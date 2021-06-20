@@ -1,0 +1,136 @@
+\doxysection{Mean\+Bias\+Error$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1MeanBiasError}\index{MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}}
+
+
+The mean bias error performance function measures the network\textquotesingle{}s performance according to the mean of errors.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Mean\+Bias\+Error} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Mean\+Bias\+Error}{p.}{classmlpack_1_1ann_1_1MeanBiasError} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Prediction\+Type , typename Target\+Type , typename Loss\+Type $>$ }\\void \textbf{ Backward} (const Prediction\+Type \&prediction, const Target\+Type \&target, Loss\+Type \&loss)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Prediction\+Type , typename Target\+Type $>$ }\\Prediction\+Type\+::elem\+\_\+type \textbf{ Forward} (const Prediction\+Type \&prediction, const Target\+Type \&target)
+\begin{DoxyCompactList}\small\item\em Computes the mean bias error function. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Mean\+Bias\+Error$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+The mean bias error performance function measures the network\textquotesingle{}s performance according to the mean of errors. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 33 of file mean\+\_\+bias\+\_\+error.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1MeanBiasError_ada93c49929a5ffd8b6bbe7618029f490}} 
+\index{MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}!MeanBiasError@{MeanBiasError}}
+\index{MeanBiasError@{MeanBiasError}!MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{MeanBiasError()}
+{\footnotesize\ttfamily \textbf{ Mean\+Bias\+Error} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Mean\+Bias\+Error}{p.}{classmlpack_1_1ann_1_1MeanBiasError} object. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1MeanBiasError_add41dbaf358dc099750dc6064cb7e0d7}} 
+\index{MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const Prediction\+Type \&}]{prediction,  }\item[{const Target\+Type \&}]{target,  }\item[{Loss\+Type \&}]{loss }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em prediction} & Predictions used for evaluating the specified loss function. \\
+\hline
+{\em target} & The target vector. \\
+\hline
+{\em loss} & The calculated error. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1MeanBiasError_ab3640059898ea76c13709b8099316fe8}} 
+\index{MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily Prediction\+Type\+::elem\+\_\+type Forward (\begin{DoxyParamCaption}\item[{const Prediction\+Type \&}]{prediction,  }\item[{const Target\+Type \&}]{target }\end{DoxyParamCaption})}
+
+
+
+Computes the mean bias error function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em prediction} & Predictions used for evaluating the specified loss function. \\
+\hline
+{\em target} & The target vector. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1MeanBiasError_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 68 of file mean\+\_\+bias\+\_\+error.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MeanBiasError_a8bae962cc603d1cab8d80ec78f8d505d}} 
+\index{MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 66 of file mean\+\_\+bias\+\_\+error.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MeanBiasError_a65cba07328997659bec80b9879b15a51}} 
+\index{MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!MeanBiasError$<$ InputDataType, OutputDataType $>$@{MeanBiasError$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/loss\+\_\+functions/\textbf{ mean\+\_\+bias\+\_\+error.\+hpp}\end{DoxyCompactItemize}

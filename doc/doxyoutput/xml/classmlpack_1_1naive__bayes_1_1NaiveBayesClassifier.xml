@@ -1,0 +1,774 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::naive_bayes::NaiveBayesClassifier</compoundname>
+    <includes refid="naive__bayes__classifier_8hpp" local="no">naive_bayes_classifier.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename ModelMatType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a0796cd3bc672aade6999c349be9cc25f" prot="public" static="no">
+        <type>ModelMatType::elem_type</type>
+        <definition>typedef ModelMatType::elem_type ElemType</definition>
+        <argsstring></argsstring>
+        <name>ElemType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="62" column="44" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a4904cc82627458fdf6672ccc0b2802c7" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double epsilon</definition>
+        <argsstring></argsstring>
+        <name>epsilon</name>
+        <briefdescription>
+<para>Small value to prevent log of zero. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="231" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="231" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a70cb8967f75fc457ef833e93dbb981d0" prot="private" static="no" mutable="no">
+        <type>ModelMatType</type>
+        <definition>ModelMatType means</definition>
+        <argsstring></argsstring>
+        <name>means</name>
+        <briefdescription>
+<para>Sample mean for each class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="223" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1ab19b631b474cfcc2895a5841824e1b28" prot="private" static="no" mutable="no">
+        <type>ModelMatType</type>
+        <definition>ModelMatType probabilities</definition>
+        <argsstring></argsstring>
+        <name>probabilities</name>
+        <briefdescription>
+<para>Class probabilities; this has the shape of a column vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="227" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="227" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1aa55237c33519e5c4b6c91fd9d6c31c50" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t trainingPoints</definition>
+        <argsstring></argsstring>
+        <name>trainingPoints</name>
+        <briefdescription>
+<para>Number of training points seen so far. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="229" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="229" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1ada8dec78014e2191c70731cde1655b4e" prot="private" static="no" mutable="no">
+        <type>ModelMatType</type>
+        <definition>ModelMatType variances</definition>
+        <argsstring></argsstring>
+        <name>variances</name>
+        <briefdescription>
+<para>Sample variances for each class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="225" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1ab4c05cba56315b162b29a020a8fa7512" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>NaiveBayesClassifier</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const bool incrementalVariance=false, const double epsilon=1e-10)</argsstring>
+        <name>NaiveBayesClassifier</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>incrementalVariance</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>epsilon</declname>
+          <defval>1e-10</defval>
+        </param>
+        <briefdescription>
+<para>Initializes the classifier as per the input and then trains it by calculating the sample mean and variances. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Example use: <programlisting><codeline><highlight class="normal">extern<sp/>arma::mat<sp/>training_data,<sp/>testing_data;</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::Row&lt;size_t&gt;<sp/>labels;</highlight></codeline>
+<codeline><highlight class="normal">NaiveBayesClassifier<sp/>nbc(training_data,<sp/>labels,<sp/>5);</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Training data points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels corresponding to training data points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in this classifier. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>incrementalVariance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, an incremental algorithm is used to calculate the variance; this can prevent loss of precision in some cases, but will be somewhat slower to calculate. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>epsilon</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Small value to prevent log of zero. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="84" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1aeb4574ad5c4777a8bb4f197da08e0ad8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>NaiveBayesClassifier</definition>
+        <argsstring>(const size_t dimensionality=0, const size_t numClasses=0, const double epsilon=1e-10)</argsstring>
+        <name>NaiveBayesClassifier</name>
+        <param>
+          <type>const size_t</type>
+          <declname>dimensionality</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>epsilon</declname>
+          <defval>1e-10</defval>
+        </param>
+        <briefdescription>
+<para>Initialize the Naive Bayes classifier without performing training. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All of the parameters of the model will be initialized to zero. Be sure to use <ref refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a1a4858124d06d22022b2eb082b6e8556" kindref="member">Train()</ref> before calling <ref refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1aa610310b354b7badd88041ca07883569" kindref="member">Classify()</ref>, otherwise the results may be meaningless. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="96" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1abd3c3812715d2e249e47476782d8e95e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;data, arma::Row&lt; size_t &gt; &amp;predictions) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given points using the trained <ref refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier" kindref="compound">NaiveBayesClassifier</ref> model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The predicted labels for each point are stored in the given vector.</para>
+<para><programlisting><codeline><highlight class="normal">arma::mat<sp/>test_data;<sp/>//<sp/>each<sp/>column<sp/>is<sp/>a<sp/>test<sp/>point</highlight></codeline>
+<codeline><highlight class="normal">arma::Row&lt;size_t&gt;<sp/>results;</highlight></codeline>
+<codeline><highlight class="normal">...</highlight></codeline>
+<codeline><highlight class="normal">nbc.Classify(test_data,<sp/>results);</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of data points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector that class predictions will be placed into. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="173" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a80f5c31d6b59f21b03b874e91bb873ad" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename ProbabilitiesMatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;data, arma::Row&lt; size_t &gt; &amp;predictions, ProbabilitiesMatType &amp;probabilities) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <param>
+          <type>ProbabilitiesMatType &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given points using the trained <ref refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier" kindref="compound">NaiveBayesClassifier</ref> model and also return estimates of the probabilities for each class in the given matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The predicted labels for each point are stored in the given vector.</para>
+<para><programlisting><codeline><highlight class="normal">arma::mat<sp/>test_data;<sp/>//<sp/>each<sp/>column<sp/>is<sp/>a<sp/>test<sp/>point</highlight></codeline>
+<codeline><highlight class="normal">arma::Row&lt;size_t&gt;<sp/>results;</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>resultsProbs;</highlight></codeline>
+<codeline><highlight class="normal">...</highlight></codeline>
+<codeline><highlight class="normal">nbc.Classify(test_data,<sp/>results,<sp/>resultsProbs);</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of points to classify. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be filled with predictions for each point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be filled with class probabilities for each point. Each row represents a point. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of data to be classified. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ProbabilitiesMatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type to store output probabilities in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="198" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1aa610310b354b7badd88041ca07883569" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t Classify</definition>
+        <argsstring>(const VecType &amp;point) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given point, using the trained <ref refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier" kindref="compound">NaiveBayesClassifier</ref> model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The predicted label is returned.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to classify. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="141" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a22e48e639567f4da2a73dbff6fb44451" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+          <param>
+            <type>typename ProbabilitiesVecType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const VecType &amp;point, size_t &amp;prediction, ProbabilitiesVecType &amp;probabilities) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>size_t &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>ProbabilitiesVecType &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given point using the trained <ref refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier" kindref="compound">NaiveBayesClassifier</ref> model and also return estimates of the probability for each class in the given vector. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to classify. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be set to the predicted class of the point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be filled with class probabilities for the point. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="154" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a97f14b922516ca3aa38c86131f5d6413" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ModelMatType &amp;</type>
+        <definition>ModelMatType&amp; Means</definition>
+        <argsstring>()</argsstring>
+        <name>Means</name>
+        <briefdescription>
+<para>Modify the sample means for each class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="205" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="205" bodyend="205"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1afbabedc78e265a25d10f64662b6f4f96" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const ModelMatType &amp;</type>
+        <definition>const ModelMatType&amp; Means</definition>
+        <argsstring>() const</argsstring>
+        <name>Means</name>
+        <briefdescription>
+<para>Get the sample means for each class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="203" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="203" bodyend="203"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a5b180e8dd80891d3ec352f92d3068ce6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ModelMatType &amp;</type>
+        <definition>ModelMatType&amp; Probabilities</definition>
+        <argsstring>()</argsstring>
+        <name>Probabilities</name>
+        <briefdescription>
+<para>Modify the prior probabilities for each class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="215" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="215" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a060a0a715c8ff0246972eaaa4575fda6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const ModelMatType &amp;</type>
+        <definition>const ModelMatType&amp; Probabilities</definition>
+        <argsstring>() const</argsstring>
+        <name>Probabilities</name>
+        <briefdescription>
+<para>Get the prior probabilities for each class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="213" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="213" bodyend="213"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the classifier. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="219" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a1a4858124d06d22022b2eb082b6e8556" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const bool incremental=true)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>incremental</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Train the Naive Bayes classifier on the given dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the incremental algorithm is used, the current model is used as a starting point (this is the default). If the incremental algorithm is not used, then the current model is ignored and the new model will be trained only on the given data. Note that even if the incremental algorithm is not used, the data must have the same dimensionality and number of classes that the model was initialized with. If you want to change the dimensionality or number of classes, either re-initialize or call <ref refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a97f14b922516ca3aa38c86131f5d6413" kindref="member">Means()</ref>, <ref refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a7d812cb65223a49a796aaa3dfbb8c1dc" kindref="member">Variances()</ref>, and <ref refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a5b180e8dd80891d3ec352f92d3068ce6" kindref="member">Probabilities()</ref> individually to set them to the right size.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The labels for the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The numbe of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>incremental</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to use the incremental algorithm for training. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="118" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a4be1a071b03a017654ecced62e354e02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const VecType &amp;point, const size_t label)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>label</declname>
+        </param>
+        <briefdescription>
+<para>Train the Naive Bayes classifier on the given point. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will use the incremental algorithm for updating the model parameters. The data must be the same dimensionality as the existing model parameters.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data point to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>label</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Label of data point. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="132" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a7d812cb65223a49a796aaa3dfbb8c1dc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>ModelMatType &amp;</type>
+        <definition>ModelMatType&amp; Variances</definition>
+        <argsstring>()</argsstring>
+        <name>Variances</name>
+        <briefdescription>
+<para>Modify the sample variances for each class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="210" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="210" bodyend="210"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a7ff00174dce9347760070d8f50c22ae5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const ModelMatType &amp;</type>
+        <definition>const ModelMatType&amp; Variances</definition>
+        <argsstring>() const</argsstring>
+        <name>Variances</name>
+        <briefdescription>
+<para>Get the sample variances for each class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="208" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="208" bodyend="208"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1abb81184d428020edb976e50623e3a123" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void LogLikelihood</definition>
+        <argsstring>(const MatType &amp;data, ModelMatType &amp;logLikelihoods) const</argsstring>
+        <name>LogLikelihood</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>ModelMatType &amp;</type>
+          <declname>logLikelihoods</declname>
+        </param>
+        <briefdescription>
+<para>Compute the unnormalized posterior log probability of given points (log likelihood). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Results are returned as arma::mat, and each column represents a point, each row represents log likelihood of a class.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of points to compute posterior log probability for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>logLikelihoods</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store log likelihoods in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="242" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The simple Naive Bayes classifier. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This class trains on the data by calculating the sample mean and variance of the features with respect to each of the labels, and also the class probabilities. The class labels are assumed to be positive integers (starting with 0), and are expected to be the last row of the data input to the constructor.</para>
+<para>Mathematically, it computes P(X_i = x_i | Y = y_j) for each feature X_i for each of the labels y_j. Along with this, it also computes the class probabilities P(Y = y_j).</para>
+<para>For classifying a data point (x_1, x_2, ..., x_n), it computes the following: arg max_y(P(Y = y)*P(X_1 = x_1 | Y = y) * ... * P(X_n = x_n | Y = y))</para>
+<para>Example use:</para>
+<para><programlisting><codeline><highlight class="normal">extern<sp/>arma::mat<sp/>training_data,<sp/>testing_data;</highlight></codeline>
+<codeline><highlight class="normal">NaiveBayesClassifier&lt;&gt;<sp/>nbc(training_data,<sp/>5);</highlight></codeline>
+<codeline><highlight class="normal">arma::vec<sp/>results;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">nbc.Classify(testing_data,<sp/>results);</highlight></codeline>
+</programlisting></para>
+<para>The ModelMatType template parameter specifies the internal matrix type that <ref refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier" kindref="compound">NaiveBayesClassifier</ref> will use to hold the means, variances, and weights that make up the Naive Bayes model. This can be arma::mat, arma::fmat, or any other Armadillo (or Armadillo-compatible) object. Because ModelMatType may be different than the type of the data the model is trained on, now training is possible with subviews, sparse matrices, or anything else, while still storing the model as a ModelMatType internally.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>ModelMatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Internal matrix type to use to store the model. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" line="58" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/naive_bayes/naive_bayes_classifier.hpp" bodystart="59" bodyend="244"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1aa610310b354b7badd88041ca07883569" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a22e48e639567f4da2a73dbff6fb44451" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1abd3c3812715d2e249e47476782d8e95e" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a80f5c31d6b59f21b03b874e91bb873ad" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a0796cd3bc672aade6999c349be9cc25f" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>ElemType</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a4904cc82627458fdf6672ccc0b2802c7" prot="private" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>epsilon</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1abb81184d428020edb976e50623e3a123" prot="private" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>LogLikelihood</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a70cb8967f75fc457ef833e93dbb981d0" prot="private" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>means</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1afbabedc78e265a25d10f64662b6f4f96" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Means</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a97f14b922516ca3aa38c86131f5d6413" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Means</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1ab4c05cba56315b162b29a020a8fa7512" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>NaiveBayesClassifier</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1aeb4574ad5c4777a8bb4f197da08e0ad8" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>NaiveBayesClassifier</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1ab19b631b474cfcc2895a5841824e1b28" prot="private" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>probabilities</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a060a0a715c8ff0246972eaaa4575fda6" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Probabilities</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a5b180e8dd80891d3ec352f92d3068ce6" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Probabilities</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a1a4858124d06d22022b2eb082b6e8556" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a4be1a071b03a017654ecced62e354e02" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1aa55237c33519e5c4b6c91fd9d6c31c50" prot="private" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>trainingPoints</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1ada8dec78014e2191c70731cde1655b4e" prot="private" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>variances</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a7ff00174dce9347760070d8f50c22ae5" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Variances</name></member>
+      <member refid="classmlpack_1_1naive__bayes_1_1NaiveBayesClassifier_1a7d812cb65223a49a796aaa3dfbb8c1dc" prot="public" virt="non-virtual"><scope>mlpack::naive_bayes::NaiveBayesClassifier</scope><name>Variances</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

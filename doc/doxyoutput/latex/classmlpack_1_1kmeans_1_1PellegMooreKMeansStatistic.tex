@@ -1,0 +1,124 @@
+\doxysection{Pelleg\+Moore\+KMeans\+Statistic Class Reference}
+\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansStatistic}\index{PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}}
+
+
+A statistic for trees which holds the blacklist for Pelleg-\/\+Moore k-\/means clustering (which represents the clusters that cannot possibly own any points in a node).  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Pelleg\+Moore\+KMeans\+Statistic} ()
+\begin{DoxyCompactList}\small\item\em Initialize the statistic without a node (this does nothing). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\\textbf{ Pelleg\+Moore\+KMeans\+Statistic} (Tree\+Type \&node)
+\begin{DoxyCompactList}\small\item\em Initialize the statistic for a node; this calculates the centroid and caches it. \end{DoxyCompactList}\item 
+arma\+::uvec \& \textbf{ Blacklist} ()
+\begin{DoxyCompactList}\small\item\em Modify the cluster blacklist. \end{DoxyCompactList}\item 
+const arma\+::uvec \& \textbf{ Blacklist} () const
+\begin{DoxyCompactList}\small\item\em Get the cluster blacklist. \end{DoxyCompactList}\item 
+arma\+::vec \& \textbf{ Centroid} ()
+\begin{DoxyCompactList}\small\item\em Modify the node\textquotesingle{}s centroid (be careful!). \end{DoxyCompactList}\item 
+const arma\+::vec \& \textbf{ Centroid} () const
+\begin{DoxyCompactList}\small\item\em Get the node\textquotesingle{}s centroid. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A statistic for trees which holds the blacklist for Pelleg-\/\+Moore k-\/means clustering (which represents the clusters that cannot possibly own any points in a node). 
+
+Definition at line 24 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+statistic.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansStatistic_ab90ad4a48d4ee000bd4406ebb09ff3e8}} 
+\index{PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}!PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}}
+\index{PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}!PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}}
+\doxysubsubsection{PellegMooreKMeansStatistic()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Pelleg\+Moore\+KMeans\+Statistic} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the statistic without a node (this does nothing). 
+
+
+
+Definition at line 28 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+statistic.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansStatistic_aba9397b219e4149d384a16923863566f}} 
+\index{PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}!PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}}
+\index{PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}!PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}}
+\doxysubsubsection{PellegMooreKMeansStatistic()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Pelleg\+Moore\+KMeans\+Statistic} (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{node }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the statistic for a node; this calculates the centroid and caches it. 
+
+
+
+Definition at line 33 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+statistic.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansStatistic_a28e7826933df4b13a45abc649a34f44a}} 
+\index{PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}!Blacklist@{Blacklist}}
+\index{Blacklist@{Blacklist}!PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}}
+\doxysubsubsection{Blacklist()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::uvec\& Blacklist (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the cluster blacklist. 
+
+
+
+Definition at line 59 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+statistic.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansStatistic_afb656efc6b69a7d77423276348a75c6e}} 
+\index{PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}!Blacklist@{Blacklist}}
+\index{Blacklist@{Blacklist}!PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}}
+\doxysubsubsection{Blacklist()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const arma\+::uvec\& Blacklist (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the cluster blacklist. 
+
+
+
+Definition at line 57 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+statistic.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansStatistic_a656ee900ec6d5a1548d3023d7df8bb9a}} 
+\index{PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}!Centroid@{Centroid}}
+\index{Centroid@{Centroid}!PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}}
+\doxysubsubsection{Centroid()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::vec\& Centroid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the node\textquotesingle{}s centroid (be careful!). 
+
+
+
+Definition at line 64 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+statistic.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1PellegMooreKMeansStatistic_a8d1b09bb5ee8c048e57746774a6e502e}} 
+\index{PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}!Centroid@{Centroid}}
+\index{Centroid@{Centroid}!PellegMooreKMeansStatistic@{PellegMooreKMeansStatistic}}
+\doxysubsubsection{Centroid()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const arma\+::vec\& Centroid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the node\textquotesingle{}s centroid. 
+
+
+
+Definition at line 62 of file pelleg\+\_\+moore\+\_\+kmeans\+\_\+statistic.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kmeans/\textbf{ pelleg\+\_\+moore\+\_\+kmeans\+\_\+statistic.\+hpp}\end{DoxyCompactItemize}

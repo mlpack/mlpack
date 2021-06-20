@@ -1,0 +1,65 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/methods/lsh/lsh\+\_\+search.hpp File Reference}
+\label{lsh__search_8hpp}\index{/home/aakash/mlpack/src/mlpack/methods/lsh/lsh\_search.hpp@{/home/aakash/mlpack/src/mlpack/methods/lsh/lsh\_search.hpp}}
+Include dependency graph for lsh\+\_\+search.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{lsh__search_8hpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ LSHSearch$<$ Sort\+Policy, Mat\+Type $>$}
+\begin{DoxyCompactList}\small\item\em The \doxyref{LSHSearch}{p.}{classmlpack_1_1neighbor_1_1LSHSearch} class; this class builds a hash on the reference set and uses this hash to compute the distance-\/approximate nearest-\/neighbors of the given queries. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::neighbor}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Parikshit Ram
+\end{DoxyAuthor}
+Defines the LSHSearch class, which performs an approximate nearest neighbor search for a queries in a query set over a given dataset using Locality-\/sensitive hashing with 2-\/stable distributions.
+
+The details of this method can be found in the following paper\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@inproceedings\{datar2004locality,}
+\DoxyCodeLine{ title=\{Locality-\/sensitive hashing scheme based on p-\/stable distributions\},}
+\DoxyCodeLine{ author=\{Datar, M. and Immorlica, N. and Indyk, P. and Mirrokni, V.S.\},}
+\DoxyCodeLine{ booktitle=}
+\DoxyCodeLine{     \{Proceedings of the 12th Annual Symposium on Computational Geometry\},}
+\DoxyCodeLine{ pages=\{253-\/-\/262\},}
+\DoxyCodeLine{ year=\{2004\},}
+\DoxyCodeLine{ organization=\{ACM\}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Additionally, the class implements Multiprobe LSH, which improves approximation results during the search for approximate nearest neighbors. The Multiprobe LSH algorithm was presented in the paper\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@inproceedings\{Lv2007multiprobe,}
+\DoxyCodeLine{ tile=\{Multi-\/probe LSH: efficient indexing \textcolor{keywordflow}{for} high-\/dimensional similarity}
+\DoxyCodeLine{ search\},}
+\DoxyCodeLine{ author=\{Lv, Qin and Josephson, William and Wang, Zhe and Charikar, Moses and}
+\DoxyCodeLine{ Li, Kai\},}
+\DoxyCodeLine{ booktitle=\{Proceedings of the 33rd international conference on Very large}
+\DoxyCodeLine{ data bases\},}
+\DoxyCodeLine{ year=\{2007\},}
+\DoxyCodeLine{ pages=\{950-\/-\/961\}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

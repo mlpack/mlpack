@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1InitTraits" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::InitTraits</compoundname>
+    <includes refid="init__rules__traits_8hpp" local="no">init_rules_traits.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InitRuleType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1InitTraits_1a6aadf10c95af2a5f0ab17196f682ffd4" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool UseLayer</definition>
+        <argsstring></argsstring>
+        <name>UseLayer</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>This is true if the initialization method is used for a single layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/init_rules_traits.hpp" line="34" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/init_rules_traits.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This is a template class that can provide information about various initialization methods. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>By default, this class will provide the weakest possible assumptions on the initialization method, and each initialization method should override values as necessary. If a initialization method doesn&apos;t need to override a value, then there&apos;s no need to write a <ref refid="classmlpack_1_1ann_1_1InitTraits" kindref="compound">InitTraits</ref> specialization for that class. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/init_rules_traits.hpp" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/init_rules_traits.hpp" bodystart="29" bodyend="35"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1InitTraits_1a6aadf10c95af2a5f0ab17196f682ffd4" prot="public" virt="non-virtual"><scope>mlpack::ann::InitTraits</scope><name>UseLayer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

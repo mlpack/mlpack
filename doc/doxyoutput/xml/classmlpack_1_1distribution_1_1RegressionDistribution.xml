@@ -1,0 +1,522 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1distribution_1_1RegressionDistribution" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::distribution::RegressionDistribution</compoundname>
+    <includes refid="regression__distribution_8hpp" local="no">regression_distribution.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1distribution_1_1RegressionDistribution_1aa0ee925f33fd2f23d33cc39b5e77a87b" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1distribution_1_1GaussianDistribution" kindref="compound">GaussianDistribution</ref></type>
+        <definition>GaussianDistribution err</definition>
+        <argsstring></argsstring>
+        <name>err</name>
+        <briefdescription>
+<para>Error distribution. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="37" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a3b2cbe0e4c4f81f9739fc6a3c21593d1" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1regression_1_1LinearRegression" kindref="compound">regression::LinearRegression</ref></type>
+        <definition>regression::LinearRegression rf</definition>
+        <argsstring></argsstring>
+        <name>rf</name>
+        <briefdescription>
+<para>Regression function for representing conditional mean. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="35" column="32" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a35b6f6f5aa1bf97a1ca8e8774b6e94c8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RegressionDistribution</definition>
+        <argsstring>()</argsstring>
+        <name>RegressionDistribution</name>
+        <briefdescription>
+<para>Default constructor, which creates a Gaussian with zero dimension. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="43" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="43" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1ab3b28892023bf3c2fcef499daf168615" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RegressionDistribution</definition>
+        <argsstring>(const arma::mat &amp;predictors, const arma::rowvec &amp;responses)</argsstring>
+        <name>RegressionDistribution</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>predictors</declname>
+        </param>
+        <param>
+          <type>const arma::rowvec &amp;</type>
+          <declname>responses</declname>
+        </param>
+        <briefdescription>
+<para>Create a Conditional Gaussian distribution with conditional mean function obtained by running RegressionFunction on predictors, responses. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>predictors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix of predictors (X). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>responses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector of responses (y). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="64" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="64" bodyend="72"/>
+        <references refid="classmlpack_1_1regression_1_1LinearRegression_1ad1b012d8c3cad8c6a155b715cb32a134">LinearRegression::ComputeError</references>
+        <references refid="classmlpack_1_1distribution_1_1GaussianDistribution_1a7cab8a0b8c0deac1833f3e489fa52daf" compoundref="gaussian__distribution_8hpp" startline="156" endline="156">GaussianDistribution::Covariance</references>
+        <references refid="classmlpack_1_1regression_1_1LinearRegression_1a593683fefbb596f9b7f6347d0be5a562">LinearRegression::Train</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1aed168e6d1511a69840c678b30808e330" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="deprecated_8hpp_1a3d7d5df477a8805980e43e423e18a525" kindref="member">mlpack_deprecated</ref></type>
+        <definition>mlpack_deprecated RegressionDistribution</definition>
+        <argsstring>(const arma::mat &amp;predictors, const arma::vec &amp;responses)</argsstring>
+        <name>RegressionDistribution</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>predictors</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>responses</declname>
+        </param>
+        <briefdescription>
+<para>Create a Conditional Gaussian distribution with conditional mean function obtained by running RegressionFunction on predictors, responses. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>predictors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix of predictors (X). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>responses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector of responses (y). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="52" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="52" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Dimensionality</definition>
+        <argsstring>() const</argsstring>
+        <name>Dimensionality</name>
+        <briefdescription>
+<para>Return the dimensionality. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="156" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="156" bodyend="156"/>
+        <references refid="classmlpack_1_1regression_1_1LinearRegression_1a6a67e9b83bb8f0ea6122efcc5f75927c" compoundref="linear__regression_8hpp" startline="127" endline="127">LinearRegression::Parameters</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a4933252a4d34e072caec0911bcc26019" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1distribution_1_1GaussianDistribution" kindref="compound">GaussianDistribution</ref> &amp;</type>
+        <definition>GaussianDistribution&amp; Err</definition>
+        <argsstring>()</argsstring>
+        <name>Err</name>
+        <briefdescription>
+<para>Modify error distribution. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="92" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="92" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a969cf44cad4d33cfb943d1a92c22c954" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1distribution_1_1GaussianDistribution" kindref="compound">GaussianDistribution</ref> &amp;</type>
+        <definition>const GaussianDistribution&amp; Err</definition>
+        <argsstring>() const</argsstring>
+        <name>Err</name>
+        <briefdescription>
+<para>Return error distribution. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="90" column="30" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="90" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a7063c1fb92f512f32bf44542c7528739" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double LogProbability</definition>
+        <argsstring>(const arma::vec &amp;observation) const</argsstring>
+        <name>LogProbability</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate log probability density function of given observation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to evaluate log probability at. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="130" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="130" bodyend="133"/>
+        <references refid="classmlpack_1_1distribution_1_1RegressionDistribution_1ab72935d592516e77511d0b5e703c0d41">RegressionDistribution::Probability</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a6a67e9b83bb8f0ea6122efcc5f75927c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; Parameters</definition>
+        <argsstring>() const</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Return the parameters (the b vector). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="153" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="153" bodyend="153"/>
+        <references refid="classmlpack_1_1regression_1_1LinearRegression_1a6a67e9b83bb8f0ea6122efcc5f75927c" compoundref="linear__regression_8hpp" startline="127" endline="127">LinearRegression::Parameters</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a71e5e21b1d92756979b32face7b3c573" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Predict</definition>
+        <argsstring>(const arma::mat &amp;points, arma::rowvec &amp;predictions) const</argsstring>
+        <name>Predict</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>points</declname>
+        </param>
+        <param>
+          <type>arma::rowvec &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <briefdescription>
+<para>Calculate y_i for each data point in points. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>points</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The data points to calculate with. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Y, will contain calculated values on completion. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="150" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a9a40c040f420186809390bdce9c8689a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="deprecated_8hpp_1a3d7d5df477a8805980e43e423e18a525" kindref="member">mlpack_deprecated</ref> void</type>
+        <definition>mlpack_deprecated void Predict</definition>
+        <argsstring>(const arma::mat &amp;points, arma::vec &amp;predictions) const</argsstring>
+        <name>Predict</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>points</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <briefdescription>
+<para>Calculate y_i for each data point in points. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>points</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The data points to calculate with. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Y, will contain calculated values on completion. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="141" column="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1ab72935d592516e77511d0b5e703c0d41" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Probability</definition>
+        <argsstring>(const arma::vec &amp;observation) const</argsstring>
+        <name>Probability</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate probability density function of given observation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to evaluate probability at. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="123" column="10"/>
+        <referencedby refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a7063c1fb92f512f32bf44542c7528739" compoundref="regression__distribution_8hpp" startline="130" endline="133">RegressionDistribution::LogProbability</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a4c492b87b66f72b328b07978eeb1ec26" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1regression_1_1LinearRegression" kindref="compound">regression::LinearRegression</ref> &amp;</type>
+        <definition>regression::LinearRegression&amp; Rf</definition>
+        <argsstring>()</argsstring>
+        <name>Rf</name>
+        <briefdescription>
+<para>Modify regression function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="87" column="32" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="87" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a46202caa2b47a86d7cbf42e22c9611cf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1regression_1_1LinearRegression" kindref="compound">regression::LinearRegression</ref> &amp;</type>
+        <definition>const regression::LinearRegression&amp; Rf</definition>
+        <argsstring>() const</argsstring>
+        <name>Rf</name>
+        <briefdescription>
+<para>Return regression function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="85" column="38" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="85" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the distribution. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="78" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="78" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a269c6f8a40ce41a5f7b6d035aef58238" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const arma::mat &amp;observations)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>observations</declname>
+        </param>
+        <briefdescription>
+<para>Estimate the Gaussian distribution directly from the given observations. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of observations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="99" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1ad92c15115a850f977b39368b171e961e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const arma::mat &amp;observations, const arma::rowvec &amp;weights)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>observations</declname>
+        </param>
+        <param>
+          <type>const arma::rowvec &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <briefdescription>
+<para>Estimate parameters using provided observation weights. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of observations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Probability that given observation is from distribution. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="116" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1RegressionDistribution_1a5897c02064b5eb7822af7bd795fe42fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="deprecated_8hpp_1a3d7d5df477a8805980e43e423e18a525" kindref="member">mlpack_deprecated</ref> void</type>
+        <definition>mlpack_deprecated void Train</definition>
+        <argsstring>(const arma::mat &amp;observations, const arma::vec &amp;weights)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>observations</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <briefdescription>
+<para>Estimate parameters using provided observation weights. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of observations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Probability that given observation is from distribution. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="107" column="26"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A class that represents a univariate conditionally Gaussian distribution. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Can be used as an emission distribution with the hmm class to implement HMM regression (HMMR) as described in <ulink url="https://www.ima.umn.edu/preprints/January1994/1195.pdf">https://www.ima.umn.edu/preprints/January1994/1195.pdf</ulink> The hmm observations should have the dependent variable in the first row, with the independent variables in the other rows. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" line="31" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/regression_distribution.hpp" bodystart="32" bodyend="157"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Dimensionality</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1aa0ee925f33fd2f23d33cc39b5e77a87b" prot="private" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>err</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a969cf44cad4d33cfb943d1a92c22c954" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Err</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a4933252a4d34e072caec0911bcc26019" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Err</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a7063c1fb92f512f32bf44542c7528739" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>LogProbability</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a6a67e9b83bb8f0ea6122efcc5f75927c" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a9a40c040f420186809390bdce9c8689a" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Predict</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a71e5e21b1d92756979b32face7b3c573" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Predict</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1ab72935d592516e77511d0b5e703c0d41" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Probability</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a35b6f6f5aa1bf97a1ca8e8774b6e94c8" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>RegressionDistribution</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1aed168e6d1511a69840c678b30808e330" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>RegressionDistribution</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1ab3b28892023bf3c2fcef499daf168615" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>RegressionDistribution</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a3b2cbe0e4c4f81f9739fc6a3c21593d1" prot="private" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>rf</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a46202caa2b47a86d7cbf42e22c9611cf" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Rf</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a4c492b87b66f72b328b07978eeb1ec26" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Rf</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a269c6f8a40ce41a5f7b6d035aef58238" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1a5897c02064b5eb7822af7bd795fe42fb" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1distribution_1_1RegressionDistribution_1ad92c15115a850f977b39368b171e961e" prot="public" virt="non-virtual"><scope>mlpack::distribution::RegressionDistribution</scope><name>Train</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

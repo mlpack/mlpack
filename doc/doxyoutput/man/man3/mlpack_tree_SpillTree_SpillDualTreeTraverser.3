@@ -1,0 +1,141 @@
+.TH "SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::SpillDualTreeTraverser< MetricType, StatisticType, MatType, HyperplaneType, SplitType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::SpillDualTreeTraverser< MetricType, StatisticType, MatType, HyperplaneType, SplitType > \- A generic dual-tree traverser for hybrid spill trees; see \fBspill_dual_tree_traverser\&.hpp\fP for implementation\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSpillDualTreeTraverser\fP (RuleType &rule)"
+.br
+.RI "Instantiate the dual-tree traverser with the given rule set\&. "
+.ti -1c
+.RI "size_t & \fBNumBaseCases\fP ()"
+.br
+.RI "Modify the number of times a base case was calculated\&. "
+.ti -1c
+.RI "size_t \fBNumBaseCases\fP () const"
+.br
+.RI "Get the number of times a base case was calculated\&. "
+.ti -1c
+.RI "size_t & \fBNumPrunes\fP ()"
+.br
+.RI "Modify the number of prunes\&. "
+.ti -1c
+.RI "size_t \fBNumPrunes\fP () const"
+.br
+.RI "Get the number of prunes\&. "
+.ti -1c
+.RI "size_t & \fBNumScores\fP ()"
+.br
+.RI "Modify the number of times a node combination was scored\&. "
+.ti -1c
+.RI "size_t \fBNumScores\fP () const"
+.br
+.RI "Get the number of times a node combination was scored\&. "
+.ti -1c
+.RI "size_t & \fBNumVisited\fP ()"
+.br
+.RI "Modify the number of visited combinations\&. "
+.ti -1c
+.RI "size_t \fBNumVisited\fP () const"
+.br
+.RI "Get the number of visited combinations\&. "
+.ti -1c
+.RI "void \fBTraverse\fP (\fBSpillTree\fP &queryNode, \fBSpillTree\fP &referenceNode, const bool bruteForce=false)"
+.br
+.RI "Traverse the two trees\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename StatisticType = EmptyStatistic, typename MatType = arma::mat, template< typename HyperplaneMetricType > class HyperplaneType = AxisOrthogonalHyperplane, template< typename SplitMetricType, typename SplitMatType > class SplitType = MidpointSpaceSplit>
+.br
+template<typename MetricType, typename StatisticType, typename MatType, template< typename HyperplaneMetricType > class HyperplaneType, template< typename SplitMetricType, typename SplitMatType > class SplitType>
+.br
+class mlpack::tree::SpillTree< MetricType, StatisticType, MatType, HyperplaneType, SplitType >::SpillDualTreeTraverser< MetricType, StatisticType, MatType, HyperplaneType, SplitType >"
+A generic dual-tree traverser for hybrid spill trees; see \fBspill_dual_tree_traverser\&.hpp\fP for implementation\&. 
+
+The Defeatist template parameter determines if the traverser must do defeatist search on overlapping nodes\&. 
+.PP
+Definition at line 35 of file spill_dual_tree_traverser\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSpillDualTreeTraverser\fP (RuleType & rule)"
+
+.PP
+Instantiate the dual-tree traverser with the given rule set\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t& NumBaseCases ()\fC [inline]\fP"
+
+.PP
+Modify the number of times a base case was calculated\&. 
+.PP
+Definition at line 74 of file spill_dual_tree_traverser\&.hpp\&.
+.SS "size_t NumBaseCases () const\fC [inline]\fP"
+
+.PP
+Get the number of times a base case was calculated\&. 
+.PP
+Definition at line 72 of file spill_dual_tree_traverser\&.hpp\&.
+.SS "size_t& NumPrunes ()\fC [inline]\fP"
+
+.PP
+Modify the number of prunes\&. 
+.PP
+Definition at line 59 of file spill_dual_tree_traverser\&.hpp\&.
+.SS "size_t NumPrunes () const\fC [inline]\fP"
+
+.PP
+Get the number of prunes\&. 
+.PP
+Definition at line 57 of file spill_dual_tree_traverser\&.hpp\&.
+.SS "size_t& NumScores ()\fC [inline]\fP"
+
+.PP
+Modify the number of times a node combination was scored\&. 
+.PP
+Definition at line 69 of file spill_dual_tree_traverser\&.hpp\&.
+.SS "size_t NumScores () const\fC [inline]\fP"
+
+.PP
+Get the number of times a node combination was scored\&. 
+.PP
+Definition at line 67 of file spill_dual_tree_traverser\&.hpp\&.
+.SS "size_t& NumVisited ()\fC [inline]\fP"
+
+.PP
+Modify the number of visited combinations\&. 
+.PP
+Definition at line 64 of file spill_dual_tree_traverser\&.hpp\&.
+.SS "size_t NumVisited () const\fC [inline]\fP"
+
+.PP
+Get the number of visited combinations\&. 
+.PP
+Definition at line 62 of file spill_dual_tree_traverser\&.hpp\&.
+.SS "void Traverse (\fBSpillTree\fP & queryNode, \fBSpillTree\fP & referenceNode, const bool bruteForce = \fCfalse\fP)"
+
+.PP
+Traverse the two trees\&. This does not reset the number of prunes\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIqueryNode\fP The query node to be traversed\&. 
+.br
+\fIreferenceNode\fP The reference node to be traversed\&. 
+.br
+\fIbruteForce\fP If true, then do a brute-force search on the reference node instead of traversing any further\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

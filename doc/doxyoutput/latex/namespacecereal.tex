@@ -1,0 +1,224 @@
+\doxysection{cereal Namespace Reference}
+\label{namespacecereal}\index{cereal@{cereal}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Array\+Wrapper}
+\begin{DoxyCompactList}\small\item\em This class is used as a shim for cereal to be able to serialize a raw pointer array. \end{DoxyCompactList}\item 
+struct \textbf{ is\+\_\+cereal\+\_\+archive}
+\item 
+struct \textbf{ is\+\_\+cereal\+\_\+archive\+\_\+saving}
+\item 
+struct \textbf{ load\+\_\+visitor}
+\item 
+class \textbf{ Pointer\+Variant\+Wrapper}
+\begin{DoxyCompactList}\small\item\em The objective of this class is to create a wrapper for boost\+::variant. \end{DoxyCompactList}\item 
+class \textbf{ Pointer\+Vector\+Variant\+Wrapper}
+\begin{DoxyCompactList}\small\item\em The objective of this class is to create a wrapper for a vector of boost\+::variant that holds pointer. \end{DoxyCompactList}\item 
+class \textbf{ Pointer\+Vector\+Wrapper}
+\begin{DoxyCompactList}\small\item\em The objective of this class is to create a wrapper for std\+::vector that hold pointers by adding also the size of the vector. \end{DoxyCompactList}\item 
+class \textbf{ Pointer\+Wrapper}
+\begin{DoxyCompactList}\small\item\em The objective of this class is to create a wrapper for raw pointer by encapsulating them in a smart pointer of type unique\+\_\+ptr. \end{DoxyCompactList}\item 
+struct \textbf{ save\+\_\+visitor}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$class Archive , template$<$ typename... $>$ class Map, typename... Args, typename  = typename Map$<$\+Args...$>$\+::mapped\+\_\+type$>$ }\\void \textbf{ CEREAL\+\_\+\+LOAD\+\_\+\+FUNCTION\+\_\+\+NAME} (Archive \&ar, Map$<$ Args... $>$ \&map)
+\begin{DoxyCompactList}\small\item\em Loading for std-\/like pair associative containers. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Archive , template$<$ typename... $>$ class Map, typename... Args, typename  = typename Map$<$\+Args...$>$\+::mapped\+\_\+type$>$ }\\void \textbf{ CEREAL\+\_\+\+SAVE\+\_\+\+FUNCTION\+\_\+\+NAME} (Archive \&ar, Map$<$ Args... $>$ const \&map)
+\begin{DoxyCompactList}\small\item\em Saving for std-\/like pair associative containers. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\bool \textbf{ is\+\_\+loading} (const typename std\+::enable\+\_\+if$<$ !\textbf{ is\+\_\+cereal\+\_\+archive}$<$ Archive $>$\+::value, Archive $>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\bool \textbf{ is\+\_\+loading} (const typename std\+::enable\+\_\+if$<$ \textbf{ is\+\_\+cereal\+\_\+archive}$<$ Archive $>$\+::value, Archive $>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\bool \textbf{ is\+\_\+saving} (const typename std\+::enable\+\_\+if$<$ !\textbf{ is\+\_\+cereal\+\_\+archive\+\_\+saving}$<$ Archive $>$\+::value, Archive $>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\bool \textbf{ is\+\_\+saving} (const typename std\+::enable\+\_\+if$<$ \textbf{ is\+\_\+cereal\+\_\+archive\+\_\+saving}$<$ Archive $>$\+::value, Archive $>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$class T , class S $>$ }\\\textbf{ Array\+Wrapper}$<$ T $>$ \textbf{ make\+\_\+array} (T $\ast$\&t, S \&s)
+\begin{DoxyCompactList}\small\item\em This function is used to serialized old c-\/style array. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class T $>$ }\\\textbf{ Pointer\+Wrapper}$<$ T $>$ \textbf{ make\+\_\+pointer} (T $\ast$\&t)
+\begin{DoxyCompactList}\small\item\em Serialize raw pointer object by encapsulating the pointer into a smart pointer. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... Variant\+Types$>$ }\\\textbf{ Pointer\+Variant\+Wrapper}$<$ Variant\+Types... $>$ \textbf{ make\+\_\+pointer\+\_\+variant} (boost\+::variant$<$ Variant\+Types... $>$ \&t)
+\begin{DoxyCompactList}\small\item\em Serialize a boost variant in which the variant it self is a raw pointer. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class T $>$ }\\\textbf{ Pointer\+Vector\+Wrapper}$<$ T $>$ \textbf{ make\+\_\+pointer\+\_\+vector} (std\+::vector$<$ T $\ast$ $>$ \&t)
+\begin{DoxyCompactList}\small\item\em Serialize an std\+::vector that holds raw pointer object by encapsulating them into a smart pointer. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... Variant\+Types$>$ }\\\textbf{ Pointer\+Vector\+Variant\+Wrapper}$<$ Variant\+Types... $>$ \textbf{ make\+\_\+vector\+\_\+pointer\+\_\+variant} (std\+::vector$<$ boost\+::variant$<$ Variant\+Types... $>$$>$ \&t)
+\begin{DoxyCompactList}\small\item\em Serialize a std\+::vector of boost variants in which the variant in each boost variant is a raw pointer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\label{namespacecereal_a679144f687ff95c7111ff96bccc573b3}} 
+\index{cereal@{cereal}!CEREAL\_LOAD\_FUNCTION\_NAME@{CEREAL\_LOAD\_FUNCTION\_NAME}}
+\index{CEREAL\_LOAD\_FUNCTION\_NAME@{CEREAL\_LOAD\_FUNCTION\_NAME}!cereal@{cereal}}
+\doxysubsubsection{CEREAL\_LOAD\_FUNCTION\_NAME()}
+{\footnotesize\ttfamily void cereal\+::\+CEREAL\+\_\+\+LOAD\+\_\+\+FUNCTION\+\_\+\+NAME (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{Map$<$ Args... $>$ \&}]{map }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Loading for std-\/like pair associative containers. 
+
+
+
+Definition at line 59 of file pair\+\_\+associative\+\_\+container.\+hpp.
+
+\mbox{\label{namespacecereal_a0c5992e59041b20f902dd4fa0b2c62f1}} 
+\index{cereal@{cereal}!CEREAL\_SAVE\_FUNCTION\_NAME@{CEREAL\_SAVE\_FUNCTION\_NAME}}
+\index{CEREAL\_SAVE\_FUNCTION\_NAME@{CEREAL\_SAVE\_FUNCTION\_NAME}!cereal@{cereal}}
+\doxysubsubsection{CEREAL\_SAVE\_FUNCTION\_NAME()}
+{\footnotesize\ttfamily void cereal\+::\+CEREAL\+\_\+\+SAVE\+\_\+\+FUNCTION\+\_\+\+NAME (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{Map$<$ Args... $>$ const \&}]{map }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Saving for std-\/like pair associative containers. 
+
+
+
+Definition at line 49 of file pair\+\_\+associative\+\_\+container.\+hpp.
+
+\mbox{\label{namespacecereal_a91c764df4d08dfd1fa59c945143b6cd7}} 
+\index{cereal@{cereal}!is\_loading@{is\_loading}}
+\index{is\_loading@{is\_loading}!cereal@{cereal}}
+\doxysubsubsection{is\_loading()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool cereal\+::is\+\_\+loading (\begin{DoxyParamCaption}\item[{const typename std\+::enable\+\_\+if$<$ !\textbf{ is\+\_\+cereal\+\_\+archive}$<$ Archive $>$\+::value, Archive $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 48 of file is\+\_\+loading.\+hpp.
+
+\mbox{\label{namespacecereal_ad79f9b690399d7e8aad9e7fc9ef3b797}} 
+\index{cereal@{cereal}!is\_loading@{is\_loading}}
+\index{is\_loading@{is\_loading}!cereal@{cereal}}
+\doxysubsubsection{is\_loading()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool cereal\+::is\+\_\+loading (\begin{DoxyParamCaption}\item[{const typename std\+::enable\+\_\+if$<$ \textbf{ is\+\_\+cereal\+\_\+archive}$<$ Archive $>$\+::value, Archive $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 40 of file is\+\_\+loading.\+hpp.
+
+\mbox{\label{namespacecereal_ae36f718d7a857ad4bbfbc7c8f4c52ade}} 
+\index{cereal@{cereal}!is\_saving@{is\_saving}}
+\index{is\_saving@{is\_saving}!cereal@{cereal}}
+\doxysubsubsection{is\_saving()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool cereal\+::is\+\_\+saving (\begin{DoxyParamCaption}\item[{const typename std\+::enable\+\_\+if$<$ !\textbf{ is\+\_\+cereal\+\_\+archive\+\_\+saving}$<$ Archive $>$\+::value, Archive $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 49 of file is\+\_\+saving.\+hpp.
+
+\mbox{\label{namespacecereal_a02f9ef803550085b28fc61c79abc0147}} 
+\index{cereal@{cereal}!is\_saving@{is\_saving}}
+\index{is\_saving@{is\_saving}!cereal@{cereal}}
+\doxysubsubsection{is\_saving()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool cereal\+::is\+\_\+saving (\begin{DoxyParamCaption}\item[{const typename std\+::enable\+\_\+if$<$ \textbf{ is\+\_\+cereal\+\_\+archive\+\_\+saving}$<$ Archive $>$\+::value, Archive $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 41 of file is\+\_\+saving.\+hpp.
+
+\mbox{\label{namespacecereal_ae5171232885f9fd98ef0bae0fa6793f6}} 
+\index{cereal@{cereal}!make\_array@{make\_array}}
+\index{make\_array@{make\_array}!cereal@{cereal}}
+\doxysubsubsection{make\_array()}
+{\footnotesize\ttfamily \textbf{ Array\+Wrapper}$<$T$>$ cereal\+::make\+\_\+array (\begin{DoxyParamCaption}\item[{T $\ast$\&}]{t,  }\item[{S \&}]{s }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function is used to serialized old c-\/style array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & C Style array. \\
+\hline
+{\em s} & the size of the array. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 74 of file array\+\_\+wrapper.\+hpp.
+
+\mbox{\label{namespacecereal_a302ac5752d711754c1832ce103328095}} 
+\index{cereal@{cereal}!make\_pointer@{make\_pointer}}
+\index{make\_pointer@{make\_pointer}!cereal@{cereal}}
+\doxysubsubsection{make\_pointer()}
+{\footnotesize\ttfamily \textbf{ Pointer\+Wrapper}$<$T$>$ cereal\+::make\+\_\+pointer (\begin{DoxyParamCaption}\item[{T $\ast$\&}]{t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize raw pointer object by encapsulating the pointer into a smart pointer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & A reference to raw pointer to be serialized. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 83 of file pointer\+\_\+wrapper.\+hpp.
+
+\mbox{\label{namespacecereal_a45bbfc5cc5f47d0c1fcf9aaa1e613610}} 
+\index{cereal@{cereal}!make\_pointer\_variant@{make\_pointer\_variant}}
+\index{make\_pointer\_variant@{make\_pointer\_variant}!cereal@{cereal}}
+\doxysubsubsection{make\_pointer\_variant()}
+{\footnotesize\ttfamily \textbf{ Pointer\+Variant\+Wrapper}$<$Variant\+Types...$>$ cereal\+::make\+\_\+pointer\+\_\+variant (\begin{DoxyParamCaption}\item[{boost\+::variant$<$ Variant\+Types... $>$ \&}]{t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize a boost variant in which the variant it self is a raw pointer. 
+
+This wrapper will wrap each variant independently by encapsulating each variant into the Poninter\+Wrapper we have created already.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & A reference to boost variant that holds raw pointer. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 42 of file pointer\+\_\+variant\+\_\+wrapper.\+hpp.
+
+
+
+Referenced by load\+\_\+visitor$<$ T $>$\+::load\+\_\+impl(), and save\+\_\+visitor$<$ Archive $>$\+::operator()().
+
+\mbox{\label{namespacecereal_a8ca376569f01b8f411f75ec9e15d3494}} 
+\index{cereal@{cereal}!make\_pointer\_vector@{make\_pointer\_vector}}
+\index{make\_pointer\_vector@{make\_pointer\_vector}!cereal@{cereal}}
+\doxysubsubsection{make\_pointer\_vector()}
+{\footnotesize\ttfamily \textbf{ Pointer\+Vector\+Wrapper}$<$T$>$ cereal\+::make\+\_\+pointer\+\_\+vector (\begin{DoxyParamCaption}\item[{std\+::vector$<$ T $\ast$ $>$ \&}]{t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize an std\+::vector that holds raw pointer object by encapsulating them into a smart pointer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & A reference to std\+::vector that holds raw pointer to be serialized. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 80 of file pointer\+\_\+vector\+\_\+wrapper.\+hpp.
+
+\mbox{\label{namespacecereal_a6bc2e1dc17dca4ab6d2cedeee89b88c1}} 
+\index{cereal@{cereal}!make\_vector\_pointer\_variant@{make\_vector\_pointer\_variant}}
+\index{make\_vector\_pointer\_variant@{make\_vector\_pointer\_variant}!cereal@{cereal}}
+\doxysubsubsection{make\_vector\_pointer\_variant()}
+{\footnotesize\ttfamily \textbf{ Pointer\+Vector\+Variant\+Wrapper}$<$Variant\+Types...$>$ cereal\+::make\+\_\+vector\+\_\+pointer\+\_\+variant (\begin{DoxyParamCaption}\item[{std\+::vector$<$ boost\+::variant$<$ Variant\+Types... $>$$>$ \&}]{t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize a std\+::vector of boost variants in which the variant in each boost variant is a raw pointer. 
+
+This wrapper will wrap each boost variant independently by encapsulating each boost variant into the Poninter\+Variant\+Wrapper we have created already.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & A reference to a vector of boost variants that holds raw pointer. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 36 of file pointer\+\_\+vector\+\_\+variant\+\_\+wrapper.\+hpp.
+

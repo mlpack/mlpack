@@ -1,0 +1,1553 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1hmm_1_1HMM" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::hmm::HMM</compoundname>
+    <includes refid="hmm_8hpp" local="no">hmm.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename Distribution</type>
+        <defval><ref refid="classmlpack_1_1distribution_1_1DiscreteDistribution" kindref="compound">distribution::DiscreteDistribution</ref></defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1hmm_1_1HMM_1aa9f403ff2a03db91a1614d9e32c21783" prot="protected" static="no" mutable="no">
+        <type>std::vector&lt; Distribution &gt;</type>
+        <definition>std::vector&lt;Distribution&gt; emission</definition>
+        <argsstring></argsstring>
+        <name>emission</name>
+        <briefdescription>
+<para>Set of emission probability distributions; one for each state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="497" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="497" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1hmm_1_1HMM_1ae0939befd9369e7605f50a8f5489cebd" compoundref="hmm_8hpp" startline="415" endline="415">HMM&lt; Distribution &gt;::Emission</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1hmm_1_1HMM_1a46e0ed8f87152b5819d73057a19524fd" prot="protected" static="no" mutable="yes">
+        <type>arma::mat</type>
+        <definition>arma::mat logTransition</definition>
+        <argsstring></argsstring>
+        <name>logTransition</name>
+        <briefdescription>
+<para>Transition probability matrix. No need to be mutable in mlpack 4.0. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="506" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="506" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1hmm_1_1HMM_1a8ccc277a880972d6b9f7738f9cea5457" prot="protected" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat transitionProxy</definition>
+        <argsstring></argsstring>
+        <name>transitionProxy</name>
+        <briefdescription>
+<para>A proxy variable in linear space for logTransition. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Should be removed in mlpack 4.0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="503" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="503" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1hmm_1_1HMM_1a103b830306d8c8d66a753f63e84ba5de" compoundref="hmm_8hpp" startline="406" endline="406">HMM&lt; Distribution &gt;::Transition</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1hmm_1_1HMM_1a24ddaaffe28b96a6d94d9c12681a03b9" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t dimensionality</definition>
+        <argsstring></argsstring>
+        <name>dimensionality</name>
+        <briefdescription>
+<para>Dimensionality of observations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="526" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="526" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1hmm_1_1HMM_1a142a762f50cfd3ce8d8a508fbe2fbaae" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec initialProxy</definition>
+        <argsstring></argsstring>
+        <name>initialProxy</name>
+        <briefdescription>
+<para>A proxy vriable in linear space for logInitial. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Should be removed in mlpack 4.0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="520" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="520" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1hmm_1_1HMM_1afaadd34ca03e201f33176b215d139a52" prot="private" static="no" mutable="yes">
+        <type>arma::vec</type>
+        <definition>arma::vec logInitial</definition>
+        <argsstring></argsstring>
+        <name>logInitial</name>
+        <briefdescription>
+<para>Initial state probability vector. No need to be mutable in mlpack 4.0. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="523" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="523" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1hmm_1_1HMM_1a44e80a66ee709bc7292431f37dcfda79" prot="private" static="no" mutable="yes">
+        <type>bool</type>
+        <definition>bool recalculateInitial</definition>
+        <argsstring></argsstring>
+        <name>recalculateInitial</name>
+        <briefdescription>
+<para>Whether or not we need to update the logInitial from initialProxy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Should be removed in mlpack 4.0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="535" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="535" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1hmm_1_1HMM_1abec635a1885030c26fa4ca848bf13c52" prot="private" static="no" mutable="yes">
+        <type>bool</type>
+        <definition>bool recalculateTransition</definition>
+        <argsstring></argsstring>
+        <name>recalculateTransition</name>
+        <briefdescription>
+<para>Whether or not we need to update the logTransition from transitionProxy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Should be removed in mlpack 4.0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="541" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="541" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1hmm_1_1HMM_1a97eab6d709b80585fe9e8a54b1e3da27" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double tolerance</definition>
+        <argsstring></argsstring>
+        <name>tolerance</name>
+        <briefdescription>
+<para>Tolerance of Baum-Welch algorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="529" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="529" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1ac173a0c0e119519329525a892f8848e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HMM</definition>
+        <argsstring>(const arma::vec &amp;initial, const arma::mat &amp;transition, const std::vector&lt; Distribution &gt; &amp;emission, const double tolerance=1e-5)</argsstring>
+        <name>HMM</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>initial</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>transition</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; Distribution &gt; &amp;</type>
+          <declname>emission</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>tolerance</declname>
+          <defval>1e-5</defval>
+        </param>
+        <briefdescription>
+<para>Create the Hidden Markov Model with the given initial probability vector, the given transition matrix, and the given emission distributions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The dimensionality of the observations of the <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> are taken from the given emission distributions. Alternately, the dimensionality can be set with <ref refid="classmlpack_1_1hmm_1_1HMM_1a787adc650f11b9430f6bd0b937bbe6b0" kindref="member">Dimensionality()</ref>.</para>
+<para>The initial state probability vector should have length equal to the number of states, and each entry represents the probability of being in the given state at time T = 0 (the beginning of a sequence).</para>
+<para>The transition matrix should be such that T(i, j) is the probability of transition to state i from state j. The columns of the matrix should sum to 1.</para>
+<para>The emission matrix should be such that E(i, j) is the probability of emission i while in state j. The columns of the matrix should sum to 1.</para>
+<para>Optionally, the tolerance for convergence of the Baum-Welch algorithm can be set.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>initial</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initial state probabilities. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>transition</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Transition matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>emission</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Emission distributions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tolerance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tolerance for convergence of training algorithm (Baum-Welch). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="136" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a20f7ef2bfbbbfe4b01733e1e0104e17b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HMM</definition>
+        <argsstring>(const size_t states=0, const Distribution emissions=Distribution(), const double tolerance=1e-5)</argsstring>
+        <name>HMM</name>
+        <param>
+          <type>const size_t</type>
+          <declname>states</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const Distribution</type>
+          <declname>emissions</declname>
+          <defval>Distribution()</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>tolerance</declname>
+          <defval>1e-5</defval>
+        </param>
+        <briefdescription>
+<para>Create the Hidden Markov Model with the given number of hidden states and the given default distribution for emissions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The dimensionality of the observations is taken from the emissions variable, so it is important that the given default emission distribution is set with the correct dimensionality. Alternately, set the dimensionality with <ref refid="classmlpack_1_1hmm_1_1HMM_1a787adc650f11b9430f6bd0b937bbe6b0" kindref="member">Dimensionality()</ref>. Optionally, the tolerance for convergence of the Baum-Welch algorithm can be set.</para>
+<para>By default, the transition matrix and initial probability vector are set to contain equal probability for each state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>states</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of states. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>emissions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default distribution for emissions. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tolerance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tolerance for convergence of training algorithm (Baum-Welch). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="105" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a787adc650f11b9430f6bd0b937bbe6b0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Dimensionality</definition>
+        <argsstring>()</argsstring>
+        <name>Dimensionality</name>
+        <briefdescription>
+<para>Set the dimensionality of observations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="422" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="422" bodyend="422"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Dimensionality</definition>
+        <argsstring>() const</argsstring>
+        <name>Dimensionality</name>
+        <briefdescription>
+<para>Get the dimensionality of observations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="420" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="420" bodyend="420"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1ace6dae9e34d19c372294bef69e317f27" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::vector&lt; Distribution &gt; &amp;</type>
+        <definition>std::vector&lt;Distribution&gt;&amp; Emission</definition>
+        <argsstring>()</argsstring>
+        <name>Emission</name>
+        <briefdescription>
+<para>Return a modifiable emission probability matrix reference. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="417" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="417" bodyend="417"/>
+        <references refid="classmlpack_1_1hmm_1_1HMM_1aa9f403ff2a03db91a1614d9e32c21783" compoundref="hmm_8hpp" startline="497">HMM&lt; Distribution &gt;::emission</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1ae0939befd9369e7605f50a8f5489cebd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::vector&lt; Distribution &gt; &amp;</type>
+        <definition>const std::vector&lt;Distribution&gt;&amp; Emission</definition>
+        <argsstring>() const</argsstring>
+        <name>Emission</name>
+        <briefdescription>
+<para>Return the emission distributions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="415" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="415" bodyend="415"/>
+        <references refid="classmlpack_1_1hmm_1_1HMM_1aa9f403ff2a03db91a1614d9e32c21783" compoundref="hmm_8hpp" startline="497">HMM&lt; Distribution &gt;::emission</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a2d90005d72558c5bcf7ce5f708e838da" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double EmissionLogLikelihood</definition>
+        <argsstring>(const arma::vec &amp;emissionLogProb, double &amp;logLikelihood, arma::vec &amp;forwardLogProb) const</argsstring>
+        <name>EmissionLogLikelihood</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>emissionLogProb</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>logLikelihood</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>forwardLogProb</declname>
+        </param>
+        <briefdescription>
+<para>Compute the log-likelihood of the given emission probability up to time t, storing the result in logLikelihood. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is meant for incremental or streaming computation of the log-likelihood of a sequence. For the first data point, provide an empty forwardLogProb vector.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>emissionLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>emission probability at time t. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>logLikelihood</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Log-likelihood of the given sequence of emission probability up to time t-1. This will be overwritten with the log-likelihood of the given emission probability up to time t. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>forwardLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which forward probabilities will be saved. Passing forwardLogProb as an empty vector indicates the start of the sequence (i.e. time t=0). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Log-likelihood of the given sequence of emission up to time t. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="326" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1aec5e2b525c29a039a482a5c4e9833a77" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double EmissionLogScaleFactor</definition>
+        <argsstring>(const arma::vec &amp;emissionLogProb, arma::vec &amp;forwardLogProb) const</argsstring>
+        <name>EmissionLogScaleFactor</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>emissionLogProb</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>forwardLogProb</declname>
+        </param>
+        <briefdescription>
+<para>Compute the log of the scaling factor of the given emission probability at time t. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>To calculate the log-likelihood for the whole sequence, accumulate log scale over the entire sequence This is meant for incremental or streaming computation of the log-likelihood of a sequence. For the first data point, provide an empty forwardLogProb vector.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>emissionLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>emission probability at time t. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>forwardLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which forward probabilities will be saved. Passing forwardLogProb as an empty vector indicates the start of the sequence (i.e. time t=0). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classmlpack_1_1Log" kindref="compound">Log</ref> scale factor of the given sequence of emission at time t. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="307" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1aba5d63e40a43faa5a2999bd47bed6c9f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Estimate</definition>
+        <argsstring>(const arma::mat &amp;dataSeq, arma::mat &amp;stateProb) const</argsstring>
+        <name>Estimate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataSeq</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>stateProb</declname>
+        </param>
+        <briefdescription>
+<para>Estimate the probabilities of each hidden state at each time step of each given data observation, using the Forward-Backward algorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The returned matrix of state probabilities has columns equal to the number of data observations, and rows equal to the number of hidden states in the model. The log-likelihood of the most probable sequence is returned.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sequence of observations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>stateProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Probabilities of each state at each time interval. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Log-likelihood of most likely state sequence. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="253" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a73a4437336c8af18d51958a6abdd588d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Estimate</definition>
+        <argsstring>(const arma::mat &amp;dataSeq, arma::mat &amp;stateProb, arma::mat &amp;forwardProb, arma::mat &amp;backwardProb, arma::vec &amp;scales) const</argsstring>
+        <name>Estimate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataSeq</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>stateProb</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>forwardProb</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>backwardProb</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>scales</declname>
+        </param>
+        <briefdescription>
+<para>Estimate the probabilities of each hidden state at each time step for each given data observation, using the Forward-Backward algorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Each matrix which is returned has columns equal to the number of data observations, and rows equal to the number of hidden states in the model. The log-likelihood of the most probable sequence is returned.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sequence of observations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>stateProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix in which the probabilities of each state at each time interval will be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>forwardProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix in which the forward probabilities of each state at each time interval will be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>backwardProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix in which the backward probabilities of each state at each time interval will be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>scales</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which the scaling factors at each time interval will be stored. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Log-likelihood of most likely state sequence. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="236" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1ab197c1fe906f9f2c81d7c0c8f1bb430a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Filter</definition>
+        <argsstring>(const arma::mat &amp;dataSeq, arma::mat &amp;filterSeq, size_t ahead=0) const</argsstring>
+        <name>Filter</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataSeq</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>filterSeq</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>ahead</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para><ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> filtering. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Computes the k-step-ahead expected emission at each time conditioned only on prior observations. That is E{ Y[t+k] | Y[0], ..., Y[t] }. The returned matrix has columns equal to the number of observations. Note that the expectation may not be meaningful for discrete emissions.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sequence of observations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>filterSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which the expected emission sequence will be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ahead</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of steps ahead (k) for expectations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="378" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1aaada1e3c4a467d13ded6cfbb0d332898" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Generate</definition>
+        <argsstring>(const size_t length, arma::mat &amp;dataSequence, arma::Row&lt; size_t &gt; &amp;stateSequence, const size_t startState=0) const</argsstring>
+        <name>Generate</name>
+        <param>
+          <type>const size_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>dataSequence</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>stateSequence</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>startState</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Generate a random data sequence of the given length. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The data sequence is stored in the dataSequence parameter, and the state sequence is stored in the stateSequence parameter. Each column of dataSequence represents a random observation.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>length</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of random sequence to generate. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dataSequence</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store data in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>stateSequence</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store states in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>startState</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hidden state to start sequence in (default 0). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="267" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1ad0b8d2c553f50a26456393e194358df8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::vec &amp;</type>
+        <definition>arma::vec&amp; Initial</definition>
+        <argsstring>()</argsstring>
+        <name>Initial</name>
+        <briefdescription>
+<para>Modify the vector of initial state probabilities. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="399" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="399" bodyend="403"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a4c983e4a77757824d9ca4e1ada75dcf5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; Initial</definition>
+        <argsstring>() const</argsstring>
+        <name>Initial</name>
+        <briefdescription>
+<para>Return the vector of initial state probabilities. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="397" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="397" bodyend="397"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1ac604f3bed03d700b41501b6ed8b5b759" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void load</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t version)</argsstring>
+        <name>load</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>version</declname>
+        </param>
+        <briefdescription>
+<para>Load the object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="433" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1af1f16adb7b69040e9bc7711ca1fa1fe8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double LogEstimate</definition>
+        <argsstring>(const arma::mat &amp;dataSeq, arma::mat &amp;stateLogProb, arma::mat &amp;forwardLogProb, arma::mat &amp;backwardLogProb, arma::vec &amp;logScales) const</argsstring>
+        <name>LogEstimate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataSeq</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>stateLogProb</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>forwardLogProb</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>backwardLogProb</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>logScales</declname>
+        </param>
+        <briefdescription>
+<para>Estimate the probabilities of each hidden state at each time step for each given data observation, using the Forward-Backward algorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Each matrix which is returned has columns equal to the number of data observations, and rows equal to the number of hidden states in the model. The log-likelihood of the most probable sequence is returned.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sequence of observations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>stateLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix in which the log probabilities of each state at each time interval will be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>forwardLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix in which the forward log probabilities of each state at each time interval will be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>backwardLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix in which the backward log probabilities of each state at each time interval will be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>logScales</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which the log of scaling factors at each time interval will be stored. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Log-likelihood of most likely state sequence. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="212" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1aa8f3f0b515cc08f9476e435bb2d13210" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double LogLikelihood</definition>
+        <argsstring>(const arma::mat &amp;dataSeq) const</argsstring>
+        <name>LogLikelihood</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataSeq</declname>
+        </param>
+        <briefdescription>
+<para>Compute the log-likelihood of the given data sequence. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data sequence to evaluate the likelihood of. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Log-likelihood of the given sequence. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="291" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a7c59285838016d2f540e6aad3f1d37f5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double LogLikelihood</definition>
+        <argsstring>(const arma::vec &amp;data, double &amp;logLikelihood, arma::vec &amp;forwardLogProb) const</argsstring>
+        <name>LogLikelihood</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>logLikelihood</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>forwardLogProb</declname>
+        </param>
+        <briefdescription>
+<para>Compute the log-likelihood of the given data up to time t, storing the result in logLikelihood. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is meant for incremental or streaming computation of the log-likelihood of a sequence. For the first data point, provide an empty forwardLogProb vector.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>observation at time t. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>logLikelihood</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Log-likelihood of the given sequence of data up to time t-1. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>forwardLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which forward probabilities will be saved. Passing forwardLogProb as an empty vector indicates the start of the sequence (i.e. time t=0). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Log-likelihood of the given sequence of data up to time t. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="363" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a51246be9ab15d6af29cf3e60ed1c57c5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double LogScaleFactor</definition>
+        <argsstring>(const arma::vec &amp;data, arma::vec &amp;forwardLogProb) const</argsstring>
+        <name>LogScaleFactor</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>forwardLogProb</declname>
+        </param>
+        <briefdescription>
+<para>Compute the log of the scaling factor of the given data at time t. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>To calculate the log-likelihood for the whole sequence, accumulate the log scale factor (the return value of this function) over the entire sequence. This is meant for incremental or streaming computation of the log-likelihood of a sequence. For the first data point, provide an empty forwardLogProb vector.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>observation at time t. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>forwardLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which forward probabilities will be saved. Passing forwardLogProb as an empty vector indicates the start of the sequence (i.e. time t=0). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classmlpack_1_1Log" kindref="compound">Log</ref> scale factor of the given sequence of data up at time t. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="345" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a3b7ef0aafafd5d5a4300c07b110807a4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Predict</definition>
+        <argsstring>(const arma::mat &amp;dataSeq, arma::Row&lt; size_t &gt; &amp;stateSeq) const</argsstring>
+        <name>Predict</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataSeq</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>stateSeq</declname>
+        </param>
+        <briefdescription>
+<para>Compute the most probable hidden state sequence for the given data sequence, using the Viterbi algorithm, returning the log-likelihood of the most likely state sequence. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sequence of observations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>stateSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which the most probable state sequence will be stored. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Log-likelihood of most probable state sequence. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="282" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1ad17c3ded534d1294e5fac2d2e16da3ba" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void save</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t version) const</argsstring>
+        <name>save</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>version</declname>
+        </param>
+        <briefdescription>
+<para>Save the object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="439" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a0139a3d883c28d6f45e15097c08bbf41" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Smooth</definition>
+        <argsstring>(const arma::mat &amp;dataSeq, arma::mat &amp;smoothSeq) const</argsstring>
+        <name>Smooth</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataSeq</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>smoothSeq</declname>
+        </param>
+        <briefdescription>
+<para><ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> smoothing. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Computes expected emission at each time conditioned on all observations. That is E{ Y[t] | Y[0], ..., Y[T] }. The returned matrix has columns equal to the number of observations. Note that the expectation may not be meaningful for discrete emissions.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sequence of observations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>smoothSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which the expected emission sequence will be stored. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="393" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a3d9fac84af16250f5a3689692e8f2173" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Tolerance</definition>
+        <argsstring>()</argsstring>
+        <name>Tolerance</name>
+        <briefdescription>
+<para>Modify the tolerance of the Baum-Welch algorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="427" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="427" bodyend="427"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a7b5af5c1a84c507cbaa7f999ea5a4fda" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Tolerance</definition>
+        <argsstring>() const</argsstring>
+        <name>Tolerance</name>
+        <briefdescription>
+<para>Get the tolerance of the Baum-Welch algorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="425" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="425" bodyend="425"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a0b3a1148721ee3e77bad0b987ca3973d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(const std::vector&lt; arma::mat &gt; &amp;dataSeq)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const std::vector&lt; arma::mat &gt; &amp;</type>
+          <declname>dataSeq</declname>
+        </param>
+        <briefdescription>
+<para>Train the model using the Baum-Welch algorithm, with only the given unlabeled observations. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Instead of giving a guess transition and emission matrix here, do that in the constructor. Each matrix in the vector of data sequences holds an individual data sequence; each point in each individual data sequence should be a column in the matrix. The number of rows in each matrix should be equal to the dimensionality of the <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> (which is set in the constructor).</para>
+<para>It is preferable to use the other overload of <ref refid="classmlpack_1_1hmm_1_1HMM_1a0b3a1148721ee3e77bad0b987ca3973d" kindref="member">Train()</ref>, with labeled data. That will produce much better results. However, if labeled data is unavailable, this will work. In addition, it is possible to use <ref refid="classmlpack_1_1hmm_1_1HMM_1a0b3a1148721ee3e77bad0b987ca3973d" kindref="member">Train()</ref> with labeled data first, and then continue to train the model using this overload of <ref refid="classmlpack_1_1hmm_1_1HMM_1a0b3a1148721ee3e77bad0b987ca3973d" kindref="member">Train()</ref> with unlabeled data.</para>
+<para>The tolerance of the Baum-Welch algorithm can be set either in the constructor or with the <ref refid="classmlpack_1_1hmm_1_1HMM_1a3d9fac84af16250f5a3689692e8f2173" kindref="member">Tolerance()</ref> method. When the change in log-likelihood of the model between iterations is less than the tolerance, the Baum-Welch algorithm terminates.</para>
+<para><simplesect kind="note"><para><ref refid="classmlpack_1_1hmm_1_1HMM_1a0b3a1148721ee3e77bad0b987ca3973d" kindref="member">Train()</ref> can be called multiple times with different sequences; each time it is called, it uses the current parameters of the <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> as a starting point for training.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector of observation sequences. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Log-likelihood of state sequence. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="169" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a2cacf650f3d30e9da07be7a0aa2ded81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const std::vector&lt; arma::mat &gt; &amp;dataSeq, const std::vector&lt; arma::Row&lt; size_t &gt; &gt; &amp;stateSeq)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const std::vector&lt; arma::mat &gt; &amp;</type>
+          <declname>dataSeq</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; arma::Row&lt; size_t &gt; &gt; &amp;</type>
+          <declname>stateSeq</declname>
+        </param>
+        <briefdescription>
+<para>Train the model using the given labeled observations; the transition and emission matrices are directly estimated. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Each matrix in the vector of data sequences corresponds to a vector in the vector of state sequences. Each point in each individual data sequence should be a column in the matrix, and its state should be the corresponding element in the state sequence vector. For instance, dataSeq[0].col(3) corresponds to the fourth observation in the first data sequence, and its state is stateSeq[0][3]. The number of rows in each matrix should be equal to the dimensionality of the <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> (which is set in the constructor).</para>
+<para><simplesect kind="note"><para><ref refid="classmlpack_1_1hmm_1_1HMM_1a0b3a1148721ee3e77bad0b987ca3973d" kindref="member">Train()</ref> can be called multiple times with different sequences; each time it is called, it uses the current parameters of the <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> as a starting point for training.</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector of observation sequences. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>stateSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector of state sequences, corresponding to each observation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="191" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a08c5d391f5ea34e09497663673c5a16a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat &amp;</type>
+        <definition>arma::mat&amp; Transition</definition>
+        <argsstring>()</argsstring>
+        <name>Transition</name>
+        <briefdescription>
+<para>Return a modifiable transition matrix reference. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="408" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="408" bodyend="412"/>
+        <references refid="classmlpack_1_1hmm_1_1HMM_1a8ccc277a880972d6b9f7738f9cea5457" compoundref="hmm_8hpp" startline="503">HMM&lt; Distribution &gt;::transitionProxy</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a103b830306d8c8d66a753f63e84ba5de" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; Transition</definition>
+        <argsstring>() const</argsstring>
+        <name>Transition</name>
+        <briefdescription>
+<para>Return the transition matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="406" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="406" bodyend="406"/>
+        <references refid="classmlpack_1_1hmm_1_1HMM_1a8ccc277a880972d6b9f7738f9cea5457" compoundref="hmm_8hpp" startline="503">HMM&lt; Distribution &gt;::transitionProxy</references>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1af0853e02f080f2c0eac23e18edafd67d" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::mat &amp;dataSeq, const arma::vec &amp;logScales, arma::mat &amp;backwardLogProb, arma::mat &amp;logProbs) const</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataSeq</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>logScales</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>backwardLogProb</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>logProbs</declname>
+        </param>
+        <briefdescription>
+<para>The Backward algorithm (part of the Forward-Backward algorithm). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Computes backward probabilities for each state for each observation in the given data sequence, using the scaling factors found (presumably) by <ref refid="classmlpack_1_1hmm_1_1HMM_1a1ec1e2d6393bbb69840a184ac35ac2ba" kindref="member">Forward()</ref>. The returned matrix has rows equal to the number of hidden states and columns equal to the number of observations.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data sequence to compute probabilities for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>logScales</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector of log of scaling factors. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>backwardLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix in which backward probabilities will be saved. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="491" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a1ec1e2d6393bbb69840a184ac35ac2ba" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::mat &amp;dataSeq, arma::vec &amp;logScales, arma::mat &amp;forwardLogProb, arma::mat &amp;logProbs) const</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataSeq</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>logScales</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>forwardLogProb</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>logProbs</declname>
+        </param>
+        <briefdescription>
+<para>The Forward algorithm (part of the Forward-Backward algorithm). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Computes forward probabilities for each state for each observation in the given data sequence. The returned matrix has rows equal to the number of hidden states and columns equal to the number of observations.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataSeq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data sequence to compute probabilities for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>logScales</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which the log of scaling factors will be saved. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>forwardLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix in which forward probabilities will be saved. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="475" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1a945acce7d1f14e9e85352e67810ad028" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>arma::vec</type>
+        <definition>arma::vec ForwardAtT0</definition>
+        <argsstring>(const arma::vec &amp;emissionLogProb, double &amp;logScales) const</argsstring>
+        <name>ForwardAtT0</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>emissionLogProb</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>logScales</declname>
+        </param>
+        <briefdescription>
+<para>Given emission probabilities, computes forward probabilities at time t=0. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>emissionLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Emission probability at time t=0. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>logScales</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which the log of scaling factors will be saved. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Forward probabilities </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="449" column="13"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1ae75539834ab1cc313fac3cef5c411efe" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>arma::vec</type>
+        <definition>arma::vec ForwardAtTn</definition>
+        <argsstring>(const arma::vec &amp;emissionLogProb, double &amp;logScales, const arma::vec &amp;prevForwardLogProb) const</argsstring>
+        <name>ForwardAtTn</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>emissionLogProb</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>logScales</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>prevForwardLogProb</declname>
+        </param>
+        <briefdescription>
+<para>Given emission probabilities, computes forward probabilities for time t&gt;0. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>emissionLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Emission probability at time t&gt;0. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>logScales</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which the log of scaling factors will be saved. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>prevForwardLogProb</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Previous forward probabilities. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Forward probabilities </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="460" column="13"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1hmm_1_1HMM_1aa1ca873adaca1c1a6bb8f6f17ba68d1e" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ConvertToLogSpace</definition>
+        <argsstring>() const</argsstring>
+        <name>ConvertToLogSpace</name>
+        <briefdescription>
+<para>Make sure the variables in log space are in sync with the linear counter parts. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Should be removed in mlpack 4.0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="514" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A class that represents a Hidden Markov Model with an arbitrary type of emission distribution. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> class supports training (supervised and unsupervised), prediction of state sequences via the Viterbi algorithm, estimation of state probabilities, generation of random sequences, and calculation of the log-likelihood of a given sequence.</para>
+<para>The template parameter, Distribution, specifies the distribution which the emissions follow. The class should implement the following functions:</para>
+<para><programlisting><codeline><highlight class="normal">class<sp/>Distribution</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/>public:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>The<sp/>type<sp/>of<sp/>observation<sp/>used<sp/>by<sp/>this<sp/>distribution.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>typedef<sp/>something<sp/>DataType;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Return<sp/>the<sp/>probability<sp/>of<sp/>the<sp/>given<sp/>observation.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>double<sp/>Probability(const<sp/>DataType&amp;<sp/>observation)<sp/>const;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Estimate<sp/>the<sp/>distribution<sp/>based<sp/>on<sp/>the<sp/>given<sp/>observations.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>double<sp/>Train(const<sp/>std::vector&lt;DataType&gt;&amp;<sp/>observations);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>Estimate<sp/>the<sp/>distribution<sp/>based<sp/>on<sp/>the<sp/>given<sp/>observations,<sp/>given<sp/>also</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>//<sp/>the<sp/>probability<sp/>of<sp/>each<sp/>observation<sp/>coming<sp/>from<sp/>this<sp/>distribution.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>double<sp/>Train(const<sp/>std::vector&lt;DataType&gt;&amp;<sp/>observations,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>std::vector&lt;double&gt;&amp;<sp/>probabilities);</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+</programlisting></para>
+<para>See the <ref refid="classmlpack_1_1distribution_1_1DiscreteDistribution" kindref="compound">mlpack::distribution::DiscreteDistribution</ref> class for an example. One would use the DiscreteDistribution class when the observations are non-negative integers. Other distributions could be Gaussians, a mixture of Gaussians (GMM), or any other probability distribution implementing the four Distribution functions.</para>
+<para>Usage of the <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> class generally involves either training an <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> or loading an already-known <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> and taking probability measurements of sequences. Example code for supervised training of a Gaussian <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> (that is, where the emission output distribution is a single Gaussian for each hidden state) is given below.</para>
+<para><programlisting><codeline><highlight class="normal">extern<sp/>arma::mat<sp/>observations;<sp/>//<sp/>Each<sp/>column<sp/>is<sp/>an<sp/>observation.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::Row&lt;size_t&gt;<sp/>states;<sp/>//<sp/>Hidden<sp/>states<sp/>for<sp/>each<sp/>observation.</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Create<sp/>an<sp/>untrained<sp/>HMM<sp/>with<sp/>5<sp/>hidden<sp/>states<sp/>and<sp/>default<sp/>(N(0,<sp/>1))</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Gaussian<sp/>distributions<sp/>with<sp/>the<sp/>dimensionality<sp/>of<sp/>the<sp/>dataset.</highlight></codeline>
+<codeline><highlight class="normal">HMM&lt;GaussianDistribution&gt;<sp/>hmm(5,<sp/>GaussianDistribution(observations.n_rows));</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Train<sp/>the<sp/>HMM<sp/>(the<sp/>labels<sp/>could<sp/>be<sp/>omitted<sp/>to<sp/>perform<sp/>unsupervised</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>training).</highlight></codeline>
+<codeline><highlight class="normal">hmm.Train(observations,<sp/>states);</highlight></codeline>
+</programlisting></para>
+<para>Once initialized, the <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> can evaluate the probability of a certain sequence (with <ref refid="classmlpack_1_1hmm_1_1HMM_1aa8f3f0b515cc08f9476e435bb2d13210" kindref="member">LogLikelihood()</ref>), predict the most likely sequence of hidden states (with <ref refid="classmlpack_1_1hmm_1_1HMM_1a3b7ef0aafafd5d5a4300c07b110807a4" kindref="member">Predict()</ref>), generate a sequence (with <ref refid="classmlpack_1_1hmm_1_1HMM_1aaada1e3c4a467d13ded6cfbb0d332898" kindref="member">Generate()</ref>), or estimate the probabilities of each state for a sequence of observations (with <ref refid="classmlpack_1_1hmm_1_1HMM_1a0b3a1148721ee3e77bad0b987ca3973d" kindref="member">Train()</ref>).</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Distribution</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of emission distribution for this <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="3">
+        <label>HMM&lt; distribution::RegressionDistribution &gt;</label>
+        <link refid="classmlpack_1_1hmm_1_1HMM"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; distribution::RegressionDistribution &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>HMM&lt; mlpack::gmm::GMM &gt;</label>
+        <link refid="classmlpack_1_1hmm_1_1HMM"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::gmm::GMM &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>HMM&lt; mlpack::gmm::DiagonalGMM &gt;</label>
+        <link refid="classmlpack_1_1hmm_1_1HMM"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::gmm::DiagonalGMM &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>HMMRegression</label>
+        <link refid="classmlpack_1_1hmm_1_1HMMRegression"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>HMM&lt; mlpack::distribution::GaussianDistribution &gt;</label>
+        <link refid="classmlpack_1_1hmm_1_1HMM"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::distribution::GaussianDistribution &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>HMM&lt; Distribution &gt;</label>
+        <link refid="classmlpack_1_1hmm_1_1HMM"/>
+      </node>
+      <node id="7">
+        <label>HMM&lt; mlpack::distribution::DiscreteDistribution &gt;</label>
+        <link refid="classmlpack_1_1hmm_1_1HMM"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::distribution::DiscreteDistribution &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="85" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" bodystart="86" bodyend="542"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1af0853e02f080f2c0eac23e18edafd67d" prot="protected" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1aa1ca873adaca1c1a6bb8f6f17ba68d1e" prot="private" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>ConvertToLogSpace</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Dimensionality</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a787adc650f11b9430f6bd0b937bbe6b0" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Dimensionality</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a24ddaaffe28b96a6d94d9c12681a03b9" prot="private" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>dimensionality</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1ae0939befd9369e7605f50a8f5489cebd" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Emission</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1ace6dae9e34d19c372294bef69e317f27" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Emission</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1aa9f403ff2a03db91a1614d9e32c21783" prot="protected" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>emission</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a2d90005d72558c5bcf7ce5f708e838da" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>EmissionLogLikelihood</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1aec5e2b525c29a039a482a5c4e9833a77" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>EmissionLogScaleFactor</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a73a4437336c8af18d51958a6abdd588d" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Estimate</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1aba5d63e40a43faa5a2999bd47bed6c9f" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Estimate</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1ab197c1fe906f9f2c81d7c0c8f1bb430a" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Filter</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a1ec1e2d6393bbb69840a184ac35ac2ba" prot="protected" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a945acce7d1f14e9e85352e67810ad028" prot="protected" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>ForwardAtT0</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1ae75539834ab1cc313fac3cef5c411efe" prot="protected" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>ForwardAtTn</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1aaada1e3c4a467d13ded6cfbb0d332898" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Generate</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a20f7ef2bfbbbfe4b01733e1e0104e17b" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>HMM</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1ac173a0c0e119519329525a892f8848e7" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>HMM</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a4c983e4a77757824d9ca4e1ada75dcf5" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Initial</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1ad0b8d2c553f50a26456393e194358df8" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Initial</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a142a762f50cfd3ce8d8a508fbe2fbaae" prot="private" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>initialProxy</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1ac604f3bed03d700b41501b6ed8b5b759" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>load</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1af1f16adb7b69040e9bc7711ca1fa1fe8" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>LogEstimate</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1afaadd34ca03e201f33176b215d139a52" prot="private" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>logInitial</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1aa8f3f0b515cc08f9476e435bb2d13210" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>LogLikelihood</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a7c59285838016d2f540e6aad3f1d37f5" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>LogLikelihood</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a51246be9ab15d6af29cf3e60ed1c57c5" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>LogScaleFactor</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a46e0ed8f87152b5819d73057a19524fd" prot="protected" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>logTransition</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a3b7ef0aafafd5d5a4300c07b110807a4" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Predict</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a44e80a66ee709bc7292431f37dcfda79" prot="private" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>recalculateInitial</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1abec635a1885030c26fa4ca848bf13c52" prot="private" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>recalculateTransition</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1ad17c3ded534d1294e5fac2d2e16da3ba" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>save</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a0139a3d883c28d6f45e15097c08bbf41" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Smooth</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a7b5af5c1a84c507cbaa7f999ea5a4fda" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Tolerance</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a3d9fac84af16250f5a3689692e8f2173" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Tolerance</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a97eab6d709b80585fe9e8a54b1e3da27" prot="private" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>tolerance</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a0b3a1148721ee3e77bad0b987ca3973d" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a2cacf650f3d30e9da07be7a0aa2ded81" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a103b830306d8c8d66a753f63e84ba5de" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Transition</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a08c5d391f5ea34e09497663673c5a16a" prot="public" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>Transition</name></member>
+      <member refid="classmlpack_1_1hmm_1_1HMM_1a8ccc277a880972d6b9f7738f9cea5457" prot="protected" virt="non-virtual"><scope>mlpack::hmm::HMM</scope><name>transitionProxy</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

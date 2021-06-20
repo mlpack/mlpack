@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::TreeTraits&lt; SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</compoundname>
+    <includes refid="spill__tree_2traits_8hpp" local="no">traits.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MetricType</type>
+      </param>
+      <param>
+        <type>typename StatisticType</type>
+      </param>
+      <param>
+        <type>typename MatType</type>
+      </param>
+      <param>
+        <type>template&lt; typename HyperplaneMetricType &gt; class</type>
+        <declname>HyperplaneType</declname>
+        <defname>HyperplaneType</defname>
+      </param>
+      <param>
+        <type>template&lt; typename SplitMetricType, typename SplitMatType &gt; class</type>
+        <declname>SplitType</declname>
+        <defname>SplitType</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1ae435fd522971cd7cfd3064636aad08f8" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool BinaryTree</definition>
+        <argsstring></argsstring>
+        <name>BinaryTree</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>This is always a binary tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" line="61" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1a74d33aa1842a86c50e913427bce29f04" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool FirstPointIsCentroid</definition>
+        <argsstring></argsstring>
+        <name>FirstPointIsCentroid</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>There is no guarantee that the first point in a node is its centroid. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" line="46" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1aace4b7477b18c336612f4f4d3046eb37" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool HasOverlappingChildren</definition>
+        <argsstring></argsstring>
+        <name>HasOverlappingChildren</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>Each spill tree node has two children which can share points. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Therefore, children can be overlapping. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" line="41" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1ad3cb9cb573f3b0e51f99664fb8d29fef" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool HasSelfChildren</definition>
+        <argsstring></argsstring>
+        <name>HasSelfChildren</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>Points are not contained at multiple levels of the spill tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" line="51" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1aba7aca795787a6fe3e8bbdae13edc70b" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool RearrangesDataset</definition>
+        <argsstring></argsstring>
+        <name>RearrangesDataset</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>Points are not rearranged during building of the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" line="56" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1a416bd78d7883fd5c3bc22b858f7d7064" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool UniqueNumDescendants</definition>
+        <argsstring></argsstring>
+        <name>UniqueNumDescendants</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>Spill trees have duplicated points, so NumDescendants() could count a given point twice. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" line="67" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This is a specialization of the TreeType class to the <ref refid="classmlpack_1_1tree_1_1SpillTree" kindref="compound">SpillTree</ref> tree type. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It defines characteristics of the spill tree, and is used to help write tree-independent (but still optimized) tree-based algorithms. See <ref refid="tree__traits_8hpp" kindref="compound">mlpack/core/tree/tree_traits.hpp</ref> for more information. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/traits.hpp" bodystart="35" bodyend="68"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1ae435fd522971cd7cfd3064636aad08f8" prot="public" virt="non-virtual"><scope>mlpack::tree::TreeTraits&lt; SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</scope><name>BinaryTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1a74d33aa1842a86c50e913427bce29f04" prot="public" virt="non-virtual"><scope>mlpack::tree::TreeTraits&lt; SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</scope><name>FirstPointIsCentroid</name></member>
+      <member refid="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1aace4b7477b18c336612f4f4d3046eb37" prot="public" virt="non-virtual"><scope>mlpack::tree::TreeTraits&lt; SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</scope><name>HasOverlappingChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1ad3cb9cb573f3b0e51f99664fb8d29fef" prot="public" virt="non-virtual"><scope>mlpack::tree::TreeTraits&lt; SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</scope><name>HasSelfChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1aba7aca795787a6fe3e8bbdae13edc70b" prot="public" virt="non-virtual"><scope>mlpack::tree::TreeTraits&lt; SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</scope><name>RearrangesDataset</name></member>
+      <member refid="classmlpack_1_1tree_1_1TreeTraits_3_01SpillTree_3_01MetricType_00_01StatisticType_00_01MatType_03c639ada9e7ec3c7879b4d5a2cf50982_1a416bd78d7883fd5c3bc22b858f7d7064" prot="public" virt="non-virtual"><scope>mlpack::tree::TreeTraits&lt; SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</scope><name>UniqueNumDescendants</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

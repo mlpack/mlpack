@@ -1,0 +1,290 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1data_1_1ImageInfo" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::ImageInfo</compoundname>
+    <includes refid="image__info_8hpp" local="no">image_info.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1ImageInfo_1afd7e33ee7b38f999645df1b32239c831" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t channels</definition>
+        <argsstring></argsstring>
+        <name>channels</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="90" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1ImageInfo_1a02afeaaf8574e7a78d6b466ff2695052" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t height</definition>
+        <argsstring></argsstring>
+        <name>height</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="87" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1ImageInfo_1a8d3e21f362266f54ca7a04ec8474bc3d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t quality</definition>
+        <argsstring></argsstring>
+        <name>quality</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="93" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1ImageInfo_1a02bed8590a9ddf520e58a060059518ec" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t width</definition>
+        <argsstring></argsstring>
+        <name>width</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="84" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ImageInfo_1a2b9fef0335337362dd24688bda90b848" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ImageInfo</definition>
+        <argsstring>(const size_t width=0, const size_t height=0, const size_t channels=3, const size_t quality=90)</argsstring>
+        <name>ImageInfo</name>
+        <param>
+          <type>const size_t</type>
+          <declname>width</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>height</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>channels</declname>
+          <defval>3</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>quality</declname>
+          <defval>90</defval>
+        </param>
+        <briefdescription>
+<para>Instantiate the <ref refid="classmlpack_1_1data_1_1ImageInfo" kindref="compound">ImageInfo</ref> object with the given image width, height, number of channels and quality parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>width</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Image width. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>height</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Image height. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>channels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of channels in the image. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>quality</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Compression of the image if saved as jpg (0 - 100). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="48" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ImageInfo_1a74cae78c7b467252fd34c15160f027ee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Channels</definition>
+        <argsstring>()</argsstring>
+        <name>Channels</name>
+        <briefdescription>
+<para>Modify the image channels. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="66" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="66" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ImageInfo_1a0b21567b7c902a872cff8193e396ec5d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const size_t &amp;</type>
+        <definition>const size_t&amp; Channels</definition>
+        <argsstring>() const</argsstring>
+        <name>Channels</name>
+        <briefdescription>
+<para>Get the image channels. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="64" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="64" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ImageInfo_1ab23737eeb70ec76db473d42fd4fa8905" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Height</definition>
+        <argsstring>()</argsstring>
+        <name>Height</name>
+        <briefdescription>
+<para>Modify the image height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="61" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="61" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ImageInfo_1ad06eef93e982f0f9f9312464043fc873" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const size_t &amp;</type>
+        <definition>const size_t&amp; Height</definition>
+        <argsstring>() const</argsstring>
+        <name>Height</name>
+        <briefdescription>
+<para>Get the image height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="59" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="59" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ImageInfo_1ac90d7f5369f20a73a6c6f7247736f9a0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Quality</definition>
+        <argsstring>()</argsstring>
+        <name>Quality</name>
+        <briefdescription>
+<para>Modify the image quality. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="71" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="71" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ImageInfo_1a2226c9cc747af961fc72ef9b55a5e255" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const size_t &amp;</type>
+        <definition>const size_t&amp; Quality</definition>
+        <argsstring>() const</argsstring>
+        <name>Quality</name>
+        <briefdescription>
+<para>Get the image quality. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="69" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="69" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ImageInfo_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="74" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="74" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ImageInfo_1aaa9870b05022ad86e12932d89b270437" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Width</definition>
+        <argsstring>()</argsstring>
+        <name>Width</name>
+        <briefdescription>
+<para>Modify the image width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="56" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="56" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ImageInfo_1a80c271716b539e82241223b6d71f6fda" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const size_t &amp;</type>
+        <definition>const size_t&amp; Width</definition>
+        <argsstring>() const</argsstring>
+        <name>Width</name>
+        <briefdescription>
+<para>Get the image width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="54" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="54" bodyend="54"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implements meta-data of images required by <ref refid="namespacemlpack_1_1data_1abbff2a667bf247e00b1fc09b7ca5f831" kindref="member">data::Load</ref> and <ref refid="namespacemlpack_1_1data_1accd1605a1d160c09ee75c93a587dc313" kindref="member">data::Save</ref> for loading and saving images into arma::Mat. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/image_info.hpp" bodystart="37" bodyend="94"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1afd7e33ee7b38f999645df1b32239c831" prot="private" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>channels</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1a0b21567b7c902a872cff8193e396ec5d" prot="public" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>Channels</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1a74cae78c7b467252fd34c15160f027ee" prot="public" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>Channels</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1a02afeaaf8574e7a78d6b466ff2695052" prot="private" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>height</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1ad06eef93e982f0f9f9312464043fc873" prot="public" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>Height</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1ab23737eeb70ec76db473d42fd4fa8905" prot="public" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>Height</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1a2b9fef0335337362dd24688bda90b848" prot="public" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>ImageInfo</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1a8d3e21f362266f54ca7a04ec8474bc3d" prot="private" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>quality</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1a2226c9cc747af961fc72ef9b55a5e255" prot="public" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>Quality</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1ac90d7f5369f20a73a6c6f7247736f9a0" prot="public" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>Quality</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1a02bed8590a9ddf520e58a060059518ec" prot="private" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>width</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1a80c271716b539e82241223b6d71f6fda" prot="public" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>Width</name></member>
+      <member refid="classmlpack_1_1data_1_1ImageInfo_1aaa9870b05022ad86e12932d89b270437" prot="public" virt="non-virtual"><scope>mlpack::data::ImageInfo</scope><name>Width</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_8eb993180349cfdeb723fdf0ce5ba7ea" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/bindings/go</compoundname>
+    <innerdir refid="dir_8a34f00928db83109662ba37a4630e9f">/home/aakash/mlpack/src/mlpack/bindings/go/mlpack</innerdir>
+    <innerdir refid="dir_b6a78a0d5330e96c8ba43a267d20521a">/home/aakash/mlpack/src/mlpack/bindings/go/tests</innerdir>
+    <innerfile refid="go_2default__param_8hpp">default_param.hpp</innerfile>
+    <innerfile refid="get__go__type_8hpp">get_go_type.hpp</innerfile>
+    <innerfile refid="go_2get__param_8hpp">get_param.hpp</innerfile>
+    <innerfile refid="go_2get__printable__param_8hpp">get_printable_param.hpp</innerfile>
+    <innerfile refid="go_2get__printable__type_8hpp">get_printable_type.hpp</innerfile>
+    <innerfile refid="go_2get__type_8hpp">get_type.hpp</innerfile>
+    <innerfile refid="go__option_8hpp">go_option.hpp</innerfile>
+    <innerfile refid="print__defn__input_8hpp">print_defn_input.hpp</innerfile>
+    <innerfile refid="print__defn__output_8hpp">print_defn_output.hpp</innerfile>
+    <innerfile refid="go_2print__doc_8hpp">print_doc.hpp</innerfile>
+    <innerfile refid="go_2print__doc__functions_8hpp">print_doc_functions.hpp</innerfile>
+    <innerfile refid="print__go_8hpp">print_go.hpp</innerfile>
+    <innerfile refid="go_2print__input__processing_8hpp">print_input_processing.hpp</innerfile>
+    <innerfile refid="print__method__config_8hpp">print_method_config.hpp</innerfile>
+    <innerfile refid="print__method__init_8hpp">print_method_init.hpp</innerfile>
+    <innerfile refid="go_2print__output__processing_8hpp">print_output_processing.hpp</innerfile>
+    <innerfile refid="go_2print__type__doc_8hpp">print_type_doc.hpp</innerfile>
+    <innerfile refid="go_2strip__type_8hpp">strip_type.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/go/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,45 @@
+.TH "/home/aakash/mlpack/src/mlpack/core/data/confusion_matrix.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/core/data/confusion_matrix.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::data\fP"
+.br
+.RI "Functions to load and save matrices and models\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename eT > void \fBConfusionMatrix\fP (const arma::Row< size_t > predictors, const arma::Row< size_t > responses, arma::Mat< eT > &output, const size_t numClasses)"
+.br
+.RI "A confusion matrix is a summary of prediction results on a classification problem\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Jeffin Sam
+.RE
+.PP
+Compute confusion matrix to evaluate the accuracy of a classification\&. The function works only for discrete data/categorical data\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBconfusion_matrix\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

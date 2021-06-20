@@ -1,0 +1,2239 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1bindings_1_1julia" kind="namespace" language="C++">
+    <compoundname>mlpack::bindings::julia</compoundname>
+    <innerclass refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption" prot="public">mlpack::bindings::julia::JuliaOption</innerclass>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacemlpack_1_1bindings_1_1julia_1a24d855d329269931b59bdf1b36706a88" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string programName</definition>
+        <argsstring></argsstring>
+        <name>programName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/julia_option.hpp" line="31" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/julia_option.hpp" declline="31" declcolumn="20"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1a15f2fbf7bd8137c68337e2dc4d353f56" compoundref="print__param__defn_8hpp" startline="51" endline="157">PrintParamDefn</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a7d5cad8715c0bcb70ade6d7db2e12053" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::DefaultParam</definition>
+        <argsstring>(util::ParamData &amp;data, const void *, void *output)</argsstring>
+        <name>DefaultParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Return the default value of an option. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is the function that will be placed into the <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> functionMap. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" line="80" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" bodystart="80" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ac4d13b54ddee907c40ec8aa7cdc674b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::DefaultParamImpl</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::string &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; mlpack::data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>DefaultParamImpl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::string &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">mlpack::data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the default value of an option. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is for regular types. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" line="27" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" declline="27" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a62eda0892cc407d543c1cbc4adde657e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::DefaultParamImpl</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>DefaultParamImpl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the default value of a model option (this returns the default filename, or &apos;&apos; if the default is no file). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" line="70" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" declline="70" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a424d4c2bef344f8316726604f813731a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::DefaultParamImpl</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if&lt; std::is_same&lt; T, std::string &gt;&gt;::type *=0)</argsstring>
+        <name>DefaultParamImpl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; std::is_same&lt; T, std::string &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the default value of a string option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" line="48" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" declline="48" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a7ca7c03888298332ca769b89fe9e6063" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::DefaultParamImpl</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>DefaultParamImpl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the default value of a vector option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" line="40" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" declline="40" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a81c91a8b2625c5244c34075a645d26aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::DefaultParamImpl</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if_c&lt; arma::is_arma_type&lt; T &gt;::value||std::is_same&lt; T, std::tuple&lt; mlpack::data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>DefaultParamImpl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if_c&lt; arma::is_arma_type&lt; T &gt;::value||std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">mlpack::data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or &apos;&apos; if the default is no file). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" line="58" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" declline="58" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a8d9828ad9cbc4d7a011cbe18bd7e6f0c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetBindingName</definition>
+        <argsstring>(const std::string &amp;bindingName)</argsstring>
+        <name>GetBindingName</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
+        <briefdescription>
+<para>Given the name of a binding, print its Julia name (this just returns the binding name). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="26" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="26" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1af033dbeffe06831a82a2e386ae183825" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetJuliaType</definition>
+        <argsstring>(util::ParamData &amp;, const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>GetJuliaType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" line="127" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" bodystart="127" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ab6258340a09d7778996b7936009d6e1c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetJuliaType</definition>
+        <argsstring>(util::ParamData &amp;, const typename std::enable_if&lt;!util::IsStdVector&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0, const typename std::enable_if&lt;!data::HasSerialize&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>GetJuliaType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" line="22" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" bodystart="22" bodyend="31"/>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1afed98c7370d51aa61481387ba7e48329" compoundref="julia_2print__doc_8hpp" startline="20" endline="59">PrintDoc</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a9af4056efe4d833964ddb6bbe6cf78ea" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetJuliaType</definition>
+        <argsstring>(util::ParamData &amp;d, const typename std::enable_if&lt; util::IsStdVector&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0, const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>GetJuliaType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" line="98" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" bodystart="98" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1aa9fe68e1da9daec9372965162d8bad94" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetJuliaType</definition>
+        <argsstring>(util::ParamData &amp;d, const typename std::enable_if&lt;!util::IsStdVector&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt; data::HasSerialize&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>GetJuliaType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" line="137" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" bodystart="137" bodyend="149"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+        <references refid="namespacemlpack_1_1util_1a7eb84b8e75a14594bd8b89733112378d" compoundref="util_2strip__type_8hpp" startline="27" endline="42">mlpack::util::StripType</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a280d7bac8b4d0ee4f89d8337b5eca7de" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetJuliaType</definition>
+        <argsstring>(util::ParamData &amp;d, const typename std::enable_if&lt;!util::IsStdVector&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0, const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>GetJuliaType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" line="109" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" bodystart="109" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a1b3cc6b2b692d2fac7d986d33a08dd34" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetJuliaType&lt; bool &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename std::enable_if&lt;!util::IsStdVector&lt; bool &gt;::value &gt;::type *, const typename std::enable_if&lt;!arma::is_arma_type&lt; bool &gt;::value &gt;::type *, const typename std::enable_if&lt;!std::is_same&lt; bool, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *, const typename std::enable_if&lt;!data::HasSerialize&lt; bool &gt;::value &gt;::type *)</argsstring>
+        <name>GetJuliaType&lt; bool &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; bool &gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; bool &gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; bool, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; bool &gt;::value &gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" line="34" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" bodystart="34" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a75357eff29c1a0027df10939cb595596" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetJuliaType&lt; double &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename std::enable_if&lt;!util::IsStdVector&lt; double &gt;::value &gt;::type *, const typename std::enable_if&lt;!arma::is_arma_type&lt; double &gt;::value &gt;::type *, const typename std::enable_if&lt;!std::is_same&lt; double, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *, const typename std::enable_if&lt;!data::HasSerialize&lt; double &gt;::value &gt;::type *)</argsstring>
+        <name>GetJuliaType&lt; double &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; double &gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; double &gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; double, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; double &gt;::value &gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" line="70" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" bodystart="70" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a4e613577bf3bc33b4783d60d0e065f60" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetJuliaType&lt; int &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename std::enable_if&lt;!util::IsStdVector&lt; int &gt;::value &gt;::type *, const typename std::enable_if&lt;!arma::is_arma_type&lt; int &gt;::value &gt;::type *, const typename std::enable_if&lt;!std::is_same&lt; int, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *, const typename std::enable_if&lt;!data::HasSerialize&lt; int &gt;::value &gt;::type *)</argsstring>
+        <name>GetJuliaType&lt; int &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; int &gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; int &gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; int, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; int &gt;::value &gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" line="46" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" bodystart="46" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a1c06ed990a6afe89e13c6afc62d8d607" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetJuliaType&lt; size_t &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename std::enable_if&lt;!util::IsStdVector&lt; size_t &gt;::value &gt;::type *, const typename std::enable_if&lt;!arma::is_arma_type&lt; size_t &gt;::value &gt;::type *, const typename std::enable_if&lt;!std::is_same&lt; size_t, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *, const typename std::enable_if&lt;!data::HasSerialize&lt; size_t &gt;::value &gt;::type *)</argsstring>
+        <name>GetJuliaType&lt; size_t &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; size_t &gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; size_t &gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; size_t, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; size_t &gt;::value &gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" line="58" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" bodystart="58" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a843780cd462e7e51fc0201666099403c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetJuliaType&lt; std::string &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename std::enable_if&lt; !util::IsStdVector&lt; std::string &gt;::value &gt;::type *, const typename std::enable_if&lt; !arma::is_arma_type&lt; std::string &gt;::value &gt;::type *, const typename std::enable_if&lt;!std::is_same&lt; std::string, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *, const typename std::enable_if&lt; !data::HasSerialize&lt; std::string &gt;::value &gt;::type *)</argsstring>
+        <name>GetJuliaType&lt; std::string &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; !<ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; std::string &gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; !arma::is_arma_type&lt; std::string &gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; std::string, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; !<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; std::string &gt;::value &gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" line="83" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_julia_type.hpp" bodystart="83" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ae4252a82393e350fb7688f6038062e6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::GetParam</definition>
+        <argsstring>(util::ParamData &amp;d, const void *, void *output)</argsstring>
+        <name>GetParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>All Julia binding types are exactly what is held in the ParamData, so no special handling is necessary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_param.hpp" line="26" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_param.hpp" bodystart="26" bodyend="31"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a5db46b750740fb5822484de47e48c8b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print an option of a simple type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" line="26" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" bodystart="26" bodyend="37"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a4283ed67763f61abbd25816621d8a9c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print a serializable class option (this prints the class name). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" line="75" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" bodystart="75" bodyend="83"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1aa702de20aa35aa3ac89db069b05adbad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print a matrix option (this prints its size). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" line="59" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" bodystart="59" bodyend="69"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a421bb63af9453194bd4fae9974e8d7a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print a combination DatasetInfo/matrix parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" line="89" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" bodystart="89" bodyend="102"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a65f67c5293bb3878c2d30ee22c87a581" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print a vector option, with spaces between it. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" line="43" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" bodystart="43" bodyend="53"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a40a6079f17369b7fc8d2b8673b8f88e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const void *, void *output)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Print an option into a std::string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This should print a short, one-line representation of the object. The string will be stored in the output pointer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter data struct. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) Unused parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output storage for the string. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" line="114" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_param.hpp" bodystart="114" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ab2840922ecef48c3f883ea169b3dac40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of an option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" line="24" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" declline="24" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1af1753e5e55255c27fd1cdf8f21915895" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" line="61" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" declline="61" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1acac62fd66dced7595d79aa70441652a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;data, const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a matrix option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" line="44" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" declline="44" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a791fb06a5c637870a266029a3b2ed6d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;data, const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a matrix tuple option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" line="52" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" declline="52" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ae25b2fae58b802c21f655cc5f7a37807" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;data, const typename std::enable_if&lt; util::IsStdVector&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" line="36" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" declline="36" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ab447f8966756bf0224070587c536e069" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;data, const void *, void *output)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Print the command-line type of an option into a string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" line="70" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/get_printable_type.hpp" bodystart="70" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a2721640ebb8e5ad4abf7e7be3d2cdac8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool mlpack::bindings::julia::IgnoreCheck</definition>
+        <argsstring>(const std::string &amp;paramName)</argsstring>
+        <name>IgnoreCheck</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <briefdescription>
+<para>Print whether or not we should ignore a check on the given parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For Julia bindings, we ignore any checks on output parameters, so if paramName is an output parameter, this returns true. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="117" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="117" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a48bbe25414605037ae8acd32ed73bdf5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool mlpack::bindings::julia::IgnoreCheck</definition>
+        <argsstring>(const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;constraints, const std::string &amp;paramName)</argsstring>
+        <name>IgnoreCheck</name>
+        <param>
+          <type>const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;</type>
+          <declname>constraints</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <briefdescription>
+<para>Print whether or not we should ignore a check on the given set of constraints. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For Julia bindings, we ignore any checks on output parameters, so if any constraint parameter or the main parameter are output parameters, this returns true. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="132" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="132" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1af39b9d7b6b7d368b766fb1ef482d25b4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool mlpack::bindings::julia::IgnoreCheck</definition>
+        <argsstring>(const std::vector&lt; std::string &gt; &amp;constraints)</argsstring>
+        <name>IgnoreCheck</name>
+        <param>
+          <type>const std::vector&lt; std::string &gt; &amp;</type>
+          <declname>constraints</declname>
+        </param>
+        <briefdescription>
+<para>Print whether or not we should ignore a check on the given set of constraints. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For Julia bindings, we ignore any checks on output parameters, so if any parameter is an output parameter, this returns true. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="124" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="124" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a627997ec4999091e2c734c8e5369c456" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::ParamString</definition>
+        <argsstring>(const std::string &amp;paramName)</argsstring>
+        <name>ParamString</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <briefdescription>
+<para>Given the parameter name, determine what it would actually be when passed to the command line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="110" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="110" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ab81006e8cf130a5968777dcf9c82baa3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintDataset</definition>
+        <argsstring>(const std::string &amp;dataset)</argsstring>
+        <name>PrintDataset</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <briefdescription>
+<para>Print a dataset type parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="66" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="66" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a6a712d2a0342de59cfd5ac5033138d6f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintDefault</definition>
+        <argsstring>(const std::string &amp;paramName)</argsstring>
+        <name>PrintDefault</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <briefdescription>
+<para>Given a parameter name, print its corresponding default value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="61" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="61" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1afed98c7370d51aa61481387ba7e48329" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintDoc</definition>
+        <argsstring>(util::ParamData &amp;d, const void *, void *output)</argsstring>
+        <name>PrintDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc.hpp" line="20" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc.hpp" bodystart="20" bodyend="59"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a378e4473b8cd1fccf534804887f2bc85" compoundref="param__data_8hpp" startline="58">ParamData::desc</references>
+        <references refid="namespacemlpack_1_1bindings_1_1julia_1ab6258340a09d7778996b7936009d6e1c" compoundref="get__julia__type_8hpp" startline="22" endline="31">GetJuliaType</references>
+        <references refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" compoundref="bindings_2go_2CMakeLists_8txt" startline="3" endline="16">if</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" compoundref="param__data_8hpp" startline="71">ParamData::required</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a74c8a5085c10ab376f52f7738bd5cf35" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintImport</definition>
+        <argsstring>(const std::string &amp;bindingName)</argsstring>
+        <name>PrintImport</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
+        <briefdescription>
+<para>Print any imports for Julia. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="31" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="31" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ad80395807c5fed5cb3ab8a9bf2461594" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintInputOptionInfo</definition>
+        <argsstring>()</argsstring>
+        <name>PrintInputOptionInfo</name>
+        <briefdescription>
+<para>Print any special information about input options. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="41" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="41" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ad5a8197f925a177406f9ba8a7f54b626" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintInputOptions</definition>
+        <argsstring>()</argsstring>
+        <name>PrintInputOptions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="79" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="79" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ae8ccf211291da278631c06ce5b6f828a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintInputOptions</definition>
+        <argsstring>(const std::string &amp;paramName, const T &amp;value, Args... args)</argsstring>
+        <name>PrintInputOptions</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>Args...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Print an input option. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will throw an exception if the parameter does not exist in <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref>. For a parameter &apos;x&apos; with value &apos;5&apos;, this will print something like x=5. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="87" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="87" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a64bffabfa040cc70a348df4b479707a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintInputParam</definition>
+        <argsstring>(util::ParamData &amp;d, const void *, void *)</argsstring>
+        <name>PrintInputParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+        </param>
+        <briefdescription>
+<para>Print the declaration of an input parameter as part of a line in a Julia function definition. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This doesn&apos;t include any commas or anything. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_param.hpp" line="27" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_param.hpp" bodystart="27" bodyend="55"/>
+        <references refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" compoundref="bindings_2go_2CMakeLists_8txt" startline="3" endline="16">if</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" compoundref="param__data_8hpp" startline="71">ParamData::required</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a055d5024615073721cd327a2ba182c98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintInputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const std::string &amp;functionName, const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintInputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>functionName</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print the input processing for an Armadillo type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_processing.hpp" line="36" column="6" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_processing.hpp" declline="36" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1abd8e1a70e4ac815dbf9c1962da0a3500" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintInputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const std::string &amp;functionName, const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintInputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>functionName</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print the input processing (basically calling <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">IO::GetParam&lt;&gt;()</ref>) for a matrix with DatasetInfo type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_processing.hpp" line="60" column="6" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_processing.hpp" declline="60" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a2eed6a97582961119310c7d5d6af4b09" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintInputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const std::string &amp;functionName, const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt; data::HasSerialize&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintInputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>functionName</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print the input processing for a serializable type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_processing.hpp" line="47" column="6" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_processing.hpp" declline="47" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a5828f427d0a15620d4d703184c53acba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintInputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const std::string &amp;functionName, const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!data::HasSerialize&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintInputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>functionName</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print the input processing (basically calling <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">IO::GetParam&lt;&gt;()</ref>) for a non-serializable type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_processing.hpp" line="24" column="6" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_processing.hpp" declline="24" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a1588b6d6799cfb9a8e72aae21fb388ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintInputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const void *input, void *)</argsstring>
+        <name>PrintInputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>void *</type>
+        </param>
+        <briefdescription>
+<para>Print the input processing (basically calling <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">IO::GetParam&lt;&gt;()</ref>) for a type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_processing.hpp" line="70" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_input_processing.hpp" bodystart="70" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a5215728242ec889f1ac23069f0227b87" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintJL</definition>
+        <argsstring>(const util::BindingDetails &amp;doc, const std::string &amp;functionName, const std::string &amp;mlpackJuliaLibSuffix)</argsstring>
+        <name>PrintJL</name>
+        <param>
+          <type>const <ref refid="structmlpack_1_1util_1_1BindingDetails" kindref="compound">util::BindingDetails</ref> &amp;</type>
+          <declname>doc</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>functionName</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>mlpackJuliaLibSuffix</declname>
+        </param>
+        <briefdescription>
+<para>Print the code for a .jl binding for an mlpack program to stdout. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_jl.hpp" line="24" column="6" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_jl.hpp" declline="24" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a5cd774b4c9bb9014c222477c84dce52e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintModel</definition>
+        <argsstring>(const std::string &amp;model)</argsstring>
+        <name>PrintModel</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>model</declname>
+        </param>
+        <briefdescription>
+<para>Print a model type parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="71" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="71" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a821aee751627d1bcf602df375c1f8eb6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintModelTypeImport</definition>
+        <argsstring>(util::ParamData &amp;, const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintModelTypeImport</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Matrices are serializable but here we also print nothing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_model_type_import.hpp" line="38" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_model_type_import.hpp" bodystart="38" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a24b9b38c5575eebc49cce49c847f76a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintModelTypeImport</definition>
+        <argsstring>(util::ParamData &amp;, const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!data::HasSerialize&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintModelTypeImport</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>If the type is not serializable, print nothing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_model_type_import.hpp" line="26" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_model_type_import.hpp" bodystart="26" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a542a7f3046a7acf108d591facc8b2e02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintModelTypeImport</definition>
+        <argsstring>(util::ParamData &amp;d, const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt; data::HasSerialize&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintModelTypeImport</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>For non-matrix serializable types we need to print something. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_model_type_import.hpp" line="49" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_model_type_import.hpp" bodystart="49" bodyend="59"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+        <references refid="namespacemlpack_1_1util_1a7eb84b8e75a14594bd8b89733112378d" compoundref="util_2strip__type_8hpp" startline="27" endline="42">mlpack::util::StripType</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1acee784e5e7d9447c5d8b597d1884cece" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintModelTypeImport</definition>
+        <argsstring>(util::ParamData &amp;d, const void *, void *)</argsstring>
+        <name>PrintModelTypeImport</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+        </param>
+        <briefdescription>
+<para>If the type is serializable, print the definition of a special utility function to set a <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> parameter of that type to stdout. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_model_type_import.hpp" line="66" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_model_type_import.hpp" bodystart="66" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a2db624423dfe22092c563dd12f4bbe8d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintOutputOptionInfo</definition>
+        <argsstring>()</argsstring>
+        <name>PrintOutputOptionInfo</name>
+        <briefdescription>
+<para>Print any special information about output options. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="36" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="36" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a458cbef16b35aa69753765e7ccdb0398" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintOutputOptions</definition>
+        <argsstring>()</argsstring>
+        <name>PrintOutputOptions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="92" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="92" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a84456d410b020a60c7add64c3791e4d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintOutputOptions</definition>
+        <argsstring>(const std::string &amp;paramName, const T &amp;value, Args... args)</argsstring>
+        <name>PrintOutputOptions</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>Args...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="95" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="95" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ad4af3ab71c4d1a6ec18f2346ca79063e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintOutputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const std::string &amp;functionName, const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintOutputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>functionName</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print the output processing for an Armadillo type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_output_processing.hpp" line="38" column="6" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_output_processing.hpp" declline="38" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a41cc552aa985d5a13364b9d1c7724bbe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintOutputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const std::string &amp;functionName, const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintOutputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>functionName</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print the output processing for a mat/DatasetInfo tuple type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_output_processing.hpp" line="61" column="6" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_output_processing.hpp" declline="61" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a7430d34457a6b74829f15dd92b4ec60a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintOutputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const std::string &amp;functionName, const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt; data::HasSerialize&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintOutputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>functionName</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print the output processing for a serializable type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_output_processing.hpp" line="49" column="6" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_output_processing.hpp" declline="49" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ac0fb78d1da3e1421a99570019fcea77b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintOutputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const std::string &amp;functionName, const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!data::HasSerialize&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintOutputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>functionName</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print the output processing (basically calling <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">IO::GetParam&lt;&gt;()</ref>) for a non-serializable type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_output_processing.hpp" line="26" column="6" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_output_processing.hpp" declline="26" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a3dcb15a14aeb2be23d072dbbdab71655" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintOutputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const void *input, void *)</argsstring>
+        <name>PrintOutputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>void *</type>
+        </param>
+        <briefdescription>
+<para>Print the output processing (basically calling <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">IO::GetParam&lt;&gt;()</ref>) for a type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_output_processing.hpp" line="71" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_output_processing.hpp" bodystart="71" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a4ebebb3c590e6fa5273ee114720e9b04" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintParamDefn</definition>
+        <argsstring>(util::ParamData &amp;, const std::string &amp;, const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintParamDefn</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Matrices are serializable but here we also print nothing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_param_defn.hpp" line="39" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_param_defn.hpp" bodystart="39" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a3683963682a623f865411e97add139e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintParamDefn</definition>
+        <argsstring>(util::ParamData &amp;, const std::string &amp;, const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt;!data::HasSerialize&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintParamDefn</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>If the type is not serializable, print nothing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_param_defn.hpp" line="26" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_param_defn.hpp" bodystart="26" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a15f2fbf7bd8137c68337e2dc4d353f56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintParamDefn</definition>
+        <argsstring>(util::ParamData &amp;d, const std::string &amp;programName, const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *=0, const typename std::enable_if&lt; data::HasSerialize&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintParamDefn</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>programName</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt;!arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>For non-matrix serializable types we need to print something. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_param_defn.hpp" line="51" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_param_defn.hpp" bodystart="51" bodyend="157"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+        <references refid="namespacemlpack_1_1bindings_1_1julia_1a24d855d329269931b59bdf1b36706a88">programName</references>
+        <references refid="namespacemlpack_1_1util_1a7eb84b8e75a14594bd8b89733112378d" compoundref="util_2strip__type_8hpp" startline="27" endline="42">mlpack::util::StripType</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a6ee55e0f1174e16211881215702c87bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintParamDefn</definition>
+        <argsstring>(util::ParamData &amp;d, const void *input, void *)</argsstring>
+        <name>PrintParamDefn</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>void *</type>
+        </param>
+        <briefdescription>
+<para>If the type is serializable, print the definition of a special utility function to set a <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> parameter of that type to stdout. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_param_defn.hpp" line="164" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_param_defn.hpp" bodystart="164" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1aa1491585c928e9d37190e48ae4f19db0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintType</definition>
+        <argsstring>(util::ParamData &amp;param)</argsstring>
+        <name>PrintType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>param</declname>
+        </param>
+        <briefdescription>
+<para>Print the type of a parameter that a user would specify from Julia. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="76" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="76" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a8e7452afff934cb6f80f4d170f5ecf05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of an option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" line="26" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" declline="26" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ad25458acb771117122a3729802d1657d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" line="63" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" declline="63" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1aa9adb68ea7e1171bfee67b705d377b75" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a matrix option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" line="46" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" declline="46" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ae404f1810f84708883c646689f27623e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a matrix tuple option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" line="54" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" declline="54" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a8e38d88da05bb4334dedabdbbfea4d41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const typename std::enable_if&lt; util::IsStdVector&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" line="38" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" declline="38" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a610a7a01bff6563135726a27c2d4f980" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::julia::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const void *, void *output)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Print the command-line type of an option into a string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" line="72" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_type_doc.hpp" bodystart="72" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1a66c87276bb72b6efb12d2b7d53202ca8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintTypeDocs</definition>
+        <argsstring>()</argsstring>
+        <name>PrintTypeDocs</name>
+        <briefdescription>
+<para>Print documentation for each of the types. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="46" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="46" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ab215ccae826d137bb18e251b63f79318" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintValue</definition>
+        <argsstring>(const bool &amp;value, bool quotes)</argsstring>
+        <name>PrintValue</name>
+        <param>
+          <type>const bool &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>quotes</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="56" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="56" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1afddeb0074153b920a7da3051b1046675" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::PrintValue</definition>
+        <argsstring>(const T &amp;value, bool quotes)</argsstring>
+        <name>PrintValue</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>quotes</declname>
+        </param>
+        <briefdescription>
+<para>Given a parameter type, print the corresponding value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="52" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="52" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1julia_1ab5edf3302fabe8ebafc3ed7228b149df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::julia::ProgramCall</definition>
+        <argsstring>(const std::string &amp;programName, Args... args)</argsstring>
+        <name>ProgramCall</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>programName</declname>
+        </param>
+        <param>
+          <type>Args...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" line="104" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp" declline="104" declcolumn="13"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/default_param.hpp" line="21" column="1"/>
+  </compounddef>
+</doxygen>

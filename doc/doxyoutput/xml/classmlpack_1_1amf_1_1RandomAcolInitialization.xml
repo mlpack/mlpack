@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1amf_1_1RandomAcolInitialization" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::amf::RandomAcolInitialization</compoundname>
+    <includes refid="random__acol__init_8hpp" local="no">random_acol_init.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>size_t</type>
+        <declname>columnsToAverage</declname>
+        <defname>columnsToAverage</defname>
+        <defval>5</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1RandomAcolInitialization_1ae167200b856b43c6d791f40eec362d21" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RandomAcolInitialization</definition>
+        <argsstring>()</argsstring>
+        <name>RandomAcolInitialization</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/random_acol_init.hpp" line="48" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/random_acol_init.hpp" bodystart="48" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1RandomAcolInitialization_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the object (in this case, there is nothing to serialize). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/random_acol_init.hpp" line="88" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/random_acol_init.hpp" bodystart="88" bodyend="88"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1RandomAcolInitialization_1a02a3610958f42b7dbef8bd5063ceaee7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Initialize</definition>
+        <argsstring>(const MatType &amp;V, const size_t r, arma::mat &amp;W, arma::mat &amp;H)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/random_acol_init.hpp" line="52" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/random_acol_init.hpp" bodystart="52" bodyend="84"/>
+        <references refid="namespacemlpack_1_1math_1aad090ac225728d74c1b66bcf52f3ab95" compoundref="random_8hpp" startline="110" endline="113">mlpack::math::RandInt</references>
+        <references refid="classmlpack_1_1Log_1af8dd463e0db2840410fe6b1165429d5b" compoundref="log_8hpp" startline="87">Log::Warn</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class initializes the W matrix of the <ref refid="classmlpack_1_1amf_1_1AMF" kindref="compound">AMF</ref> algorithm by averaging p randomly chosen columns of V. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>In this case, p is a template parameter. H is then filled using a uniform distribution in the range [0, 1].</para>
+<para>This simple initialization is the &quot;random Acol initialization&quot; found in the following paper:</para>
+<para><programlisting><codeline><highlight class="normal">@techreport{langville2014algorithms,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/>=<sp/>{Algorithms,<sp/>Initializations,<sp/>and<sp/>Convergence<sp/>for<sp/>the<sp/>Nonnegative</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Matrix<sp/>Factorization},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/>=<sp/>{Langville,<sp/>A.N.<sp/>and<sp/>Meyer,<sp/>C.D.<sp/>and<sp/>Albright,<sp/>R.<sp/>and<sp/>Cox,<sp/>J.<sp/>and</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Duling,<sp/>D.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/>=<sp/>{2014},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>institution<sp/>=<sp/>{NCSU<sp/>Technical<sp/>Report<sp/>Math<sp/>81706}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>columnsToAverage</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of random columns to average for each column of W. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/random_acol_init.hpp" line="44" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/init_rules/random_acol_init.hpp" bodystart="45" bodyend="89"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1amf_1_1RandomAcolInitialization_1a02a3610958f42b7dbef8bd5063ceaee7" prot="public" virt="non-virtual"><scope>mlpack::amf::RandomAcolInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1RandomAcolInitialization_1ae167200b856b43c6d791f40eec362d21" prot="public" virt="non-virtual"><scope>mlpack::amf::RandomAcolInitialization</scope><name>RandomAcolInitialization</name></member>
+      <member refid="classmlpack_1_1amf_1_1RandomAcolInitialization_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" virt="non-virtual"><scope>mlpack::amf::RandomAcolInitialization</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

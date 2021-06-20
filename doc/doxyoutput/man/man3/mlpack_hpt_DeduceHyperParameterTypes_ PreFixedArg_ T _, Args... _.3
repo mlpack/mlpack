@@ -1,0 +1,42 @@
+.TH "DeduceHyperParameterTypes< PreFixedArg< T >, Args... >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DeduceHyperParameterTypes< PreFixedArg< T >, Args... > \- Defining \fBDeduceHyperParameterTypes\fP for the case when not all argument types have been processed, and the next one is the type of an argument that should be fixed\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBResultHolder\fP"
+.br
+.in -1c
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBTupleType\fP = typename ResultHolder<>::\fBTupleType\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T, typename\&.\&.\&. Args>
+.br
+struct mlpack::hpt::DeduceHyperParameterTypes< PreFixedArg< T >, Args\&.\&.\&. >"
+Defining \fBDeduceHyperParameterTypes\fP for the case when not all argument types have been processed, and the next one is the type of an argument that should be fixed\&. 
+.PP
+Definition at line 109 of file deduce_hp_types\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBTupleType\fP =  typename ResultHolder<>::\fBTupleType\fP"
+
+.PP
+Definition at line 118 of file deduce_hp_types\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

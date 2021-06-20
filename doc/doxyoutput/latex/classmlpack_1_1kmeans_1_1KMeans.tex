@@ -1,0 +1,325 @@
+\doxysection{KMeans$<$ Metric\+Type, Initial\+Partition\+Policy, Empty\+Cluster\+Policy, Lloyd\+Step\+Type, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1kmeans_1_1KMeans}\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+
+
+This class implements K-\/\+Means clustering, using a variety of possible implementations of Lloyd\textquotesingle{}s algorithm.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ KMeans} (const size\+\_\+t max\+Iterations=1000, const Metric\+Type metric=Metric\+Type(), const Initial\+Partition\+Policy partitioner=Initial\+Partition\+Policy(), const Empty\+Cluster\+Policy empty\+Cluster\+Action=Empty\+Cluster\+Policy())
+\begin{DoxyCompactList}\small\item\em Create a K-\/\+Means object and (optionally) set the parameters which K-\/\+Means will be run with. \end{DoxyCompactList}\item 
+void \textbf{ Cluster} (const Mat\+Type \&data, const size\+\_\+t clusters, arma\+::\+Row$<$ size\+\_\+t $>$ \&assignments, arma\+::mat \&centroids, const bool initial\+Assignment\+Guess=false, const bool initial\+Centroid\+Guess=false)
+\begin{DoxyCompactList}\small\item\em Perform k-\/means clustering on the data, returning a list of cluster assignments and also the centroids of each cluster. \end{DoxyCompactList}\item 
+void \textbf{ Cluster} (const Mat\+Type \&data, const size\+\_\+t clusters, arma\+::\+Row$<$ size\+\_\+t $>$ \&assignments, const bool initial\+Guess=false)
+\begin{DoxyCompactList}\small\item\em Perform k-\/means clustering on the data, returning a list of cluster assignments. \end{DoxyCompactList}\item 
+void \textbf{ Cluster} (const Mat\+Type \&data, size\+\_\+t clusters, arma\+::mat \&centroids, const bool initial\+Guess=false)
+\begin{DoxyCompactList}\small\item\em Perform k-\/means clustering on the data, returning the centroids of each cluster in the centroids matrix. \end{DoxyCompactList}\item 
+Empty\+Cluster\+Policy \& \textbf{ Empty\+Cluster\+Action} ()
+\begin{DoxyCompactList}\small\item\em Modify the empty cluster policy. \end{DoxyCompactList}\item 
+const Empty\+Cluster\+Policy \& \textbf{ Empty\+Cluster\+Action} () const
+\begin{DoxyCompactList}\small\item\em Get the empty cluster policy. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Max\+Iterations} ()
+\begin{DoxyCompactList}\small\item\em Set the maximum number of iterations. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Max\+Iterations} () const
+\begin{DoxyCompactList}\small\item\em Get the maximum number of iterations. \end{DoxyCompactList}\item 
+Metric\+Type \& \textbf{ Metric} ()
+\begin{DoxyCompactList}\small\item\em Modify the distance metric. \end{DoxyCompactList}\item 
+const Metric\+Type \& \textbf{ Metric} () const
+\begin{DoxyCompactList}\small\item\em Get the distance metric. \end{DoxyCompactList}\item 
+Initial\+Partition\+Policy \& \textbf{ Partitioner} ()
+\begin{DoxyCompactList}\small\item\em Modify the initial partitioning policy. \end{DoxyCompactList}\item 
+const Initial\+Partition\+Policy \& \textbf{ Partitioner} () const
+\begin{DoxyCompactList}\small\item\em Get the initial partitioning policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t version)
+\begin{DoxyCompactList}\small\item\em Serialize the k-\/means object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+Euclidean\+Distance, typename Initial\+Partition\+Policy = Sample\+Initialization, typename Empty\+Cluster\+Policy = Max\+Variance\+New\+Cluster, template$<$ class, class $>$ class Lloyd\+Step\+Type = Naive\+KMeans, typename Mat\+Type = arma\+::mat$>$\newline
+class mlpack\+::kmeans\+::\+KMeans$<$ Metric\+Type, Initial\+Partition\+Policy, Empty\+Cluster\+Policy, Lloyd\+Step\+Type, Mat\+Type $>$}
+
+This class implements K-\/\+Means clustering, using a variety of possible implementations of Lloyd\textquotesingle{}s algorithm. 
+
+Four template parameters can (optionally) be supplied\+: the distance metric to use, the policy for how to find the initial partition of the data, the actions to be taken when an empty cluster is encountered, and the implementation of a single Lloyd step to use.
+
+A simple example of how to run K-\/\+Means clustering is shown below.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{extern} arma::mat data; \textcolor{comment}{// Dataset we want to run K-\/Means on.}}
+\DoxyCodeLine{arma::Row<size\_t> assignments; \textcolor{comment}{// Cluster assignments.}}
+\DoxyCodeLine{arma::mat centroids; \textcolor{comment}{// Cluster centroids.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{KMeans<> k; \textcolor{comment}{// Default options.}}
+\DoxyCodeLine{k.Cluster(data, 3, assignments, centroids); \textcolor{comment}{// 3 clusters.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Cluster using the Manhattan distance, 100 iterations maximum, saving only}}
+\DoxyCodeLine{\textcolor{comment}{// the centroids.}}
+\DoxyCodeLine{KMeans<metric::ManhattanDistance> k(100);}
+\DoxyCodeLine{k.Cluster(data, 6, centroids); \textcolor{comment}{// 6 clusters.}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Metric\+Type} & The distance metric to use for this \doxyref{KMeans}{p.}{classmlpack_1_1kmeans_1_1KMeans}; see \doxyref{metric\+::\+LMetric}{p.}{classmlpack_1_1metric_1_1LMetric} for an example. \\
+\hline
+{\em Initial\+Partition\+Policy} & Initial partitioning policy; must implement a default constructor and either \textquotesingle{}void Cluster(const arma\+::mat\&, const size\+\_\+t, arma\+::\+Row$<$size\+\_\+t$>$\&)\textquotesingle{} or \textquotesingle{}void Cluster(const arma\+::mat\&, const size\+\_\+t, arma\+::mat\&)\textquotesingle{}. \\
+\hline
+{\em Empty\+Cluster\+Policy} & Policy for what to do on an empty cluster; must implement a default constructor and \textquotesingle{}void Empty\+Cluster(const arma\+::mat\& data, const size\+\_\+t empty\+Cluster, const arma\+::mat\& old\+Centroids, arma\+::mat\& new\+Centroids, arma\+::\+Col$<$size\+\_\+t$>$\& counts, Metric\+Type\& metric, const size\+\_\+t iteration)\textquotesingle{}. \\
+\hline
+{\em Lloyd\+Step\+Type} & Implementation of single Lloyd step to use.\\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxySeeAlso}{See also}
+\doxyref{Random\+Partition}{p.}{classmlpack_1_1kmeans_1_1RandomPartition}, \doxyref{Sample\+Initialization}{p.}{classmlpack_1_1kmeans_1_1SampleInitialization}, \doxyref{Refined\+Start}{p.}{classmlpack_1_1kmeans_1_1RefinedStart}, \doxyref{Allow\+Empty\+Clusters}{p.}{classmlpack_1_1kmeans_1_1AllowEmptyClusters}, \doxyref{Max\+Variance\+New\+Cluster}{p.}{classmlpack_1_1kmeans_1_1MaxVarianceNewCluster}, \doxyref{Naive\+KMeans}{p.}{classmlpack_1_1kmeans_1_1NaiveKMeans}, \doxyref{Elkan\+KMeans}{p.}{classmlpack_1_1kmeans_1_1ElkanKMeans} 
+\end{DoxySeeAlso}
+
+
+Definition at line 73 of file kmeans.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_a2c02f26404b56010005348a1a9c78811}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!KMeans@{KMeans}}
+\index{KMeans@{KMeans}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{KMeans()}
+{\footnotesize\ttfamily \textbf{ KMeans} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 1000},  }\item[{const Metric\+Type}]{metric = {\ttfamily MetricType()},  }\item[{const Initial\+Partition\+Policy}]{partitioner = {\ttfamily InitialPartitionPolicy()},  }\item[{const Empty\+Cluster\+Policy}]{empty\+Cluster\+Action = {\ttfamily EmptyClusterPolicy()} }\end{DoxyParamCaption})}
+
+
+
+Create a K-\/\+Means object and (optionally) set the parameters which K-\/\+Means will be run with. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Iterations} & Maximum number of iterations allowed before giving up (0 is valid, but the algorithm may never terminate). \\
+\hline
+{\em metric} & Optional Metric\+Type object; for when the metric has state it needs to store. \\
+\hline
+{\em partitioner} & Optional Initial\+Partition\+Policy object; for when a specially initialized partitioning policy is required. \\
+\hline
+{\em empty\+Cluster\+Action} & Optional Empty\+Cluster\+Policy object; for when a specially initialized empty cluster policy is required. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_a7f936cca3a7f4af330fb90da9e2f4d0b}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!Cluster@{Cluster}}
+\index{Cluster@{Cluster}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{Cluster()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily void Cluster (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const size\+\_\+t}]{clusters,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{assignments,  }\item[{arma\+::mat \&}]{centroids,  }\item[{const bool}]{initial\+Assignment\+Guess = {\ttfamily false},  }\item[{const bool}]{initial\+Centroid\+Guess = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Perform k-\/means clustering on the data, returning a list of cluster assignments and also the centroids of each cluster. 
+
+Optionally, the vector of assignments can be set to an initial guess of the cluster assignments; to do this, set initial\+Assignment\+Guess to true. Another way to set initial cluster guesses is to fill the centroids matrix with the centroid guesses, and then set initial\+Centroid\+Guess to true. initial\+Assignment\+Guess supersedes initial\+Centroid\+Guess, so if both are set to true, the assignments vector is used.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of matrix (arma\+::mat or arma\+::sp\+\_\+mat). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to cluster. \\
+\hline
+{\em clusters} & Number of clusters to compute. \\
+\hline
+{\em assignments} & Vector to store cluster assignments in. \\
+\hline
+{\em centroids} & Matrix in which centroids are stored. \\
+\hline
+{\em initial\+Assignment\+Guess} & If true, then it is assumed that assignments has a list of initial cluster assignments. \\
+\hline
+{\em initial\+Centroid\+Guess} & If true, then it is assumed that centroids contains the initial centroids of each cluster. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_a6826456ef16a5d9129bdcb14d4e7b601}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!Cluster@{Cluster}}
+\index{Cluster@{Cluster}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{Cluster()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily void Cluster (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const size\+\_\+t}]{clusters,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{assignments,  }\item[{const bool}]{initial\+Guess = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Perform k-\/means clustering on the data, returning a list of cluster assignments. 
+
+Optionally, the vector of assignments can be set to an initial guess of the cluster assignments; to do this, set initial\+Guess to true.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of matrix (arma\+::mat or arma\+::sp\+\_\+mat). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to cluster. \\
+\hline
+{\em clusters} & Number of clusters to compute. \\
+\hline
+{\em assignments} & Vector to store cluster assignments in. \\
+\hline
+{\em initial\+Guess} & If true, then it is assumed that assignments has a list of initial cluster assignments. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_a628f7259d908bb79c6076e6c8542bb37}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!Cluster@{Cluster}}
+\index{Cluster@{Cluster}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{Cluster()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Cluster (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{size\+\_\+t}]{clusters,  }\item[{arma\+::mat \&}]{centroids,  }\item[{const bool}]{initial\+Guess = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Perform k-\/means clustering on the data, returning the centroids of each cluster in the centroids matrix. 
+
+Optionally, the initial centroids can be specified by filling the centroids matrix with the initial centroids and specifying initial\+Guess = true.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of matrix (arma\+::mat or arma\+::sp\+\_\+mat). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to cluster. \\
+\hline
+{\em clusters} & Number of clusters to compute. \\
+\hline
+{\em centroids} & Matrix in which centroids are stored. \\
+\hline
+{\em initial\+Guess} & If true, then it is assumed that centroids contains the initial cluster centroids. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_a6fad56c8618d74d504739243a5acd350}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!EmptyClusterAction@{EmptyClusterAction}}
+\index{EmptyClusterAction@{EmptyClusterAction}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{EmptyClusterAction()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Empty\+Cluster\+Policy\& Empty\+Cluster\+Action (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the empty cluster policy. 
+
+
+
+Definition at line 177 of file kmeans.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_aa48f5728e3adee070ea825c121ebe25e}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!EmptyClusterAction@{EmptyClusterAction}}
+\index{EmptyClusterAction@{EmptyClusterAction}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{EmptyClusterAction()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Empty\+Cluster\+Policy\& Empty\+Cluster\+Action (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the empty cluster policy. 
+
+
+
+Definition at line 174 of file kmeans.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_acda675ab4ab86b95c92bc33bc391a61b}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!MaxIterations@{MaxIterations}}
+\index{MaxIterations@{MaxIterations}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{MaxIterations()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Max\+Iterations (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the maximum number of iterations. 
+
+
+
+Definition at line 161 of file kmeans.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_a420770944a5b0c7a852c4ec372c4a2d1}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!MaxIterations@{MaxIterations}}
+\index{MaxIterations@{MaxIterations}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{MaxIterations()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Max\+Iterations (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the maximum number of iterations. 
+
+
+
+Definition at line 159 of file kmeans.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_acc71d930ed90e73b2bc0c360835c5371}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!Metric@{Metric}}
+\index{Metric@{Metric}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{Metric()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Metric\+Type\& Metric (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the distance metric. 
+
+
+
+Definition at line 166 of file kmeans.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_aac4d643c62af7d9cc2a072aea10d2b32}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!Metric@{Metric}}
+\index{Metric@{Metric}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{Metric()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Metric\+Type\& Metric (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the distance metric. 
+
+
+
+Definition at line 164 of file kmeans.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_a4312395900bd208fb8f63c8d0a6f7c6c}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!Partitioner@{Partitioner}}
+\index{Partitioner@{Partitioner}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{Partitioner()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Initial\+Partition\+Policy\& Partitioner (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the initial partitioning policy. 
+
+
+
+Definition at line 171 of file kmeans.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_a7e66bff389c56384db8677109a05eb8b}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!Partitioner@{Partitioner}}
+\index{Partitioner@{Partitioner}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{Partitioner()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Initial\+Partition\+Policy\& Partitioner (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the initial partitioning policy. 
+
+
+
+Definition at line 169 of file kmeans.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1KMeans_a72d63b74c8166dff8e1a9006905ad9ca}} 
+\index{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$@{KMeans$<$ MetricType, InitialPartitionPolicy, EmptyClusterPolicy, LloydStepType, MatType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{version }\end{DoxyParamCaption})}
+
+
+
+Serialize the k-\/means object. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kmeans/\textbf{ kmeans.\+hpp}\end{DoxyCompactItemize}

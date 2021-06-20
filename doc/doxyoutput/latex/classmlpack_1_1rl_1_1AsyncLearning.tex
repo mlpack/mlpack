@@ -1,0 +1,275 @@
+\doxysection{Async\+Learning$<$ Worker\+Type, Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1rl_1_1AsyncLearning}\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+
+
+Wrapper of various asynchronous learning algorithms, e.\+g.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Async\+Learning} (\textbf{ Training\+Config} config, Network\+Type network, Policy\+Type policy, Updater\+Type updater=Updater\+Type(), Environment\+Type environment=Environment\+Type())
+\begin{DoxyCompactList}\small\item\em Construct an instance of the given async learning algorithm. \end{DoxyCompactList}\item 
+\textbf{ Training\+Config} \& \textbf{ Config} ()
+\begin{DoxyCompactList}\small\item\em Get training config. \end{DoxyCompactList}\item 
+const \textbf{ Training\+Config} \& \textbf{ Config} () const
+\begin{DoxyCompactList}\small\item\em Modify training config. \end{DoxyCompactList}\item 
+Environment\+Type \& \textbf{ Environment} ()
+\begin{DoxyCompactList}\small\item\em Get the environment. \end{DoxyCompactList}\item 
+const Environment\+Type \& \textbf{ Environment} () const
+\begin{DoxyCompactList}\small\item\em Modify the environment. \end{DoxyCompactList}\item 
+Network\+Type \& \textbf{ Network} ()
+\begin{DoxyCompactList}\small\item\em Get learning network. \end{DoxyCompactList}\item 
+const Network\+Type \& \textbf{ Network} () const
+\begin{DoxyCompactList}\small\item\em Modify learning network. \end{DoxyCompactList}\item 
+Policy\+Type \& \textbf{ Policy} ()
+\begin{DoxyCompactList}\small\item\em Get behavior policy. \end{DoxyCompactList}\item 
+const Policy\+Type \& \textbf{ Policy} () const
+\begin{DoxyCompactList}\small\item\em Modify behavior policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Measure $>$ }\\void \textbf{ Train} (Measure \&measure)
+\begin{DoxyCompactList}\small\item\em Starting async training. \end{DoxyCompactList}\item 
+Updater\+Type \& \textbf{ Updater} ()
+\begin{DoxyCompactList}\small\item\em Get optimizer. \end{DoxyCompactList}\item 
+const Updater\+Type \& \textbf{ Updater} () const
+\begin{DoxyCompactList}\small\item\em Modify optimizer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Worker\+Type, typename Environment\+Type, typename Network\+Type, typename Updater\+Type, typename Policy\+Type$>$\newline
+class mlpack\+::rl\+::\+Async\+Learning$<$ Worker\+Type, Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type $>$}
+
+Wrapper of various asynchronous learning algorithms, e.\+g. 
+
+async one-\/step Q-\/learning, async one-\/step Sarsa, async n-\/step Q-\/learning and async advantage actor-\/critic.
+
+For more details, see the following\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@inproceedings\{mnih2016asynchronous,}
+\DoxyCodeLine{  title     = \{Asynchronous methods \textcolor{keywordflow}{for} deep reinforcement learning\},}
+\DoxyCodeLine{  author    = \{Mnih, Volodymyr and Badia, Adria Puigdomenech and Mirza,}
+\DoxyCodeLine{               Mehdi and Graves, Alex and Lillicrap, Timothy and Harley,}
+\DoxyCodeLine{               Tim and Silver, David and Kavukcuoglu, Koray\},}
+\DoxyCodeLine{  booktitle = \{International Conference on Machine Learning\},}
+\DoxyCodeLine{  pages     = \{1928-\/-\/1937\},}
+\DoxyCodeLine{  year      = \{2016\}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Worker\+Type} & The type of the worker. \\
+\hline
+{\em Environment\+Type} & The type of reinforcement learning task. \\
+\hline
+{\em Network\+Type} & The type of the network model. \\
+\hline
+{\em Updater\+Type} & The type of the optimizer. \\
+\hline
+{\em Policy\+Type} & The type of the behavior policy. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 57 of file async\+\_\+learning.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_a107901cf3bb6acfdc35a11eb8721def9}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!AsyncLearning@{AsyncLearning}}
+\index{AsyncLearning@{AsyncLearning}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{AsyncLearning()}
+{\footnotesize\ttfamily \textbf{ Async\+Learning} (\begin{DoxyParamCaption}\item[{\textbf{ Training\+Config}}]{config,  }\item[{Network\+Type}]{network,  }\item[{Policy\+Type}]{policy,  }\item[{Updater\+Type}]{updater = {\ttfamily UpdaterType()},  }\item[{Environment\+Type}]{environment = {\ttfamily EnvironmentType()} }\end{DoxyParamCaption})}
+
+
+
+Construct an instance of the given async learning algorithm. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em config} & Hyper-\/parameters for training. \\
+\hline
+{\em network} & The network model. \\
+\hline
+{\em policy} & The behavior policy. \\
+\hline
+{\em updater} & The optimizer. \\
+\hline
+{\em environment} & The reinforcement learning task. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_a9428142f6a4c6d03657200fde2dda9c9}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!Config@{Config}}
+\index{Config@{Config}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{Config()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Training\+Config}\& Config (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get training config. 
+
+
+
+Definition at line 92 of file async\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_a10bc8bd4dab7fba79b770fdd1bb63a8f}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!Config@{Config}}
+\index{Config@{Config}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{Config()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const \textbf{ Training\+Config}\& Config (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify training config. 
+
+
+
+Definition at line 94 of file async\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_a59cc43eb892c46ea7c50e18fb78b9172}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!Environment@{Environment}}
+\index{Environment@{Environment}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{Environment()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Environment\+Type\& Environment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the environment. 
+
+
+
+Definition at line 112 of file async\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_adc517fd7b152925b4297e09a3bb4afe0}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!Environment@{Environment}}
+\index{Environment@{Environment}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{Environment()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Environment\+Type\& Environment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the environment. 
+
+
+
+Definition at line 114 of file async\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_a3802bdee893a3f86fb9fa08cbbc8239c}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!Network@{Network}}
+\index{Network@{Network}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{Network()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Network\+Type\& Network (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get learning network. 
+
+
+
+Definition at line 97 of file async\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_a0ce8c122193c6a20fd4b397bc8525f7d}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!Network@{Network}}
+\index{Network@{Network}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{Network()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Network\+Type\& Network (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify learning network. 
+
+
+
+Definition at line 99 of file async\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_a1ef80c7b0a3fb5468b9d920fef109d36}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!Policy@{Policy}}
+\index{Policy@{Policy}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{Policy()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Policy\+Type\& Policy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get behavior policy. 
+
+
+
+Definition at line 102 of file async\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_a04e9dd2c0ef71ea0e2cb126233652bfa}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!Policy@{Policy}}
+\index{Policy@{Policy}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{Policy()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Policy\+Type\& Policy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify behavior policy. 
+
+
+
+Definition at line 104 of file async\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_ae1533b4fc586f67a0c38757ed08a27c7}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!Train@{Train}}
+\index{Train@{Train}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{Train()}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{Measure \&}]{measure }\end{DoxyParamCaption})}
+
+
+
+Starting async training. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Measure} & The type of the measurement. It should be a callable object like 
+\begin{DoxyCode}{1}
+\DoxyCodeLine{\textcolor{keywordtype}{bool} foo(\textcolor{keywordtype}{double} reward);}
+
+\end{DoxyCode}
+ where reward is the total reward of a deterministic test episode, and the return value should indicate whether the training process is completed. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em measure} & The measurement instance. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_abbd240500a77c5f76a69eb874862d4ec}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!Updater@{Updater}}
+\index{Updater@{Updater}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{Updater()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Updater\+Type\& Updater (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get optimizer. 
+
+
+
+Definition at line 107 of file async\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1AsyncLearning_af345bba27115c3d09fa7b06fc1c984a4}} 
+\index{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}!Updater@{Updater}}
+\index{Updater@{Updater}!AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$@{AsyncLearning$<$ WorkerType, EnvironmentType, NetworkType, UpdaterType, PolicyType $>$}}
+\doxysubsubsection{Updater()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Updater\+Type\& Updater (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify optimizer. 
+
+
+
+Definition at line 109 of file async\+\_\+learning.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/\textbf{ async\+\_\+learning.\+hpp}\end{DoxyCompactItemize}

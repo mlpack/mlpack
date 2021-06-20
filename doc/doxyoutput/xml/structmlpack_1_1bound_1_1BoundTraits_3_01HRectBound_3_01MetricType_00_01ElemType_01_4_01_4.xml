@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1bound_1_1BoundTraits_3_01HRectBound_3_01MetricType_00_01ElemType_01_4_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::bound::BoundTraits&lt; HRectBound&lt; MetricType, ElemType &gt; &gt;</compoundname>
+    <includes refid="hrectbound_8hpp" local="no">hrectbound.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MetricType</type>
+      </param>
+      <param>
+        <type>typename ElemType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1bound_1_1BoundTraits_3_01HRectBound_3_01MetricType_00_01ElemType_01_4_01_4_1af41e456bf5ea6c0557730318fe660d2d" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool HasTightBounds</definition>
+        <argsstring></argsstring>
+        <name>HasTightBounds</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>These bounds are always tight for each dimension. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/hrectbound.hpp" line="254" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/hrectbound.hpp" bodystart="254" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/hrectbound.hpp" line="251" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/hrectbound.hpp" bodystart="252" bodyend="255"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1bound_1_1BoundTraits_3_01HRectBound_3_01MetricType_00_01ElemType_01_4_01_4_1af41e456bf5ea6c0557730318fe660d2d" prot="public" virt="non-virtual"><scope>mlpack::bound::BoundTraits&lt; HRectBound&lt; MetricType, ElemType &gt; &gt;</scope><name>HasTightBounds</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

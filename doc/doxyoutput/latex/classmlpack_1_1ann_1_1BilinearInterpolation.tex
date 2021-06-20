@@ -1,0 +1,375 @@
+\doxysection{Bilinear\+Interpolation$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1BilinearInterpolation}\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+
+
+Definition and Implementation of the Bilinear Interpolation Layer.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Bilinear\+Interpolation} ()
+\begin{DoxyCompactList}\small\item\em Create the Bilinear Interpolation object. \end{DoxyCompactList}\item 
+\textbf{ Bilinear\+Interpolation} (const size\+\_\+t in\+Row\+Size, const size\+\_\+t in\+Col\+Size, const size\+\_\+t out\+Row\+Size, const size\+\_\+t out\+Col\+Size, const size\+\_\+t depth)
+\begin{DoxyCompactList}\small\item\em The constructor for the Bilinear Interpolation. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gradient, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Forward pass through the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ In\+Col\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the column size of the input. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ In\+Col\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the column size of the input. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ In\+Depth} ()
+\begin{DoxyCompactList}\small\item\em Modify the depth of the input. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ In\+Depth} () const
+\begin{DoxyCompactList}\small\item\em Get the depth of the input. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Shape} () const
+\begin{DoxyCompactList}\small\item\em Get the shape of the input. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ In\+Row\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the row size of the input. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ In\+Row\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the row size of the input. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Out\+Col\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the column size of the output. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ Out\+Col\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the column size of the output. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Out\+Row\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the row size of the output. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ Out\+Row\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the row size of the output. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Bilinear\+Interpolation$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Definition and Implementation of the Bilinear Interpolation Layer. 
+
+Bilinear Interpolation is an mathematical technique, primarily used for scaling purposes. It is an extension of linear interpolation, for interpolating functions of two variables on a rectangular grid. The key idea is to perform linear interpolation first in one direction (e.\+g., along x-\/axis), and then again in the other direction (i.\+e., y-\/axis), on four different known points in the grid. This way, we represent any arbitrary point, present within the grid, as a function of those four points.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 39 of file bilinear\+\_\+interpolation.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a8373b0b3b099c636a8e438baadfa3baf}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!BilinearInterpolation@{BilinearInterpolation}}
+\index{BilinearInterpolation@{BilinearInterpolation}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{BilinearInterpolation()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Bilinear\+Interpolation} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the Bilinear Interpolation object. 
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_ad384fa6deb9134484dea8961a70df35f}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!BilinearInterpolation@{BilinearInterpolation}}
+\index{BilinearInterpolation@{BilinearInterpolation}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{BilinearInterpolation()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Bilinear\+Interpolation} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{in\+Row\+Size,  }\item[{const size\+\_\+t}]{in\+Col\+Size,  }\item[{const size\+\_\+t}]{out\+Row\+Size,  }\item[{const size\+\_\+t}]{out\+Col\+Size,  }\item[{const size\+\_\+t}]{depth }\end{DoxyParamCaption})}
+
+
+
+The constructor for the Bilinear Interpolation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Row\+Size} & Number of input rows. \\
+\hline
+{\em in\+Col\+Size} & Number of input columns. \\
+\hline
+{\em out\+Row\+Size} & Number of output rows. \\
+\hline
+{\em out\+Col\+Size} & Number of output columns. \\
+\hline
+{\em depth} & Number of input slices. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a633ef28f24c29c3438a9205786e817a3}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gradient,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass. Since the layer does not have any learn-\/able parameters, we just have to down-\/sample the gradient to make its size compatible with the input size.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The input matrix. \\
+\hline
+{\em gradient} & The computed backward gradient. \\
+\hline
+{\em output} & The resulting down-\/sampled output. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_ad6601342d560219ce951d554e69e5e87}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 94 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 92 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Forward pass through the layer. 
+
+The layer interpolates the matrix using the given Bilinear Interpolation method.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The input matrix. \\
+\hline
+{\em output} & The resulting interpolated output matrix. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a1df27f614ba64eb812606a2971005a5e}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!InColSize@{InColSize}}
+\index{InColSize@{InColSize}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InColSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& In\+Col\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the column size of the input. 
+
+
+
+Definition at line 104 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a3866c02efcb03b37b6df7bb8299c889b}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!InColSize@{InColSize}}
+\index{InColSize@{InColSize}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InColSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& In\+Col\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the column size of the input. 
+
+
+
+Definition at line 102 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a0ba6062be684978ed809bd7abe917789}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!InDepth@{InDepth}}
+\index{InDepth@{InDepth}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InDepth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& In\+Depth (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the depth of the input. 
+
+
+
+Definition at line 119 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_aacd90229a50c3271523c62556287d0d6}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!InDepth@{InDepth}}
+\index{InDepth@{InDepth}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InDepth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& In\+Depth (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the depth of the input. 
+
+
+
+Definition at line 117 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a13ab93f234244a68f6ade76287284447}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!InputShape@{InputShape}}
+\index{InputShape@{InputShape}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputShape()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Shape (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the shape of the input. 
+
+
+
+Definition at line 122 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a3057ecd053b3a1e5e744efeabc33fec3}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!InRowSize@{InRowSize}}
+\index{InRowSize@{InRowSize}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InRowSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& In\+Row\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the row size of the input. 
+
+
+
+Definition at line 99 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a913067c139b71a0e8ca5f1c28244becf}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!InRowSize@{InRowSize}}
+\index{InRowSize@{InRowSize}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InRowSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& In\+Row\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the row size of the input. 
+
+
+
+Definition at line 97 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a0430a9583e828be9d8b325221cfdf01b}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!OutColSize@{OutColSize}}
+\index{OutColSize@{OutColSize}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutColSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Out\+Col\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the column size of the output. 
+
+
+
+Definition at line 114 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_ad414d1f042fe0df8c4ccbbfcb1e3a482}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!OutColSize@{OutColSize}}
+\index{OutColSize@{OutColSize}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutColSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& Out\+Col\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the column size of the output. 
+
+
+
+Definition at line 112 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 89 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 87 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a5061d94d050e5c78e8374801db4c2a9b}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!OutRowSize@{OutRowSize}}
+\index{OutRowSize@{OutRowSize}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutRowSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Out\+Row\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the row size of the output. 
+
+
+
+Definition at line 109 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a0e4acfe53c207e4b3fba11525be06458}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!OutRowSize@{OutRowSize}}
+\index{OutRowSize@{OutRowSize}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutRowSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& Out\+Row\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the row size of the output. 
+
+
+
+Definition at line 107 of file bilinear\+\_\+interpolation.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1BilinearInterpolation_a65cba07328997659bec80b9879b15a51}} 
+\index{BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!BilinearInterpolation$<$ InputDataType, OutputDataType $>$@{BilinearInterpolation$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ bilinear\+\_\+interpolation.\+hpp}\end{DoxyCompactItemize}

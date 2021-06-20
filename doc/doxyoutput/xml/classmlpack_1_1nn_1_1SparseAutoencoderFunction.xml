@@ -1,0 +1,530 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1nn_1_1SparseAutoencoderFunction" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::nn::SparseAutoencoderFunction</compoundname>
+    <includes refid="sparse__autoencoder__function_8hpp" local="no">sparse_autoencoder_function.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a9424343761f8c4f4c1afe8f5b6bf471b" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double beta</definition>
+        <argsstring></argsstring>
+        <name>beta</name>
+        <briefdescription>
+<para>KL divergence parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="160" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ae5b1ec6954a3feec359c1a19d4059fb5" prot="private" static="no" mutable="no">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>The matrix of data points. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="150" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ad807388d5d1fc99793b27be860a1a204" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t hiddenSize</definition>
+        <argsstring></argsstring>
+        <name>hiddenSize</name>
+        <briefdescription>
+<para>Size of the hidden layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="156" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a146cdce9a82b3555d1d83744c74ee3f2" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat initialPoint</definition>
+        <argsstring></argsstring>
+        <name>initialPoint</name>
+        <briefdescription>
+<para>Initial parameter vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="152" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a3db359547eed8cfd48ca821d95f577af" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double lambda</definition>
+        <argsstring></argsstring>
+        <name>lambda</name>
+        <briefdescription>
+<para>L2-regularization parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="158" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a3ed57096651b587c2bf716fa78048153" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double rho</definition>
+        <argsstring></argsstring>
+        <name>rho</name>
+        <briefdescription>
+<para>Sparsity parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="162" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a0381a080118c46d9bd4177072d1e646c" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t visibleSize</definition>
+        <argsstring></argsstring>
+        <name>visibleSize</name>
+        <briefdescription>
+<para>Size of the visible layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="154" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a4a7a43662bc32bf255eb155815e3585c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SparseAutoencoderFunction</definition>
+        <argsstring>(const arma::mat &amp;data, const size_t visibleSize, const size_t hiddenSize, const double lambda=0.0001, const double beta=3, const double rho=0.01)</argsstring>
+        <name>SparseAutoencoderFunction</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>visibleSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>hiddenSize</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>lambda</declname>
+          <defval>0.0001</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>beta</declname>
+          <defval>3</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>rho</declname>
+          <defval>0.01</defval>
+        </param>
+        <briefdescription>
+<para>Construct the sparse autoencoder objective function with the given parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The data matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>visibleSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of input vector expected at the visible layer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hiddenSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of input vector expected at the hidden layer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lambda</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>L2-regularization parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>beta</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>KL divergence parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rho</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sparsity parameter. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="40" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ad1b9206255af52171cb88dfb7c326576" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Beta</definition>
+        <argsstring>() const</argsstring>
+        <name>Beta</name>
+        <briefdescription>
+<para>Gets the KL divergence parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="131" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="131" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ac48f9c3723fbeb5d97e8382b706bb20d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Beta</definition>
+        <argsstring>(const double b)</argsstring>
+        <name>Beta</name>
+        <param>
+          <type>const double</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Sets the KL divergence parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="125" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="125" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a6c7f979b684b70aab5bec8b09b5eb1a4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const arma::mat &amp;parameters) const</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+<para>Evaluates the objective function of the sparse autoencoder model using the given parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The cost function has terms for the reconstruction error, regularization cost and the sparsity cost. The objective function takes a low value when the model is able to reconstruct the data well using weights which are low in value and when the average activations of neurons in the hidden layers agrees well with the sparsity parameter &apos;rho&apos;.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current values of the model parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="60" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ac3e9aa612cb56d0d93f3259f4a8122bb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; GetInitialPoint</definition>
+        <argsstring>() const</argsstring>
+        <name>GetInitialPoint</name>
+        <briefdescription>
+<para>Return the initial point for the optimization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="86" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="86" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ab9a604f48072ce6c08443519ff787a73" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::mat &amp;parameters, arma::mat &amp;gradient) const</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Evaluates the gradient values of the objective function given the current set of parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function performs a feedforward pass and computes the error in reconstructing the data points. It then uses the backpropagation algorithm to compute the gradient values.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current values of the model parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix where gradient values will be stored. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="71" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a820e775a98d21ef0d06283a445e0813a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t HiddenSize</definition>
+        <argsstring>() const</argsstring>
+        <name>HiddenSize</name>
+        <briefdescription>
+<para>Gets the size of the hidden layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="107" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="107" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1aef6f7e6478c5268a8762768f2bed7cf3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void HiddenSize</definition>
+        <argsstring>(const size_t hidden)</argsstring>
+        <name>HiddenSize</name>
+        <param>
+          <type>const size_t</type>
+          <declname>hidden</declname>
+        </param>
+        <briefdescription>
+<para>Sets size of the hidden layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="101" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="101" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a97fbb8f95277b263fbb07eda614633ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>const arma::mat</type>
+        <definition>const arma::mat InitializeWeights</definition>
+        <argsstring>()</argsstring>
+        <name>InitializeWeights</name>
+        <briefdescription>
+<para>Initializes the parameters of the model to suitable values. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="48" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a53535041275cedd0ec3de67ca032aa94" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Lambda</definition>
+        <argsstring>() const</argsstring>
+        <name>Lambda</name>
+        <briefdescription>
+<para>Gets the L2-regularization parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="119" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="119" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1af476ed1916ad9b39eaddd7e7ac108f4b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Lambda</definition>
+        <argsstring>(const double l)</argsstring>
+        <name>Lambda</name>
+        <param>
+          <type>const double</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+<para>Sets the L2-regularization parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="113" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="113" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a309719b378c0bb1962982a8162e58e84" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Rho</definition>
+        <argsstring>() const</argsstring>
+        <name>Rho</name>
+        <briefdescription>
+<para>Gets the sparsity parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="143" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="143" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a97ac05cf618f1f137a4aa8fcd4e48539" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Rho</definition>
+        <argsstring>(const double r)</argsstring>
+        <name>Rho</name>
+        <param>
+          <type>const double</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Sets the sparsity parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="137" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="137" bodyend="140"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a78a48b3c359a36dbc1d6936d7c8ba276" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Sigmoid</definition>
+        <argsstring>(const arma::mat &amp;x, arma::mat &amp;output) const</argsstring>
+        <name>Sigmoid</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Returns the elementwise sigmoid of the passed matrix, where the sigmoid function of a real number &apos;x&apos; is [1 / (1 + exp(-x))]. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix of real values for which we require the sigmoid activation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="80" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="80" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a3cea635d43096bb8cd925c74dcdd1d48" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t VisibleSize</definition>
+        <argsstring>() const</argsstring>
+        <name>VisibleSize</name>
+        <briefdescription>
+<para>Gets size of the visible layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="95" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="95" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a56ba0c1d534d55c931e725914b00a100" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void VisibleSize</definition>
+        <argsstring>(const size_t visible)</argsstring>
+        <name>VisibleSize</name>
+        <param>
+          <type>const size_t</type>
+          <declname>visible</declname>
+        </param>
+        <briefdescription>
+<para>Sets size of the visible layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="89" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="89" bodyend="92"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This is a class for the sparse autoencoder objective function. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It can be used to create learning models like self-taught learning, stacked autoencoders, conditional random fields (CRFs), and so forth. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/sparse_autoencoder_function.hpp" bodystart="27" bodyend="163"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ac48f9c3723fbeb5d97e8382b706bb20d" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>Beta</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ad1b9206255af52171cb88dfb7c326576" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>Beta</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a9424343761f8c4f4c1afe8f5b6bf471b" prot="private" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>beta</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ae5b1ec6954a3feec359c1a19d4059fb5" prot="private" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>data</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a6c7f979b684b70aab5bec8b09b5eb1a4" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ac3e9aa612cb56d0d93f3259f4a8122bb" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>GetInitialPoint</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ab9a604f48072ce6c08443519ff787a73" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1ad807388d5d1fc99793b27be860a1a204" prot="private" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>hiddenSize</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1aef6f7e6478c5268a8762768f2bed7cf3" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>HiddenSize</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a820e775a98d21ef0d06283a445e0813a" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>HiddenSize</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a97fbb8f95277b263fbb07eda614633ea" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>InitializeWeights</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a146cdce9a82b3555d1d83744c74ee3f2" prot="private" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>initialPoint</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a3db359547eed8cfd48ca821d95f577af" prot="private" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>lambda</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1af476ed1916ad9b39eaddd7e7ac108f4b" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>Lambda</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a53535041275cedd0ec3de67ca032aa94" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>Lambda</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a3ed57096651b587c2bf716fa78048153" prot="private" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>rho</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a97ac05cf618f1f137a4aa8fcd4e48539" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>Rho</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a309719b378c0bb1962982a8162e58e84" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>Rho</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a78a48b3c359a36dbc1d6936d7c8ba276" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>Sigmoid</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a4a7a43662bc32bf255eb155815e3585c" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>SparseAutoencoderFunction</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a56ba0c1d534d55c931e725914b00a100" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>VisibleSize</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a3cea635d43096bb8cd925c74dcdd1d48" prot="public" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>VisibleSize</name></member>
+      <member refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction_1a0381a080118c46d9bd4177072d1e646c" prot="private" virt="non-virtual"><scope>mlpack::nn::SparseAutoencoderFunction</scope><name>visibleSize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

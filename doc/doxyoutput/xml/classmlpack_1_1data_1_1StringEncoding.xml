@@ -1,0 +1,685 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1data_1_1StringEncoding" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::StringEncoding</compoundname>
+    <includes refid="string__encoding_8hpp" local="no">string_encoding.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename EncodingPolicyType</type>
+      </param>
+      <param>
+        <type>typename DictionaryType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1StringEncoding_1ae3946020d167acdabd4ae203fd48c6a4" prot="private" static="no" mutable="no">
+        <type>DictionaryType</type>
+        <definition>DictionaryType dictionary</definition>
+        <argsstring></argsstring>
+        <name>dictionary</name>
+        <briefdescription>
+<para>The dictionary that contains the tokens and their labels. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="209" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1StringEncoding_1a6760add7010ddd8035388873996bc127" prot="private" static="no" mutable="no">
+        <type>EncodingPolicyType</type>
+        <definition>EncodingPolicyType encodingPolicy</definition>
+        <argsstring></argsstring>
+        <name>encodingPolicy</name>
+        <briefdescription>
+<para>The encoding policy object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="207" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a6e2ca577ba21593168e40b2a501df04b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ...</type>
+            <declname>ArgTypes</declname>
+            <defname>ArgTypes</defname>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>StringEncoding</definition>
+        <argsstring>(ArgTypes &amp;&amp;... args)</argsstring>
+        <name>StringEncoding</name>
+        <param>
+          <type>ArgTypes &amp;&amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Pass the given arguments to the policy constructor and create the <ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref> object using the policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="43" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a2092e5bc9779c37fa1c8fa1e00f16601" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>StringEncoding</definition>
+        <argsstring>(const StringEncoding &amp;)</argsstring>
+        <name>StringEncoding</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref> &amp;</type>
+        </param>
+        <briefdescription>
+<para>Default copy-constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="58" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1ae43e1effe91f99f1e92e310656f78f06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>StringEncoding</definition>
+        <argsstring>(EncodingPolicyType encodingPolicy)</argsstring>
+        <name>StringEncoding</name>
+        <param>
+          <type>EncodingPolicyType</type>
+          <declname>encodingPolicy</declname>
+        </param>
+        <briefdescription>
+<para>Construct the class from the given encoding policy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>encodingPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The given encoding policy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="50" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a80b1b7c1a2c84ed87b58de55a27f0c87" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>StringEncoding</definition>
+        <argsstring>(StringEncoding &amp;&amp;)</argsstring>
+        <name>StringEncoding</name>
+        <param>
+          <type><ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+<para>Default move-constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="64" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a7bfda9fe4da48578f104522296e7bc5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>StringEncoding</definition>
+        <argsstring>(StringEncoding &amp;)</argsstring>
+        <name>StringEncoding</name>
+        <param>
+          <type><ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref> &amp;</type>
+        </param>
+        <briefdescription>
+<para>A variant of the copy constructor for non-constant objects. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="55" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1aa71d36872f416feaa853788a7a7a7ef8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Clear</definition>
+        <argsstring>()</argsstring>
+        <name>Clear</name>
+        <briefdescription>
+<para>Clear the dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="91" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a09334684a4bb6a10a48b149bbc5c35e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TokenizerType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void CreateMap</definition>
+        <argsstring>(const std::string &amp;input, const TokenizerType &amp;tokenizer)</argsstring>
+        <name>CreateMap</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const TokenizerType &amp;</type>
+          <declname>tokenizer</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the dictionary using the given corpus. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>TokenizerType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the tokenizer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Corpus of text to encode. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tokenizer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tokenizer object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+The tokenization algorithm has to be an object with two public methods:<orderedlist>
+<listitem><para>operator() which accepts a reference to boost::string_view, extracts the next token from the given view, removes the prefix containing the extracted token and returns the token;</para>
+</listitem><listitem><para>IsTokenEmpty() that accepts a token and returns true if the given token is empty. </para>
+</listitem></orderedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="85" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a7e13f2329a9be7393a4e147e200fe9f0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>DictionaryType &amp;</type>
+        <definition>DictionaryType&amp; Dictionary</definition>
+        <argsstring>()</argsstring>
+        <name>Dictionary</name>
+        <briefdescription>
+<para>Modify the dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="126" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" bodystart="126" bodyend="126"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1aadfe9ead3a6d93ceb91fb8b69ae75aff" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const DictionaryType &amp;</type>
+        <definition>const DictionaryType&amp; Dictionary</definition>
+        <argsstring>() const</argsstring>
+        <name>Dictionary</name>
+        <briefdescription>
+<para>Return the dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="124" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" bodystart="124" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a6170e90e6359284924d3cbf2acdbf75f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename OutputType</type>
+          </param>
+          <param>
+            <type>typename TokenizerType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Encode</definition>
+        <argsstring>(const std::vector&lt; std::string &gt; &amp;input, OutputType &amp;output, const TokenizerType &amp;tokenizer)</argsstring>
+        <name>Encode</name>
+        <param>
+          <type>const std::vector&lt; std::string &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>OutputType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const TokenizerType &amp;</type>
+          <declname>tokenizer</declname>
+        </param>
+        <briefdescription>
+<para>Encode the given text and write the result to the given output. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The encoder writes data in the column-major order or in the row-major order depending on the output data type.</para>
+<para>If the output type is either arma::mat or arma::sp_mat then the function writes it in the column-major order. If the output type is 2D std::vector then the function writes it in the row major order.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>OutputType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output container. The function supports the following types: arma::mat, arma::sp_mat, std::vector&lt;std::vector&lt;&gt;&gt;. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>TokenizerType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the tokenizer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Corpus of text to encode. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output container to store the result. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tokenizer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tokenizer object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+The tokenization algorithm has to be an object with two public methods:<orderedlist>
+<listitem><para>operator() which accepts a reference to boost::string_view, extracts the next token from the given view, removes the prefix containing the extracted token and returns the token;</para>
+</listitem><listitem><para>IsTokenEmpty() that accepts a token and returns true if the given token is empty. </para>
+</listitem></orderedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="119" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a966fb1ddae12f03d28700d7520d9a625" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>EncodingPolicyType &amp;</type>
+        <definition>EncodingPolicyType&amp; EncodingPolicy</definition>
+        <argsstring>()</argsstring>
+        <name>EncodingPolicy</name>
+        <briefdescription>
+<para>Modify the encoding policy object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="131" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" bodystart="131" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a123b735db5cf6ef4bf38b6a0b925fa3d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const EncodingPolicyType &amp;</type>
+        <definition>const EncodingPolicyType&amp; EncodingPolicy</definition>
+        <argsstring>() const</argsstring>
+        <name>EncodingPolicy</name>
+        <briefdescription>
+<para>Return the encoding policy object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="129" column="28" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" bodystart="129" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a65bb5577416cf451d1bd2e88d7bb77f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref> &amp;</type>
+        <definition>StringEncoding&amp; operator=</definition>
+        <argsstring>(const StringEncoding &amp;)=default</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref> &amp;</type>
+        </param>
+        <briefdescription>
+<para>Default copy assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="61" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a78607e4296ac26000b06e0c875a814a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref> &amp;</type>
+        <definition>StringEncoding&amp; operator=</definition>
+        <argsstring>(StringEncoding &amp;&amp;)=default</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+<para>Default move assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="67" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the class to the given archive. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="137" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1a33d81232dc983e17a017f6fa32d08ad1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename OutputType</type>
+          </param>
+          <param>
+            <type>typename TokenizerType</type>
+          </param>
+          <param>
+            <type>typename PolicyType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void EncodeHelper</definition>
+        <argsstring>(const std::vector&lt; std::string &gt; &amp;input, OutputType &amp;output, const TokenizerType &amp;tokenizer, PolicyType &amp;policy)</argsstring>
+        <name>EncodeHelper</name>
+        <param>
+          <type>const std::vector&lt; std::string &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>OutputType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const TokenizerType &amp;</type>
+          <declname>tokenizer</declname>
+        </param>
+        <param>
+          <type>PolicyType &amp;</type>
+          <declname>policy</declname>
+        </param>
+        <briefdescription>
+<para>A helper function to encode the given text and write the result to the given output. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The encoder writes data in the column-major order or in the row-major order depending on the output data type.</para>
+<para>If the output type is either arma::mat or arma::sp_mat then the function writes it in the column-major order. If the output type is 2D std::vector then the function writes it in the row major order.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>OutputType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output container. The function supports the following types: arma::mat, arma::sp_mat, std::vector&lt;std::vector&lt;&gt;&gt;. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>TokenizerType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the tokenizer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>PolicyType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the encoding policy. It has to be equal to EncodingPolicyType.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Corpus of text to encode. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output container to store the result. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tokenizer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tokenizer object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>policy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The policy object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+The tokenization algorithm has to be an object with two public methods:<orderedlist>
+<listitem><para>operator() which accepts a reference to boost::string_view, extracts the next token from the given view, removes the prefix containing the extracted token and returns the token;</para>
+</listitem><listitem><para>IsTokenEmpty() that accepts a token and returns true if the given token is empty. </para>
+</listitem></orderedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="169" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1StringEncoding_1af430a7ed4dfa32be84d763a6c3d5fd5f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TokenizerType</type>
+          </param>
+          <param>
+            <type>typename PolicyType</type>
+          </param>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void EncodeHelper</definition>
+        <argsstring>(const std::vector&lt; std::string &gt; &amp;input, std::vector&lt; std::vector&lt; ElemType &gt;&gt; &amp;output, const TokenizerType &amp;tokenizer, PolicyType &amp;policy, typename std::enable_if&lt; StringEncodingPolicyTraits&lt; PolicyType &gt;::onePassEncoding &gt;::type *=0)</argsstring>
+        <name>EncodeHelper</name>
+        <param>
+          <type>const std::vector&lt; std::string &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; ElemType &gt;&gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const TokenizerType &amp;</type>
+          <declname>tokenizer</declname>
+        </param>
+        <param>
+          <type>PolicyType &amp;</type>
+          <declname>policy</declname>
+        </param>
+        <param>
+          <type>typename std::enable_if&lt; <ref refid="structmlpack_1_1data_1_1StringEncodingPolicyTraits" kindref="compound">StringEncodingPolicyTraits</ref>&lt; PolicyType &gt;::onePassEncoding &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>A helper function to encode the given text and write the result to the given output. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is an optimized overload for policies that support the one pass encoding algorithm. The encoder writes data in the row-major order.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>TokenizerType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the tokenizer. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>PolicyType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the encoding policy. It has to be equal to EncodingPolicyType. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ElemType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output values.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Corpus of text to encode. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output container to store the result. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tokenizer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tokenizer object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>policy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The policy object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+The tokenization algorithm has to be an object with two public methods:<orderedlist>
+<listitem><para>operator() which accepts a reference to boost::string_view, extracts the next token from the given view, removes the prefix containing the extracted token and returns the token;</para>
+</listitem><listitem><para>IsTokenEmpty() that accepts a token and returns true if the given token is empty. </para>
+</listitem></orderedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="198" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The class translates a set of strings into numbers using various encoding algorithms. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The encoder writes data either in the column-major order or in the row-major order depending on the output data type.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>EncodingPolicyType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the encoding algorithm itself. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DictionaryType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the dictionary. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding.hpp" bodystart="36" bodyend="210"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1aa71d36872f416feaa853788a7a7a7ef8" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>Clear</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a09334684a4bb6a10a48b149bbc5c35e1" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>CreateMap</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1ae3946020d167acdabd4ae203fd48c6a4" prot="private" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>dictionary</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1aadfe9ead3a6d93ceb91fb8b69ae75aff" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>Dictionary</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a7e13f2329a9be7393a4e147e200fe9f0" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>Dictionary</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a6170e90e6359284924d3cbf2acdbf75f" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>Encode</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a33d81232dc983e17a017f6fa32d08ad1" prot="private" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>EncodeHelper</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1af430a7ed4dfa32be84d763a6c3d5fd5f" prot="private" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>EncodeHelper</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a6760add7010ddd8035388873996bc127" prot="private" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>encodingPolicy</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a123b735db5cf6ef4bf38b6a0b925fa3d" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>EncodingPolicy</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a966fb1ddae12f03d28700d7520d9a625" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>EncodingPolicy</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a65bb5577416cf451d1bd2e88d7bb77f4" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a78607e4296ac26000b06e0c875a814a0" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a6e2ca577ba21593168e40b2a501df04b" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>StringEncoding</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1ae43e1effe91f99f1e92e310656f78f06" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>StringEncoding</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a7bfda9fe4da48578f104522296e7bc5f" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>StringEncoding</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a2092e5bc9779c37fa1c8fa1e00f16601" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>StringEncoding</name></member>
+      <member refid="classmlpack_1_1data_1_1StringEncoding_1a80b1b7c1a2c84ed87b58de55a27f0c87" prot="public" virt="non-virtual"><scope>mlpack::data::StringEncoding</scope><name>StringEncoding</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,2317 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="param_8hpp" kind="file" language="C++">
+    <compoundname>param.hpp</compoundname>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1data">mlpack::data</innernamespace>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" prot="public" static="no">
+        <name>BINDING_EXAMPLE</name>
+        <param><defname>EXAMPLE</defname></param>
+        <initializer>      static \
+      <ref refid="classmlpack_1_1util_1_1Example" kindref="compound">mlpack::util::Example</ref> \
+      JOIN(JOIN(io_programexample_dummy_object_, __LINE__), opt) = \
+      <ref refid="classmlpack_1_1util_1_1Example" kindref="compound">mlpack::util::Example</ref>( \
+      []() { return(std::string(EXAMPLE)); });</initializer>
+        <briefdescription>
+<para>Specify the example of a binding. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Mutiple instance of this macro can be present in your program! Therefore, use it in the main.cpp (or corresponding binding) in your program.</para>
+<para><simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a59a38dfe16c56a278bd89817216a3739" kindref="member">PARAM_FLAG()</ref>, <ref refid="param_8hpp_1a627025f18abd2735345f03fd733ccd9b" kindref="member">PARAM_INT_IN()</ref>, <ref refid="param_8hpp_1a14e7059294c684b01128819daea241d4" kindref="member">PARAM_DOUBLE_IN()</ref>, <ref refid="param_8hpp_1a9514ae93b51ba592bc3299da8326bb80" kindref="member">PARAM_STRING_IN()</ref>, <ref refid="param_8hpp_1a8431e7deab47987cfdb2ae3f242c72bc" kindref="member">PARAM_VECTOR_IN()</ref>, <ref refid="param_8hpp_1a50b8bfabec3f0b64fb6e15837da50aa0" kindref="member">PARAM_INT_OUT()</ref>, <ref refid="param_8hpp_1aa39a5fa65308f2d5581c01cfae5f9203" kindref="member">PARAM_DOUBLE_OUT()</ref>, <ref refid="param_8hpp_1ac24919def62bd93f462cc3ff9d555cbc" kindref="member">PARAM_VECTOR_OUT()</ref>, <ref refid="param_8hpp_1a59102e55c5d69d23909a75bd6093f816" kindref="member">PARAM_INT_IN_REQ()</ref>, <ref refid="param_8hpp_1a1236858e19f2e8be7da663d4aecfac9f" kindref="member">PARAM_DOUBLE_IN_REQ()</ref>, <ref refid="param_8hpp_1a39f209691f1ca8c649a40cb22cea5408" kindref="member">PARAM_STRING_IN_REQ()</ref>, <ref refid="param_8hpp_1a83c3be131e322e0a661c8ddf9c3c7df6" kindref="member">PARAM_VECTOR_IN_REQ()</ref>, PARAM_INT_OUT_REQ(), PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>EXAMPLE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Long string describing a simple usage example.. Newlines should not be used here; this is taken care of by IO (however, you can explicitly specify newlines to denote new paragraphs). You can also use printing macros like PRINT_CALL(), PRINT_DATASET(), and others. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="127" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" prot="public" static="no">
+        <name>BINDING_LONG_DESC</name>
+        <param><defname>LONG_DESC</defname></param>
+        <initializer>    static \
+    <ref refid="classmlpack_1_1util_1_1LongDescription" kindref="compound">mlpack::util::LongDescription</ref> \
+    io_programlong_desc_dummy_object = <ref refid="classmlpack_1_1util_1_1LongDescription" kindref="compound">mlpack::util::LongDescription</ref>( \
+    []() { return std::string(LONG_DESC); });</initializer>
+        <briefdescription>
+<para>Specify the long description of a binding. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Only one instance of this macro present in your program! Therefore, use it in the main.cpp (or corresponding binding) in your program.</para>
+<para><simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a59a38dfe16c56a278bd89817216a3739" kindref="member">PARAM_FLAG()</ref>, <ref refid="param_8hpp_1a627025f18abd2735345f03fd733ccd9b" kindref="member">PARAM_INT_IN()</ref>, <ref refid="param_8hpp_1a14e7059294c684b01128819daea241d4" kindref="member">PARAM_DOUBLE_IN()</ref>, <ref refid="param_8hpp_1a9514ae93b51ba592bc3299da8326bb80" kindref="member">PARAM_STRING_IN()</ref>, <ref refid="param_8hpp_1a8431e7deab47987cfdb2ae3f242c72bc" kindref="member">PARAM_VECTOR_IN()</ref>, <ref refid="param_8hpp_1a50b8bfabec3f0b64fb6e15837da50aa0" kindref="member">PARAM_INT_OUT()</ref>, <ref refid="param_8hpp_1aa39a5fa65308f2d5581c01cfae5f9203" kindref="member">PARAM_DOUBLE_OUT()</ref>, <ref refid="param_8hpp_1ac24919def62bd93f462cc3ff9d555cbc" kindref="member">PARAM_VECTOR_OUT()</ref>, <ref refid="param_8hpp_1a59102e55c5d69d23909a75bd6093f816" kindref="member">PARAM_INT_IN_REQ()</ref>, <ref refid="param_8hpp_1a1236858e19f2e8be7da663d4aecfac9f" kindref="member">PARAM_DOUBLE_IN_REQ()</ref>, <ref refid="param_8hpp_1a39f209691f1ca8c649a40cb22cea5408" kindref="member">PARAM_STRING_IN_REQ()</ref>, <ref refid="param_8hpp_1a83c3be131e322e0a661c8ddf9c3c7df6" kindref="member">PARAM_VECTOR_IN_REQ()</ref>, PARAM_INT_OUT_REQ(), PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>LONG_DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Long string describing what the program does. Newlines should not be used here; this is taken care of by IO (however, you can explicitly specify newlines to denote new paragraphs). You can also use printing macros like PRINT_PARAM_STRING(), PRINT_DATASET(), and others. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="98" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" prot="public" static="no">
+        <name>BINDING_NAME</name>
+        <param><defname>NAME</defname></param>
+        <initializer>    static \
+    <ref refid="classmlpack_1_1util_1_1ProgramName" kindref="compound">mlpack::util::ProgramName</ref> \
+    io_programname_dummy_object = <ref refid="classmlpack_1_1util_1_1ProgramName" kindref="compound">mlpack::util::ProgramName</ref>(NAME);</initializer>
+        <briefdescription>
+<para>Specify the program name of a binding. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Only one instance of this macro should be present in your program! Therefore, use it in the main.cpp (or corresponding binding) in your program.</para>
+<para><simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a59a38dfe16c56a278bd89817216a3739" kindref="member">PARAM_FLAG()</ref>, <ref refid="param_8hpp_1a627025f18abd2735345f03fd733ccd9b" kindref="member">PARAM_INT_IN()</ref>, <ref refid="param_8hpp_1a14e7059294c684b01128819daea241d4" kindref="member">PARAM_DOUBLE_IN()</ref>, <ref refid="param_8hpp_1a9514ae93b51ba592bc3299da8326bb80" kindref="member">PARAM_STRING_IN()</ref>, <ref refid="param_8hpp_1a8431e7deab47987cfdb2ae3f242c72bc" kindref="member">PARAM_VECTOR_IN()</ref>, <ref refid="param_8hpp_1a50b8bfabec3f0b64fb6e15837da50aa0" kindref="member">PARAM_INT_OUT()</ref>, <ref refid="param_8hpp_1aa39a5fa65308f2d5581c01cfae5f9203" kindref="member">PARAM_DOUBLE_OUT()</ref>, <ref refid="param_8hpp_1ac24919def62bd93f462cc3ff9d555cbc" kindref="member">PARAM_VECTOR_OUT()</ref>, <ref refid="param_8hpp_1a59102e55c5d69d23909a75bd6093f816" kindref="member">PARAM_INT_IN_REQ()</ref>, <ref refid="param_8hpp_1a1236858e19f2e8be7da663d4aecfac9f" kindref="member">PARAM_DOUBLE_IN_REQ()</ref>, <ref refid="param_8hpp_1a39f209691f1ca8c649a40cb22cea5408" kindref="member">PARAM_STRING_IN_REQ()</ref>, <ref refid="param_8hpp_1a83c3be131e322e0a661c8ddf9c3c7df6" kindref="member">PARAM_VECTOR_IN_REQ()</ref>, PARAM_INT_OUT_REQ(), PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>NAME</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Short string representing the name of the program. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="57" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" prot="public" static="no">
+        <name>BINDING_SEE_ALSO</name>
+        <param><defname>DESCRIPTION</defname></param>
+        <param><defname>LINK</defname></param>
+        <initializer>      static \
+      <ref refid="classmlpack_1_1util_1_1SeeAlso" kindref="compound">mlpack::util::SeeAlso</ref> \
+      JOIN(JOIN(io_programsee_also_dummy_object_, __LINE__), opt) = \
+      <ref refid="classmlpack_1_1util_1_1SeeAlso" kindref="compound">mlpack::util::SeeAlso</ref>(DESCRIPTION, LINK);</initializer>
+        <briefdescription>
+<para>Specify the see-also of a binding. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Mutiple instance of this macro can be present in your program! Therefore, use it in the main.cpp (or corresponding binding) in your program.</para>
+<para><simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a59a38dfe16c56a278bd89817216a3739" kindref="member">PARAM_FLAG()</ref>, <ref refid="param_8hpp_1a627025f18abd2735345f03fd733ccd9b" kindref="member">PARAM_INT_IN()</ref>, <ref refid="param_8hpp_1a14e7059294c684b01128819daea241d4" kindref="member">PARAM_DOUBLE_IN()</ref>, <ref refid="param_8hpp_1a9514ae93b51ba592bc3299da8326bb80" kindref="member">PARAM_STRING_IN()</ref>, <ref refid="param_8hpp_1a8431e7deab47987cfdb2ae3f242c72bc" kindref="member">PARAM_VECTOR_IN()</ref>, <ref refid="param_8hpp_1a50b8bfabec3f0b64fb6e15837da50aa0" kindref="member">PARAM_INT_OUT()</ref>, <ref refid="param_8hpp_1aa39a5fa65308f2d5581c01cfae5f9203" kindref="member">PARAM_DOUBLE_OUT()</ref>, <ref refid="param_8hpp_1ac24919def62bd93f462cc3ff9d555cbc" kindref="member">PARAM_VECTOR_OUT()</ref>, <ref refid="param_8hpp_1a59102e55c5d69d23909a75bd6093f816" kindref="member">PARAM_INT_IN_REQ()</ref>, <ref refid="param_8hpp_1a1236858e19f2e8be7da663d4aecfac9f" kindref="member">PARAM_DOUBLE_IN_REQ()</ref>, <ref refid="param_8hpp_1a39f209691f1ca8c649a40cb22cea5408" kindref="member">PARAM_STRING_IN_REQ()</ref>, <ref refid="param_8hpp_1a83c3be131e322e0a661c8ddf9c3c7df6" kindref="member">PARAM_VECTOR_IN_REQ()</ref>, PARAM_INT_OUT_REQ(), PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().</para>
+</simplesect>
+Provide a link for a binding&apos;s &quot;see also&quot; documentation section, which is primarily (but not necessarily exclusively) used by the Markdown bindings This link can be specified by calling SEE_ALSO(&quot;description&quot;, &quot;link&quot;), where &quot;description&quot; is the description of the link and &quot;link&quot; may be one of the following:</para>
+<para><itemizedlist>
+<listitem><para>A direct URL, starting with <ulink url="http://">http://</ulink> or <ulink url="https://">https://</ulink>.</para>
+</listitem><listitem><para>A page anchor for documentation, referencing another binding by its CMake binding name, i.e. &quot;#knn&quot;.</para>
+</listitem><listitem><para>A link to a Doxygen page, using the mangled Doxygen name after a &apos;@doxygen/&apos;, i.e., &quot;@doxygen/mlpack1_1_adaboost1_1_AdaBoost&quot;. </para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="163" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" prot="public" static="no">
+        <name>BINDING_SHORT_DESC</name>
+        <param><defname>SHORT_DESC</defname></param>
+        <initializer>    static \
+    <ref refid="classmlpack_1_1util_1_1ShortDescription" kindref="compound">mlpack::util::ShortDescription</ref> \
+    io_programshort_desc_dummy_object = <ref refid="classmlpack_1_1util_1_1ShortDescription" kindref="compound">mlpack::util::ShortDescription</ref>( \
+    SHORT_DESC);</initializer>
+        <briefdescription>
+<para>Specify the short description of a binding. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Only one instance of this macro should be present in your program! Therefore, use it in the main.cpp (or corresponding binding) in your program.</para>
+<para><simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a59a38dfe16c56a278bd89817216a3739" kindref="member">PARAM_FLAG()</ref>, <ref refid="param_8hpp_1a627025f18abd2735345f03fd733ccd9b" kindref="member">PARAM_INT_IN()</ref>, <ref refid="param_8hpp_1a14e7059294c684b01128819daea241d4" kindref="member">PARAM_DOUBLE_IN()</ref>, <ref refid="param_8hpp_1a9514ae93b51ba592bc3299da8326bb80" kindref="member">PARAM_STRING_IN()</ref>, <ref refid="param_8hpp_1a8431e7deab47987cfdb2ae3f242c72bc" kindref="member">PARAM_VECTOR_IN()</ref>, <ref refid="param_8hpp_1a50b8bfabec3f0b64fb6e15837da50aa0" kindref="member">PARAM_INT_OUT()</ref>, <ref refid="param_8hpp_1aa39a5fa65308f2d5581c01cfae5f9203" kindref="member">PARAM_DOUBLE_OUT()</ref>, <ref refid="param_8hpp_1ac24919def62bd93f462cc3ff9d555cbc" kindref="member">PARAM_VECTOR_OUT()</ref>, <ref refid="param_8hpp_1a59102e55c5d69d23909a75bd6093f816" kindref="member">PARAM_INT_IN_REQ()</ref>, <ref refid="param_8hpp_1a1236858e19f2e8be7da663d4aecfac9f" kindref="member">PARAM_DOUBLE_IN_REQ()</ref>, <ref refid="param_8hpp_1a39f209691f1ca8c649a40cb22cea5408" kindref="member">PARAM_STRING_IN_REQ()</ref>, <ref refid="param_8hpp_1a83c3be131e322e0a661c8ddf9c3c7df6" kindref="member">PARAM_VECTOR_IN_REQ()</ref>, PARAM_INT_OUT_REQ(), PARAM_DOUBLE_OUT_REQ(), PARAM_VECTOR_OUT_REQ(), PARAM_STRING_OUT_REQ().</para>
+</simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>SHORT_DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Short two-sentence description of the program; it should describe what the program implements and does, and a quick overview of how it can be used and what it should be used for. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="76" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" prot="public" static="no">
+        <name>PARAM</name>
+        <param><defname>T</defname></param>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>NAME</defname></param>
+        <param><defname>REQ</defname></param>
+        <param><defname>IN</defname></param>
+        <param><defname>TRANS</defname></param>
+        <param><defname>DEF</defname></param>
+        <initializer>      static mlpack::util::Option&lt;T&gt; \
+      JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
+      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, testName);</initializer>
+        <briefdescription>
+<para>Define the <ref refid="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" kindref="member">PARAM()</ref>, <ref refid="param_8hpp_1a1e4f86c8f4de8e3f932c4cedbe4d8157" kindref="member">PARAM_MODEL()</ref> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Don&apos;t use this function; use the other ones above that call it. Note that we are using the <bold>LINE</bold> macro for naming these actual parameters when <bold>COUNTER</bold> does not exist, which is a bit of an ugly hack... but this is the preprocessor, after all. We don&apos;t have much choice other than ugliness.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Alias for this parameter (one letter). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DEF</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default value of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>REQ</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not parameter is required (boolean value). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1277" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1277" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1afef4dcbf5fa0b81c4daf50f77b4391af" prot="public" static="no">
+        <name>PARAM_COL</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>REQ</defname></param>
+        <param><defname>TRANS</defname></param>
+        <param><defname>IN</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" kindref="member">PARAM</ref>(arma::vec, ID, DESC, ALIAS, &quot;arma::vec&quot;, REQ, IN, TRANS, \
+        arma::vec());</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1228" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1228" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a36713e2f7157727157af4a92f1c2ad5d" prot="public" static="no">
+        <name>PARAM_COL_IN</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1afef4dcbf5fa0b81c4daf50f77b4391af" kindref="member">PARAM_COL</ref>(ID, DESC, ALIAS, false, true, true)</initializer>
+        <briefdescription>
+<para>Define a vector input parameter (type arma::vec). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the vector parameter was &quot;vec&quot;, the user could specify that the &quot;vec&quot; vector was held in vec.csv by giving the parameter:</para>
+<para><programlisting><codeline><highlight class="normal">--vec_file<sp/>vector.csv</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000018"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="670" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="670" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1ad390258cf9c175da3c77ac7e63359417" prot="public" static="no">
+        <name>PARAM_COL_IN_REQ</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1afef4dcbf5fa0b81c4daf50f77b4391af" kindref="member">PARAM_COL</ref>(ID, DESC, ALIAS, true, true, true)</initializer>
+        <briefdescription>
+<para>Define a required vector input parameter (type arma::vec). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the vector parameter was &quot;vec&quot;, the user could specify that the &quot;vec&quot; vector was held in vec.csv by giving the parameter:</para>
+<para><programlisting><codeline><highlight class="normal">--vec_file<sp/>vector.csv</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000019"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="698" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="698" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a07120f558c6c681b2a27a719a7c39bd2" prot="public" static="no">
+        <name>PARAM_COL_OUT</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1afef4dcbf5fa0b81c4daf50f77b4391af" kindref="member">PARAM_COL</ref>(ID, DESC, ALIAS, false, true, false)</initializer>
+        <briefdescription>
+<para>Define a vector output parameter (type arma::vec). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the program terminates, the vector will be saved to whatever it was set to during the program. From the command-line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with &quot;_file&quot; appended. So, for instance, if the name of the output vector parameter was &quot;vec&quot;, the user could specify that the &quot;vec&quot; vector should be saved in vector.csv by giving the parameter:</para>
+<para><programlisting><codeline><highlight class="normal">--vec_file<sp/>vector.csv</highlight></codeline>
+</programlisting></para>
+<para>The output vector will not be printed on stdout, like the other output option types.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000023"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="816" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="816" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a14e7059294c684b01128819daea241d4" prot="public" static="no">
+        <name>PARAM_DOUBLE_IN</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>DEF</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a71739f2cfc051c5575d2080203025631" kindref="member">PARAM_IN</ref>(double, ID, DESC, ALIAS, DEF, false)</initializer>
+        <briefdescription>
+<para>Define a double input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter can then be specified on the command line with <ndash/>ID=value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DEF</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default value of the parameter.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000005"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="275" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="275" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a1236858e19f2e8be7da663d4aecfac9f" prot="public" static="no">
+        <name>PARAM_DOUBLE_IN_REQ</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a71739f2cfc051c5575d2080203025631" kindref="member">PARAM_IN</ref>(double, ID, DESC, ALIAS, 0.0, true)</initializer>
+        <briefdescription>
+<para>Define a required double parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter must then be specified on the command line with <ndash/>ID=value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000031"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1156" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1aa39a5fa65308f2d5581c01cfae5f9203" prot="public" static="no">
+        <name>PARAM_DOUBLE_OUT</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <initializer>    <ref refid="param_8hpp_1afe71e03991bbb1721872dbf20620b37a" kindref="member">PARAM_OUT</ref>(double, ID, DESC, &quot;&quot;, 0.0, false)</initializer>
+        <briefdescription>
+<para>Define a double output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This parameter will be printed on stdout at the end of the program; for instance, if the parameter name is &quot;number&quot; and the value is 5.012, the output on stdout would be of the following form:</para>
+<para><programlisting><codeline><highlight class="normal">number:<sp/>5.012</highlight></codeline>
+</programlisting></para>
+<para>If the parameter is not set by the end of the program, a fatal runtime error will be issued.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000006"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="306" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="306" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a59a38dfe16c56a278bd89817216a3739" prot="public" static="no">
+        <name>PARAM_FLAG</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a71739f2cfc051c5575d2080203025631" kindref="member">PARAM_IN</ref>(bool, ID, DESC, ALIAS, false, false);</initializer>
+        <briefdescription>
+<para>Define a flag parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000002"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="189" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a71739f2cfc051c5575d2080203025631" prot="public" static="no">
+        <name>PARAM_IN</name>
+        <param><defname>T</defname></param>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>DEF</defname></param>
+        <param><defname>REQ</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" kindref="member">PARAM</ref>(T, ID, DESC, ALIAS, #T, REQ, true, false, DEF);</initializer>
+        <briefdescription>
+<para>Defining useful macros using PARAM macro defined later. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1214" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a627025f18abd2735345f03fd733ccd9b" prot="public" static="no">
+        <name>PARAM_INT_IN</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>DEF</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a71739f2cfc051c5575d2080203025631" kindref="member">PARAM_IN</ref>(int, ID, DESC, ALIAS, DEF, false)</initializer>
+        <briefdescription>
+<para>Define an integer input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter can then be specified on the command line with <ndash/>ID=value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DEF</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default value of the parameter.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000003"><xreftitle>Bug</xreftitle><xrefdescription><para>Use a forward declaration of the class. The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information.</para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="217" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a59102e55c5d69d23909a75bd6093f816" prot="public" static="no">
+        <name>PARAM_INT_IN_REQ</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a71739f2cfc051c5575d2080203025631" kindref="member">PARAM_IN</ref>(int, ID, DESC, ALIAS, 0, true)</initializer>
+        <briefdescription>
+<para>Define a required integer input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter must then be specified on the command line with <ndash/>ID=value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000030"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1131" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a50b8bfabec3f0b64fb6e15837da50aa0" prot="public" static="no">
+        <name>PARAM_INT_OUT</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <initializer>    <ref refid="param_8hpp_1afe71e03991bbb1721872dbf20620b37a" kindref="member">PARAM_OUT</ref>(int, ID, DESC, &quot;&quot;, 0, false)</initializer>
+        <briefdescription>
+<para>Define an integer output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This parameter will be printed on stdout at the end of the program; for instance, if the parameter name is &quot;number&quot; and the value is 5, the output on stdout would be of the following form:</para>
+<para><programlisting><codeline><highlight class="normal">number:<sp/>5</highlight></codeline>
+</programlisting></para>
+<para>If the parameter is not set by the end of the program, a fatal runtime error will be issued.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000004"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="248" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a4ce453a83dd3e3efc08a335b0e2775ea" prot="public" static="no">
+        <name>PARAM_MATRIX</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>REQ</defname></param>
+        <param><defname>TRANS</defname></param>
+        <param><defname>IN</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" kindref="member">PARAM</ref>(arma::mat, ID, DESC, ALIAS, &quot;arma::mat&quot;, REQ, IN, \
+        TRANS, arma::mat());</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1220" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a444c996b7e4b9dadaa5e43a7d7798f71" prot="public" static="no">
+        <name>PARAM_MATRIX_AND_INFO_IN</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" kindref="member">PARAM</ref>(<ref refid="param_8hpp_1a56a316ac6f3ea218df55afae8376ce4e" kindref="member">TUPLE_TYPE</ref>, ID, DESC, ALIAS, \
+        &quot;std::tuple&lt;<ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">mlpack::data::DatasetInfo</ref>, arma::mat&gt;&quot;, false, true, true, \
+        <ref refid="param_8hpp_1a56a316ac6f3ea218df55afae8376ce4e" kindref="member">TUPLE_TYPE</ref>())</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1017" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1017" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a49e6517671e6c8173dd3570de950363b" prot="public" static="no">
+        <name>PARAM_MATRIX_IN</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a4ce453a83dd3e3efc08a335b0e2775ea" kindref="member">PARAM_MATRIX</ref>(ID, DESC, ALIAS, false, true, true)</initializer>
+        <briefdescription>
+<para>Define a matrix input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the matrix parameter was &quot;mat&quot;, the user could specify that the &quot;mat&quot; matrix was held in matrix.csv by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--mat_file<sp/>matrix.csv</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000009"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="395" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="395" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a20dc72054c6568f040bdc8a5512acacb" prot="public" static="no">
+        <name>PARAM_MATRIX_IN_REQ</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a4ce453a83dd3e3efc08a335b0e2775ea" kindref="member">PARAM_MATRIX</ref>(ID, DESC, ALIAS, true, true, true)</initializer>
+        <briefdescription>
+<para>Define a required matrix input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the matrix parameter was &quot;mat&quot;, the user could specify that the &quot;mat&quot; matrix was held in matrix.csv by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--mat_file<sp/>matrix.csv</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000010"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="423" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="423" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a20f436f371a7613b532ae3a4c0416b30" prot="public" static="no">
+        <name>PARAM_MATRIX_OUT</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a4ce453a83dd3e3efc08a335b0e2775ea" kindref="member">PARAM_MATRIX</ref>(ID, DESC, ALIAS, false, true, false)</initializer>
+        <briefdescription>
+<para>Define a matrix output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the program terminates, the matrix will be saved to whatever it was set to by IO::GetParam&lt;arma::mat&gt;(ID) during the program. From the command-line, the user may specify the file in which to save the output matrix using a string option that is the name of the matrix parameter with &quot;_file&quot; appended. So, for instance, if the name of the output matrix parameter was &quot;mat&quot;, the user could speicfy that the &quot;mat&quot; matrix should be saved in matrix.csv by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--mat_file<sp/>matrix.csv</highlight></codeline>
+</programlisting></para>
+<para>The output matrix will not be printed on stdout, like the other output option types.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000011"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="456" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="456" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a1e4f86c8f4de8e3f932c4cedbe4d8157" prot="public" static="no">
+        <name>PARAM_MODEL</name>
+        <param><defname>TYPE</defname></param>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>REQ</defname></param>
+        <param><defname>IN</defname></param>
+        <initializer>      static mlpack::util::Option&lt;TYPE*&gt; \
+      JOIN(JOIN(io_option_dummy_object_model_, __LINE__), opt) \
+      (nullptr, ID, DESC, ALIAS, #TYPE, REQ, IN, false, \
+      testName);</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1282" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1282" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a663f71826f69f70d119b5f577d20721e" prot="public" static="no">
+        <name>PARAM_MODEL_IN</name>
+        <param><defname>TYPE</defname></param>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a1e4f86c8f4de8e3f932c4cedbe4d8157" kindref="member">PARAM_MODEL</ref>(TYPE, ID, DESC, ALIAS, false, true)</initializer>
+        <briefdescription>
+<para>Define an input model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the model, using the name of the model parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the model parameter was &quot;model&quot;, the user could specify that the &quot;model&quot; model was held in model.bin by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--model_file<sp/>model.bin</highlight></codeline>
+</programlisting></para>
+<para>Note that the first parameter of this model is the type (the class name) of the model to be loaded. This model type must have a serialize() function; a compilation error (a very long and complex one) will result if the model type does not have the following function:</para>
+<para><programlisting><codeline><highlight class="normal">template&lt;typename<sp/>Archive&gt;</highlight></codeline>
+<codeline><highlight class="normal">void<sp/>serialize(Archive&amp;<sp/>ar,<sp/>const<sp/>uint32_t<sp/>version);</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>TYPE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the model to be loaded. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter. Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1050" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1050" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a42961ca5512a6e6ab58cdcd15e374fca" prot="public" static="no">
+        <name>PARAM_MODEL_IN_REQ</name>
+        <param><defname>TYPE</defname></param>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a1e4f86c8f4de8e3f932c4cedbe4d8157" kindref="member">PARAM_MODEL</ref>(TYPE, ID, DESC, ALIAS, true, true)</initializer>
+        <briefdescription>
+<para>Define a required input model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the model, using the name of the model parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the model parameter was &quot;model&quot;, the user could specify that the &quot;model&quot; model was held in model.bin by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--model_file<sp/>model.bin</highlight></codeline>
+</programlisting></para>
+<para>Note that the first parameter of this model is the type (the class name) of the model to be loaded. This model type must have a serialize() function; a compilation error (a very long and complex one) will result if the model type does not have the following function:</para>
+<para><programlisting><codeline><highlight class="normal">template&lt;typename<sp/>Archive&gt;</highlight></codeline>
+<codeline><highlight class="normal">void<sp/>serialize(Archive&amp;<sp/>ar,<sp/>const<sp/>uint32_t<sp/>version);</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>TYPE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the model to be loaded. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter. Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1081" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1081" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a303372e5feffaee9bd0a4bb50f3011b1" prot="public" static="no">
+        <name>PARAM_MODEL_OUT</name>
+        <param><defname>TYPE</defname></param>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a1e4f86c8f4de8e3f932c4cedbe4d8157" kindref="member">PARAM_MODEL</ref>(TYPE, ID, DESC, ALIAS, false, false)</initializer>
+        <briefdescription>
+<para>Define an output model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that should hold the model, using the name of the model parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the user desires to save the model to model.bin and the parameter name is &quot;model&quot;, they could specify</para>
+<para><programlisting><codeline><highlight class="normal">--model_file<sp/>model.bin</highlight></codeline>
+</programlisting></para>
+<para>The model will be saved at the termination of the program. If you use a parameter of this type, you must call IO::Destroy() at the end of your program.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>TYPE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the model to be saved. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter. Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1106" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1afe71e03991bbb1721872dbf20620b37a" prot="public" static="no">
+        <name>PARAM_OUT</name>
+        <param><defname>T</defname></param>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>DEF</defname></param>
+        <param><defname>REQ</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" kindref="member">PARAM</ref>(T, ID, DESC, ALIAS, #T, REQ, false, false, DEF);</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1217" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1ac3efb084f2c69acdb9368f4fb9db654f" prot="public" static="no">
+        <name>PARAM_ROW</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>REQ</defname></param>
+        <param><defname>TRANS</defname></param>
+        <param><defname>IN</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" kindref="member">PARAM</ref>(arma::rowvec, ID, DESC, ALIAS, &quot;arma::rowvec&quot;, REQ, IN, \
+    TRANS, arma::rowvec());</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1236" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a503427b6b8cca3f0948487006e7f11b4" prot="public" static="no">
+        <name>PARAM_ROW_IN</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1ac3efb084f2c69acdb9368f4fb9db654f" kindref="member">PARAM_ROW</ref>(ID, DESC, ALIAS, false, true, true)</initializer>
+        <briefdescription>
+<para>Define a row vector input parameter (type arma::rowvec). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the vector parameter was &quot;vec&quot;, the user could specify that the &quot;vec&quot; vector was held in vec.csv by giving the parameter:</para>
+<para><programlisting><codeline><highlight class="normal">--vec_file<sp/>vector.csv</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000020"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="726" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="726" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a9beb54447b7992ecff903397abb60f73" prot="public" static="no">
+        <name>PARAM_ROW_OUT</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1ac3efb084f2c69acdb9368f4fb9db654f" kindref="member">PARAM_ROW</ref>(ID, DESC, ALIAS, false, true, false)</initializer>
+        <briefdescription>
+<para>Define a row vector output parameter (type arma::rowvec). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the program terminates, the vector will be saved to whatever it was set to during the program. From the command-line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with &quot;_file&quot; appended. So, for instance, if the name of the output vector parameter was &quot;vec&quot;, the user could specify that the &quot;vec&quot; vector should be saved in vector.csv by giving the parameter:</para>
+<para><programlisting><codeline><highlight class="normal">--vec_file<sp/>vector.csv</highlight></codeline>
+</programlisting></para>
+<para>The output vector will not be printed on stdout, like the other output option types.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000024"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="849" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="849" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a9514ae93b51ba592bc3299da8326bb80" prot="public" static="no">
+        <name>PARAM_STRING_IN</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>DEF</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a71739f2cfc051c5575d2080203025631" kindref="member">PARAM_IN</ref>(std::string, ID, DESC, ALIAS, DEF, false)</initializer>
+        <briefdescription>
+<para>Define a string input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter can then be specified on the command line with <ndash/>ID=value. If ALIAS is equal to DEF_MOD (which is set using the <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref> macro), the parameter can be specified with just <ndash/>ID=value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DEF</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default value of the parameter.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000007"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="335" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="335" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a39f209691f1ca8c649a40cb22cea5408" prot="public" static="no">
+        <name>PARAM_STRING_IN_REQ</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a71739f2cfc051c5575d2080203025631" kindref="member">PARAM_IN</ref>(std::string, ID, DESC, ALIAS, &quot;&quot;, true)</initializer>
+        <briefdescription>
+<para>Define a required string parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter must then be specified on the command line with <ndash/>ID=value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000032"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1181" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a94d8f8edc103da0e05f04fce245e8a93" prot="public" static="no">
+        <name>PARAM_STRING_OUT</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1afe71e03991bbb1721872dbf20620b37a" kindref="member">PARAM_OUT</ref>(std::string, ID, DESC, ALIAS, &quot;&quot;, false)</initializer>
+        <briefdescription>
+<para>Define a string output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The string will be printed to stdout at the end of the program. For instance, if there was a string output parameter called &quot;something&quot; with value &quot;hello&quot;, at the end of the program the output would be of the following form:</para>
+<para><programlisting><codeline><highlight class="normal">something:<sp/>&quot;hello&quot;</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000008"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="367" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="367" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a237697d0b35e7e6484e8ce52c0ed00c9" prot="public" static="no">
+        <name>PARAM_TMATRIX_IN</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a4ce453a83dd3e3efc08a335b0e2775ea" kindref="member">PARAM_MATRIX</ref>(ID, DESC, ALIAS, false, false, true)</initializer>
+        <briefdescription>
+<para>Define a transposed matrix input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is useful when data is desired in row-major form instead of the usual column-major form. From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the matrix parameter was &quot;mat&quot;, the user could specify that the &quot;mat&quot; matrix was held in matrix.csv by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--mat_file<sp/>matrix.csv</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000012"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="485" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="485" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a580cb0e5b1c587a4bc5b7211aa2c414b" prot="public" static="no">
+        <name>PARAM_TMATRIX_IN_REQ</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a4ce453a83dd3e3efc08a335b0e2775ea" kindref="member">PARAM_MATRIX</ref>(ID, DESC, ALIAS, true, false, true)</initializer>
+        <briefdescription>
+<para>Define a required transposed matrix input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is useful when data is desired in row-major form instead of the usual column-major form. From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the matrix parameter was &quot;mat&quot;, the user could specify that the &quot;mat&quot; matrix was held in matrix.csv by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--mat_file<sp/>matrix.csv</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000013"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="515" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="515" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a76754d246b86d1b159270e4794c25019" prot="public" static="no">
+        <name>PARAM_TMATRIX_OUT</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a4ce453a83dd3e3efc08a335b0e2775ea" kindref="member">PARAM_MATRIX</ref>(ID, DESC, ALIAS, false, false, false)</initializer>
+        <briefdescription>
+<para>Define a transposed matrix output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is useful when data is stored in a row-major form instead of the usual column-major form. When the program terminates, the matrix will be saved to whatever it was set to by IO::GetParam&lt;arma::mat&gt;(ID) during the program. From the command-line, the user may specify the file in which to save the output matrix using a string option that is the name of the matrix parameter with &quot;_file&quot; appended. So, for instance, if the name of the output matrix parameter was &quot;mat&quot;, the user could speicfy that the &quot;mat&quot; matrix should be saved in matrix.csv by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--mat_file<sp/>matrix.csv</highlight></codeline>
+</programlisting></para>
+<para>The output matrix will not be printed on stdout, like the other output option types.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000014"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="550" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="550" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1ad293cdde75e8b7986b01b50fc05e0186" prot="public" static="no">
+        <name>PARAM_UCOL</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>REQ</defname></param>
+        <param><defname>TRANS</defname></param>
+        <param><defname>IN</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" kindref="member">PARAM</ref>(arma::Col&lt;size_t&gt;, ID, DESC, ALIAS, &quot;arma::Col&lt;size_t&gt;&quot;, \
+        REQ, IN, TRANS, arma::Col&lt;size_t&gt;());</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1232" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1232" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a55c356a0f2cc3df7122b3f033033538e" prot="public" static="no">
+        <name>PARAM_UCOL_IN</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1ad293cdde75e8b7986b01b50fc05e0186" kindref="member">PARAM_UCOL</ref>(ID, DESC, ALIAS, false, true, true)</initializer>
+        <briefdescription>
+<para>Define an unsigned vector input parameter (type arma::Col&lt;size_t&gt;). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the vector parameter was &quot;vec&quot;, the user could specify that the &quot;vec&quot; vector was held in vec.csv by giving the parameter:</para>
+<para><programlisting><codeline><highlight class="normal">--vec_file<sp/>vector.csv</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000021"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="754" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="754" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1ac8b7f343ae79cb1ec43a0d2eb791090d" prot="public" static="no">
+        <name>PARAM_UCOL_OUT</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1ad293cdde75e8b7986b01b50fc05e0186" kindref="member">PARAM_UCOL</ref>(ID, DESC, ALIAS, false, true, false)</initializer>
+        <briefdescription>
+<para>Define an unsigned vector output parameter (type arma::Col&lt;size_t&gt;). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the program terminates, the vector will be saved to whatever it was set to during the program. From the command-line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with &quot;_file&quot; appended. So, for instance, if the name of the output vector parameter was &quot;vec&quot;, the user could specify that the &quot;vec&quot; vector should be saved in vector.csv by giving the parameter:</para>
+<para><programlisting><codeline><highlight class="normal">--vec_file<sp/>vector.csv</highlight></codeline>
+</programlisting></para>
+<para>The output vector will not be printed on stdout, like the other output option types.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000025"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="882" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="882" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a6bcf880c112f92361cdb4a3536fba0ca" prot="public" static="no">
+        <name>PARAM_UMATRIX</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>REQ</defname></param>
+        <param><defname>TRANS</defname></param>
+        <param><defname>IN</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" kindref="member">PARAM</ref>(arma::Mat&lt;size_t&gt;, ID, DESC, ALIAS, &quot;arma::Mat&lt;size_t&gt;&quot;, \
+        REQ, IN, TRANS, arma::Mat&lt;size_t&gt;());</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1224" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a0db58e2b5c75754d200638093b9cc40f" prot="public" static="no">
+        <name>PARAM_UMATRIX_IN</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a6bcf880c112f92361cdb4a3536fba0ca" kindref="member">PARAM_UMATRIX</ref>(ID, DESC, ALIAS, false, true, true)</initializer>
+        <briefdescription>
+<para>Define an unsigned matrix input parameter (arma::Mat&lt;size_t&gt;). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the matrix parameter was &quot;mat&quot;, the user could specify that the &quot;mat&quot; matrix was held in matrix.csv by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--mat_file<sp/>matrix.csv</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000015"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="578" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="578" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1aaf334355d68e6667f4e50e071eee4d63" prot="public" static="no">
+        <name>PARAM_UMATRIX_IN_REQ</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a6bcf880c112f92361cdb4a3536fba0ca" kindref="member">PARAM_UMATRIX</ref>(ID, DESC, ALIAS, true, true, true)</initializer>
+        <briefdescription>
+<para>Define a required unsigned matrix input parameter (arma::Mat&lt;size_t&gt;). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the matrix parameter was &quot;mat&quot;, the user could specify that the &quot;mat&quot; matrix was held in matrix.csv by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--mat_file<sp/>matrix.csv</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000016"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="607" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="607" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a145abfa58262c15f01139092ececc571" prot="public" static="no">
+        <name>PARAM_UMATRIX_OUT</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a6bcf880c112f92361cdb4a3536fba0ca" kindref="member">PARAM_UMATRIX</ref>(ID, DESC, ALIAS, false, true, false)</initializer>
+        <briefdescription>
+<para>Define an unsigned matrix output parameter (arma::Mat&lt;size_t&gt;). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the program terminates, the matrix will be saved to whatever it was set to by IO::GetParam&lt;arma::Mat&lt;size_t&gt;&gt;(ID) during the program. From the command-line, the user may specify the file in which to save the output matrix using a string option that is the name of the matrix parameter with &quot;_file&quot; appended. So, for instance, if the name of the output matrix parameter was &quot;mat&quot;, the user could speicfy that the &quot;mat&quot; matrix should be saved in matrix.csv by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--mat_file<sp/>matrix.csv</highlight></codeline>
+</programlisting></para>
+<para>The output matrix will not be printed on stdout, like the other output option types.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000017"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="641" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="641" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a79385d438fe2c4f19f6d563d26592aea" prot="public" static="no">
+        <name>PARAM_UROW</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <param><defname>REQ</defname></param>
+        <param><defname>TRANS</defname></param>
+        <param><defname>IN</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" kindref="member">PARAM</ref>(arma::Row&lt;size_t&gt;, ID, DESC, ALIAS, &quot;arma::Row&lt;size_t&gt;&quot;, \
+    REQ, IN, TRANS, arma::Row&lt;size_t&gt;());</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1240" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1240" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a311a7e2ebd5c3c73bb58206337e1da5d" prot="public" static="no">
+        <name>PARAM_UROW_IN</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a79385d438fe2c4f19f6d563d26592aea" kindref="member">PARAM_UROW</ref>(ID, DESC, ALIAS, false, true, true)</initializer>
+        <briefdescription>
+<para>Define an unsigned row vector input parameter (type arma::Row&lt;size_t&gt;). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the vector, using the name of the vector parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the vector parameter was &quot;vec&quot;, the user could specify that the &quot;vec&quot; vector was held in vec.csv by giving the parameter:</para>
+<para><programlisting><codeline><highlight class="normal">--vec_file<sp/>vector.csv</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000022"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="783" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="783" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a0027b7ba5f161851bf91b167c8891058" prot="public" static="no">
+        <name>PARAM_UROW_OUT</name>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a79385d438fe2c4f19f6d563d26592aea" kindref="member">PARAM_UROW</ref>(ID, DESC, ALIAS, false, true, false)</initializer>
+        <briefdescription>
+<para>Define an unsigned row vector output parameter (type arma::Row&lt;size_t&gt;). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>When the program terminates, the vector will be saved to whatever it was set to during the program. From the command-line, the user may specify the file in which to save the output vector using a string option that is the name of the matrix parameter with &quot;_file&quot; appended. So, for instance, if the name of the output vector parameter was &quot;vec&quot;, the user could specify that the &quot;vec&quot; vector should be saved in vector.csv by giving the parameter:</para>
+<para><programlisting><codeline><highlight class="normal">--vec_file<sp/>vector.csv</highlight></codeline>
+</programlisting></para>
+<para>The output vector will not be printed on stdout, like the other output option types.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<xrefsect id="bug_1_bug000026"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="915" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="915" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a8431e7deab47987cfdb2ae3f242c72bc" prot="public" static="no">
+        <name>PARAM_VECTOR_IN</name>
+        <param><defname>T</defname></param>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a71739f2cfc051c5575d2080203025631" kindref="member">PARAM_IN</ref>(std::vector&lt;T&gt;, ID, DESC, ALIAS, std::vector&lt;T&gt;(), false)</initializer>
+        <briefdescription>
+<para>Define a std::vector input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter can then be specified on the command line with <ndash/>ID=value1,value2,value3.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000027"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="942" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="942" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a83c3be131e322e0a661c8ddf9c3c7df6" prot="public" static="no">
+        <name>PARAM_VECTOR_IN_REQ</name>
+        <param><defname>T</defname></param>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1a71739f2cfc051c5575d2080203025631" kindref="member">PARAM_IN</ref>(std::vector&lt;T&gt;, ID, DESC, ALIAS, std::vector&lt;T&gt;(), true);</initializer>
+        <briefdescription>
+<para>Define a required vector parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The parameter must then be specified on the command line with <ndash/>ID=value1,value2,value3.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000033"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1208" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1ac24919def62bd93f462cc3ff9d555cbc" prot="public" static="no">
+        <name>PARAM_VECTOR_OUT</name>
+        <param><defname>T</defname></param>
+        <param><defname>ID</defname></param>
+        <param><defname>DESC</defname></param>
+        <param><defname>ALIAS</defname></param>
+        <initializer>    <ref refid="param_8hpp_1afe71e03991bbb1721872dbf20620b37a" kindref="member">PARAM_OUT</ref>(std::vector&lt;T&gt;, ID, DESC, ALIAS, std::vector&lt;T&gt;(), false)</initializer>
+        <briefdescription>
+<para>Define a vector output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This vector will be printed on stdout at the end of the program; for instance, if the parameter name is &quot;vector&quot; and the vector holds the array { 1, 2, 3, 4 }, the output on stdout would be of the following form:</para>
+<para><programlisting><codeline><highlight class="normal">vector:<sp/>1,<sp/>2,<sp/>3,<sp/>4</highlight></codeline>
+</programlisting></para>
+<para>If the parameter is not set by the end of the program, a fatal runtime error will be issued.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter (one letter).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000028"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="976" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="976" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="param_8hpp_1a56a316ac6f3ea218df55afae8376ce4e" prot="public" static="no">
+        <name>TUPLE_TYPE</name>
+        <initializer>std::tuple&lt;<ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">mlpack::data::DatasetInfo</ref>, arma::mat&gt;</initializer>
+        <briefdescription>
+<para>Define an input DatasetInfo/matrix parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>From the command line, the user can specify the file that holds the matrix, using the name of the matrix parameter with &quot;_file&quot; appended (and the same alias). So for instance, if the name of the matrix parameter was &quot;matrix&quot;, the user could specify that the &quot;matrix&quot; matrix was held in file.csv by giving the parameter</para>
+<para><programlisting><codeline><highlight class="normal">--matrix_file<sp/>file.csv</highlight></codeline>
+</programlisting></para>
+<para>Then the DatasetInfo and matrix type could be accessed with</para>
+<para><programlisting><codeline><highlight class="normal">DatasetInfo<sp/>d<sp/>=<sp/>std::move(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>IO::GetParam&lt;std::tuple&lt;DatasetInfo,<sp/>arma::mat&gt;&gt;(&quot;matrix&quot;).get&lt;0&gt;());</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>m<sp/>=<sp/>std::move(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>IO::GetParam&lt;std::tuple&lt;DatasetInfo,<sp/>arma::mat&gt;&gt;(&quot;matrix&quot;).get&lt;1&gt;());</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Quick description of the parameter (1-2 sentences). Don&apos;t use printing macros like PRINT_PARAM_STRING() or PRINT_DATASET() or others here<mdash/>it will cause problems. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>One-character string representing the alias of the parameter.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1IO" kindref="compound">mlpack::IO</ref>, <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref>, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref>, <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref>.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000029"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" line="1016" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param.hpp" bodystart="1016" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Matthew Amidon </para>
+</simplesect>
+<simplesect kind="author"><para>Ryan Curtin</para>
+</simplesect>
+Definition of PARAM_*_IN() and PARAM_*_OUT() macros, as well as the Documentation related macro, which are used to define input and output parameters of command-line programs and bindings to other languages.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_UTIL_PARAM_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_UTIL_PARAM_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Required<sp/>forward<sp/>declarations.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">data<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">IncrementPolicy;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PolicyType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>InputType&gt;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">DatasetMapper;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">DatasetInfo</ref><sp/>=<sp/>DatasetMapper&lt;IncrementPolicy,<sp/>std::string&gt;;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>data</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//<sp/>These<sp/>are<sp/>ugly,<sp/>but<sp/>necessary<sp/>utility<sp/>functions<sp/>we<sp/>must<sp/>use<sp/>to<sp/>generate<sp/>a</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//<sp/>unique<sp/>identifier<sp/>inside<sp/>of<sp/>the<sp/>PARAM()<sp/>module.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>JOIN(x,<sp/>y)<sp/>JOIN_AGAIN(x,<sp/>y)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>JOIN_AGAIN(x,<sp/>y)<sp/>x<sp/>##<sp/>y</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BINDING_NAME(NAME)<sp/>static<sp/>\</highlight></codeline>
+<codeline lineno="58"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>mlpack::util::ProgramName<sp/>\</highlight></codeline>
+<codeline lineno="59"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>io_programname_dummy_object<sp/>=<sp/>mlpack::util::ProgramName(NAME);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BINDING_SHORT_DESC(SHORT_DESC)<sp/>static<sp/>\</highlight></codeline>
+<codeline lineno="77"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>mlpack::util::ShortDescription<sp/>\</highlight></codeline>
+<codeline lineno="78"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>io_programshort_desc_dummy_object<sp/>=<sp/>mlpack::util::ShortDescription(<sp/>\</highlight></codeline>
+<codeline lineno="79"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>SHORT_DESC);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>BINDING_LONG_DESC(LONG_DESC)<sp/>static<sp/>\</highlight></codeline>
+<codeline lineno="99"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>mlpack::util::LongDescription<sp/>\</highlight></codeline>
+<codeline lineno="100"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>io_programlong_desc_dummy_object<sp/>=<sp/>mlpack::util::LongDescription(<sp/>\</highlight></codeline>
+<codeline lineno="101"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>[]()<sp/>{<sp/>return<sp/>std::string(LONG_DESC);<sp/>});</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__COUNTER__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#define<sp/>BINDING_EXAMPLE(EXAMPLE)<sp/>static<sp/>\</highlight></codeline>
+<codeline lineno="122"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>mlpack::util::Example<sp/>\</highlight></codeline>
+<codeline lineno="123"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>JOIN(io_programexample_dummy_object_,<sp/>__COUNTER__)<sp/>=<sp/>\</highlight></codeline>
+<codeline lineno="124"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>mlpack::util::Example(<sp/>\</highlight></codeline>
+<codeline lineno="125"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>[]()<sp/>{<sp/>return(std::string(EXAMPLE));<sp/>});</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#define<sp/>BINDING_EXAMPLE(EXAMPLE)<sp/>static<sp/>\</highlight></codeline>
+<codeline lineno="128"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>mlpack::util::Example<sp/>\</highlight></codeline>
+<codeline lineno="129"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>JOIN(JOIN(io_programexample_dummy_object_,<sp/>__LINE__),<sp/>opt)<sp/>=<sp/>\</highlight></codeline>
+<codeline lineno="130"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>mlpack::util::Example(<sp/>\</highlight></codeline>
+<codeline lineno="131"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>[]()<sp/>{<sp/>return(std::string(EXAMPLE));<sp/>});</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__COUNTER__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#define<sp/>BINDING_SEE_ALSO(DESCRIPTION,<sp/>LINK)<sp/>static<sp/>\</highlight></codeline>
+<codeline lineno="159"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>mlpack::util::SeeAlso<sp/>\</highlight></codeline>
+<codeline lineno="160"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>JOIN(io_programsee_also_dummy_object_,<sp/>__COUNTER__)<sp/>=<sp/>\</highlight></codeline>
+<codeline lineno="161"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>mlpack::util::SeeAlso(DESCRIPTION,<sp/>LINK);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163" refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#define<sp/>BINDING_SEE_ALSO(DESCRIPTION,<sp/>LINK)<sp/>static<sp/>\</highlight></codeline>
+<codeline lineno="164"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>mlpack::util::SeeAlso<sp/>\</highlight></codeline>
+<codeline lineno="165"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>JOIN(JOIN(io_programsee_also_dummy_object_,<sp/>__LINE__),<sp/>opt)<sp/>=<sp/>\</highlight></codeline>
+<codeline lineno="166"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>mlpack::util::SeeAlso(DESCRIPTION,<sp/>LINK);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189" refid="param_8hpp_1a59a38dfe16c56a278bd89817216a3739" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_FLAG(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="190"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_IN(bool,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>false);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217" refid="param_8hpp_1a627025f18abd2735345f03fd733ccd9b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_INT_IN(ID,<sp/>DESC,<sp/>ALIAS,<sp/>DEF)<sp/>\</highlight></codeline>
+<codeline lineno="218"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_IN(int,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>DEF,<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="248" refid="param_8hpp_1a50b8bfabec3f0b64fb6e15837da50aa0" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_INT_OUT(ID,<sp/>DESC)<sp/>\</highlight></codeline>
+<codeline lineno="249"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_OUT(int,<sp/>ID,<sp/>DESC,<sp/>&quot;&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>false)</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275" refid="param_8hpp_1a14e7059294c684b01128819daea241d4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_DOUBLE_IN(ID,<sp/>DESC,<sp/>ALIAS,<sp/>DEF)<sp/>\</highlight></codeline>
+<codeline lineno="276"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_IN(double,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>DEF,<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306" refid="param_8hpp_1aa39a5fa65308f2d5581c01cfae5f9203" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_DOUBLE_OUT(ID,<sp/>DESC)<sp/>\</highlight></codeline>
+<codeline lineno="307"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_OUT(double,<sp/>ID,<sp/>DESC,<sp/>&quot;&quot;</highlight><highlight class="normal">,<sp/>0.0,<sp/>false)</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight></codeline>
+<codeline lineno="335" refid="param_8hpp_1a9514ae93b51ba592bc3299da8326bb80" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_STRING_IN(ID,<sp/>DESC,<sp/>ALIAS,<sp/>DEF)<sp/>\</highlight></codeline>
+<codeline lineno="336"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_IN(std::string,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>DEF,<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="337"><highlight class="normal"></highlight></codeline>
+<codeline lineno="367" refid="param_8hpp_1a94d8f8edc103da0e05f04fce245e8a93" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_STRING_OUT(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="368"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_OUT(std::string,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>&quot;&quot;</highlight><highlight class="normal">,<sp/>false)</highlight></codeline>
+<codeline lineno="369"><highlight class="normal"></highlight></codeline>
+<codeline lineno="395" refid="param_8hpp_1a49e6517671e6c8173dd3570de950363b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_MATRIX_IN(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="396"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_MATRIX(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="397"><highlight class="normal"></highlight></codeline>
+<codeline lineno="423" refid="param_8hpp_1a20dc72054c6568f040bdc8a5512acacb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_MATRIX_IN_REQ(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="424"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_MATRIX(ID,<sp/>DESC,<sp/>ALIAS,<sp/>true,<sp/>true,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="425"><highlight class="normal"></highlight></codeline>
+<codeline lineno="456" refid="param_8hpp_1a20f436f371a7613b532ae3a4c0416b30" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_MATRIX_OUT(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="457"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_MATRIX(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="458"><highlight class="normal"></highlight></codeline>
+<codeline lineno="485" refid="param_8hpp_1a237697d0b35e7e6484e8ce52c0ed00c9" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_TMATRIX_IN(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="486"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_MATRIX(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>false,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="487"><highlight class="normal"></highlight></codeline>
+<codeline lineno="515" refid="param_8hpp_1a580cb0e5b1c587a4bc5b7211aa2c414b" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_TMATRIX_IN_REQ(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="516"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_MATRIX(ID,<sp/>DESC,<sp/>ALIAS,<sp/>true,<sp/>false,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="517"><highlight class="normal"></highlight></codeline>
+<codeline lineno="550" refid="param_8hpp_1a76754d246b86d1b159270e4794c25019" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_TMATRIX_OUT(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="551"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_MATRIX(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>false,<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="552"><highlight class="normal"></highlight></codeline>
+<codeline lineno="578" refid="param_8hpp_1a0db58e2b5c75754d200638093b9cc40f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_UMATRIX_IN(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="579"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_UMATRIX(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="580"><highlight class="normal"></highlight></codeline>
+<codeline lineno="607" refid="param_8hpp_1aaf334355d68e6667f4e50e071eee4d63" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_UMATRIX_IN_REQ(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="608"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_UMATRIX(ID,<sp/>DESC,<sp/>ALIAS,<sp/>true,<sp/>true,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="609"><highlight class="normal"></highlight></codeline>
+<codeline lineno="641" refid="param_8hpp_1a145abfa58262c15f01139092ececc571" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_UMATRIX_OUT(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="642"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_UMATRIX(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="643"><highlight class="normal"></highlight></codeline>
+<codeline lineno="644"><highlight class="normal"></highlight></codeline>
+<codeline lineno="670" refid="param_8hpp_1a36713e2f7157727157af4a92f1c2ad5d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_COL_IN(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="671"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_COL(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="672"><highlight class="normal"></highlight></codeline>
+<codeline lineno="698" refid="param_8hpp_1ad390258cf9c175da3c77ac7e63359417" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_COL_IN_REQ(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="699"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_COL(ID,<sp/>DESC,<sp/>ALIAS,<sp/>true,<sp/>true,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="700"><highlight class="normal"></highlight></codeline>
+<codeline lineno="726" refid="param_8hpp_1a503427b6b8cca3f0948487006e7f11b4" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_ROW_IN(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="727"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_ROW(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="728"><highlight class="normal"></highlight></codeline>
+<codeline lineno="754" refid="param_8hpp_1a55c356a0f2cc3df7122b3f033033538e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_UCOL_IN(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="755"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_UCOL(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="756"><highlight class="normal"></highlight></codeline>
+<codeline lineno="783" refid="param_8hpp_1a311a7e2ebd5c3c73bb58206337e1da5d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_UROW_IN(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="784"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_UROW(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="785"><highlight class="normal"></highlight></codeline>
+<codeline lineno="816" refid="param_8hpp_1a07120f558c6c681b2a27a719a7c39bd2" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_COL_OUT(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="817"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_COL(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="818"><highlight class="normal"></highlight></codeline>
+<codeline lineno="849" refid="param_8hpp_1a9beb54447b7992ecff903397abb60f73" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_ROW_OUT(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="850"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_ROW(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="851"><highlight class="normal"></highlight></codeline>
+<codeline lineno="882" refid="param_8hpp_1ac8b7f343ae79cb1ec43a0d2eb791090d" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_UCOL_OUT(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="883"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_UCOL(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="884"><highlight class="normal"></highlight></codeline>
+<codeline lineno="915" refid="param_8hpp_1a0027b7ba5f161851bf91b167c8891058" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_UROW_OUT(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="916"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_UROW(ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true,<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="917"><highlight class="normal"></highlight></codeline>
+<codeline lineno="942" refid="param_8hpp_1a8431e7deab47987cfdb2ae3f242c72bc" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_VECTOR_IN(T,<sp/>ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="943"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_IN(std::vector&lt;T&gt;,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>std::vector&lt;T&gt;(),<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="944"><highlight class="normal"></highlight></codeline>
+<codeline lineno="976" refid="param_8hpp_1ac24919def62bd93f462cc3ff9d555cbc" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_VECTOR_OUT(T,<sp/>ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="977"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_OUT(std::vector&lt;T&gt;,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>std::vector&lt;T&gt;(),<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="978"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1016" refid="param_8hpp_1a56a316ac6f3ea218df55afae8376ce4e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>TUPLE_TYPE<sp/>std::tuple&lt;mlpack::data::DatasetInfo,<sp/>arma::mat&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1017" refid="param_8hpp_1a444c996b7e4b9dadaa5e43a7d7798f71" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_MATRIX_AND_INFO_IN(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="1018"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM(TUPLE_TYPE,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>\</highlight></codeline>
+<codeline lineno="1019"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;std::tuple&lt;mlpack::data::DatasetInfo,<sp/>arma::mat&gt;&quot;</highlight><highlight class="normal">,<sp/>false,<sp/>true,<sp/>true,<sp/>\</highlight></codeline>
+<codeline lineno="1020"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TUPLE_TYPE())</highlight></codeline>
+<codeline lineno="1021"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1050" refid="param_8hpp_1a663f71826f69f70d119b5f577d20721e" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_MODEL_IN(TYPE,<sp/>ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="1051"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_MODEL(TYPE,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1052"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1081" refid="param_8hpp_1a42961ca5512a6e6ab58cdcd15e374fca" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_MODEL_IN_REQ(TYPE,<sp/>ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="1082"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_MODEL(TYPE,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>true,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1083"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1106" refid="param_8hpp_1a303372e5feffaee9bd0a4bb50f3011b1" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_MODEL_OUT(TYPE,<sp/>ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="1107"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_MODEL(TYPE,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>false,<sp/>false)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1131" refid="param_8hpp_1a59102e55c5d69d23909a75bd6093f816" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_INT_IN_REQ(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="1132"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_IN(int,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>0,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1156" refid="param_8hpp_1a1236858e19f2e8be7da663d4aecfac9f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_DOUBLE_IN_REQ(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="1157"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_IN(double,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>0.0,<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1181" refid="param_8hpp_1a39f209691f1ca8c649a40cb22cea5408" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_STRING_IN_REQ(ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="1182"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_IN(std::string,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>&quot;&quot;</highlight><highlight class="normal">,<sp/>true)</highlight></codeline>
+<codeline lineno="1183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1208" refid="param_8hpp_1a83c3be131e322e0a661c8ddf9c3c7df6" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_VECTOR_IN_REQ(T,<sp/>ID,<sp/>DESC,<sp/>ALIAS)<sp/>\</highlight></codeline>
+<codeline lineno="1209"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM_IN(std::vector&lt;T&gt;,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>std::vector&lt;T&gt;(),<sp/>true);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1214" refid="param_8hpp_1a71739f2cfc051c5575d2080203025631" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_IN(T,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>DEF,<sp/>REQ)<sp/>\</highlight></codeline>
+<codeline lineno="1215"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM(T,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>#T,<sp/>REQ,<sp/>true,<sp/>false,<sp/>DEF);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1217" refid="param_8hpp_1afe71e03991bbb1721872dbf20620b37a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_OUT(T,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>DEF,<sp/>REQ)<sp/>\</highlight></codeline>
+<codeline lineno="1218"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM(T,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>#T,<sp/>REQ,<sp/>false,<sp/>false,<sp/>DEF);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1220" refid="param_8hpp_1a4ce453a83dd3e3efc08a335b0e2775ea" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_MATRIX(ID,<sp/>DESC,<sp/>ALIAS,<sp/>REQ,<sp/>TRANS,<sp/>IN)<sp/>\</highlight></codeline>
+<codeline lineno="1221"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM(arma::mat,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>&quot;arma::mat&quot;</highlight><highlight class="normal">,<sp/>REQ,<sp/>IN,<sp/>\</highlight></codeline>
+<codeline lineno="1222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TRANS,<sp/>arma::mat());</highlight></codeline>
+<codeline lineno="1223"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1224" refid="param_8hpp_1a6bcf880c112f92361cdb4a3536fba0ca" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_UMATRIX(ID,<sp/>DESC,<sp/>ALIAS,<sp/>REQ,<sp/>TRANS,<sp/>IN)<sp/>\</highlight></codeline>
+<codeline lineno="1225"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM(arma::Mat&lt;size_t&gt;,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>&quot;arma::Mat&lt;size_t&gt;&quot;</highlight><highlight class="normal">,<sp/>\</highlight></codeline>
+<codeline lineno="1226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REQ,<sp/>IN,<sp/>TRANS,<sp/>arma::Mat&lt;size_t&gt;());</highlight></codeline>
+<codeline lineno="1227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1228" refid="param_8hpp_1afef4dcbf5fa0b81c4daf50f77b4391af" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_COL(ID,<sp/>DESC,<sp/>ALIAS,<sp/>REQ,<sp/>TRANS,<sp/>IN)<sp/>\</highlight></codeline>
+<codeline lineno="1229"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM(arma::vec,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>&quot;arma::vec&quot;</highlight><highlight class="normal">,<sp/>REQ,<sp/>IN,<sp/>TRANS,<sp/>\</highlight></codeline>
+<codeline lineno="1230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec());</highlight></codeline>
+<codeline lineno="1231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1232" refid="param_8hpp_1ad293cdde75e8b7986b01b50fc05e0186" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_UCOL(ID,<sp/>DESC,<sp/>ALIAS,<sp/>REQ,<sp/>TRANS,<sp/>IN)<sp/>\</highlight></codeline>
+<codeline lineno="1233"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM(arma::Col&lt;size_t&gt;,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>&quot;arma::Col&lt;size_t&gt;&quot;</highlight><highlight class="normal">,<sp/>\</highlight></codeline>
+<codeline lineno="1234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>REQ,<sp/>IN,<sp/>TRANS,<sp/>arma::Col&lt;size_t&gt;());</highlight></codeline>
+<codeline lineno="1235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1236" refid="param_8hpp_1ac3efb084f2c69acdb9368f4fb9db654f" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_ROW(ID,<sp/>DESC,<sp/>ALIAS,<sp/>REQ,<sp/>TRANS,<sp/>IN)<sp/>\</highlight></codeline>
+<codeline lineno="1237"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM(arma::rowvec,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>&quot;arma::rowvec&quot;</highlight><highlight class="normal">,<sp/>REQ,<sp/>IN,<sp/>\</highlight></codeline>
+<codeline lineno="1238"><highlight class="normal"><sp/><sp/><sp/><sp/>TRANS,<sp/>arma::rowvec());</highlight></codeline>
+<codeline lineno="1239"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1240" refid="param_8hpp_1a79385d438fe2c4f19f6d563d26592aea" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>PARAM_UROW(ID,<sp/>DESC,<sp/>ALIAS,<sp/>REQ,<sp/>TRANS,<sp/>IN)<sp/>\</highlight></codeline>
+<codeline lineno="1241"><highlight class="preprocessor"><sp/><sp/><sp/><sp/>PARAM(arma::Row&lt;size_t&gt;,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>&quot;arma::Row&lt;size_t&gt;&quot;</highlight><highlight class="normal">,<sp/>\</highlight></codeline>
+<codeline lineno="1242"><highlight class="normal"><sp/><sp/><sp/><sp/>REQ,<sp/>IN,<sp/>TRANS,<sp/>arma::Row&lt;size_t&gt;());</highlight></codeline>
+<codeline lineno="1243"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1260"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>__COUNTER__</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1261"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#define<sp/>PARAM(T,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>NAME,<sp/>REQ,<sp/>IN,<sp/>TRANS,<sp/>DEF)<sp/>\</highlight></codeline>
+<codeline lineno="1262"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>mlpack::util::Option&lt;T&gt;<sp/>\</highlight></codeline>
+<codeline lineno="1263"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>JOIN(io_option_dummy_object_in_,<sp/>__COUNTER__)<sp/>\</highlight></codeline>
+<codeline lineno="1264"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>(DEF,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>NAME,<sp/>REQ,<sp/>IN,<sp/>!TRANS,<sp/>testName);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1266"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>There<sp/>are<sp/>no<sp/>uses<sp/>of<sp/>required<sp/>models,<sp/>so<sp/>that<sp/>is<sp/>not<sp/>an<sp/>option<sp/>to<sp/>this</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1267"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>macro<sp/>(it<sp/>would<sp/>be<sp/>easy<sp/>to<sp/>add).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1268"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#define<sp/>PARAM_MODEL(TYPE,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>REQ,<sp/>IN)<sp/>\</highlight></codeline>
+<codeline lineno="1269"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>mlpack::util::Option&lt;TYPE*&gt;<sp/>\</highlight></codeline>
+<codeline lineno="1270"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>JOIN(io_option_dummy_model_,<sp/>__COUNTER__)<sp/>\</highlight></codeline>
+<codeline lineno="1271"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>(nullptr,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>#TYPE,<sp/>REQ,<sp/>IN,<sp/>false,<sp/>testName);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1272"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1273"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>have<sp/>to<sp/>do<sp/>some<sp/>really<sp/>bizarre<sp/>stuff<sp/>since<sp/>__COUNTER__<sp/>isn&apos;t<sp/>defined.<sp/>I</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1274"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>don&apos;t<sp/>think<sp/>we<sp/>can<sp/>absolutely<sp/>guarantee<sp/>success,<sp/>but<sp/>it<sp/>should<sp/>be<sp/>&quot;good</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1275"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>enough&quot;.<sp/><sp/>We<sp/>use<sp/>the<sp/>__LINE__<sp/>macro<sp/>and<sp/>the<sp/>type<sp/>of<sp/>the<sp/>parameter<sp/>to<sp/>try</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1276"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>and<sp/>get<sp/>a<sp/>good<sp/>guess<sp/>at<sp/>something<sp/>unique.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1277" refid="param_8hpp_1a8bb10b94c90813e49664ad5de62708fb" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#define<sp/>PARAM(T,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>NAME,<sp/>REQ,<sp/>IN,<sp/>TRANS,<sp/>DEF)<sp/>\</highlight></codeline>
+<codeline lineno="1278"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>mlpack::util::Option&lt;T&gt;<sp/>\</highlight></codeline>
+<codeline lineno="1279"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>JOIN(JOIN(io_option_dummy_object_in_,<sp/>__LINE__),<sp/>opt)<sp/>\</highlight></codeline>
+<codeline lineno="1280"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>(DEF,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>NAME,<sp/>REQ,<sp/>IN,<sp/>!TRANS,<sp/>testName);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1281"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1282" refid="param_8hpp_1a1e4f86c8f4de8e3f932c4cedbe4d8157" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#define<sp/>PARAM_MODEL(TYPE,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>REQ,<sp/>IN)<sp/>\</highlight></codeline>
+<codeline lineno="1283"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>static<sp/>mlpack::util::Option&lt;TYPE*&gt;<sp/>\</highlight></codeline>
+<codeline lineno="1284"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>JOIN(JOIN(io_option_dummy_object_model_,<sp/>__LINE__),<sp/>opt)<sp/>\</highlight></codeline>
+<codeline lineno="1285"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>(nullptr,<sp/>ID,<sp/>DESC,<sp/>ALIAS,<sp/>#TYPE,<sp/>REQ,<sp/>IN,<sp/>false,<sp/>\</highlight></codeline>
+<codeline lineno="1286"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/>testName);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1287"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1288"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1289"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/param.hpp"/>
+  </compounddef>
+</doxygen>

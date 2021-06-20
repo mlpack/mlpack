@@ -1,0 +1,120 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/tests/main\+\_\+tests/range\+\_\+search\+\_\+utils.hpp File Reference}
+\label{range__search__utils_8hpp}\index{/home/aakash/mlpack/src/mlpack/tests/main\_tests/range\_search\_utils.hpp@{/home/aakash/mlpack/src/mlpack/tests/main\_tests/range\_search\_utils.hpp}}
+Include dependency graph for range\+\_\+search\+\_\+utils.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{range__search__utils_8hpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ Check\+Matrices} (std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&vec1, std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&vec2, const double tolerance=1e-\/3)
+\begin{DoxyCompactList}\small\item\em Check that 2 matrices of type vector$<$vector$<$double$>$$>$ are close to equal, using the given tolerance. \end{DoxyCompactList}\item 
+void \textbf{ Check\+Matrices} (std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&vec1, std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&vec2)
+\begin{DoxyCompactList}\small\item\em Check that 2 matrices of type vector$<$vector$<$size\+\_\+t$>$$>$ are equal. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Model\+To\+String} (RSModel $\ast$model)
+\begin{DoxyCompactList}\small\item\em Convert a model to a string using the text\+\_\+oarchive of cereal. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::vector$<$ std\+::vector$<$ T $>$ $>$ \textbf{ Read\+Data} (const std\+::string \&filename)
+\begin{DoxyCompactList}\small\item\em Load a CSV file into a vector of vector with a templated datatype. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Niteya Shah
+\end{DoxyAuthor}
+Helper functions used in the execution of the Range Search test.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 
+
+\doxysubsection{Function Documentation}
+\mbox{\label{range__search__utils_8hpp_a8c20314a21117877d9660a084c83a039}} 
+\index{range\_search\_utils.hpp@{range\_search\_utils.hpp}!CheckMatrices@{CheckMatrices}}
+\index{CheckMatrices@{CheckMatrices}!range\_search\_utils.hpp@{range\_search\_utils.hpp}}
+\doxysubsubsection{CheckMatrices()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Check\+Matrices (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{vec1,  }\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$ \&}]{vec2,  }\item[{const double}]{tolerance = {\ttfamily 1e-\/3} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check that 2 matrices of type vector$<$vector$<$double$>$$>$ are close to equal, using the given tolerance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec1} & First vector to compare. \\
+\hline
+{\em vec2} & Second vector to compare. \\
+\hline
+{\em tolerance} & Allowed tolerance for values. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 41 of file range\+\_\+search\+\_\+utils.\+hpp.
+
+\mbox{\label{range__search__utils_8hpp_a3adc3e063b86994ba106c7871438c402}} 
+\index{range\_search\_utils.hpp@{range\_search\_utils.hpp}!CheckMatrices@{CheckMatrices}}
+\index{CheckMatrices@{CheckMatrices}!range\_search\_utils.hpp@{range\_search\_utils.hpp}}
+\doxysubsubsection{CheckMatrices()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Check\+Matrices (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&}]{vec1,  }\item[{std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$$>$ \&}]{vec2 }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check that 2 matrices of type vector$<$vector$<$size\+\_\+t$>$$>$ are equal. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em vec1} & First vector to compare. \\
+\hline
+{\em vec2} & Second vector to compare. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 64 of file range\+\_\+search\+\_\+utils.\+hpp.
+
+\mbox{\label{range__search__utils_8hpp_a22e8b75c2153dee033c40446de6f9579}} 
+\index{range\_search\_utils.hpp@{range\_search\_utils.hpp}!ModelToString@{ModelToString}}
+\index{ModelToString@{ModelToString}!range\_search\_utils.hpp@{range\_search\_utils.hpp}}
+\doxysubsubsection{ModelToString()}
+{\footnotesize\ttfamily std\+::string Model\+To\+String (\begin{DoxyParamCaption}\item[{RSModel $\ast$}]{model }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Convert a model to a string using the text\+\_\+oarchive of cereal. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em model} & RSModel to be converted to string. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 25 of file range\+\_\+search\+\_\+utils.\+hpp.
+
+
+
+References CEREAL\+\_\+\+POINTER.
+
+\mbox{\label{range__search__utils_8hpp_af6f5b481a584d67f7621e7339fddc137}} 
+\index{range\_search\_utils.hpp@{range\_search\_utils.hpp}!ReadData@{ReadData}}
+\index{ReadData@{ReadData}!range\_search\_utils.hpp@{range\_search\_utils.hpp}}
+\doxysubsubsection{ReadData()}
+{\footnotesize\ttfamily std\+::vector$<$std\+::vector$<$T$>$ $>$ Read\+Data (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{filename }\end{DoxyParamCaption})}
+
+
+
+Load a CSV file into a vector of vector with a templated datatype. 
+
+Any \textquotesingle{},\textquotesingle{} characters are stripped from the input; lines are split on \textquotesingle{}~\newline
+\textquotesingle{} and elements of each line are split on spaces.
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & Name of the file to load. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 88 of file range\+\_\+search\+\_\+utils.\+hpp.
+

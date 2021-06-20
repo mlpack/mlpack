@@ -1,0 +1,460 @@
+.TH "NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType > \- The \fBNeighborSearch\fP class is a template class for performing distance-based neighbor searches\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef TreeType< MetricType, \fBNeighborSearchStat\fP< SortPolicy >, MatType > \fBTree\fP"
+.br
+.RI "Convenience typedef\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNeighborSearch\fP (const \fBNeighborSearch\fP &other)"
+.br
+.RI "Construct the \fBNeighborSearch\fP object by copying the given \fBNeighborSearch\fP object\&. "
+.ti -1c
+.RI "\fBNeighborSearch\fP (const \fBNeighborSearchMode\fP mode=\fBDUAL_TREE_MODE\fP, const double epsilon=0, const MetricType metric=MetricType())"
+.br
+.RI "Create a \fBNeighborSearch\fP object without any reference data\&. "
+.ti -1c
+.RI "\fBNeighborSearch\fP (MatType referenceSet, const \fBNeighborSearchMode\fP mode=\fBDUAL_TREE_MODE\fP, const double epsilon=0, const MetricType metric=MetricType())"
+.br
+.RI "Initialize the \fBNeighborSearch\fP object, passing a reference dataset (this is the dataset which is searched)\&. "
+.ti -1c
+.RI "\fBNeighborSearch\fP (\fBNeighborSearch\fP &&other)"
+.br
+.RI "Construct the \fBNeighborSearch\fP object by taking ownership of the given \fBNeighborSearch\fP object\&. "
+.ti -1c
+.RI "\fBNeighborSearch\fP (\fBTree\fP referenceTree, const \fBNeighborSearchMode\fP mode=\fBDUAL_TREE_MODE\fP, const double epsilon=0, const MetricType metric=MetricType())"
+.br
+.RI "Initialize the \fBNeighborSearch\fP object with a copy of the given pre-constructed reference tree (this is the tree built on the points that will be searched)\&. "
+.ti -1c
+.RI "\fB~NeighborSearch\fP ()"
+.br
+.RI "Delete the \fBNeighborSearch\fP object\&. "
+.ti -1c
+.RI "size_t \fBBaseCases\fP () const"
+.br
+.RI "Return the total number of base case evaluations performed during the last search\&. "
+.ti -1c
+.RI "double & \fBEpsilon\fP ()"
+.br
+.RI "Modify the relative error to be considered in approximate search\&. "
+.ti -1c
+.RI "double \fBEpsilon\fP () const"
+.br
+.RI "Access the relative error to be considered in approximate search\&. "
+.ti -1c
+.RI "\fBNeighborSearch\fP & \fBoperator=\fP (const \fBNeighborSearch\fP &other)"
+.br
+.RI "Copy the given \fBNeighborSearch\fP object\&. "
+.ti -1c
+.RI "\fBNeighborSearch\fP & \fBoperator=\fP (\fBNeighborSearch\fP &&other)"
+.br
+.RI "Take ownership of the given \fBNeighborSearch\fP object\&. "
+.ti -1c
+.RI "const MatType & \fBReferenceSet\fP () const"
+.br
+.RI "Access the reference dataset\&. "
+.ti -1c
+.RI "\fBTree\fP & \fBReferenceTree\fP ()"
+.br
+.RI "Modify the reference tree\&. "
+.ti -1c
+.RI "const \fBTree\fP & \fBReferenceTree\fP () const"
+.br
+.RI "Access the reference tree\&. "
+.ti -1c
+.RI "size_t \fBScores\fP () const"
+.br
+.RI "Return the number of node combination scores during the last search\&. "
+.ti -1c
+.RI "void \fBSearch\fP (const MatType &querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "For each point in the query set, compute the nearest neighbors and store the output in the given matrices\&. "
+.ti -1c
+.RI "void \fBSearch\fP (const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "Search for the nearest neighbors of every point in the reference set\&. "
+.ti -1c
+.RI "void \fBSearch\fP (\fBTree\fP &queryTree, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances, bool sameSet=false)"
+.br
+.RI "Given a pre-built query tree, search for the nearest neighbors of each point in the query tree, storing the output in the given matrices\&. "
+.ti -1c
+.RI "\fBNeighborSearchMode\fP & \fBSearchMode\fP ()"
+.br
+.RI "Modify the search mode\&. "
+.ti -1c
+.RI "\fBNeighborSearchMode\fP \fBSearchMode\fP () const"
+.br
+.RI "Access the search mode\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t version)"
+.br
+.RI "Serialize the \fBNeighborSearch\fP model\&. "
+.ti -1c
+.RI "void \fBTrain\fP (MatType referenceSet)"
+.br
+.RI "Set the reference set to a new reference set, and build a tree if necessary\&. "
+.ti -1c
+.RI "void \fBTrain\fP (\fBTree\fP referenceTree)"
+.br
+.RI "Set the reference tree to a new reference tree\&. "
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static double \fBEffectiveError\fP (arma::mat &foundDistances, arma::mat &realDistances)"
+.br
+.RI "Calculate the average relative error (effective error) between the distances calculated and the true distances provided\&. "
+.ti -1c
+.RI "static double \fBRecall\fP (arma::Mat< size_t > &foundNeighbors, arma::Mat< size_t > &realNeighbors)"
+.br
+.RI "Calculate the recall (% of neighbors found) given the list of found neighbors and the true set of neighbors\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SortPolicy = NearestNeighborSort, typename MetricType = mlpack::metric::EuclideanDistance, typename MatType = arma::mat, template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::KDTree, template< typename RuleType > class DualTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template DualTreeTraverser, template< typename RuleType > class SingleTreeTraversalType = TreeType<MetricType,                      NeighborSearchStat<SortPolicy>,                      MatType>::template SingleTreeTraverser>
+.br
+class mlpack::neighbor::NeighborSearch< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType >"
+The \fBNeighborSearch\fP class is a template class for performing distance-based neighbor searches\&. 
+
+It takes a query dataset and a reference dataset (or just a reference dataset) and, for each point in the query dataset, finds the k neighbors in the reference dataset which have the 'best' distance according to a given sorting policy\&. A constructor is given which takes only a reference dataset, and if that constructor is used, the given reference dataset is also used as the query dataset\&.
+.PP
+The template parameters SortPolicy and Metric define the sort function used and the metric (distance function) used\&. More information on those classes can be found in the NearestNeighborSort class and the \fBkernel::ExampleKernel\fP class\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fISortPolicy\fP The sort policy for distances; see NearestNeighborSort\&. 
+.br
+\fIMetricType\fP The metric to use for computation\&. 
+.br
+\fIMatType\fP The type of data matrix\&. 
+.br
+\fITreeType\fP The tree type to use; must adhere to the TreeType API\&. 
+.br
+\fIDualTreeTraversalType\fP The type of dual tree traversal to use (defaults to the tree's default traverser)\&. 
+.br
+\fISingleTreeTraversalType\fP The type of single tree traversal to use (defaults to the tree's default traverser)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 88 of file neighbor_search\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef TreeType<MetricType, \fBNeighborSearchStat\fP<SortPolicy>, MatType> \fBTree\fP"
+
+.PP
+Convenience typedef\&. 
+.PP
+Definition at line 92 of file neighbor_search\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBNeighborSearch\fP (MatType referenceSet, const \fBNeighborSearchMode\fP mode = \fC\fBDUAL_TREE_MODE\fP\fP, const double epsilon = \fC0\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBNeighborSearch\fP object, passing a reference dataset (this is the dataset which is searched)\&. Optionally, perform the computation in a different mode\&. An initialized distance metric can be given, for cases where the metric has internal data (i\&.e\&. the distance::MahalanobisDistance class)\&.
+.PP
+This method will move the matrices to internal copies, which are rearranged during tree-building\&. You can avoid creating an extra copy by pre-constructing the trees, passing std::move(yourReferenceSet)\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIreferenceSet\fP Set of reference points\&. 
+.br
+\fImode\fP Neighbor search mode\&. 
+.br
+\fIepsilon\fP Relative approximate error (non-negative)\&. 
+.br
+\fImetric\fP An optional instance of the MetricType class\&. 
+.RE
+.PP
+
+.SS "\fBNeighborSearch\fP (\fBTree\fP referenceTree, const \fBNeighborSearchMode\fP mode = \fC\fBDUAL_TREE_MODE\fP\fP, const double epsilon = \fC0\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Initialize the \fBNeighborSearch\fP object with a copy of the given pre-constructed reference tree (this is the tree built on the points that will be searched)\&. Optionally, choose to use single-tree mode\&. Naive mode is not available as an option for this constructor\&. Additionally, an instantiated distance metric can be given, for cases where the distance metric holds data\&.
+.PP
+This method will copy the given tree\&. When copies must absolutely be avoided, you can avoid this copy, while taking ownership of the given tree, by passing std::move(yourReferenceTree)
+.PP
+\fBNote\fP
+.RS 4
+Mapping the points of the matrix back to their original indices is not done when this constructor is used, so if the tree type you are using maps points (like BinarySpaceTree), then you will have to perform the re-mapping manually\&.
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIreferenceTree\fP Pre-built tree for reference points\&. 
+.br
+\fImode\fP Neighbor search mode\&. 
+.br
+\fIepsilon\fP Relative approximate error (non-negative)\&. 
+.br
+\fImetric\fP Instantiated distance metric\&. 
+.RE
+.PP
+
+.SS "\fBNeighborSearch\fP (const \fBNeighborSearchMode\fP mode = \fC\fBDUAL_TREE_MODE\fP\fP, const double epsilon = \fC0\fP, const MetricType metric = \fCMetricType()\fP)"
+
+.PP
+Create a \fBNeighborSearch\fP object without any reference data\&. If \fBSearch()\fP is called before a reference set is set with \fBTrain()\fP, an exception will be thrown\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fImode\fP Neighbor search mode\&. 
+.br
+\fIepsilon\fP Relative approximate error (non-negative)\&. 
+.br
+\fImetric\fP Instantiated metric\&. 
+.RE
+.PP
+
+.SS "\fBNeighborSearch\fP (const \fBNeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType > & other)"
+
+.PP
+Construct the \fBNeighborSearch\fP object by copying the given \fBNeighborSearch\fP object\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP \fBNeighborSearch\fP object to copy\&. 
+.RE
+.PP
+
+.SS "\fBNeighborSearch\fP (\fBNeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType > && other)"
+
+.PP
+Construct the \fBNeighborSearch\fP object by taking ownership of the given \fBNeighborSearch\fP object\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP \fBNeighborSearch\fP object to take ownership of\&. 
+.RE
+.PP
+
+.SS "~\fBNeighborSearch\fP ()"
+
+.PP
+Delete the \fBNeighborSearch\fP object\&. The tree is the only member we are responsible for deleting\&. The others will take care of themselves\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t BaseCases () const\fC [inline]\fP"
+
+.PP
+Return the total number of base case evaluations performed during the last search\&. 
+.PP
+Definition at line 314 of file neighbor_search\&.hpp\&.
+.SS "static double EffectiveError (arma::mat & foundDistances, arma::mat & realDistances)\fC [static]\fP"
+
+.PP
+Calculate the average relative error (effective error) between the distances calculated and the true distances provided\&. The input matrices must have the same size\&.
+.PP
+Cases where the true distance is zero (the same point) or the calculated distance is SortPolicy::WorstDistance() (didn't find enough points) will be ignored\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIfoundDistances\fP Matrix storing lists of calculated distances for each query point\&. 
+.br
+\fIrealDistances\fP Matrix storing lists of true best distances for each query point\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Average relative error\&. 
+.RE
+.PP
+
+.SS "double& Epsilon ()\fC [inline]\fP"
+
+.PP
+Modify the relative error to be considered in approximate search\&. 
+.PP
+Definition at line 327 of file neighbor_search\&.hpp\&.
+.SS "double Epsilon () const\fC [inline]\fP"
+
+.PP
+Access the relative error to be considered in approximate search\&. 
+.PP
+Definition at line 325 of file neighbor_search\&.hpp\&.
+.PP
+Referenced by NSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Epsilon()\&.
+.SS "\fBNeighborSearch\fP& operator= (const \fBNeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType > & other)"
+
+.PP
+Copy the given \fBNeighborSearch\fP object\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP \fBNeighborSearch\fP object to copy\&. 
+.RE
+.PP
+
+.SS "\fBNeighborSearch\fP& operator= (\fBNeighborSearch\fP< SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType > && other)"
+
+.PP
+Take ownership of the given \fBNeighborSearch\fP object\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP \fBNeighborSearch\fP object to take ownership of\&. 
+.RE
+.PP
+
+.SS "static double Recall (arma::Mat< size_t > & foundNeighbors, arma::Mat< size_t > & realNeighbors)\fC [static]\fP"
+
+.PP
+Calculate the recall (% of neighbors found) given the list of found neighbors and the true set of neighbors\&. The recall returned will be in the range [0, 1]\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIfoundNeighbors\fP Matrix storing lists of calculated neighbors for each query point\&. 
+.br
+\fIrealNeighbors\fP Matrix storing lists of true best neighbors for each query point\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Recall\&. 
+.RE
+.PP
+
+.SS "const MatType& ReferenceSet () const\fC [inline]\fP"
+
+.PP
+Access the reference dataset\&. 
+.PP
+Definition at line 330 of file neighbor_search\&.hpp\&.
+.PP
+Referenced by NSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::Dataset()\&.
+.SS "\fBTree\fP& ReferenceTree ()\fC [inline]\fP"
+
+.PP
+Modify the reference tree\&. 
+.PP
+Definition at line 335 of file neighbor_search\&.hpp\&.
+.SS "const \fBTree\fP& ReferenceTree () const\fC [inline]\fP"
+
+.PP
+Access the reference tree\&. 
+.PP
+Definition at line 333 of file neighbor_search\&.hpp\&.
+.SS "size_t Scores () const\fC [inline]\fP"
+
+.PP
+Return the number of node combination scores during the last search\&. 
+.PP
+Definition at line 317 of file neighbor_search\&.hpp\&.
+.SS "void Search (const MatType & querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+For each point in the query set, compute the nearest neighbors and store the output in the given matrices\&. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for\&.
+.PP
+If querySet contains only a few query points, the extra cost of building a tree on the points for dual-tree search may not be warranted, and it may be worthwhile to set singleMode = false (either in the constructor or with SingleMode())\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIquerySet\fP Set of query points (can be just one point)\&. 
+.br
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fIneighbors\fP Matrix storing lists of neighbors for each query point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.RE
+.PP
+
+.PP
+Referenced by CosineSearch::Search(), LMetricSearch< TPower >::Search(), and PearsonSearch::Search()\&.
+.SS "void Search (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)"
+
+.PP
+Search for the nearest neighbors of every point in the reference set\&. This is basically equivalent to calling any other overload of \fBSearch()\fP with the reference set as the query set; so, this lets you do all-k-nearest-neighbors search\&. The results are stored in the given matrices\&. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fIneighbors\fP Matrix storing lists of neighbors for each query point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.RE
+.PP
+
+.SS "void Search (\fBTree\fP & queryTree, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances, bool sameSet = \fCfalse\fP)"
+
+.PP
+Given a pre-built query tree, search for the nearest neighbors of each point in the query tree, storing the output in the given matrices\&. The matrices will be set to the size of n columns by k rows, where n is the number of points in the query dataset and k is the number of neighbors being searched for\&.
+.PP
+Note that if you are calling \fBSearch()\fP multiple times with a single query tree, you need to reset the bounds in the statistic of each query node, otherwise the result may be wrong! You can do this by calling \fCTreeType::Stat()\fP\&.Reset() on each node in the query tree\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIqueryTree\fP Tree built on query points\&. 
+.br
+\fIk\fP Number of neighbors to search for\&. 
+.br
+\fIneighbors\fP Matrix storing lists of neighbors for each query point\&. 
+.br
+\fIdistances\fP Matrix storing distances of neighbors for each query point\&. 
+.br
+\fIsameSet\fP Denotes whether or not the reference and query sets are the same\&. 
+.RE
+.PP
+
+.SS "\fBNeighborSearchMode\fP& SearchMode ()\fC [inline]\fP"
+
+.PP
+Modify the search mode\&. 
+.PP
+Definition at line 322 of file neighbor_search\&.hpp\&.
+.SS "\fBNeighborSearchMode\fP SearchMode () const\fC [inline]\fP"
+
+.PP
+Access the search mode\&. 
+.PP
+Definition at line 320 of file neighbor_search\&.hpp\&.
+.PP
+Referenced by NSWrapper< SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType >::SearchMode()\&.
+.SS "void serialize (Archive & ar, const uint32_t version)"
+
+.PP
+Serialize the \fBNeighborSearch\fP model\&. 
+.SS "void Train (MatType referenceSet)"
+
+.PP
+Set the reference set to a new reference set, and build a tree if necessary\&. The dataset is copied by default, but the copy can be avoided by transferring the ownership of the dataset using std::move()\&. This method is called '\fBTrain()\fP' in order to match the rest of the mlpack abstractions, even though calling this 'training' is maybe a bit of a stretch\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIreferenceSet\fP New set of reference data\&. 
+.RE
+.PP
+
+.PP
+Referenced by CosineSearch::CosineSearch(), and PearsonSearch::PearsonSearch()\&.
+.SS "void Train (\fBTree\fP referenceTree)"
+
+.PP
+Set the reference tree to a new reference tree\&. The tree is copied by default, but the copy can be avoided by using std::move() to transfer the ownership of the tree\&. This method is called '\fBTrain()\fP' in order to match the rest of the mlpack abstractions, even though calling this 'training' is maybe a bit of a stretch\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIreferenceTree\fP Pre-built tree for reference points\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

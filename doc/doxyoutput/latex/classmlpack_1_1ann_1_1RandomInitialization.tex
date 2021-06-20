@@ -1,0 +1,184 @@
+\doxysection{Random\+Initialization Class Reference}
+\label{classmlpack_1_1ann_1_1RandomInitialization}\index{RandomInitialization@{RandomInitialization}}
+
+
+This class is used to initialize randomly the weight matrix.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Random\+Initialization} (const double bound)
+\begin{DoxyCompactList}\small\item\em Initialize the random initialization rule with the given bound. \end{DoxyCompactList}\item 
+\textbf{ Random\+Initialization} (const double lower\+Bound=-\/1, const double upper\+Bound=1)
+\begin{DoxyCompactList}\small\item\em Initialize the random initialization rule with the given lower bound and upper bound. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Cube$<$ eT $>$ \&W)
+\begin{DoxyCompactList}\small\item\em Initialize randomly the elements of the specified weight 3rd order tensor. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Cube$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols, const size\+\_\+t slices)
+\begin{DoxyCompactList}\small\item\em Initialize randomly the elements of the specified weight 3rd order tensor. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Mat$<$ eT $>$ \&W)
+\begin{DoxyCompactList}\small\item\em Initialize randomly the elements of the specified weight matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Mat$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols)
+\begin{DoxyCompactList}\small\item\em Initialize randomly the elements of the specified weight matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is used to initialize randomly the weight matrix. 
+
+Definition at line 24 of file random\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1RandomInitialization_a7e4ae84b793b74a3cbf91e3f26ea92bc}} 
+\index{RandomInitialization@{RandomInitialization}!RandomInitialization@{RandomInitialization}}
+\index{RandomInitialization@{RandomInitialization}!RandomInitialization@{RandomInitialization}}
+\doxysubsubsection{RandomInitialization()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Random\+Initialization} (\begin{DoxyParamCaption}\item[{const double}]{lower\+Bound = {\ttfamily -\/1},  }\item[{const double}]{upper\+Bound = {\ttfamily 1} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the random initialization rule with the given lower bound and upper bound. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em lower\+Bound} & The number used as lower bound. \\
+\hline
+{\em upper\+Bound} & The number used as upper bound. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 34 of file random\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1RandomInitialization_a829fd29a4d9b066c6d519f8d89a7f8e4}} 
+\index{RandomInitialization@{RandomInitialization}!RandomInitialization@{RandomInitialization}}
+\index{RandomInitialization@{RandomInitialization}!RandomInitialization@{RandomInitialization}}
+\doxysubsubsection{RandomInitialization()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Random\+Initialization} (\begin{DoxyParamCaption}\item[{const double}]{bound }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the random initialization rule with the given bound. 
+
+Using the negative of the bound as lower bound and the positive bound as upper bound.
+
+
+\begin{DoxyParams}{Parameters}
+{\em bound} & The number used as lower bound \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 45 of file random\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1RandomInitialization_ae2f3e6d570824a160b687ff9f734f83c}} 
+\index{RandomInitialization@{RandomInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!RandomInitialization@{RandomInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Cube$<$ eT $>$ \&}]{W }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize randomly the elements of the specified weight 3rd order tensor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 109 of file random\+\_\+init.\+hpp.
+
+
+
+References Log\+::\+Fatal, and Random\+Initialization\+::\+Initialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1RandomInitialization_a40a2b6466bdba0f6aab4eb92b6e65934}} 
+\index{RandomInitialization@{RandomInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!RandomInitialization@{RandomInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Cube$<$ eT $>$ \&}]{W,  }\item[{const size\+\_\+t}]{rows,  }\item[{const size\+\_\+t}]{cols,  }\item[{const size\+\_\+t}]{slices }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize randomly the elements of the specified weight 3rd order tensor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+{\em slices} & Number of slices. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 91 of file random\+\_\+init.\+hpp.
+
+
+
+References Random\+Initialization\+::\+Initialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1RandomInitialization_af2d770912321b8b9ca7b03ab98f735c0}} 
+\index{RandomInitialization@{RandomInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!RandomInitialization@{RandomInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Mat$<$ eT $>$ \&}]{W }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize randomly the elements of the specified weight matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 72 of file random\+\_\+init.\+hpp.
+
+
+
+References Log\+::\+Fatal.
+
+\mbox{\label{classmlpack_1_1ann_1_1RandomInitialization_a5cfe472251a41fffd45b170bb0d3c1bd}} 
+\index{RandomInitialization@{RandomInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!RandomInitialization@{RandomInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Mat$<$ eT $>$ \&}]{W,  }\item[{const size\+\_\+t}]{rows,  }\item[{const size\+\_\+t}]{cols }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize randomly the elements of the specified weight matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 56 of file random\+\_\+init.\+hpp.
+
+
+
+Referenced by Random\+Initialization\+::\+Initialize(), Glorot\+Initialization\+Type$<$ Uniform $>$\+::\+Initialize(), Kathirvalavakumar\+Subavathi\+Initialization\+::\+Initialize(), Nguyen\+Widrow\+Initialization\+::\+Initialize(), Oivs\+Initialization$<$ Activation\+Function $>$\+::\+Initialize(), and Jacobian\+Test().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/init\+\_\+rules/\textbf{ random\+\_\+init.\+hpp}\end{DoxyCompactItemize}

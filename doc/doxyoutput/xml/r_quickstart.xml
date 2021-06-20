@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="r_quickstart" kind="page">
+    <compoundname>r_quickstart</compoundname>
+    <title>mlpack in R quickstart guide</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="r_quickstart_1r_quickstart_intro">
+<title>Introduction</title>
+<para>This page describes how you can quickly get started using mlpack from R and gives a few examples of usage, and pointers to deeper documentation.</para>
+<para>This quickstart guide is also available for <ref refid="python_quickstart" kindref="compound">Python</ref>, <ref refid="cli_quickstart" kindref="compound">the command-line</ref>, <ref refid="julia_quickstart" kindref="compound">Julia</ref> and <ref refid="go_quickstart" kindref="compound">Go</ref>.</para>
+</sect1>
+<sect1 id="r_quickstart_1r_quickstart_install">
+<title>Installing mlpack binary package</title>
+<para>Installing the mlpack bindings for R is straightforward; you can just use CRAN:</para>
+<para><programlisting filename=".R"><codeline><highlight class="normal">install.packages(&apos;mlpack&apos;)</highlight></codeline>
+</programlisting></para>
+</sect1>
+<sect1 id="r_quickstart_1r_quickstart_source_install">
+<title>Installing mlpack package from source</title>
+<para>Building the R bindings from scratch is a little more in-depth, though. For information on that, follow the instructions on the <ref refid="build" kindref="compound">Building mlpack From Source</ref> page, and be sure to specify <computeroutput>-DBUILD_R_BINDINGS=ON</computeroutput> to CMake; you may need to also set the location of the R program with <computeroutput>-DR_EXECUTABLE=/path/to/R</computeroutput>.</para>
+</sect1>
+<sect1 id="r_quickstart_1r_quickstart_example">
+<title>Simple mlpack quickstart example</title>
+<para>As a really simple example of how to use mlpack from R, let&apos;s do some simple classification on a subset of the standard machine learning <computeroutput>covertype</computeroutput> dataset. We&apos;ll first split the dataset into a training set and a testing set, then we&apos;ll train an mlpack random forest on the training data, and finally we&apos;ll print the accuracy of the random forest on the test dataset.</para>
+<para>You can copy-paste this code directly into R to run it.</para>
+<para><programlisting filename=".R"><codeline><highlight class="normal">if(!requireNamespace(&quot;data.table&quot;,<sp/>quietly<sp/>=<sp/>TRUE))<sp/>{<sp/>install.packages(&quot;data.table&quot;)<sp/>}</highlight></codeline>
+<codeline><highlight class="normal">suppressMessages({</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>library(&quot;mlpack&quot;)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>library(&quot;data.table&quot;)</highlight></codeline>
+<codeline><highlight class="normal">})</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Load<sp/>the<sp/>dataset<sp/>from<sp/>an<sp/>online<sp/>URL.<sp/><sp/>Replace<sp/>with<sp/>&apos;covertype.csv.gz&apos;<sp/>if<sp/>you</highlight></codeline>
+<codeline><highlight class="normal">#<sp/>want<sp/>to<sp/>use<sp/>on<sp/>the<sp/>full<sp/>dataset.</highlight></codeline>
+<codeline><highlight class="normal">df<sp/>&lt;-<sp/>fread(&quot;https://www.mlpack.org/datasets/covertype-small.csv.gz&quot;)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Split<sp/>the<sp/>labels.</highlight></codeline>
+<codeline><highlight class="normal">labels<sp/>&lt;-<sp/>df[,<sp/>.(label)]</highlight></codeline>
+<codeline><highlight class="normal">dataset<sp/>&lt;-<sp/>df[,<sp/>label:=NULL]</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Split<sp/>the<sp/>dataset<sp/>using<sp/>mlpack.</highlight></codeline>
+<codeline><highlight class="normal">prepdata<sp/>&lt;-<sp/>preprocess_split(input<sp/>=<sp/>dataset,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>input_labels<sp/>=<sp/>labels,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>test_ratio<sp/>=<sp/>0.3,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>verbose<sp/>=<sp/>TRUE)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Train<sp/>a<sp/>random<sp/>forest.</highlight></codeline>
+<codeline><highlight class="normal">output<sp/>&lt;-<sp/>random_forest(training<sp/>=<sp/>prepdata$training,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>labels<sp/>=<sp/>prepdata$training_labels,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>print_training_accuracy<sp/>=<sp/>TRUE,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>num_trees<sp/>=<sp/>10,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>minimum_leaf_size<sp/>=<sp/>3,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>verbose<sp/>=<sp/>TRUE)</highlight></codeline>
+<codeline><highlight class="normal">rf_model<sp/>&lt;-<sp/>output$output_model</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Predict<sp/>the<sp/>labels<sp/>of<sp/>the<sp/>test<sp/>points.</highlight></codeline>
+<codeline><highlight class="normal">output<sp/>&lt;-<sp/>random_forest(input_model<sp/>=<sp/>rf_model,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>test<sp/>=<sp/>prepdata$test,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>verbose<sp/>=<sp/>TRUE)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Now<sp/>print<sp/>the<sp/>accuracy.<sp/><sp/>The<sp/>third<sp/>return<sp/>value<sp/>(&apos;probabilities&apos;),<sp/>which<sp/>we</highlight></codeline>
+<codeline><highlight class="normal">#<sp/>ignored<sp/>here,<sp/>could<sp/>also<sp/>be<sp/>used<sp/>to<sp/>generate<sp/>an<sp/>ROC<sp/>curve.</highlight></codeline>
+<codeline><highlight class="normal">correct<sp/>&lt;-<sp/>sum(output$predictions<sp/>==<sp/>prepdata$test_labels)</highlight></codeline>
+<codeline><highlight class="normal">cat(correct,<sp/>&quot;out<sp/>of&quot;,<sp/>length(prepdata$test_labels),<sp/>&quot;test<sp/>points<sp/>correct&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>correct<sp/>/<sp/>length(prepdata$test_labels)<sp/>*<sp/>100.0,<sp/>&quot;%\n&quot;)</highlight></codeline>
+</programlisting></para>
+<para>We can see that we achieve reasonably good accuracy on the test dataset (80%+); if we use the full <computeroutput>covertype.csv.gz</computeroutput>, the accuracy should increase significantly (but training will take longer).</para>
+<para>It&apos;s easy to modify the code above to do more complex things, or to use different mlpack learners, or to interface with other machine learning toolkits.</para>
+</sect1>
+<sect1 id="r_quickstart_1r_quickstart_whatelse">
+<title>What else does mlpack implement?</title>
+<para>The example above has only shown a little bit of the functionality of mlpack. Lots of other commands are available with different functionality. A full list of each of these commands and full documentation can be found on the following page:</para>
+<para><itemizedlist>
+<listitem><para><ulink url="https://www.mlpack.org/doc/mlpack-git/r_documentation.html">r documentation</ulink></para>
+</listitem></itemizedlist>
+</para>
+<para>For more information on what mlpack does, see <ulink url="https://www.mlpack.org/">https://www.mlpack.org/</ulink>. Next, let&apos;s go through another example for providing movie recommendations with mlpack.</para>
+</sect1>
+<sect1 id="r_quickstart_1r_quickstart_movierecs">
+<title>Using mlpack for movie recommendations</title>
+<para>In this example, we&apos;ll train a collaborative filtering model using mlpack&apos;s <computeroutput><ulink url="https://www.mlpack.org/doc/mlpack-git/r_documentation.html#cf">cf()</ulink></computeroutput> method. We&apos;ll train this on the MovieLens dataset from <ulink url="https://grouplens.org/datasets/movielens/">https://grouplens.org/datasets/movielens/</ulink>, and then we&apos;ll use the model that we train to give recommendations.</para>
+<para>You can copy-paste this code directly into R to run it.</para>
+<para><programlisting filename=".R"><codeline><highlight class="normal">if(!requireNamespace(&quot;data.table&quot;,<sp/>quietly<sp/>=<sp/>TRUE))<sp/>{<sp/>install.packages(&quot;data.table&quot;)<sp/>}</highlight></codeline>
+<codeline><highlight class="normal">suppressMessages({</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>library(&quot;mlpack&quot;)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>library(&quot;data.table&quot;)</highlight></codeline>
+<codeline><highlight class="normal">})</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>First,<sp/>load<sp/>the<sp/>MovieLens<sp/>dataset.<sp/><sp/>This<sp/>is<sp/>taken<sp/>from<sp/>files.grouplens.org/</highlight></codeline>
+<codeline><highlight class="normal">#<sp/>but<sp/>reposted<sp/>on<sp/>mlpack.org<sp/>as<sp/>unpacked<sp/>and<sp/>slightly<sp/>preprocessed<sp/>data.</highlight></codeline>
+<codeline><highlight class="normal">ratings<sp/>&lt;-<sp/>fread(&quot;http://www.mlpack.org/datasets/ml-20m/ratings-only.csv.gz&quot;)</highlight></codeline>
+<codeline><highlight class="normal">movies<sp/>&lt;-<sp/>fread(&quot;http://www.mlpack.org/datasets/ml-20m/movies.csv.gz&quot;)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Hold<sp/>out<sp/>10%<sp/>of<sp/>the<sp/>dataset<sp/>into<sp/>a<sp/>test<sp/>set<sp/>so<sp/>we<sp/>can<sp/>evaluate<sp/>performance.</highlight></codeline>
+<codeline><highlight class="normal">predata<sp/>&lt;-<sp/>preprocess_split(input<sp/>=<sp/>ratings,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>test_ratio<sp/>=<sp/>0.1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>verbose<sp/>=<sp/>TRUE)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Train<sp/>the<sp/>model.<sp/><sp/>Change<sp/>the<sp/>rank<sp/>to<sp/>increase/decrease<sp/>the<sp/>complexity<sp/>of<sp/>the</highlight></codeline>
+<codeline><highlight class="normal">#<sp/>model.</highlight></codeline>
+<codeline><highlight class="normal">output<sp/>&lt;-<sp/>cf(training<sp/>=<sp/>predata$training,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>test<sp/>=<sp/>predata$test,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rank<sp/>=<sp/>10,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>verbose<sp/>=<sp/>TRUE,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>max_iteration=2,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>algorithm<sp/>=<sp/>&quot;RegSVD&quot;)</highlight></codeline>
+<codeline><highlight class="normal">cf_model<sp/>&lt;-<sp/>output$output_model</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Now<sp/>query<sp/>the<sp/>5<sp/>top<sp/>movies<sp/>for<sp/>user<sp/>1.</highlight></codeline>
+<codeline><highlight class="normal">output<sp/>&lt;-<sp/>cf(input_model<sp/>=<sp/>cf_model,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>query<sp/>=<sp/>matrix(1),</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>recommendations<sp/>=<sp/>10,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>verbose<sp/>=<sp/>TRUE)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">#<sp/>Get<sp/>the<sp/>names<sp/>of<sp/>the<sp/>movies<sp/>for<sp/>user<sp/>1.</highlight></codeline>
+<codeline><highlight class="normal">cat(&quot;Recommendations<sp/>for<sp/>user<sp/>1:\n&quot;)</highlight></codeline>
+<codeline><highlight class="normal">for<sp/>(i<sp/>in<sp/>1:10)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>cat(&quot;<sp/><sp/>&quot;,<sp/>i,<sp/>&quot;:&quot;,<sp/>as.character(movies[output$output[i],<sp/>3]),<sp/>&quot;\n&quot;)</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Here is some example output, showing that user 1 seems to have good taste in movies:</para>
+<para><programlisting filename=".unparsed"><codeline><highlight class="normal">Recommendations<sp/>for<sp/>user<sp/>1:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>0:<sp/>Casablanca<sp/>(1942)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>1:<sp/>Pan&apos;s<sp/>Labyrinth<sp/>(Laberinto<sp/>del<sp/>fauno,<sp/>El)<sp/>(2006)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>2:<sp/>Godfather,<sp/>The<sp/>(1972)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>3:<sp/>Answer<sp/>This!<sp/>(2010)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>4:<sp/>Life<sp/>Is<sp/>Beautiful<sp/>(La<sp/>Vita<sp/>è<sp/>bella)<sp/>(1997)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>5:<sp/>Adventures<sp/>of<sp/>Tintin,<sp/>The<sp/>(2011)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>6:<sp/>Dark<sp/>Knight,<sp/>The<sp/>(2008)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>7:<sp/>Out<sp/>for<sp/>Justice<sp/>(1991)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>8:<sp/>Dr.<sp/>Strangelove<sp/>or:<sp/>How<sp/>I<sp/>Learned<sp/>to<sp/>Stop<sp/>Worrying<sp/>and<sp/>Love<sp/>the<sp/>Bomb<sp/>(1964)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>9:<sp/>Schindler&apos;s<sp/>List<sp/>(1993)</highlight></codeline>
+</programlisting></para>
+</sect1>
+<sect1 id="r_quickstart_1r_quickstart_nextsteps">
+<title>Next steps with mlpack</title>
+<para>After working through this overview to <computeroutput>mlpack</computeroutput>&apos;s R package, we hope you are inspired to use <computeroutput>mlpack</computeroutput>&apos; in your data science workflow. We recommend as part of your next steps to look at more documentation for the R mlpack bindings:</para>
+<para><itemizedlist>
+<listitem><para><ulink url="https://www.mlpack.org/doc/mlpack-git/r_documentation.html">R mlpack binding documentation</ulink></para>
+</listitem></itemizedlist>
+</para>
+<para>Also, mlpack is much more flexible from C++ and allows much greater functionality. So, more complicated tasks are possible if you are willing to write C++ (or perhaps Rcpp). To get started learning about mlpack in C++, the following resources might be helpful:</para>
+<para><itemizedlist>
+<listitem><para><ulink url="https://www.mlpack.org/doc/mlpack-git/doxygen/tutorials.html">mlpack C++ tutorials</ulink></para>
+</listitem><listitem><para><ulink url="https://www.mlpack.org/doc/mlpack-git/doxygen/build.html">mlpack build and installation guide</ulink></para>
+</listitem><listitem><para><ulink url="https://www.mlpack.org/doc/mlpack-git/doxygen/sample.html">Simple sample C++ mlpack programs</ulink></para>
+</listitem><listitem><para><ulink url="https://www.mlpack.org/doc/mlpack-git/doxygen/index.html">mlpack Doxygen documentation homepage</ulink> </para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/doc/guide/r_quickstart.hpp"/>
+  </compounddef>
+</doxygen>

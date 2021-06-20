@@ -1,0 +1,180 @@
+\doxysection{User\+Mean\+Normalization Class Reference}
+\label{classmlpack_1_1cf_1_1UserMeanNormalization}\index{UserMeanNormalization@{UserMeanNormalization}}
+
+
+This normalization class performs user mean normalization on raw ratings.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ User\+Mean\+Normalization} ()
+\item 
+void \textbf{ Denormalize} (const arma\+::\+Mat$<$ size\+\_\+t $>$ \&combinations, arma\+::vec \&predictions) const
+\begin{DoxyCompactList}\small\item\em Denormalize computed rating by adding user mean. \end{DoxyCompactList}\item 
+double \textbf{ Denormalize} (const size\+\_\+t user, const size\+\_\+t, const double rating) const
+\begin{DoxyCompactList}\small\item\em Denormalize computed rating by adding user mean. \end{DoxyCompactList}\item 
+const arma\+::vec \& \textbf{ Mean} () const
+\begin{DoxyCompactList}\small\item\em Return user mean. \end{DoxyCompactList}\item 
+void \textbf{ Normalize} (arma\+::mat \&data)
+\begin{DoxyCompactList}\small\item\em Normalize the data by subtracting user mean from each of existing ratings. \end{DoxyCompactList}\item 
+void \textbf{ Normalize} (arma\+::sp\+\_\+mat \&cleaned\+Data)
+\begin{DoxyCompactList}\small\item\em Normalize the data by subtracting user mean from each of existing rating. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This normalization class performs user mean normalization on raw ratings. 
+
+An example of how to use \doxyref{User\+Mean\+Normalization}{p.}{classmlpack_1_1cf_1_1UserMeanNormalization} in CF is shown below\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{extern} arma::mat data; \textcolor{comment}{// data is a (user, item, rating) table.}}
+\DoxyCodeLine{\textcolor{comment}{// Users for whom recommendations are generated.}}
+\DoxyCodeLine{\textcolor{keyword}{extern} arma::Col<size\_t> users;}
+\DoxyCodeLine{arma::Mat<size\_t> recommendations; \textcolor{comment}{// Resulting recommendations.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Use UserMeanNormalization as normalization method.}}
+\DoxyCodeLine{CFType<NMFPolicy, UserMeanNormalization> cf(data);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Generate 10 recommendations for all users.}}
+\DoxyCodeLine{cf.GetRecommendations(10, recommendations);}
+
+\end{DoxyCode}
+ 
+
+Definition at line 39 of file user\+\_\+mean\+\_\+normalization.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1UserMeanNormalization_a95ff6b23a42843c747deb50c32825344}} 
+\index{UserMeanNormalization@{UserMeanNormalization}!UserMeanNormalization@{UserMeanNormalization}}
+\index{UserMeanNormalization@{UserMeanNormalization}!UserMeanNormalization@{UserMeanNormalization}}
+\doxysubsubsection{UserMeanNormalization()}
+{\footnotesize\ttfamily \textbf{ User\+Mean\+Normalization} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 43 of file user\+\_\+mean\+\_\+normalization.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1UserMeanNormalization_a93926452083f79197edc30f83476a40d}} 
+\index{UserMeanNormalization@{UserMeanNormalization}!Denormalize@{Denormalize}}
+\index{Denormalize@{Denormalize}!UserMeanNormalization@{UserMeanNormalization}}
+\doxysubsubsection{Denormalize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Denormalize (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{combinations,  }\item[{arma\+::vec \&}]{predictions }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Denormalize computed rating by adding user mean. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em combinations} & User/\+Item combinations. \\
+\hline
+{\em predictions} & Predicted ratings for each user/item combination. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 143 of file user\+\_\+mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1UserMeanNormalization_abf21cefd8cf5cdc776b4dc9cf8eac372}} 
+\index{UserMeanNormalization@{UserMeanNormalization}!Denormalize@{Denormalize}}
+\index{Denormalize@{Denormalize}!UserMeanNormalization@{UserMeanNormalization}}
+\doxysubsubsection{Denormalize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Denormalize (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{user,  }\item[{const}]{size\+\_\+t,  }\item[{const double}]{rating }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Denormalize computed rating by adding user mean. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em user} & User ID. \\
+\hline
+{\em $\ast$} & (item) Item ID. \\
+\hline
+{\em rating} & Computed rating before denormalization. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 130 of file user\+\_\+mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1UserMeanNormalization_a6db5f5d76cbd055347cecd9ca90eea86}} 
+\index{UserMeanNormalization@{UserMeanNormalization}!Mean@{Mean}}
+\index{Mean@{Mean}!UserMeanNormalization@{UserMeanNormalization}}
+\doxysubsubsection{Mean()}
+{\footnotesize\ttfamily const arma\+::vec\& Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return user mean. 
+
+
+
+Definition at line 156 of file user\+\_\+mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1UserMeanNormalization_a87410cc06d847eef46d0dfdb137c6be7}} 
+\index{UserMeanNormalization@{UserMeanNormalization}!Normalize@{Normalize}}
+\index{Normalize@{Normalize}!UserMeanNormalization@{UserMeanNormalization}}
+\doxysubsubsection{Normalize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Normalize (\begin{DoxyParamCaption}\item[{arma\+::mat \&}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Normalize the data by subtracting user mean from each of existing ratings. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Input dataset in the form of coordinate list. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 50 of file user\+\_\+mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1UserMeanNormalization_a9656a2fd4841da15cf4b13ab57aa8000}} 
+\index{UserMeanNormalization@{UserMeanNormalization}!Normalize@{Normalize}}
+\index{Normalize@{Normalize}!UserMeanNormalization@{UserMeanNormalization}}
+\doxysubsubsection{Normalize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Normalize (\begin{DoxyParamCaption}\item[{arma\+::sp\+\_\+mat \&}]{cleaned\+Data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Normalize the data by subtracting user mean from each of existing rating. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cleaned\+Data} & Input data as a sparse matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 90 of file user\+\_\+mean\+\_\+normalization.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1UserMeanNormalization_a65cba07328997659bec80b9879b15a51}} 
+\index{UserMeanNormalization@{UserMeanNormalization}!serialize@{serialize}}
+\index{serialize@{serialize}!UserMeanNormalization@{UserMeanNormalization}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialization. 
+
+
+
+Definition at line 162 of file user\+\_\+mean\+\_\+normalization.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/cf/normalization/\textbf{ user\+\_\+mean\+\_\+normalization.\+hpp}\end{DoxyCompactItemize}

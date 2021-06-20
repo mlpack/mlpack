@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1kmeans_1_1RandomPartition" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::kmeans::RandomPartition</compoundname>
+    <includes refid="random__partition_8hpp" local="no">random_partition.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1RandomPartition_1ac9affc7889d9b8911bb695c6855896e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RandomPartition</definition>
+        <argsstring>()</argsstring>
+        <name>RandomPartition</name>
+        <briefdescription>
+<para>Empty constructor, required by the InitialPartitionPolicy policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/random_partition.hpp" line="30" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/random_partition.hpp" bodystart="30" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1RandomPartition_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the partitioner (nothing to do). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/random_partition.hpp" line="55" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/random_partition.hpp" bodystart="55" bodyend="55"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1RandomPartition_1a66c98fbe18c8952d61e996c723860a81" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Cluster</definition>
+        <argsstring>(const MatType &amp;data, const size_t clusters, arma::Row&lt; size_t &gt; &amp;assignments)</argsstring>
+        <name>Cluster</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>clusters</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>assignments</declname>
+        </param>
+        <briefdescription>
+<para>Partition the given dataset into the given number of clusters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Assignments are random, and the number of points in each cluster should be equal (or approximately equal).</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of data (arma::mat or arma::sp_mat). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to partition. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>clusters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of clusters to split dataset into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>assignments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store cluster assignments into. Values will be between 0 and (clusters - 1). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/random_partition.hpp" line="44" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/random_partition.hpp" bodystart="44" bodyend="51"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A very simple partitioner which partitions the data randomly into the number of desired clusters. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It has no parameters, and so an instance of the class is not even necessary. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/random_partition.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/random_partition.hpp" bodystart="27" bodyend="56"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1kmeans_1_1RandomPartition_1a66c98fbe18c8952d61e996c723860a81" prot="public" virt="non-virtual"><scope>mlpack::kmeans::RandomPartition</scope><name>Cluster</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1RandomPartition_1ac9affc7889d9b8911bb695c6855896e1" prot="public" virt="non-virtual"><scope>mlpack::kmeans::RandomPartition</scope><name>RandomPartition</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1RandomPartition_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" virt="non-virtual"><scope>mlpack::kmeans::RandomPartition</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

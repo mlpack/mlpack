@@ -1,0 +1,461 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1PositionalEncoding" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::PositionalEncoding</compoundname>
+    <includes refid="positional__encoding_8hpp" local="no">positional_encoding.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PositionalEncoding_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="123" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PositionalEncoding_1ad2783331e8c6fc75f46831945c3c5cd1" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t embedDim</definition>
+        <argsstring></argsstring>
+        <name>embedDim</name>
+        <briefdescription>
+<para>Locally-stored embedding dimension. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="114" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PositionalEncoding_1a9ed1298793b1995f8bb9d2bec6991823" prot="private" static="no" mutable="no">
+        <type>InputDataType</type>
+        <definition>InputDataType inputParameter</definition>
+        <argsstring></argsstring>
+        <name>inputParameter</name>
+        <briefdescription>
+<para>Locally-stored input parameter object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="126" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PositionalEncoding_1a396ed41af6920c437022bc6c727b7ffb" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxSequenceLength</definition>
+        <argsstring></argsstring>
+        <name>maxSequenceLength</name>
+        <briefdescription>
+<para>Locally-stored maximum sequence length that has to be encoded. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="117" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PositionalEncoding_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="129" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PositionalEncoding_1a6c635230497555da70e72d28c73b5edd" prot="private" static="no" mutable="no">
+        <type>InputDataType</type>
+        <definition>InputDataType positionalEncoding</definition>
+        <argsstring></argsstring>
+        <name>positionalEncoding</name>
+        <briefdescription>
+<para>Locally-stored positional encodings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="120" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1afe8585a7bae882ae64e784ffa84edf69" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>PositionalEncoding</definition>
+        <argsstring>()</argsstring>
+        <name>PositionalEncoding</name>
+        <briefdescription>
+<para>Create <ref refid="classmlpack_1_1ann_1_1PositionalEncoding" kindref="compound">PositionalEncoding</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="43" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1ad8fe002413777b2f9b47c74cb93d029b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>PositionalEncoding</definition>
+        <argsstring>(const size_t embedDim, const size_t maxSequenceLength)</argsstring>
+        <name>PositionalEncoding</name>
+        <param>
+          <type>const size_t</type>
+          <declname>embedDim</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxSequenceLength</declname>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1PositionalEncoding" kindref="compound">PositionalEncoding</ref> layer object using the specified parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>embedDim</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The length of the embedding vector. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxSequenceLength</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of tokens in each sequence. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="51" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) The propagated input activation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="74" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="91" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="91" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="89" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="89" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1ab177d14792ab15a08e9c27d0c556b37c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType const  &amp;</type>
+        <definition>InputDataType const&amp; Encoding</definition>
+        <argsstring>() const</argsstring>
+        <name>Encoding</name>
+        <briefdescription>
+<para>Get the positional encoding vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="94" column="23" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="94" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="62" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1a063c3b1053c7979a7dd2e7bbd2bf1f8a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType &amp;</type>
+        <definition>InputDataType&amp; InputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Modify the input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="81" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1aaffd593b3ab627f8b5aae2a1f53634b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType const  &amp;</type>
+        <definition>InputDataType const&amp; InputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Get the input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="79" column="23" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="79" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1a13ab93f234244a68f6ade76287284447" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputShape</definition>
+        <argsstring>() const</argsstring>
+        <name>InputShape</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="96" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="96" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="86" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="86" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="84" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="84" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="105" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PositionalEncoding_1ae0c13399f286937fa8d539bd4c3ff568" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void InitPositionalEncoding</definition>
+        <argsstring>()</argsstring>
+        <name>InitPositionalEncoding</name>
+        <briefdescription>
+<para>Initialize positional encodings for further use. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="111" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Positional Encoding injects some information about the relative or absolute position of the tokens in the sequence. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The input and the output have the same shape: <computeroutput>(embedDim * maxSequenceLength, batchSize)</computeroutput>. The embeddings are stored consequently.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/positional_encoding.hpp" bodystart="38" bodyend="130"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1ad2783331e8c6fc75f46831945c3c5cd1" prot="private" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>embedDim</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1ab177d14792ab15a08e9c27d0c556b37c" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>Encoding</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1ae0c13399f286937fa8d539bd4c3ff568" prot="private" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>InitPositionalEncoding</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a9ed1298793b1995f8bb9d2bec6991823" prot="private" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>inputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1aaffd593b3ab627f8b5aae2a1f53634b0" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a063c3b1053c7979a7dd2e7bbd2bf1f8a" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a13ab93f234244a68f6ade76287284447" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>InputShape</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a396ed41af6920c437022bc6c727b7ffb" prot="private" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>maxSequenceLength</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a6c635230497555da70e72d28c73b5edd" prot="private" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>positionalEncoding</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1afe8585a7bae882ae64e784ffa84edf69" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>PositionalEncoding</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1ad8fe002413777b2f9b47c74cb93d029b" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>PositionalEncoding</name></member>
+      <member refid="classmlpack_1_1ann_1_1PositionalEncoding_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::PositionalEncoding</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

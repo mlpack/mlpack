@@ -1,0 +1,82 @@
+\doxysection{Merge\+Initialization$<$ WInitialization\+Rule\+Type, HInitialization\+Rule\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1amf_1_1MergeInitialization}\index{MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$@{MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$}}
+
+
+This initialization rule for \doxyref{AMF}{p.}{classmlpack_1_1amf_1_1AMF} simply takes in two initialization rules, and initialize W with the first rule and H with the second rule.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Merge\+Initialization} ()
+\item 
+\textbf{ Merge\+Initialization} (const WInitialization\+Rule\+Type \&w\+Init\+Rule, const HInitialization\+Rule\+Type \&h\+Init\+Rule)
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Initialize} (const Mat\+Type \&V, const size\+\_\+t r, arma\+::mat \&W, arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em Initialize W and H with the corresponding initialization rules. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename WInitialization\+Rule\+Type, typename HInitialization\+Rule\+Type$>$\newline
+class mlpack\+::amf\+::\+Merge\+Initialization$<$ WInitialization\+Rule\+Type, HInitialization\+Rule\+Type $>$}
+
+This initialization rule for \doxyref{AMF}{p.}{classmlpack_1_1amf_1_1AMF} simply takes in two initialization rules, and initialize W with the first rule and H with the second rule. 
+
+Definition at line 27 of file merge\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1amf_1_1MergeInitialization_ad5795a973773fbf91796bb0c8d068234}} 
+\index{MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$@{MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$}!MergeInitialization@{MergeInitialization}}
+\index{MergeInitialization@{MergeInitialization}!MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$@{MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$}}
+\doxysubsubsection{MergeInitialization()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Merge\+Initialization} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 31 of file merge\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1MergeInitialization_a473ad003397f9089eb97f20c5b9b0973}} 
+\index{MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$@{MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$}!MergeInitialization@{MergeInitialization}}
+\index{MergeInitialization@{MergeInitialization}!MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$@{MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$}}
+\doxysubsubsection{MergeInitialization()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Merge\+Initialization} (\begin{DoxyParamCaption}\item[{const WInitialization\+Rule\+Type \&}]{w\+Init\+Rule,  }\item[{const HInitialization\+Rule\+Type \&}]{h\+Init\+Rule }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 35 of file merge\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1amf_1_1MergeInitialization_af7816b2608658041cf35befb4c3946b9}} 
+\index{MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$@{MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$@{MergeInitialization$<$ WInitializationRuleType, HInitializationRuleType $>$}}
+\doxysubsubsection{Initialize()}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{V,  }\item[{const size\+\_\+t}]{r,  }\item[{arma\+::mat \&}]{W,  }\item[{arma\+::mat \&}]{H }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize W and H with the corresponding initialization rules. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix. \\
+\hline
+{\em r} & Rank of decomposition. \\
+\hline
+{\em W} & W matrix, to be initialized to given matrix. \\
+\hline
+{\em H} & H matrix, to be initialized to given matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 50 of file merge\+\_\+init.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/amf/init\+\_\+rules/\textbf{ merge\+\_\+init.\+hpp}\end{DoxyCompactItemize}

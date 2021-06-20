@@ -1,0 +1,2377 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1RectangleTree" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::RectangleTree</compoundname>
+    <includes refid="rectangle__tree_2rectangle__tree_8hpp" local="no">rectangle_tree.hpp</includes>
+    <innerclass refid="classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser" prot="public">mlpack::tree::RectangleTree::DualTreeTraverser</innerclass>
+    <innerclass refid="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser" prot="public">mlpack::tree::RectangleTree::SingleTreeTraverser</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename MetricType</type>
+        <defval><ref refid="namespacemlpack_1_1metric_1a0306f114fdf32dcdfa8f015408cfc37d" kindref="member">metric::EuclideanDistance</ref></defval>
+      </param>
+      <param>
+        <type>typename StatisticType</type>
+        <defval><ref refid="classmlpack_1_1tree_1_1EmptyStatistic" kindref="compound">EmptyStatistic</ref></defval>
+      </param>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename <ref refid="classmlpack_1_1tree_1_1RectangleTree_1af8cd44a1d4485c9c0022f124b0b312bf" kindref="member">SplitType</ref></type>
+        <defval><ref refid="classmlpack_1_1tree_1_1RTreeSplit" kindref="compound">RTreeSplit</ref></defval>
+      </param>
+      <param>
+        <type>typename <ref refid="classmlpack_1_1tree_1_1RectangleTree_1ad326ceae04a3d7cb8de5f57c385475fe" kindref="member">DescentType</ref></type>
+        <defval><ref refid="classmlpack_1_1tree_1_1RTreeDescentHeuristic" kindref="compound">RTreeDescentHeuristic</ref></defval>
+      </param>
+      <param>
+        <type>template&lt; typename &gt; class</type>
+        <declname>AuxiliaryInformationType</declname>
+        <defname>AuxiliaryInformationType</defname>
+        <defval><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation" kindref="compound">NoAuxiliaryInformation</ref></defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1RectangleTree_1a5037c9f86afcfda12a618bfe99994a23" prot="public" static="no">
+        <type>AuxiliaryInformationType&lt; <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &gt;</type>
+        <definition>typedef AuxiliaryInformationType&lt;RectangleTree&gt; AuxiliaryInformation</definition>
+        <argsstring></argsstring>
+        <name>AuxiliaryInformation</name>
+        <briefdescription>
+<para>The auxiliary information type held by the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="66" column="36" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" prot="public" static="no">
+        <type>MatType::elem_type</type>
+        <definition>typedef MatType::elem_type ElemType</definition>
+        <argsstring></argsstring>
+        <name>ElemType</name>
+        <briefdescription>
+<para>The element type held by the matrix type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="64" column="39" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1RectangleTree_1a57758caa2e58c3fe05d1284eeabae523" prot="public" static="no">
+        <type>MatType</type>
+        <definition>typedef MatType Mat</definition>
+        <argsstring></argsstring>
+        <name>Mat</name>
+        <briefdescription>
+<para>So other classes can use TreeType::Mat. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="62" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1ae21ac42a417c926e51abe722dab18c77" prot="private" static="no" mutable="no">
+        <type>AuxiliaryInformationType&lt; <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &gt;</type>
+        <definition>AuxiliaryInformationType&lt;RectangleTree&gt; auxiliaryInfo</definition>
+        <argsstring></argsstring>
+        <name>auxiliaryInfo</name>
+        <briefdescription>
+<para>A tree-specific information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="106" column="28" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1aac83a4c2da46afd4932602be91f84961" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t begin</definition>
+        <argsstring></argsstring>
+        <name>begin</name>
+        <briefdescription>
+<para>The index of the first point in the dataset contained in this node (and its children). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>THIS IS ALWAYS 0 AT THE MOMENT. IT EXISTS MERELY IN CASE I THINK OF A WAY TO CHANGE THAT. IN OTHER WORDS, IT WILL PROBABLY BE REMOVED. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="82" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1aa88672962c7250500d2f0fc84270fbcc" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound</ref>&lt; <ref refid="namespacemlpack_1_1metric_1a0306f114fdf32dcdfa8f015408cfc37d" kindref="member">metric::EuclideanDistance</ref>, <ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref> &gt;</type>
+        <definition>bound::HRectBound&lt;metric::EuclideanDistance, ElemType&gt; bound</definition>
+        <argsstring></argsstring>
+        <name>bound</name>
+        <briefdescription>
+<para>The bound object for this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="93" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1aa3663305871277bbc9e36a7b81cf734d" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> * &gt;</type>
+        <definition>std::vector&lt;RectangleTree*&gt; children</definition>
+        <argsstring></argsstring>
+        <name>children</name>
+        <briefdescription>
+<para>The child nodes (Starting at 0 and ending at (numChildren-1) ). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="75" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1a76d971a3c552bc58ba9f0d5fceae9806" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <briefdescription>
+<para>The number of points in the dataset contained in this node (and its children). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="85" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1a829bf4b7b37982e2743e9d6452ebee43" prot="private" static="no" mutable="no">
+        <type>const MatType *</type>
+        <definition>const MatType* dataset</definition>
+        <argsstring></argsstring>
+        <name>dataset</name>
+        <briefdescription>
+<para>The dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="99" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1a6268dbdb14fcc39e206f59d888dbd50c" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxLeafSize</definition>
+        <argsstring></argsstring>
+        <name>maxLeafSize</name>
+        <briefdescription>
+<para>The max leaf size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="89" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1a6bbe0fa01782eeb2e41eb66112fe2291" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxNumChildren</definition>
+        <argsstring></argsstring>
+        <name>maxNumChildren</name>
+        <briefdescription>
+<para>The max number of child nodes a non-leaf node can have. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="69" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1a36703b8486adee79af9a06e2373212f7" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t minLeafSize</definition>
+        <argsstring></argsstring>
+        <name>minLeafSize</name>
+        <briefdescription>
+<para>The minimum leaf size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="91" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1ab4ba1235386a1ea816c5061740fe7986" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t minNumChildren</definition>
+        <argsstring></argsstring>
+        <name>minNumChildren</name>
+        <briefdescription>
+<para>The minimum number of child nodes a non-leaf node can have. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="71" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1a2ea94a4c57e156ae2a81f1669b73534f" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numChildren</definition>
+        <argsstring></argsstring>
+        <name>numChildren</name>
+        <briefdescription>
+<para>The number of child nodes actually in use (0 if this is a leaf node). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="73" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1a21646c00540e6bb4fb8a311f0a0773c3" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numDescendants</definition>
+        <argsstring></argsstring>
+        <name>numDescendants</name>
+        <briefdescription>
+<para>The number of descendants of this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="87" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1a5cf8f8c203a73513ad87438d1ae02fe2" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool ownsDataset</definition>
+        <argsstring></argsstring>
+        <name>ownsDataset</name>
+        <briefdescription>
+<para>Whether or not we are responsible for deleting the dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is probably not aligned well... </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="102" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1a8048503d158b3f6c037c4fd46b888dfc" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> *</type>
+        <definition>RectangleTree* parent</definition>
+        <argsstring></argsstring>
+        <name>parent</name>
+        <briefdescription>
+<para>The parent node (NULL if this is the root of the tree). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="77" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1a110be38965cb624d9e3b4d335f962806" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref></type>
+        <definition>ElemType parentDistance</definition>
+        <argsstring></argsstring>
+        <name>parentDistance</name>
+        <briefdescription>
+<para>The distance from the centroid of this node to the centroid of the parent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="97" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1ac8724844d8e60191e6cc7142536dcc04" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; size_t &gt;</type>
+        <definition>std::vector&lt;size_t&gt; points</definition>
+        <argsstring></argsstring>
+        <name>points</name>
+        <briefdescription>
+<para>The mapping to the dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="104" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1a3bb6957cc0ee042b639ebc4b8b45fd37" prot="private" static="no" mutable="no">
+        <type>StatisticType</type>
+        <definition>StatisticType stat</definition>
+        <argsstring></argsstring>
+        <name>stat</name>
+        <briefdescription>
+<para>Any extra data contained in the node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="95" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classmlpack_1_1tree_1_1RectangleTree_1ab2f44cbb59a08132f4c843e5225bba0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class cereal::access</definition>
+        <argsstring></argsstring>
+        <name>cereal::access</name>
+        <param>
+          <type>cereal::access</type>
+        </param>
+        <briefdescription>
+<para>Friend access is given for the default constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="577" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="577" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1ac178ecb38a40a86e40c005ff70d2702a" prot="protected" static="no" mutable="no">
+        <type>friend</type>
+        <definition>friend AuxiliaryInformation</definition>
+        <argsstring></argsstring>
+        <name>AuxiliaryInformation</name>
+        <briefdescription>
+<para>Give friend access for AuxiliaryInformationType. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="586" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="586" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1ad326ceae04a3d7cb8de5f57c385475fe" prot="protected" static="no" mutable="no">
+        <type>friend</type>
+        <definition>friend DescentType</definition>
+        <argsstring></argsstring>
+        <name>DescentType</name>
+        <briefdescription>
+<para>Give friend access for DescentType. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="580" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="580" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1af8cd44a1d4485c9c0022f124b0b312bf" prot="protected" static="no" mutable="no">
+        <type>friend</type>
+        <definition>friend SplitType</definition>
+        <argsstring></argsstring>
+        <name>SplitType</name>
+        <briefdescription>
+<para>Give friend access for SplitType. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="583" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="583" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a2c3185b5f76fda53e2cd37b11aa93d0f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>RectangleTree</definition>
+        <argsstring>(Archive &amp;ar, const typename std::enable_if_t&lt; cereal::is_loading&lt; Archive &gt;()&gt; *=0)</argsstring>
+        <name>RectangleTree</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; <ref refid="namespacecereal_1ad79f9b690399d7e8aad9e7fc9ef3b797" kindref="member">cereal::is_loading</ref>&lt; Archive &gt;()&gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Construct the tree from a cereal archive. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="207" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a1027fe8c984d5656006328acd6cc92c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RectangleTree</definition>
+        <argsstring>(const MatType &amp;data, const size_t maxLeafSize=20, const size_t minLeafSize=8, const size_t maxNumChildren=5, const size_t minNumChildren=2, const size_t firstDataIndex=0)</argsstring>
+        <name>RectangleTree</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxLeafSize</declname>
+          <defval>20</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minLeafSize</declname>
+          <defval>8</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxNumChildren</declname>
+          <defval>5</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minNumChildren</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>firstDataIndex</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Construct this as the root node of a rectangle type tree using the given dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will modify the ordering of the points in the dataset!</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset from which to create the tree. This will be modified! </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum size of each leaf in the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum size of each leaf in the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxNumChildren</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The maximum number of child nodes a non-leaf node may have. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minNumChildren</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The minimum number of child nodes a non-leaf node may have. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>firstDataIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the first data point. UNUSED UNLESS WE ADD SUPPORT FOR HAVING A &quot;CENTERAL&quot; DATA MATRIX. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="131" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a7021cb2a458cca4ead6ae79780c14ad8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RectangleTree</definition>
+        <argsstring>(const RectangleTree &amp;other, const bool deepCopy=true, RectangleTree *newParent=NULL)</argsstring>
+        <name>RectangleTree</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>deepCopy</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> *</type>
+          <declname>newParent</declname>
+          <defval>NULL</defval>
+        </param>
+        <briefdescription>
+<para>Create a rectangle tree by copying the other tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Be careful! This can take a long time and use a lot of memory.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tree to be copied. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>deepCopy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If false, the children are not recursively copied. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newParent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set a new parent as applicable, default NULL. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="178" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1af147218dd8dc0045cd6a7cecd43a2ffe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RectangleTree</definition>
+        <argsstring>(MatType &amp;&amp;data, const size_t maxLeafSize=20, const size_t minLeafSize=8, const size_t maxNumChildren=5, const size_t minNumChildren=2, const size_t firstDataIndex=0)</argsstring>
+        <name>RectangleTree</name>
+        <param>
+          <type>MatType &amp;&amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxLeafSize</declname>
+          <defval>20</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minLeafSize</declname>
+          <defval>8</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxNumChildren</declname>
+          <defval>5</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minNumChildren</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>firstDataIndex</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Construct this as the root node of a rectangle tree type using the given dataset, and taking ownership of the given dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset from which to create the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum size of each leaf in the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum size of each leaf in the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxNumChildren</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The maximum number of child nodes a non-leaf node may have. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minNumChildren</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The minimum number of child nodes a non-leaf node may have. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>firstDataIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the first data point. UNUSED UNLESS WE ADD SUPPORT FOR HAVING A &quot;CENTERAL&quot; DATA MATRIX. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="152" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a32f828a13cdc2f5eeca43d37c87ff4db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RectangleTree</definition>
+        <argsstring>(RectangleTree &amp;&amp;other)</argsstring>
+        <name>RectangleTree</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Create a rectangle tree by moving the other tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tree to be moved. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="187" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a3b593f811c454b7b95d033c80e051ed3" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RectangleTree</definition>
+        <argsstring>(RectangleTree *parentNode, const size_t numMaxChildren=0)</argsstring>
+        <name>RectangleTree</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> *</type>
+          <declname>parentNode</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numMaxChildren</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Construct this as an empty node with the specified parent. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Copying the parameters (maxLeafSize, minLeafSize, maxNumChildren, minNumChildren, firstDataIndex) from the parent.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parentNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parent of the node that is being constructed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numMaxChildren</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The max number of child nodes (used in x-trees). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="167" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a71251e80af594b01fde0d834d178f849" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~RectangleTree</definition>
+        <argsstring>()</argsstring>
+        <name>~RectangleTree</name>
+        <briefdescription>
+<para>Deletes this node, deallocating the memory for the children and calling their destructors in turn. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will invalidate any younters or references to any nodes which are children of this one. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="216" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a3217304f02ab31874410c5326e3d74c3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>AuxiliaryInformationType&lt; <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &gt; &amp;</type>
+        <definition>AuxiliaryInformationType&lt;RectangleTree&gt;&amp; AuxiliaryInfo</definition>
+        <argsstring>()</argsstring>
+        <name>AuxiliaryInfo</name>
+        <briefdescription>
+<para>Modify the split object of this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="328" column="28" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="328" bodyend="329"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1aef466731529118c6276cf3d214fee09d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const AuxiliaryInformationType&lt; <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &gt; &amp;</type>
+        <definition>const AuxiliaryInformationType&lt;RectangleTree&gt;&amp; AuxiliaryInfo</definition>
+        <argsstring>() const</argsstring>
+        <name>AuxiliaryInfo</name>
+        <briefdescription>
+<para>Return the auxiliary information object of this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="325" column="34" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="325" bodyend="326"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a49cdbf8b1b2899522cd80f4cbff40b69" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Begin</definition>
+        <argsstring>()</argsstring>
+        <name>Begin</name>
+        <briefdescription>
+<para>Modify the index of the beginning point of this subset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="545" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="545" bodyend="545"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ac50a3a009687e641fd8249e011f628d4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Begin</definition>
+        <argsstring>() const</argsstring>
+        <name>Begin</name>
+        <briefdescription>
+<para>Return the index of the beginning point of this subset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="543" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="543" bodyend="543"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a8a0a35d824602c0e21a8d21638cfd6ad" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound</ref>&lt; MetricType &gt; &amp;</type>
+        <definition>bound::HRectBound&lt;MetricType&gt;&amp; Bound</definition>
+        <argsstring>()</argsstring>
+        <name>Bound</name>
+        <briefdescription>
+<para>Modify the bound object for this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="317" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="317" bodyend="317"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound</ref>&lt; MetricType &gt; &amp;</type>
+        <definition>const bound::HRectBound&lt;MetricType&gt;&amp; Bound</definition>
+        <argsstring>() const</argsstring>
+        <name>Bound</name>
+        <briefdescription>
+<para>Return the bound object for this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="315" column="27" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="315" bodyend="315"/>
+        <referencedby refid="classmlpack_1_1tree_1_1RectangleTree_1a9bb75acadb3f676baa2ae6b6fae506d7" compoundref="rectangle__tree_2rectangle__tree_8hpp" startline="493" endline="496">RectangleTree&lt; MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType &gt;::MaxDistance</referencedby>
+        <referencedby refid="classmlpack_1_1tree_1_1RectangleTree_1a0f14293f72c1558489a01063d109cd33" compoundref="rectangle__tree_2rectangle__tree_8hpp" startline="487" endline="490">RectangleTree&lt; MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType &gt;::MinDistance</referencedby>
+        <referencedby refid="classmlpack_1_1tree_1_1RectangleTree_1a3a9f26442a5841dcdf5022d14df68a13" compoundref="rectangle__tree_2rectangle__tree_8hpp" startline="499" endline="502">RectangleTree&lt; MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType &gt;::RangeDistance</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a16e556777ca3125ab3cdc16aed9e7885" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Center</definition>
+        <argsstring>(arma::vec &amp;center)</argsstring>
+        <name>Center</name>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>center</declname>
+        </param>
+        <briefdescription>
+<para>Get the centroid of the node and store it in the given vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="368" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="368" bodyend="368"/>
+        <references refid="classmlpack_1_1bound_1_1HRectBound_1ac519e0ecb1bbd517724a93b4b57cc399">HRectBound&lt; MetricType, ElemType &gt;::Center</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ae1f4a985db958092c3015e735a8db69d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+        <definition>RectangleTree&amp; Child</definition>
+        <argsstring>(const size_t child)</argsstring>
+        <name>Child</name>
+        <param>
+          <type>const size_t</type>
+          <declname>child</declname>
+        </param>
+        <briefdescription>
+<para>Modify the specified child. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>child</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of child to return. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="447" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="447" bodyend="450"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a562c73abb0bf2e473ecb9ff0075aa9d5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+        <definition>RectangleTree&amp; Child</definition>
+        <argsstring>(const size_t child) const</argsstring>
+        <name>Child</name>
+        <param>
+          <type>const size_t</type>
+          <declname>child</declname>
+        </param>
+        <briefdescription>
+<para>Get the specified child. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>child</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of child to return. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="437" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="437" bodyend="440"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ae6ffa3cb0972ea772a972b50df36fc59" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CondenseTree</definition>
+        <argsstring>(const arma::vec &amp;point, std::vector&lt; bool &gt; &amp;relevels, const bool usePoint)</argsstring>
+        <name>CondenseTree</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>relevels</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>usePoint</declname>
+        </param>
+        <briefdescription>
+<para>Condense the bounding rectangles for this node based on the removal of the point specified by the arma::vec&amp;. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This recurses up the tree. If a node goes below the minimum fill, this function will fix the tree.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The arma::vec&amp; of the point that was removed to require this condesation of the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>usePoint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>True if we use the optimized version of the algorithm that is possible when we now what point was deleted. False otherwise (eg. if we deleted a node instead of a point). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>relevels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The levels that have been reinserted to on this top level insertion. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="602" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a5a132e068ab206a014b986ff71c3442d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Count</definition>
+        <argsstring>()</argsstring>
+        <name>Count</name>
+        <briefdescription>
+<para>Modify the number of points in this subset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="550" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="550" bodyend="550"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ab30fd361b8bee994ff8ed9fbb6fae845" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Count</definition>
+        <argsstring>() const</argsstring>
+        <name>Count</name>
+        <briefdescription>
+<para>Return the number of points in this subset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="548" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="548" bodyend="548"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1abb34576c3ddb31987f1dda9c33e6476f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>MatType &amp;</type>
+        <definition>MatType&amp; Dataset</definition>
+        <argsstring>()</argsstring>
+        <name>Dataset</name>
+        <briefdescription>
+<para>Modify the dataset which the tree is built on. Be careful! </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="362" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="362" bodyend="362"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a4c3764c98d5804083a9ec2c867eb9366" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const MatType &amp;</type>
+        <definition>const MatType&amp; Dataset</definition>
+        <argsstring>() const</argsstring>
+        <name>Dataset</name>
+        <briefdescription>
+<para>Get the dataset which the tree is built on. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="360" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="360" bodyend="360"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a0509380350bfe78f838730719b5421ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool DeletePoint</definition>
+        <argsstring>(const size_t point)</argsstring>
+        <name>DeletePoint</name>
+        <param>
+          <type>const size_t</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Deletes a point from the treeand, updates the bounding rectangle. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>However, the point will be kept in the centeral dataset. (The user may remove it from there if he wants, but he must not change the indices of the other points.) Returns true if the point is successfully removed and false if it is not. (ie. the point is not in the tree) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="270" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a06c0d2543978fc03efc5d2114d6e1e54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool DeletePoint</definition>
+        <argsstring>(const size_t point, std::vector&lt; bool &gt; &amp;relevels)</argsstring>
+        <name>DeletePoint</name>
+        <param>
+          <type>const size_t</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>relevels</declname>
+        </param>
+        <briefdescription>
+<para>Deletes a point from the tree, updates the bounding rectangle, tracking levels. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>However, the point will be kept in the centeral dataset. (The user may remove it from there if he wants, but he must not change the indices of the other points.) Returns true if the point is successfully removed and false if it is not. (ie. the point is not in the tree) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="280" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1aa732ea3eeb38529c549fd4d15d8655be" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Descendant</definition>
+        <argsstring>(const size_t index) const</argsstring>
+        <name>Descendant</name>
+        <param>
+          <type>const size_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Return the index (with reference to the dataset) of a particular descendant of this node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The index should be greater than zero but less than the number of descendants.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the descendant. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="470" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a07db5ef67990c55a04f42765ed589bef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> *</type>
+        <definition>RectangleTree* ExactClone</definition>
+        <argsstring>()</argsstring>
+        <name>ExactClone</name>
+        <briefdescription>
+<para>Make an exact copy of this node, pointers and everything. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="627" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a97f6fd1983ad549297e75d849e1a2bca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> *</type>
+        <definition>RectangleTree* FindByBeginCount</definition>
+        <argsstring>(size_t begin, size_t count)</argsstring>
+        <name>FindByBeginCount</name>
+        <param>
+          <type>size_t</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+<para>Find a node in this tree by its begin and count. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Every node is uniquely identified by these two numbers. This is useful for communicating position over the network, when pointers would be invalid.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The begin() of the node to find. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The count() of the node to find. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The found node, or NULL if not found. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="312" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a27dcf57c01f3eaafaa08631c31900eb5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> *</type>
+        <definition>const RectangleTree* FindByBeginCount</definition>
+        <argsstring>(size_t begin, size_t count) const</argsstring>
+        <name>FindByBeginCount</name>
+        <param>
+          <type>size_t</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+<para>Find a node in this tree by its begin and count (const). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Every node is uniquely identified by these two numbers. This is useful for communicating position over the network, when pointers would be invalid.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The begin() of the node to find. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The count() of the node to find. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The found node, or NULL if not found. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="299" column="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1adc597088eadfcfa3060336d0484ab573" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref></type>
+        <definition>ElemType FurthestDescendantDistance</definition>
+        <argsstring>() const</argsstring>
+        <name>FurthestDescendantDistance</name>
+        <briefdescription>
+<para>Return the furthest possible descendant distance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This returns the maximum distance from the centroid to the edge of the bound and not the empirical quantity which is the actual furthest descendant distance. So the actual furthest descendant distance may be less than what this method returns (but it will never be greater than this). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="418" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1acbe82a6439f71405b5801ca7d941cbfb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref></type>
+        <definition>ElemType FurthestPointDistance</definition>
+        <argsstring>() const</argsstring>
+        <name>FurthestPointDistance</name>
+        <briefdescription>
+<para>Return the furthest distance to a point held in this node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If this is not a leaf node, then the distance is 0 because the node holds no points. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="409" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1aea96598fb89ed27fe7340349051aa6a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t GetFurthestChild</definition>
+        <argsstring>(const RectangleTree &amp;queryNode)</argsstring>
+        <name>GetFurthestChild</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+          <declname>queryNode</declname>
+        </param>
+        <briefdescription>
+<para>Return the index of the furthest child node to the given query node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If it can&apos;t decide, it will return <ref refid="classmlpack_1_1tree_1_1RectangleTree_1a605a6e856364afd0bad4bafa17dbe5c0" kindref="member">NumChildren()</ref> (invalid index). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="403" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a0257281722537c7916db7763623f67f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t GetFurthestChild</definition>
+        <argsstring>(const VecType &amp;point, typename std::enable_if_t&lt; IsVector&lt; VecType &gt;::value &gt; *=0)</argsstring>
+        <name>GetFurthestChild</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; <ref refid="structIsVector" kindref="compound">IsVector</ref>&lt; VecType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the index of the furthest child node to the given query point. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If this is a leaf node, it will return <ref refid="classmlpack_1_1tree_1_1RectangleTree_1a605a6e856364afd0bad4bafa17dbe5c0" kindref="member">NumChildren()</ref> (invalid index). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="389" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1adae284b6b280a26fd609ad03ede81884" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t GetNearestChild</definition>
+        <argsstring>(const RectangleTree &amp;queryNode)</argsstring>
+        <name>GetNearestChild</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+          <declname>queryNode</declname>
+        </param>
+        <briefdescription>
+<para>Return the index of the nearest child node to the given query node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If it can&apos;t decide, it will return <ref refid="classmlpack_1_1tree_1_1RectangleTree_1a605a6e856364afd0bad4bafa17dbe5c0" kindref="member">NumChildren()</ref> (invalid index). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="397" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a19b9a5fd41d8e192b62effb1445bd410" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t GetNearestChild</definition>
+        <argsstring>(const VecType &amp;point, typename std::enable_if_t&lt; IsVector&lt; VecType &gt;::value &gt; *=0)</argsstring>
+        <name>GetNearestChild</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; <ref refid="structIsVector" kindref="compound">IsVector</ref>&lt; VecType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the index of the nearest child node to the given query point. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If this is a leaf node, it will return <ref refid="classmlpack_1_1tree_1_1RectangleTree_1a605a6e856364afd0bad4bafa17dbe5c0" kindref="member">NumChildren()</ref> (invalid index). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="380" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a35df6b8ff4b000deb441755b6bb2f2d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void InsertNode</definition>
+        <argsstring>(RectangleTree *node, const size_t level, std::vector&lt; bool &gt; &amp;relevels)</argsstring>
+        <name>InsertNode</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>level</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>relevels</declname>
+        </param>
+        <briefdescription>
+<para>Inserts a node into the tree, tracking which levels have been inserted into. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The node will be inserted so that the tree remains valid.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The node to be inserted. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>level</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The depth that should match the node where this node is finally inserted. This should be the number returned by calling <ref refid="classmlpack_1_1tree_1_1RectangleTree_1a5ec5eed000f9d4996ab56d5869817e7f" kindref="member">TreeDepth()</ref> from the node that originally contained &quot;node&quot;. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>relevels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The levels that have been reinserted to on this top level insertion. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="259" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a3095158e2444767314c01f08d6548505" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void InsertPoint</definition>
+        <argsstring>(const size_t point)</argsstring>
+        <name>InsertPoint</name>
+        <param>
+          <type>const size_t</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Inserts a point into the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of a point in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="236" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1aa2008c231e0bc68b24da85dd6a8231ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void InsertPoint</definition>
+        <argsstring>(const size_t point, std::vector&lt; bool &gt; &amp;relevels)</argsstring>
+        <name>InsertPoint</name>
+        <param>
+          <type>const size_t</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>relevels</declname>
+        </param>
+        <briefdescription>
+<para>Inserts a point into the tree, tracking which levels have been inserted into. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of a point in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>relevels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The levels that have been reinserted to on this top level insertion. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="246" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1aa0f4813924e6cdee43b45050bb947abe" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool IsLeaf</definition>
+        <argsstring>() const</argsstring>
+        <name>IsLeaf</name>
+        <briefdescription>
+<para>Return whether or not this node is a leaf (true if it has no children). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="332" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a9bb75acadb3f676baa2ae6b6fae506d7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref></type>
+        <definition>ElemType MaxDistance</definition>
+        <argsstring>(const RectangleTree &amp;other) const</argsstring>
+        <name>MaxDistance</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Return the maximum distance to another node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="493" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="493" bodyend="496"/>
+        <references refid="classmlpack_1_1tree_1_1RectangleTree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" compoundref="rectangle__tree_2rectangle__tree_8hpp" startline="315" endline="315">RectangleTree&lt; MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType &gt;::Bound</references>
+        <references refid="classmlpack_1_1bound_1_1HRectBound_1ae764d88483236cc470f5abe0273df4c5">HRectBound&lt; MetricType, ElemType &gt;::MaxDistance</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ae764d88483236cc470f5abe0273df4c5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref></type>
+        <definition>ElemType MaxDistance</definition>
+        <argsstring>(const VecType &amp;point, typename std::enable_if_t&lt; IsVector&lt; VecType &gt;::value &gt; *=0) const</argsstring>
+        <name>MaxDistance</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; <ref refid="structIsVector" kindref="compound">IsVector</ref>&lt; VecType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the maximum distance to another point. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="515" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="515" bodyend="520"/>
+        <references refid="classmlpack_1_1bound_1_1HRectBound_1ae764d88483236cc470f5abe0273df4c5">HRectBound&lt; MetricType, ElemType &gt;::MaxDistance</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1adae692ee05a48b48cc51c57106ec8e7b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MaxLeafSize</definition>
+        <argsstring>()</argsstring>
+        <name>MaxLeafSize</name>
+        <briefdescription>
+<para>Modify the maximum leaf size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="337" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="337" bodyend="337"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a327048550159fb03f23f87f48dbaa324" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MaxLeafSize</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxLeafSize</name>
+        <briefdescription>
+<para>Return the maximum leaf size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="335" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="335" bodyend="335"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a6af237a35eebff7911cce7fd553748ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MaxNumChildren</definition>
+        <argsstring>()</argsstring>
+        <name>MaxNumChildren</name>
+        <briefdescription>
+<para>Modify the maximum number of children (in a non-leaf node). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="347" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="347" bodyend="347"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a24c251ad0b5266cca6e2e96b9bb95c42" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MaxNumChildren</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxNumChildren</name>
+        <briefdescription>
+<para>Return the maximum number of children (in a non-leaf node). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="345" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="345" bodyend="345"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ab7cdd810a507e4a0aa262ea0fa8a322c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>MetricType</type>
+        <definition>MetricType Metric</definition>
+        <argsstring>() const</argsstring>
+        <name>Metric</name>
+        <briefdescription>
+<para>Get the metric which the tree uses. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="365" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="365" bodyend="365"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a0f14293f72c1558489a01063d109cd33" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref></type>
+        <definition>ElemType MinDistance</definition>
+        <argsstring>(const RectangleTree &amp;other) const</argsstring>
+        <name>MinDistance</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Return the minimum distance to another node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="487" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="487" bodyend="490"/>
+        <references refid="classmlpack_1_1tree_1_1RectangleTree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" compoundref="rectangle__tree_2rectangle__tree_8hpp" startline="315" endline="315">RectangleTree&lt; MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType &gt;::Bound</references>
+        <references refid="classmlpack_1_1bound_1_1HRectBound_1a73bf99a433e88a31d98b46bf4c0da147">HRectBound&lt; MetricType, ElemType &gt;::MinDistance</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a73bf99a433e88a31d98b46bf4c0da147" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref></type>
+        <definition>ElemType MinDistance</definition>
+        <argsstring>(const VecType &amp;point, typename std::enable_if_t&lt; IsVector&lt; VecType &gt;::value &gt; *=0) const</argsstring>
+        <name>MinDistance</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; <ref refid="structIsVector" kindref="compound">IsVector</ref>&lt; VecType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the minimum distance to another point. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="506" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="506" bodyend="511"/>
+        <references refid="classmlpack_1_1bound_1_1HRectBound_1a73bf99a433e88a31d98b46bf4c0da147">HRectBound&lt; MetricType, ElemType &gt;::MinDistance</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a20a4e92da6066eb335a576b7f9cd0415" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref></type>
+        <definition>ElemType MinimumBoundDistance</definition>
+        <argsstring>() const</argsstring>
+        <name>MinimumBoundDistance</name>
+        <briefdescription>
+<para>Return the minimum distance from the center to any edge of the bound. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Currently, this returns 0, which doesn&apos;t break algorithms, but it isn&apos;t necessarily correct, either. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="423" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="423" bodyend="423"/>
+        <references refid="classmlpack_1_1bound_1_1HRectBound_1ab8478ff52c4d4d5e7fa6311fa39abb76" compoundref="hrectbound_8hpp" startline="106" endline="106">HRectBound&lt; MetricType, ElemType &gt;::MinWidth</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ac6f8a0c45a30bbe3c43af0375d51236e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MinLeafSize</definition>
+        <argsstring>()</argsstring>
+        <name>MinLeafSize</name>
+        <briefdescription>
+<para>Modify the minimum leaf size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="342" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="342" bodyend="342"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1adca26805731ae240cfe1073a42ecee2e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MinLeafSize</definition>
+        <argsstring>() const</argsstring>
+        <name>MinLeafSize</name>
+        <briefdescription>
+<para>Return the minimum leaf size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="340" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="340" bodyend="340"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a612aa5b60faaf2050038e6cf6e056839" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MinNumChildren</definition>
+        <argsstring>()</argsstring>
+        <name>MinNumChildren</name>
+        <briefdescription>
+<para>Modify the minimum number of children (in a non-leaf node). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="352" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="352" bodyend="352"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a5d3958327333930dd14e490db6a3c4d6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MinNumChildren</definition>
+        <argsstring>() const</argsstring>
+        <name>MinNumChildren</name>
+        <briefdescription>
+<para>Return the minimum number of children (in a non-leaf node). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="350" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="350" bodyend="350"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a8dbe26c4727e347359f1da279659f0cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void NullifyData</definition>
+        <argsstring>()</argsstring>
+        <name>NullifyData</name>
+        <briefdescription>
+<para>Nullify the auxiliary information. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Used for memory management. Be cafeful. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="229" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a605a6e856364afd0bad4bafa17dbe5c0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; NumChildren</definition>
+        <argsstring>()</argsstring>
+        <name>NumChildren</name>
+        <briefdescription>
+<para>Modify the number of child nodes. Be careful. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="373" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="373" bodyend="373"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumChildren</definition>
+        <argsstring>() const</argsstring>
+        <name>NumChildren</name>
+        <briefdescription>
+<para>Return the number of child nodes. (One level beneath this one only.) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="371" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="371" bodyend="371"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a2a85eb34222f1fc073940e8c89274e81" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumDescendants</definition>
+        <argsstring>() const</argsstring>
+        <name>NumDescendants</name>
+        <briefdescription>
+<para>Return the number of descendants of this node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For a non-leaf in a binary space tree, this is the number of points at the descendant leaves. For a leaf, this is the number of points in the leaf. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="461" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a352077c26368da0ee570c0b7f062b1e3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumPoints</definition>
+        <argsstring>() const</argsstring>
+        <name>NumPoints</name>
+        <briefdescription>
+<para>Return the number of points in this node (returns 0 if this node is not a leaf). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="454" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a909551417a05af16d48eaa9713088eb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+        <definition>RectangleTree&amp; operator=</definition>
+        <argsstring>(const RectangleTree &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy the given rectangle tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tree to be copied. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="194" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ae8eb5a80d261df7b9331c4444e54bc21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+        <definition>RectangleTree&amp; operator=</definition>
+        <argsstring>(RectangleTree &amp;&amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Take ownership of the given rectangle tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tree to take ownership of. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="201" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ac585a5030dd745d64fed3111bf3b83b9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> *&amp;</type>
+        <definition>RectangleTree*&amp; Parent</definition>
+        <argsstring>()</argsstring>
+        <name>Parent</name>
+        <briefdescription>
+<para>Modify the parent of this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="357" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="357" bodyend="357"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a05bac703d5c74952f9a92fafa507837b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> *</type>
+        <definition>RectangleTree* Parent</definition>
+        <argsstring>() const</argsstring>
+        <name>Parent</name>
+        <briefdescription>
+<para>Gets the parent of this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="355" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="355" bodyend="355"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1aa22ead21ac809efb970b90ec014dc318" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref> &amp;</type>
+        <definition>ElemType&amp; ParentDistance</definition>
+        <argsstring>()</argsstring>
+        <name>ParentDistance</name>
+        <briefdescription>
+<para>Modify the distance from the center of this node to the center of the parent node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="430" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="430" bodyend="430"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1af44ed4e7bfea088689caed082da67e17" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref></type>
+        <definition>ElemType ParentDistance</definition>
+        <argsstring>() const</argsstring>
+        <name>ParentDistance</name>
+        <briefdescription>
+<para>Return the distance from the center of this node to the center of the parent node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="427" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="427" bodyend="427"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a24009b888a79e08dcbf3c1587f33a8c2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Point</definition>
+        <argsstring>(const size_t index)</argsstring>
+        <name>Point</name>
+        <param>
+          <type>const size_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Modify the index of a particular point in this node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Be very careful when you do this! You may make the tree invalid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="484" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="484" bodyend="484"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a559eede5ea60f68634f8e7e72c3c68d2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Point</definition>
+        <argsstring>(const size_t index) const</argsstring>
+        <name>Point</name>
+        <param>
+          <type>const size_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Return the index (with reference to the dataset) of a particular point in this node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will happily return invalid indices if the given index is greater than the number of points in this node (obtained with <ref refid="classmlpack_1_1tree_1_1RectangleTree_1a352077c26368da0ee570c0b7f062b1e3" kindref="member">NumPoints()</ref>) <ndash/> be careful.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of point for which a dataset index is wanted. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="480" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="480" bodyend="480"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a3a9f26442a5841dcdf5022d14df68a13" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">math::RangeType</ref>&lt; <ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref> &gt;</type>
+        <definition>math::RangeType&lt;ElemType&gt; RangeDistance</definition>
+        <argsstring>(const RectangleTree &amp;other) const</argsstring>
+        <name>RangeDistance</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Return the minimum and maximum distance to another node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="499" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="499" bodyend="502"/>
+        <references refid="classmlpack_1_1tree_1_1RectangleTree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" compoundref="rectangle__tree_2rectangle__tree_8hpp" startline="315" endline="315">RectangleTree&lt; MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType &gt;::Bound</references>
+        <references refid="classmlpack_1_1bound_1_1HRectBound_1a2c5555e91d38db00fc5f76fe0032044c">HRectBound&lt; MetricType, ElemType &gt;::RangeDistance</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a60a550bf46aa1d7b858134ce41fd5a3a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">math::RangeType</ref>&lt; <ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref> &gt;</type>
+        <definition>math::RangeType&lt;ElemType&gt; RangeDistance</definition>
+        <argsstring>(const VecType &amp;point, typename std::enable_if_t&lt; IsVector&lt; VecType &gt;::value &gt; *=0) const</argsstring>
+        <name>RangeDistance</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; <ref refid="structIsVector" kindref="compound">IsVector</ref>&lt; VecType &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the minimum and maximum distance to another point. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="524" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="524" bodyend="529"/>
+        <references refid="classmlpack_1_1bound_1_1HRectBound_1a2c5555e91d38db00fc5f76fe0032044c">HRectBound&lt; MetricType, ElemType &gt;::RangeDistance</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a9429055f5e8da6c92f684f73355c4199" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool RemoveNode</definition>
+        <argsstring>(const RectangleTree *node, std::vector&lt; bool &gt; &amp;relevels)</argsstring>
+        <name>RemoveNode</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>relevels</declname>
+        </param>
+        <briefdescription>
+<para>Removes a node from the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>You are responsible for deleting it if you wish to do so. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="286" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="633" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1abb9c409311948fe4a16aa79f434c0a91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ShrinkBoundForBound</definition>
+        <argsstring>(const bound::HRectBound&lt; MetricType &gt; &amp;changedBound)</argsstring>
+        <name>ShrinkBoundForBound</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound</ref>&lt; MetricType &gt; &amp;</type>
+          <declname>changedBound</declname>
+        </param>
+        <briefdescription>
+<para>Shrink the bound object of this node for the removal of a child node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>changedBound</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The HRectBound&lt;&gt;&amp; of the bound that was removed to reqire this shrinking. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the bound needed to be changed, false if it did not. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="622" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a14b62a27c4f71e7d38a92b5982b4bff9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ShrinkBoundForPoint</definition>
+        <argsstring>(const arma::vec &amp;point)</argsstring>
+        <name>ShrinkBoundForPoint</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Shrink the bound object of this node for the removal of a point. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The arma::vec&amp; of the point that was removed to require this shrinking. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the bound needed to be changed, false if it did not. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="613" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ad35ef7f791a42b33ebf554e27def9391" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SoftDelete</definition>
+        <argsstring>()</argsstring>
+        <name>SoftDelete</name>
+        <briefdescription>
+<para>Delete this node of the tree, but leave the stuff contained in it intact. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is used when splitting a node, where the data in this tree is moved to two other trees. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="223" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1aac2d3c104b89109f3df4a9a8cad244da" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>StatisticType &amp;</type>
+        <definition>StatisticType&amp; Stat</definition>
+        <argsstring>()</argsstring>
+        <name>Stat</name>
+        <briefdescription>
+<para>Modify the statistic object for this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="322" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="322" bodyend="322"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ad8b29c84ac793742cd15834f9f4c4f31" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const StatisticType &amp;</type>
+        <definition>const StatisticType&amp; Stat</definition>
+        <argsstring>() const</argsstring>
+        <name>Stat</name>
+        <briefdescription>
+<para>Return the statistic object for this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="320" column="23" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="320" bodyend="320"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a5ec5eed000f9d4996ab56d5869817e7f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t TreeDepth</definition>
+        <argsstring>() const</argsstring>
+        <name>TreeDepth</name>
+        <briefdescription>
+<para>Obtains the number of levels below this node in the tree, starting with this. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="540" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1ab8408997f02b82d3ded6adf51b289427" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t TreeSize</definition>
+        <argsstring>() const</argsstring>
+        <name>TreeSize</name>
+        <briefdescription>
+<para>Obtains the number of nodes in the tree, starting with this. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="534" column="10"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a60aac11feac13998d65ed4e403d8dd37" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BuildStatistics</definition>
+        <argsstring>(RectangleTree *node)</argsstring>
+        <name>BuildStatistics</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> *</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+<para>Builds statistics for a node and all its descendants in a bottom-up way. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Node for which statistics will be built. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="565" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a2ec293f85de392490128a5b5be02707b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SplitNode</definition>
+        <argsstring>(std::vector&lt; bool &gt; &amp;relevels)</argsstring>
+        <name>SplitNode</name>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>relevels</declname>
+        </param>
+        <briefdescription>
+<para>Splits the current node, recursing up the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>relevels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to track which levels have been inserted to. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="558" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1a916bffeba8c599629948d1711a97cbd7" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RectangleTree</definition>
+        <argsstring>()</argsstring>
+        <name>RectangleTree</name>
+        <briefdescription>
+<para>A default constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is meant to only be used with cereal, which is allowed with the friend declaration below. This does not return a valid tree! This method must be protected, so that the serialization shim can work with the default constructor. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="574" column="3"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A rectangle type tree tree, such as an R-tree or X-tree. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Once the bound and type of dataset is defined, the tree will construct itself. Call the constructor with the dataset to build the tree on, and the entire tree will be built.</para>
+<para>This tree does allow growth, so you can add and delete nodes from it.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MetricType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This <emphasis>must</emphasis> be EuclideanDistance, but the template parameter is required to satisfy the TreeType API. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>StatisticType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Extra data contained in the node. See <ref refid="statistic_8hpp" kindref="compound">statistic.hpp</ref> for the necessary skeleton interface. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The dataset class. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>SplitType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of split to use when inserting points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DescentType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The heuristic to use when descending the tree to insert points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>AuxiliaryInformationType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An auxiliary information contained in the node. This information depends on the type of the <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" line="54" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp" bodystart="55" bodyend="634"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1aef466731529118c6276cf3d214fee09d" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>AuxiliaryInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a3217304f02ab31874410c5326e3d74c3" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>AuxiliaryInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ae21ac42a417c926e51abe722dab18c77" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>auxiliaryInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a5037c9f86afcfda12a618bfe99994a23" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>AuxiliaryInformation</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ac178ecb38a40a86e40c005ff70d2702a" prot="protected" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>AuxiliaryInformation</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1aac83a4c2da46afd4932602be91f84961" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>begin</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ac50a3a009687e641fd8249e011f628d4" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Begin</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a49cdbf8b1b2899522cd80f4cbff40b69" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Begin</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Bound</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a8a0a35d824602c0e21a8d21638cfd6ad" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Bound</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1aa88672962c7250500d2f0fc84270fbcc" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>bound</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a60aac11feac13998d65ed4e403d8dd37" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>BuildStatistics</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a16e556777ca3125ab3cdc16aed9e7885" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Center</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a562c73abb0bf2e473ecb9ff0075aa9d5" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Child</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ae1f4a985db958092c3015e735a8db69d" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Child</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1aa3663305871277bbc9e36a7b81cf734d" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>children</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ae6ffa3cb0972ea772a972b50df36fc59" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>CondenseTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a76d971a3c552bc58ba9f0d5fceae9806" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>count</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ab30fd361b8bee994ff8ed9fbb6fae845" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Count</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a5a132e068ab206a014b986ff71c3442d" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Count</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a829bf4b7b37982e2743e9d6452ebee43" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>dataset</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a4c3764c98d5804083a9ec2c867eb9366" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Dataset</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1abb34576c3ddb31987f1dda9c33e6476f" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Dataset</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a0509380350bfe78f838730719b5421ee" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>DeletePoint</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a06c0d2543978fc03efc5d2114d6e1e54" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>DeletePoint</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1aa732ea3eeb38529c549fd4d15d8655be" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Descendant</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ad326ceae04a3d7cb8de5f57c385475fe" prot="protected" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>DescentType</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>ElemType</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a07db5ef67990c55a04f42765ed589bef" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>ExactClone</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a27dcf57c01f3eaafaa08631c31900eb5" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>FindByBeginCount</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a97f6fd1983ad549297e75d849e1a2bca" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>FindByBeginCount</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1adc597088eadfcfa3060336d0484ab573" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>FurthestDescendantDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1acbe82a6439f71405b5801ca7d941cbfb" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>FurthestPointDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a0257281722537c7916db7763623f67f7" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>GetFurthestChild</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1aea96598fb89ed27fe7340349051aa6a2" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>GetFurthestChild</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a19b9a5fd41d8e192b62effb1445bd410" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>GetNearestChild</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1adae284b6b280a26fd609ad03ede81884" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>GetNearestChild</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a35df6b8ff4b000deb441755b6bb2f2d4" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>InsertNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a3095158e2444767314c01f08d6548505" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>InsertPoint</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1aa2008c231e0bc68b24da85dd6a8231ca" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>InsertPoint</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1aa0f4813924e6cdee43b45050bb947abe" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>IsLeaf</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a57758caa2e58c3fe05d1284eeabae523" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Mat</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a9bb75acadb3f676baa2ae6b6fae506d7" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MaxDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ae764d88483236cc470f5abe0273df4c5" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MaxDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a327048550159fb03f23f87f48dbaa324" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MaxLeafSize</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1adae692ee05a48b48cc51c57106ec8e7b" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MaxLeafSize</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a6268dbdb14fcc39e206f59d888dbd50c" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>maxLeafSize</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a6bbe0fa01782eeb2e41eb66112fe2291" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>maxNumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a24c251ad0b5266cca6e2e96b9bb95c42" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MaxNumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a6af237a35eebff7911cce7fd553748ce" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MaxNumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ab7cdd810a507e4a0aa262ea0fa8a322c" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Metric</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a0f14293f72c1558489a01063d109cd33" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MinDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a73bf99a433e88a31d98b46bf4c0da147" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MinDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a20a4e92da6066eb335a576b7f9cd0415" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MinimumBoundDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1adca26805731ae240cfe1073a42ecee2e" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MinLeafSize</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ac6f8a0c45a30bbe3c43af0375d51236e" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MinLeafSize</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a36703b8486adee79af9a06e2373212f7" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>minLeafSize</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ab4ba1235386a1ea816c5061740fe7986" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>minNumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a5d3958327333930dd14e490db6a3c4d6" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MinNumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a612aa5b60faaf2050038e6cf6e056839" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>MinNumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a8dbe26c4727e347359f1da279659f0cd" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>NullifyData</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>NumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a605a6e856364afd0bad4bafa17dbe5c0" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>NumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a2ea94a4c57e156ae2a81f1669b73534f" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>numChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a21646c00540e6bb4fb8a311f0a0773c3" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>numDescendants</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a2a85eb34222f1fc073940e8c89274e81" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>NumDescendants</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a352077c26368da0ee570c0b7f062b1e3" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>NumPoints</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a909551417a05af16d48eaa9713088eb3" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ae8eb5a80d261df7b9331c4444e54bc21" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a5cf8f8c203a73513ad87438d1ae02fe2" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>ownsDataset</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a8048503d158b3f6c037c4fd46b888dfc" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>parent</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a05bac703d5c74952f9a92fafa507837b" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Parent</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ac585a5030dd745d64fed3111bf3b83b9" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Parent</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a110be38965cb624d9e3b4d335f962806" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>parentDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1af44ed4e7bfea088689caed082da67e17" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>ParentDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1aa22ead21ac809efb970b90ec014dc318" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>ParentDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a559eede5ea60f68634f8e7e72c3c68d2" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Point</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a24009b888a79e08dcbf3c1587f33a8c2" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Point</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ac8724844d8e60191e6cc7142536dcc04" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>points</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a3a9f26442a5841dcdf5022d14df68a13" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>RangeDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a60a550bf46aa1d7b858134ce41fd5a3a" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>RangeDistance</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a1027fe8c984d5656006328acd6cc92c3" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>RectangleTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1af147218dd8dc0045cd6a7cecd43a2ffe" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>RectangleTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a3b593f811c454b7b95d033c80e051ed3" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>RectangleTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a7021cb2a458cca4ead6ae79780c14ad8" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>RectangleTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a32f828a13cdc2f5eeca43d37c87ff4db" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>RectangleTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a2c3185b5f76fda53e2cd37b11aa93d0f" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>RectangleTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a916bffeba8c599629948d1711a97cbd7" prot="protected" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>RectangleTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a9429055f5e8da6c92f684f73355c4199" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>RemoveNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1abb9c409311948fe4a16aa79f434c0a91" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>ShrinkBoundForBound</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a14b62a27c4f71e7d38a92b5982b4bff9" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>ShrinkBoundForPoint</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ad35ef7f791a42b33ebf554e27def9391" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>SoftDelete</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a2ec293f85de392490128a5b5be02707b" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>SplitNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1af8cd44a1d4485c9c0022f124b0b312bf" prot="protected" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>SplitType</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a3bb6957cc0ee042b639ebc4b8b45fd37" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>stat</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ad8b29c84ac793742cd15834f9f4c4f31" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Stat</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1aac2d3c104b89109f3df4a9a8cad244da" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>Stat</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a5ec5eed000f9d4996ab56d5869817e7f" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>TreeDepth</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1ab8408997f02b82d3ded6adf51b289427" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>TreeSize</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1a71251e80af594b01fde0d834d178f849" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree</scope><name>~RectangleTree</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

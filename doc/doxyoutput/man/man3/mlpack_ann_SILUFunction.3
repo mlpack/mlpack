@@ -1,0 +1,108 @@
+.TH "SILUFunction" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SILUFunction \- The SILU function, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static double \fBDeriv\fP (const double x)"
+.br
+.RI "Computes the first derivative of the SILU function\&. "
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBDeriv\fP (const InputVecType &x, OutputVecType &y)"
+.br
+.RI "Computes the first derivatives of the SILU function\&. "
+.ti -1c
+.RI "static double \fBFn\fP (const double x)"
+.br
+.RI "Computes the SILU function\&. "
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBFn\fP (const InputVecType &x, OutputVecType &y)"
+.br
+.RI "Computes the SILU function\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The SILU function, defined by\&. 
+
+\begin{eqnarray*} f(x) &=& x * \frac{1}{1 + e^{-x}}\\ f'(x) &=& \frac{1}{1 + e^{-x}} * (1 + x * (1-\frac{1}{1 + e^{-x}}))\\ \end{eqnarray*} 
+.PP
+Definition at line 43 of file silu_function\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Deriv (const double x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivative of the SILU function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIy\fP Input activation\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+f'(x) 
+.RE
+.PP
+
+.PP
+Definition at line 75 of file silu_function\&.hpp\&.
+.SS "static void Deriv (const InputVecType & x, OutputVecType & y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivatives of the SILU function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIy\fP Input activations\&. 
+.br
+\fIx\fP The resulting derivatives\&. 
+.RE
+.PP
+
+.PP
+Definition at line 88 of file silu_function\&.hpp\&.
+.SS "static double Fn (const double x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the SILU function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Input data\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+f(x)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 52 of file silu_function\&.hpp\&.
+.SS "static void Fn (const InputVecType & x, OutputVecType & y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the SILU function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Input data\&. 
+.br
+\fIy\fP The resulting output activation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 64 of file silu_function\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

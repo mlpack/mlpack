@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="camel__case_8hpp" kind="file" language="C++">
+    <compoundname>camel_case.hpp</compoundname>
+    <includedby refid="print__defn__input_8hpp" local="no">/home/aakash/mlpack/src/mlpack/bindings/go/print_defn_input.hpp</includedby>
+    <includedby refid="go_2print__doc_8hpp" local="no">/home/aakash/mlpack/src/mlpack/bindings/go/print_doc.hpp</includedby>
+    <includedby refid="go_2print__input__processing_8hpp" local="no">/home/aakash/mlpack/src/mlpack/bindings/go/print_input_processing.hpp</includedby>
+    <includedby refid="print__method__config_8hpp" local="no">/home/aakash/mlpack/src/mlpack/bindings/go/print_method_config.hpp</includedby>
+    <includedby refid="print__method__init_8hpp" local="no">/home/aakash/mlpack/src/mlpack/bindings/go/print_method_init.hpp</includedby>
+    <includedby refid="go_2print__output__processing_8hpp" local="no">/home/aakash/mlpack/src/mlpack/bindings/go/print_output_processing.hpp</includedby>
+    <invincdepgraph>
+      <node id="3">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/go/go_option.hpp</label>
+        <link refid="go__option_8hpp"/>
+      </node>
+      <node id="7">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/go/print_method_init.hpp</label>
+        <link refid="print__method__init_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/go/print_method_config.hpp</label>
+        <link refid="print__method__config_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/util/camel_case.hpp</label>
+        <link refid="camel__case_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/go/print_defn_input.hpp</label>
+        <link refid="print__defn__input_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/go/print_input_processing.hpp</label>
+        <link refid="go_2print__input__processing_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/go/print_output_processing.hpp</label>
+        <link refid="go_2print__output__processing_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/go/print_doc.hpp</label>
+        <link refid="go_2print__doc_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1util">mlpack::util</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Yashwant Singh Parihar</para>
+</simplesect>
+Convert snake_case name to CamelCase.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_BINDINGS_UTIL_CAMEL_CASE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_BINDINGS_UTIL_CAMEL_CASE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">util<sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="namespacemlpack_1_1util_1a4b979c0f88a8672aa71202b6e237daa9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1util_1a4b979c0f88a8672aa71202b6e237daa9" kindref="member">CamelCase</ref>(std::string<sp/>s,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>lower)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!lower)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>s[0]<sp/>=<sp/>std::toupper(s[0]);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>s[0]<sp/>=<sp/>std::tolower(s[0]);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>s.length();</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>resInd<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>n;<sp/>i++)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Check<sp/>for<sp/>spaces<sp/>in<sp/>the<sp/>sentence.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(s[i]<sp/>==<sp/></highlight><highlight class="charliteral">&apos;_&apos;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Conversion<sp/>into<sp/>upper<sp/>case.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>s[i<sp/>+<sp/>1]<sp/>=<sp/>toupper(s[i<sp/>+<sp/>1]);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">continue</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>not<sp/>space,<sp/>copy<sp/>character.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>s[resInd++]<sp/>=<sp/>s[i];</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Return<sp/>string<sp/>to<sp/>main.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>s.substr(0,<sp/>resInd);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>util</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/util/camel_case.hpp"/>
+  </compounddef>
+</doxygen>

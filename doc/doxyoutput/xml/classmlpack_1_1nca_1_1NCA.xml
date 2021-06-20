@@ -1,0 +1,288 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1nca_1_1NCA" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::nca::NCA</compoundname>
+    <includes refid="nca_8hpp" local="no">nca.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MetricType</type>
+        <defval><ref refid="namespacemlpack_1_1metric_1a42614a1b47a4de6037e67742b94dd24d" kindref="member">metric::SquaredEuclideanDistance</ref></defval>
+      </param>
+      <param>
+        <type>typename OptimizerType</type>
+        <defval>ens::StandardSGD</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1NCA_1a513b486f0725823790c22399f0c054a8" prot="private" static="no" mutable="no">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; dataset</definition>
+        <argsstring></argsstring>
+        <name>dataset</name>
+        <briefdescription>
+<para>Dataset reference. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="91" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1NCA_1a8ac96ae64acb3f1c3614819ce6a2ab45" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction" kindref="compound">SoftmaxErrorFunction</ref>&lt; MetricType &gt;</type>
+        <definition>SoftmaxErrorFunction&lt;MetricType&gt; errorFunction</definition>
+        <argsstring></argsstring>
+        <name>errorFunction</name>
+        <briefdescription>
+<para>The function to optimize. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="99" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1NCA_1a27d52672c552cd7f78c89c94dbb6375d" prot="private" static="no" mutable="no">
+        <type>const arma::Row&lt; size_t &gt; &amp;</type>
+        <definition>const arma::Row&lt;size_t&gt;&amp; labels</definition>
+        <argsstring></argsstring>
+        <name>labels</name>
+        <briefdescription>
+<para>Labels reference. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="93" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1NCA_1ad069c71a7bc99c59bce1c3f859e5d22b" prot="private" static="no" mutable="no">
+        <type>MetricType</type>
+        <definition>MetricType metric</definition>
+        <argsstring></argsstring>
+        <name>metric</name>
+        <briefdescription>
+<para>Metric to be used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="96" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1nca_1_1NCA_1af46443e4b38268e2b061773090207a09" prot="private" static="no" mutable="no">
+        <type>OptimizerType</type>
+        <definition>OptimizerType optimizer</definition>
+        <argsstring></argsstring>
+        <name>optimizer</name>
+        <briefdescription>
+<para>The optimizer to use. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="102" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1NCA_1a8a7a5b0fbf5a82acaf0e316944998f63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>NCA</definition>
+        <argsstring>(const arma::mat &amp;dataset, const arma::Row&lt; size_t &gt; &amp;labels, MetricType metric=MetricType())</argsstring>
+        <name>NCA</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>MetricType</type>
+          <declname>metric</declname>
+          <defval>MetricType()</defval>
+        </param>
+        <briefdescription>
+<para>Construct the Neighborhood Components Analysis object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This simply stores the reference to the dataset and labels as well as the parameters for optimization before the actual optimization is performed.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input dataset labels. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated metric to use. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="61" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1NCA_1aff320b9a86b77a150e630c01d5888273" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; Dataset</definition>
+        <argsstring>() const</argsstring>
+        <name>Dataset</name>
+        <briefdescription>
+<para>Get the dataset reference. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="81" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1NCA_1ae68718a757e9635f87377fd3935ca20d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::Row&lt; size_t &gt; &amp;</type>
+        <definition>const arma::Row&lt;size_t&gt;&amp; Labels</definition>
+        <argsstring>() const</argsstring>
+        <name>Labels</name>
+        <briefdescription>
+<para>Get the labels reference. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="83" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" bodystart="83" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1NCA_1a55126379a6e9673a59546f4e446e9ada" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>CallbackTypes</declname>
+            <defname>CallbackTypes</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void LearnDistance</definition>
+        <argsstring>(arma::mat &amp;outputMatrix, CallbackTypes &amp;&amp;... callbacks)</argsstring>
+        <name>LearnDistance</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>outputMatrix</declname>
+        </param>
+        <param>
+          <type>CallbackTypes &amp;&amp;...</type>
+          <declname>callbacks</declname>
+        </param>
+        <briefdescription>
+<para>Perform Neighborhood Components Analysis. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The output distance learning matrix is written into the passed reference. If <ref refid="classmlpack_1_1nca_1_1NCA_1a55126379a6e9673a59546f4e446e9ada" kindref="member">LearnDistance()</ref> is called with an outputMatrix which has the correct size (dataset.n_rows x dataset.n_rows), that matrix will be used as the starting point for optimization.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>CallbackTypes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Types of Callback functions. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>outputMatrix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Covariance matrix of Mahalanobis distance. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>callbacks</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback function for ensmallen optimizer <computeroutput>OptimizerType</computeroutput>. See <ulink url="https://www.ensmallen.org/docs.html#callback-documentation">https://www.ensmallen.org/docs.html#callback-documentation</ulink>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="78" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1NCA_1a213f61b8936eadf8a162e45b4c6188d0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OptimizerType &amp;</type>
+        <definition>OptimizerType&amp; Optimizer</definition>
+        <argsstring>()</argsstring>
+        <name>Optimizer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="87" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" bodystart="87" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1nca_1_1NCA_1a3bdf808beacdb2f464caa78076a23a0a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const OptimizerType &amp;</type>
+        <definition>const OptimizerType&amp; Optimizer</definition>
+        <argsstring>() const</argsstring>
+        <name>Optimizer</name>
+        <briefdescription>
+<para>Get the optimizer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="86" column="23" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" bodystart="86" bodyend="86"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An implementation of Neighborhood Components Analysis, both a linear dimensionality reduction technique and a distance learning technique. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The method seeks to improve k-nearest-neighbor classification on a dataset by scaling the dimensions. The method is nonparametric, and does not require a value of k. It works by using stochastic (&quot;soft&quot;) neighbor assignments and using optimization techniques over the gradient of the accuracy of the neighbor assignments.</para>
+<para>For more details, see the following published paper:</para>
+<para><programlisting><codeline><highlight class="normal">@inproceedings{Goldberger2004,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/>=<sp/>{Goldberger,<sp/>Jacob<sp/>and<sp/>Roweis,<sp/>Sam<sp/>and<sp/>Hinton,<sp/>Geoff<sp/>and</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Salakhutdinov,<sp/>Ruslan},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle<sp/>=<sp/>{Advances<sp/>in<sp/>Neural<sp/>Information<sp/>Processing<sp/>Systems<sp/>17},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages<sp/>=<sp/>{513--520},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>publisher<sp/>=<sp/>{MIT<sp/>Press},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/>=<sp/>{{Neighbourhood<sp/>Components<sp/>Analysis}},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/>=<sp/>{2004}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="49" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" bodystart="50" bodyend="103"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1nca_1_1NCA_1a513b486f0725823790c22399f0c054a8" prot="private" virt="non-virtual"><scope>mlpack::nca::NCA</scope><name>dataset</name></member>
+      <member refid="classmlpack_1_1nca_1_1NCA_1aff320b9a86b77a150e630c01d5888273" prot="public" virt="non-virtual"><scope>mlpack::nca::NCA</scope><name>Dataset</name></member>
+      <member refid="classmlpack_1_1nca_1_1NCA_1a8ac96ae64acb3f1c3614819ce6a2ab45" prot="private" virt="non-virtual"><scope>mlpack::nca::NCA</scope><name>errorFunction</name></member>
+      <member refid="classmlpack_1_1nca_1_1NCA_1a27d52672c552cd7f78c89c94dbb6375d" prot="private" virt="non-virtual"><scope>mlpack::nca::NCA</scope><name>labels</name></member>
+      <member refid="classmlpack_1_1nca_1_1NCA_1ae68718a757e9635f87377fd3935ca20d" prot="public" virt="non-virtual"><scope>mlpack::nca::NCA</scope><name>Labels</name></member>
+      <member refid="classmlpack_1_1nca_1_1NCA_1a55126379a6e9673a59546f4e446e9ada" prot="public" virt="non-virtual"><scope>mlpack::nca::NCA</scope><name>LearnDistance</name></member>
+      <member refid="classmlpack_1_1nca_1_1NCA_1ad069c71a7bc99c59bce1c3f859e5d22b" prot="private" virt="non-virtual"><scope>mlpack::nca::NCA</scope><name>metric</name></member>
+      <member refid="classmlpack_1_1nca_1_1NCA_1a8a7a5b0fbf5a82acaf0e316944998f63" prot="public" virt="non-virtual"><scope>mlpack::nca::NCA</scope><name>NCA</name></member>
+      <member refid="classmlpack_1_1nca_1_1NCA_1af46443e4b38268e2b061773090207a09" prot="private" virt="non-virtual"><scope>mlpack::nca::NCA</scope><name>optimizer</name></member>
+      <member refid="classmlpack_1_1nca_1_1NCA_1a3bdf808beacdb2f464caa78076a23a0a" prot="public" virt="non-virtual"><scope>mlpack::nca::NCA</scope><name>Optimizer</name></member>
+      <member refid="classmlpack_1_1nca_1_1NCA_1a213f61b8936eadf8a162e45b4c6188d0" prot="public" virt="non-virtual"><scope>mlpack::nca::NCA</scope><name>Optimizer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

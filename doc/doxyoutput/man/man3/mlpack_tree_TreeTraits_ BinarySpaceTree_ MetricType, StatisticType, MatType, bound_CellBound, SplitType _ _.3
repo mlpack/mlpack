@@ -1,0 +1,79 @@
+.TH "TreeTraits< BinarySpaceTree< MetricType, StatisticType, MatType, bound::CellBound, SplitType > >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+TreeTraits< BinarySpaceTree< MetricType, StatisticType, MatType, bound::CellBound, SplitType > > \- This is a specialization of the TreeType class to the UBTree tree type\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBBinaryTree\fP = true"
+.br
+.ti -1c
+.RI "static const bool \fBFirstPointIsCentroid\fP = false"
+.br
+.ti -1c
+.RI "static const bool \fBHasDuplicatedPoints\fP = false"
+.br
+.ti -1c
+.RI "static const bool \fBHasOverlappingChildren\fP = true"
+.br
+.ti -1c
+.RI "static const bool \fBHasSelfChildren\fP = false"
+.br
+.ti -1c
+.RI "static const bool \fBRearrangesDataset\fP = true"
+.br
+.ti -1c
+.RI "static const bool \fBUniqueNumDescendants\fP = true"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename StatisticType, typename MatType, template< typename SplitBoundType, typename SplitMatType > class SplitType>
+.br
+class mlpack::tree::TreeTraits< BinarySpaceTree< MetricType, StatisticType, MatType, bound::CellBound, SplitType > >"
+This is a specialization of the TreeType class to the UBTree tree type\&. 
+
+The only difference with general \fBBinarySpaceTree\fP is that UBTree can have overlapping children\&. See \fBmlpack/core/tree/tree_traits\&.hpp\fP for more information\&. 
+.PP
+Definition at line 235 of file traits\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool BinaryTree = true\fC [static]\fP"
+
+.PP
+Definition at line 244 of file traits\&.hpp\&.
+.SS "const bool FirstPointIsCentroid = false\fC [static]\fP"
+
+.PP
+Definition at line 241 of file traits\&.hpp\&.
+.SS "const bool HasDuplicatedPoints = false\fC [static]\fP"
+
+.PP
+Definition at line 240 of file traits\&.hpp\&.
+.SS "const bool HasOverlappingChildren = true\fC [static]\fP"
+
+.PP
+Definition at line 239 of file traits\&.hpp\&.
+.SS "const bool HasSelfChildren = false\fC [static]\fP"
+
+.PP
+Definition at line 242 of file traits\&.hpp\&.
+.SS "const bool RearrangesDataset = true\fC [static]\fP"
+
+.PP
+Definition at line 243 of file traits\&.hpp\&.
+.SS "const bool UniqueNumDescendants = true\fC [static]\fP"
+
+.PP
+Definition at line 245 of file traits\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

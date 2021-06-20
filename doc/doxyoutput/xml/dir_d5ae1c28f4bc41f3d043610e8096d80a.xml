@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_d5ae1c28f4bc41f3d043610e8096d80a" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/kernel_pca</compoundname>
+    <innerdir refid="dir_702d0be5535d6df644d10e1014296a0d">/home/aakash/mlpack/src/mlpack/methods/kernel_pca/kernel_rules</innerdir>
+    <innerfile refid="kernel__pca_8hpp">kernel_pca.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kernel_pca/"/>
+  </compounddef>
+</doxygen>

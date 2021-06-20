@@ -1,0 +1,331 @@
+\doxysection{KDEWrapper\+Base Class Reference}
+\label{classmlpack_1_1kde_1_1KDEWrapperBase}\index{KDEWrapperBase@{KDEWrapperBase}}
+
+
+\doxyref{KDEWrapper\+Base}{p.}{classmlpack_1_1kde_1_1KDEWrapperBase} is a base wrapper class for holding all \doxyref{KDE}{p.}{classmlpack_1_1kde_1_1KDE} types supported by \doxyref{KDEModel}{p.}{classmlpack_1_1kde_1_1KDEModel}.  
+
+
+
+
+Inheritance diagram for KDEWrapper\+Base\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=190pt]{classmlpack_1_1kde_1_1KDEWrapperBase__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ KDEWrapper\+Base} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{KDEWrapper\+Base}{p.}{classmlpack_1_1kde_1_1KDEWrapperBase} object. \end{DoxyCompactList}\item 
+virtual \textbf{ $\sim$\+KDEWrapper\+Base} ()
+\begin{DoxyCompactList}\small\item\em Destruct the \doxyref{KDEWrapper\+Base}{p.}{classmlpack_1_1kde_1_1KDEWrapperBase} (nothing to do). \end{DoxyCompactList}\item 
+virtual void \textbf{ Absolute\+Error} (const double abs\+Error)=0
+\begin{DoxyCompactList}\small\item\em Modify the absolute error tolerance. \end{DoxyCompactList}\item 
+virtual void \textbf{ Bandwidth} (const double bw)=0
+\begin{DoxyCompactList}\small\item\em Modify the bandwidth of the kernel. \end{DoxyCompactList}\item 
+virtual \textbf{ KDEWrapper\+Base} $\ast$ \textbf{ Clone} () const =0
+\begin{DoxyCompactList}\small\item\em Create a new \doxyref{KDEWrapper\+Base}{p.}{classmlpack_1_1kde_1_1KDEWrapperBase} that is the same as this one. \end{DoxyCompactList}\item 
+virtual void \textbf{ Evaluate} (arma\+::mat \&\&query\+Set, arma\+::vec \&estimates)=0
+\begin{DoxyCompactList}\small\item\em Perform bichromatic \doxyref{KDE}{p.}{classmlpack_1_1kde_1_1KDE} (i.\+e. \doxyref{KDE}{p.}{classmlpack_1_1kde_1_1KDE} with a separate query set). \end{DoxyCompactList}\item 
+virtual void \textbf{ Evaluate} (arma\+::vec \&estimates)=0
+\begin{DoxyCompactList}\small\item\em Perform monochromatic \doxyref{KDE}{p.}{classmlpack_1_1kde_1_1KDE} (i.\+e. with the reference set as the query set). \end{DoxyCompactList}\item 
+virtual void \textbf{ MCBreak\+Coef} (const double break\+Coef)=0
+\begin{DoxyCompactList}\small\item\em Modify the Monte Carlo break coefficient. \end{DoxyCompactList}\item 
+virtual void \textbf{ MCEntry\+Coef} (const double entry\+Coef)=0
+\begin{DoxyCompactList}\small\item\em Modify the Monte Carlo entry coefficient. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \textbf{ MCInitial\+Sample\+Size} () const =0
+\begin{DoxyCompactList}\small\item\em Get the Monte Carlo sample size. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \& \textbf{ MCInitial\+Sample\+Size} ()=0
+\begin{DoxyCompactList}\small\item\em Modify the Monte Carlo sample size. \end{DoxyCompactList}\item 
+virtual void \textbf{ MCProb} (const double mc\+Prob)=0
+\begin{DoxyCompactList}\small\item\em Modify the Monte Carlo probability. \end{DoxyCompactList}\item 
+virtual \textbf{ KDEMode} \textbf{ Mode} () const =0
+\begin{DoxyCompactList}\small\item\em Get the search mode. \end{DoxyCompactList}\item 
+virtual \textbf{ KDEMode} \& \textbf{ Mode} ()=0
+\begin{DoxyCompactList}\small\item\em Modify the search mode. \end{DoxyCompactList}\item 
+virtual bool \textbf{ Monte\+Carlo} () const =0
+\begin{DoxyCompactList}\small\item\em Get whether Monte Carlo search is being used. \end{DoxyCompactList}\item 
+virtual bool \& \textbf{ Monte\+Carlo} ()=0
+\begin{DoxyCompactList}\small\item\em Modify whether Monte Carlo search is being used. \end{DoxyCompactList}\item 
+virtual void \textbf{ Relative\+Error} (const double rel\+Error)=0
+\begin{DoxyCompactList}\small\item\em Modify the relative error tolerance. \end{DoxyCompactList}\item 
+virtual void \textbf{ Train} (arma\+::mat \&\&reference\+Set)=0
+\begin{DoxyCompactList}\small\item\em Train the model (build the tree). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxyref{KDEWrapper\+Base}{p.}{classmlpack_1_1kde_1_1KDEWrapperBase} is a base wrapper class for holding all \doxyref{KDE}{p.}{classmlpack_1_1kde_1_1KDE} types supported by \doxyref{KDEModel}{p.}{classmlpack_1_1kde_1_1KDEModel}. 
+
+All \doxyref{KDE}{p.}{classmlpack_1_1kde_1_1KDE} type wrappers inheirt from this class, allowing a simple interface via inheritance for all the different types we want to support. 
+
+Definition at line 71 of file kde\+\_\+model.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_ac1313101961cb19928ea3946dedc6ad9}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!KDEWrapperBase@{KDEWrapperBase}}
+\index{KDEWrapperBase@{KDEWrapperBase}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{KDEWrapperBase()}
+{\footnotesize\ttfamily \textbf{ KDEWrapper\+Base} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create the \doxyref{KDEWrapper\+Base}{p.}{classmlpack_1_1kde_1_1KDEWrapperBase} object. 
+
+The base class does not hold anything, so this constructor does nothing. 
+
+Definition at line 76 of file kde\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_ae58d12a345c8353b6c5338e620e68d59}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!````~KDEWrapperBase@{$\sim$KDEWrapperBase}}
+\index{````~KDEWrapperBase@{$\sim$KDEWrapperBase}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{$\sim$KDEWrapperBase()}
+{\footnotesize\ttfamily virtual $\sim$\textbf{ KDEWrapper\+Base} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Destruct the \doxyref{KDEWrapper\+Base}{p.}{classmlpack_1_1kde_1_1KDEWrapperBase} (nothing to do). 
+
+
+
+Definition at line 83 of file kde\+\_\+model.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_a1c0162417e08001b37ce9aaacc761773}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!AbsoluteError@{AbsoluteError}}
+\index{AbsoluteError@{AbsoluteError}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{AbsoluteError()}
+{\footnotesize\ttfamily virtual void Absolute\+Error (\begin{DoxyParamCaption}\item[{const double}]{abs\+Error }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the absolute error tolerance. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_a0b9d34d8e38ac36cd2ca2118466d0953}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_a1ebaea5971fb978c1e23657dc8c55a17}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!Bandwidth@{Bandwidth}}
+\index{Bandwidth@{Bandwidth}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{Bandwidth()}
+{\footnotesize\ttfamily virtual void Bandwidth (\begin{DoxyParamCaption}\item[{const double}]{bw }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the bandwidth of the kernel. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_a3d47a1b167a794ee6c4d646ee46254b6}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_ae7622cb6081c01a9346b9845c916be0a}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!Clone@{Clone}}
+\index{Clone@{Clone}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{Clone()}
+{\footnotesize\ttfamily virtual \textbf{ KDEWrapper\+Base}$\ast$ Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Create a new \doxyref{KDEWrapper\+Base}{p.}{classmlpack_1_1kde_1_1KDEWrapperBase} that is the same as this one. 
+
+This function will properly handle polymorphism. 
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_a0ba337bbc529b82831c60d60b9441d08}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_a7815883137a47fda73c3ac1f608eef0a}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual void Evaluate (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{query\+Set,  }\item[{arma\+::vec \&}]{estimates }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Perform bichromatic \doxyref{KDE}{p.}{classmlpack_1_1kde_1_1KDE} (i.\+e. \doxyref{KDE}{p.}{classmlpack_1_1kde_1_1KDE} with a separate query set). 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_a52a2ccd4d4e143187436097916dae748}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_ae9574287052493ece978538a96a8fb98}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual void Evaluate (\begin{DoxyParamCaption}\item[{arma\+::vec \&}]{estimates }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Perform monochromatic \doxyref{KDE}{p.}{classmlpack_1_1kde_1_1KDE} (i.\+e. with the reference set as the query set). 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_aecea217fc025d169adadd10f78a77fa5}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_ad7e08030744c69b2c47446d9d846487c}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!MCBreakCoef@{MCBreakCoef}}
+\index{MCBreakCoef@{MCBreakCoef}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{MCBreakCoef()}
+{\footnotesize\ttfamily virtual void MCBreak\+Coef (\begin{DoxyParamCaption}\item[{const double}]{break\+Coef }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the Monte Carlo break coefficient. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_a4bbcfabadfb5b781249c7ea4125677ac}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_a2e9a7a651dd745d46880139cc0e7b720}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!MCEntryCoef@{MCEntryCoef}}
+\index{MCEntryCoef@{MCEntryCoef}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{MCEntryCoef()}
+{\footnotesize\ttfamily virtual void MCEntry\+Coef (\begin{DoxyParamCaption}\item[{const double}]{entry\+Coef }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the Monte Carlo entry coefficient. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_a04a0caefbe404092e3d18baabd3baef7}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_aa17a084342c0caafda4d046545e5993b}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!MCInitialSampleSize@{MCInitialSampleSize}}
+\index{MCInitialSampleSize@{MCInitialSampleSize}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{MCInitialSampleSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual size\+\_\+t MCInitial\+Sample\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get the Monte Carlo sample size. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_a615951cec49961d82ea4497a3073b7b8}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_abb328957925b5cd31e13e8e27efc0071}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!MCInitialSampleSize@{MCInitialSampleSize}}
+\index{MCInitialSampleSize@{MCInitialSampleSize}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{MCInitialSampleSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual size\+\_\+t\& MCInitial\+Sample\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the Monte Carlo sample size. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_adfcd113c0ea444a40d8720aa693e6686}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_a73f434ac1df0cc309db1e11c9439059d}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!MCProb@{MCProb}}
+\index{MCProb@{MCProb}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{MCProb()}
+{\footnotesize\ttfamily virtual void MCProb (\begin{DoxyParamCaption}\item[{const double}]{mc\+Prob }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the Monte Carlo probability. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_a3cb963e1bd6ee5c7d1121d774bb17afc}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_ab38fc729a0a6f58a4d9ef6e38a9959cf}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!Mode@{Mode}}
+\index{Mode@{Mode}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{Mode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual \textbf{ KDEMode} Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get the search mode. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_a80cc32208d4e19c3196d97d0992829ef}.
+
+
+
+Referenced by KDEModel\+::\+Mode().
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_a06cd29610512406d9ea63f325856983a}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!Mode@{Mode}}
+\index{Mode@{Mode}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{Mode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual \textbf{ KDEMode}\& Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the search mode. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_afe26b90d4fcc474c9d074bad2a667279}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_a7e1172b47c3d2775ceb49bed772c44cf}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!MonteCarlo@{MonteCarlo}}
+\index{MonteCarlo@{MonteCarlo}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{MonteCarlo()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual bool Monte\+Carlo (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get whether Monte Carlo search is being used. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_a3c91c4e6858fc5d602622548d043fdc2}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_ad5ee40ede39f0233b7f01e74d3c1e1c0}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!MonteCarlo@{MonteCarlo}}
+\index{MonteCarlo@{MonteCarlo}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{MonteCarlo()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual bool\& Monte\+Carlo (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify whether Monte Carlo search is being used. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_aa9f25dddb2e9608e47417d6808adfb2f}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_aef3e830b36580b39b0ddb75ea89f4d8a}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!RelativeError@{RelativeError}}
+\index{RelativeError@{RelativeError}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{RelativeError()}
+{\footnotesize\ttfamily virtual void Relative\+Error (\begin{DoxyParamCaption}\item[{const double}]{rel\+Error }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the relative error tolerance. 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_a50e2786ac18e3f69fb4e164b68920390}.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEWrapperBase_af72c25a0ebac1dc4d40f76b9a2f5e149}} 
+\index{KDEWrapperBase@{KDEWrapperBase}!Train@{Train}}
+\index{Train@{Train}!KDEWrapperBase@{KDEWrapperBase}}
+\doxysubsubsection{Train()}
+{\footnotesize\ttfamily virtual void Train (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{reference\+Set }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Train the model (build the tree). 
+
+
+
+Implemented in \textbf{ KDEWrapper$<$ Kernel\+Type, Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1kde_1_1KDEWrapper_ac9780b7b68f55a2fb2df95768aec1bd4}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kde/\textbf{ kde\+\_\+model.\+hpp}\end{DoxyCompactItemize}

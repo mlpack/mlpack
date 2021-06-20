@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHPType" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;::ResultHPType</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename ArgumentType</type>
+      </param>
+      <param>
+        <type>bool</type>
+        <declname>IsArithmetic</declname>
+        <defname>IsArithmetic</defname>
+        <defval>std::is_arithmetic&lt;ArgumentType&gt;::value</defval>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+<para>A type function to deduce the result hyper-parameter type for ArgumentType. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" line="56" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" bodystart="56" bodyend="-1"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="methods_2nmf_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="methods_2nmf_2CMakeLists_8txt_1a1406f37190e825427440bc020919218a" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>go</definition>
+        <argsstring></argsstring>
+        <name>go</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nmf/CMakeLists.txt" line="6" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nmf/CMakeLists.txt" bodystart="6" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="methods_2nmf_2CMakeLists_8txt_1a24991bea13cdec9759e0db813306fe5f" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>julia</definition>
+        <argsstring></argsstring>
+        <name>julia</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nmf/CMakeLists.txt" line="6" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nmf/CMakeLists.txt" bodystart="6" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>python</definition>
+        <argsstring></argsstring>
+        <name>python</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nmf/CMakeLists.txt" line="6" column="2" bodyfile="/home/aakash/mlpack/src/mlpack/methods/nmf/CMakeLists.txt" bodystart="6" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>add_cli_executable</definition>
+        <argsstring>(nmf) add_python_binding(nmf) add_julia_binding(nmf) add_go_binding(nmf) add_r_binding(nmf) add_markdown_docs(nmf &quot;cli</argsstring>
+        <name>add_cli_executable</name>
+        <param>
+          <type>nmf</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/nmf/CMakeLists.txt" line="1" column="1" declfile="/home/aakash/mlpack/src/mlpack/methods/nmf/CMakeLists.txt" declline="1" declcolumn="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" refkind="member"><highlight class="normal"><ref refid="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" kindref="member">add_cli_executable</ref>(nmf)</highlight></codeline>
+<codeline lineno="2"><highlight class="normal">add_python_binding(nmf)</highlight></codeline>
+<codeline lineno="3"><highlight class="normal"><ref refid="bindings_2julia_2tests_2CMakeLists_8txt_1ae685258df021a14510fa0ed9764a5cbc" kindref="member">add_julia_binding</ref>(nmf)</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"><ref refid="bindings_2go_2tests_2CMakeLists_8txt_1a8019c6301c4208b236494c76444c8a02" kindref="member">add_go_binding</ref>(nmf)</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><ref refid="bindings_2R_2tests_2CMakeLists_8txt_1a4244f5fccac7507c1551008244a99799" kindref="member">add_r_binding</ref>(nmf)</highlight></codeline>
+<codeline lineno="6" refid="methods_2nmf_2CMakeLists_8txt_1a1406f37190e825427440bc020919218a" refkind="member"><highlight class="normal">add_markdown_docs(nmf<sp/>&quot;cli;<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>;<ref refid="methods_2nmf_2CMakeLists_8txt_1a24991bea13cdec9759e0db813306fe5f" kindref="member">julia</ref>;<ref refid="methods_2nmf_2CMakeLists_8txt_1a1406f37190e825427440bc020919218a" kindref="member">go</ref>;r&quot;<sp/>&quot;misc.<sp/>/<sp/>other&quot;)</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/nmf/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

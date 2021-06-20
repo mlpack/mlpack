@@ -1,0 +1,34 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/core/math/multiply\+\_\+slices.hpp File Reference}
+\label{multiply__slices_8hpp}\index{/home/aakash/mlpack/src/mlpack/core/math/multiply\_slices.hpp@{/home/aakash/mlpack/src/mlpack/core/math/multiply\_slices.hpp}}
+Include dependency graph for multiply\+\_\+slices.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{multiply__slices_8hpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::math}
+\begin{DoxyCompactList}\small\item\em Miscellaneous math routines. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Cube\+Type $>$ }\\Cube\+Type \textbf{ Multiply\+Cube2\+Cube} (const Cube\+Type \&cubeA, const Cube\+Type \&cubeB, const bool a\+Transpose=false, const bool b\+Transpose=false)
+\begin{DoxyCompactList}\small\item\em Matrix multiplication of slices of two cubes. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Cube\+Type , typename Mat\+Type $>$ }\\Cube\+Type \textbf{ Multiply\+Cube2\+Mat} (const Cube\+Type \&cubeA, const Mat\+Type \&matB, const bool a\+Transpose=false, const bool b\+Transpose=false)
+\begin{DoxyCompactList}\small\item\em Matrix multiplication of all slices of a cube with a matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Cube\+Type $>$ }\\Cube\+Type \textbf{ Multiply\+Mat2\+Cube} (const Mat\+Type \&matA, const Cube\+Type \&cubeB, const bool a\+Transpose=false, const bool b\+Transpose=false)
+\begin{DoxyCompactList}\small\item\em Matrix multiplication of a matrix and all the slices of a cube. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Mrityunjay Tripathi
+\end{DoxyAuthor}
+Function to perform matrix multiplication on cubes.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

@@ -1,0 +1,274 @@
+\doxysection{Regularized\+SVDFunction$<$ Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1svd_1_1RegularizedSVDFunction}\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+
+
+The data is stored in a matrix of type Mat\+Type, so that this class can be used with both dense and sparse matrix types.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Regularized\+SVDFunction} (const Mat\+Type \&data, const size\+\_\+t rank, const double lambda)
+\begin{DoxyCompactList}\small\item\em Constructor for \doxyref{Regularized\+SVDFunction}{p.}{classmlpack_1_1svd_1_1RegularizedSVDFunction} class. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Dataset} () const
+\begin{DoxyCompactList}\small\item\em Return the dataset passed into the constructor. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const arma\+::mat \&parameters) const
+\begin{DoxyCompactList}\small\item\em Evaluates the cost function over all examples in the data. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const arma\+::mat \&parameters, const size\+\_\+t start, const size\+\_\+t batch\+Size=1) const
+\begin{DoxyCompactList}\small\item\em Evaluates the cost function for one training example. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Get\+Initial\+Point} () const
+\begin{DoxyCompactList}\small\item\em Return the initial point for the optimization. \end{DoxyCompactList}\item 
+void \textbf{ Gradient} (const arma\+::mat \&parameters, arma\+::mat \&gradient) const
+\begin{DoxyCompactList}\small\item\em Evaluates the full gradient of the cost function over all the training examples. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Grad\+Type $>$ }\\void \textbf{ Gradient} (const arma\+::mat \&parameters, const size\+\_\+t start, Grad\+Type \&gradient, const size\+\_\+t batch\+Size=1) const
+\begin{DoxyCompactList}\small\item\em Evaluates the gradient of the cost function over one training example. \end{DoxyCompactList}\item 
+double \textbf{ Lambda} () const
+\begin{DoxyCompactList}\small\item\em Return the regularization parameters. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Functions} () const
+\begin{DoxyCompactList}\small\item\em Return the number of training examples. Useful for SGD optimizer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Items} () const
+\begin{DoxyCompactList}\small\item\em Return the number of items in the data. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Users} () const
+\begin{DoxyCompactList}\small\item\em Return the number of users in the data. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Rank} () const
+\begin{DoxyCompactList}\small\item\em Return the rank used for the factorization. \end{DoxyCompactList}\item 
+void \textbf{ Shuffle} ()
+\begin{DoxyCompactList}\small\item\em Shuffle the points in the dataset. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Mat\+Type = arma\+::mat$>$\newline
+class mlpack\+::svd\+::\+Regularized\+SVDFunction$<$ Mat\+Type $>$}
+
+The data is stored in a matrix of type Mat\+Type, so that this class can be used with both dense and sparse matrix types. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & The matrix type of the dataset. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 29 of file regularized\+\_\+svd\+\_\+function.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_a2875f9fa65d53423c1090a56ea71675c}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!RegularizedSVDFunction@{RegularizedSVDFunction}}
+\index{RegularizedSVDFunction@{RegularizedSVDFunction}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{RegularizedSVDFunction()}
+{\footnotesize\ttfamily \textbf{ Regularized\+SVDFunction} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const size\+\_\+t}]{rank,  }\item[{const double}]{lambda }\end{DoxyParamCaption})}
+
+
+
+Constructor for \doxyref{Regularized\+SVDFunction}{p.}{classmlpack_1_1svd_1_1RegularizedSVDFunction} class. 
+
+The constructor calculates the number of users and items in the passed data. It also randomly initializes the parameter values.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset for which SVD is calculated. \\
+\hline
+{\em rank} & Rank used for matrix factorization. \\
+\hline
+{\em lambda} & Regularization parameter used for optimization. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_aff320b9a86b77a150e630c01d5888273}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{Dataset()}
+{\footnotesize\ttfamily const arma\+::mat\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the dataset passed into the constructor. 
+
+
+
+Definition at line 101 of file regularized\+\_\+svd\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_a6c7f979b684b70aab5bec8b09b5eb1a4}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the cost function over all examples in the data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Parameters(user/item matrices) of the decomposition. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_a12589583139057b24a415995079f6ffe}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{start,  }\item[{const size\+\_\+t}]{batch\+Size = {\ttfamily 1} }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the cost function for one training example. 
+
+Useful for the SGD optimizer abstraction which uses one training example at a time.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Parameters(user/item matrices) of the decomposition. \\
+\hline
+{\em start} & First index of the training examples to be used. \\
+\hline
+{\em batch\+Size} & Size of batch to evaluate. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_ac3e9aa612cb56d0d93f3259f4a8122bb}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!GetInitialPoint@{GetInitialPoint}}
+\index{GetInitialPoint@{GetInitialPoint}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{GetInitialPoint()}
+{\footnotesize\ttfamily const arma\+::mat\& Get\+Initial\+Point (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the initial point for the optimization. 
+
+
+
+Definition at line 98 of file regularized\+\_\+svd\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_ab9a604f48072ce6c08443519ff787a73}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{arma\+::mat \&}]{gradient }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the full gradient of the cost function over all the training examples. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Parameters(user/item matrices) of the decomposition. \\
+\hline
+{\em gradient} & Calculated gradient for the parameters. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_a5b06b7506faa0b510622078a31e88009}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{start,  }\item[{Grad\+Type \&}]{gradient,  }\item[{const size\+\_\+t}]{batch\+Size = {\ttfamily 1} }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the gradient of the cost function over one training example. 
+
+This function is useful for optimizers like SGD. The type of the gradient parameter is a template argument to allow the computation of a sparse gradient.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Grad\+Type} & The type of the gradient out-\/param. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Parameters(user/item matrices) of the decomposition. \\
+\hline
+{\em start} & The first index of the training examples to use. \\
+\hline
+{\em gradient} & Calculated gradient for the parameters. \\
+\hline
+{\em batch\+Size} & Size of batch to calculate gradient for. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_a53535041275cedd0ec3de67ca032aa94}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{Lambda()}
+{\footnotesize\ttfamily double Lambda (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the regularization parameters. 
+
+
+
+Definition at line 113 of file regularized\+\_\+svd\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_a1fa76af34a6e3ea927b307f0c318ee4b}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!NumFunctions@{NumFunctions}}
+\index{NumFunctions@{NumFunctions}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{NumFunctions()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Functions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of training examples. Useful for SGD optimizer. 
+
+
+
+Definition at line 104 of file regularized\+\_\+svd\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_ad4e27ce22a8ed61cf6a83e3c1b48de3a}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!NumItems@{NumItems}}
+\index{NumItems@{NumItems}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{NumItems()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Items (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of items in the data. 
+
+
+
+Definition at line 110 of file regularized\+\_\+svd\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_af41355bc8f20533711975528a054c4dc}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!NumUsers@{NumUsers}}
+\index{NumUsers@{NumUsers}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{NumUsers()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Users (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of users in the data. 
+
+
+
+Definition at line 107 of file regularized\+\_\+svd\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_afe1447c5e7fa184cbf19ced57a50b7b6}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!Rank@{Rank}}
+\index{Rank@{Rank}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{Rank()}
+{\footnotesize\ttfamily size\+\_\+t Rank (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the rank used for the factorization. 
+
+
+
+Definition at line 116 of file regularized\+\_\+svd\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1RegularizedSVDFunction_a2697cc8b37d7bca7c055228382a9b208}} 
+\index{RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}!Shuffle@{Shuffle}}
+\index{Shuffle@{Shuffle}!RegularizedSVDFunction$<$ MatType $>$@{RegularizedSVDFunction$<$ MatType $>$}}
+\doxysubsubsection{Shuffle()}
+{\footnotesize\ttfamily void Shuffle (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Shuffle the points in the dataset. 
+
+This may be used by optimizers. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/regularized\+\_\+svd/\textbf{ regularized\+\_\+svd\+\_\+function.\+hpp}\end{DoxyCompactItemize}

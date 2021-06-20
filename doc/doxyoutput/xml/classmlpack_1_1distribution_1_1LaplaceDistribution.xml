@@ -1,0 +1,478 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1distribution_1_1LaplaceDistribution" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::distribution::LaplaceDistribution</compoundname>
+    <includes refid="laplace__distribution_8hpp" local="no">laplace_distribution.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1ab4b037af44fcecb75381f2bc4e14d5a3" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec mean</definition>
+        <argsstring></argsstring>
+        <name>mean</name>
+        <briefdescription>
+<para>Mean of the distribution. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="184" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a80d402d10e8341004c0caf10133b80ab" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double scale</definition>
+        <argsstring></argsstring>
+        <name>scale</name>
+        <briefdescription>
+<para>Scale parameter of the distribution. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="186" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a83291cefd1754252b508778f63010e9a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>LaplaceDistribution</definition>
+        <argsstring>()</argsstring>
+        <name>LaplaceDistribution</name>
+        <briefdescription>
+<para>Default constructor, which creates a Laplace distribution with zero dimension and zero scale parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="57" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="57" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a4d7d471d63f2b083d0f445eaaac1fc5c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>LaplaceDistribution</definition>
+        <argsstring>(const arma::vec &amp;mean, const double scale)</argsstring>
+        <name>LaplaceDistribution</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>mean</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>scale</declname>
+        </param>
+        <briefdescription>
+<para>Construct the Laplace distribution with the given mean and scale parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mean</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Mean of distribution. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>scale</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scale of distribution. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="76" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="76" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a598b5dc7055687d35a2ae19304de0c16" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>LaplaceDistribution</definition>
+        <argsstring>(const size_t dimensionality, const double scale)</argsstring>
+        <name>LaplaceDistribution</name>
+        <param>
+          <type>const size_t</type>
+          <declname>dimensionality</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>scale</declname>
+        </param>
+        <briefdescription>
+<para>Construct the Laplace distribution with the given scale and dimensionality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The mean is initialized to zero.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dimensionality</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dimensionality of distribution. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>scale</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scale of distribution. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="66" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="66" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Dimensionality</definition>
+        <argsstring>() const</argsstring>
+        <name>Dimensionality</name>
+        <briefdescription>
+<para>Return the dimensionality of this distribution. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="80" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="80" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a8e4f3f3159adc7073194a9c71d5c6fc4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Estimate</definition>
+        <argsstring>(const arma::mat &amp;observations)</argsstring>
+        <name>Estimate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>observations</declname>
+        </param>
+        <briefdescription>
+<para>Estimate the Laplace distribution directly from the given observations. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of observations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="152" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a486d2a322d6bfd15f62127c5e25e20f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Estimate</definition>
+        <argsstring>(const arma::mat &amp;observations, const arma::vec &amp;probabilities)</argsstring>
+        <name>Estimate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>observations</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Estimate the Laplace distribution from the given observations, taking into account the probability of each observation actually being from this distribution. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="159" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1aabd4dbf56bd3d719aede447516d68296" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void LogProbability</definition>
+        <argsstring>(const arma::mat &amp;x, arma::vec &amp;logProbabilities) const</argsstring>
+        <name>LogProbability</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>logProbabilities</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate log probability density function of given observation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of observations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>logProbabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output probabilities for each input observation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="113" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="113" bodyend="120"/>
+        <references refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a7063c1fb92f512f32bf44542c7528739">LaplaceDistribution::LogProbability</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a7063c1fb92f512f32bf44542c7528739" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double LogProbability</definition>
+        <argsstring>(const arma::vec &amp;observation) const</argsstring>
+        <name>LogProbability</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <briefdescription>
+<para>Return the log probability of the given observation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to evaluate logarithm of probability. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="105" column="10"/>
+        <referencedby refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1aabd4dbf56bd3d719aede447516d68296" compoundref="laplace__distribution_8hpp" startline="113" endline="120">LaplaceDistribution::LogProbability</referencedby>
+        <referencedby refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1ab72935d592516e77511d0b5e703c0d41" compoundref="laplace__distribution_8hpp" startline="87" endline="90">LaplaceDistribution::Probability</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a94becb1cd872c0334328c37f130db253" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::vec &amp;</type>
+        <definition>arma::vec&amp; Mean</definition>
+        <argsstring>()</argsstring>
+        <name>Mean</name>
+        <briefdescription>
+<para>Modify the mean. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="165" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="165" bodyend="165"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a6db5f5d76cbd055347cecd9ca90eea86" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; Mean</definition>
+        <argsstring>() const</argsstring>
+        <name>Mean</name>
+        <briefdescription>
+<para>Return the mean. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="163" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="163" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a1e516aca34e9c99caf1431a822d87fc6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Probability</definition>
+        <argsstring>(const arma::mat &amp;x, arma::vec &amp;probabilities) const</argsstring>
+        <name>Probability</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate probability density function of given observation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of observations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output probabilities for each input observation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="98" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1ab72935d592516e77511d0b5e703c0d41" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Probability</definition>
+        <argsstring>(const arma::vec &amp;observation) const</argsstring>
+        <name>Probability</name>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>observation</declname>
+        </param>
+        <briefdescription>
+<para>Return the probability of the given observation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>observation</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to evaluate probability at. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="87" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="87" bodyend="90"/>
+        <references refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a7063c1fb92f512f32bf44542c7528739">LaplaceDistribution::LogProbability</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a2c6f8d5bb4eacf7de767d2172b320756" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::vec</type>
+        <definition>arma::vec Random</definition>
+        <argsstring>() const</argsstring>
+        <name>Random</name>
+        <briefdescription>
+<para>Return a randomly generated observation according to the probability distribution defined by this object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is inlined for speed.</para>
+<para><simplesect kind="return"><para>Random observation from this Laplace distribution. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="128" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="128" bodyend="145"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a8190151e4134e9f69f1f51cd013ba43c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Scale</definition>
+        <argsstring>()</argsstring>
+        <name>Scale</name>
+        <briefdescription>
+<para>Modify the scale parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="170" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="170" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1ab30d1e52df44eb451081926df999fc17" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Scale</definition>
+        <argsstring>() const</argsstring>
+        <name>Scale</name>
+        <briefdescription>
+<para>Return the scale parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="168" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="168" bodyend="168"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1distribution_1_1LaplaceDistribution_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the distribution. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="176" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="176" bodyend="180"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The multivariate Laplace distribution centered at 0 has pdf. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><formula id="33">\[ f(x|\theta) = \frac{1}{2 \theta}\exp\left(-\frac{\|x - \mu\|}{\theta}\right) \]</formula></para>
+<para>given scale parameter <formula id="34">$\theta$</formula> and mean <formula id="35">$\mu$</formula>. This implementation assumes a diagonal covariance, but a rewrite to support arbitrary covariances is possible.</para>
+<para>See the following paper for more information on the non-diagonal-covariance Laplace distribution and estimation techniques:</para>
+<para><programlisting><codeline><highlight class="normal">@article{eltoft2006multivariate,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={{On<sp/>the<sp/>Multivariate<sp/>Laplace<sp/>Distribution}},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Eltoft,<sp/>Torbj\orn<sp/>and<sp/>Kim,<sp/>Taesu<sp/>and<sp/>Lee,<sp/>Te-Won},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>journal={IEEE<sp/>Signal<sp/>Processing<sp/>Letters},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>volume={13},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>number={5},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages={300--304},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2006}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Note that because of the diagonal covariance restriction, much of the algebra in the paper above becomes simplified, and the PDF takes roughly the same form as the univariate case. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" line="50" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/dists/laplace_distribution.hpp" bodystart="51" bodyend="187"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a78eda6bfb9e9462afa0fc85e32abe1af" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>Dimensionality</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a8e4f3f3159adc7073194a9c71d5c6fc4" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>Estimate</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a486d2a322d6bfd15f62127c5e25e20f0" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>Estimate</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a83291cefd1754252b508778f63010e9a" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>LaplaceDistribution</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a598b5dc7055687d35a2ae19304de0c16" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>LaplaceDistribution</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a4d7d471d63f2b083d0f445eaaac1fc5c" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>LaplaceDistribution</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a7063c1fb92f512f32bf44542c7528739" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>LogProbability</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1aabd4dbf56bd3d719aede447516d68296" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>LogProbability</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1ab4b037af44fcecb75381f2bc4e14d5a3" prot="private" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>mean</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a6db5f5d76cbd055347cecd9ca90eea86" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>Mean</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a94becb1cd872c0334328c37f130db253" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>Mean</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1ab72935d592516e77511d0b5e703c0d41" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>Probability</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a1e516aca34e9c99caf1431a822d87fc6" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>Probability</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a2c6f8d5bb4eacf7de767d2172b320756" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>Random</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a80d402d10e8341004c0caf10133b80ab" prot="private" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>scale</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1ab30d1e52df44eb451081926df999fc17" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>Scale</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a8190151e4134e9f69f1f51cd013ba43c" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>Scale</name></member>
+      <member refid="classmlpack_1_1distribution_1_1LaplaceDistribution_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::distribution::LaplaceDistribution</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

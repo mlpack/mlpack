@@ -1,0 +1,62 @@
+.TH "NoRegularizer" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+NoRegularizer \- Implementation of the \fBNoRegularizer\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNoRegularizer\fP ()"
+.br
+.RI "Create the regularizer object\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBEvaluate\fP (const MatType &, MatType &)"
+.br
+.RI "Calculate the gradient for regularization\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Implementation of the \fBNoRegularizer\fP\&. 
+
+This does not add any regularization to the weights\&. 
+.PP
+Definition at line 24 of file no_regularizer\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBNoRegularizer\fP ()\fC [inline]\fP"
+
+.PP
+Create the regularizer object\&. 
+.PP
+Definition at line 30 of file no_regularizer\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Evaluate (const MatType &, MatType &)\fC [inline]\fP"
+
+.PP
+Calculate the gradient for regularization\&. 
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIMatType\fP Type of weight matrix\&. 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (weight) The weight matrix to be regularized\&. 
+.br
+\fI*\fP (gradient) The calculated gradient\&. 
+.RE
+.PP
+
+.PP
+Definition at line 43 of file no_regularizer\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

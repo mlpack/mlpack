@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_b555923761b25372c22bbdf14676b4b4" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/ann/visitor</compoundname>
+    <innerfile refid="add__visitor_8hpp">add_visitor.hpp</innerfile>
+    <innerfile refid="backward__visitor_8hpp">backward_visitor.hpp</innerfile>
+    <innerfile refid="bias__set__visitor_8hpp">bias_set_visitor.hpp</innerfile>
+    <innerfile refid="copy__visitor_8hpp">copy_visitor.hpp</innerfile>
+    <innerfile refid="delete__visitor_8hpp">delete_visitor.hpp</innerfile>
+    <innerfile refid="delta__visitor_8hpp">delta_visitor.hpp</innerfile>
+    <innerfile refid="deterministic__set__visitor_8hpp">deterministic_set_visitor.hpp</innerfile>
+    <innerfile refid="forward__visitor_8hpp">forward_visitor.hpp</innerfile>
+    <innerfile refid="gradient__set__visitor_8hpp">gradient_set_visitor.hpp</innerfile>
+    <innerfile refid="gradient__update__visitor_8hpp">gradient_update_visitor.hpp</innerfile>
+    <innerfile refid="gradient__visitor_8hpp">gradient_visitor.hpp</innerfile>
+    <innerfile refid="gradient__zero__visitor_8hpp">gradient_zero_visitor.hpp</innerfile>
+    <innerfile refid="input__shape__visitor_8hpp">input_shape_visitor.hpp</innerfile>
+    <innerfile refid="load__output__parameter__visitor_8hpp">load_output_parameter_visitor.hpp</innerfile>
+    <innerfile refid="loss__visitor_8hpp">loss_visitor.hpp</innerfile>
+    <innerfile refid="output__height__visitor_8hpp">output_height_visitor.hpp</innerfile>
+    <innerfile refid="output__parameter__visitor_8hpp">output_parameter_visitor.hpp</innerfile>
+    <innerfile refid="output__width__visitor_8hpp">output_width_visitor.hpp</innerfile>
+    <innerfile refid="parameters__set__visitor_8hpp">parameters_set_visitor.hpp</innerfile>
+    <innerfile refid="parameters__visitor_8hpp">parameters_visitor.hpp</innerfile>
+    <innerfile refid="reset__cell__visitor_8hpp">reset_cell_visitor.hpp</innerfile>
+    <innerfile refid="reset__visitor_8hpp">reset_visitor.hpp</innerfile>
+    <innerfile refid="reward__set__visitor_8hpp">reward_set_visitor.hpp</innerfile>
+    <innerfile refid="run__set__visitor_8hpp">run_set_visitor.hpp</innerfile>
+    <innerfile refid="save__output__parameter__visitor_8hpp">save_output_parameter_visitor.hpp</innerfile>
+    <innerfile refid="set__input__height__visitor_8hpp">set_input_height_visitor.hpp</innerfile>
+    <innerfile refid="set__input__width__visitor_8hpp">set_input_width_visitor.hpp</innerfile>
+    <innerfile refid="weight__set__visitor_8hpp">weight_set_visitor.hpp</innerfile>
+    <innerfile refid="weight__size__visitor_8hpp">weight_size_visitor.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/"/>
+  </compounddef>
+</doxygen>

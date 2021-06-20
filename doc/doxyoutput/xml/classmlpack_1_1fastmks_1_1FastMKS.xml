@@ -1,0 +1,1187 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1fastmks_1_1FastMKS" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::fastmks::FastMKS</compoundname>
+    <includes refid="fastmks_8hpp" local="no">fastmks.hpp</includes>
+    <innerclass refid="structmlpack_1_1fastmks_1_1FastMKS_1_1CandidateCmp" prot="private">mlpack::fastmks::FastMKS::CandidateCmp</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename KernelType</type>
+      </param>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>template&lt; typename TreeMetricType, typename TreeStatType, typename TreeMatType &gt; class</type>
+        <declname>TreeType</declname>
+        <defname>TreeType</defname>
+        <defval><ref refid="namespacemlpack_1_1tree_1a6ed9d585969e7837af0d41e0c3975602" kindref="member">tree::StandardCoverTree</ref></defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1fastmks_1_1FastMKS_1ae9d9e44675a5326d3998fabdb3f33c74" prot="public" static="no">
+        <type>TreeType&lt; <ref refid="classmlpack_1_1metric_1_1IPMetric" kindref="compound">metric::IPMetric</ref>&lt; KernelType &gt;, <ref refid="classmlpack_1_1fastmks_1_1FastMKSStat" kindref="compound">FastMKSStat</ref>, MatType &gt;</type>
+        <definition>typedef TreeType&lt;metric::IPMetric&lt;KernelType&gt;, FastMKSStat, MatType&gt; Tree</definition>
+        <argsstring></argsstring>
+        <name>Tree</name>
+        <briefdescription>
+<para>Convenience typedef. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="67" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmlpack_1_1fastmks_1_1FastMKS_1a25f2752ae2dd3aa1e6b36257252e9c63" prot="private" static="no">
+        <type>std::pair&lt; double, size_t &gt;</type>
+        <definition>typedef std::pair&lt;double, size_t&gt; Candidate</definition>
+        <argsstring></argsstring>
+        <name>Candidate</name>
+        <briefdescription>
+<para>Candidate represents a possible candidate point (value, index). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="329" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="329" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1fastmks_1_1FastMKS_1a971deda91e33f8ac7c017c8caab84593" prot="private" static="no">
+        <type>std::priority_queue&lt; Candidate, std::vector&lt; Candidate &gt;, CandidateCmp &gt;</type>
+        <definition>typedef std::priority_queue&lt;Candidate, std::vector&lt;Candidate&gt;, CandidateCmp&gt; CandidateList</definition>
+        <argsstring></argsstring>
+        <name>CandidateList</name>
+        <briefdescription>
+<para>Use a priority queue to represent the list of candidate points. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="341" column="2" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="341" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKS_1aaefefbd4f43f337e92705ef7ef0ee537" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1metric_1_1IPMetric" kindref="compound">metric::IPMetric</ref>&lt; KernelType &gt;</type>
+        <definition>metric::IPMetric&lt;KernelType&gt; metric</definition>
+        <argsstring></argsstring>
+        <name>metric</name>
+        <briefdescription>
+<para>The instantiated inner-product metric induced by the given kernel. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="326" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="326" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKS_1a060864f6de9076fe26693298a2d570bd" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool naive</definition>
+        <argsstring></argsstring>
+        <name>naive</name>
+        <briefdescription>
+<para>If true, naive (brute-force) search is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="323" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="323" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKS_1afdeaba8b33d99d27772a74843e7dfbc2" prot="private" static="no" mutable="no">
+        <type>const MatType *</type>
+        <definition>const MatType* referenceSet</definition>
+        <argsstring></argsstring>
+        <name>referenceSet</name>
+        <briefdescription>
+<para>The reference dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>We never own this; only the tree or a higher level does. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="312" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="312" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKS_1afce03afdbc14367356598962033187af" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS_1ae9d9e44675a5326d3998fabdb3f33c74" kindref="member">Tree</ref> *</type>
+        <definition>Tree* referenceTree</definition>
+        <argsstring></argsstring>
+        <name>referenceTree</name>
+        <briefdescription>
+<para>The tree built on the reference dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="314" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="314" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKS_1a91bfd33ad72709c4da52441df886dc02" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool setOwner</definition>
+        <argsstring></argsstring>
+        <name>setOwner</name>
+        <briefdescription>
+<para>If true, we own the dataset. This happens in only a few situations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="318" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="318" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKS_1a72486e26c509c1276fa97ea7917f6d6c" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool singleMode</definition>
+        <argsstring></argsstring>
+        <name>singleMode</name>
+        <briefdescription>
+<para>If true, single-tree search is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="321" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="321" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKS_1a09dd83eb7ea58a2d5cfbdbdca5f63b88" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool treeOwner</definition>
+        <argsstring></argsstring>
+        <name>treeOwner</name>
+        <briefdescription>
+<para>If true, this object created the tree and is responsible for it. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="316" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="316" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a8929924ebf7292b49847f01e0565d551" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FastMKS</definition>
+        <argsstring>(const bool singleMode=false, const bool naive=false)</argsstring>
+        <name>FastMKS</name>
+        <param>
+          <type>const bool</type>
+          <declname>singleMode</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>naive</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> object with an empty reference set and default kernel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Make sure to call <ref refid="classmlpack_1_1fastmks_1_1FastMKS_1ad3fd386abe263b5cf9461366485cb62d" kindref="member">Train()</ref> before <ref refid="classmlpack_1_1fastmks_1_1FastMKS_1af0704791dd9b3290639bb23a591e0ac8" kindref="member">Search()</ref> is called!</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>singleMode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to run single-tree search. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>naive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to run brute-force (naive) search. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="76" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1ae87575a643a4a978674954bb7624d514" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FastMKS</definition>
+        <argsstring>(const FastMKS &amp;other)</argsstring>
+        <name>FastMKS</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy the parameters of the given model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="154" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1afee6c99ec9f30b076de479ba7b771ae2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FastMKS</definition>
+        <argsstring>(const MatType &amp;referenceSet, const bool singleMode=false, const bool naive=false)</argsstring>
+        <name>FastMKS</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>singleMode</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>naive</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> object with the given reference set (this is the set that is searched). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Optionally, specify whether or not single-tree search or naive (brute-force) search should be used.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>singleMode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to run single-tree search. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>naive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to run brute-force (naive) search. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="87" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a8dfc666eb77095ea4fafdd88aaf5dfd9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FastMKS</definition>
+        <argsstring>(const MatType &amp;referenceSet, KernelType &amp;kernel, const bool singleMode=false, const bool naive=false)</argsstring>
+        <name>FastMKS</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>KernelType &amp;</type>
+          <declname>kernel</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>singleMode</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>naive</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> object using the reference set (this is the set that is searched) with an initialized kernel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is useful for when the kernel stores state. Optionally, specify whether or not single-tree search or naive (brute-force) search should be used.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference set of data for <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialized kernel. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>singleMode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to run single-tree search. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>naive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to run brute-force (naive) search. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="102" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1ae44d8a17127cf60eef6d1d6e6b967a9c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FastMKS</definition>
+        <argsstring>(FastMKS &amp;&amp;other)</argsstring>
+        <name>FastMKS</name>
+        <param>
+          <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Take ownership of the given model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="159" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1adad457dfd833ec0cb9d9d2cfb3ccf233" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FastMKS</definition>
+        <argsstring>(MatType &amp;&amp;referenceSet, const bool singleMode=false, const bool naive=false)</argsstring>
+        <name>FastMKS</name>
+        <param>
+          <type>MatType &amp;&amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>singleMode</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>naive</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> object with the given reference set (this is the set that is searched), taking ownership of the reference set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Optionally, specify whether or not single-tree search or naive (brute-force) search should be used.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>singleMode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to run single-tree search. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>naive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to run brute-force (naive) search. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="117" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a3920de429037b75eea30b02ab5f8ba27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FastMKS</definition>
+        <argsstring>(MatType &amp;&amp;referenceSet, KernelType &amp;kernel, const bool singleMode=false, const bool naive=false)</argsstring>
+        <name>FastMKS</name>
+        <param>
+          <type>MatType &amp;&amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>KernelType &amp;</type>
+          <declname>kernel</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>singleMode</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>naive</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> object using the reference set (this is the set that is searched) with an initialized kernel, taking ownership of the reference set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is useful for when the kernel stores state. Optionally, specify whether or not single-tree search or naive (brute-force) search should be used.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference set of data for <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initialized kernel. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>singleMode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to run single-tree search. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>naive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to run brute-force (naive) search. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="133" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a7e1243e858cce013126f02acbe503770" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FastMKS</definition>
+        <argsstring>(Tree *referenceTree, const bool singleMode=false)</argsstring>
+        <name>FastMKS</name>
+        <param>
+          <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS_1ae9d9e44675a5326d3998fabdb3f33c74" kindref="member">Tree</ref> *</type>
+          <declname>referenceTree</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>singleMode</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> object with an already-initialized tree built on the reference points. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Be sure that the tree is built with the metric type IPMetric&lt;KernelType&gt;. Optionally, whether or not to run single-tree search can be specified. Brute-force search is not available with this constructor since a tree is given (use one of the other constructors).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceTree</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree built on reference data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>singleMode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to run single-tree search. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="148" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a587b1748da4da938d879b494d3d73ae6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~FastMKS</definition>
+        <argsstring>()</argsstring>
+        <name>~FastMKS</name>
+        <briefdescription>
+<para>Destructor for the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="172" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1aeafbdda6260df07dffa6e97262ed5dcc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1metric_1_1IPMetric" kindref="compound">metric::IPMetric</ref>&lt; KernelType &gt; &amp;</type>
+        <definition>metric::IPMetric&lt;KernelType&gt;&amp; Metric</definition>
+        <argsstring>()</argsstring>
+        <name>Metric</name>
+        <briefdescription>
+<para>Modify the inner-product metric induced by the given kernel. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="293" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="293" bodyend="293"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a783d5d06bf6589a56a297ba89a8eb75e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1metric_1_1IPMetric" kindref="compound">metric::IPMetric</ref>&lt; KernelType &gt; &amp;</type>
+        <definition>const metric::IPMetric&lt;KernelType&gt;&amp; Metric</definition>
+        <argsstring>() const</argsstring>
+        <name>Metric</name>
+        <briefdescription>
+<para>Get the inner-product metric induced by the given kernel. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="291" column="26" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="291" bodyend="291"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1af7d397adca3f411b4e2d2f977b280ce6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Naive</definition>
+        <argsstring>()</argsstring>
+        <name>Naive</name>
+        <briefdescription>
+<para>Modify whether or not brute-force (naive) search is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="303" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="303" bodyend="303"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a343230e7d7344e3f7d5f5f2eb89cf2c5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Naive</definition>
+        <argsstring>() const</argsstring>
+        <name>Naive</name>
+        <briefdescription>
+<para>Get whether or not brute-force (naive) search is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="301" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="301" bodyend="301"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1aa972b5311cdff2c681beb64da448b084" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> &amp;</type>
+        <definition>FastMKS&amp; operator=</definition>
+        <argsstring>(const FastMKS &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Assign this model to be a copy of the given model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="164" column="11"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a49fd929bf8784789ec55d4c7acd96070" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> &amp;</type>
+        <definition>FastMKS&amp; operator=</definition>
+        <argsstring>(FastMKS &amp;&amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="169" column="11"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1af0704791dd9b3290639bb23a591e0ac8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const MatType &amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;kernels)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>indices</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>kernels</declname>
+        </param>
+        <briefdescription>
+<para>Search for the points in the reference set with maximum kernel evaluation to each point in the given query set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The resulting kernel evaluations are stored in the kernels matrix, and the corresponding point indices are stored in the indices matrix. The results for each point in the query set are stored in the corresponding column of the kernels and products matrices; for instance, the index of the point with maximum kernel evaluation to point 4 in the query set will be stored in row 0 and column 4 of the indices matrix.</para>
+<para>If querySet only contains a few points, the extra overhead of building a tree to perform dual-tree search may not be warranted, and it may be faster to use single-tree search, either by setting singleMode to false in the constructor or with <ref refid="classmlpack_1_1fastmks_1_1FastMKS_1adadacd63ddeadf138d834b1fdc632773" kindref="member">SingleMode()</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>querySet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of query points (can be a single point). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of maximum kernels to find. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>indices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store resulting indices of max-kernel search in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store resulting max-kernel values in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="240" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1aa0b0df843179afabdec5a3bc50c68704" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;products)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>indices</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>products</declname>
+        </param>
+        <briefdescription>
+<para>Search for the maximum inner products of the query set (or if no query set was passed, the reference set is used). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The resulting maximum inner products are stored in the products matrix and the corresponding point indices are stores in the indices matrix. The results for each point in the query set are stored in the corresponding column of the indices and products matrices; for instance, the index of the point with maximum inner product to point 4 in the query set will be stored in row 0 and column 4 of the indices matrix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of maximum kernels to find. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>indices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store resulting indices of max-kernel search in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>products</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store resulting max-kernel values in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="286" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a58abd056551df0f13890ddc350594740" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(Tree *querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;kernels)</argsstring>
+        <name>Search</name>
+        <param>
+          <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS_1ae9d9e44675a5326d3998fabdb3f33c74" kindref="member">Tree</ref> *</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>indices</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>kernels</declname>
+        </param>
+        <briefdescription>
+<para>Search for the points in the reference set with maximum kernel evaluation to each point in the query set corresponding to the given pre-built query tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The resulting kernel evaluations are stored in the kernels matrix, and the corresponding point indices are stored in the indices matrix. The results for each point in the query set are stored in the corresponding column of the kernels and products matrices; for instance, the index of the point with maximum kernel evaluation to point 4 in the query set will be stored in row 0 and column 4 of the indices matrix.</para>
+<para>This will throw an exception if called while the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> object has &apos;single&apos; set to true.</para>
+<para>Be aware that if your tree modifies the original input matrix, the results here are with respect to the modified input matrix (that is, queryTree-&gt;Dataset()).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>querySet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree built on query points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of maximum kernels to find. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>indices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store resulting indices of max-kernel search in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store resulting max-kernel values in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="267" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="307" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1adadacd63ddeadf138d834b1fdc632773" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; SingleMode</definition>
+        <argsstring>()</argsstring>
+        <name>SingleMode</name>
+        <briefdescription>
+<para>Modify whether or not single-tree search is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="298" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="298" bodyend="298"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool SingleMode</definition>
+        <argsstring>() const</argsstring>
+        <name>SingleMode</name>
+        <briefdescription>
+<para>Get whether or not single-tree search is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="296" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="296" bodyend="296"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1ad3fd386abe263b5cf9461366485cb62d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const MatType &amp;referenceSet)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <briefdescription>
+<para>&quot;Train&quot; the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> model on the given reference set (this will just build a tree, if the current search mode is not naive mode). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference points. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="180" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a9af17008ca7cb2ed611e9e9ed5fdeb53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const MatType &amp;referenceSet, KernelType &amp;kernel)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>KernelType &amp;</type>
+          <declname>kernel</declname>
+        </param>
+        <briefdescription>
+<para>&quot;Train&quot; the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> model on the given reference set and use the given kernel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will just build a tree and replace the metric, if the current search mode is not naive mode.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Kernel to use for search. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="190" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1aa53a1056d8a4e4fae0049ba42b5e8dd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(MatType &amp;&amp;referenceSet)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>MatType &amp;&amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <briefdescription>
+<para>&quot;Train&quot; the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> model on the given reference set (this will just build a tree, if the current search mode is not naive mode). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This takes ownership of the reference set.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference points. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="199" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1aa9bdecc510e909eb1e92f1c9275421bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(MatType &amp;&amp;referenceSet, KernelType &amp;kernel)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>MatType &amp;&amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>KernelType &amp;</type>
+          <declname>kernel</declname>
+        </param>
+        <briefdescription>
+<para>&quot;Train&quot; the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> model on the given reference set and use the given kernel. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will just build a tree and replace the metric, if the current search mode is not naive mode. This takes ownership of the reference set.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Kernel to use for search. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="209" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKS_1a3d1133fe6bda66e7143fd7aab27cbd04" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(Tree *referenceTree)</argsstring>
+        <name>Train</name>
+        <param>
+          <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS_1ae9d9e44675a5326d3998fabdb3f33c74" kindref="member">Tree</ref> *</type>
+          <declname>referenceTree</declname>
+        </param>
+        <briefdescription>
+<para>Train the <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> model on the given reference tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This takes ownership of the tree, so you do not need to delete it! This will throw an exception if the model is searching in naive mode (i.e. if <ref refid="classmlpack_1_1fastmks_1_1FastMKS_1af7d397adca3f411b4e2d2f977b280ce6" kindref="member">Naive()</ref> == true).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceTree</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to use as reference data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="218" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An implementation of fast exact max-kernel search. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Given a query dataset and a reference dataset (or optionally just a reference dataset which is also used as the query dataset), fast exact max-kernel search finds, for each point in the query dataset, the k points in the reference set with maximum kernel value K(p_q, p_r), where k is a specified parameter and K() is a Mercer kernel.</para>
+<para>For more information, see the following paper.</para>
+<para><programlisting><codeline><highlight class="normal">@inproceedings{curtin2013fast,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={Fast<sp/>Exact<sp/>Max-Kernel<sp/>Search},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Curtin,<sp/>Ryan<sp/>R.<sp/>and<sp/>Ram,<sp/>Parikshit<sp/>and<sp/>Gray,<sp/>Alexander<sp/>G.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle={Proceedings<sp/>of<sp/>the<sp/>2013<sp/>SIAM<sp/>International<sp/>Conference<sp/>on<sp/>Data</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Mining<sp/>(SDM<sp/>13)},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2013}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>This class allows specification of the type of kernel and also of the type of tree. <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> can be run on kernels that work on arbitrary objects <ndash/> however, this only works with cover trees and other trees that are built only on points in the dataset (and not centroids of regions or anything like that).</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>KernelType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of kernel to run <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> with. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of data matrix (usually arma::mat). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>TreeType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of tree to run <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> with; it must satisfy the TreeType policy API. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="7">
+        <label>FastMKS&lt; mlpack::kernel::LinearKernel &gt;</label>
+        <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::kernel::LinearKernel &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>FastMKS&lt; mlpack::kernel::GaussianKernel &gt;</label>
+        <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::kernel::GaussianKernel &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="6">
+        <label>FastMKS&lt; mlpack::kernel::PolynomialKernel &gt;</label>
+        <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::kernel::PolynomialKernel &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>FastMKS&lt; mlpack::kernel::HyperbolicTangentKernel &gt;</label>
+        <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::kernel::HyperbolicTangentKernel &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>FastMKS&lt; mlpack::kernel::EpanechnikovKernel &gt;</label>
+        <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::kernel::EpanechnikovKernel &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="8">
+        <label>FastMKS&lt; mlpack::kernel::CosineDistance &gt;</label>
+        <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::kernel::CosineDistance &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>FastMKS&lt; KernelType, MatType, TreeType &gt;</label>
+        <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
+      </node>
+      <node id="3">
+        <label>FastMKS&lt; mlpack::kernel::TriangularKernel &gt;</label>
+        <link refid="classmlpack_1_1fastmks_1_1FastMKS"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::kernel::TriangularKernel &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" line="63" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks.hpp" bodystart="64" bodyend="342"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a25f2752ae2dd3aa1e6b36257252e9c63" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Candidate</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a971deda91e33f8ac7c017c8caab84593" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>CandidateList</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a8929924ebf7292b49847f01e0565d551" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>FastMKS</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1afee6c99ec9f30b076de479ba7b771ae2" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>FastMKS</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a8dfc666eb77095ea4fafdd88aaf5dfd9" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>FastMKS</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1adad457dfd833ec0cb9d9d2cfb3ccf233" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>FastMKS</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a3920de429037b75eea30b02ab5f8ba27" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>FastMKS</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a7e1243e858cce013126f02acbe503770" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>FastMKS</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1ae87575a643a4a978674954bb7624d514" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>FastMKS</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1ae44d8a17127cf60eef6d1d6e6b967a9c" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>FastMKS</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1aaefefbd4f43f337e92705ef7ef0ee537" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>metric</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a783d5d06bf6589a56a297ba89a8eb75e" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Metric</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1aeafbdda6260df07dffa6e97262ed5dcc" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Metric</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a060864f6de9076fe26693298a2d570bd" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>naive</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a343230e7d7344e3f7d5f5f2eb89cf2c5" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Naive</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1af7d397adca3f411b4e2d2f977b280ce6" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Naive</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1aa972b5311cdff2c681beb64da448b084" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a49fd929bf8784789ec55d4c7acd96070" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1afdeaba8b33d99d27772a74843e7dfbc2" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>referenceSet</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1afce03afdbc14367356598962033187af" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>referenceTree</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1af0704791dd9b3290639bb23a591e0ac8" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a58abd056551df0f13890ddc350594740" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1aa0b0df843179afabdec5a3bc50c68704" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a91bfd33ad72709c4da52441df886dc02" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>setOwner</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a72486e26c509c1276fa97ea7917f6d6c" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>singleMode</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>SingleMode</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1adadacd63ddeadf138d834b1fdc632773" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>SingleMode</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1ad3fd386abe263b5cf9461366485cb62d" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a9af17008ca7cb2ed611e9e9ed5fdeb53" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1aa53a1056d8a4e4fae0049ba42b5e8dd7" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1aa9bdecc510e909eb1e92f1c9275421bb" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a3d1133fe6bda66e7143fd7aab27cbd04" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1ae9d9e44675a5326d3998fabdb3f33c74" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>Tree</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a09dd83eb7ea58a2d5cfbdbdca5f63b88" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>treeOwner</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKS_1a587b1748da4da938d879b494d3d73ae6" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKS</scope><name>~FastMKS</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

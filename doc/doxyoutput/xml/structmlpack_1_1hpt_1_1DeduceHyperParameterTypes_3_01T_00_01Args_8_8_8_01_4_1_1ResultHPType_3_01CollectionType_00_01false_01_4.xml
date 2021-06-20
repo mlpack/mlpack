@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHPType_3_01CollectionType_00_01false_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;::ResultHPType&lt; CollectionType, false &gt;</compoundname>
+    <includes refid="deduce__hp__types_8hpp" local="no">deduce_hp_types.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename CollectionType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHPType_3_01CollectionType_00_01false_01_4_1a3c17e8c74759e8a51edcee28b5d4cc01" prot="public" static="no">
+        <type>typename CollectionType::value_type</type>
+        <definition>using Type =  typename CollectionType::value_type</definition>
+        <argsstring></argsstring>
+        <name>Type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" line="90" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" line="84" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" bodystart="85" bodyend="91"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHPType_3_01CollectionType_00_01false_01_4_1a3c17e8c74759e8a51edcee28b5d4cc01" prot="public" virt="non-virtual"><scope>mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;::ResultHPType&lt; CollectionType, false &gt;</scope><name>Type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

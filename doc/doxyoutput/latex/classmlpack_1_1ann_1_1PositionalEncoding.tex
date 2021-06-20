@@ -1,0 +1,251 @@
+\doxysection{Positional\+Encoding$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1PositionalEncoding}\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+
+
+Positional Encoding injects some information about the relative or absolute position of the tokens in the sequence.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Positional\+Encoding} ()
+\begin{DoxyCompactList}\small\item\em Create \doxyref{Positional\+Encoding}{p.}{classmlpack_1_1ann_1_1PositionalEncoding} object. \end{DoxyCompactList}\item 
+\textbf{ Positional\+Encoding} (const size\+\_\+t embed\+Dim, const size\+\_\+t max\+Sequence\+Length)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Positional\+Encoding}{p.}{classmlpack_1_1ann_1_1PositionalEncoding} layer object using the specified parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+Input\+Data\+Type const  \& \textbf{ Encoding} () const
+\begin{DoxyCompactList}\small\item\em Get the positional encoding vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& \textbf{ Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type const  \& \textbf{ Input\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Shape} () const
+\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Positional\+Encoding$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Positional Encoding injects some information about the relative or absolute position of the tokens in the sequence. 
+
+The input and the output have the same shape\+: {\ttfamily (embed\+Dim $\ast$ max\+Sequence\+Length, batch\+Size)}. The embeddings are stored consequently.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 37 of file positional\+\_\+encoding.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_afe8585a7bae882ae64e784ffa84edf69}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!PositionalEncoding@{PositionalEncoding}}
+\index{PositionalEncoding@{PositionalEncoding}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{PositionalEncoding()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Positional\+Encoding} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create \doxyref{Positional\+Encoding}{p.}{classmlpack_1_1ann_1_1PositionalEncoding} object. 
+
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_ad8fe002413777b2f9b47c74cb93d029b}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!PositionalEncoding@{PositionalEncoding}}
+\index{PositionalEncoding@{PositionalEncoding}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{PositionalEncoding()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Positional\+Encoding} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{embed\+Dim,  }\item[{const size\+\_\+t}]{max\+Sequence\+Length }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Positional\+Encoding}{p.}{classmlpack_1_1ann_1_1PositionalEncoding} layer object using the specified parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em embed\+Dim} & The length of the embedding vector. \\
+\hline
+{\em max\+Sequence\+Length} & Number of tokens in each sequence. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_ad6601342d560219ce951d554e69e5e87}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 91 of file positional\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 89 of file positional\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_ab177d14792ab15a08e9c27d0c556b37c}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!Encoding@{Encoding}}
+\index{Encoding@{Encoding}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Encoding()}
+{\footnotesize\ttfamily Input\+Data\+Type const\& Encoding (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the positional encoding vector. 
+
+
+
+Definition at line 94 of file positional\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_a063c3b1053c7979a7dd2e7bbd2bf1f8a}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!InputParameter@{InputParameter}}
+\index{InputParameter@{InputParameter}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 81 of file positional\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_aaffd593b3ab627f8b5aae2a1f53634b0}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!InputParameter@{InputParameter}}
+\index{InputParameter@{InputParameter}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type const\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input parameter. 
+
+
+
+Definition at line 79 of file positional\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_a13ab93f234244a68f6ade76287284447}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!InputShape@{InputShape}}
+\index{InputShape@{InputShape}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputShape()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Shape (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 96 of file positional\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 86 of file positional\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 84 of file positional\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1PositionalEncoding_a65cba07328997659bec80b9879b15a51}} 
+\index{PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!PositionalEncoding$<$ InputDataType, OutputDataType $>$@{PositionalEncoding$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ positional\+\_\+encoding.\+hpp}\end{DoxyCompactItemize}

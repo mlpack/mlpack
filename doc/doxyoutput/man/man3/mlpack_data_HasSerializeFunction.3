@@ -1,0 +1,59 @@
+.TH "HasSerializeFunction< T >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+HasSerializeFunction< T >
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "template<typename C > using \fBNonStaticSerialize\fP = void(C::*)(cereal::XMLOutputArchive &, const uint32_t version)"
+.br
+.ti -1c
+.RI "template<typename > using \fBStaticSerialize\fP = void(*)(cereal::XMLOutputArchive &, const uint32_t version)"
+.br
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBvalue\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T>
+.br
+struct mlpack::data::HasSerializeFunction< T >"
+
+.PP
+Definition at line 32 of file has_serialize\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBNonStaticSerialize\fP =  void(C::*)(cereal::XMLOutputArchive&, const uint32_t version)"
+
+.PP
+Definition at line 35 of file has_serialize\&.hpp\&.
+.SS "using \fBStaticSerialize\fP =  void(*)(cereal::XMLOutputArchive&, const uint32_t version)"
+
+.PP
+Definition at line 39 of file has_serialize\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool value\fC [static]\fP"
+\fBInitial value:\fP
+.PP
+.nf
+= HasSerializeCheck<T, NonStaticSerialize>::value ||
+                            HasSerializeCheck<T, StaticSerialize>::value
+.fi
+.PP
+Definition at line 42 of file has_serialize\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

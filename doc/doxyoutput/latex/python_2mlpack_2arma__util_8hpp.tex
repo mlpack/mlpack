@@ -1,0 +1,71 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/bindings/python/mlpack/arma\+\_\+util.hpp File Reference}
+\label{python_2mlpack_2arma__util_8hpp}\index{/home/aakash/mlpack/src/mlpack/bindings/python/mlpack/arma\_util.hpp@{/home/aakash/mlpack/src/mlpack/bindings/python/mlpack/arma\_util.hpp}}
+Include dependency graph for arma\+\_\+util.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{python_2mlpack_2arma__util_8hpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\T\+::elem\+\_\+type $\ast$ \textbf{ Get\+Memory} (T \&m)
+\begin{DoxyCompactList}\small\item\em Return the matrix\textquotesingle{}s allocated memory pointer, unless the matrix is using its internal preallocated memory, in which case we copy that and return a pointer to the memory we just made. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\size\+\_\+t \textbf{ Get\+Mem\+State} (T \&t)
+\begin{DoxyCompactList}\small\item\em Get the memory state of the given Armadillo object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Set\+Mem\+State} (T \&t, int state)
+\begin{DoxyCompactList}\small\item\em Set the memory state of the given Armadillo object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Utility function for Cython to set the memory state of an Armadillo object.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 
+
+\doxysubsection{Function Documentation}
+\mbox{\label{python_2mlpack_2arma__util_8hpp_abefb6113a86ec15d75ba169aae6a6b25}} 
+\index{arma\_util.hpp@{arma\_util.hpp}!GetMemory@{GetMemory}}
+\index{GetMemory@{GetMemory}!arma\_util.hpp@{arma\_util.hpp}}
+\doxysubsubsection{GetMemory()}
+{\footnotesize\ttfamily T\+::elem\+\_\+type$\ast$ Get\+Memory (\begin{DoxyParamCaption}\item[{T \&}]{m }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the matrix\textquotesingle{}s allocated memory pointer, unless the matrix is using its internal preallocated memory, in which case we copy that and return a pointer to the memory we just made. 
+
+
+
+Definition at line 53 of file arma\+\_\+util.\+hpp.
+
+\mbox{\label{python_2mlpack_2arma__util_8hpp_a4662e37466c53c085b4798378853d271}} 
+\index{arma\_util.hpp@{arma\_util.hpp}!GetMemState@{GetMemState}}
+\index{GetMemState@{GetMemState}!arma\_util.hpp@{arma\_util.hpp}}
+\doxysubsubsection{GetMemState()}
+{\footnotesize\ttfamily size\+\_\+t Get\+Mem\+State (\begin{DoxyParamCaption}\item[{T \&}]{t }\end{DoxyParamCaption})}
+
+
+
+Get the memory state of the given Armadillo object. 
+
+
+
+Definition at line 37 of file arma\+\_\+util.\+hpp.
+
+\mbox{\label{python_2mlpack_2arma__util_8hpp_ad5ce6aecb5d278fe4e68c882973142cb}} 
+\index{arma\_util.hpp@{arma\_util.hpp}!SetMemState@{SetMemState}}
+\index{SetMemState@{SetMemState}!arma\_util.hpp@{arma\_util.hpp}}
+\doxysubsubsection{SetMemState()}
+{\footnotesize\ttfamily void Set\+Mem\+State (\begin{DoxyParamCaption}\item[{T \&}]{t,  }\item[{int}]{state }\end{DoxyParamCaption})}
+
+
+
+Set the memory state of the given Armadillo object. 
+
+
+
+Definition at line 22 of file arma\+\_\+util.\+hpp.
+

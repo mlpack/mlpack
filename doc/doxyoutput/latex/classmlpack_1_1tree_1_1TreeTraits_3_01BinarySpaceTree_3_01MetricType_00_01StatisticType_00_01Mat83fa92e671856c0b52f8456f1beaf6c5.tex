@@ -1,0 +1,142 @@
+\doxysection{Tree\+Traits$<$ Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Bound\+Type, RPTree\+Mean\+Split $>$ $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1TreeTraits_3_01BinarySpaceTree_3_01MetricType_00_01StatisticType_00_01Mat83fa92e671856c0b52f8456f1beaf6c5}\index{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}}
+
+
+This is a specialization of the Tree\+Type class to the mean-\/split random projection tree.  
+
+
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool \textbf{ Binary\+Tree} = true
+\begin{DoxyCompactList}\small\item\em This is always a binary tree. \end{DoxyCompactList}\item 
+static const bool \textbf{ First\+Point\+Is\+Centroid} = false
+\begin{DoxyCompactList}\small\item\em There is no guarantee that the first point in a node is its centroid. \end{DoxyCompactList}\item 
+static const bool \textbf{ Has\+Duplicated\+Points} = false
+\begin{DoxyCompactList}\small\item\em The tree has not got duplicated points. \end{DoxyCompactList}\item 
+static const bool \textbf{ Has\+Overlapping\+Children} = true
+\begin{DoxyCompactList}\small\item\em Children of a random projection tree node may overlap. \end{DoxyCompactList}\item 
+static const bool \textbf{ Has\+Self\+Children} = false
+\begin{DoxyCompactList}\small\item\em Points are not contained at multiple levels of the binary space tree. \end{DoxyCompactList}\item 
+static const bool \textbf{ Rearranges\+Dataset} = true
+\begin{DoxyCompactList}\small\item\em Points are rearranged during building of the tree. \end{DoxyCompactList}\item 
+static const bool \textbf{ Unique\+Num\+Descendants} = true
+\begin{DoxyCompactList}\small\item\em Binary space trees don\textquotesingle{}t have duplicated points, so Num\+Descendants() represents the number of unique descendant points. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Statistic\+Type, typename Mat\+Type, template$<$ typename Bound\+Metric\+Type, typename... $>$ class Bound\+Type$>$\newline
+class mlpack\+::tree\+::\+Tree\+Traits$<$ Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Bound\+Type, RPTree\+Mean\+Split $>$ $>$}
+
+This is a specialization of the Tree\+Type class to the mean-\/split random projection tree. 
+
+The only difference with general \doxyref{Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree} is that the tree can have overlapping children. 
+
+Definition at line 135 of file traits.\+hpp.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_3_01BinarySpaceTree_3_01MetricType_00_01StatisticType_00_01Mat83fa92e671856c0b52f8456f1beaf6c5_ae435fd522971cd7cfd3064636aad08f8}} 
+\index{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}!BinaryTree@{BinaryTree}}
+\index{BinaryTree@{BinaryTree}!TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}}
+\doxysubsubsection{BinaryTree}
+{\footnotesize\ttfamily const bool Binary\+Tree = true\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This is always a binary tree. 
+
+
+
+Definition at line 167 of file traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_3_01BinarySpaceTree_3_01MetricType_00_01StatisticType_00_01Mat83fa92e671856c0b52f8456f1beaf6c5_a74d33aa1842a86c50e913427bce29f04}} 
+\index{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}!FirstPointIsCentroid@{FirstPointIsCentroid}}
+\index{FirstPointIsCentroid@{FirstPointIsCentroid}!TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}}
+\doxysubsubsection{FirstPointIsCentroid}
+{\footnotesize\ttfamily const bool First\+Point\+Is\+Centroid = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+There is no guarantee that the first point in a node is its centroid. 
+
+
+
+Definition at line 152 of file traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_3_01BinarySpaceTree_3_01MetricType_00_01StatisticType_00_01Mat83fa92e671856c0b52f8456f1beaf6c5_af080c27547c6b45c37173e0df36d63be}} 
+\index{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}!HasDuplicatedPoints@{HasDuplicatedPoints}}
+\index{HasDuplicatedPoints@{HasDuplicatedPoints}!TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}}
+\doxysubsubsection{HasDuplicatedPoints}
+{\footnotesize\ttfamily const bool Has\+Duplicated\+Points = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The tree has not got duplicated points. 
+
+
+
+Definition at line 147 of file traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_3_01BinarySpaceTree_3_01MetricType_00_01StatisticType_00_01Mat83fa92e671856c0b52f8456f1beaf6c5_aace4b7477b18c336612f4f4d3046eb37}} 
+\index{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}!HasOverlappingChildren@{HasOverlappingChildren}}
+\index{HasOverlappingChildren@{HasOverlappingChildren}!TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}}
+\doxysubsubsection{HasOverlappingChildren}
+{\footnotesize\ttfamily const bool Has\+Overlapping\+Children = true\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Children of a random projection tree node may overlap. 
+
+
+
+Definition at line 142 of file traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_3_01BinarySpaceTree_3_01MetricType_00_01StatisticType_00_01Mat83fa92e671856c0b52f8456f1beaf6c5_ad3cb9cb573f3b0e51f99664fb8d29fef}} 
+\index{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}!HasSelfChildren@{HasSelfChildren}}
+\index{HasSelfChildren@{HasSelfChildren}!TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}}
+\doxysubsubsection{HasSelfChildren}
+{\footnotesize\ttfamily const bool Has\+Self\+Children = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Points are not contained at multiple levels of the binary space tree. 
+
+
+
+Definition at line 157 of file traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_3_01BinarySpaceTree_3_01MetricType_00_01StatisticType_00_01Mat83fa92e671856c0b52f8456f1beaf6c5_aba7aca795787a6fe3e8bbdae13edc70b}} 
+\index{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}!RearrangesDataset@{RearrangesDataset}}
+\index{RearrangesDataset@{RearrangesDataset}!TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}}
+\doxysubsubsection{RearrangesDataset}
+{\footnotesize\ttfamily const bool Rearranges\+Dataset = true\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Points are rearranged during building of the tree. 
+
+
+
+Definition at line 162 of file traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_3_01BinarySpaceTree_3_01MetricType_00_01StatisticType_00_01Mat83fa92e671856c0b52f8456f1beaf6c5_a416bd78d7883fd5c3bc22b858f7d7064}} 
+\index{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}!UniqueNumDescendants@{UniqueNumDescendants}}
+\index{UniqueNumDescendants@{UniqueNumDescendants}!TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$@{TreeTraits$<$ BinarySpaceTree$<$ MetricType, StatisticType, MatType, BoundType, RPTreeMeanSplit $>$ $>$}}
+\doxysubsubsection{UniqueNumDescendants}
+{\footnotesize\ttfamily const bool Unique\+Num\+Descendants = true\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Binary space trees don\textquotesingle{}t have duplicated points, so Num\+Descendants() represents the number of unique descendant points. 
+
+
+
+Definition at line 173 of file traits.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/binary\+\_\+space\+\_\+tree/\textbf{ traits.\+hpp}\end{DoxyCompactItemize}

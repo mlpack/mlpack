@@ -1,0 +1,107 @@
+\doxysection{Sort\+Task Class Reference}
+\label{classmlpack_1_1ann_1_1augmented_1_1tasks_1_1SortTask}\index{SortTask@{SortTask}}
+
+
+Generator of instances of the sequence sort task.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Sort\+Task} (const size\+\_\+t max\+Length, const size\+\_\+t bit\+Len, bool add\+Separator=false)
+\begin{DoxyCompactList}\small\item\em Creates an instance of the sequence sort task. \end{DoxyCompactList}\item 
+void \textbf{ Generate} (arma\+::field$<$ arma\+::mat $>$ \&input, arma\+::field$<$ arma\+::mat $>$ \&labels, const size\+\_\+t batch\+Size, bool fixed\+Length=false) const
+\begin{DoxyCompactList}\small\item\em Generate dataset of a given size. \end{DoxyCompactList}\item 
+void \textbf{ Generate} (arma\+::mat \&input, arma\+::mat \&labels, const size\+\_\+t batch\+Size) const
+\begin{DoxyCompactList}\small\item\em Generate dataset of a given size and store it in arma\+::mat object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Generator of instances of the sequence sort task. 
+
+The parameters are\+:
+\begin{DoxyItemize}
+\item maximum sequence length;
+\item binary length of sequence elements.
+\end{DoxyItemize}
+
+Generated datasets are compliant with mlpack format -\/ every dataset element is shaped as a vector of length (binary length) $\ast$ (sequence length).
+
+Example of generated dataset (sequence length = 3, binary length = 2)\+:
+\begin{DoxyItemize}
+\item Input sequences\+: [1,1,0,0,0,1] (three numbers in the sequence are 11, 00, and 01)
+\item Output sequences\+: [0,0,0,1,1,1] (00, 01, 11 -\/ reordering of the numbers above in the ascending order) 
+\end{DoxyItemize}
+
+Definition at line 41 of file sort.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1augmented_1_1tasks_1_1SortTask_a2514704634242b4d8006cd35a4d5fe70}} 
+\index{SortTask@{SortTask}!SortTask@{SortTask}}
+\index{SortTask@{SortTask}!SortTask@{SortTask}}
+\doxysubsubsection{SortTask()}
+{\footnotesize\ttfamily \textbf{ Sort\+Task} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{max\+Length,  }\item[{const size\+\_\+t}]{bit\+Len,  }\item[{bool}]{add\+Separator = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Creates an instance of the sequence sort task. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Length} & Maximum length of the number sequence. \\
+\hline
+{\em bit\+Len} & Binary length of sorted numbers. \\
+\hline
+{\em add\+Separator} & Flag indicating whether generator should emit separating symbol after input sequence. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1augmented_1_1tasks_1_1SortTask_acc8e2fb3239e2da7746f86d77277d96e}} 
+\index{SortTask@{SortTask}!Generate@{Generate}}
+\index{Generate@{Generate}!SortTask@{SortTask}}
+\doxysubsubsection{Generate()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Generate (\begin{DoxyParamCaption}\item[{arma\+::field$<$ arma\+::mat $>$ \&}]{input,  }\item[{arma\+::field$<$ arma\+::mat $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{batch\+Size,  }\item[{bool}]{fixed\+Length = {\ttfamily false} }\end{DoxyParamCaption}) const}
+
+
+
+Generate dataset of a given size. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The variable to store input sequences. \\
+\hline
+{\em labels} & The variable to store output sequences. \\
+\hline
+{\em batch\+Size} & The dataset size. \\
+\hline
+{\em fixed\+Length} & Flag indicating whether generator should emit sequences of pairwise equal length. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1augmented_1_1tasks_1_1SortTask_ae1dd5f431ebef64addfa8cbc82d9c2b2}} 
+\index{SortTask@{SortTask}!Generate@{Generate}}
+\index{Generate@{Generate}!SortTask@{SortTask}}
+\doxysubsubsection{Generate()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Generate (\begin{DoxyParamCaption}\item[{arma\+::mat \&}]{input,  }\item[{arma\+::mat \&}]{labels,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption}) const}
+
+
+
+Generate dataset of a given size and store it in arma\+::mat object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The variable to store input sequences. \\
+\hline
+{\em labels} & The variable to store output sequences. \\
+\hline
+{\em batch\+Size} & The dataset size. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/augmented/tasks/\textbf{ sort.\+hpp}\end{DoxyCompactItemize}

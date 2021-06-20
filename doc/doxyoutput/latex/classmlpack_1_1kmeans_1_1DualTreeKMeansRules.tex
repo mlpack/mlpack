@@ -1,0 +1,180 @@
+\doxysection{Dual\+Tree\+KMeans\+Rules$<$ Metric\+Type, Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules}\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef \textbf{ tree\+::\+Traversal\+Info}$<$ Tree\+Type $>$ \textbf{ Traversal\+Info\+Type}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Dual\+Tree\+KMeans\+Rules} (const arma\+::mat \&centroids, const arma\+::mat \&dataset, arma\+::\+Row$<$ size\+\_\+t $>$ \&assignments, arma\+::vec \&upper\+Bounds, arma\+::vec \&lower\+Bounds, Metric\+Type \&metric, const std\+::vector$<$ bool $>$ \&pruned\+Points, const std\+::vector$<$ size\+\_\+t $>$ \&old\+From\+New\+Centroids, std\+::vector$<$ bool $>$ \&visited)
+\item 
+double \textbf{ Base\+Case} (const size\+\_\+t query\+Index, const size\+\_\+t reference\+Index)
+\item 
+size\+\_\+t \& \textbf{ Base\+Cases} ()
+\item 
+size\+\_\+t \textbf{ Base\+Cases} () const
+\item 
+size\+\_\+t \textbf{ Minimum\+Base\+Cases} () const
+\begin{DoxyCompactList}\small\item\em Get the minimum number of base cases needed for correct results for each query point. \end{DoxyCompactList}\item 
+double \textbf{ Rescore} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node, const double old\+Score)
+\item 
+double \textbf{ Rescore} (Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node, const double old\+Score)
+\item 
+double \textbf{ Score} (const size\+\_\+t query\+Index, Tree\+Type \&reference\+Node)
+\item 
+double \textbf{ Score} (Tree\+Type \&query\+Node, Tree\+Type \&reference\+Node)
+\item 
+size\+\_\+t \& \textbf{ Scores} ()
+\item 
+size\+\_\+t \textbf{ Scores} () const
+\item 
+\textbf{ Traversal\+Info\+Type} \& \textbf{ Traversal\+Info} ()
+\item 
+const \textbf{ Traversal\+Info\+Type} \& \textbf{ Traversal\+Info} () const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Tree\+Type$>$\newline
+class mlpack\+::kmeans\+::\+Dual\+Tree\+KMeans\+Rules$<$ Metric\+Type, Tree\+Type $>$}
+
+
+
+Definition at line 23 of file dual\+\_\+tree\+\_\+kmeans\+\_\+rules.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_ab5f079db10d0a6813eefeb1115e894cb}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!TraversalInfoType@{TraversalInfoType}}
+\index{TraversalInfoType@{TraversalInfoType}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{TraversalInfoType}
+{\footnotesize\ttfamily typedef \textbf{ tree\+::\+Traversal\+Info}$<$Tree\+Type$>$ \textbf{ Traversal\+Info\+Type}}
+
+
+
+Definition at line 47 of file dual\+\_\+tree\+\_\+kmeans\+\_\+rules.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_a6bd12aafc51bdfe31d7d8d51f3ad2775}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!DualTreeKMeansRules@{DualTreeKMeansRules}}
+\index{DualTreeKMeansRules@{DualTreeKMeansRules}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{DualTreeKMeansRules()}
+{\footnotesize\ttfamily \textbf{ Dual\+Tree\+KMeans\+Rules} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{centroids,  }\item[{const arma\+::mat \&}]{dataset,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{assignments,  }\item[{arma\+::vec \&}]{upper\+Bounds,  }\item[{arma\+::vec \&}]{lower\+Bounds,  }\item[{Metric\+Type \&}]{metric,  }\item[{const std\+::vector$<$ bool $>$ \&}]{pruned\+Points,  }\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{old\+From\+New\+Centroids,  }\item[{std\+::vector$<$ bool $>$ \&}]{visited }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_abac50f780bb5e1bc12dd0d16d850cacc}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!BaseCase@{BaseCase}}
+\index{BaseCase@{BaseCase}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{BaseCase()}
+{\footnotesize\ttfamily double Base\+Case (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{query\+Index,  }\item[{const size\+\_\+t}]{reference\+Index }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_ab93e60b3671ebddbe95a890f1e1b2768}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!BaseCases@{BaseCases}}
+\index{BaseCases@{BaseCases}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{BaseCases()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 53 of file dual\+\_\+tree\+\_\+kmeans\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_a3f4bd5d0aa64ea090796725f7755287d}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!BaseCases@{BaseCases}}
+\index{BaseCases@{BaseCases}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{BaseCases()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 52 of file dual\+\_\+tree\+\_\+kmeans\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_a469f61784f9cce8f2574c23823405768}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!MinimumBaseCases@{MinimumBaseCases}}
+\index{MinimumBaseCases@{MinimumBaseCases}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{MinimumBaseCases()}
+{\footnotesize\ttfamily size\+\_\+t Minimum\+Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the minimum number of base cases needed for correct results for each query point. 
+
+This only matters in defeatist search mode. 
+
+Definition at line 60 of file dual\+\_\+tree\+\_\+kmeans\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_a6f97dd07745e07a2d7ff3d4a42347e48}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{Rescore()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Rescore (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{query\+Index,  }\item[{Tree\+Type \&}]{reference\+Node,  }\item[{const double}]{old\+Score }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_a355b654f0c696bfe4f7be6d98c96d1ee}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!Rescore@{Rescore}}
+\index{Rescore@{Rescore}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{Rescore()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Rescore (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{query\+Node,  }\item[{Tree\+Type \&}]{reference\+Node,  }\item[{const double}]{old\+Score }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_a53d373b7aeee359b0e686f823c602b1c}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!Score@{Score}}
+\index{Score@{Score}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{Score()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Score (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{query\+Index,  }\item[{Tree\+Type \&}]{reference\+Node }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_a05b142945ef94221b628a75961f48b02}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!Score@{Score}}
+\index{Score@{Score}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{Score()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Score (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{query\+Node,  }\item[{Tree\+Type \&}]{reference\+Node }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_a8c3486626c1d3c0a10cdb27a8faa198f}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!Scores@{Scores}}
+\index{Scores@{Scores}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{Scores()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 56 of file dual\+\_\+tree\+\_\+kmeans\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_a4d1e40c0bf406280a237ca1b487e3c62}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!Scores@{Scores}}
+\index{Scores@{Scores}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{Scores()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 55 of file dual\+\_\+tree\+\_\+kmeans\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_a4027bb90e756a4520d55978459c7f83e}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!TraversalInfo@{TraversalInfo}}
+\index{TraversalInfo@{TraversalInfo}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{TraversalInfo()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Traversal\+Info\+Type}\& Traversal\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 49 of file dual\+\_\+tree\+\_\+kmeans\+\_\+rules.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeansRules_ab5c6f4ae7c3b71b808403a7b7454f26f}} 
+\index{DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}!TraversalInfo@{TraversalInfo}}
+\index{TraversalInfo@{TraversalInfo}!DualTreeKMeansRules$<$ MetricType, TreeType $>$@{DualTreeKMeansRules$<$ MetricType, TreeType $>$}}
+\doxysubsubsection{TraversalInfo()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const \textbf{ Traversal\+Info\+Type}\& Traversal\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 50 of file dual\+\_\+tree\+\_\+kmeans\+\_\+rules.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kmeans/\textbf{ dual\+\_\+tree\+\_\+kmeans\+\_\+rules.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,298 @@
+\doxysection{Lookup$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Lookup}\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+
+
+The \doxyref{Lookup}{p.}{classmlpack_1_1ann_1_1Lookup} class stores word embeddings and retrieves them using tokens.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Lookup} (const size\+\_\+t vocab\+Size=0, const size\+\_\+t embedding\+Size=0)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Lookup}{p.}{classmlpack_1_1ann_1_1Lookup} object using the specified vocabulary and embedding size. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Embedding\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the length of each embedding vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Gradient} () const
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&gradient)
+\begin{DoxyCompactList}\small\item\em Calculate the gradient using the output delta and the input activation. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Vocab\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the size of the vocabulary. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Lookup$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+The \doxyref{Lookup}{p.}{classmlpack_1_1ann_1_1Lookup} class stores word embeddings and retrieves them using tokens. 
+
+The \doxyref{Lookup}{p.}{classmlpack_1_1ann_1_1Lookup} layer is always the first layer of the network. The input to the \doxyref{Lookup}{p.}{classmlpack_1_1ann_1_1Lookup} class is a matrix of shape (sequence\+Length, batch\+Size). The matrix consists of tokens which are used to lookup the table (i.\+e. weights) to find the embeddings of those tokens.
+
+The input shape \+: (sequence\+Length, batch\+Size). The output shape \+: (embedding\+Size, sequence\+Length, batch\+Size).
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 41 of file lookup.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_ad2a92a24a6c38f608d103d2ac2153a91}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!Lookup@{Lookup}}
+\index{Lookup@{Lookup}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Lookup()}
+{\footnotesize\ttfamily \textbf{ Lookup} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{vocab\+Size = {\ttfamily 0},  }\item[{const size\+\_\+t}]{embedding\+Size = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Lookup}{p.}{classmlpack_1_1ann_1_1Lookup} object using the specified vocabulary and embedding size. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em vocab\+Size} & The size of the vocabulary. \\
+\hline
+{\em embedding\+Size} & The length of each embedding vector. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_ad6601342d560219ce951d554e69e5e87}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 101 of file lookup.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 99 of file lookup.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_af901e8433309aa802f54ce6efdafe41b}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!EmbeddingSize@{EmbeddingSize}}
+\index{EmbeddingSize@{EmbeddingSize}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{EmbeddingSize()}
+{\footnotesize\ttfamily size\+\_\+t Embedding\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the length of each embedding vector. 
+
+
+
+Definition at line 112 of file lookup.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_a19abce4739c3b0b658b612537e21956a}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the gradient. 
+
+
+
+Definition at line 106 of file lookup.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_a0f1f4e6d93472d83852731a96c8c3f59}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradient. 
+
+
+
+Definition at line 104 of file lookup.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_aaf577db350e2130754490d8486fba215}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{gradient }\end{DoxyParamCaption})}
+
+
+
+Calculate the gradient using the output delta and the input activation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The input parameter used for calculating the gradient. \\
+\hline
+{\em error} & The calculated error. \\
+\hline
+{\em gradient} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 96 of file lookup.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 94 of file lookup.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_a9c5c5900772a689d5a6b59778ec67120}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parameters. 
+
+
+
+Definition at line 91 of file lookup.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_aa530552c7ef915c952fbacc77b965c90}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the parameters. 
+
+
+
+Definition at line 89 of file lookup.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_a65cba07328997659bec80b9879b15a51}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Lookup_acc5c821b1d52424abca736bd81c3f476}} 
+\index{Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}!VocabSize@{VocabSize}}
+\index{VocabSize@{VocabSize}!Lookup$<$ InputDataType, OutputDataType $>$@{Lookup$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{VocabSize()}
+{\footnotesize\ttfamily size\+\_\+t Vocab\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the size of the vocabulary. 
+
+
+
+Definition at line 109 of file lookup.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ lookup.\+hpp}\end{DoxyCompactItemize}

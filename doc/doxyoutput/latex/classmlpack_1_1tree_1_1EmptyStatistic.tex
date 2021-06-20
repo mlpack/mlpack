@@ -1,0 +1,93 @@
+\doxysection{Empty\+Statistic Class Reference}
+\label{classmlpack_1_1tree_1_1EmptyStatistic}\index{EmptyStatistic@{EmptyStatistic}}
+
+
+Empty statistic if you are not interested in storing statistics in your tree.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Empty\+Statistic} ()
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\\textbf{ Empty\+Statistic} (Tree\+Type \&)
+\begin{DoxyCompactList}\small\item\em This constructor is called when a node is finished being created. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+Empty\+Statistic} ()
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the statistic (there\textquotesingle{}s nothing to be saved). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Empty statistic if you are not interested in storing statistics in your tree. 
+
+Use this as a template for your own. 
+
+Definition at line 24 of file statistic.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1EmptyStatistic_a4af70266f8b5ec22f8f7f52e7c3e6e3f}} 
+\index{EmptyStatistic@{EmptyStatistic}!EmptyStatistic@{EmptyStatistic}}
+\index{EmptyStatistic@{EmptyStatistic}!EmptyStatistic@{EmptyStatistic}}
+\doxysubsubsection{EmptyStatistic()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Empty\+Statistic} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 27 of file statistic.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1EmptyStatistic_abc37a7efb17bbc88b61466c822374116}} 
+\index{EmptyStatistic@{EmptyStatistic}!````~EmptyStatistic@{$\sim$EmptyStatistic}}
+\index{````~EmptyStatistic@{$\sim$EmptyStatistic}!EmptyStatistic@{EmptyStatistic}}
+\doxysubsubsection{$\sim$EmptyStatistic()}
+{\footnotesize\ttfamily $\sim$\textbf{ Empty\+Statistic} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 28 of file statistic.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1EmptyStatistic_ad322148677faa456e0bde2c5edcbbaa4}} 
+\index{EmptyStatistic@{EmptyStatistic}!EmptyStatistic@{EmptyStatistic}}
+\index{EmptyStatistic@{EmptyStatistic}!EmptyStatistic@{EmptyStatistic}}
+\doxysubsubsection{EmptyStatistic()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Empty\+Statistic} (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This constructor is called when a node is finished being created. 
+
+The node is finished, and its children are finished, but it is not necessarily true that the statistics of other nodes are initialized yet.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (node) Node which this corresponds to. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 38 of file statistic.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1EmptyStatistic_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{EmptyStatistic@{EmptyStatistic}!serialize@{serialize}}
+\index{serialize@{serialize}!EmptyStatistic@{EmptyStatistic}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the statistic (there\textquotesingle{}s nothing to be saved). 
+
+
+
+Definition at line 44 of file statistic.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/\textbf{ statistic.\+hpp}\end{DoxyCompactItemize}

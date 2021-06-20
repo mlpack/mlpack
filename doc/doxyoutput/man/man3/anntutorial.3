@@ -1,0 +1,596 @@
+.TH "anntutorial" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+anntutorial \- Neural Network tutorial 
+
+.SH "Introduction"
+.PP
+There is vast literature on neural networks and their uses, as well as strategies for choosing initial points effectively, keeping the algorithm from converging in local minima, choosing the best model structure, choosing the best optimizers, and so forth\&. mlpack implements many of these building blocks, making it very easy to create different neural networks in a modular way\&.
+.PP
+mlpack currently implements two easy-to-use forms of neural networks: \fBFeed-Forward\fP \fBNetworks\fP (this includes convolutional neural networks) and \fBRecurrent\fP \fBNeural\fP \fBNetworks\fP\&.
+.SH "Table of Contents"
+.PP
+This tutorial is split into the following sections:
+.PP
+.IP "\(bu" 2
+\fBIntroduction\fP
+.IP "\(bu" 2
+\fBTable of Contents\fP
+.IP "\(bu" 2
+\fBModel API\fP
+.IP "\(bu" 2
+\fBLayer API\fP
+.IP "\(bu" 2
+\fBModel Setup & Training\fP
+.IP "\(bu" 2
+\fBSaving & Loading\fP
+.IP "\(bu" 2
+\fBExtracting Parameters\fP
+.IP "\(bu" 2
+\fBFurther documentation\fP
+.PP
+.SH "Model API"
+.PP
+There are two main neural network classes that are meant to be used as container for neural network layers that \fBmlpack\fP implements; each class is suited to a different setting:
+.PP
+.IP "\(bu" 2
+\fCFFN:\fP the Feed Forward Network model provides a means to plug layers together in a feed-forward fully connected manner\&. This is the 'standard' type of deep learning model, and includes convolutional neural networks (CNNs)\&.
+.IP "\(bu" 2
+\fCRNN:\fP the Recurrent Neural Network model provides a means to consider successive calls to forward as different time-steps in a sequence\&. This is often used for time sequence modeling tasks, such as predicting the next character in a sequence\&.
+.PP
+.PP
+Below is some basic guidance on what should be used\&. Note that the question of 'which algorithm should be used' is a very difficult question to answer, so the guidance below is just that---guidance---and may not be right for a particular problem\&.
+.PP
+.IP "\(bu" 2
+\fBFeed-forward\fP \fBNetworks\fP allow signals or inputs to travel one way only\&. There is no feedback within the network; for instance, the output of any layer does only affect the upcoming layer\&. That makes Feed-Forward Networks straightforward and very effective\&. They are extensively used in pattern recognition and are ideally suitable for modeling relationships between a set of input and one or more output variables\&.
+.IP "\(bu" 2
+\fBRecurrent\fP \fBNetworks\fP allow signals or inputs to travel in both directions by introducing loops in the network\&. Computations derived from earlier inputs are fed back into the network, which gives the recurrent network some kind of memory\&. RNNs are currently being used for all kinds of sequential tasks; for instance, time series prediction, sequence labeling, and sequence classification\&.
+.PP
+.PP
+In order to facilitate consistent implementations, the \fCFFN\fP and \fCRNN\fP classes have a number of methods in common:
+.PP
+.IP "\(bu" 2
+\fCTrain()\fP: trains the initialized model on the given input data\&. Optionally an optimizer object can be passed to control the optimization process\&.
+.IP "\(bu" 2
+\fCPredict()\fP: predicts the responses to a given set of predictors\&. Note the responses will reflect the output of the specified output layer\&.
+.IP "\(bu" 2
+\fCAdd()\fP: this method can be used to add a layer to the model\&.
+.PP
+.PP
+\fBNote\fP
+.RS 4
+To be able to optimize the network, both classes implement the OptimizerFunction API\&. In short, the \fCFNN\fP and \fCRNN\fP class implement two methods: \fCEvaluate()\fP and \fCGradient()\fP\&. This enables the optimization given some learner and some performance measure\&.
+.RE
+.PP
+Similar to the existing layer infrastructure, the \fCFFN\fP and \fCRNN\fP classes are very extensible, having the following template arguments; which can be modified to change the behavior of the network:
+.PP
+.IP "\(bu" 2
+\fCOutputLayerType:\fP this type defines the output layer used to evaluate the network; by default, \fCNegativeLogLikelihood\fP is used\&.
+.IP "\(bu" 2
+\fCInitializationRuleType:\fP this type defines the method by which initial parameters are set; by default, \fCRandomInitialization\fP is used\&.
+.PP
+.PP
+.PP
+.nf
+template<
+  typename OutputLayerType = NegativeLogLikelihood<>,
+  typename InitializationRuleType = RandomInitialization
+>
+class FNN;
+.fi
+.PP
+.PP
+Internally, the \fCFFN\fP and \fCRNN\fP class keeps an instantiated \fCOutputLayerType\fP class (which can be given in the constructor)\&. This is useful for using different loss functions like the Negative-Log-Likelihood function or the \fCVRClassReward\fP function, which takes an optional score parameter\&. Therefore, you can write a non-static OutputLayerType class and use it seamlessly in combination with the \fCFNN\fP and \fCRNN\fP class\&. The same applies to the \fCInitializationRuleType\fP template parameter\&.
+.PP
+By choosing different components for each of these template classes in conjunction with the \fCAdd()\fP method, a very arbitrary network object can be constructed\&.
+.PP
+Below are several examples of how the \fCFNN\fP and \fCRNN\fP classes might be used\&. The first examples focus on the \fCFNN\fP class, and the last shows how the \fCRNN\fP class can be used\&.
+.PP
+The simplest way to use the FNN<> class is to pass in a dataset with the corresponding labels, and receive the classification in return\&. Note that the dataset must be column-major – that is, one column corresponds to one point\&. See the \fBmatrices guide\fP for more information\&.
+.PP
+The code below builds a simple feed-forward network with the default options, then queries for the assignments for every point in the \fCqueries\fP matrix\&.
+.PP
+ 
+.PP
+\fBNote\fP
+.RS 4
+The number of inputs in the above graph doesn't match with the real number of features in the thyroid dataset and are just used as an abstract representation\&.
+.RE
+.PP
+.PP
+.nf
+#include <mlpack/core\&.hpp>
+#include <mlpack/methods/ann/layer/layer\&.hpp>
+#include <mlpack/methods/ann/ffn\&.hpp>
+
+using namespace mlpack;
+using namespace mlpack::ann;
+
+int main()
+{
+  // Load the training set and testing set\&.
+  arma::mat trainData;
+  data::Load("thyroid_train\&.csv", trainData, true);
+  arma::mat testData;
+  data::Load("thyroid_test\&.csv", testData, true);
+
+  // Split the labels from the training set and testing set respectively\&.
+  // Decrement the labels by 1, so they are in the range 0 to (numClasses - 1)\&.
+  arma::mat trainLabels = trainData\&.row(trainData\&.n_rows - 1) - 1;
+  arma::mat testLabels = testData\&.row(testData\&.n_rows - 1) - 1;
+  trainData\&.shed_row(trainData\&.n_rows - 1);
+  testData\&.shed_row(testData\&.n_rows - 1);
+
+  // Initialize the network\&.
+  FFN<> model;
+  model\&.Add<Linear<> >(trainData\&.n_rows, 8);
+  model\&.Add<SigmoidLayer<> >();
+  model\&.Add<Linear<> >(8, 3);
+  model\&.Add<LogSoftMax<> >();
+
+  // Train the model\&.
+  model\&.Train(trainData, trainLabels);
+
+  // Use the Predict method to get the predictions\&.
+  arma::mat predictionTemp;
+  model\&.Predict(testData, predictionTemp);
+
+  /*
+    Since the predictionsTemp is of dimensions (3 x number_of_data_points)
+    with continuous values, we first need to reduce it to a dimension of
+    (1 x number_of_data_points) with scalar values, to be able to compare with
+    testLabels\&.
+
+    The first step towards doing this is to create a matrix of zeros with the
+    desired dimensions (1 x number_of_data_points)\&.
+
+    In predictionsTemp, the 3 dimensions for each data point correspond to the
+    probabilities of belonging to the three possible classes\&.
+  */
+  arma::mat prediction = arma::zeros<arma::mat>(1, predictionTemp\&.n_cols);
+
+  // Find index of max prediction for each data point and store in "prediction"
+  for (size_t i = 0; i < predictionTemp\&.n_cols; ++i)
+  {
+    prediction(i) = arma::as_scalar(arma::find(
+        arma::max(predictionTemp\&.col(i)) == predictionTemp\&.col(i), 1));
+  }
+
+  /*
+    Compute the error between predictions and testLabels,
+    now that we have the desired predictions\&.
+  */
+  size_t correct = arma::accu(prediction == testLabels);
+  double classificationError = 1 - double(correct) / testData\&.n_cols;
+
+  // Print out the classification error for the testing dataset\&.
+  std::cout << "Classification Error for the Test set: " << classificationError << std::endl;
+  return 0;
+}
+.fi
+.PP
+.PP
+Now, the matrix prediction holds the classification of each point in the dataset\&. Subsequently, we find the classification error by comparing it with testLabels\&.
+.PP
+In the next example, we create simple noisy sine sequences, which are trained later on, using the RNN class in the \fCRNNModel()\fP method\&.
+.PP
+.PP
+.nf
+void GenerateNoisySines(arma::mat& data,
+                        arma::mat& labels,
+                        const size_t points,
+                        const size_t sequences,
+                        const double noise = 0\&.3)
+{
+  arma::colvec x =  arma::linspace<arma::Col<double>>(0,
+      points - 1, points) / points * 20\&.0;
+  arma::colvec y1 = arma::sin(x + arma::as_scalar(arma::randu(1)) * 3\&.0);
+  arma::colvec y2 = arma::sin(x / 2\&.0 + arma::as_scalar(arma::randu(1)) * 3\&.0);
+
+  data = arma::zeros(points, sequences * 2);
+  labels = arma::zeros(2, sequences * 2);
+
+  for (size_t seq = 0; seq < sequences; seq++)
+  {
+    data\&.col(seq) = arma::randu(points) * noise + y1 +
+        arma::as_scalar(arma::randu(1) - 0\&.5) * noise;
+    labels(0, seq) = 1;
+
+    data\&.col(sequences + seq) = arma::randu(points) * noise + y2 +
+        arma::as_scalar(arma::randu(1) - 0\&.5) * noise;
+    labels(1, sequences + seq) = 1;
+  }
+}
+
+void RNNModel()
+{
+  const size_t rho = 10;
+
+  // Generate 12 (2 * 6) noisy sines\&. A single sine contains rho
+  // points/features\&.
+  arma::mat input, labelsTemp;
+  GenerateNoisySines(input, labelsTemp, rho, 6);
+
+  arma::mat labels = arma::zeros<arma::mat>(rho, labelsTemp\&.n_cols);
+  for (size_t i = 0; i < labelsTemp\&.n_cols; ++i)
+  {
+    const int value = arma::as_scalar(arma::find(
+        arma::max(labelsTemp\&.col(i)) == labelsTemp\&.col(i), 1));
+    labels\&.col(i)\&.fill(value);
+  }
+
+  Add<> add(4);
+  Linear<> lookup(1, 4);
+  SigmoidLayer<> sigmoidLayer;
+  Linear<> linear(4, 4);
+  Recurrent<> recurrent(add, lookup, linear, sigmoidLayer, rho);
+
+  RNN<> model(rho);
+  model\&.Add<IdentityLayer<> >();
+  model\&.Add(recurrent);
+  model\&.Add<Linear<> >(4, 10);
+  model\&.Add<LogSoftMax<> >();
+
+  StandardSGD opt(0\&.1, 1, input\&.n_cols /* 1 epoch */, -100);
+  model\&.Train(input, labels, opt);
+}
+.fi
+.PP
+.PP
+For further examples on the usage of the ann classes, see \fCmlpack models\fP\&.
+.SH "Layer API"
+.PP
+In order to facilitate consistent implementations, we have defined a LayerType API that describes all the methods that a \fClayer\fP may implement\&. mlpack offers a few variations of this API, each designed to cover some of the model characteristics mentioned in the previous section\&. Any \fClayer\fP requires the implementation of a \fCForward()\fP method\&. The interface looks like:
+.PP
+.PP
+.nf
+template<typename eT>
+void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+.fi
+.PP
+.PP
+The method should calculate the output of the layer given the input matrix and store the result in the given output matrix\&. Next, any \fClayer\fP must implement the Backward() method, which uses certain computations obtained during the forward pass and should calculate the function f(x) by propagating x backward through f:
+.PP
+.PP
+.nf
+template<typename eT>
+void Backward(const arma::Mat<eT>& input,
+              const arma::Mat<eT>& gy,
+              arma::Mat<eT>& g);
+.fi
+.PP
+.PP
+Finally, if the layer is differentiable, the layer must also implement a Gradient() method:
+.PP
+.PP
+.nf
+template<typename eT>
+void Gradient(const arma::Mat<eT>& input,
+              const arma::Mat<eT>& error,
+              arma::Mat<eT>& gradient);
+.fi
+.PP
+.PP
+The Gradient function should calculate the gradient with respect to the input activations \fCinput\fP and calculated errors \fCerror\fP and place the results into the gradient matrix object \fCgradient\fP that is passed as an argument\&.
+.PP
+\fBNote\fP
+.RS 4
+Note that each method accepts a template parameter InputType, OutputType or GradientType, which may be arma::mat (dense Armadillo matrix) or arma::sp_mat (sparse Armadillo matrix)\&. This allows support for both sparse-supporting and non-sparse-supporting \fClayer\fP without explicitly passing the type\&.
+.RE
+.PP
+In addition, each layer must implement the Parameters(), InputParameter(), OutputParameter(), Delta() methods, differentiable layer should also provide access to the gradient by implementing the Gradient(), Parameters() member function\&. Note each function is a single line that looks like:
+.PP
+.PP
+.nf
+OutputDataType const& Parameters() const { return weights; }
+.fi
+.PP
+.PP
+Below is an example that shows each function with some additional boilerplate code\&.
+.PP
+\fBNote\fP
+.RS 4
+Note this is not an actual layer but instead an example that exists to show and document all the functions that mlpack layer must implement\&. For a better overview of the various layers, see \fBmlpack::ann\fP\&. Also be aware that the implementations of each of the methods in this example are entirely fake and do not work; this example exists for its API, not its implementation\&.
+.RE
+.PP
+Note that layer sometimes have different properties\&. These properties are known at compile-time through the \fBmlpack::ann::LayerTraits\fP class, and some properties may imply the existence (or non-existence) of certain functions\&. Refer to the LayerTraits \fBlayer_traits\&.hpp\fP for more documentation on that\&.
+.PP
+The two template parameters below must be template parameters to the layer, in the order given below\&. More template parameters are fine, but they must come after the first two\&.
+.PP
+.IP "\(bu" 2
+\fCInputDataType:\fP this defines the internally used input type for example to store the parameter matrix\&. Note, a layer could be built on a dense matrix or a sparse matrix\&. All mlpack trees should be able to support any Armadillo- compatible matrix type\&. When the layer is written it should be assumed that MatType has the same functionality as arma::mat\&. Note that
+.IP "\(bu" 2
+\fCOutputDataType:\fP this defines the internally used input type for example to store the parameter matrix\&. Note, a layer could be built on a dense matrix or a sparse matrix\&. All mlpack trees should be able to support any Armadillo- compatible matrix type\&. When the layer is written it should be assumed that MatType has the same functionality as arma::mat\&.
+.PP
+.PP
+.PP
+.nf
+template<typename InputDataType = arma::mat,
+         typename OutputDataType = arma::mat>
+class ExampleLayer
+{
+ public:
+  ExampleLayer(const size_t inSize, const size_t outSize) :
+      inputSize(inSize), outputSize(outSize)
+  {
+    /* Nothing to do here */
+  }
+}
+.fi
+.PP
+.PP
+The constructor for \fCExampleLayer\fP will build the layer given the input and output size\&. Note that, if the input or output size information isn't used internally it's not necessary to provide a specific constructor\&. Also, one could add additional or other information that are necessary for the layer construction\&. One example could be:
+.PP
+.PP
+.nf
+ExampleLayer(const double ratio = 0\&.5) : ratio(ratio) {/* Nothing to do here*/}
+.fi
+.PP
+.PP
+When this constructor is finished, the entire layer will be built and is ready to be used\&. Next, as pointed out above, each layer has to follow the LayerType API, so we must implement some additional functions\&.
+.PP
+.PP
+.nf
+template<typename InputType, typename OutputType>
+void Forward(const InputType& input, OutputType& output)
+{
+  output = arma::ones(input\&.n_rows, input\&.n_cols);
+}
+
+template<typename InputType, typename ErrorType, typename GradientType>
+void Backward(const InputType& input, const ErrorType& gy, GradientType& g)
+{
+  g = arma::zeros(gy\&.n_rows, gy\&.n_cols) + gy;
+}
+
+template<typename InputType, typename ErrorType, typename GradientType>
+void Gradient(const InputType& input,
+              ErrorType& error,
+              GradientType& gradient)
+{
+  gradient = arma::zeros(input\&.n_rows, input\&.n_cols) * error;
+}
+.fi
+.PP
+.PP
+The three functions \fCForward()\fP, \fCBackward()\fP and \fCGradient()\fP (which is needed for a differentiable layer) contain the main logic of the layer\&. The following functions are just to access and manipulate the different layer parameters\&.
+.PP
+.PP
+.nf
+OutputDataType& Parameters() { return weights; }
+InputDataType& InputParameter() { return inputParameter; }
+OutputDataType& OutputParameter() { return outputParameter; }
+OutputDataType& Delta() { return delta; }
+OutputDataType& Gradient() { return gradient; }
+.fi
+.PP
+.PP
+Since some of this methods return internal class members we have to define them\&.
+.PP
+.PP
+.nf
+private:
+  size_t inSize, outSize;
+  OutputDataType weights, delta, gradient, outputParameter;
+  InputDataType inputParameter;
+.fi
+.PP
+.PP
+Note some members are just here so \fCExampleLayer\fP compiles without warning\&. For instance, \fCinputSize\fP is not required to be a member of every type of layer\&.
+.PP
+There is one last method that is especially interesting for a layer that shares parameter\&. Since the layer weights are set once the complete model is defined, it's not possible to split the weights during the construction time\&. To solve this issue, a layer can implement the \fCReset()\fP method which is called once the layer parameter is set\&.
+.SH "Model Setup & Training"
+.PP
+Once the base container is selected (\fCFNN\fP or \fCRNN\fP), the \fCAdd\fP method can be used to add layers to the model\&. The code below adds two linear layers to the model---the first takes 512 units as input and gives 256 output units, and the second takes 256 units as input and gives 128 output units\&.
+.PP
+.PP
+.nf
+FFN<> model;
+model\&.Add<Linear<> >(512, 256);
+model\&.Add<Linear<> >(256, 128);
+.fi
+.PP
+.PP
+The model is trained on Armadillo matrices\&. For training a model, you will typically use the \fCTrain()\fP function:
+.PP
+.PP
+.nf
+arma::mat trainingSet, trainingLabels;
+model\&.Train(trainingSet, trainingLabels);
+.fi
+.PP
+.PP
+You can use mlpack's \fC\fBLoad()\fP\fP function to load a dataset like this:
+.PP
+.PP
+.nf
+arma::mat trainingSet;
+data::Load("dataset\&.csv", dataset, true);
+.fi
+.PP
+.PP
+.PP
+.nf
+$ cat dataset\&.csv
+0, 1, 4
+1, 0, 5
+1, 1, 1
+2, 0, 2
+.fi
+.PP
+.PP
+The type does not necessarily need to be a CSV; it can be any supported storage format, assuming that it is a coordinate-format file in the format specified above\&. For more information on mlpack file formats, see the documentation for \fBmlpack::data::Load()\fP\&.
+.PP
+\fBNote\fP
+.RS 4
+It’s often a good idea to normalize or standardize your data, for example using:
+.RE
+.PP
+.PP
+.nf
+for (size_t i = 0; i < dataset\&.n_cols; ++i)
+  dataset\&.col(i) /= norm(dataset\&.col(i), 2);
+.fi
+.PP
+.PP
+Also, it is possible to retrain a model with new parameters or with a new reference set\&. This is functionally equivalent to creating a new model\&.
+.SH "Saving & Loading"
+.PP
+Using \fCcereal\fP (for more information about the internals see \fCthe Cereal website\fP), mlpack is able to load and save machine learning models with ease\&. To save a trained neural network to disk\&. The example below builds a model on the \fCthyroid\fP dataset and then saves the model to the file \fCmodel\&.xml\fP for later use\&.
+.PP
+.PP
+.nf
+// Load the training set\&.
+arma::mat dataset;
+data::Load("thyroid_train\&.csv", dataset, true);
+
+// Split the labels from the training set\&.
+arma::mat trainData = dataset\&.submat(0, 0, dataset\&.n_rows - 4,
+    dataset\&.n_cols - 1);
+
+// Split the data from the training set\&.
+// Subtract 1 so the labels are the range from 0 to (numClasses - 1)\&.
+arma::mat trainLabels = dataset\&.submat(dataset\&.n_rows - 3, 0,
+    dataset\&.n_rows - 1, dataset\&.n_cols - 1) - 1;
+
+// Initialize the network\&.
+FFN<> model;
+model\&.Add<Linear<> >(trainData\&.n_rows, 3);
+model\&.Add<SigmoidLayer<> >();
+model\&.Add<LogSoftMax<> >();
+
+// Train the model\&.
+model\&.Train(trainData, trainLabels);
+
+// Use the Predict method to get the assignments\&.
+arma::mat assignments;
+model\&.Predict(trainData, assignments);
+
+data::Save("model\&.xml", "model", model, false);
+.fi
+.PP
+.PP
+After this, the file model\&.xml will be available in the current working directory\&.
+.PP
+Now, we can look at the output model file, \fCmodel\&.xml:\fP 
+.PP
+.PP
+.nf
+$ cat model\&.xml
+<?xml version="1\&.0" encoding="utf-8"?>
+<cereal>
+  <model>
+    <cereal_class_version>0</cereal_class_version>
+    <parameter>
+      <n_rows>60</n_rows>
+      <n_cols>1</n_cols>
+      <vec_state>0</vec_state>
+      <elem>10\&.461979353567767</elem>
+      <elem>-10\&.040855482151116</elem>
+      <elem>0\&.18048901768535316</elem>
+      <elem>4\&.8989495084787169</elem>
+      <elem>-4\&.4381643782652276</elem>
+      <elem>0\&.049477846402230616</elem>
+      <elem>2\&.5271808924795987</elem>
+      <elem>-3\&.96993488526287</elem>
+      \&.\&.\&.
+    </parameter>
+    <width>0</width>
+    <height>0</height>
+    <reset>true</reset>
+    <value0>
+      <vecSize>3</vecSize>
+      <value0>
+        <which>30</which>
+        <value0>
+          <cereal_class_version>0</cereal_class_version>
+          <smartPointer>
+            <ptr_wrapper>
+              <valid>1</valid>
+              <data>
+                <cereal_class_version>0</cereal_class_version>
+                <inSize>19</inSize>
+                <outSize>3</outSize>
+              </data>
+            </ptr_wrapper>
+          </smartPointer>
+        </value0>
+      </value0>
+      <value1>
+        <which>6</which>
+        <value0>
+          <cereal_class_version>0</cereal_class_version>
+          <smartPointer>
+            <ptr_wrapper>
+              <valid>1</valid>
+              <data>
+                <cereal_class_version>0</cereal_class_version>
+              </data>
+            </ptr_wrapper>
+          </smartPointer>
+        </value0>
+      </value1>
+      <value2>
+        <which>32</which>
+        <value0>
+          <cereal_class_version>0</cereal_class_version>
+          <smartPointer>
+            <ptr_wrapper>
+              <valid>1</valid>
+              <data>
+                <cereal_class_version>0</cereal_class_version>
+              </data>
+            </ptr_wrapper>
+          </smartPointer>
+        </value0>
+      </value2>
+    </value0>
+  </model>
+</cereal>
+.fi
+.PP
+.PP
+As you can see, the \fC<parameter>\fP section of \fCmodel\&.xml\fP contains the trained network weights\&. We can see that this section also contains the network input size, which is 66 rows and 1 column\&. Note that in this example, we used three different layers, as can be seen by looking at the \fC<network>\fP section\&. Each node has a unique id that is used to reconstruct the model when loading\&.
+.PP
+The models can also be saved as \fC\fP\&.bin or \fC\fP\&.txt; the \fC\fP\&.xml format provides a human-inspectable format (though the models tend to be quite complex and may be difficult to read)\&. These models can then be re-used to be used for classification or other tasks\&.
+.PP
+So, instead of saving or training a network, mlpack can also load a pre-trained model\&. For instance, the example below will load the model from \fCmodel\&.xml\fP and then generate the class predictions for the \fCthyroid\fP test dataset\&.
+.PP
+.PP
+.nf
+data::Load("thyroid_test\&.csv", dataset, true);
+
+arma::mat testData = dataset\&.submat(0, 0, dataset\&.n_rows - 4,
+    dataset\&.n_cols - 1);
+
+data::Load("model\&.xml", "model", model);
+
+arma::mat predictions;
+model\&.Predict(testData, predictions);
+.fi
+.PP
+.PP
+This enables the possibility to distribute a model without having to train it first or simply to save a model for later use\&. Note that loading will also work on different machines\&.
+.SH "Extracting Parameters"
+.PP
+To access the weights from the neural network layers, you can call the following function on any initialized network:
+.PP
+.PP
+.nf
+model\&.Parameters();
+.fi
+.PP
+.PP
+which will return the complete model parameters as an armadillo matrix object; however often it is useful to not only have the parameters for the complete network, but the parameters of a specific layer\&. Another method, \fCModel()\fP, makes this easily possible:
+.PP
+.PP
+.nf
+model\&.Model()[1]\&.Parameters();
+.fi
+.PP
+.PP
+In the example above, we get the weights of the second layer\&.
+.SH "Further documentation"
+.PP
+For further documentation on the ann classes, consult the \fBcomplete API documentation\fP\&. 

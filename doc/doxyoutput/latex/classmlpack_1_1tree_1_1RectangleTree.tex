@@ -1,0 +1,1439 @@
+\doxysection{Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1RectangleTree}\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+
+
+A rectangle type tree tree, such as an R-\/tree or X-\/tree.  
+
+
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Dual\+Tree\+Traverser}
+\begin{DoxyCompactList}\small\item\em A dual tree traverser for rectangle type trees. \end{DoxyCompactList}\item 
+class \textbf{ Single\+Tree\+Traverser}
+\begin{DoxyCompactList}\small\item\em A single traverser for rectangle type trees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Auxiliary\+Information\+Type$<$ \textbf{ Rectangle\+Tree} $>$ \textbf{ Auxiliary\+Information}
+\begin{DoxyCompactList}\small\item\em The auxiliary information type held by the tree. \end{DoxyCompactList}\item 
+typedef Mat\+Type\+::elem\+\_\+type \textbf{ Elem\+Type}
+\begin{DoxyCompactList}\small\item\em The element type held by the matrix type. \end{DoxyCompactList}\item 
+typedef Mat\+Type \textbf{ Mat}
+\begin{DoxyCompactList}\small\item\em So other classes can use Tree\+Type\+::\+Mat. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\\textbf{ Rectangle\+Tree} (Archive \&ar, const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ cereal\+::is\+\_\+loading}$<$ Archive $>$()$>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Construct the tree from a cereal archive. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} (const Mat\+Type \&data, const size\+\_\+t max\+Leaf\+Size=20, const size\+\_\+t min\+Leaf\+Size=8, const size\+\_\+t max\+Num\+Children=5, const size\+\_\+t min\+Num\+Children=2, const size\+\_\+t first\+Data\+Index=0)
+\begin{DoxyCompactList}\small\item\em Construct this as the root node of a rectangle type tree using the given dataset. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} (const \textbf{ Rectangle\+Tree} \&other, const bool deep\+Copy=true, \textbf{ Rectangle\+Tree} $\ast$new\+Parent=NULL)
+\begin{DoxyCompactList}\small\item\em Create a rectangle tree by copying the other tree. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} (Mat\+Type \&\&data, const size\+\_\+t max\+Leaf\+Size=20, const size\+\_\+t min\+Leaf\+Size=8, const size\+\_\+t max\+Num\+Children=5, const size\+\_\+t min\+Num\+Children=2, const size\+\_\+t first\+Data\+Index=0)
+\begin{DoxyCompactList}\small\item\em Construct this as the root node of a rectangle tree type using the given dataset, and taking ownership of the given dataset. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} (\textbf{ Rectangle\+Tree} \&\&other)
+\begin{DoxyCompactList}\small\item\em Create a rectangle tree by moving the other tree. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} (\textbf{ Rectangle\+Tree} $\ast$parent\+Node, const size\+\_\+t num\+Max\+Children=0)
+\begin{DoxyCompactList}\small\item\em Construct this as an empty node with the specified parent. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+Rectangle\+Tree} ()
+\begin{DoxyCompactList}\small\item\em Deletes this node, deallocating the memory for the children and calling their destructors in turn. \end{DoxyCompactList}\item 
+Auxiliary\+Information\+Type$<$ \textbf{ Rectangle\+Tree} $>$ \& \textbf{ Auxiliary\+Info} ()
+\begin{DoxyCompactList}\small\item\em Modify the split object of this node. \end{DoxyCompactList}\item 
+const Auxiliary\+Information\+Type$<$ \textbf{ Rectangle\+Tree} $>$ \& \textbf{ Auxiliary\+Info} () const
+\begin{DoxyCompactList}\small\item\em Return the auxiliary information object of this node. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Begin} ()
+\begin{DoxyCompactList}\small\item\em Modify the index of the beginning point of this subset. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Begin} () const
+\begin{DoxyCompactList}\small\item\em Return the index of the beginning point of this subset. \end{DoxyCompactList}\item 
+\textbf{ bound\+::\+HRect\+Bound}$<$ Metric\+Type $>$ \& \textbf{ Bound} ()
+\begin{DoxyCompactList}\small\item\em Modify the bound object for this node. \end{DoxyCompactList}\item 
+const \textbf{ bound\+::\+HRect\+Bound}$<$ Metric\+Type $>$ \& \textbf{ Bound} () const
+\begin{DoxyCompactList}\small\item\em Return the bound object for this node. \end{DoxyCompactList}\item 
+void \textbf{ Center} (arma\+::vec \&center)
+\begin{DoxyCompactList}\small\item\em Get the centroid of the node and store it in the given vector. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} \& \textbf{ Child} (const size\+\_\+t child)
+\begin{DoxyCompactList}\small\item\em Modify the specified child. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} \& \textbf{ Child} (const size\+\_\+t child) const
+\begin{DoxyCompactList}\small\item\em Get the specified child. \end{DoxyCompactList}\item 
+void \textbf{ Condense\+Tree} (const arma\+::vec \&point, std\+::vector$<$ bool $>$ \&relevels, const bool use\+Point)
+\begin{DoxyCompactList}\small\item\em Condense the bounding rectangles for this node based on the removal of the point specified by the arma\+::vec\&. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Count} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of points in this subset. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Count} () const
+\begin{DoxyCompactList}\small\item\em Return the number of points in this subset. \end{DoxyCompactList}\item 
+Mat\+Type \& \textbf{ Dataset} ()
+\begin{DoxyCompactList}\small\item\em Modify the dataset which the tree is built on. Be careful! \end{DoxyCompactList}\item 
+const Mat\+Type \& \textbf{ Dataset} () const
+\begin{DoxyCompactList}\small\item\em Get the dataset which the tree is built on. \end{DoxyCompactList}\item 
+bool \textbf{ Delete\+Point} (const size\+\_\+t point)
+\begin{DoxyCompactList}\small\item\em Deletes a point from the treeand, updates the bounding rectangle. \end{DoxyCompactList}\item 
+bool \textbf{ Delete\+Point} (const size\+\_\+t point, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Deletes a point from the tree, updates the bounding rectangle, tracking levels. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Descendant} (const size\+\_\+t index) const
+\begin{DoxyCompactList}\small\item\em Return the index (with reference to the dataset) of a particular descendant of this node. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} $\ast$ \textbf{ Exact\+Clone} ()
+\begin{DoxyCompactList}\small\item\em Make an exact copy of this node, pointers and everything. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} $\ast$ \textbf{ Find\+By\+Begin\+Count} (size\+\_\+t begin, size\+\_\+t count)
+\begin{DoxyCompactList}\small\item\em Find a node in this tree by its begin and count. \end{DoxyCompactList}\item 
+const \textbf{ Rectangle\+Tree} $\ast$ \textbf{ Find\+By\+Begin\+Count} (size\+\_\+t begin, size\+\_\+t count) const
+\begin{DoxyCompactList}\small\item\em Find a node in this tree by its begin and count (const). \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Furthest\+Descendant\+Distance} () const
+\begin{DoxyCompactList}\small\item\em Return the furthest possible descendant distance. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Furthest\+Point\+Distance} () const
+\begin{DoxyCompactList}\small\item\em Return the furthest distance to a point held in this node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Get\+Furthest\+Child} (const \textbf{ Rectangle\+Tree} \&query\+Node)
+\begin{DoxyCompactList}\small\item\em Return the index of the furthest child node to the given query node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t \textbf{ Get\+Furthest\+Child} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the index of the furthest child node to the given query point. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Get\+Nearest\+Child} (const \textbf{ Rectangle\+Tree} \&query\+Node)
+\begin{DoxyCompactList}\small\item\em Return the index of the nearest child node to the given query node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t \textbf{ Get\+Nearest\+Child} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the index of the nearest child node to the given query point. \end{DoxyCompactList}\item 
+void \textbf{ Insert\+Node} (\textbf{ Rectangle\+Tree} $\ast$node, const size\+\_\+t level, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Inserts a node into the tree, tracking which levels have been inserted into. \end{DoxyCompactList}\item 
+void \textbf{ Insert\+Point} (const size\+\_\+t point)
+\begin{DoxyCompactList}\small\item\em Inserts a point into the tree. \end{DoxyCompactList}\item 
+void \textbf{ Insert\+Point} (const size\+\_\+t point, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Inserts a point into the tree, tracking which levels have been inserted into. \end{DoxyCompactList}\item 
+bool \textbf{ Is\+Leaf} () const
+\begin{DoxyCompactList}\small\item\em Return whether or not this node is a leaf (true if it has no children). \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Max\+Distance} (const \textbf{ Rectangle\+Tree} \&other) const
+\begin{DoxyCompactList}\small\item\em Return the maximum distance to another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\\textbf{ Elem\+Type} \textbf{ Max\+Distance} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const
+\begin{DoxyCompactList}\small\item\em Return the maximum distance to another point. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Max\+Leaf\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum leaf size. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Max\+Leaf\+Size} () const
+\begin{DoxyCompactList}\small\item\em Return the maximum leaf size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Max\+Num\+Children} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum number of children (in a non-\/leaf node). \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Max\+Num\+Children} () const
+\begin{DoxyCompactList}\small\item\em Return the maximum number of children (in a non-\/leaf node). \end{DoxyCompactList}\item 
+Metric\+Type \textbf{ Metric} () const
+\begin{DoxyCompactList}\small\item\em Get the metric which the tree uses. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Min\+Distance} (const \textbf{ Rectangle\+Tree} \&other) const
+\begin{DoxyCompactList}\small\item\em Return the minimum distance to another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\\textbf{ Elem\+Type} \textbf{ Min\+Distance} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const
+\begin{DoxyCompactList}\small\item\em Return the minimum distance to another point. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Minimum\+Bound\+Distance} () const
+\begin{DoxyCompactList}\small\item\em Return the minimum distance from the center to any edge of the bound. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Min\+Leaf\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the minimum leaf size. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Min\+Leaf\+Size} () const
+\begin{DoxyCompactList}\small\item\em Return the minimum leaf size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Min\+Num\+Children} ()
+\begin{DoxyCompactList}\small\item\em Modify the minimum number of children (in a non-\/leaf node). \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Min\+Num\+Children} () const
+\begin{DoxyCompactList}\small\item\em Return the minimum number of children (in a non-\/leaf node). \end{DoxyCompactList}\item 
+void \textbf{ Nullify\+Data} ()
+\begin{DoxyCompactList}\small\item\em Nullify the auxiliary information. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Children} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of child nodes. Be careful. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Children} () const
+\begin{DoxyCompactList}\small\item\em Return the number of child nodes. (One level beneath this one only.) \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Descendants} () const
+\begin{DoxyCompactList}\small\item\em Return the number of descendants of this node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Points} () const
+\begin{DoxyCompactList}\small\item\em Return the number of points in this node (returns 0 if this node is not a leaf). \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} \& \textbf{ operator=} (const \textbf{ Rectangle\+Tree} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given rectangle tree. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} \& \textbf{ operator=} (\textbf{ Rectangle\+Tree} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given rectangle tree. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} $\ast$\& \textbf{ Parent} ()
+\begin{DoxyCompactList}\small\item\em Modify the parent of this node. \end{DoxyCompactList}\item 
+\textbf{ Rectangle\+Tree} $\ast$ \textbf{ Parent} () const
+\begin{DoxyCompactList}\small\item\em Gets the parent of this node. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \& \textbf{ Parent\+Distance} ()
+\begin{DoxyCompactList}\small\item\em Modify the distance from the center of this node to the center of the parent node. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Parent\+Distance} () const
+\begin{DoxyCompactList}\small\item\em Return the distance from the center of this node to the center of the parent node. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Point} (const size\+\_\+t index)
+\begin{DoxyCompactList}\small\item\em Modify the index of a particular point in this node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Point} (const size\+\_\+t index) const
+\begin{DoxyCompactList}\small\item\em Return the index (with reference to the dataset) of a particular point in this node. \end{DoxyCompactList}\item 
+\textbf{ math\+::\+Range\+Type}$<$ \textbf{ Elem\+Type} $>$ \textbf{ Range\+Distance} (const \textbf{ Rectangle\+Tree} \&other) const
+\begin{DoxyCompactList}\small\item\em Return the minimum and maximum distance to another node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\\textbf{ math\+::\+Range\+Type}$<$ \textbf{ Elem\+Type} $>$ \textbf{ Range\+Distance} (const Vec\+Type \&point, typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$=0) const
+\begin{DoxyCompactList}\small\item\em Return the minimum and maximum distance to another point. \end{DoxyCompactList}\item 
+bool \textbf{ Remove\+Node} (const \textbf{ Rectangle\+Tree} $\ast$node, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Removes a node from the tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the tree. \end{DoxyCompactList}\item 
+bool \textbf{ Shrink\+Bound\+For\+Bound} (const \textbf{ bound\+::\+HRect\+Bound}$<$ Metric\+Type $>$ \&changed\+Bound)
+\begin{DoxyCompactList}\small\item\em Shrink the bound object of this node for the removal of a child node. \end{DoxyCompactList}\item 
+bool \textbf{ Shrink\+Bound\+For\+Point} (const arma\+::vec \&point)
+\begin{DoxyCompactList}\small\item\em Shrink the bound object of this node for the removal of a point. \end{DoxyCompactList}\item 
+void \textbf{ Soft\+Delete} ()
+\begin{DoxyCompactList}\small\item\em Delete this node of the tree, but leave the stuff contained in it intact. \end{DoxyCompactList}\item 
+Statistic\+Type \& \textbf{ Stat} ()
+\begin{DoxyCompactList}\small\item\em Modify the statistic object for this node. \end{DoxyCompactList}\item 
+const Statistic\+Type \& \textbf{ Stat} () const
+\begin{DoxyCompactList}\small\item\em Return the statistic object for this node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Tree\+Depth} () const
+\begin{DoxyCompactList}\small\item\em Obtains the number of levels below this node in the tree, starting with this. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Tree\+Size} () const
+\begin{DoxyCompactList}\small\item\em Obtains the number of nodes in the tree, starting with this. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Rectangle\+Tree} ()
+\begin{DoxyCompactList}\small\item\em A default constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+friend \textbf{ Auxiliary\+Information}
+\begin{DoxyCompactList}\small\item\em Give friend access for Auxiliary\+Information\+Type. \end{DoxyCompactList}\item 
+friend \textbf{ Descent\+Type}
+\begin{DoxyCompactList}\small\item\em Give friend access for Descent\+Type. \end{DoxyCompactList}\item 
+friend \textbf{ Split\+Type}
+\begin{DoxyCompactList}\small\item\em Give friend access for Split\+Type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+Euclidean\+Distance, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat, typename Split\+Type = RTree\+Split, typename Descent\+Type = RTree\+Descent\+Heuristic, template$<$ typename $>$ class Auxiliary\+Information\+Type = No\+Auxiliary\+Information$>$\newline
+class mlpack\+::tree\+::\+Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$}
+
+A rectangle type tree tree, such as an R-\/tree or X-\/tree. 
+
+Once the bound and type of dataset is defined, the tree will construct itself. Call the constructor with the dataset to build the tree on, and the entire tree will be built.
+
+This tree does allow growth, so you can add and delete nodes from it.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Metric\+Type} & This {\itshape must} be Euclidean\+Distance, but the template parameter is required to satisfy the Tree\+Type API. \\
+\hline
+{\em Statistic\+Type} & Extra data contained in the node. See \doxyref{statistic.\+hpp}{p.}{statistic_8hpp} for the necessary skeleton interface. \\
+\hline
+{\em Mat\+Type} & The dataset class. \\
+\hline
+{\em Split\+Type} & The type of split to use when inserting points. \\
+\hline
+{\em Descent\+Type} & The heuristic to use when descending the tree to insert points. \\
+\hline
+{\em Auxiliary\+Information\+Type} & An auxiliary information contained in the node. This information depends on the type of the \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree}. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 54 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a5037c9f86afcfda12a618bfe99994a23}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!AuxiliaryInformation@{AuxiliaryInformation}}
+\index{AuxiliaryInformation@{AuxiliaryInformation}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{AuxiliaryInformation}
+{\footnotesize\ttfamily typedef Auxiliary\+Information\+Type$<$\textbf{ Rectangle\+Tree}$>$ \textbf{ Auxiliary\+Information}}
+
+
+
+The auxiliary information type held by the tree. 
+
+
+
+Definition at line 66 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a227d0c7e23e98fcd6c81ecab357a791f}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!ElemType@{ElemType}}
+\index{ElemType@{ElemType}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{ElemType}
+{\footnotesize\ttfamily typedef Mat\+Type\+::elem\+\_\+type \textbf{ Elem\+Type}}
+
+
+
+The element type held by the matrix type. 
+
+
+
+Definition at line 64 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a57758caa2e58c3fe05d1284eeabae523}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Mat@{Mat}}
+\index{Mat@{Mat}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Mat}
+{\footnotesize\ttfamily typedef Mat\+Type \textbf{ Mat}}
+
+
+
+So other classes can use Tree\+Type\+::\+Mat. 
+
+
+
+Definition at line 62 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a1027fe8c984d5656006328acd6cc92c3}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!RectangleTree@{RectangleTree}}
+\index{RectangleTree@{RectangleTree}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{RectangleTree()\hspace{0.1cm}{\footnotesize\ttfamily [1/7]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20},  }\item[{const size\+\_\+t}]{min\+Leaf\+Size = {\ttfamily 8},  }\item[{const size\+\_\+t}]{max\+Num\+Children = {\ttfamily 5},  }\item[{const size\+\_\+t}]{min\+Num\+Children = {\ttfamily 2},  }\item[{const size\+\_\+t}]{first\+Data\+Index = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Construct this as the root node of a rectangle type tree using the given dataset. 
+
+This will modify the ordering of the points in the dataset!
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset from which to create the tree. This will be modified! \\
+\hline
+{\em max\+Leaf\+Size} & Maximum size of each leaf in the tree. \\
+\hline
+{\em min\+Leaf\+Size} & Minimum size of each leaf in the tree. \\
+\hline
+{\em max\+Num\+Children} & The maximum number of child nodes a non-\/leaf node may have. \\
+\hline
+{\em min\+Num\+Children} & The minimum number of child nodes a non-\/leaf node may have. \\
+\hline
+{\em first\+Data\+Index} & The index of the first data point. UNUSED UNLESS WE ADD SUPPORT FOR HAVING A \char`\"{}\+CENTERAL\char`\"{} DATA MATRIX. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_af147218dd8dc0045cd6a7cecd43a2ffe}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!RectangleTree@{RectangleTree}}
+\index{RectangleTree@{RectangleTree}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{RectangleTree()\hspace{0.1cm}{\footnotesize\ttfamily [2/7]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree} (\begin{DoxyParamCaption}\item[{Mat\+Type \&\&}]{data,  }\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 20},  }\item[{const size\+\_\+t}]{min\+Leaf\+Size = {\ttfamily 8},  }\item[{const size\+\_\+t}]{max\+Num\+Children = {\ttfamily 5},  }\item[{const size\+\_\+t}]{min\+Num\+Children = {\ttfamily 2},  }\item[{const size\+\_\+t}]{first\+Data\+Index = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Construct this as the root node of a rectangle tree type using the given dataset, and taking ownership of the given dataset. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset from which to create the tree. \\
+\hline
+{\em max\+Leaf\+Size} & Maximum size of each leaf in the tree. \\
+\hline
+{\em min\+Leaf\+Size} & Minimum size of each leaf in the tree. \\
+\hline
+{\em max\+Num\+Children} & The maximum number of child nodes a non-\/leaf node may have. \\
+\hline
+{\em min\+Num\+Children} & The minimum number of child nodes a non-\/leaf node may have. \\
+\hline
+{\em first\+Data\+Index} & The index of the first data point. UNUSED UNLESS WE ADD SUPPORT FOR HAVING A \char`\"{}\+CENTERAL\char`\"{} DATA MATRIX. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a3b593f811c454b7b95d033c80e051ed3}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!RectangleTree@{RectangleTree}}
+\index{RectangleTree@{RectangleTree}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{RectangleTree()\hspace{0.1cm}{\footnotesize\ttfamily [3/7]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree} (\begin{DoxyParamCaption}\item[{\textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ $\ast$}]{parent\+Node,  }\item[{const size\+\_\+t}]{num\+Max\+Children = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Construct this as an empty node with the specified parent. 
+
+Copying the parameters (max\+Leaf\+Size, min\+Leaf\+Size, max\+Num\+Children, min\+Num\+Children, first\+Data\+Index) from the parent.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent\+Node} & The parent of the node that is being constructed. \\
+\hline
+{\em num\+Max\+Children} & The max number of child nodes (used in x-\/trees). \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a7021cb2a458cca4ead6ae79780c14ad8}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!RectangleTree@{RectangleTree}}
+\index{RectangleTree@{RectangleTree}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{RectangleTree()\hspace{0.1cm}{\footnotesize\ttfamily [4/7]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree} (\begin{DoxyParamCaption}\item[{const \textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ \&}]{other,  }\item[{const bool}]{deep\+Copy = {\ttfamily true},  }\item[{\textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ $\ast$}]{new\+Parent = {\ttfamily NULL} }\end{DoxyParamCaption})}
+
+
+
+Create a rectangle tree by copying the other tree. 
+
+Be careful! This can take a long time and use a lot of memory.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tree to be copied. \\
+\hline
+{\em deep\+Copy} & If false, the children are not recursively copied. \\
+\hline
+{\em new\+Parent} & Set a new parent as applicable, default NULL. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a32f828a13cdc2f5eeca43d37c87ff4db}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!RectangleTree@{RectangleTree}}
+\index{RectangleTree@{RectangleTree}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{RectangleTree()\hspace{0.1cm}{\footnotesize\ttfamily [5/7]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree} (\begin{DoxyParamCaption}\item[{\textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Create a rectangle tree by moving the other tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tree to be moved. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a2c3185b5f76fda53e2cd37b11aa93d0f}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!RectangleTree@{RectangleTree}}
+\index{RectangleTree@{RectangleTree}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{RectangleTree()\hspace{0.1cm}{\footnotesize\ttfamily [6/7]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree} (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ cereal\+::is\+\_\+loading}$<$ Archive $>$()$>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Construct the tree from a cereal archive. 
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a71251e80af594b01fde0d834d178f849}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!````~RectangleTree@{$\sim$RectangleTree}}
+\index{````~RectangleTree@{$\sim$RectangleTree}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{$\sim$RectangleTree()}
+{\footnotesize\ttfamily $\sim$\textbf{ Rectangle\+Tree} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Deletes this node, deallocating the memory for the children and calling their destructors in turn. 
+
+This will invalidate any younters or references to any nodes which are children of this one. \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a916bffeba8c599629948d1711a97cbd7}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!RectangleTree@{RectangleTree}}
+\index{RectangleTree@{RectangleTree}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{RectangleTree()\hspace{0.1cm}{\footnotesize\ttfamily [7/7]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+A default constructor. 
+
+This is meant to only be used with cereal, which is allowed with the friend declaration below. This does not return a valid tree! This method must be protected, so that the serialization shim can work with the default constructor. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a3217304f02ab31874410c5326e3d74c3}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!AuxiliaryInfo@{AuxiliaryInfo}}
+\index{AuxiliaryInfo@{AuxiliaryInfo}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{AuxiliaryInfo()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Auxiliary\+Information\+Type$<$\textbf{ Rectangle\+Tree}$>$\& Auxiliary\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the split object of this node. 
+
+
+
+Definition at line 328 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_aef466731529118c6276cf3d214fee09d}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!AuxiliaryInfo@{AuxiliaryInfo}}
+\index{AuxiliaryInfo@{AuxiliaryInfo}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{AuxiliaryInfo()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Auxiliary\+Information\+Type$<$\textbf{ Rectangle\+Tree}$>$\& Auxiliary\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the auxiliary information object of this node. 
+
+
+
+Definition at line 325 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a49cdbf8b1b2899522cd80f4cbff40b69}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Begin@{Begin}}
+\index{Begin@{Begin}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Begin()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Begin (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the index of the beginning point of this subset. 
+
+
+
+Definition at line 545 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ac50a3a009687e641fd8249e011f628d4}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Begin@{Begin}}
+\index{Begin@{Begin}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Begin()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Begin (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the index of the beginning point of this subset. 
+
+
+
+Definition at line 543 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a8a0a35d824602c0e21a8d21638cfd6ad}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Bound@{Bound}}
+\index{Bound@{Bound}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Bound()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ bound\+::\+HRect\+Bound}$<$Metric\+Type$>$\& Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the bound object for this node. 
+
+
+
+Definition at line 317 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ad4a13f7a6c0b11ebbfc0c1bf551141d1}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Bound@{Bound}}
+\index{Bound@{Bound}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Bound()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const \textbf{ bound\+::\+HRect\+Bound}$<$Metric\+Type$>$\& Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the bound object for this node. 
+
+
+
+Definition at line 315 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+Referenced by Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+::\+Max\+Distance(), Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+::\+Min\+Distance(), and Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+::\+Range\+Distance().
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a16e556777ca3125ab3cdc16aed9e7885}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Center@{Center}}
+\index{Center@{Center}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Center()}
+{\footnotesize\ttfamily void Center (\begin{DoxyParamCaption}\item[{arma\+::vec \&}]{center }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the centroid of the node and store it in the given vector. 
+
+
+
+Definition at line 368 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+References HRect\+Bound$<$ Metric\+Type, Elem\+Type $>$\+::\+Center().
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ae1f4a985db958092c3015e735a8db69d}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Child@{Child}}
+\index{Child@{Child}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Child()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree}\& Child (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{child }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the specified child. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em child} & Index of child to return. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 447 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a562c73abb0bf2e473ecb9ff0075aa9d5}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Child@{Child}}
+\index{Child@{Child}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Child()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree}\& Child (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{child }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the specified child. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em child} & Index of child to return. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 437 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ae6ffa3cb0972ea772a972b50df36fc59}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!CondenseTree@{CondenseTree}}
+\index{CondenseTree@{CondenseTree}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{CondenseTree()}
+{\footnotesize\ttfamily void Condense\+Tree (\begin{DoxyParamCaption}\item[{const arma\+::vec \&}]{point,  }\item[{std\+::vector$<$ bool $>$ \&}]{relevels,  }\item[{const bool}]{use\+Point }\end{DoxyParamCaption})}
+
+
+
+Condense the bounding rectangles for this node based on the removal of the point specified by the arma\+::vec\&. 
+
+This recurses up the tree. If a node goes below the minimum fill, this function will fix the tree.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & The arma\+::vec\& of the point that was removed to require this condesation of the tree. \\
+\hline
+{\em use\+Point} & True if we use the optimized version of the algorithm that is possible when we now what point was deleted. False otherwise (eg. if we deleted a node instead of a point). \\
+\hline
+{\em relevels} & The levels that have been reinserted to on this top level insertion. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a5a132e068ab206a014b986ff71c3442d}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Count@{Count}}
+\index{Count@{Count}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Count()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of points in this subset. 
+
+
+
+Definition at line 550 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ab30fd361b8bee994ff8ed9fbb6fae845}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Count@{Count}}
+\index{Count@{Count}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Count()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of points in this subset. 
+
+
+
+Definition at line 548 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_abb34576c3ddb31987f1dda9c33e6476f}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Dataset()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Mat\+Type\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the dataset which the tree is built on. Be careful! 
+
+
+
+Definition at line 362 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a4c3764c98d5804083a9ec2c867eb9366}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Dataset()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Mat\+Type\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the dataset which the tree is built on. 
+
+
+
+Definition at line 360 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a0509380350bfe78f838730719b5421ee}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!DeletePoint@{DeletePoint}}
+\index{DeletePoint@{DeletePoint}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{DeletePoint()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Delete\+Point (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{point }\end{DoxyParamCaption})}
+
+
+
+Deletes a point from the treeand, updates the bounding rectangle. 
+
+However, the point will be kept in the centeral dataset. (The user may remove it from there if he wants, but he must not change the indices of the other points.) Returns true if the point is successfully removed and false if it is not. (ie. the point is not in the tree) \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a06c0d2543978fc03efc5d2114d6e1e54}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!DeletePoint@{DeletePoint}}
+\index{DeletePoint@{DeletePoint}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{DeletePoint()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Delete\+Point (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{point,  }\item[{std\+::vector$<$ bool $>$ \&}]{relevels }\end{DoxyParamCaption})}
+
+
+
+Deletes a point from the tree, updates the bounding rectangle, tracking levels. 
+
+However, the point will be kept in the centeral dataset. (The user may remove it from there if he wants, but he must not change the indices of the other points.) Returns true if the point is successfully removed and false if it is not. (ie. the point is not in the tree) \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_aa732ea3eeb38529c549fd4d15d8655be}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Descendant@{Descendant}}
+\index{Descendant@{Descendant}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Descendant()}
+{\footnotesize\ttfamily size\+\_\+t Descendant (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{index }\end{DoxyParamCaption}) const}
+
+
+
+Return the index (with reference to the dataset) of a particular descendant of this node. 
+
+The index should be greater than zero but less than the number of descendants.
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Index of the descendant. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a07db5ef67990c55a04f42765ed589bef}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!ExactClone@{ExactClone}}
+\index{ExactClone@{ExactClone}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{ExactClone()}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree}$\ast$ Exact\+Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Make an exact copy of this node, pointers and everything. 
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a97f6fd1983ad549297e75d849e1a2bca}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!FindByBeginCount@{FindByBeginCount}}
+\index{FindByBeginCount@{FindByBeginCount}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{FindByBeginCount()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree}$\ast$ Find\+By\+Begin\+Count (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{begin,  }\item[{size\+\_\+t}]{count }\end{DoxyParamCaption})}
+
+
+
+Find a node in this tree by its begin and count. 
+
+Every node is uniquely identified by these two numbers. This is useful for communicating position over the network, when pointers would be invalid.
+
+
+\begin{DoxyParams}{Parameters}
+{\em begin} & The begin() of the node to find. \\
+\hline
+{\em count} & The count() of the node to find. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The found node, or NULL if not found. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a27dcf57c01f3eaafaa08631c31900eb5}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!FindByBeginCount@{FindByBeginCount}}
+\index{FindByBeginCount@{FindByBeginCount}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{FindByBeginCount()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const \textbf{ Rectangle\+Tree}$\ast$ Find\+By\+Begin\+Count (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{begin,  }\item[{size\+\_\+t}]{count }\end{DoxyParamCaption}) const}
+
+
+
+Find a node in this tree by its begin and count (const). 
+
+Every node is uniquely identified by these two numbers. This is useful for communicating position over the network, when pointers would be invalid.
+
+
+\begin{DoxyParams}{Parameters}
+{\em begin} & The begin() of the node to find. \\
+\hline
+{\em count} & The count() of the node to find. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The found node, or NULL if not found. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_adc597088eadfcfa3060336d0484ab573}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!FurthestDescendantDistance@{FurthestDescendantDistance}}
+\index{FurthestDescendantDistance@{FurthestDescendantDistance}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{FurthestDescendantDistance()}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Furthest\+Descendant\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the furthest possible descendant distance. 
+
+This returns the maximum distance from the centroid to the edge of the bound and not the empirical quantity which is the actual furthest descendant distance. So the actual furthest descendant distance may be less than what this method returns (but it will never be greater than this). \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_acbe82a6439f71405b5801ca7d941cbfb}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!FurthestPointDistance@{FurthestPointDistance}}
+\index{FurthestPointDistance@{FurthestPointDistance}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{FurthestPointDistance()}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Furthest\+Point\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the furthest distance to a point held in this node. 
+
+If this is not a leaf node, then the distance is 0 because the node holds no points. \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_aea96598fb89ed27fe7340349051aa6a2}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!GetFurthestChild@{GetFurthestChild}}
+\index{GetFurthestChild@{GetFurthestChild}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{GetFurthestChild()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Get\+Furthest\+Child (\begin{DoxyParamCaption}\item[{const \textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ \&}]{query\+Node }\end{DoxyParamCaption})}
+
+
+
+Return the index of the furthest child node to the given query node. 
+
+If it can\textquotesingle{}t decide, it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1RectangleTree_a605a6e856364afd0bad4bafa17dbe5c0} (invalid index). \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a0257281722537c7916db7763623f67f7}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!GetFurthestChild@{GetFurthestChild}}
+\index{GetFurthestChild@{GetFurthestChild}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{GetFurthestChild()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Get\+Furthest\+Child (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the index of the furthest child node to the given query point. 
+
+If this is a leaf node, it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1RectangleTree_a605a6e856364afd0bad4bafa17dbe5c0} (invalid index). \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_adae284b6b280a26fd609ad03ede81884}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!GetNearestChild@{GetNearestChild}}
+\index{GetNearestChild@{GetNearestChild}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{GetNearestChild()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Get\+Nearest\+Child (\begin{DoxyParamCaption}\item[{const \textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ \&}]{query\+Node }\end{DoxyParamCaption})}
+
+
+
+Return the index of the nearest child node to the given query node. 
+
+If it can\textquotesingle{}t decide, it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1RectangleTree_a605a6e856364afd0bad4bafa17dbe5c0} (invalid index). \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a19b9a5fd41d8e192b62effb1445bd410}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!GetNearestChild@{GetNearestChild}}
+\index{GetNearestChild@{GetNearestChild}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{GetNearestChild()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Get\+Nearest\+Child (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the index of the nearest child node to the given query point. 
+
+If this is a leaf node, it will return \doxyref{Num\+Children()}{p.}{classmlpack_1_1tree_1_1RectangleTree_a605a6e856364afd0bad4bafa17dbe5c0} (invalid index). \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a35df6b8ff4b000deb441755b6bb2f2d4}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!InsertNode@{InsertNode}}
+\index{InsertNode@{InsertNode}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{InsertNode()}
+{\footnotesize\ttfamily void Insert\+Node (\begin{DoxyParamCaption}\item[{\textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ $\ast$}]{node,  }\item[{const size\+\_\+t}]{level,  }\item[{std\+::vector$<$ bool $>$ \&}]{relevels }\end{DoxyParamCaption})}
+
+
+
+Inserts a node into the tree, tracking which levels have been inserted into. 
+
+The node will be inserted so that the tree remains valid.
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & The node to be inserted. \\
+\hline
+{\em level} & The depth that should match the node where this node is finally inserted. This should be the number returned by calling \doxyref{Tree\+Depth()}{p.}{classmlpack_1_1tree_1_1RectangleTree_a5ec5eed000f9d4996ab56d5869817e7f} from the node that originally contained \char`\"{}node\char`\"{}. \\
+\hline
+{\em relevels} & The levels that have been reinserted to on this top level insertion. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a3095158e2444767314c01f08d6548505}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!InsertPoint@{InsertPoint}}
+\index{InsertPoint@{InsertPoint}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{InsertPoint()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Insert\+Point (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{point }\end{DoxyParamCaption})}
+
+
+
+Inserts a point into the tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & The index of a point in the dataset. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_aa2008c231e0bc68b24da85dd6a8231ca}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!InsertPoint@{InsertPoint}}
+\index{InsertPoint@{InsertPoint}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{InsertPoint()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Insert\+Point (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{point,  }\item[{std\+::vector$<$ bool $>$ \&}]{relevels }\end{DoxyParamCaption})}
+
+
+
+Inserts a point into the tree, tracking which levels have been inserted into. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & The index of a point in the dataset. \\
+\hline
+{\em relevels} & The levels that have been reinserted to on this top level insertion. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_aa0f4813924e6cdee43b45050bb947abe}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!IsLeaf@{IsLeaf}}
+\index{IsLeaf@{IsLeaf}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{IsLeaf()}
+{\footnotesize\ttfamily bool Is\+Leaf (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return whether or not this node is a leaf (true if it has no children). 
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a9bb75acadb3f676baa2ae6b6fae506d7}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MaxDistance@{MaxDistance}}
+\index{MaxDistance@{MaxDistance}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MaxDistance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Max\+Distance (\begin{DoxyParamCaption}\item[{const \textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the maximum distance to another node. 
+
+
+
+Definition at line 493 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+References Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+::\+Bound(), and HRect\+Bound$<$ Metric\+Type, Elem\+Type $>$\+::\+Max\+Distance().
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ae764d88483236cc470f5abe0273df4c5}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MaxDistance@{MaxDistance}}
+\index{MaxDistance@{MaxDistance}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MaxDistance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Max\+Distance (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the maximum distance to another point. 
+
+
+
+Definition at line 515 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+References HRect\+Bound$<$ Metric\+Type, Elem\+Type $>$\+::\+Max\+Distance().
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_adae692ee05a48b48cc51c57106ec8e7b}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MaxLeafSize@{MaxLeafSize}}
+\index{MaxLeafSize@{MaxLeafSize}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MaxLeafSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Max\+Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the maximum leaf size. 
+
+
+
+Definition at line 337 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a327048550159fb03f23f87f48dbaa324}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MaxLeafSize@{MaxLeafSize}}
+\index{MaxLeafSize@{MaxLeafSize}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MaxLeafSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Max\+Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the maximum leaf size. 
+
+
+
+Definition at line 335 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a6af237a35eebff7911cce7fd553748ce}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MaxNumChildren@{MaxNumChildren}}
+\index{MaxNumChildren@{MaxNumChildren}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MaxNumChildren()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Max\+Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the maximum number of children (in a non-\/leaf node). 
+
+
+
+Definition at line 347 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a24c251ad0b5266cca6e2e96b9bb95c42}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MaxNumChildren@{MaxNumChildren}}
+\index{MaxNumChildren@{MaxNumChildren}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MaxNumChildren()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Max\+Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the maximum number of children (in a non-\/leaf node). 
+
+
+
+Definition at line 345 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ab7cdd810a507e4a0aa262ea0fa8a322c}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Metric@{Metric}}
+\index{Metric@{Metric}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Metric()}
+{\footnotesize\ttfamily Metric\+Type Metric (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the metric which the tree uses. 
+
+
+
+Definition at line 365 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a0f14293f72c1558489a01063d109cd33}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MinDistance@{MinDistance}}
+\index{MinDistance@{MinDistance}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MinDistance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Min\+Distance (\begin{DoxyParamCaption}\item[{const \textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum distance to another node. 
+
+
+
+Definition at line 487 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+References Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+::\+Bound(), and HRect\+Bound$<$ Metric\+Type, Elem\+Type $>$\+::\+Min\+Distance().
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a73bf99a433e88a31d98b46bf4c0da147}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MinDistance@{MinDistance}}
+\index{MinDistance@{MinDistance}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MinDistance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Min\+Distance (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum distance to another point. 
+
+
+
+Definition at line 506 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+References HRect\+Bound$<$ Metric\+Type, Elem\+Type $>$\+::\+Min\+Distance().
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a20a4e92da6066eb335a576b7f9cd0415}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MinimumBoundDistance@{MinimumBoundDistance}}
+\index{MinimumBoundDistance@{MinimumBoundDistance}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MinimumBoundDistance()}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Minimum\+Bound\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum distance from the center to any edge of the bound. 
+
+Currently, this returns 0, which doesn\textquotesingle{}t break algorithms, but it isn\textquotesingle{}t necessarily correct, either. 
+
+Definition at line 423 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+References HRect\+Bound$<$ Metric\+Type, Elem\+Type $>$\+::\+Min\+Width().
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ac6f8a0c45a30bbe3c43af0375d51236e}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MinLeafSize@{MinLeafSize}}
+\index{MinLeafSize@{MinLeafSize}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MinLeafSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Min\+Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the minimum leaf size. 
+
+
+
+Definition at line 342 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_adca26805731ae240cfe1073a42ecee2e}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MinLeafSize@{MinLeafSize}}
+\index{MinLeafSize@{MinLeafSize}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MinLeafSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Min\+Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum leaf size. 
+
+
+
+Definition at line 340 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a612aa5b60faaf2050038e6cf6e056839}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MinNumChildren@{MinNumChildren}}
+\index{MinNumChildren@{MinNumChildren}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MinNumChildren()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Min\+Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the minimum number of children (in a non-\/leaf node). 
+
+
+
+Definition at line 352 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a5d3958327333930dd14e490db6a3c4d6}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!MinNumChildren@{MinNumChildren}}
+\index{MinNumChildren@{MinNumChildren}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{MinNumChildren()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Min\+Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum number of children (in a non-\/leaf node). 
+
+
+
+Definition at line 350 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a8dbe26c4727e347359f1da279659f0cd}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!NullifyData@{NullifyData}}
+\index{NullifyData@{NullifyData}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{NullifyData()}
+{\footnotesize\ttfamily void Nullify\+Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Nullify the auxiliary information. 
+
+Used for memory management. Be cafeful. \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a605a6e856364afd0bad4bafa17dbe5c0}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!NumChildren@{NumChildren}}
+\index{NumChildren@{NumChildren}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{NumChildren()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of child nodes. Be careful. 
+
+
+
+Definition at line 373 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a1f7ec083be66d58a3e02e12956bf005e}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!NumChildren@{NumChildren}}
+\index{NumChildren@{NumChildren}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{NumChildren()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of child nodes. (One level beneath this one only.) 
+
+
+
+Definition at line 371 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a2a85eb34222f1fc073940e8c89274e81}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!NumDescendants@{NumDescendants}}
+\index{NumDescendants@{NumDescendants}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{NumDescendants()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Descendants (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the number of descendants of this node. 
+
+For a non-\/leaf in a binary space tree, this is the number of points at the descendant leaves. For a leaf, this is the number of points in the leaf. \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a352077c26368da0ee570c0b7f062b1e3}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!NumPoints@{NumPoints}}
+\index{NumPoints@{NumPoints}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{NumPoints()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Points (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the number of points in this node (returns 0 if this node is not a leaf). 
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a909551417a05af16d48eaa9713088eb3}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy the given rectangle tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tree to be copied. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ae8eb5a80d261df7b9331c4444e54bc21}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of the given rectangle tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The tree to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ac585a5030dd745d64fed3111bf3b83b9}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Parent@{Parent}}
+\index{Parent@{Parent}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Parent()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree}$\ast$\& Parent (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parent of this node. 
+
+
+
+Definition at line 357 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a05bac703d5c74952f9a92fafa507837b}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Parent@{Parent}}
+\index{Parent@{Parent}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Parent()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Rectangle\+Tree}$\ast$ Parent (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the parent of this node. 
+
+
+
+Definition at line 355 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_aa22ead21ac809efb970b90ec014dc318}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!ParentDistance@{ParentDistance}}
+\index{ParentDistance@{ParentDistance}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{ParentDistance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type}\& Parent\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the distance from the center of this node to the center of the parent node. 
+
+
+
+Definition at line 430 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_af44ed4e7bfea088689caed082da67e17}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!ParentDistance@{ParentDistance}}
+\index{ParentDistance@{ParentDistance}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{ParentDistance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Parent\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the distance from the center of this node to the center of the parent node. 
+
+
+
+Definition at line 427 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a24009b888a79e08dcbf3c1587f33a8c2}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Point@{Point}}
+\index{Point@{Point}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Point()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Point (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the index of a particular point in this node. 
+
+Be very careful when you do this! You may make the tree invalid. 
+
+Definition at line 484 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a559eede5ea60f68634f8e7e72c3c68d2}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Point@{Point}}
+\index{Point@{Point}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Point()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Point (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the index (with reference to the dataset) of a particular point in this node. 
+
+This will happily return invalid indices if the given index is greater than the number of points in this node (obtained with \doxyref{Num\+Points()}{p.}{classmlpack_1_1tree_1_1RectangleTree_a352077c26368da0ee570c0b7f062b1e3}) -- be careful.
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Index of point for which a dataset index is wanted. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 480 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a3a9f26442a5841dcdf5022d14df68a13}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!RangeDistance@{RangeDistance}}
+\index{RangeDistance@{RangeDistance}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{RangeDistance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ math\+::\+Range\+Type}$<$\textbf{ Elem\+Type}$>$ Range\+Distance (\begin{DoxyParamCaption}\item[{const \textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum and maximum distance to another node. 
+
+
+
+Definition at line 499 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+References Rectangle\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Split\+Type, Descent\+Type, Auxiliary\+Information\+Type $>$\+::\+Bound(), and HRect\+Bound$<$ Metric\+Type, Elem\+Type $>$\+::\+Range\+Distance().
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a60a550bf46aa1d7b858134ce41fd5a3a}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!RangeDistance@{RangeDistance}}
+\index{RangeDistance@{RangeDistance}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{RangeDistance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ math\+::\+Range\+Type}$<$\textbf{ Elem\+Type}$>$ Range\+Distance (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{typename \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ \textbf{ Is\+Vector}$<$ Vec\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum and maximum distance to another point. 
+
+
+
+Definition at line 524 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+References HRect\+Bound$<$ Metric\+Type, Elem\+Type $>$\+::\+Range\+Distance().
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a9429055f5e8da6c92f684f73355c4199}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!RemoveNode@{RemoveNode}}
+\index{RemoveNode@{RemoveNode}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{RemoveNode()}
+{\footnotesize\ttfamily bool Remove\+Node (\begin{DoxyParamCaption}\item[{const \textbf{ Rectangle\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type, \textbf{ Split\+Type}, \textbf{ Descent\+Type}, Auxiliary\+Information\+Type $>$ $\ast$}]{node,  }\item[{std\+::vector$<$ bool $>$ \&}]{relevels }\end{DoxyParamCaption})}
+
+
+
+Removes a node from the tree. 
+
+You are responsible for deleting it if you wish to do so. \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a65cba07328997659bec80b9879b15a51}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the tree. 
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_abb9c409311948fe4a16aa79f434c0a91}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!ShrinkBoundForBound@{ShrinkBoundForBound}}
+\index{ShrinkBoundForBound@{ShrinkBoundForBound}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{ShrinkBoundForBound()}
+{\footnotesize\ttfamily bool Shrink\+Bound\+For\+Bound (\begin{DoxyParamCaption}\item[{const \textbf{ bound\+::\+HRect\+Bound}$<$ Metric\+Type $>$ \&}]{changed\+Bound }\end{DoxyParamCaption})}
+
+
+
+Shrink the bound object of this node for the removal of a child node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em changed\+Bound} & The HRect\+Bound$<$$>$\& of the bound that was removed to reqire this shrinking. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the bound needed to be changed, false if it did not. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a14b62a27c4f71e7d38a92b5982b4bff9}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!ShrinkBoundForPoint@{ShrinkBoundForPoint}}
+\index{ShrinkBoundForPoint@{ShrinkBoundForPoint}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{ShrinkBoundForPoint()}
+{\footnotesize\ttfamily bool Shrink\+Bound\+For\+Point (\begin{DoxyParamCaption}\item[{const arma\+::vec \&}]{point }\end{DoxyParamCaption})}
+
+
+
+Shrink the bound object of this node for the removal of a point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & The arma\+::vec\& of the point that was removed to require this shrinking. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the bound needed to be changed, false if it did not. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ad35ef7f791a42b33ebf554e27def9391}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!SoftDelete@{SoftDelete}}
+\index{SoftDelete@{SoftDelete}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{SoftDelete()}
+{\footnotesize\ttfamily void Soft\+Delete (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Delete this node of the tree, but leave the stuff contained in it intact. 
+
+This is used when splitting a node, where the data in this tree is moved to two other trees. \mbox{\label{classmlpack_1_1tree_1_1RectangleTree_aac2d3c104b89109f3df4a9a8cad244da}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Stat@{Stat}}
+\index{Stat@{Stat}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Stat()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Statistic\+Type\& Stat (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the statistic object for this node. 
+
+
+
+Definition at line 322 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ad8b29c84ac793742cd15834f9f4c4f31}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!Stat@{Stat}}
+\index{Stat@{Stat}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{Stat()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Statistic\+Type\& Stat (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the statistic object for this node. 
+
+
+
+Definition at line 320 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_a5ec5eed000f9d4996ab56d5869817e7f}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!TreeDepth@{TreeDepth}}
+\index{TreeDepth@{TreeDepth}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{TreeDepth()}
+{\footnotesize\ttfamily size\+\_\+t Tree\+Depth (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Obtains the number of levels below this node in the tree, starting with this. 
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ab8408997f02b82d3ded6adf51b289427}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!TreeSize@{TreeSize}}
+\index{TreeSize@{TreeSize}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{TreeSize()}
+{\footnotesize\ttfamily size\+\_\+t Tree\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Obtains the number of nodes in the tree, starting with this. 
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ac178ecb38a40a86e40c005ff70d2702a}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!AuxiliaryInformation@{AuxiliaryInformation}}
+\index{AuxiliaryInformation@{AuxiliaryInformation}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{AuxiliaryInformation}
+{\footnotesize\ttfamily friend \textbf{ Auxiliary\+Information}\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Give friend access for Auxiliary\+Information\+Type. 
+
+
+
+Definition at line 586 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_ad326ceae04a3d7cb8de5f57c385475fe}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!DescentType@{DescentType}}
+\index{DescentType@{DescentType}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{DescentType}
+{\footnotesize\ttfamily friend Descent\+Type\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Give friend access for Descent\+Type. 
+
+
+
+Definition at line 580 of file rectangle\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RectangleTree_af8cd44a1d4485c9c0022f124b0b312bf}} 
+\index{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}!SplitType@{SplitType}}
+\index{SplitType@{SplitType}!RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$@{RectangleTree$<$ MetricType, StatisticType, MatType, SplitType, DescentType, AuxiliaryInformationType $>$}}
+\doxysubsubsection{SplitType}
+{\footnotesize\ttfamily friend Split\+Type\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Give friend access for Split\+Type. 
+
+
+
+Definition at line 583 of file rectangle\+\_\+tree.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/rectangle\+\_\+tree/\textbf{ rectangle\+\_\+tree.\+hpp}\end{DoxyCompactItemize}

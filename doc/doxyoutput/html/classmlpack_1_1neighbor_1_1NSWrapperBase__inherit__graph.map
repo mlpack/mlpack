@@ -1,0 +1,8 @@
+<map id="NSWrapperBase" name="NSWrapperBase">
+<area shape="rect" id="node1" title="NSWrapperBase is a base wrapper class for holding all NeighborSearch types supported by NSModel." alt="" coords="5,204,132,230"/>
+<area shape="rect" id="node2" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title=" " alt="" coords="837,14,1158,143"/>
+<area shape="rect" id="node4" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title=" " alt="" coords="819,266,1176,395"/>
+<area shape="rect" id="node6" href="$classmlpack_1_1neighbor_1_1NSWrapper.html" title="NSWrapper is a wrapper class for most NeighborSearch types." alt="" coords="181,189,413,245"/>
+<area shape="rect" id="node3" href="$classmlpack_1_1neighbor_1_1LeafSizeNSWrapper.html" title="LeafSizeNSWrapper wraps any NeighborSearch types that take a leaf size for tree construction." alt="" coords="1235,43,1434,114"/>
+<area shape="rect" id="node5" href="$classmlpack_1_1neighbor_1_1SpillNSWrapper.html" title="The SpillNSWrapper class wraps the NeighborSearch class when the spill tree is used." alt="" coords="1225,317,1444,344"/>
+</map>

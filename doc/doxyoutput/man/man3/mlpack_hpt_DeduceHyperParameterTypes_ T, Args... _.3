@@ -1,0 +1,56 @@
+.TH "DeduceHyperParameterTypes< T, Args... >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DeduceHyperParameterTypes< T, Args... > \- Defining \fBDeduceHyperParameterTypes\fP for the case when not all argument types have been processed, and the next one (T) is a collection type or an arithmetic type\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBIsCollectionType\fP"
+.br
+.RI "A type function to check whether Type is a collection type (for that it should define value_type)\&. "
+.ti -1c
+.RI "struct \fBResultHolder\fP"
+.br
+.ti -1c
+.RI "struct \fBResultHPType\fP"
+.br
+.RI "A type function to deduce the result hyper-parameter type for ArgumentType\&. "
+.ti -1c
+.RI "struct \fBResultHPType< ArithmeticType, true >\fP"
+.br
+.ti -1c
+.RI "struct \fBResultHPType< CollectionType, false >\fP"
+.br
+.in -1c
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBTupleType\fP = typename ResultHolder<>::\fBTupleType\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T, typename\&.\&.\&. Args>
+.br
+struct mlpack::hpt::DeduceHyperParameterTypes< T, Args\&.\&.\&. >"
+Defining \fBDeduceHyperParameterTypes\fP for the case when not all argument types have been processed, and the next one (T) is a collection type or an arithmetic type\&. 
+.PP
+Definition at line 49 of file deduce_hp_types\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBTupleType\fP =  typename ResultHolder<>::\fBTupleType\fP"
+
+.PP
+Definition at line 100 of file deduce_hp_types\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

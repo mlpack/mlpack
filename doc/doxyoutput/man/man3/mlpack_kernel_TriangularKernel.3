@@ -1,0 +1,139 @@
+.TH "TriangularKernel" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+TriangularKernel \- The trivially simple triangular kernel, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBTriangularKernel\fP (const double bandwidth=1\&.0)"
+.br
+.RI "Initialize the triangular kernel with the given bandwidth (default 1\&.0)\&. "
+.ti -1c
+.RI "double & \fBBandwidth\fP ()"
+.br
+.RI "Modify the bandwidth of the kernel\&. "
+.ti -1c
+.RI "double \fBBandwidth\fP () const"
+.br
+.RI "Get the bandwidth of the kernel\&. "
+.ti -1c
+.RI "double \fBEvaluate\fP (const double distance) const"
+.br
+.RI "Evaluate the triangular kernel given that the distance between the two points is known\&. "
+.ti -1c
+.RI "template<typename VecTypeA , typename VecTypeB > double \fBEvaluate\fP (const VecTypeA &a, const VecTypeB &b) const"
+.br
+.RI "Evaluate the triangular kernel for the two given vectors\&. "
+.ti -1c
+.RI "double \fBGradient\fP (const double distance) const"
+.br
+.RI "Evaluate the gradient of triangular kernel given that the distance between the two points is known\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the kernel\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The trivially simple triangular kernel, defined by\&. 
+
+\[ K(x, y) = \max \{ 0, 1 - \frac{|| x - y ||_2}{b} \} \]
+.PP
+where $ b $ is the bandwidth of the kernel\&. 
+.PP
+Definition at line 30 of file triangular_kernel\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBTriangularKernel\fP (const double bandwidth = \fC1\&.0\fP)\fC [inline]\fP"
+
+.PP
+Initialize the triangular kernel with the given bandwidth (default 1\&.0)\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbandwidth\fP Bandwidth of the triangular kernel\&. 
+.RE
+.PP
+
+.PP
+Definition at line 38 of file triangular_kernel\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double& Bandwidth ()\fC [inline]\fP"
+
+.PP
+Modify the bandwidth of the kernel\&. 
+.PP
+Definition at line 92 of file triangular_kernel\&.hpp\&.
+.SS "double Bandwidth () const\fC [inline]\fP"
+
+.PP
+Get the bandwidth of the kernel\&. 
+.PP
+Definition at line 90 of file triangular_kernel\&.hpp\&.
+.SS "double Evaluate (const double distance) const\fC [inline]\fP"
+
+.PP
+Evaluate the triangular kernel given that the distance between the two points is known\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdistance\fP The distance between the two points\&. 
+.RE
+.PP
+
+.PP
+Definition at line 61 of file triangular_kernel\&.hpp\&.
+.SS "double Evaluate (const VecTypeA & a, const VecTypeB & b) const\fC [inline]\fP"
+
+.PP
+Evaluate the triangular kernel for the two given vectors\&. 
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIVecTypeA\fP Type of first vector\&. 
+.br
+\fIVecTypeB\fP Type of second vector\&. 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIa\fP First vector\&. 
+.br
+\fIb\fP Second vector\&. 
+.RE
+.PP
+
+.PP
+Definition at line 49 of file triangular_kernel\&.hpp\&.
+.PP
+References LMetric< 2, true >::Evaluate()\&.
+.SS "double Gradient (const double distance) const\fC [inline]\fP"
+
+.PP
+Evaluate the gradient of triangular kernel given that the distance between the two points is known\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdistance\fP The distance between the two points\&. 
+.RE
+.PP
+
+.PP
+Definition at line 73 of file triangular_kernel\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the kernel\&. 
+.PP
+Definition at line 96 of file triangular_kernel\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

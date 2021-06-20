@@ -1,0 +1,439 @@
+.TH "CosineTree" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CosineTree
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBCosineTree\fP (const arma::mat &dataset)"
+.br
+.RI "\fBCosineTree\fP constructor for the root node of the tree\&. "
+.ti -1c
+.RI "\fBCosineTree\fP (const arma::mat &dataset, const double epsilon, const double delta)"
+.br
+.RI "Construct the \fBCosineTree\fP and the basis for the given matrix, and passed 'epsilon' and 'delta' parameters\&. "
+.ti -1c
+.RI "\fBCosineTree\fP (const \fBCosineTree\fP &other)"
+.br
+.RI "Copy the given tree\&. "
+.ti -1c
+.RI "\fBCosineTree\fP (\fBCosineTree\fP &&other)"
+.br
+.RI "Move the given tree\&. "
+.ti -1c
+.RI "\fBCosineTree\fP (\fBCosineTree\fP &parentNode, const std::vector< size_t > &subIndices)"
+.br
+.RI "\fBCosineTree\fP constructor for nodes other than the root node of the tree\&. "
+.ti -1c
+.RI "\fB~CosineTree\fP ()"
+.br
+.RI "Clean up the \fBCosineTree\fP: release allocated memory (including children)\&. "
+.ti -1c
+.RI "arma::vec & \fBBasisVector\fP ()"
+.br
+.RI "Get the basis vector of the node\&. "
+.ti -1c
+.RI "void \fBBasisVector\fP (arma::vec &bVector)"
+.br
+.RI "Set the basis vector of the node\&. "
+.ti -1c
+.RI "size_t \fBBinarySearch\fP (arma::vec &cDistribution, double value, size_t start, size_t end)"
+.br
+.RI "Sample a column based on the cumulative Length-Squared distribution of the cosine node, and a randomly generated value in the range [0, 1]\&. "
+.ti -1c
+.RI "void \fBCalculateCentroid\fP ()"
+.br
+.RI "Calculate centroid of the columns present in the node\&. "
+.ti -1c
+.RI "void \fBCalculateCosines\fP (arma::vec &cosines)"
+.br
+.RI "Calculate cosines of the columns present in the node, with respect to the sampled splitting point\&. "
+.ti -1c
+.RI "arma::vec & \fBCentroid\fP ()"
+.br
+.RI "Get pointer to the centroid vector\&. "
+.ti -1c
+.RI "size_t \fBColumnSampleLS\fP ()"
+.br
+.RI "Sample a point from the Length-Squared distribution of the cosine node\&. "
+.ti -1c
+.RI "void \fBColumnSamplesLS\fP (std::vector< size_t > &sampledIndices, arma::vec &probabilities, size_t numSamples)"
+.br
+.RI "Sample 'numSamples' points from the Length-Squared distribution of the cosine node\&. "
+.ti -1c
+.RI "void \fBConstructBasis\fP (\fBCosineNodeQueue\fP &treeQueue)"
+.br
+.RI "Constructs the final basis matrix, after the cosine tree construction\&. "
+.ti -1c
+.RI "void \fBCosineNodeSplit\fP ()"
+.br
+.RI "This function splits the cosine node into two children based on the cosines of the columns contained in the node, with respect to the sampled splitting point\&. "
+.ti -1c
+.RI "double \fBFrobNormSquared\fP () const"
+.br
+.RI "Get the Frobenius norm squared of columns in the node\&. "
+.ti -1c
+.RI "const arma::mat & \fBGetDataset\fP () const"
+.br
+.RI "Get pointer to the dataset matrix\&. "
+.ti -1c
+.RI "void \fBGetFinalBasis\fP (arma::mat &finalBasis)"
+.br
+.RI "Returns the basis of the constructed subspace\&. "
+.ti -1c
+.RI "double \fBL2Error\fP () const"
+.br
+.RI "Get the Monte Carlo error\&. "
+.ti -1c
+.RI "void \fBL2Error\fP (const double error)"
+.br
+.RI "Set the Monte Carlo error\&. "
+.ti -1c
+.RI "\fBCosineTree\fP *& \fBLeft\fP ()"
+.br
+.RI "Modify the pointer to the left child of the node\&. "
+.ti -1c
+.RI "\fBCosineTree\fP * \fBLeft\fP () const"
+.br
+.RI "Get pointer to the left child of the node\&. "
+.ti -1c
+.RI "void \fBModifiedGramSchmidt\fP (\fBCosineNodeQueue\fP &treeQueue, arma::vec &centroid, arma::vec &newBasisVector, arma::vec *addBasisVector=NULL)"
+.br
+.RI "Calculates the orthonormalization of the passed centroid, with respect to the current vector subspace\&. "
+.ti -1c
+.RI "double \fBMonteCarloError\fP (\fBCosineTree\fP *node, \fBCosineNodeQueue\fP &treeQueue, arma::vec *addBasisVector1=NULL, arma::vec *addBasisVector2=NULL)"
+.br
+.RI "Estimates the squared error of the projection of the input node's matrix onto the current vector subspace\&. "
+.ti -1c
+.RI "size_t \fBNumColumns\fP () const"
+.br
+.RI "Get number of columns of input matrix in the node\&. "
+.ti -1c
+.RI "\fBCosineTree\fP & \fBoperator=\fP (const \fBCosineTree\fP &other)"
+.br
+.RI "Copy the given Cosine Tree\&. "
+.ti -1c
+.RI "\fBCosineTree\fP & \fBoperator=\fP (\fBCosineTree\fP &&other)"
+.br
+.RI "Take ownership of the given Cosine Tree\&. "
+.ti -1c
+.RI "\fBCosineTree\fP *& \fBParent\fP ()"
+.br
+.RI "Modify the pointer to the parent node\&. "
+.ti -1c
+.RI "\fBCosineTree\fP * \fBParent\fP () const"
+.br
+.RI "Get pointer to the parent node\&. "
+.ti -1c
+.RI "\fBCosineTree\fP *& \fBRight\fP ()"
+.br
+.RI "Modify the pointer to the left child of the node\&. "
+.ti -1c
+.RI "\fBCosineTree\fP * \fBRight\fP () const"
+.br
+.RI "Get pointer to the right child of the node\&. "
+.ti -1c
+.RI "size_t \fBSplitPointIndex\fP () const"
+.br
+.RI "Get the column index of split point of the node\&. "
+.ti -1c
+.RI "std::vector< size_t > & \fBVectorIndices\fP ()"
+.br
+.RI "Get the indices of columns in the node\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 29 of file cosine_tree\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBCosineTree\fP (const arma::mat & dataset)"
+
+.PP
+\fBCosineTree\fP constructor for the root node of the tree\&. It initializes the necessary variables required for splitting of the node, and building the tree further\&. It takes a pointer to the input matrix and calculates the relevant variables using it\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdataset\fP Matrix for which cosine tree is constructed\&. 
+.RE
+.PP
+
+.SS "\fBCosineTree\fP (\fBCosineTree\fP & parentNode, const std::vector< size_t > & subIndices)"
+
+.PP
+\fBCosineTree\fP constructor for nodes other than the root node of the tree\&. It takes in a pointer to the parent node and a list of column indices which mentions the columns to be included in the node\&. The function calculate the relevant variables just like the constructor above\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIparentNode\fP Pointer to the parent cosine node\&. 
+.br
+\fIsubIndices\fP Pointer to vector of column indices to be included\&. 
+.RE
+.PP
+
+.SS "\fBCosineTree\fP (const arma::mat & dataset, const double epsilon, const double delta)"
+
+.PP
+Construct the \fBCosineTree\fP and the basis for the given matrix, and passed 'epsilon' and 'delta' parameters\&. The \fBCosineTree\fP is constructed by splitting nodes in the direction of maximum error, stored using a priority queue\&. Basis vectors are added from the left and right children of the split node\&. The basis vector from a node is the orthonormalized centroid of its columns\&. The splitting continues till the Monte Carlo estimate of the input matrix's projection on the obtained subspace is less than a fraction of the norm of the input matrix\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdataset\fP Matrix for which the \fBCosineTree\fP is constructed\&. 
+.br
+\fIepsilon\fP Error tolerance fraction for calculated subspace\&. 
+.br
+\fIdelta\fP Cumulative probability for Monte Carlo error lower bound\&. 
+.RE
+.PP
+
+.SS "\fBCosineTree\fP (const \fBCosineTree\fP & other)"
+
+.PP
+Copy the given tree\&. Be careful! This may use a lot of memory\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Tree to copy from\&. 
+.RE
+.PP
+
+.SS "\fBCosineTree\fP (\fBCosineTree\fP && other)"
+
+.PP
+Move the given tree\&. The tree passed as a parameter will be emptied and will not be usable after this call\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Tree to move\&. 
+.RE
+.PP
+
+.SS "~\fBCosineTree\fP ()"
+
+.PP
+Clean up the \fBCosineTree\fP: release allocated memory (including children)\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "arma::vec& BasisVector ()\fC [inline]\fP"
+
+.PP
+Get the basis vector of the node\&. 
+.PP
+Definition at line 218 of file cosine_tree\&.hpp\&.
+.SS "void BasisVector (arma::vec & bVector)\fC [inline]\fP"
+
+.PP
+Set the basis vector of the node\&. 
+.PP
+Definition at line 215 of file cosine_tree\&.hpp\&.
+.SS "size_t BinarySearch (arma::vec & cDistribution, double value, size_t start, size_t end)"
+
+.PP
+Sample a column based on the cumulative Length-Squared distribution of the cosine node, and a randomly generated value in the range [0, 1]\&. Binary search is more efficient than searching linearly for the same\&. This leads a significant speedup when there are large number of columns to choose from and when a number of samples are to be drawn from the distribution\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIcDistribution\fP Cumulative LS distribution of columns in the node\&. 
+.br
+\fIvalue\fP Randomly generated value in the range [0, 1]\&. 
+.br
+\fIstart\fP Starting index of the distribution interval to search in\&. 
+.br
+\fIend\fP Ending index of the distribution interval to search in\&. 
+.RE
+.PP
+
+.SS "void CalculateCentroid ()"
+
+.PP
+Calculate centroid of the columns present in the node\&. The calculated centroid is used as a basis vector for the cosine tree being constructed\&. 
+.SS "void CalculateCosines (arma::vec & cosines)"
+
+.PP
+Calculate cosines of the columns present in the node, with respect to the sampled splitting point\&. The calculated cosine values are useful for splitting the node into its children\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIcosines\fP Vector to store the cosine values in\&. 
+.RE
+.PP
+
+.SS "arma::vec& Centroid ()\fC [inline]\fP"
+
+.PP
+Get pointer to the centroid vector\&. 
+.PP
+Definition at line 212 of file cosine_tree\&.hpp\&.
+.SS "size_t ColumnSampleLS ()"
+
+.PP
+Sample a point from the Length-Squared distribution of the cosine node\&. The function uses 'l2NormsSquared' to calculate the cumulative probability distribution of the column vectors\&. The sampling is based on a randomly generated value in the range [0, 1]\&. 
+.SS "void ColumnSamplesLS (std::vector< size_t > & sampledIndices, arma::vec & probabilities, size_t numSamples)"
+
+.PP
+Sample 'numSamples' points from the Length-Squared distribution of the cosine node\&. The function uses 'l2NormsSquared' to calculate the cumulative probability distribution of the column vectors\&. The sampling is based on a randomly generated values in the range [0, 1]\&. 
+.SS "void ConstructBasis (\fBCosineNodeQueue\fP & treeQueue)"
+
+.PP
+Constructs the final basis matrix, after the cosine tree construction\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fItreeQueue\fP Priority queue of cosine nodes\&. 
+.RE
+.PP
+
+.SS "void CosineNodeSplit ()"
+
+.PP
+This function splits the cosine node into two children based on the cosines of the columns contained in the node, with respect to the sampled splitting point\&. The function also calls the \fBCosineTree\fP constructor for the children\&. 
+.SS "double FrobNormSquared () const\fC [inline]\fP"
+
+.PP
+Get the Frobenius norm squared of columns in the node\&. 
+.PP
+Definition at line 239 of file cosine_tree\&.hpp\&.
+.SS "const arma::mat& GetDataset () const\fC [inline]\fP"
+
+.PP
+Get pointer to the dataset matrix\&. 
+.PP
+Definition at line 201 of file cosine_tree\&.hpp\&.
+.SS "void GetFinalBasis (arma::mat & finalBasis)\fC [inline]\fP"
+
+.PP
+Returns the basis of the constructed subspace\&. 
+.PP
+Definition at line 198 of file cosine_tree\&.hpp\&.
+.SS "double L2Error () const\fC [inline]\fP"
+
+.PP
+Get the Monte Carlo error\&. 
+.PP
+Definition at line 209 of file cosine_tree\&.hpp\&.
+.SS "void L2Error (const double error)\fC [inline]\fP"
+
+.PP
+Set the Monte Carlo error\&. 
+.PP
+Definition at line 207 of file cosine_tree\&.hpp\&.
+.PP
+Referenced by CompareCosineNode::operator()()\&.
+.SS "\fBCosineTree\fP*& Left ()\fC [inline]\fP"
+
+.PP
+Modify the pointer to the left child of the node\&. 
+.PP
+Definition at line 228 of file cosine_tree\&.hpp\&.
+.SS "\fBCosineTree\fP* Left () const\fC [inline]\fP"
+
+.PP
+Get pointer to the left child of the node\&. 
+.PP
+Definition at line 226 of file cosine_tree\&.hpp\&.
+.SS "void ModifiedGramSchmidt (\fBCosineNodeQueue\fP & treeQueue, arma::vec & centroid, arma::vec & newBasisVector, arma::vec * addBasisVector = \fCNULL\fP)"
+
+.PP
+Calculates the orthonormalization of the passed centroid, with respect to the current vector subspace\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fItreeQueue\fP Priority queue of cosine nodes\&. 
+.br
+\fIcentroid\fP Centroid of the node being added to the basis\&. 
+.br
+\fInewBasisVector\fP Orthonormalized centroid of the node\&. 
+.br
+\fIaddBasisVector\fP Address to additional basis vector\&. 
+.RE
+.PP
+
+.SS "double MonteCarloError (\fBCosineTree\fP * node, \fBCosineNodeQueue\fP & treeQueue, arma::vec * addBasisVector1 = \fCNULL\fP, arma::vec * addBasisVector2 = \fCNULL\fP)"
+
+.PP
+Estimates the squared error of the projection of the input node's matrix onto the current vector subspace\&. A normal distribution is fit using weighted norms of projections of samples drawn from the input node's matrix columns\&. The error is calculated as the difference between the Frobenius norm of the input node's matrix and lower bound of the normal distribution\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fInode\fP Node for which Monte Carlo estimate is calculated\&. 
+.br
+\fItreeQueue\fP Priority queue of cosine nodes\&. 
+.br
+\fIaddBasisVector1\fP Address to first additional basis vector\&. 
+.br
+\fIaddBasisVector2\fP Address to second additional basis vector\&. 
+.RE
+.PP
+
+.SS "size_t NumColumns () const\fC [inline]\fP"
+
+.PP
+Get number of columns of input matrix in the node\&. 
+.PP
+Definition at line 236 of file cosine_tree\&.hpp\&.
+.SS "\fBCosineTree\fP& operator= (const \fBCosineTree\fP & other)"
+
+.PP
+Copy the given Cosine Tree\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP The tree to be copied\&. 
+.RE
+.PP
+
+.SS "\fBCosineTree\fP& operator= (\fBCosineTree\fP && other)"
+
+.PP
+Take ownership of the given Cosine Tree\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP The tree to take ownership of\&. 
+.RE
+.PP
+
+.SS "\fBCosineTree\fP*& Parent ()\fC [inline]\fP"
+
+.PP
+Modify the pointer to the parent node\&. 
+.PP
+Definition at line 223 of file cosine_tree\&.hpp\&.
+.SS "\fBCosineTree\fP* Parent () const\fC [inline]\fP"
+
+.PP
+Get pointer to the parent node\&. 
+.PP
+Definition at line 221 of file cosine_tree\&.hpp\&.
+.SS "\fBCosineTree\fP*& Right ()\fC [inline]\fP"
+
+.PP
+Modify the pointer to the left child of the node\&. 
+.PP
+Definition at line 233 of file cosine_tree\&.hpp\&.
+.SS "\fBCosineTree\fP* Right () const\fC [inline]\fP"
+
+.PP
+Get pointer to the right child of the node\&. 
+.PP
+Definition at line 231 of file cosine_tree\&.hpp\&.
+.SS "size_t SplitPointIndex () const\fC [inline]\fP"
+
+.PP
+Get the column index of split point of the node\&. 
+.PP
+Definition at line 242 of file cosine_tree\&.hpp\&.
+.SS "std::vector<size_t>& VectorIndices ()\fC [inline]\fP"
+
+.PP
+Get the indices of columns in the node\&. 
+.PP
+Definition at line 204 of file cosine_tree\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

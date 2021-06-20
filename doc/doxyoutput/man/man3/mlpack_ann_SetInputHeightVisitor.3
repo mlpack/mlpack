@@ -1,0 +1,49 @@
+.TH "SetInputHeightVisitor" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SetInputHeightVisitor \- \fBSetInputHeightVisitor\fP updates the input height parameter with the given input height\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< bool >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSetInputHeightVisitor\fP (const size_t inputHeight=0, const bool reset=false)"
+.br
+.RI "Update the input height parameter with the given input height\&. "
+.ti -1c
+.RI "template<typename LayerType > bool \fBoperator()\fP (LayerType *layer) const"
+.br
+.RI "Update the input height parameter\&. "
+.ti -1c
+.RI "bool \fBoperator()\fP (\fBMoreTypes\fP layer) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBSetInputHeightVisitor\fP updates the input height parameter with the given input height\&. 
+.PP
+Definition at line 27 of file set_input_height_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSetInputHeightVisitor\fP (const size_t inputHeight = \fC0\fP, const bool reset = \fCfalse\fP)"
+
+.PP
+Update the input height parameter with the given input height\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "bool operator() (LayerType * layer) const"
+
+.PP
+Update the input height parameter\&. 
+.SS "bool operator() (\fBMoreTypes\fP layer) const"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,71 @@
+\doxysection{Sample\+Initialization Class Reference}
+\label{classmlpack_1_1kmeans_1_1SampleInitialization}\index{SampleInitialization@{SampleInitialization}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Sample\+Initialization} ()
+\begin{DoxyCompactList}\small\item\em Empty constructor, required by the Initial\+Partition\+Policy type definition. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void \textbf{ Cluster} (const Mat\+Type \&data, const size\+\_\+t clusters, arma\+::mat \&centroids)
+\begin{DoxyCompactList}\small\item\em Initialize the centroids matrix by randomly sampling points from the data matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 23 of file sample\+\_\+initialization.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1SampleInitialization_a47289aac77d670ddc14b58336fb5b051}} 
+\index{SampleInitialization@{SampleInitialization}!SampleInitialization@{SampleInitialization}}
+\index{SampleInitialization@{SampleInitialization}!SampleInitialization@{SampleInitialization}}
+\doxysubsubsection{SampleInitialization()}
+{\footnotesize\ttfamily \textbf{ Sample\+Initialization} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Empty constructor, required by the Initial\+Partition\+Policy type definition. 
+
+
+
+Definition at line 27 of file sample\+\_\+initialization.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1SampleInitialization_a8ee4dff98d318a0f5586140c5846ef39}} 
+\index{SampleInitialization@{SampleInitialization}!Cluster@{Cluster}}
+\index{Cluster@{Cluster}!SampleInitialization@{SampleInitialization}}
+\doxysubsubsection{Cluster()}
+{\footnotesize\ttfamily static void Cluster (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const size\+\_\+t}]{clusters,  }\item[{arma\+::mat \&}]{centroids }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Initialize the centroids matrix by randomly sampling points from the data matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset. \\
+\hline
+{\em clusters} & Number of clusters. \\
+\hline
+{\em centroids} & Matrix to put initial centroids into. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 38 of file sample\+\_\+initialization.\+hpp.
+
+
+
+References mlpack\+::math\+::\+Rand\+Int().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kmeans/\textbf{ sample\+\_\+initialization.\+hpp}\end{DoxyCompactItemize}

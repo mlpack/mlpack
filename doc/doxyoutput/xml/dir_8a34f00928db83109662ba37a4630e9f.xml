@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_8a34f00928db83109662ba37a4630e9f" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/bindings/go/mlpack</compoundname>
+    <innerdir refid="dir_bd73b3e05c5a1c35ce25e4542e3217eb">/home/aakash/mlpack/src/mlpack/bindings/go/mlpack/capi</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/go/mlpack/"/>
+  </compounddef>
+</doxygen>

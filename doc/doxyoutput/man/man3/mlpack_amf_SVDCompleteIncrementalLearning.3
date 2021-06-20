@@ -1,0 +1,135 @@
+.TH "SVDCompleteIncrementalLearning< MatType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SVDCompleteIncrementalLearning< MatType > \- This class computes SVD using complete incremental batch learning, as described in the following paper:  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSVDCompleteIncrementalLearning\fP (double u=0\&.0001, double kw=0, double kh=0)"
+.br
+.RI "Initialize the \fBSVDCompleteIncrementalLearning\fP class with the given parameters\&. "
+.ti -1c
+.RI "void \fBHUpdate\fP (const MatType &V, const arma::mat &W, arma::mat &H)"
+.br
+.RI "The update rule for the encoding matrix H\&. "
+.ti -1c
+.RI "void \fBInitialize\fP (const MatType &, const size_t)"
+.br
+.RI "Initialize parameters before factorization\&. "
+.ti -1c
+.RI "void \fBWUpdate\fP (const MatType &V, arma::mat &W, const arma::mat &H)"
+.br
+.RI "The update rule for the basis matrix W\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<class MatType>
+.br
+class mlpack::amf::SVDCompleteIncrementalLearning< MatType >"
+This class computes SVD using complete incremental batch learning, as described in the following paper: 
+
+
+.PP
+.nf
+@techreport{ma2008guide,
+  title={A Guide to Singular Value Decomposition for Collaborative
+      Filtering},
+  author={Ma, Chih-Chao},
+  year={2008},
+  institution={Department of Computer Science, National Taiwan University}
+}
+
+.fi
+.PP
+.PP
+This class implements 'Algorithm 3' given in the paper\&. Complete incremental learning is an extreme case of incremental learning, where feature vectors are updated after looking at each single element in the input matrix (V)\&. This approach differs from incomplete incremental learning where feature vectors are updated after seeing columns of elements in the input matrix\&.
+.PP
+\fBSee also\fP
+.RS 4
+\fBSVDIncompleteIncrementalLearning\fP 
+.RE
+.PP
+
+.PP
+Definition at line 45 of file svd_complete_incremental_learning\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSVDCompleteIncrementalLearning\fP (double u = \fC0\&.0001\fP, double kw = \fC0\fP, double kh = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Initialize the \fBSVDCompleteIncrementalLearning\fP class with the given parameters\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIu\fP Step value used in batch learning\&. 
+.br
+\fIkw\fP Regularization constant for W matrix\&. 
+.br
+\fIkh\fP Regularization constant for H matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 56 of file svd_complete_incremental_learning\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void HUpdate (const MatType & V, const arma::mat & W, arma::mat & H)\fC [inline]\fP"
+
+.PP
+The update rule for the encoding matrix H\&. The function takes in all the matrices and only changes the value of the H matrix\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.br
+\fIW\fP Basis matrix\&. 
+.br
+\fIH\fP Encoding matrix to be updated\&. 
+.RE
+.PP
+
+.PP
+Definition at line 123 of file svd_complete_incremental_learning\&.hpp\&.
+.SS "void Initialize (const MatType &, const size_t)\fC [inline]\fP"
+
+.PP
+Initialize parameters before factorization\&. This function must be called before a new factorization\&. For this initialization, the input parameters are unnecessary; we are only setting the current element index to 0\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (dataset) Input matrix to be factorized\&. 
+.br
+\fI*\fP (rank) Rank of factorization\&. 
+.RE
+.PP
+
+.PP
+Definition at line 72 of file svd_complete_incremental_learning\&.hpp\&.
+.SS "void WUpdate (const MatType & V, arma::mat & W, const arma::mat & H)\fC [inline]\fP"
+
+.PP
+The update rule for the basis matrix W\&. The function takes in all the matrices and only changes the value of the W matrix\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.br
+\fIW\fP Basis matrix to be updated\&. 
+.br
+\fIH\fP Encoding matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 87 of file svd_complete_incremental_learning\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

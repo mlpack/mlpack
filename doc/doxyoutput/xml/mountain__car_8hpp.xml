@@ -1,0 +1,622 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="mountain__car_8hpp" kind="file" language="C++">
+    <compoundname>mountain_car.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="clamp_8hpp" local="no">mlpack/core/math/clamp.hpp</includes>
+    <incdepgraph>
+      <node id="59">
+        <label>list</label>
+      </node>
+      <node id="56">
+        <label>atomic</label>
+      </node>
+      <node id="39">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="15">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="58">
+        <label>iomanip</label>
+      </node>
+      <node id="68">
+        <label>float.h</label>
+      </node>
+      <node id="24">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>cstdint</label>
+      </node>
+      <node id="16">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="23">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="66">
+        <label>stdlib.h</label>
+      </node>
+      <node id="49">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="46">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="47">
+        <label>mlpack/core/util/log.hpp</label>
+        <link refid="log_8hpp"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="3">
+        <label>cmath</label>
+      </node>
+      <node id="22">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="11">
+        <label>stdexcept</label>
+      </node>
+      <node id="31">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>string</label>
+      </node>
+      <node id="43">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>map</label>
+      </node>
+      <node id="5">
+        <label>cfloat</label>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp</label>
+        <link refid="mountain__car_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="51">
+        <label>prefixedoutstream_impl.hpp</label>
+      </node>
+      <node id="63">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="19">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="42">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="52">
+        <label>nulloutstream.hpp</label>
+        <link refid="nulloutstream_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="41">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>cstdio</label>
+      </node>
+      <node id="12">
+        <label>tuple</label>
+      </node>
+      <node id="17">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="34">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>prefixedoutstream.hpp</label>
+        <link refid="prefixedoutstream_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>streambuf</label>
+      </node>
+      <node id="65">
+        <label>mlpack/core/math/clamp.hpp</label>
+        <link refid="clamp_8hpp"/>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>utility</label>
+      </node>
+      <node id="37">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="28">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="25">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="40">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>math.h</label>
+      </node>
+      <node id="9">
+        <label>cstdlib</label>
+      </node>
+      <node id="4">
+        <label>cctype</label>
+      </node>
+      <node id="53">
+        <label>iostream</label>
+      </node>
+      <node id="27">
+        <label>unordered_map</label>
+      </node>
+      <node id="6">
+        <label>climits</label>
+      </node>
+      <node id="61">
+        <label>mutex</label>
+      </node>
+      <node id="57">
+        <label>chrono</label>
+      </node>
+      <node id="64">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="62">
+        <label>thread</label>
+      </node>
+      <node id="44">
+        <label>type_traits</label>
+      </node>
+      <node id="20">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="14">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="38">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>cstring</label>
+      </node>
+      <node id="29">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="18">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1rl_1_1MountainCar" prot="public">mlpack::rl::MountainCar</innerclass>
+    <innerclass refid="classmlpack_1_1rl_1_1MountainCar_1_1Action" prot="public">mlpack::rl::MountainCar::Action</innerclass>
+    <innerclass refid="classmlpack_1_1rl_1_1MountainCar_1_1State" prot="public">mlpack::rl::MountainCar::State</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1rl">mlpack::rl</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Shangtong Zhang</para>
+</simplesect>
+This file is an implementation of Mountain Car task: <ulink url="https://gym.openai.com/envs/MountainCar-v0">https://gym.openai.com/envs/MountainCar-v0</ulink></para>
+<para>TODO: provide an option to use dynamics directly from OpenAI gym.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_RL_ENVIRONMENT_MOUNTAIN_CAR_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_RL_ENVIRONMENT_MOUNTAIN_CAR_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="clamp_8hpp" kindref="compound">mlpack/core/math/clamp.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">rl<sp/>{</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28" refid="classmlpack_1_1rl_1_1MountainCar" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1MountainCar" kindref="compound">MountainCar</ref></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="35" refid="classmlpack_1_1rl_1_1MountainCar_1_1State" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State" kindref="compound">State</ref></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="41" refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a790355057d12e9c1ce7643551c16fecd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a790355057d12e9c1ce7643551c16fecd" kindref="member">State</ref>():<sp/>data(<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1ae813298f34ef9d793885fc04b54dff99" kindref="member">dimension</ref>,<sp/>arma::fill::zeros)</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here.<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" kindref="member">State</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::colvec&amp;<sp/>data):<sp/>data(data)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here.<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec&amp;<sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" kindref="member">Data</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data;<sp/>}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" kindref="member">Velocity</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[0];<sp/>}</highlight></codeline>
+<codeline lineno="58" refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a2bdce16cfc8c84b65f13ee9fffab1266" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a2bdce16cfc8c84b65f13ee9fffab1266" kindref="member">Velocity</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[0];<sp/>}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" kindref="member">Position</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[1];<sp/>}</highlight></codeline>
+<codeline lineno="63" refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a005c39713bc5c65715a94572bfb5fc29" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a005c39713bc5c65715a94572bfb5fc29" kindref="member">Position</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data[1];<sp/>}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a8c1a320788b55fad936455caf0acb62a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::colvec&amp;<sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a8c1a320788b55fad936455caf0acb62a" kindref="member">Encode</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>data;<sp/>}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1ae813298f34ef9d793885fc04b54dff99" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>constexpr<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1ae813298f34ef9d793885fc04b54dff99" kindref="member">dimension</ref><sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>data;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="classmlpack_1_1rl_1_1MountainCar_1_1Action" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1Action" kindref="compound">Action</ref></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="82" refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1af806efc6052edbc741683ec893bb2fe1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1af806efc6052edbc741683ec893bb2fe1" kindref="member">actions</ref></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="84" refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1af806efc6052edbc741683ec893bb2fe1ab3d7481243d86f5bf31d617c7ba70220" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1af806efc6052edbc741683ec893bb2fe1ab3d7481243d86f5bf31d617c7ba70220" kindref="member">backward</ref>,</highlight></codeline>
+<codeline lineno="85" refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1af806efc6052edbc741683ec893bb2fe1ad82a4ca4dc1f04bf9453ad19f9341028" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1af806efc6052edbc741683ec893bb2fe1ad82a4ca4dc1f04bf9453ad19f9341028" kindref="member">stop</ref>,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1af806efc6052edbc741683ec893bb2fe1a726a0af5164861adac8c015a742dcf21" kindref="member">forward</ref></highlight></codeline>
+<codeline lineno="87" refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1af806efc6052edbc741683ec893bb2fe1a726a0af5164861adac8c015a742dcf21" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>To<sp/>store<sp/>the<sp/>action.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1aae7cee579dae25461f6f47c95c41bd9a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1af806efc6052edbc741683ec893bb2fe1" kindref="member">Action::actions</ref><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1aae7cee579dae25461f6f47c95c41bd9a" kindref="member">action</ref>;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Track<sp/>the<sp/>size<sp/>of<sp/>the<sp/>action<sp/>space.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1a685609860d73ccd0d45ada287ab9ab5f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1a685609860d73ccd0d45ada287ab9ab5f" kindref="member">size</ref><sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="classmlpack_1_1rl_1_1MountainCar_1a316fd35227c45969b0a254c053b12d34" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1a316fd35227c45969b0a254c053b12d34" kindref="member">MountainCar</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxSteps<sp/>=<sp/>200,</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>positionMin<sp/>=<sp/>-1.2,</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>positionMax<sp/>=<sp/>0.6,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>positionGoal<sp/>=<sp/>0.5,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>velocityMin<sp/>=<sp/>-0.07,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>velocityMax<sp/>=<sp/>0.07,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>doneReward<sp/>=<sp/>0)<sp/>:</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxSteps(maxSteps),</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>positionMin(positionMin),</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>positionMax(positionMax),</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>positionGoal(positionGoal),</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>velocityMin(velocityMin),</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>velocityMax(velocityMax),</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>doneReward(doneReward),</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>stepsPerformed(0)</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133" refid="classmlpack_1_1rl_1_1MountainCar_1a311ac19edc537dee94f37b7cce93d908" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1a311ac19edc537dee94f37b7cce93d908" kindref="member">Sample</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State" kindref="compound">State</ref>&amp;<sp/>state,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1Action" kindref="compound">Action</ref>&amp;<sp/>action,</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State" kindref="compound">State</ref>&amp;<sp/>nextState)</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Update<sp/>the<sp/>number<sp/>of<sp/>steps<sp/>performed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>stepsPerformed++;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>acceleration.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>direction<sp/>=<sp/>action.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1Action_1aae7cee579dae25461f6f47c95c41bd9a" kindref="member">action</ref><sp/>-<sp/>1;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>nextState.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" kindref="member">Velocity</ref>()<sp/>=<sp/>state.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" kindref="member">Velocity</ref>()<sp/>+<sp/>0.001<sp/>*<sp/>direction<sp/>-<sp/>0.0025<sp/>*</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cos(3<sp/>*<sp/>state.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" kindref="member">Position</ref>());</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>nextState.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" kindref="member">Velocity</ref>()<sp/>=<sp/><ref refid="namespacemlpack_1_1math_1a0fa7f378ef122a2fc2b82009b436cdeb" kindref="member">math::ClampRange</ref>(nextState.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" kindref="member">Velocity</ref>(),</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>velocityMin,<sp/>velocityMax);</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Update<sp/>states.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/>nextState.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" kindref="member">Position</ref>()<sp/>=<sp/>state.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" kindref="member">Position</ref>()<sp/>+<sp/>nextState.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" kindref="member">Velocity</ref>();</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/>nextState.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" kindref="member">Position</ref>()<sp/>=<sp/><ref refid="namespacemlpack_1_1math_1a0fa7f378ef122a2fc2b82009b436cdeb" kindref="member">math::ClampRange</ref>(nextState.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" kindref="member">Position</ref>(),</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>positionMin,<sp/>positionMax);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(nextState.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" kindref="member">Position</ref>()<sp/>==<sp/>positionMin<sp/>&amp;&amp;<sp/>nextState.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" kindref="member">Velocity</ref>()<sp/>&lt;<sp/>0)</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>nextState.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" kindref="member">Velocity</ref>()<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Check<sp/>if<sp/>the<sp/>episode<sp/>has<sp/>terminated.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>done<sp/>=<sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1a7fd056133dfd315e4bf45c408f99326f" kindref="member">IsTerminal</ref>(nextState);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Do<sp/>not<sp/>reward<sp/>the<sp/>agent<sp/>if<sp/>time<sp/>ran<sp/>out.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(done<sp/>&amp;&amp;<sp/>maxSteps<sp/>!=<sp/>0<sp/>&amp;&amp;<sp/>stepsPerformed<sp/>&gt;=<sp/>maxSteps)</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(done)</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>doneReward;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-1;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="classmlpack_1_1rl_1_1MountainCar_1af2bb860eaefeaa62a40f5cf940793704" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1af2bb860eaefeaa62a40f5cf940793704" kindref="member">Sample</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State" kindref="compound">State</ref>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1Action" kindref="compound">Action</ref>&amp;<sp/>action)</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State" kindref="compound">State</ref><sp/>nextState;</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1a311ac19edc537dee94f37b7cce93d908" kindref="member">Sample</ref>(state,<sp/>action,<sp/>nextState);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="classmlpack_1_1rl_1_1MountainCar_1aa9f537249fa0c1e62b38197996ab4c6a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State" kindref="compound">State</ref><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1aa9f537249fa0c1e62b38197996ab4c6a" kindref="member">InitialSample</ref>()</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State" kindref="compound">State</ref><sp/>state;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>stepsPerformed<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" kindref="member">Velocity</ref>()<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" kindref="member">Position</ref>()<sp/>=<sp/>arma::as_scalar(arma::randu(1))<sp/>*<sp/>0.2<sp/>-<sp/>0.6;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state;</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202" refid="classmlpack_1_1rl_1_1MountainCar_1a7fd056133dfd315e4bf45c408f99326f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1a7fd056133dfd315e4bf45c408f99326f" kindref="member">IsTerminal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State" kindref="compound">State</ref>&amp;<sp/>state)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="203"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(maxSteps<sp/>!=<sp/>0<sp/>&amp;&amp;<sp/>stepsPerformed<sp/>&gt;=<sp/>maxSteps)</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1Log_1a6e069f745e1bbea8ccc4c1d39bf56089" kindref="member">Log::Info</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Episode<sp/>terminated<sp/>due<sp/>to<sp/>the<sp/>maximum<sp/>number<sp/>of<sp/>steps&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;being<sp/>taken.&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" kindref="member">Position</ref>()<sp/>&gt;=<sp/>positionGoal)</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1Log_1a6e069f745e1bbea8ccc4c1d39bf56089" kindref="member">Log::Info</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Episode<sp/>terminated<sp/>due<sp/>to<sp/>agent<sp/>succeeding.&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219" refid="classmlpack_1_1rl_1_1MountainCar_1a5fe06563064ebcee88c593e1673f03d4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1a5fe06563064ebcee88c593e1673f03d4" kindref="member">StepsPerformed</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>stepsPerformed;<sp/>}</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222" refid="classmlpack_1_1rl_1_1MountainCar_1ad8fd6d8f7581c82e73556491b79a8907" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1ad8fd6d8f7581c82e73556491b79a8907" kindref="member">MaxSteps</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxSteps;<sp/>}</highlight></codeline>
+<codeline lineno="224" refid="classmlpack_1_1rl_1_1MountainCar_1a64c84cebc489c6fdfd7f057e127b0aef" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1MountainCar_1a64c84cebc489c6fdfd7f057e127b0aef" kindref="member">MaxSteps</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxSteps;<sp/>}</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxSteps;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>positionMin;</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>positionMax;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>positionGoal;</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>velocityMin;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>velocityMax;</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>doneReward;</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>stepsPerformed;</highlight></codeline>
+<codeline lineno="250"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>rl</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="253"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp"/>
+  </compounddef>
+</doxygen>

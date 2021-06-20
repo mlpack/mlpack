@@ -1,0 +1,46 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/core/math/make\+\_\+alias.hpp File Reference}
+\label{make__alias_8hpp}\index{/home/aakash/mlpack/src/mlpack/core/math/make\_alias.hpp@{/home/aakash/mlpack/src/mlpack/core/math/make\_alias.hpp}}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{make__alias_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::math}
+\begin{DoxyCompactList}\small\item\em Miscellaneous math routines. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\void \textbf{ Clear\+Alias} (arma\+::\+Mat$<$ Elem\+Type $>$ \&mat)
+\begin{DoxyCompactList}\small\item\em Clear an alias so that no data is overwritten. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\void \textbf{ Clear\+Alias} (arma\+::\+Sp\+Mat$<$ Elem\+Type $>$ \&)
+\begin{DoxyCompactList}\small\item\em Clear an alias for a sparse matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Col$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (arma\+::\+Col$<$ Elem\+Type $>$ \&input, const bool strict=true)
+\begin{DoxyCompactList}\small\item\em Make an alias of a dense column. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Cube$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (arma\+::\+Cube$<$ Elem\+Type $>$ \&input, const bool strict=true)
+\begin{DoxyCompactList}\small\item\em Make an alias of a dense cube. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Mat$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (arma\+::\+Mat$<$ Elem\+Type $>$ \&input, const bool strict=true)
+\begin{DoxyCompactList}\small\item\em Make an alias of a dense matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Row$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (arma\+::\+Row$<$ Elem\+Type $>$ \&input, const bool strict=true)
+\begin{DoxyCompactList}\small\item\em Make an alias of a dense row. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Sp\+Col$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (const arma\+::\+Sp\+Col$<$ Elem\+Type $>$ \&input, const bool=true)
+\begin{DoxyCompactList}\small\item\em Make a copy of a sparse column (an alias is not possible). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Sp\+Mat$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (const arma\+::\+Sp\+Mat$<$ Elem\+Type $>$ \&input, const bool=true)
+\begin{DoxyCompactList}\small\item\em Make a copy of a sparse matrix (an alias is not possible). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Sp\+Row$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (const arma\+::\+Sp\+Row$<$ Elem\+Type $>$ \&input, const bool=true)
+\begin{DoxyCompactList}\small\item\em Make a copy of a sparse row (an alias is not possible). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Make an alias of a matrix. For sparse matrices, unfortunately no alias can be made and a copy must be incurred.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

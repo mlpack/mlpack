@@ -1,0 +1,417 @@
+\doxysection{Sequential$<$ Input\+Data\+Type, Output\+Data\+Type, Residual, Custom\+Layers $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Sequential}\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+
+
+Implementation of the \doxyref{Sequential}{p.}{classmlpack_1_1ann_1_1Sequential} class.  
+
+
+
+
+Inheritance diagram for Sequential$<$ Input\+Data\+Type, Output\+Data\+Type, Residual, Custom\+Layers $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=197pt]{classmlpack_1_1ann_1_1Sequential__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Sequential} (const bool model, const bool owns\+Layers)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Sequential}{p.}{classmlpack_1_1ann_1_1Sequential} object using the specified parameters. \end{DoxyCompactList}\item 
+\textbf{ Sequential} (const bool model=true)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Sequential}{p.}{classmlpack_1_1ann_1_1Sequential} object using the specified parameters. \end{DoxyCompactList}\item 
+\textbf{ Sequential} (const \textbf{ Sequential} \&layer)
+\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+Sequential} ()
+\begin{DoxyCompactList}\small\item\em Destroy the \doxyref{Sequential}{p.}{classmlpack_1_1ann_1_1Sequential} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Layer\+Type , class... Args$>$ }\\void \textbf{ Add} (Args... args)
+\item 
+void \textbf{ Add} (\textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ layer)
+\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+arma\+::mat const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+arma\+::mat const  \& \textbf{ Gradient} () const
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&)
+\item 
+arma\+::mat \& \textbf{ Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+arma\+::mat const  \& \textbf{ Input\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Shape} () const
+\item 
+std\+::vector$<$ \textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ $>$ \& \textbf{ Model} ()
+\begin{DoxyCompactList}\small\item\em Return the model modules. \end{DoxyCompactList}\item 
+\textbf{ Sequential} \& \textbf{ operator=} (const \textbf{ Sequential} \&layer)
+\begin{DoxyCompactList}\small\item\em Copy assignment operator. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+arma\+::mat const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the initial point for the optimization. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Return the initial point for the optimization. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat, bool Residual = false, typename... Custom\+Layers$>$\newline
+class mlpack\+::ann\+::\+Sequential$<$ Input\+Data\+Type, Output\+Data\+Type, Residual, Custom\+Layers $>$}
+
+Implementation of the \doxyref{Sequential}{p.}{classmlpack_1_1ann_1_1Sequential} class. 
+
+The sequential class works as a feed-\/forward fully connected network container which plugs various layers together.
+
+This class can also be used as a container for a residual block. In that case, the sizes of the input and output matrices of this class should be equal. A typedef has been added for use as a Residual$<$$>$ class.
+
+For more information, refer the following paper.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@article\{He15,}
+\DoxyCodeLine{  author    = \{Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun\},}
+\DoxyCodeLine{  title     = \{Deep Residual Learning \textcolor{keywordflow}{for} Image Recognition\},}
+\DoxyCodeLine{  year      = \{2015\},}
+\DoxyCodeLine{  url       = \{https:\textcolor{comment}{//arxiv.org/abs/1512.03385\},}}
+\DoxyCodeLine{  eprint    = \{1512.03385\},}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Note\+: If this class is used as the first layer of a network, it should be preceded by Identity\+Layer$<$$>$.
+
+Note\+: This class should at least have two layers for a call to its \doxyref{Gradient()}{p.}{classmlpack_1_1ann_1_1Sequential_a59e16b7142696049a5543ff35547ebd9} function.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Residual} & If true, use the object as a Residual block. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 73 of file sequential.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a01b828c8a9d0398c7d899fe5a0159cf0}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Sequential@{Sequential}}
+\index{Sequential@{Sequential}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Sequential()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ Sequential} (\begin{DoxyParamCaption}\item[{const bool}]{model = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Sequential}{p.}{classmlpack_1_1ann_1_1Sequential} object using the specified parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em model} & Expose the all network modules. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a54e8b8c60e747977fcb5d1d33181d2d6}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Sequential@{Sequential}}
+\index{Sequential@{Sequential}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Sequential()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ Sequential} (\begin{DoxyParamCaption}\item[{const bool}]{model,  }\item[{const bool}]{owns\+Layers }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Sequential}{p.}{classmlpack_1_1ann_1_1Sequential} object using the specified parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em model} & Expose all the network modules. \\
+\hline
+{\em owns\+Layers} & If true, then this module will delete its layers when deallocated. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a146eb0ef8b57693cf58802961b1a1601}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Sequential@{Sequential}}
+\index{Sequential@{Sequential}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Sequential()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ Sequential} (\begin{DoxyParamCaption}\item[{const \textbf{ Sequential}$<$ Input\+Data\+Type, Output\+Data\+Type, \textbf{ Residual}, Custom\+Layers $>$ \&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Copy constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a104b6c42467bc2edb7c514afca99bcec}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!````~Sequential@{$\sim$Sequential}}
+\index{````~Sequential@{$\sim$Sequential}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{$\sim$Sequential()}
+{\footnotesize\ttfamily $\sim$\textbf{ Sequential} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Destroy the \doxyref{Sequential}{p.}{classmlpack_1_1ann_1_1Sequential} object. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a8b5234495846c00f6b2c8296ca6bc718}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Add@{Add}}
+\index{Add@{Add}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Add()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void \textbf{ Add} (\begin{DoxyParamCaption}\item[{Args...}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 143 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a503a807740e6c729be9efc89520db728}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Add@{Add}}
+\index{Add@{Add}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Add()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void \textbf{ Add} (\begin{DoxyParamCaption}\item[{\textbf{ Layer\+Types}$<$ Custom\+Layers... $>$}]{layer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 150 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a49c3606024580071e0c65e2e4d080e1e}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 181 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a6126fc05a10e2e988ea7e75aada214fd}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::mat const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 179 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a59e16b7142696049a5543ff35547ebd9}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily arma\+::mat\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the gradient. 
+
+
+
+Definition at line 186 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a13444d1f198ceeef85e7a288a7d1d9c2}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily arma\+::mat const\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradient. 
+
+
+
+Definition at line 184 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a505acb56ef67da2fc73190d3d4931969}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a818d585c592c80d8e8c101f67bc389ad}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!InputParameter@{InputParameter}}
+\index{InputParameter@{InputParameter}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{InputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 171 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a9b1735296084fc571524101988744884}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!InputParameter@{InputParameter}}
+\index{InputParameter@{InputParameter}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{InputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::mat const\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input parameter. 
+
+
+
+Definition at line 169 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a13ab93f234244a68f6ade76287284447}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!InputShape@{InputShape}}
+\index{InputShape@{InputShape}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{InputShape()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Shape (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a4cb1e93bff99ccf1f8f974065a3b13c3}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Model@{Model}}
+\index{Model@{Model}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Model()}
+{\footnotesize\ttfamily std\+::vector$<$\textbf{ Layer\+Types}$<$Custom\+Layers...$>$ $>$\& Model (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the model modules. 
+
+
+
+Definition at line 153 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a806923a7f052d5b9a0966407899fc104}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{operator=()}
+{\footnotesize\ttfamily \textbf{ Sequential}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ Sequential}$<$ Input\+Data\+Type, Output\+Data\+Type, \textbf{ Residual}, Custom\+Layers $>$ \&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Copy assignment operator. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a28ce681558d0bf02302f868d1c811f2a}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 176 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a712dc230c489d0caf3175cbdfc59639f}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::mat const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 174 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a043f0ccd62e6711a18e0d81047be9a0a}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the initial point for the optimization. 
+
+
+
+Definition at line 166 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_aa68d74dc1e86e4352e00a3cab83a0e4a}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const arma\+::mat\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the initial point for the optimization. 
+
+
+
+Definition at line 164 of file sequential.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Sequential_a65cba07328997659bec80b9879b15a51}} 
+\index{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$@{Sequential$<$ InputDataType, OutputDataType, Residual, CustomLayers $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ layer\+\_\+types.\+hpp}\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ sequential.\+hpp}\end{DoxyCompactItemize}

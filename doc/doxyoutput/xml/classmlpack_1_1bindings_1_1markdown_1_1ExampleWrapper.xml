@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1bindings_1_1markdown_1_1ExampleWrapper" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::bindings::markdown::ExampleWrapper</compoundname>
+    <includes refid="program__doc__wrapper_8hpp" local="no">program_doc_wrapper.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1bindings_1_1markdown_1_1ExampleWrapper_1a9be4971a5d0811c9d6da8e72a4351c70" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ExampleWrapper</definition>
+        <argsstring>(const std::string &amp;bindingName, const std::function&lt; std::string()&gt; &amp;example)</argsstring>
+        <name>ExampleWrapper</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
+        <param>
+          <type>const std::function&lt; std::string()&gt; &amp;</type>
+          <declname>example</declname>
+        </param>
+        <briefdescription>
+<para>Register example. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" line="71" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" bodystart="71" bodyend="76"/>
+        <references refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a10e347723a80667c48bd5a3c60d9b870">BindingInfo::GetSingleton</references>
+        <references refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a11738b577fb016e05929ab8b548d436e" compoundref="binding__info_8hpp" startline="44">BindingInfo::map</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" line="65" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" bodystart="66" bodyend="77"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1bindings_1_1markdown_1_1ExampleWrapper_1a9be4971a5d0811c9d6da8e72a4351c70" prot="public" virt="non-virtual"><scope>mlpack::bindings::markdown::ExampleWrapper</scope><name>ExampleWrapper</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

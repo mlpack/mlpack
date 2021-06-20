@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_dcee21e1606ddff0b2f71b477ed9280c" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/nca</compoundname>
+    <innerfile refid="nca_8hpp">nca.hpp</innerfile>
+    <innerfile refid="nca__softmax__error__function_8hpp">nca_softmax_error_function.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/nca/"/>
+  </compounddef>
+</doxygen>

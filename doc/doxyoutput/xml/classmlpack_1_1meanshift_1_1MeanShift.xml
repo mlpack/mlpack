@@ -1,0 +1,601 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1meanshift_1_1MeanShift" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::meanshift::MeanShift</compoundname>
+    <includes refid="mean__shift_8hpp" local="no">mean_shift.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>bool</type>
+        <declname>UseKernel</declname>
+        <defname>UseKernel</defname>
+        <defval>false</defval>
+      </param>
+      <param>
+        <type>typename KernelType</type>
+        <defval><ref refid="classmlpack_1_1kernel_1_1GaussianKernel" kindref="compound">kernel::GaussianKernel</ref></defval>
+      </param>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1meanshift_1_1MeanShift_1a7efe9a82e3ae452329882c727ec2bbb9" prot="private" static="no" mutable="no">
+        <type>KernelType</type>
+        <definition>KernelType kernel</definition>
+        <argsstring></argsstring>
+        <name>kernel</name>
+        <briefdescription>
+<para>Instantiated kernel. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="170" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1meanshift_1_1MeanShift_1adb3fa2e38847b23885acf3833f28538e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxIterations</definition>
+        <argsstring></argsstring>
+        <name>maxIterations</name>
+        <briefdescription>
+<para>Maximum number of iterations before giving up. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="167" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1meanshift_1_1MeanShift_1a3f67c53b80389c5f53961936edba04c9" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double radius</definition>
+        <argsstring></argsstring>
+        <name>radius</name>
+        <briefdescription>
+<para>If distance of two centroids is less than radius, one will be removed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Points with distance to current centroid less than radius will be used to calculate new centroid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="164" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a2d412008ae2244778bfd2afb1e292858" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MeanShift</definition>
+        <argsstring>(const double radius=0, const size_t maxIterations=1000, const KernelType kernel=KernelType())</argsstring>
+        <name>MeanShift</name>
+        <param>
+          <type>const double</type>
+          <declname>radius</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxIterations</declname>
+          <defval>1000</defval>
+        </param>
+        <param>
+          <type>const KernelType</type>
+          <declname>kernel</declname>
+          <defval>KernelType()</defval>
+        </param>
+        <briefdescription>
+<para>Create a mean shift object and set the parameters which mean shift will be run with. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>radius</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If distance of two centroids is less than it, one will be removed. If this value isn&apos;t positive, an estimation will be given when clustering. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxIterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of iterations allowed before giving up iterations will terminate. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional KernelType object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="65" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1ae6c156618ab407e37eb42f6843e46005" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster</definition>
+        <argsstring>(const MatType &amp;data, arma::Row&lt; size_t &gt; &amp;assignments, arma::mat &amp;centroids, bool forceConvergence=true, bool useSeeds=true)</argsstring>
+        <name>Cluster</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>assignments</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>centroids</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>forceConvergence</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>useSeeds</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Perform mean shift clustering on the data, returning a list of cluster assignments and centroids. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to cluster. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>assignments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store cluster assignments in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>centroids</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix in which centroids are stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>forceConvergence</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flag whether to force each centroid seed to converge regardless of maxIterations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>useSeeds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set true to use seeds. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="89" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a18e16a5764b4b09cd46402c5ac40e711" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double EstimateRadius</definition>
+        <argsstring>(const MatType &amp;data, const double ratio=0.2)</argsstring>
+        <name>EstimateRadius</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>ratio</declname>
+          <defval>0.2</defval>
+        </param>
+        <briefdescription>
+<para>Give an estimation of radius based on given dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset for estimation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ratio</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Percentage of dataset to use for nearest neighbor search. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="75" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1ab8d1bedeac8344d80e50d819790a117a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>KernelType &amp;</type>
+        <definition>KernelType&amp; Kernel</definition>
+        <argsstring>()</argsstring>
+        <name>Kernel</name>
+        <briefdescription>
+<para>Modify the kernel. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="108" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="108" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a917492b75cc17298bc58c3d28e2944fb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const KernelType &amp;</type>
+        <definition>const KernelType&amp; Kernel</definition>
+        <argsstring>() const</argsstring>
+        <name>Kernel</name>
+        <briefdescription>
+<para>Get the kernel. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="106" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="106" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MaxIterations</definition>
+        <argsstring>()</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Set the maximum number of iterations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="98" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="98" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MaxIterations</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Get the maximum number of iterations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="96" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a02d5a1a7e8669d3c22506ecd9a811df8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Radius</definition>
+        <argsstring>() const</argsstring>
+        <name>Radius</name>
+        <briefdescription>
+<para>Get the radius. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="101" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="101" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1ae12840857c3632026e7c513e0f19e52d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Radius</definition>
+        <argsstring>(double radius)</argsstring>
+        <name>Radius</name>
+        <param>
+          <type>double</type>
+          <declname>radius</declname>
+        </param>
+        <briefdescription>
+<para>Set the radius. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="103" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1ab026297de5f55cef7c8ca1eaf05f2c9d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>bool</type>
+            <declname>ApplyKernel</declname>
+            <defname>ApplyKernel</defname>
+            <defval>UseKernel</defval>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt;!ApplyKernel, bool &gt;::type</type>
+        <definition>std::enable_if&lt;!ApplyKernel, bool&gt;::type CalculateCentroid</definition>
+        <argsstring>(const MatType &amp;data, const std::vector&lt; size_t &gt; &amp;neighbors, const std::vector&lt; double &gt; &amp;, arma::colvec &amp;centroid)</argsstring>
+        <name>CalculateCentroid</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; double &gt; &amp;</type>
+        </param>
+        <param>
+          <type>arma::colvec &amp;</type>
+          <declname>centroid</declname>
+        </param>
+        <briefdescription>
+<para>Use mean to calculate new centroid given dataset and valid neighbors. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The whole dataset </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Valid neighbors </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Distances to neighbors </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+<sect1 id="classmlpack_1_1meanshift_1_1MeanShift_1autotoc_md4">
+<title>@param centroid Store calculated centroid</title>
+</sect1>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="154" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a905a0b35f8c4f4144797e8e71bbab138" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>bool</type>
+            <declname>ApplyKernel</declname>
+            <defname>ApplyKernel</defname>
+            <defval>UseKernel</defval>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; ApplyKernel, bool &gt;::type</type>
+        <definition>std::enable_if&lt;ApplyKernel, bool&gt;::type CalculateCentroid</definition>
+        <argsstring>(const MatType &amp;data, const std::vector&lt; size_t &gt; &amp;neighbors, const std::vector&lt; double &gt; &amp;distances, arma::colvec &amp;centroid)</argsstring>
+        <name>CalculateCentroid</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; double &gt; &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <param>
+          <type>arma::colvec &amp;</type>
+          <declname>centroid</declname>
+        </param>
+        <briefdescription>
+<para>Use kernel to calculate new centroid given dataset and valid neighbors. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The whole dataset </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Valid neighbors </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Distances to neighbors </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+<sect1 id="classmlpack_1_1meanshift_1_1MeanShift_1autotoc_md3">
+<title>@param centroid Store calculated centroid</title>
+</sect1>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="139" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1meanshift_1_1MeanShift_1a0ecaac2048406a662d00ceed10a3450a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void GenSeeds</definition>
+        <argsstring>(const MatType &amp;data, const double binSize, const int minFreq, MatType &amp;seeds)</argsstring>
+        <name>GenSeeds</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>binSize</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>minFreq</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>seeds</declname>
+        </param>
+        <briefdescription>
+<para>To speed up, we can generate some seeds from data set and use them as initial centroids rather than all the points in the data set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The basic idea here is that we will place our points into hypercube bins of side length binSize, and any bins that contain fewer than minFreq points will be removed as possible seeds. Usually, 1 is a sufficient parameter for minFreq, and the bin size can be set equal to the estimated radius.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The reference data set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>binSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Width of hypercube bins. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minFreq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in bin. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>seed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store generated seeds in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="124" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class implements mean shift clustering. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>For each point in dataset, apply mean shift algorithm until maximum iterations or convergence. Then remove duplicate centroids.</para>
+<para>A simple example of how to run mean shift clustering is shown below.</para>
+<para><programlisting><codeline><highlight class="normal">extern<sp/>arma::mat<sp/>data;<sp/>//<sp/>Dataset<sp/>we<sp/>want<sp/>to<sp/>run<sp/>mean<sp/>shift<sp/>on.</highlight></codeline>
+<codeline><highlight class="normal">arma::Row&lt;size_t&gt;<sp/>assignments;<sp/>//<sp/>Cluster<sp/>assignments.</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>centroids;<sp/>//<sp/>Cluster<sp/>centroids.</highlight></codeline>
+<codeline><highlight class="normal">bool<sp/>forceConvergence<sp/>=<sp/>true;<sp/>//<sp/>Flag<sp/>whether<sp/>to<sp/>force<sp/>each<sp/>centroid<sp/>seed</highlight></codeline>
+<codeline><highlight class="normal">to<sp/>converge<sp/>regardless<sp/>of<sp/>maxIterations.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">MeanShift&lt;&gt;<sp/>meanShift();</highlight></codeline>
+<codeline><highlight class="normal">meanShift.Cluster(dataset,<sp/>assignments,<sp/>centroids,<sp/>forceConvergence);</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>UseKernel</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Use kernel or mean to calculate new centroid. If false, KernelType will be ignored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>KernelType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The kernel to use. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of matrix the data is stored in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" line="51" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/mean_shift/mean_shift.hpp" bodystart="52" bodyend="171"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1a905a0b35f8c4f4144797e8e71bbab138" prot="private" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>CalculateCentroid</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1ab026297de5f55cef7c8ca1eaf05f2c9d" prot="private" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>CalculateCentroid</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1ae6c156618ab407e37eb42f6843e46005" prot="public" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>Cluster</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1a18e16a5764b4b09cd46402c5ac40e711" prot="public" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>EstimateRadius</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1a0ecaac2048406a662d00ceed10a3450a" prot="private" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>GenSeeds</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1a7efe9a82e3ae452329882c727ec2bbb9" prot="private" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>kernel</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1a917492b75cc17298bc58c3d28e2944fb" prot="public" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>Kernel</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1ab8d1bedeac8344d80e50d819790a117a" prot="public" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>Kernel</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1adb3fa2e38847b23885acf3833f28538e" prot="private" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>maxIterations</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1a2d412008ae2244778bfd2afb1e292858" prot="public" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>MeanShift</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1a3f67c53b80389c5f53961936edba04c9" prot="private" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>radius</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1a02d5a1a7e8669d3c22506ecd9a811df8" prot="public" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>Radius</name></member>
+      <member refid="classmlpack_1_1meanshift_1_1MeanShift_1ae12840857c3632026e7c513e0f19e52d" prot="public" virt="non-virtual"><scope>mlpack::meanshift::MeanShift</scope><name>Radius</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

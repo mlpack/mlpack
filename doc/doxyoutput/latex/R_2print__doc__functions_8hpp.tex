@@ -1,0 +1,68 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/bindings/\+R/print\+\_\+doc\+\_\+functions.hpp File Reference}
+\label{R_2print__doc__functions_8hpp}\index{/home/aakash/mlpack/src/mlpack/bindings/R/print\_doc\_functions.hpp@{/home/aakash/mlpack/src/mlpack/bindings/R/print\_doc\_functions.hpp}}
+Include dependency graph for print\+\_\+doc\+\_\+functions.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=324pt]{R_2print__doc__functions_8hpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::bindings}
+\item 
+ \textbf{ mlpack\+::bindings\+::r}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \textbf{ Get\+Binding\+Name} (const std\+::string \&binding\+Name)
+\begin{DoxyCompactList}\small\item\em Given the name of a binding, print its R name. \end{DoxyCompactList}\item 
+bool \textbf{ Ignore\+Check} (const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Print whether or not we should ignore a check on the given parameter. \end{DoxyCompactList}\item 
+bool \textbf{ Ignore\+Check} (const std\+::vector$<$ std\+::pair$<$ std\+::string, bool $>$$>$ \&constraints, const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Print whether or not we should ignore a check on the given set of constraints. \end{DoxyCompactList}\item 
+bool \textbf{ Ignore\+Check} (const std\+::vector$<$ std\+::string $>$ \&constraints)
+\begin{DoxyCompactList}\small\item\em Print whether or not we should ignore a check on the given set of constraints. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Param\+String} (const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Given the parameter name, determine what it would actually be when passed to the command line. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Dataset} (const std\+::string \&dataset\+Name)
+\begin{DoxyCompactList}\small\item\em Given the name of a matrix, print it. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Default} (const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Given a parameter name, print its corresponding default value. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Import} ()
+\begin{DoxyCompactList}\small\item\em Print any import information for the R binding. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Input\+Option\+Info} ()
+\begin{DoxyCompactList}\small\item\em Print any special information about input options. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Input\+Options} ()
+\begin{DoxyCompactList}\small\item\em Recursion base case. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , typename... Args$>$ }\\std\+::string \textbf{ Print\+Input\+Options} (const std\+::string \&param\+Name, const T \&value, Args... args)
+\begin{DoxyCompactList}\small\item\em Print an input option. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Model} (const std\+::string \&model\+Name)
+\begin{DoxyCompactList}\small\item\em Given the name of a model, print it. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Output\+Option\+Info} ()
+\begin{DoxyCompactList}\small\item\em Print any special information about output options. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , typename... Args$>$ }\\std\+::string \textbf{ Print\+Output\+Options} (const bool markdown, const std\+::string \&param\+Name, const T \&value, Args... args)
+\item 
+std\+::string \textbf{ Print\+Output\+Options} (const bool)
+\begin{DoxyCompactList}\small\item\em Recursion base case. \end{DoxyCompactList}\item 
+template$<$$>$ std\+::string \textbf{ Print\+Value} (const bool \&value, bool quotes)
+\begin{DoxyCompactList}\small\item\em Special overload for booleans. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Value} (const T \&value, bool quotes)
+\begin{DoxyCompactList}\small\item\em Given a parameter type, print the corresponding value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... Args$>$ }\\std\+::string \textbf{ Program\+Call} (const bool markdown, const std\+::string \&program\+Name, Args... args)
+\begin{DoxyCompactList}\small\item\em Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Program\+Call} (const std\+::string \&program\+Name)
+\begin{DoxyCompactList}\small\item\em Given the name of a binding, print a program call assuming that all options are specified. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Yashwant Singh Parihar
+\end{DoxyAuthor}
+This file contains functions useful for printing documentation strings related to R bindings.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

@@ -1,0 +1,94 @@
+\doxysection{Char\+Extract Class Reference}
+\label{classmlpack_1_1data_1_1CharExtract}\index{CharExtract@{CharExtract}}
+
+
+The class is used to split a string into characters.  
+
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \textbf{ Token\+Type} = int
+\begin{DoxyCompactList}\small\item\em The type of the token which the tokenizer extracts. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \textbf{ operator()} (boost\+::string\+\_\+view \&str) const
+\begin{DoxyCompactList}\small\item\em The function extracts the first character from the given string view and removes it from the view. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \textbf{ Is\+Token\+Empty} (const int token)
+\begin{DoxyCompactList}\small\item\em The function returns true if the given token is equal to EOF. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The class is used to split a string into characters. 
+
+Definition at line 25 of file char\+\_\+extract.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1data_1_1CharExtract_a80e7e247aa7b4392b900c808645a26cb}} 
+\index{CharExtract@{CharExtract}!TokenType@{TokenType}}
+\index{TokenType@{TokenType}!CharExtract@{CharExtract}}
+\doxysubsubsection{TokenType}
+{\footnotesize\ttfamily using \textbf{ Token\+Type} =  int}
+
+
+
+The type of the token which the tokenizer extracts. 
+
+
+
+Definition at line 29 of file char\+\_\+extract.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1data_1_1CharExtract_a68ac0f257a34674662078d3303c25b99}} 
+\index{CharExtract@{CharExtract}!IsTokenEmpty@{IsTokenEmpty}}
+\index{IsTokenEmpty@{IsTokenEmpty}!CharExtract@{CharExtract}}
+\doxysubsubsection{IsTokenEmpty()}
+{\footnotesize\ttfamily static bool Is\+Token\+Empty (\begin{DoxyParamCaption}\item[{const int}]{token }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The function returns true if the given token is equal to EOF. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em token} & The given token. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 56 of file char\+\_\+extract.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1CharExtract_af8bc68c5ca75596657ff05e08954fbcd}} 
+\index{CharExtract@{CharExtract}!operator()@{operator()}}
+\index{operator()@{operator()}!CharExtract@{CharExtract}}
+\doxysubsubsection{operator()()}
+{\footnotesize\ttfamily int operator() (\begin{DoxyParamCaption}\item[{boost\+::string\+\_\+view \&}]{str }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The function extracts the first character from the given string view and removes it from the view. 
+
+Each charecter is casted to unsigned char i.\+e. it belongs to [0, 255]. The functon returns EOF provided that the input string is empty.
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & String view to retrieve the next token from. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 39 of file char\+\_\+extract.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/data/tokenizers/\textbf{ char\+\_\+extract.\+hpp}\end{DoxyCompactItemize}

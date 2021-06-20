@@ -1,0 +1,464 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1HoeffdingNumericSplit" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::HoeffdingNumericSplit</compoundname>
+    <includes refid="hoeffding__numeric__split_8hpp" local="no">hoeffding_numeric_split.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename FitnessFunction</type>
+      </param>
+      <param>
+        <type>typename ObservationType</type>
+        <defval>double</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1ab96dc0dd71f3e2aca194f2c83abc65a4" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1tree_1_1NumericSplitInfo" kindref="compound">NumericSplitInfo</ref>&lt; ObservationType &gt;</type>
+        <definition>typedef NumericSplitInfo&lt;ObservationType&gt; SplitInfo</definition>
+        <argsstring></argsstring>
+        <name>SplitInfo</name>
+        <briefdescription>
+<para>The splitting information type required by the <ref refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit" kindref="compound">HoeffdingNumericSplit</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="57" column="28" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a02ac8bd4858ce7c34501540832c5c239" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t bins</definition>
+        <argsstring></argsstring>
+        <name>bins</name>
+        <briefdescription>
+<para>The number of bins. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="135" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a8d93c7ea0cd86b267090c6e91b4d806c" prot="private" static="no" mutable="no">
+        <type>arma::Col&lt; size_t &gt;</type>
+        <definition>arma::Col&lt;size_t&gt; labels</definition>
+        <argsstring></argsstring>
+        <name>labels</name>
+        <briefdescription>
+<para>This holds the labels of the points before binning. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="130" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a7d84f74f48994404caea8255b433735c" prot="private" static="no" mutable="no">
+        <type>arma::Col&lt; ObservationType &gt;</type>
+        <definition>arma::Col&lt;ObservationType&gt; observations</definition>
+        <argsstring></argsstring>
+        <name>observations</name>
+        <briefdescription>
+<para>Before binning, this holds the points we have seen so far. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="128" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1af6acdd3f9b3d747980abcfecce62c7d6" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t observationsBeforeBinning</definition>
+        <argsstring></argsstring>
+        <name>observationsBeforeBinning</name>
+        <briefdescription>
+<para>The number of observations we must see before binning. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="137" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a3a2a68951bf4194f2f647989e54debe6" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t samplesSeen</definition>
+        <argsstring></argsstring>
+        <name>samplesSeen</name>
+        <briefdescription>
+<para>The number of samples we have seen so far. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="139" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a1b81ed7fedf3200128438d0083d92ef1" prot="private" static="no" mutable="no">
+        <type>arma::Col&lt; ObservationType &gt;</type>
+        <definition>arma::Col&lt;ObservationType&gt; splitPoints</definition>
+        <argsstring></argsstring>
+        <name>splitPoints</name>
+        <briefdescription>
+<para>The split points for the binning (length bins - 1). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="133" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a8ddf10a071149ba65edcb50a842a6320" prot="private" static="no" mutable="no">
+        <type>arma::Mat&lt; size_t &gt;</type>
+        <definition>arma::Mat&lt;size_t&gt; sufficientStatistics</definition>
+        <argsstring></argsstring>
+        <name>sufficientStatistics</name>
+        <briefdescription>
+<para>After binning, this contains the sufficient statistics. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="142" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a9193134c37305448ee4dd854de7cd22e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HoeffdingNumericSplit</definition>
+        <argsstring>(const size_t numClasses, const HoeffdingNumericSplit &amp;other)</argsstring>
+        <name>HoeffdingNumericSplit</name>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit" kindref="compound">HoeffdingNumericSplit</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit" kindref="compound">HoeffdingNumericSplit</ref> class, using the parameters from the given other split object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="76" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a08a5e3111c85e88f71d9555700bfea0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HoeffdingNumericSplit</definition>
+        <argsstring>(const size_t numClasses=0, const size_t bins=10, const size_t observationsBeforeBinning=100)</argsstring>
+        <name>HoeffdingNumericSplit</name>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>bins</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>observationsBeforeBinning</declname>
+          <defval>100</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit" kindref="compound">HoeffdingNumericSplit</ref> class, and specify some basic parameters about how the binning should take place. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bins</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bins. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>observationsBeforeBinning</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of points to see before binning is performed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="68" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a1fad01f08637cd9cb2934b21ab703778" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Bins</definition>
+        <argsstring>() const</argsstring>
+        <name>Bins</name>
+        <briefdescription>
+<para>Return the number of bins. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="120" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1ab4f1b00c777ddabfddd98e45093b97ab" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void EvaluateFitnessFunction</definition>
+        <argsstring>(double &amp;bestFitness, double &amp;secondBestFitness) const</argsstring>
+        <name>EvaluateFitnessFunction</name>
+        <param>
+          <type>double &amp;</type>
+          <declname>bestFitness</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>secondBestFitness</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate the fitness function given what has been calculated so far. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In this case, if binning has not yet been performed, 0 will be returned (i.e., no gain). Because this split can only split one possible way, secondBestFitness (the fitness function for the second best possible split) will be set to 0.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bestFitness</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value of the fitness function for the best possible split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>secondBestFitness</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value of the fitness function for the second best possible split (always 0 for this split). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="102" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a2fbf818eb68075c92655a22904b7ee1a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MajorityClass</definition>
+        <argsstring>() const</argsstring>
+        <name>MajorityClass</name>
+        <briefdescription>
+<para>Return the majority class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="115" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a68e5f5a4d8c6194482a83440619be83b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double MajorityProbability</definition>
+        <argsstring>() const</argsstring>
+        <name>MajorityProbability</name>
+        <briefdescription>
+<para>Return the probability of the majority class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="117" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumChildren</definition>
+        <argsstring>() const</argsstring>
+        <name>NumChildren</name>
+        <briefdescription>
+<para>Return the number of children if this node splits on this feature. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="106" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" bodystart="106" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="124" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a3b018961e96b9d8bd09667b662502866" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Split</definition>
+        <argsstring>(arma::Col&lt; size_t &gt; &amp;childMajorities, SplitInfo &amp;splitInfo) const</argsstring>
+        <name>Split</name>
+        <param>
+          <type>arma::Col&lt; size_t &gt; &amp;</type>
+          <declname>childMajorities</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1ab96dc0dd71f3e2aca194f2c83abc65a4" kindref="member">SplitInfo</ref> &amp;</type>
+          <declname>splitInfo</declname>
+        </param>
+        <briefdescription>
+<para>Return the majority class of each child to be created, if a split on this dimension was performed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Also create the split object. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="112" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a4c204ab8547c9493c8c3cca15131e9c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(ObservationType value, const size_t label)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>ObservationType</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>label</declname>
+        </param>
+        <briefdescription>
+<para>Train the <ref refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit" kindref="compound">HoeffdingNumericSplit</ref> on the given observed value (remember that this object only cares about the information for a single feature, not an entire point). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value in the dimension that this <ref refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit" kindref="compound">HoeffdingNumericSplit</ref> refers to. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>label</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Label of the given point. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="88" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit" kindref="compound">HoeffdingNumericSplit</ref> class implements the numeric feature splitting strategy alluded to by Domingos and Hulten in the following paper: </para>
+    </briefdescription>
+    <detaileddescription>
+<para><programlisting><codeline><highlight class="normal">@inproceedings{domingos2000mining,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={{Mining<sp/>High-Speed<sp/>Data<sp/>Streams}},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Domingos,<sp/>P.<sp/>and<sp/>Hulten,<sp/>G.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2000},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle={Proceedings<sp/>of<sp/>the<sp/>Sixth<sp/>ACM<sp/>SIGKDD<sp/>International<sp/>Conference<sp/>on</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Knowledge<sp/>Discovery<sp/>and<sp/>Data<sp/>Mining<sp/>(KDD<sp/>&apos;00)},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages={71--80}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>The strategy alluded to is very simple: we discretize the numeric features that we see. But in this case, we don&apos;t know how many bins we have, which makes things a little difficult. This class only makes binary splits, and has a maximum number of bins. The binning strategy is simple: the split caches the minimum and maximum value of points seen so far, and when the number of points hits a predefined threshold, the cached minimum-maximum range is equally split into bins, and splitting proceeds in the same way as with the categorical splits. This is a simple and stupid strategy, so don&apos;t expect it to be the best possible thing you can do.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>FitnessFunction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Fitness function to use for calculating gain. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ObservationType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of observations in this dimension. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>HoeffdingNumericSplit&lt; FitnessFunction, ObservationType &gt;</label>
+        <link refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit"/>
+      </node>
+      <node id="2">
+        <label>HoeffdingNumericSplit&lt; GiniImpurity &gt;</label>
+        <link refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; GiniImpurity &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" line="53" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_numeric_split.hpp" bodystart="54" bodyend="143"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a1fad01f08637cd9cb2934b21ab703778" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>Bins</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a02ac8bd4858ce7c34501540832c5c239" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>bins</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1ab4f1b00c777ddabfddd98e45093b97ab" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>EvaluateFitnessFunction</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a08a5e3111c85e88f71d9555700bfea0e" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>HoeffdingNumericSplit</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a9193134c37305448ee4dd854de7cd22e" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>HoeffdingNumericSplit</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a8d93c7ea0cd86b267090c6e91b4d806c" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>labels</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a2fbf818eb68075c92655a22904b7ee1a" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>MajorityClass</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a68e5f5a4d8c6194482a83440619be83b" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>MajorityProbability</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>NumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a7d84f74f48994404caea8255b433735c" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>observations</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1af6acdd3f9b3d747980abcfecce62c7d6" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>observationsBeforeBinning</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a3a2a68951bf4194f2f647989e54debe6" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>samplesSeen</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a3b018961e96b9d8bd09667b662502866" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>Split</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1ab96dc0dd71f3e2aca194f2c83abc65a4" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>SplitInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a1b81ed7fedf3200128438d0083d92ef1" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>splitPoints</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a8ddf10a071149ba65edcb50a842a6320" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>sufficientStatistics</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingNumericSplit_1a4c204ab8547c9493c8c3cca15131e9c5" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingNumericSplit</scope><name>Train</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,713 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="prioritized__replay_8hpp" kind="file" language="C++">
+    <compoundname>prioritized_replay.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="sumtree_8hpp" local="yes">sumtree.hpp</includes>
+    <includedby refid="q__learning_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp</includedby>
+    <incdepgraph>
+      <node id="59">
+        <label>list</label>
+      </node>
+      <node id="56">
+        <label>atomic</label>
+      </node>
+      <node id="39">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="15">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="58">
+        <label>iomanip</label>
+      </node>
+      <node id="24">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>cstdint</label>
+      </node>
+      <node id="16">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="23">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="49">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="46">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="47">
+        <label>mlpack/core/util/log.hpp</label>
+        <link refid="log_8hpp"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="3">
+        <label>cmath</label>
+      </node>
+      <node id="22">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="11">
+        <label>stdexcept</label>
+      </node>
+      <node id="31">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>string</label>
+      </node>
+      <node id="43">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>map</label>
+      </node>
+      <node id="5">
+        <label>cfloat</label>
+      </node>
+      <node id="35">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="51">
+        <label>prefixedoutstream_impl.hpp</label>
+      </node>
+      <node id="63">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="19">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="42">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="52">
+        <label>nulloutstream.hpp</label>
+        <link refid="nulloutstream_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="41">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>cstdio</label>
+      </node>
+      <node id="65">
+        <label>sumtree.hpp</label>
+        <link refid="sumtree_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>tuple</label>
+      </node>
+      <node id="17">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="34">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>prefixedoutstream.hpp</label>
+        <link refid="prefixedoutstream_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>streambuf</label>
+      </node>
+      <node id="13">
+        <label>utility</label>
+      </node>
+      <node id="37">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="28">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="25">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="40">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>cstdlib</label>
+      </node>
+      <node id="4">
+        <label>cctype</label>
+      </node>
+      <node id="53">
+        <label>iostream</label>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/prioritized_replay.hpp</label>
+        <link refid="prioritized__replay_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>unordered_map</label>
+      </node>
+      <node id="6">
+        <label>climits</label>
+      </node>
+      <node id="61">
+        <label>mutex</label>
+      </node>
+      <node id="57">
+        <label>chrono</label>
+      </node>
+      <node id="64">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="62">
+        <label>thread</label>
+      </node>
+      <node id="44">
+        <label>type_traits</label>
+      </node>
+      <node id="20">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="14">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="38">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>cstring</label>
+      </node>
+      <node id="29">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="18">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp</label>
+        <link refid="q__learning_8hpp"/>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/prioritized_replay.hpp</label>
+        <link refid="prioritized__replay_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1rl_1_1PrioritizedReplay" prot="public">mlpack::rl::PrioritizedReplay</innerclass>
+    <innerclass refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition" prot="public">mlpack::rl::PrioritizedReplay::Transition</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1rl">mlpack::rl</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Xiaohong</para>
+</simplesect>
+This file is an implementation of prioritized experience replay.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_RL_PRIORITIZED_REPLAY_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_RL_PRIORITIZED_REPLAY_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sumtree_8hpp" kindref="compound">sumtree.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">rl<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>EnvironmentType&gt;</highlight></codeline>
+<codeline lineno="39" refid="classmlpack_1_1rl_1_1PrioritizedReplay" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay" kindref="compound">PrioritizedReplay</ref></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="43" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1aaf7b2dc5d49d01961601c7c16be76777" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1aaf7b2dc5d49d01961601c7c16be76777" kindref="member">ActionType</ref><sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>EnvironmentType::Action;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ada68ef405b7c331a2bee337614f00088" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref><sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>EnvironmentType::State;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition" kindref="compound">Transition</ref></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="50" refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition_1a4d1aa26dcfa648e02cbb0964cddbdbfe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref><sp/><ref refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition_1a4d1aa26dcfa648e02cbb0964cddbdbfe" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="51" refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition_1a99189868c044162e6d669fd832ecdc81" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1aaf7b2dc5d49d01961601c7c16be76777" kindref="member">ActionType</ref><sp/><ref refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition_1a99189868c044162e6d669fd832ecdc81" kindref="member">action</ref>;</highlight></codeline>
+<codeline lineno="52" refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition_1acee3a91cbbd4173eee61bff21bd94815" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition_1acee3a91cbbd4173eee61bff21bd94815" kindref="member">reward</ref>;</highlight></codeline>
+<codeline lineno="53" refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition_1a3a01625e5f3d13101025ef2ad44d35db" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref><sp/><ref refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition_1a3a01625e5f3d13101025ef2ad44d35db" kindref="member">nextState</ref>;</highlight></codeline>
+<codeline lineno="54" refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition_1a110a50eb2161ae511abfacc86dc4d888" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1rl_1_1PrioritizedReplay_1_1Transition_1a110a50eb2161ae511abfacc86dc4d888" kindref="member">isEnd</ref>;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a2d2ee6b689ad5f996c939be2f1f61ba0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a2d2ee6b689ad5f996c939be2f1f61ba0" kindref="member">PrioritizedReplay</ref>():</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>batchSize(0),</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>capacity(0),</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>position(0),</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>full(false),</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>alpha(0),</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxPriority(0),</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>initialBeta(0),</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>beta(0),</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>replayBetaIters(0),</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>nSteps(0)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do<sp/>here.<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a2754147b888db0a76084538e3426c4f9" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a2754147b888db0a76084538e3426c4f9" kindref="member">PrioritizedReplay</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>batchSize,</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>capacity,</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>alpha,</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>nSteps<sp/>=<sp/>1,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dimension<sp/>=<sp/>StateType::dimension)<sp/>:</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>batchSize(batchSize),</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>capacity(capacity),</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>position(0),</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>full(false),</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="det_8txt_1ae7ed598bdef2a989db6a7ae6e7c11288" kindref="member">alpha</ref>(<ref refid="det_8txt_1ae7ed598bdef2a989db6a7ae6e7c11288" kindref="member">alpha</ref>),</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxPriority(1.0),</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>initialBeta(0.6),</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>replayBetaIters(10000),</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>nSteps(nSteps),</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>states(dimension,<sp/>capacity),</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>actions(capacity),</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>rewards(capacity),</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>nextStates(dimension,<sp/>capacity),</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>isTerminal(capacity)</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(size<sp/>&lt;<sp/>capacity)</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>size<sp/>*=<sp/>2;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>beta<sp/>=<sp/>initialBeta;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>idxSum<sp/>=<sp/><ref refid="classmlpack_1_1rl_1_1SumTree" kindref="compound">SumTree&lt;double&gt;</ref>(size);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ab17ee90540cf7b26647b57acf16116d5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ab17ee90540cf7b26647b57acf16116d5" kindref="member">Store</ref>(<ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref><sp/>state,</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1aaf7b2dc5d49d01961601c7c16be76777" kindref="member">ActionType</ref><sp/>action,</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>reward,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref><sp/>nextState,</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isEnd,</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/>discount)</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>nStepBuffer.push_back({state,<sp/>action,<sp/>reward,<sp/>nextState,<sp/>isEnd});</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Single<sp/>step<sp/>transition<sp/>is<sp/>not<sp/>ready.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(nStepBuffer.size()<sp/>&lt;<sp/>nSteps)</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>To<sp/>keep<sp/>the<sp/>queue<sp/>size<sp/>fixed<sp/>to<sp/>nSteps.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(nStepBuffer.size()<sp/>&gt;<sp/>nSteps)</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>nStepBuffer.pop_front();</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Before<sp/>moving<sp/>ahead,<sp/>lets<sp/>confirm<sp/>if<sp/>our<sp/>fixed<sp/>size<sp/>buffer<sp/>works.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(nStepBuffer.size()<sp/>==<sp/>nSteps);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Make<sp/>a<sp/>n-step<sp/>transition.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1abf36129b66f5b30a65d96d11ebfde027" kindref="member">GetNStepInfo</ref>(reward,<sp/>nextState,<sp/>isEnd,<sp/>discount);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>state<sp/>=<sp/>nStepBuffer.front().state;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>action<sp/>=<sp/>nStepBuffer.front().action;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>states.col(position)<sp/>=<sp/>state.Encode();</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/>actions[position]<sp/>=<sp/>action;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/>rewards(position)<sp/>=<sp/>reward;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>nextStates.col(position)<sp/>=<sp/>nextState.Encode();</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>isTerminal(position)<sp/>=<sp/>isEnd;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>idxSum.<ref refid="classmlpack_1_1rl_1_1SumTree_1a60cd481b36347a9062b4e0c740c836ec" kindref="member">Set</ref>(position,<sp/>maxPriority<sp/>*<sp/>alpha);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>position++;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(position<sp/>==<sp/>capacity)</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>full<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>position<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1abf36129b66f5b30a65d96d11ebfde027" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1abf36129b66f5b30a65d96d11ebfde027" kindref="member">GetNStepInfo</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/>reward,</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref>&amp;<sp/>nextState,</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/>isEnd,</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/>discount)</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/>reward<sp/>=<sp/>nStepBuffer.back().reward;</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>nextState<sp/>=<sp/>nStepBuffer.back().nextState;</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/>isEnd<sp/>=<sp/>nStepBuffer.back().isEnd;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Should<sp/>start<sp/>from<sp/>the<sp/>second<sp/>last<sp/>transition<sp/>in<sp/>buffer.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>nStepBuffer.size()<sp/>-<sp/>2;<sp/>i<sp/>&gt;=<sp/>0;<sp/>i--)</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>iE<sp/>=<sp/>nStepBuffer[i].isEnd;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>reward<sp/>=<sp/>nStepBuffer[i].reward<sp/>+<sp/>discount<sp/>*<sp/>reward<sp/>*<sp/>(1<sp/>-<sp/>iE);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(iE)</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nextState<sp/>=<sp/>nStepBuffer[i].nextState;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>isEnd<sp/>=<sp/>iE;</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="198" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a1a45c1e17aad599a64fa6f941979ad10" refkind="member"><highlight class="normal"><sp/><sp/>arma::ucolvec<sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a1a45c1e17aad599a64fa6f941979ad10" kindref="member">SampleProportional</ref>()</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::ucolvec<sp/>idxes(batchSize);</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>totalSum<sp/>=<sp/>idxSum.<ref refid="classmlpack_1_1rl_1_1SumTree_1ae64a6b8188bfdeecb0f6cc3ff2391528" kindref="member">Sum</ref>(0,<sp/>(full<sp/>?<sp/>capacity<sp/>:<sp/>position));</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sumPerRange<sp/>=<sp/>totalSum<sp/>/<sp/>batchSize;</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>bt<sp/>=<sp/>0;<sp/>bt<sp/>&lt;<sp/>batchSize;<sp/>bt++)</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mass<sp/>=<sp/>arma::randu()<sp/>*<sp/>sumPerRange<sp/>+<sp/>bt<sp/>*<sp/>sumPerRange;</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>idxes(bt)<sp/>=<sp/>idxSum.<ref refid="classmlpack_1_1rl_1_1SumTree_1a3cc70bfa6c4dd50a0dd99da3a60ec761" kindref="member">FindPrefixSum</ref>(mass);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>idxes;</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a6ecc6da2d5f83f0eefdc74be3465925a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a6ecc6da2d5f83f0eefdc74be3465925a" kindref="member">Sample</ref>(arma::mat&amp;<sp/>sampledStates,</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;ActionType&gt;&amp;<sp/>sampledActions,</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::rowvec&amp;<sp/>sampledRewards,</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>sampledNextStates,</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::irowvec&amp;<sp/>isTerminal)</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/>sampledIndices<sp/>=<sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a1a45c1e17aad599a64fa6f941979ad10" kindref="member">SampleProportional</ref>();</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a26967aa9c873e7085b621d541d4120e0" kindref="member">BetaAnneal</ref>();</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/>sampledStates<sp/>=<sp/>states.cols(sampledIndices);</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>t<sp/>=<sp/>0;<sp/>t<sp/>&lt;<sp/>sampledIndices.n_rows;<sp/>t<sp/>++)</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>sampledActions.push_back(actions[sampledIndices[t]]);</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/>sampledRewards<sp/>=<sp/>rewards.elem(sampledIndices).t();</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/>sampledNextStates<sp/>=<sp/>nextStates.cols(sampledIndices);</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/>isTerminal<sp/>=<sp/>this-&gt;isTerminal.elem(sampledIndices).t();</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>the<sp/>weights<sp/>of<sp/>sampled<sp/>transitions.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numSample<sp/>=<sp/>full<sp/>?<sp/>capacity<sp/>:<sp/>position;</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/>weights<sp/>=<sp/>arma::rowvec(sampledIndices.n_rows);</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>sampledIndices.n_rows;<sp/>++i)</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>p_sample<sp/>=<sp/>idxSum.<ref refid="classmlpack_1_1rl_1_1SumTree_1a0f6adb7068497f76d7f01870c3fa32a0" kindref="member">Get</ref>(sampledIndices(i))<sp/>/<sp/>idxSum.<ref refid="classmlpack_1_1rl_1_1SumTree_1ae64a6b8188bfdeecb0f6cc3ff2391528" kindref="member">Sum</ref>();</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>weights(i)<sp/>=<sp/>pow(numSample<sp/>*<sp/>p_sample,<sp/>-beta);</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/>weights<sp/>/=<sp/>weights.max();</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a3b512739fae1601beafbb89d51c40a7d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a3b512739fae1601beafbb89d51c40a7d" kindref="member">UpdatePriorities</ref>(arma::ucolvec&amp;<sp/>indices,<sp/>arma::colvec&amp;<sp/>priorities)</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>arma::colvec<sp/>alphaPri<sp/>=<sp/>alpha<sp/>*<sp/>priorities;</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>maxPriority<sp/>=<sp/>std::max(maxPriority,<sp/>arma::max(priorities));</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>idxSum.<ref refid="classmlpack_1_1rl_1_1SumTree_1a326fbc401980f2b071d3a0f37d51be05" kindref="member">BatchUpdate</ref>(indices,<sp/>alphaPri);</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ab8983dc8f7847b4c77148b86d0e7fc8d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ab8983dc8f7847b4c77148b86d0e7fc8d" kindref="member">Size</ref>()</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>full<sp/>?<sp/>capacity<sp/>:<sp/>position;</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight></codeline>
+<codeline lineno="276" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a26967aa9c873e7085b621d541d4120e0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a26967aa9c873e7085b621d541d4120e0" kindref="member">BetaAnneal</ref>()</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/>beta<sp/>=<sp/>beta<sp/>+<sp/>(1<sp/>-<sp/>initialBeta)<sp/>*<sp/>1.0<sp/>/<sp/>replayBetaIters;</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a9f4cfe4f0266408c291e51db0606b8e0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a9f4cfe4f0266408c291e51db0606b8e0" kindref="member">Update</ref>(arma::mat<sp/>target,</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;ActionType&gt;<sp/>sampledActions,</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat<sp/>nextActionValues,</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>gradients)</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/>arma::colvec<sp/>tdError(target.n_cols);</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>target.n_cols;<sp/>i<sp/>++)</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>tdError(i)<sp/>=<sp/>nextActionValues(sampledActions[i].action,<sp/>i)<sp/>-</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>target(sampledActions[i].action,<sp/>i);</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/>tdError<sp/>=<sp/>arma::abs(tdError);</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a3b512739fae1601beafbb89d51c40a7d" kindref="member">UpdatePriorities</ref>(sampledIndices,<sp/>tdError);</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Update<sp/>the<sp/>gradient</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/>gradients<sp/>=<sp/>arma::mean(weights)<sp/>*<sp/>gradients;</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight></codeline>
+<codeline lineno="308" refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a48a86a6254329a98e1f15d4722c4e85b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a48a86a6254329a98e1f15d4722c4e85b" kindref="member">NSteps</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>nSteps;<sp/>}</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>batchSize;</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"></highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>capacity;</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"></highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>position;</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>full;</highlight></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>alpha;</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"></highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maxPriority;</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"></highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>initialBeta;</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>beta;</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"></highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>replayBetaIters;</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"></highlight></codeline>
+<codeline lineno="340"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1rl_1_1SumTree" kindref="compound">SumTree&lt;double&gt;</ref><sp/>idxSum;</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"></highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/>arma::ucolvec<sp/>sampledIndices;</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"></highlight></codeline>
+<codeline lineno="346"><highlight class="normal"><sp/><sp/>arma::rowvec<sp/>weights;</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"></highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>nSteps;</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="352"><highlight class="normal"><sp/><sp/>std::deque&lt;Transition&gt;<sp/>nStepBuffer;</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/>arma::mat<sp/>states;</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"></highlight></codeline>
+<codeline lineno="358"><highlight class="normal"><sp/><sp/>std::vector&lt;ActionType&gt;<sp/>actions;</highlight></codeline>
+<codeline lineno="359"><highlight class="normal"></highlight></codeline>
+<codeline lineno="361"><highlight class="normal"><sp/><sp/>arma::rowvec<sp/>rewards;</highlight></codeline>
+<codeline lineno="362"><highlight class="normal"></highlight></codeline>
+<codeline lineno="364"><highlight class="normal"><sp/><sp/>arma::mat<sp/>nextStates;</highlight></codeline>
+<codeline lineno="365"><highlight class="normal"></highlight></codeline>
+<codeline lineno="367"><highlight class="normal"><sp/><sp/>arma::irowvec<sp/>isTerminal;</highlight></codeline>
+<codeline lineno="368"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="369"><highlight class="normal"></highlight></codeline>
+<codeline lineno="370"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>rl</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="371"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="372"><highlight class="normal"></highlight></codeline>
+<codeline lineno="373"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/prioritized_replay.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_2d12642280fdb077ac311b8d583628a0" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/bayesian_linear_regression</compoundname>
+    <innerfile refid="bayesian__linear__regression_8hpp">bayesian_linear_regression.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/bayesian_linear_regression/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,710 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1HoeffdingTreeModel" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::HoeffdingTreeModel</compoundname>
+    <includes refid="hoeffding__tree__model_8hpp" local="no">hoeffding_tree_model.hpp</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad3b4bdb44cb5a8b5f50a9bc6b6580f42" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref>&lt; <ref refid="classmlpack_1_1tree_1_1GiniImpurity" kindref="compound">GiniImpurity</ref>, <ref refid="namespacemlpack_1_1tree_1aa1c709206789f8ef16cf826bf965498e" kindref="member">BinaryDoubleNumericSplit</ref>, <ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref> &gt;</type>
+        <definition>typedef HoeffdingTree&lt;GiniImpurity, BinaryDoubleNumericSplit, HoeffdingCategoricalSplit&gt; GiniBinaryTreeType</definition>
+        <argsstring></argsstring>
+        <name>GiniBinaryTreeType</name>
+        <briefdescription>
+<para>Convenience typedef for GINI_BINARY tree type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="44" column="2" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ab8f9aaf513769a8edba91d1beec7d2a1" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref>&lt; <ref refid="classmlpack_1_1tree_1_1GiniImpurity" kindref="compound">GiniImpurity</ref>, <ref refid="namespacemlpack_1_1tree_1adab87fde9829454616f519ea70291b62" kindref="member">HoeffdingDoubleNumericSplit</ref>, <ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref> &gt;</type>
+        <definition>typedef HoeffdingTree&lt;GiniImpurity, HoeffdingDoubleNumericSplit, HoeffdingCategoricalSplit&gt; GiniHoeffdingTreeType</definition>
+        <argsstring></argsstring>
+        <name>GiniHoeffdingTreeType</name>
+        <briefdescription>
+<para>Convenience typedef for GINI_HOEFFDING tree type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="41" column="2" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a173ecc6c2892e0b23b78f0a71edb10d1" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref>&lt; <ref refid="classmlpack_1_1tree_1_1HoeffdingInformationGain" kindref="compound">HoeffdingInformationGain</ref>, <ref refid="namespacemlpack_1_1tree_1aa1c709206789f8ef16cf826bf965498e" kindref="member">BinaryDoubleNumericSplit</ref>, <ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref> &gt;</type>
+        <definition>typedef HoeffdingTree&lt;HoeffdingInformationGain, BinaryDoubleNumericSplit, HoeffdingCategoricalSplit&gt; InfoBinaryTreeType</definition>
+        <argsstring></argsstring>
+        <name>InfoBinaryTreeType</name>
+        <briefdescription>
+<para>Convenience typedef for INFO_BINARY tree type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="50" column="2" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a3afd79bb5ecc026dd85ded8e9cc27503" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref>&lt; <ref refid="classmlpack_1_1tree_1_1HoeffdingInformationGain" kindref="compound">HoeffdingInformationGain</ref>, <ref refid="namespacemlpack_1_1tree_1adab87fde9829454616f519ea70291b62" kindref="member">HoeffdingDoubleNumericSplit</ref>, <ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref> &gt;</type>
+        <definition>typedef HoeffdingTree&lt;HoeffdingInformationGain, HoeffdingDoubleNumericSplit, HoeffdingCategoricalSplit&gt; InfoHoeffdingTreeType</definition>
+        <argsstring></argsstring>
+        <name>InfoHoeffdingTreeType</name>
+        <briefdescription>
+<para>Convenience typedef for INFO_HOEFFDING tree type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="47" column="2" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="enum" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91" prot="public" static="no" strong="no">
+        <type></type>
+        <name>TreeType</name>
+        <enumvalue id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91aaebbe41129ff1d2535b5c964b75bc657" prot="public">
+          <name>GINI_HOEFFDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91a524e864e4cd56a5ea98acaa0df5d318d" prot="public">
+          <name>GINI_BINARY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91ab95f780a9d428d76880775193f9d0f2d" prot="public">
+          <name>INFO_HOEFFDING</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91a667a98036d4afd2297eaa5fee8bb4358" prot="public">
+          <name>INFO_BINARY</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>This enumerates the four types of trees we can hold. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="31" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="32" bodyend="37"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a86767b91ff7450fc0ca13329151b35f3" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad3b4bdb44cb5a8b5f50a9bc6b6580f42" kindref="member">GiniBinaryTreeType</ref> *</type>
+        <definition>GiniBinaryTreeType* giniBinaryTree</definition>
+        <argsstring></argsstring>
+        <name>giniBinaryTree</name>
+        <briefdescription>
+<para>This is used if we are using the Gini impurity and the binary numeric split. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="209" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad4ce7d270a269b34024f6450b6d6d5c9" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ab8f9aaf513769a8edba91d1beec7d2a1" kindref="member">GiniHoeffdingTreeType</ref> *</type>
+        <definition>GiniHoeffdingTreeType* giniHoeffdingTree</definition>
+        <argsstring></argsstring>
+        <name>giniHoeffdingTree</name>
+        <briefdescription>
+<para>This is used if we are using the Gini impurity and the Hoeffding numeric split. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="205" column="25" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a39b994c71366095f3e4d3cce31f4fc2a" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a173ecc6c2892e0b23b78f0a71edb10d1" kindref="member">InfoBinaryTreeType</ref> *</type>
+        <definition>InfoBinaryTreeType* infoBinaryTree</definition>
+        <argsstring></argsstring>
+        <name>infoBinaryTree</name>
+        <briefdescription>
+<para>This is used if we are using the information gain and the binary numeric split. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="217" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1af3f2dce9393cc3361a6de8a694f96395" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a3afd79bb5ecc026dd85ded8e9cc27503" kindref="member">InfoHoeffdingTreeType</ref> *</type>
+        <definition>InfoHoeffdingTreeType* infoHoeffdingTree</definition>
+        <argsstring></argsstring>
+        <name>infoHoeffdingTree</name>
+        <briefdescription>
+<para>This is used if we are using the information gain and the Hoeffding numeric split. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="213" column="25" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a933763fc40bf45cf23597d0090ac89b1" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91" kindref="member">TreeType</ref></type>
+        <definition>TreeType type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+<para>The type of tree we are using. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="201" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a961c0476745562f700098f61fbf16299" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HoeffdingTreeModel</definition>
+        <argsstring>(const HoeffdingTreeModel &amp;other)</argsstring>
+        <name>HoeffdingTreeModel</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel" kindref="compound">HoeffdingTreeModel</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy the Hoeffding tree model from the given other model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hoeffding tree model to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="66" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a476333dcafeb08e3ede7a3a0505ed6d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HoeffdingTreeModel</definition>
+        <argsstring>(const TreeType &amp;type=GINI_HOEFFDING)</argsstring>
+        <name>HoeffdingTreeModel</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91" kindref="member">TreeType</ref> &amp;</type>
+          <declname>type</declname>
+          <defval><ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91aaebbe41129ff1d2535b5c964b75bc657" kindref="member">GINI_HOEFFDING</ref></defval>
+        </param>
+        <briefdescription>
+<para>Construct the Hoeffding tree model, but don&apos;t initialize any tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Be sure to call <ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad6b64552727317fd93b5b5c087fee439" kindref="member">Train()</ref> before doing anything with the model!</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of tree that will be used. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="59" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a1719668b2f0b4ece9f36f77eaad5029f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HoeffdingTreeModel</definition>
+        <argsstring>(HoeffdingTreeModel &amp;&amp;other)</argsstring>
+        <name>HoeffdingTreeModel</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel" kindref="compound">HoeffdingTreeModel</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move the Hoeffding tree model from the given other model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hoeffding tree model to move. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="73" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ac2dec599c0f31df6113eddb2cf1cd750" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~HoeffdingTreeModel</definition>
+        <argsstring>()</argsstring>
+        <name>~HoeffdingTreeModel</name>
+        <briefdescription>
+<para>Clean up the given model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="92" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a290721d98ef6f720897b46207248b8a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BuildModel</definition>
+        <argsstring>(const arma::mat &amp;dataset, const data::DatasetInfo &amp;datasetInfo, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const bool batchTraining, const double successProbability, const size_t maxSamples, const size_t checkInterval, const size_t minSamples, const size_t bins, const size_t observationsBeforeBinning)</argsstring>
+        <name>BuildModel</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>batchTraining</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>successProbability</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxSamples</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>checkInterval</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minSamples</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>bins</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>observationsBeforeBinning</declname>
+        </param>
+        <briefdescription>
+<para>Train the model on the given dataset with the given labels. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This method just passes to the appropriate HoeffdingTree&lt;...&gt; constructor, and will train with one pass over the dataset.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Information about dimensions of dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for training set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchTraining</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to train in batch. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>successProbability</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Probability of success required in Hoeffding bound before a split can happen. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxSamples</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of samples before a split is forced. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>checkInterval</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of samples required before each split check. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minSamples</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the node has seen this many points or fewer, no split will be allowed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bins</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bins, for Hoeffding numeric split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>observationsBeforeBinning</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of observations before binning, for Hoeffding numeric split. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="114" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a55240ba5fc5c909ee2e51c21a60a3462" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const arma::mat &amp;dataset, arma::Row&lt; size_t &gt; &amp;predictions) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <briefdescription>
+<para>Using the model, classify the given test points. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Be sure that <ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a290721d98ef6f720897b46207248b8a4" kindref="member">BuildModel()</ref> has been called first!</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to classify. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store predictions for test points in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="145" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a94d6a9985b89e0ec6fe802a43b62b468" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const arma::mat &amp;dataset, arma::Row&lt; size_t &gt; &amp;predictions, arma::rowvec &amp;probabilities) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <param>
+          <type>arma::rowvec &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Using the model, classify the given test points, returning class probabilities. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to classify. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store predictions for test points in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store probabilities for test points in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="156" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a5745ee58508df730d6557dc103ede353" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumNodes</definition>
+        <argsstring>() const</argsstring>
+        <name>NumNodes</name>
+        <briefdescription>
+<para>Get the number of nodes in the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="163" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1acda6fbc886f946152fb00e868613be15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel" kindref="compound">HoeffdingTreeModel</ref> &amp;</type>
+        <definition>HoeffdingTreeModel&amp; operator=</definition>
+        <argsstring>(const HoeffdingTreeModel &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel" kindref="compound">HoeffdingTreeModel</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy the Hoeffding tree model from the given other model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hoeffding tree model to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="80" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a057776ef665edf24ca98899f8b648bf3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel" kindref="compound">HoeffdingTreeModel</ref> &amp;</type>
+        <definition>HoeffdingTreeModel&amp; operator=</definition>
+        <argsstring>(HoeffdingTreeModel &amp;&amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel" kindref="compound">HoeffdingTreeModel</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move the Hoeffding tree model from the given other model. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hoeffding tree model to move. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="87" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="169" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="169" bodyend="197"/>
+        <references refid="pointer__wrapper_8hpp_1a58a300268ba9c6215a8ab2075a4dc675" compoundref="pointer__wrapper_8hpp" startline="96">CEREAL_POINTER</references>
+        <references refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91a524e864e4cd56a5ea98acaa0df5d318d" compoundref="hoeffding__tree__model_8hpp" startline="34">HoeffdingTreeModel::GINI_BINARY</references>
+        <references refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91aaebbe41129ff1d2535b5c964b75bc657" compoundref="hoeffding__tree__model_8hpp" startline="33">HoeffdingTreeModel::GINI_HOEFFDING</references>
+        <references refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91a667a98036d4afd2297eaa5fee8bb4358" compoundref="hoeffding__tree__model_8hpp" startline="36">HoeffdingTreeModel::INFO_BINARY</references>
+        <references refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91ab95f780a9d428d76880775193f9d0f2d" compoundref="hoeffding__tree__model_8hpp" startline="35">HoeffdingTreeModel::INFO_HOEFFDING</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad6b64552727317fd93b5b5c087fee439" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const arma::mat &amp;dataset, const arma::Row&lt; size_t &gt; &amp;labels, const bool batchTraining)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>batchTraining</declname>
+        </param>
+        <briefdescription>
+<para>Train in streaming mode on the given dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This takes one pass. Be sure that <ref refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a290721d98ef6f720897b46207248b8a4" kindref="member">BuildModel()</ref> has been called first!</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for training set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchTraining</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to train in batch. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="134" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class is a serializable Hoeffding tree model that can hold four different types of Hoeffding trees. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It is meant to be used by the command-line program for Hoeffding trees. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" line="27" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree_model.hpp" bodystart="28" bodyend="218"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a290721d98ef6f720897b46207248b8a4" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>BuildModel</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a55240ba5fc5c909ee2e51c21a60a3462" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a94d6a9985b89e0ec6fe802a43b62b468" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91a524e864e4cd56a5ea98acaa0df5d318d" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>GINI_BINARY</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91aaebbe41129ff1d2535b5c964b75bc657" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>GINI_HOEFFDING</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a86767b91ff7450fc0ca13329151b35f3" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>giniBinaryTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad3b4bdb44cb5a8b5f50a9bc6b6580f42" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>GiniBinaryTreeType</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad4ce7d270a269b34024f6450b6d6d5c9" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>giniHoeffdingTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ab8f9aaf513769a8edba91d1beec7d2a1" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>GiniHoeffdingTreeType</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a476333dcafeb08e3ede7a3a0505ed6d2" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>HoeffdingTreeModel</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a961c0476745562f700098f61fbf16299" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>HoeffdingTreeModel</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a1719668b2f0b4ece9f36f77eaad5029f" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>HoeffdingTreeModel</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91a667a98036d4afd2297eaa5fee8bb4358" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>INFO_BINARY</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91ab95f780a9d428d76880775193f9d0f2d" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>INFO_HOEFFDING</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a39b994c71366095f3e4d3cce31f4fc2a" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>infoBinaryTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a173ecc6c2892e0b23b78f0a71edb10d1" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>InfoBinaryTreeType</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1af3f2dce9393cc3361a6de8a694f96395" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>infoHoeffdingTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a3afd79bb5ecc026dd85ded8e9cc27503" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>InfoHoeffdingTreeType</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a5745ee58508df730d6557dc103ede353" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>NumNodes</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1acda6fbc886f946152fb00e868613be15" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a057776ef665edf24ca98899f8b648bf3" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad6b64552727317fd93b5b5c087fee439" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ad31da9b5f4979160b0e600cd47e42b91" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>TreeType</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1a933763fc40bf45cf23597d0090ac89b1" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>type</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTreeModel_1ac2dec599c0f31df6113eddb2cf1cd750" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTreeModel</scope><name>~HoeffdingTreeModel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

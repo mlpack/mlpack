@@ -1,0 +1,148 @@
+.TH "RandomInitialization" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RandomInitialization \- This class is used to initialize randomly the weight matrix\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRandomInitialization\fP (const double bound)"
+.br
+.RI "Initialize the random initialization rule with the given bound\&. "
+.ti -1c
+.RI "\fBRandomInitialization\fP (const double lowerBound=\-1, const double upperBound=1)"
+.br
+.RI "Initialize the random initialization rule with the given lower bound and upper bound\&. "
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Cube< eT > &W)"
+.br
+.RI "Initialize randomly the elements of the specified weight 3rd order tensor\&. "
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Cube< eT > &W, const size_t rows, const size_t cols, const size_t slices)"
+.br
+.RI "Initialize randomly the elements of the specified weight 3rd order tensor\&. "
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Mat< eT > &W)"
+.br
+.RI "Initialize randomly the elements of the specified weight matrix\&. "
+.ti -1c
+.RI "template<typename eT > void \fBInitialize\fP (arma::Mat< eT > &W, const size_t rows, const size_t cols)"
+.br
+.RI "Initialize randomly the elements of the specified weight matrix\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class is used to initialize randomly the weight matrix\&. 
+.PP
+Definition at line 24 of file random_init\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRandomInitialization\fP (const double lowerBound = \fC\-1\fP, const double upperBound = \fC1\fP)\fC [inline]\fP"
+
+.PP
+Initialize the random initialization rule with the given lower bound and upper bound\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIlowerBound\fP The number used as lower bound\&. 
+.br
+\fIupperBound\fP The number used as upper bound\&. 
+.RE
+.PP
+
+.PP
+Definition at line 34 of file random_init\&.hpp\&.
+.SS "\fBRandomInitialization\fP (const double bound)\fC [inline]\fP"
+
+.PP
+Initialize the random initialization rule with the given bound\&. Using the negative of the bound as lower bound and the positive bound as upper bound\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIbound\fP The number used as lower bound 
+.RE
+.PP
+
+.PP
+Definition at line 45 of file random_init\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Initialize (arma::Cube< eT > & W)\fC [inline]\fP"
+
+.PP
+Initialize randomly the elements of the specified weight 3rd order tensor\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.RE
+.PP
+
+.PP
+Definition at line 109 of file random_init\&.hpp\&.
+.PP
+References Log::Fatal, and RandomInitialization::Initialize()\&.
+.SS "void Initialize (arma::Cube< eT > & W, const size_t rows, const size_t cols, const size_t slices)\fC [inline]\fP"
+
+.PP
+Initialize randomly the elements of the specified weight 3rd order tensor\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.br
+\fIslices\fP Number of slices\&. 
+.RE
+.PP
+
+.PP
+Definition at line 91 of file random_init\&.hpp\&.
+.PP
+References RandomInitialization::Initialize()\&.
+.SS "void Initialize (arma::Mat< eT > & W)\fC [inline]\fP"
+
+.PP
+Initialize randomly the elements of the specified weight matrix\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.RE
+.PP
+
+.PP
+Definition at line 72 of file random_init\&.hpp\&.
+.PP
+References Log::Fatal\&.
+.SS "void Initialize (arma::Mat< eT > & W, const size_t rows, const size_t cols)\fC [inline]\fP"
+
+.PP
+Initialize randomly the elements of the specified weight matrix\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIW\fP Weight matrix to initialize\&. 
+.br
+\fIrows\fP Number of rows\&. 
+.br
+\fIcols\fP Number of columns\&. 
+.RE
+.PP
+
+.PP
+Definition at line 56 of file random_init\&.hpp\&.
+.PP
+Referenced by RandomInitialization::Initialize(), GlorotInitializationType< Uniform >::Initialize(), KathirvalavakumarSubavathiInitialization::Initialize(), NguyenWidrowInitialization::Initialize(), OivsInitialization< ActivationFunction >::Initialize(), and JacobianTest()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

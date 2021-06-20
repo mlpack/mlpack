@@ -1,0 +1,1013 @@
+.TH "mlpack::bindings::python" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::bindings::python
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBPyOption\fP"
+.br
+.RI "The Python option class\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > void \fBDefaultParam\fP (\fButil::ParamData\fP &data, const void *, void *output)"
+.br
+.RI "Return the default value of an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::string >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Return the default value of an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return the default value of a model option (this returns the default filename, or '' if the default is no file)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< std::is_same< T, std::string >>::type *=0)"
+.br
+.RI "Return the default value of a string option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type *=0)"
+.br
+.RI "Return the default value of a vector option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if_c< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or '' if the default is no file)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetArmaType\fP ()"
+.br
+.RI "This is used for arma::Mat<> types; it will return 'mat' for matrices, 'row' for row vectors, and 'col' for column vectors\&. "
+.ti -1c
+.RI "std::string \fBGetBindingName\fP (const std::string &bindingName)"
+.br
+.RI "Given the name of a binding, print its Python name\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetCythonType\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetCythonType\fP (\fButil::ParamData\fP &d, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetCythonType\fP (\fButil::ParamData\fP &d, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetCythonType\fP (\fButil::ParamData\fP &d, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetCythonType< bool >\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< bool >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< bool >>::type *, const typename boost::disable_if< arma::is_arma_type< bool >>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetCythonType< double >\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< double >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< double >>::type *, const typename boost::disable_if< arma::is_arma_type< double >>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetCythonType< int >\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< int >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< int >>::type *, const typename boost::disable_if< arma::is_arma_type< int >>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetCythonType< size_t >\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< size_t >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< size_t >>::type *, const typename boost::disable_if< arma::is_arma_type< size_t >>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetCythonType< std::string >\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< std::string >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< std::string >>::type *, const typename boost::disable_if< arma::is_arma_type< std::string >>::type *)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetNumpyType\fP ()"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetNumpyType< double >\fP ()"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetNumpyType< size_t >\fP ()"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetNumpyTypeChar\fP ()"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetNumpyTypeChar< arma::Col< size_t > >\fP ()"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetNumpyTypeChar< arma::mat >\fP ()"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetNumpyTypeChar< arma::Mat< size_t > >\fP ()"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetNumpyTypeChar< arma::Row< size_t > >\fP ()"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetNumpyTypeChar< arma::rowvec >\fP ()"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetNumpyTypeChar< arma::vec >\fP ()"
+.br
+.ti -1c
+.RI "template<typename T > void \fBGetParam\fP (\fButil::ParamData\fP &d, const void *, void *output)"
+.br
+.RI "All Python binding types are exactly what is held in the ParamData, so no special handling is necessary\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Print an option of a simple type\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Print a serializable class option (this prints the class name)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "Print a matrix option (this prints its size)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Print a combination DatasetInfo/matrix parameter\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type *=0)"
+.br
+.RI "Print a vector option, with spaces between it\&. "
+.ti -1c
+.RI "template<typename T > void \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const void *, void *output)"
+.br
+.RI "Print an option into a std::string\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &d, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &d, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > void \fBGetPrintableType\fP (\fButil::ParamData\fP &d, const void *, void *output)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetPrintableType< bool >\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< bool >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< bool >>::type *, const typename boost::disable_if< arma::is_arma_type< bool >>::type *, const typename boost::disable_if< std::is_same< bool, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetPrintableType< double >\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< double >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< double >>::type *, const typename boost::disable_if< arma::is_arma_type< double >>::type *, const typename boost::disable_if< std::is_same< double, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetPrintableType< int >\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< int >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< int >>::type *, const typename boost::disable_if< arma::is_arma_type< int >>::type *, const typename boost::disable_if< std::is_same< int, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetPrintableType< size_t >\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< size_t >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< size_t >>::type *, const typename boost::disable_if< arma::is_arma_type< size_t >>::type *, const typename boost::disable_if< std::is_same< size_t, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetPrintableType< std::string >\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< std::string >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< std::string >>::type *, const typename boost::disable_if< arma::is_arma_type< std::string >>::type *, const typename boost::disable_if< std::is_same< std::string, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *)"
+.br
+.ti -1c
+.RI "bool \fBIgnoreCheck\fP (const std::string &paramName)"
+.br
+.RI "Print whether or not we should ignore a check on the given parameter\&. "
+.ti -1c
+.RI "bool \fBIgnoreCheck\fP (const std::vector< std::pair< std::string, bool >> &constraints, const std::string &paramName)"
+.br
+.RI "Print whether or not we should ignore a check on the given set of constraints\&. "
+.ti -1c
+.RI "bool \fBIgnoreCheck\fP (const std::vector< std::string > &constraints)"
+.br
+.RI "Print whether or not we should ignore a check on the given set of constraints\&. "
+.ti -1c
+.RI "template<typename T > void \fBImportDecl\fP (\fButil::ParamData\fP &, const size_t, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "For a non-serializable type, print nothing\&. "
+.ti -1c
+.RI "template<typename T > void \fBImportDecl\fP (\fButil::ParamData\fP &, const size_t, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "For a matrix type, print nothing\&. "
+.ti -1c
+.RI "template<typename T > void \fBImportDecl\fP (\fButil::ParamData\fP &d, const size_t indent, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "For a serializable type, print a cppclass definition\&. "
+.ti -1c
+.RI "template<typename T > void \fBImportDecl\fP (\fButil::ParamData\fP &d, const void *indent, void *)"
+.br
+.RI "Print the cppclass definition for a serializable model; print nothing for a non-serializable type\&. "
+.ti -1c
+.RI "std::string \fBParamString\fP (const std::string &paramName)"
+.br
+.RI "Given the parameter name, determine what it would actually be when passed to the command line\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintClassDefn\fP (\fButil::ParamData\fP &, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Non-serializable models don't require any special definitions, so this prints nothing\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintClassDefn\fP (\fButil::ParamData\fP &, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "Matrices don't require any special definitions, so this prints nothing\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintClassDefn\fP (\fButil::ParamData\fP &d, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Serializable models require a special class definition\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintClassDefn\fP (\fButil::ParamData\fP &d, const void *, void *)"
+.br
+.RI "Print the class definition to stdout\&. "
+.ti -1c
+.RI "std::string \fBPrintDataset\fP (const std::string &datasetName)"
+.br
+.RI "Given the name of a matrix, print it\&. "
+.ti -1c
+.RI "std::string \fBPrintDefault\fP (const std::string &paramName)"
+.br
+.RI "Given a parameter name, print its corresponding default value\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintDefn\fP (\fButil::ParamData\fP &d, const void *, void *)"
+.br
+.RI "Print the definition for a Python binding parameter to stdout\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintDoc\fP (\fButil::ParamData\fP &d, const void *input, void *)"
+.br
+.RI "Print the docstring documentation for a given parameter\&. "
+.ti -1c
+.RI "std::string \fBPrintImport\fP (const std::string &bindingName)"
+.br
+.RI "Print any import information for the Python binding\&. "
+.ti -1c
+.RI "std::string \fBPrintInputOptionInfo\fP ()"
+.br
+.RI "Print any special information about input options\&. "
+.ti -1c
+.RI "std::string \fBPrintInputOptions\fP ()"
+.br
+.ti -1c
+.RI "template<typename T , typename\&.\&.\&. Args> std::string \fBPrintInputOptions\fP (const std::string &paramName, const T &value, Args\&.\&.\&. args)"
+.br
+.RI "Print an input option\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputProcessing\fP (\fButil::ParamData\fP &d, const size_t indent, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type *=0)"
+.br
+.RI "Print input processing for a vector type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputProcessing\fP (\fButil::ParamData\fP &d, const size_t indent, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Print input processing for a standard option type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputProcessing\fP (\fButil::ParamData\fP &d, const size_t indent, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Print input processing for a serializable type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputProcessing\fP (\fButil::ParamData\fP &d, const size_t indent, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "Print input processing for a matrix type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputProcessing\fP (\fButil::ParamData\fP &d, const size_t indent, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Print input processing for a matrix/DatasetInfo type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputProcessing\fP (\fButil::ParamData\fP &d, const void *input, void *)"
+.br
+.RI "Given parameter information and the current number of spaces for indentation, print the code to process the input to cout\&. "
+.ti -1c
+.RI "std::string \fBPrintModel\fP (const std::string &modelName)"
+.br
+.RI "Given the name of a model, print it\&. "
+.ti -1c
+.RI "std::string \fBPrintOutputOptionInfo\fP ()"
+.br
+.RI "Print any special information about output options\&. "
+.ti -1c
+.RI "std::string \fBPrintOutputOptions\fP ()"
+.br
+.ti -1c
+.RI "template<typename T , typename\&.\&.\&. Args> std::string \fBPrintOutputOptions\fP (const std::string &paramName, const T &value, Args\&.\&.\&. args)"
+.br
+.ti -1c
+.RI "template<typename T > void \fBPrintOutputProcessing\fP (\fButil::ParamData\fP &d, const size_t indent, const bool onlyOutput, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Print output processing for a regular parameter type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintOutputProcessing\fP (\fButil::ParamData\fP &d, const size_t indent, const bool onlyOutput, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Print output processing for a serializable model\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintOutputProcessing\fP (\fButil::ParamData\fP &d, const size_t indent, const bool onlyOutput, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "Print output processing for a matrix type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintOutputProcessing\fP (\fButil::ParamData\fP &d, const size_t indent, const bool onlyOutput, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Print output processing for a dataset info / matrix combination\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintOutputProcessing\fP (\fButil::ParamData\fP &d, const void *input, void *)"
+.br
+.RI "Given parameter information and the current number of spaces for indentation, print the code to process the output to cout\&. "
+.ti -1c
+.RI "void \fBPrintPYX\fP (const \fButil::BindingDetails\fP &doc, const std::string &mainFilename, const std::string &functionName)"
+.br
+.RI "Given a list of parameter definition and program documentation, print a generated \&.pyx file to stdout\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Return a string representing the command-line type of an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a model\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename std::enable_if< arma::is_arma_type< T >::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a matrix option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a matrix tuple option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a vector\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const void *, void *output)"
+.br
+.RI "Print the command-line type of an option into a string\&. "
+.ti -1c
+.RI "template<> std::string \fBPrintValue\fP (const bool &value, bool quotes)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBPrintValue\fP (const T &value, bool quotes)"
+.br
+.RI "Given a parameter type, print the corresponding value\&. "
+.ti -1c
+.RI "std::string \fBProgramCall\fP (const std::string &\fBprogramName\fP)"
+.br
+.RI "Given the name of a binding, print a program call assuming that all options are specified\&. "
+.ti -1c
+.RI "template<typename\&.\&.\&. Args> std::string \fBProgramCall\fP (const std::string &\fBprogramName\fP, Args\&.\&.\&. args)"
+.br
+.RI "Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call\&. "
+.ti -1c
+.RI "template<typename T > void \fBSerializeIn\fP (T *t, const std::string &str, const std::string &name)"
+.br
+.ti -1c
+.RI "template<typename T > void \fBSerializeInJSON\fP (T *t, const std::string &str, const std::string &name)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBSerializeOut\fP (T *t, const std::string &name)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBSerializeOutJSON\fP (T *t, const std::string &name)"
+.br
+.ti -1c
+.RI "void \fBStripType\fP (const std::string &inputType, std::string &strippedType, std::string &printedType, std::string &defaultsType)"
+.br
+.RI "Given an input type like, e\&.g\&., 'LogisticRegression<>', return three types that can be used in Python code\&. "
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "std::string \fBprogramName\fP"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void mlpack::bindings::python::DefaultParam (\fButil::ParamData\fP & data, const void *, void * output)"
+
+.PP
+Return the default value of an option\&. This is the function that will be placed into the \fBIO\fP functionMap\&. 
+.PP
+Definition at line 80 of file default_param\&.hpp\&.
+.SS "std::string mlpack::bindings::python::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::string >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Return the default value of an option\&. This is for regular types\&. 
+.SS "std::string mlpack::bindings::python::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return the default value of a model option (this returns the default filename, or '' if the default is no file)\&. 
+.SS "std::string mlpack::bindings::python::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if< std::is_same< T, std::string >>::type * = \fC0\fP)"
+
+.PP
+Return the default value of a string option\&. 
+.SS "std::string mlpack::bindings::python::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return the default value of a vector option\&. 
+.SS "std::string mlpack::bindings::python::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if_c< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or '' if the default is no file)\&. 
+.SS "std::string mlpack::bindings::python::GetArmaType ()\fC [inline]\fP"
+
+.PP
+This is used for arma::Mat<> types; it will return 'mat' for matrices, 'row' for row vectors, and 'col' for column vectors\&. 
+.PP
+Definition at line 28 of file get_arma_type\&.hpp\&.
+.SS "std::string mlpack::bindings::python::GetBindingName (const std::string & bindingName)\fC [inline]\fP"
+
+.PP
+Given the name of a binding, print its Python name\&. 
+.SS "std::string mlpack::bindings::python::GetCythonType (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 24 of file get_cython_type\&.hpp\&.
+.SS "std::string mlpack::bindings::python::GetCythonType (\fButil::ParamData\fP & d, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 106 of file get_cython_type\&.hpp\&.
+.PP
+References ParamData::cppType\&.
+.SS "std::string mlpack::bindings::python::GetCythonType (\fButil::ParamData\fP & d, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 92 of file get_cython_type\&.hpp\&.
+.SS "std::string mlpack::bindings::python::GetCythonType (\fButil::ParamData\fP & d, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 84 of file get_cython_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetCythonType\fP< bool > (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< bool >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< bool >>::type *, const typename boost::disable_if< arma::is_arma_type< bool >>::type *)\fC [inline]\fP"
+
+.PP
+Definition at line 74 of file get_cython_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetCythonType\fP< double > (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< double >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< double >>::type *, const typename boost::disable_if< arma::is_arma_type< double >>::type *)\fC [inline]\fP"
+
+.PP
+Definition at line 44 of file get_cython_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetCythonType\fP< int > (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< int >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< int >>::type *, const typename boost::disable_if< arma::is_arma_type< int >>::type *)\fC [inline]\fP"
+
+.PP
+Definition at line 34 of file get_cython_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetCythonType\fP< size_t > (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< size_t >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< size_t >>::type *, const typename boost::disable_if< arma::is_arma_type< size_t >>::type *)\fC [inline]\fP"
+
+.PP
+Definition at line 64 of file get_cython_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetCythonType\fP< std::string > (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< std::string >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< std::string >>::type *, const typename boost::disable_if< arma::is_arma_type< std::string >>::type *)\fC [inline]\fP"
+
+.PP
+Definition at line 54 of file get_cython_type\&.hpp\&.
+.SS "std::string mlpack::bindings::python::GetNumpyType ()\fC [inline]\fP"
+
+.PP
+Definition at line 22 of file get_numpy_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetNumpyType\fP< double > ()\fC [inline]\fP"
+
+.PP
+Definition at line 28 of file get_numpy_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetNumpyType\fP< size_t > ()\fC [inline]\fP"
+
+.PP
+Definition at line 34 of file get_numpy_type\&.hpp\&.
+.SS "std::string mlpack::bindings::python::GetNumpyTypeChar ()\fC [inline]\fP"
+
+.PP
+Definition at line 23 of file get_numpy_type_char\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetNumpyTypeChar\fP< arma::Col< size_t > > ()\fC [inline]\fP"
+
+.PP
+Definition at line 36 of file get_numpy_type_char\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetNumpyTypeChar\fP< arma::mat > ()\fC [inline]\fP"
+
+.PP
+Definition at line 49 of file get_numpy_type_char\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetNumpyTypeChar\fP< arma::Mat< size_t > > ()\fC [inline]\fP"
+
+.PP
+Definition at line 30 of file get_numpy_type_char\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetNumpyTypeChar\fP< arma::Row< size_t > > ()\fC [inline]\fP"
+
+.PP
+Definition at line 42 of file get_numpy_type_char\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetNumpyTypeChar\fP< arma::rowvec > ()\fC [inline]\fP"
+
+.PP
+Definition at line 61 of file get_numpy_type_char\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetNumpyTypeChar\fP< arma::vec > ()\fC [inline]\fP"
+
+.PP
+Definition at line 55 of file get_numpy_type_char\&.hpp\&.
+.SS "void mlpack::bindings::python::GetParam (\fButil::ParamData\fP & d, const void *, void * output)"
+
+.PP
+All Python binding types are exactly what is held in the ParamData, so no special handling is necessary\&. 
+.PP
+Definition at line 26 of file get_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "std::string mlpack::bindings::python::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Print an option of a simple type\&. 
+.PP
+Definition at line 26 of file get_printable_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "std::string mlpack::bindings::python::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Print a serializable class option (this prints the class name)\&. 
+.PP
+Definition at line 75 of file get_printable_param\&.hpp\&.
+.PP
+References ParamData::cppType, and ParamData::value\&.
+.SS "std::string mlpack::bindings::python::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Print a matrix option (this prints its size)\&. 
+.PP
+Definition at line 59 of file get_printable_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "std::string mlpack::bindings::python::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Print a combination DatasetInfo/matrix parameter\&. 
+.PP
+Definition at line 89 of file get_printable_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "std::string mlpack::bindings::python::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Print a vector option, with spaces between it\&. 
+.PP
+Definition at line 43 of file get_printable_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "void mlpack::bindings::python::GetPrintableParam (\fButil::ParamData\fP & data, const void *, void * output)"
+
+.PP
+Print an option into a std::string\&. This should print a short, one-line representation of the object\&. The string will be stored in the output pointer\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Parameter data struct\&. 
+.br
+\fI*\fP (input) Unused parameter\&. 
+.br
+\fIoutput\fP Output storage for the string\&. 
+.RE
+.PP
+
+.PP
+Definition at line 114 of file get_printable_param\&.hpp\&.
+.SS "std::string mlpack::bindings::python::GetPrintableType (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)\fC [inline]\fP"
+
+.SS "std::string mlpack::bindings::python::GetPrintableType (\fButil::ParamData\fP &, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)\fC [inline]\fP"
+
+.SS "std::string mlpack::bindings::python::GetPrintableType (\fButil::ParamData\fP &, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)\fC [inline]\fP"
+
+.SS "std::string mlpack::bindings::python::GetPrintableType (\fButil::ParamData\fP & d, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)\fC [inline]\fP"
+
+.SS "std::string mlpack::bindings::python::GetPrintableType (\fButil::ParamData\fP & d, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)\fC [inline]\fP"
+
+.SS "void mlpack::bindings::python::GetPrintableType (\fButil::ParamData\fP & d, const void *, void * output)"
+
+.PP
+Definition at line 106 of file get_printable_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::python::GetPrintableType\fP< bool > (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< bool >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< bool >>::type *, const typename boost::disable_if< arma::is_arma_type< bool >>::type *, const typename boost::disable_if< std::is_same< bool, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *)\fC [inline]\fP"
+
+.SS "std::string \fBmlpack::bindings::python::GetPrintableType\fP< double > (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< double >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< double >>::type *, const typename boost::disable_if< arma::is_arma_type< double >>::type *, const typename boost::disable_if< std::is_same< double, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *)\fC [inline]\fP"
+
+.SS "std::string \fBmlpack::bindings::python::GetPrintableType\fP< int > (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< int >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< int >>::type *, const typename boost::disable_if< arma::is_arma_type< int >>::type *, const typename boost::disable_if< std::is_same< int, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *)\fC [inline]\fP"
+
+.SS "std::string \fBmlpack::bindings::python::GetPrintableType\fP< size_t > (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< size_t >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< size_t >>::type *, const typename boost::disable_if< arma::is_arma_type< size_t >>::type *, const typename boost::disable_if< std::is_same< size_t, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *)\fC [inline]\fP"
+
+.SS "std::string \fBmlpack::bindings::python::GetPrintableType\fP< std::string > (\fButil::ParamData\fP &, const typename boost::disable_if< \fButil::IsStdVector\fP< std::string >>::type *, const typename boost::disable_if< \fBdata::HasSerialize\fP< std::string >>::type *, const typename boost::disable_if< arma::is_arma_type< std::string >>::type *, const typename boost::disable_if< std::is_same< std::string, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *)\fC [inline]\fP"
+
+.SS "bool mlpack::bindings::python::IgnoreCheck (const std::string & paramName)\fC [inline]\fP"
+
+.PP
+Print whether or not we should ignore a check on the given parameter\&. For Python bindings, we ignore any checks on output parameters, so if paramName is an output parameter, this returns true\&. 
+.SS "bool mlpack::bindings::python::IgnoreCheck (const std::vector< std::pair< std::string, bool >> & constraints, const std::string & paramName)\fC [inline]\fP"
+
+.PP
+Print whether or not we should ignore a check on the given set of constraints\&. For Python bindings, we ignore any checks on output parameters, so if any constraint parameter or the main parameter are output parameters, this returns true\&. 
+.SS "bool mlpack::bindings::python::IgnoreCheck (const std::vector< std::string > & constraints)\fC [inline]\fP"
+
+.PP
+Print whether or not we should ignore a check on the given set of constraints\&. For Python bindings, we ignore any checks on output parameters, so if any parameter is an output parameter, this returns true\&. 
+.SS "void mlpack::bindings::python::ImportDecl (\fButil::ParamData\fP &, const size_t, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+For a non-serializable type, print nothing\&. 
+.PP
+Definition at line 53 of file import_decl\&.hpp\&.
+.SS "void mlpack::bindings::python::ImportDecl (\fButil::ParamData\fP &, const size_t, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+For a matrix type, print nothing\&. 
+.PP
+Definition at line 66 of file import_decl\&.hpp\&.
+.SS "void mlpack::bindings::python::ImportDecl (\fButil::ParamData\fP & d, const size_t indent, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+For a serializable type, print a cppclass definition\&. This will give output of the form:
+.PP
+cdef cppclass Type: Type() nogil
+.PP
+Definition at line 26 of file import_decl\&.hpp\&.
+.PP
+References ParamData::cppType, and StripType()\&.
+.SS "void mlpack::bindings::python::ImportDecl (\fButil::ParamData\fP & d, const void * indent, void *)"
+
+.PP
+Print the cppclass definition for a serializable model; print nothing for a non-serializable type\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Parameter info struct\&. 
+.br
+\fIindent\fP Pointer to size_t indicating indent\&. 
+.br
+\fI*\fP (output) Unused parameter\&. 
+.RE
+.PP
+
+.PP
+Definition at line 83 of file import_decl\&.hpp\&.
+.SS "std::string mlpack::bindings::python::ParamString (const std::string & paramName)\fC [inline]\fP"
+
+.PP
+Given the parameter name, determine what it would actually be when passed to the command line\&. 
+.SS "void mlpack::bindings::python::PrintClassDefn (\fButil::ParamData\fP &, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Non-serializable models don't require any special definitions, so this prints nothing\&. 
+.PP
+Definition at line 26 of file print_class_defn\&.hpp\&.
+.SS "void mlpack::bindings::python::PrintClassDefn (\fButil::ParamData\fP &, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Matrices don't require any special definitions, so this prints nothing\&. 
+.PP
+Definition at line 38 of file print_class_defn\&.hpp\&.
+.SS "void mlpack::bindings::python::PrintClassDefn (\fButil::ParamData\fP & d, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Serializable models require a special class definition\&. This will produce code like:
+.PP
+.PP
+.nf
+cdef class <ModelType>Type:
+  cdef <ModelType>* modelptr
+  cdef public dict scrubbed_params
+
+  def __cinit__(self):
+    self\&.modelptr = new <ModelType>()
+    self\&.scrubbed_params = dict()
+
+  def __dealloc__(self):
+    del self\&.modelptr
+
+  def __getstate__(self):
+    return SerializeOut(self\&.modelptr, "<ModelType>")
+
+  def __setstate__(self, state):
+    SerializeIn(self\&.modelptr, state, "<ModelType>")
+
+  def __reduce_ex__(self):
+    return (self\&.__class__, (), self\&.__getstate__())
+
+  def _get_cpp_params(self):
+    return SerializeOutJSON(self\&.modelptr, "<ModelType>")
+
+  def _set_cpp_params(self, state):
+    SerializeInJSON(self\&.modelptr, state, "<ModelType>")
+
+  def get_cpp_params(self, return_str=False):
+    params = self\&._get_cpp_params()
+    return process_params_out(self, params, return_str=return_str)
+
+  def set_cpp_params(self, params_dic):
+    params_str = process_params_in(self, params_dic)
+    self\&._set_cpp_params(params_str)
+.fi
+.PP
+
+.PP
+Definition at line 49 of file print_class_defn\&.hpp\&.
+.PP
+References ParamData::cppType, and StripType()\&.
+.SS "void mlpack::bindings::python::PrintClassDefn (\fButil::ParamData\fP & d, const void *, void *)"
+
+.PP
+Print the class definition to stdout\&. Only serializable models require a different class definition, so anything else does nothing\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Parameter data\&. 
+.br
+\fI*\fP (input) Unused parameter\&. 
+.br
+\fI*\fP (output) Unused parameter\&. 
+.RE
+.PP
+
+.PP
+Definition at line 149 of file print_class_defn\&.hpp\&.
+.SS "std::string mlpack::bindings::python::PrintDataset (const std::string & datasetName)\fC [inline]\fP"
+
+.PP
+Given the name of a matrix, print it\&. Here we do not need to modify anything\&. 
+.SS "std::string mlpack::bindings::python::PrintDefault (const std::string & paramName)\fC [inline]\fP"
+
+.PP
+Given a parameter name, print its corresponding default value\&. 
+.SS "void mlpack::bindings::python::PrintDefn (\fButil::ParamData\fP & d, const void *, void *)"
+
+.PP
+Print the definition for a Python binding parameter to stdout\&. This is the definition in the function declaration\&. 
+.PP
+Definition at line 26 of file print_defn\&.hpp\&.
+.PP
+References if(), ParamData::name, and ParamData::required\&.
+.SS "void mlpack::bindings::python::PrintDoc (\fButil::ParamData\fP & d, const void * input, void *)"
+
+.PP
+Print the docstring documentation for a given parameter\&. You are responsible for setting up the line---this does not handle indentation or anything\&. This is meant to produce a line of documentation describing a single parameter\&.
+.PP
+The indent parameter (void* input, which should be a pointer to a size_t) should be passed to know how much to indent for a new line\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Parameter data struct\&. 
+.br
+\fIinput\fP Pointer to size_t containing indent\&. 
+.br
+\fI*\fP (output) Unused parameter\&. 
+.RE
+.PP
+
+.PP
+Definition at line 36 of file print_doc\&.hpp\&.
+.PP
+References ParamData::cppType, ParamData::desc, mlpack::util::HyphenateString(), if(), ParamData::name, and ParamData::required\&.
+.SS "std::string mlpack::bindings::python::PrintImport (const std::string & bindingName)\fC [inline]\fP"
+
+.PP
+Print any import information for the Python binding\&. 
+.SS "std::string mlpack::bindings::python::PrintInputOptionInfo ()\fC [inline]\fP"
+
+.PP
+Print any special information about input options\&. 
+.SS "std::string mlpack::bindings::python::PrintInputOptions ()\fC [inline]\fP"
+
+.SS "std::string mlpack::bindings::python::PrintInputOptions (const std::string & paramName, const T & value, Args\&.\&.\&. args)"
+
+.PP
+Print an input option\&. This will throw an exception if the parameter does not exist in \fBIO\fP\&. For a parameter 'x' with value '5', this will print something like x=5\&. 
+.SS "void mlpack::bindings::python::PrintInputProcessing (\fButil::ParamData\fP & d, const size_t indent, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Print input processing for a vector type\&. This gives us code like: if param_name is not None: if isinstance(param_name, list): if len(param_name) > 0: if isinstance(param_name[0], str): SetParam[vector[string]](<const string> 'param_name', param_name) \fBIO\&.SetPassed\fP(<const string> 'param_name') else: raise TypeError(''param_name' must have type 'list of strs'!') else: raise TypeError(''param_name' must have type 'list'!')
+.PP
+Definition at line 164 of file print_input_processing\&.hpp\&.
+.PP
+References ParamData::name, and ParamData::required\&.
+.SS "void mlpack::bindings::python::PrintInputProcessing (\fButil::ParamData\fP & d, const size_t indent, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Print input processing for a standard option type\&. This gives us code like:
+.SH "Detect if the parameter was passed; set if so\&."
+.PP
+if param_name is not None: if isinstance(param_name, int): SetParam[int](<const string> 'param_name', param_name) \fBIO\&.SetPassed\fP(<const string> 'param_name') else: raise TypeError(''param_name' must have type 'list'!')
+.PP
+Definition at line 31 of file print_input_processing\&.hpp\&.
+.PP
+References if(), ParamData::name, and ParamData::required\&.
+.SS "void mlpack::bindings::python::PrintInputProcessing (\fButil::ParamData\fP & d, const size_t indent, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Print input processing for a serializable type\&. This gives us code like:
+.SH "Detect if the parameter was passed; set if so\&."
+.PP
+if param_name is not None: try: SetParamPtr[Model]('param_name', (<ModelType?> param_name)\&.modelptr, \fBIO\&.HasParam\fP('copy_all_inputs')) except TypeError as e: if type(param_name)\&.__name__ == 'ModelType': SetParamPtr[Model]('param_name', (<ModelType> param_name)\&.modelptr, \fBIO\&.HasParam\fP('copy_all_inputs')) else: raise e \fBIO\&.SetPassed\fP(<const string> 'param_name')
+.PP
+Definition at line 372 of file print_input_processing\&.hpp\&.
+.PP
+References ParamData::cppType, ParamData::name, ParamData::required, and StripType()\&.
+.SS "void mlpack::bindings::python::PrintInputProcessing (\fButil::ParamData\fP & d, const size_t indent, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Print input processing for a matrix type\&. This gives us code like:
+.SH "Detect if the parameter was passed; set if so\&."
+.PP
+if param_name is not None: param_name_tuple = to_matrix(param_name) if param_name_tuple[0]\&.shape[0] == 1 or param_name_tuple[0]\&.shape[1] == 1: param_name_tuple[0]\&.shape = (param_name_tuple[0]\&.size,) param_name_mat = arma_numpy\&.numpy_to_mat_s(param_name_tuple[0], param_name_tuple[1]) SetParam[mat](<const string> 'param_name', dereference(param_name_mat)) \fBIO\&.SetPassed\fP(<const string> 'param_name')
+.PP
+Definition at line 251 of file print_input_processing\&.hpp\&.
+.PP
+References ParamData::name, and ParamData::required\&.
+.SS "void mlpack::bindings::python::PrintInputProcessing (\fButil::ParamData\fP & d, const size_t indent, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Print input processing for a matrix/DatasetInfo type\&. We want to generate code like the following:
+.PP
+if param_name is not None: param_name_tuple = to_matrix_with_info(param_name) if len(param_name_tuple[0]\&.shape) < 2: param_name_tuple[0]\&.shape = (param_name_tuple[0]\&.size,) param_name_mat = arma_numpy\&.numpy_to_matrix_d(param_name_tuple[0]) SetParamWithInfo[mat](<const string> 'param_name', dereference(param_name_mat), &param_name_tuple[1][0]) \fBIO\&.SetPassed\fP(<const string> 'param_name')
+.PP
+Definition at line 445 of file print_input_processing\&.hpp\&.
+.PP
+References ParamData::name, and ParamData::required\&.
+.SS "void mlpack::bindings::python::PrintInputProcessing (\fButil::ParamData\fP & d, const void * input, void *)"
+
+.PP
+Given parameter information and the current number of spaces for indentation, print the code to process the input to cout\&. This code assumes that data\&.input is true, and should not be called when data\&.input is false\&.
+.PP
+The number of spaces to indent should be passed through the input pointer\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Parameter data struct\&. 
+.br
+\fIinput\fP Pointer to size_t holding the indentation\&. 
+.br
+\fI*\fP (output) Unused parameter\&. 
+.RE
+.PP
+
+.PP
+Definition at line 525 of file print_input_processing\&.hpp\&.
+.SS "std::string mlpack::bindings::python::PrintModel (const std::string & modelName)\fC [inline]\fP"
+
+.PP
+Given the name of a model, print it\&. Here we do not need to modify anything\&. 
+.SS "std::string mlpack::bindings::python::PrintOutputOptionInfo ()\fC [inline]\fP"
+
+.PP
+Print any special information about output options\&. 
+.SS "std::string mlpack::bindings::python::PrintOutputOptions ()\fC [inline]\fP"
+
+.SS "std::string mlpack::bindings::python::PrintOutputOptions (const std::string & paramName, const T & value, Args\&.\&.\&. args)"
+
+.SS "void mlpack::bindings::python::PrintOutputProcessing (\fButil::ParamData\fP & d, const size_t indent, const bool onlyOutput, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Print output processing for a regular parameter type\&. This gives us code like:
+.PP
+result = \fBIO\&.GetParam\fP[int]('param_name')
+.PP
+This gives us code like:
+.PP
+result['param_name'] = \fBIO\&.GetParam\fP[int]('param_name')
+.PP
+Definition at line 29 of file print_output_processing\&.hpp\&.
+.PP
+References ParamData::name\&.
+.SS "void mlpack::bindings::python::PrintOutputProcessing (\fButil::ParamData\fP & d, const size_t indent, const bool onlyOutput, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Print output processing for a serializable model\&. This gives us code like:
+.PP
+result = ModelType() (<ModelType?> result)\&.modelptr = GetParamPtr[Model]('name')
+.PP
+But we also have to check to ensure there aren't any input model parameters of the same type that could have the same model pointer\&. So we need to loop through all input parameters that have the same type, and double-check\&.
+.PP
+This gives us code like:
+.PP
+result['name'] = ModelType() (<ModelType?> result['name'])\&.modelptr = GetParamPtr[Model]('name'))
+.PP
+But we also have to check to ensure there aren't any input model parameters of the same type that could have the same model pointer\&. So we need to loop through all input parameters that have the same type, and double-check\&.
+.PP
+Definition at line 169 of file print_output_processing\&.hpp\&.
+.PP
+References ParamData::cppType, ParamData::input, ParamData::name, IO::Parameters(), ParamData::required, and StripType()\&.
+.SS "void mlpack::bindings::python::PrintOutputProcessing (\fButil::ParamData\fP & d, const size_t indent, const bool onlyOutput, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Print output processing for a matrix type\&. This gives us code like:
+.PP
+result = arma_numpy\&.mat_to_numpy_X(\fBIO\&.GetParam\fP[mat]('name'))
+.PP
+where X indicates the type to convert to\&.
+.PP
+This gives us code like:
+.PP
+result['param_name'] = arma_numpy\&.mat_to_numpy_X(\fBIO\&.GetParam\fP[mat]('name')
+.PP
+where X indicates the type to convert to\&.
+.PP
+Definition at line 85 of file print_output_processing\&.hpp\&.
+.PP
+References ParamData::name\&.
+.SS "void mlpack::bindings::python::PrintOutputProcessing (\fButil::ParamData\fP & d, const size_t indent, const bool onlyOutput, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Print output processing for a dataset info / matrix combination\&. This gives us code like:
+.PP
+result = arma_numpy\&.mat_to_numpy_X(GetParamWithInfo[mat]('name'))
+.PP
+This gives us code like:
+.PP
+result['param_name'] = arma_numpy\&.mat_to_numpy_X(GetParamWithInfo[mat]('name'))
+.PP
+Definition at line 127 of file print_output_processing\&.hpp\&.
+.PP
+References ParamData::name\&.
+.SS "void mlpack::bindings::python::PrintOutputProcessing (\fButil::ParamData\fP & d, const void * input, void *)"
+
+.PP
+Given parameter information and the current number of spaces for indentation, print the code to process the output to cout\&. This code assumes that data\&.input is false, and should not be called when data\&.input is true\&. If this is the only output, the results will be different\&.
+.PP
+The input pointer should be a pointer to a std::tuple<size_t, bool> where the first element is the indentation and the second element is a boolean representing whether or not this is the only output parameter\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Parameter data struct\&. 
+.br
+\fIinput\fP Pointer to size_t holding the indentation\&. 
+.br
+\fI*\fP (output) Unused parameter\&. 
+.RE
+.PP
+
+.PP
+Definition at line 298 of file print_output_processing\&.hpp\&.
+.SS "void mlpack::bindings::python::PrintPYX (const \fButil::BindingDetails\fP & doc, const std::string & mainFilename, const std::string & functionName)"
+
+.PP
+Given a list of parameter definition and program documentation, print a generated \&.pyx file to stdout\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdoc\fP Documentation for the program\&. 
+.br
+\fImainFilename\fP Filename of the main program (i\&.e\&. '/path/to/pca_main\&.cpp')\&. 
+.br
+\fIfunctionName\fP Name of the function (i\&.e\&. 'pca')\&. 
+.RE
+.PP
+
+.SS "std::string mlpack::bindings::python::PrintTypeDoc (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of an option\&. 
+.SS "std::string mlpack::bindings::python::PrintTypeDoc (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a model\&. 
+.SS "std::string mlpack::bindings::python::PrintTypeDoc (\fButil::ParamData\fP & data, const typename std::enable_if< arma::is_arma_type< T >::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a matrix option\&. 
+.SS "std::string mlpack::bindings::python::PrintTypeDoc (\fButil::ParamData\fP & data, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a matrix tuple option\&. 
+.SS "std::string mlpack::bindings::python::PrintTypeDoc (\fButil::ParamData\fP & data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a vector\&. 
+.SS "void mlpack::bindings::python::PrintTypeDoc (\fButil::ParamData\fP & data, const void *, void * output)"
+
+.PP
+Print the command-line type of an option into a string\&. 
+.PP
+Definition at line 72 of file print_type_doc\&.hpp\&.
+.SS "std::string mlpack::bindings::python::PrintValue (const bool & value, bool quotes)\fC [inline]\fP"
+
+.SS "std::string mlpack::bindings::python::PrintValue (const T & value, bool quotes)\fC [inline]\fP"
+
+.PP
+Given a parameter type, print the corresponding value\&. 
+.SS "std::string mlpack::bindings::python::ProgramCall (const std::string & programName)\fC [inline]\fP"
+
+.PP
+Given the name of a binding, print a program call assuming that all options are specified\&. 
+.SS "std::string mlpack::bindings::python::ProgramCall (const std::string & programName, Args\&.\&.\&. args)"
+
+.PP
+Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call\&. 
+.SS "void mlpack::bindings::python::SerializeIn (T * t, const std::string & str, const std::string & name)"
+
+.PP
+Definition at line 34 of file serialization\&.hpp\&.
+.SS "void mlpack::bindings::python::SerializeInJSON (T * t, const std::string & str, const std::string & name)"
+
+.PP
+Definition at line 54 of file serialization\&.hpp\&.
+.SS "std::string mlpack::bindings::python::SerializeOut (T * t, const std::string & name)"
+
+.PP
+Definition at line 22 of file serialization\&.hpp\&.
+.SS "std::string mlpack::bindings::python::SerializeOutJSON (T * t, const std::string & name)"
+
+.PP
+Definition at line 42 of file serialization\&.hpp\&.
+.SS "void mlpack::bindings::python::StripType (const std::string & inputType, std::string & strippedType, std::string & printedType, std::string & defaultsType)\fC [inline]\fP"
+
+.PP
+Given an input type like, e\&.g\&., 'LogisticRegression<>', return three types that can be used in Python code\&. strippedType will be a type with no template parameters (e\&.g\&. 'LogisticRegression'), printedType will be a printable type with the template parameters (e\&.g\&. 'LogisticRegression[]'), and defaultsType will be a printable type with a default template parameter (e\&.g\&. 'LogisticRegression[T=*]') that can be used for class definitions\&. 
+.PP
+Definition at line 28 of file strip_type\&.hpp\&.
+.PP
+Referenced by ImportDecl(), PrintClassDefn(), PrintInputProcessing(), and PrintOutputProcessing()\&.
+.SH "Variable Documentation"
+.PP 
+.SS "std::string programName\fC [extern]\fP"
+
+.PP
+Referenced by PyOption< T >::PyOption()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

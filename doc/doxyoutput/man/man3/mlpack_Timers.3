@@ -1,0 +1,166 @@
+.TH "Timers" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Timers
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBTimers\fP ()"
+.br
+.RI "Default to disabled\&. "
+.ti -1c
+.RI "std::atomic< bool > & \fBEnabled\fP ()"
+.br
+.RI "Modify whether or not timing is enabled\&. "
+.ti -1c
+.RI "bool \fBEnabled\fP () const"
+.br
+.RI "Get whether or not timing is enabled\&. "
+.ti -1c
+.RI "std::map< std::string, std::chrono::microseconds > \fBGetAllTimers\fP ()"
+.br
+.RI "Returns a copy of all the timers used via this interface\&. "
+.ti -1c
+.RI "bool \fBGetState\fP (const std::string &timerName, const std::thread::id &threadId=std::thread::id())"
+.br
+.RI "Returns state of the given timer\&. "
+.ti -1c
+.RI "std::chrono::microseconds \fBGetTimer\fP (const std::string &timerName)"
+.br
+.RI "Returns a copy of the timer specified\&. "
+.ti -1c
+.RI "void \fBPrintTimer\fP (const std::string &timerName)"
+.br
+.RI "Prints the specified timer\&. "
+.ti -1c
+.RI "void \fBReset\fP ()"
+.br
+.RI "Reset the timers\&. "
+.ti -1c
+.RI "void \fBStartTimer\fP (const std::string &timerName, const std::thread::id &threadId=std::thread::id())"
+.br
+.RI "Initializes a timer, available like a normal value specified on the command line\&. "
+.ti -1c
+.RI "void \fBStopAllTimers\fP ()"
+.br
+.RI "Stop all timers\&. "
+.ti -1c
+.RI "void \fBStopTimer\fP (const std::string &timerName, const std::thread::id &threadId=std::thread::id())"
+.br
+.RI "Halts the timer, and replaces its value with the delta time from its start\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 98 of file timers\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBTimers\fP ()\fC [inline]\fP"
+
+.PP
+Default to disabled\&. 
+.PP
+Definition at line 102 of file timers\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "std::atomic<bool>& Enabled ()\fC [inline]\fP"
+
+.PP
+Modify whether or not timing is enabled\&. 
+.PP
+Definition at line 167 of file timers\&.hpp\&.
+.SS "bool Enabled () const\fC [inline]\fP"
+
+.PP
+Get whether or not timing is enabled\&. 
+.PP
+Definition at line 169 of file timers\&.hpp\&.
+.SS "std::map<std::string, std::chrono::microseconds> GetAllTimers ()"
+
+.PP
+Returns a copy of all the timers used via this interface\&. 
+.PP
+Referenced by mlpack::bindings::cli::EndProgram()\&.
+.SS "bool GetState (const std::string & timerName, const std::thread::id & threadId = \fCstd::thread::id()\fP)"
+
+.PP
+Returns state of the given timer\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fItimerName\fP The name of the timer in question\&. 
+.br
+\fIthreadId\fP Id of the thread accessing the timer\&. 
+.RE
+.PP
+
+.SS "std::chrono::microseconds GetTimer (const std::string & timerName)"
+
+.PP
+Returns a copy of the timer specified\&. This contains the sum of the timing results for timers that have been stopped with this name\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fItimerName\fP The name of the timer in question\&. 
+.RE
+.PP
+
+.SS "void PrintTimer (const std::string & timerName)"
+
+.PP
+Prints the specified timer\&. If it took longer than a minute to complete the timer will be displayed in days, hours, and minutes as well\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fItimerName\fP The name of the timer in question\&. 
+.RE
+.PP
+
+.PP
+Referenced by mlpack::bindings::cli::EndProgram()\&.
+.SS "void Reset ()"
+
+.PP
+Reset the timers\&. This stops all running timers and removes them\&. Whether or not timing is enabled will not be changed\&. 
+.PP
+Referenced by mlpack::util::ResetTimers()\&.
+.SS "void StartTimer (const std::string & timerName, const std::thread::id & threadId = \fCstd::thread::id()\fP)"
+
+.PP
+Initializes a timer, available like a normal value specified on the command line\&. \fBTimers\fP are of type timeval\&. If a timer is started, then stopped, then re-started, then stopped, the final timer value will be the length of both runs of the timer\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fItimerName\fP The name of the timer in question\&. 
+.br
+\fIthreadId\fP Id of the thread accessing the timer\&. 
+.RE
+.PP
+
+.SS "void StopAllTimers ()"
+
+.PP
+Stop all timers\&. 
+.PP
+Referenced by mlpack::bindings::cli::EndProgram()\&.
+.SS "void StopTimer (const std::string & timerName, const std::thread::id & threadId = \fCstd::thread::id()\fP)"
+
+.PP
+Halts the timer, and replaces its value with the delta time from its start\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fItimerName\fP The name of the timer in question\&. 
+.br
+\fIthreadId\fP Id of the thread accessing the timer\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

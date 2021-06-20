@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_5b0b179e83013be2ae877b5cea1eb6e2" kind="dir">
+    <compoundname>/home/aakash/mlpack/doc/tutorials</compoundname>
+    <innerdir refid="dir_1322cdb6f56538f48ad4f8b381b1a5f0">/home/aakash/mlpack/doc/tutorials/amf</innerdir>
+    <innerdir refid="dir_d95b55037c9d366abe91844e79eea075">/home/aakash/mlpack/doc/tutorials/ann</innerdir>
+    <innerdir refid="dir_171b7ad9fca163f5f0f3f49fd60e624e">/home/aakash/mlpack/doc/tutorials/approx_kfn</innerdir>
+    <innerdir refid="dir_563617f3f91357fea18cd173ab64c409">/home/aakash/mlpack/doc/tutorials/cf</innerdir>
+    <innerdir refid="dir_4c8169bbbf919211d5e60c77ce9f9ec1">/home/aakash/mlpack/doc/tutorials/det</innerdir>
+    <innerdir refid="dir_a0beb53bbba19ca0f40afe3def5a2323">/home/aakash/mlpack/doc/tutorials/emst</innerdir>
+    <innerdir refid="dir_a2e4b06e97ca55ac470fb3173d702142">/home/aakash/mlpack/doc/tutorials/fastmks</innerdir>
+    <innerdir refid="dir_bac988ef86778b14baa45266e7bf6d5e">/home/aakash/mlpack/doc/tutorials/image</innerdir>
+    <innerdir refid="dir_f67e9e330d0bc4490f6cae018ef5cbe3">/home/aakash/mlpack/doc/tutorials/kmeans</innerdir>
+    <innerdir refid="dir_10006804e1e6ab58cb2760d43b307bc4">/home/aakash/mlpack/doc/tutorials/linear_regression</innerdir>
+    <innerdir refid="dir_2c107c5ae81e4e216ed69a14ead144d7">/home/aakash/mlpack/doc/tutorials/neighbor_search</innerdir>
+    <innerdir refid="dir_ff17e66e9b54f6fc999c6b0bf097f9f5">/home/aakash/mlpack/doc/tutorials/range_search</innerdir>
+    <innerdir refid="dir_baabf8011ff2aef67867e5b7eafb334b">/home/aakash/mlpack/doc/tutorials/reinforcement_learning</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/doc/tutorials/"/>
+  </compounddef>
+</doxygen>

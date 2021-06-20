@@ -1,0 +1,77 @@
+.TH "SVDConvolution< BorderMode >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SVDConvolution< BorderMode > \- Computes the two-dimensional convolution using singular value decomposition\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename eT > static void \fBConvolution\fP (const arma::Cube< eT > &input, const arma::Cube< eT > &filter, arma::Cube< eT > &output)"
+.br
+.ti -1c
+.RI "template<typename eT > static void \fBConvolution\fP (const arma::Cube< eT > &input, const arma::Mat< eT > &filter, arma::Cube< eT > &output)"
+.br
+.ti -1c
+.RI "template<typename eT > static void \fBConvolution\fP (const arma::Mat< eT > &input, const arma::Cube< eT > &filter, arma::Cube< eT > &output)"
+.br
+.ti -1c
+.RI "template<typename eT > static void \fBConvolution\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &filter, arma::Mat< eT > &output)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename BorderMode = FullConvolution>
+.br
+class mlpack::ann::SVDConvolution< BorderMode >"
+Computes the two-dimensional convolution using singular value decomposition\&. 
+
+This class allows specification of the type of the border type\&. The convolution can be computed with the valid border type of the full border type (default)\&.
+.PP
+\fBFullConvolution\fP: returns the full two-dimensional convolution\&. \fBValidConvolution\fP: returns only those parts of the convolution that are computed without the zero-padded edges\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIBorderMode\fP Type of the border mode (\fBFullConvolution\fP or \fBValidConvolution\fP)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 38 of file svd_convolution\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static void \fBConvolution\fP (const arma::Cube< eT > & input, const arma::Cube< eT > & filter, arma::Cube< eT > & output)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 122 of file svd_convolution\&.hpp\&.
+.PP
+References SVDConvolution< BorderMode >::Convolution()\&.
+.SS "static void \fBConvolution\fP (const arma::Cube< eT > & input, const arma::Mat< eT > & filter, arma::Cube< eT > & output)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 181 of file svd_convolution\&.hpp\&.
+.PP
+References SVDConvolution< BorderMode >::Convolution()\&.
+.SS "static void \fBConvolution\fP (const arma::Mat< eT > & input, const arma::Cube< eT > & filter, arma::Cube< eT > & output)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 152 of file svd_convolution\&.hpp\&.
+.PP
+References SVDConvolution< BorderMode >::Convolution()\&.
+.SS "static void \fBConvolution\fP (const arma::Mat< eT > & input, const arma::Mat< eT > & filter, arma::Mat< eT > & output)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 56 of file svd_convolution\&.hpp\&.
+.PP
+References FFTConvolution< BorderMode, padLastDim >::Convolution(), and NaiveConvolution< BorderMode >::Convolution()\&.
+.PP
+Referenced by SVDConvolution< BorderMode >::Convolution()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

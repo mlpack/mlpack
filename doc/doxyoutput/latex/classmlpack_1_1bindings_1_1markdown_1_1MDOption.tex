@@ -1,0 +1,48 @@
+\doxysection{MDOption$<$ T $>$ Class Template Reference}
+\label{classmlpack_1_1bindings_1_1markdown_1_1MDOption}\index{MDOption$<$ T $>$@{MDOption$<$ T $>$}}
+
+
+The Markdown option class.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ MDOption} (const T default\+Value, const std\+::string \&identifier, const std\+::string \&description, const std\+::string \&alias, const std\+::string \&cpp\+Name, const bool required=false, const bool input=true, const bool no\+Transpose=false, const std\+::string \&binding\+Name=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Construct an \doxyref{MDOption}{p.}{classmlpack_1_1bindings_1_1markdown_1_1MDOption} object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class mlpack\+::bindings\+::markdown\+::\+MDOption$<$ T $>$}
+
+The Markdown option class. 
+
+Definition at line 33 of file md\+\_\+option.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1bindings_1_1markdown_1_1MDOption_a5e8beab62dc76222b892d3e1fb1971cf}} 
+\index{MDOption$<$ T $>$@{MDOption$<$ T $>$}!MDOption@{MDOption}}
+\index{MDOption@{MDOption}!MDOption$<$ T $>$@{MDOption$<$ T $>$}}
+\doxysubsubsection{MDOption()}
+{\footnotesize\ttfamily \textbf{ MDOption} (\begin{DoxyParamCaption}\item[{const T}]{default\+Value,  }\item[{const std\+::string \&}]{identifier,  }\item[{const std\+::string \&}]{description,  }\item[{const std\+::string \&}]{alias,  }\item[{const std\+::string \&}]{cpp\+Name,  }\item[{const bool}]{required = {\ttfamily false},  }\item[{const bool}]{input = {\ttfamily true},  }\item[{const bool}]{no\+Transpose = {\ttfamily false},  }\item[{const std\+::string \&}]{binding\+Name = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct an \doxyref{MDOption}{p.}{classmlpack_1_1bindings_1_1markdown_1_1MDOption} object. 
+
+When constructed, it will register itself with CLI. The test\+Name parameter is not used and added for compatibility reasons. 
+
+Definition at line 41 of file md\+\_\+option.\+hpp.
+
+
+
+References IO\+::\+Add(), Param\+Data\+::alias, IO\+::\+Clear\+Settings(), Param\+Data\+::cpp\+Type, Param\+Data\+::desc, IO\+::function\+Map, IO\+::\+Get\+Singleton(), Param\+Data\+::input, Param\+Data\+::loaded, Param\+Data\+::name, Param\+Data\+::no\+Transpose, Param\+Data\+::persistent, Param\+Data\+::required, IO\+::\+Restore\+Settings(), IO\+::\+Store\+Settings(), Param\+Data\+::tname, TYPENAME, Param\+Data\+::value, and Param\+Data\+::was\+Passed.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/bindings/markdown/\textbf{ md\+\_\+option.\+hpp}\end{DoxyCompactItemize}

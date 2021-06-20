@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1nca" kind="namespace" language="C++">
+    <compoundname>mlpack::nca</compoundname>
+    <innerclass refid="classmlpack_1_1nca_1_1NCA" prot="public">mlpack::nca::NCA</innerclass>
+    <innerclass refid="classmlpack_1_1nca_1_1SoftmaxErrorFunction" prot="public">mlpack::nca::SoftmaxErrorFunction</innerclass>
+    <briefdescription>
+<para>Neighborhood Components Analysis. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/nca/nca.hpp" line="22" column="1"/>
+  </compounddef>
+</doxygen>

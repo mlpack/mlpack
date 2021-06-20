@@ -1,0 +1,321 @@
+\doxysection{Diagonal\+Gaussian\+Distribution Class Reference}
+\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution}\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+
+
+A single multivariate Gaussian distribution with diagonal covariance.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Diagonal\+Gaussian\+Distribution} ()
+\begin{DoxyCompactList}\small\item\em Default constructor, which creates a Gaussian with zero dimension. \end{DoxyCompactList}\item 
+\textbf{ Diagonal\+Gaussian\+Distribution} (const arma\+::vec \&mean, const arma\+::vec \&covariance)
+\begin{DoxyCompactList}\small\item\em Create a Gaussian distribution with the given mean and diagonal covariance. \end{DoxyCompactList}\item 
+\textbf{ Diagonal\+Gaussian\+Distribution} (const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Create a Gaussian Distribution with zero mean and diagonal covariance with the given dimensionality. \end{DoxyCompactList}\item 
+const arma\+::vec \& \textbf{ Covariance} () const
+\begin{DoxyCompactList}\small\item\em Return the covariance matrix. \end{DoxyCompactList}\item 
+void \textbf{ Covariance} (arma\+::vec \&\&covariance)
+\begin{DoxyCompactList}\small\item\em Set the covariance matrix using move assignment. \end{DoxyCompactList}\item 
+void \textbf{ Covariance} (const arma\+::vec \&covariance)
+\begin{DoxyCompactList}\small\item\em Set the covariance matrix. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Dimensionality} () const
+\begin{DoxyCompactList}\small\item\em Return the dimensionality of this distribution. \end{DoxyCompactList}\item 
+void \textbf{ Log\+Probability} (const arma\+::mat \&observations, arma\+::vec \&log\+Probabilities) const
+\begin{DoxyCompactList}\small\item\em Calculate the multivariate Gaussian log probability density function for each data point (column) in the given matrix. \end{DoxyCompactList}\item 
+double \textbf{ Log\+Probability} (const arma\+::vec \&observation) const
+\begin{DoxyCompactList}\small\item\em Return the log probability of the given observation. \end{DoxyCompactList}\item 
+arma\+::vec \& \textbf{ Mean} ()
+\begin{DoxyCompactList}\small\item\em Return a modifiable copy of the mean. \end{DoxyCompactList}\item 
+const arma\+::vec \& \textbf{ Mean} () const
+\begin{DoxyCompactList}\small\item\em Return the mean. \end{DoxyCompactList}\item 
+void \textbf{ Probability} (const arma\+::mat \&x, arma\+::vec \&probabilities) const
+\begin{DoxyCompactList}\small\item\em Calculate the multivariate Gaussian probability density function for each data point (column) in the given matrix. \end{DoxyCompactList}\item 
+double \textbf{ Probability} (const arma\+::vec \&observation) const
+\begin{DoxyCompactList}\small\item\em Return the probability of the given observation. \end{DoxyCompactList}\item 
+arma\+::vec \textbf{ Random} () const
+\begin{DoxyCompactList}\small\item\em Return a randomly generated observation according to the probability distribution defined by this object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the distribution. \end{DoxyCompactList}\item 
+void \textbf{ Train} (const arma\+::mat \&observations)
+\begin{DoxyCompactList}\small\item\em Estimate the Gaussian distribution directly from the given observations. \end{DoxyCompactList}\item 
+void \textbf{ Train} (const arma\+::mat \&observations, const arma\+::vec \&probabilities)
+\begin{DoxyCompactList}\small\item\em Estimate the Gaussian distribution from the given observations, taking into account the probability of each observation actually being from this distribution. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A single multivariate Gaussian distribution with diagonal covariance. 
+
+Definition at line 21 of file diagonal\+\_\+gaussian\+\_\+distribution.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_acdb3a37208d86c70813f6bd57976d91d}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{DiagonalGaussianDistribution()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ Diagonal\+Gaussian\+Distribution} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default constructor, which creates a Gaussian with zero dimension. 
+
+
+
+Definition at line 38 of file diagonal\+\_\+gaussian\+\_\+distribution.\+hpp.
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a53c6049f223552c6ed646615def048c8}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{DiagonalGaussianDistribution()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ Diagonal\+Gaussian\+Distribution} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{dimension }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create a Gaussian Distribution with zero mean and diagonal covariance with the given dimensionality. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & Number of dimensions. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 46 of file diagonal\+\_\+gaussian\+\_\+distribution.\+hpp.
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a99d581f05bb370789481f5c33747d616}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{DiagonalGaussianDistribution()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ Diagonal\+Gaussian\+Distribution} (\begin{DoxyParamCaption}\item[{const arma\+::vec \&}]{mean,  }\item[{const arma\+::vec \&}]{covariance }\end{DoxyParamCaption})}
+
+
+
+Create a Gaussian distribution with the given mean and diagonal covariance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mean} & Mean of distribution. \\
+\hline
+{\em covariance} & Covariance of distribution. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_ad6dd9f58ac49805f6c1c4d473880e907}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!Covariance@{Covariance}}
+\index{Covariance@{Covariance}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{Covariance()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily const arma\+::vec\& Covariance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the covariance matrix. 
+
+
+
+Definition at line 133 of file diagonal\+\_\+gaussian\+\_\+distribution.\+hpp.
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a89b5e71beec8cc65746c402006b1c445}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!Covariance@{Covariance}}
+\index{Covariance@{Covariance}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{Covariance()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily void Covariance (\begin{DoxyParamCaption}\item[{arma\+::vec \&\&}]{covariance }\end{DoxyParamCaption})}
+
+
+
+Set the covariance matrix using move assignment. 
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_ae6f1bf6b3f2bf510f1b37b34ed38bc69}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!Covariance@{Covariance}}
+\index{Covariance@{Covariance}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{Covariance()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Covariance (\begin{DoxyParamCaption}\item[{const arma\+::vec \&}]{covariance }\end{DoxyParamCaption})}
+
+
+
+Set the covariance matrix. 
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a78eda6bfb9e9462afa0fc85e32abe1af}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!Dimensionality@{Dimensionality}}
+\index{Dimensionality@{Dimensionality}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{Dimensionality()}
+{\footnotesize\ttfamily size\+\_\+t Dimensionality (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the dimensionality of this distribution. 
+
+
+
+Definition at line 64 of file diagonal\+\_\+gaussian\+\_\+distribution.\+hpp.
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a10aa8675001ec75323be892d23b4a2cb}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!LogProbability@{LogProbability}}
+\index{LogProbability@{LogProbability}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{LogProbability()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Log\+Probability (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{observations,  }\item[{arma\+::vec \&}]{log\+Probabilities }\end{DoxyParamCaption}) const}
+
+
+
+Calculate the multivariate Gaussian log probability density function for each data point (column) in the given matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & Matrix of observations. \\
+\hline
+{\em log\+Probabilities} & Output log probabilities for each observation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a7063c1fb92f512f32bf44542c7528739}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!LogProbability@{LogProbability}}
+\index{LogProbability@{LogProbability}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{LogProbability()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Log\+Probability (\begin{DoxyParamCaption}\item[{const arma\+::vec \&}]{observation }\end{DoxyParamCaption}) const}
+
+
+
+Return the log probability of the given observation. 
+
+
+
+Referenced by Diagonal\+Gaussian\+Distribution\+::\+Probability().
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a94becb1cd872c0334328c37f130db253}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!Mean@{Mean}}
+\index{Mean@{Mean}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{Mean()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::vec\& Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return a modifiable copy of the mean. 
+
+
+
+Definition at line 130 of file diagonal\+\_\+gaussian\+\_\+distribution.\+hpp.
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a6db5f5d76cbd055347cecd9ca90eea86}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!Mean@{Mean}}
+\index{Mean@{Mean}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{Mean()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const arma\+::vec\& Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the mean. 
+
+
+
+Definition at line 127 of file diagonal\+\_\+gaussian\+\_\+distribution.\+hpp.
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a1e516aca34e9c99caf1431a822d87fc6}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!Probability@{Probability}}
+\index{Probability@{Probability}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{Probability()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Probability (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{x,  }\item[{arma\+::vec \&}]{probabilities }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculate the multivariate Gaussian probability density function for each data point (column) in the given matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Matrix of observations. \\
+\hline
+{\em probabilities} & Output probabilities for each input observation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 82 of file diagonal\+\_\+gaussian\+\_\+distribution.\+hpp.
+
+
+
+References Diagonal\+Gaussian\+Distribution\+::\+Log\+Probability().
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_ab72935d592516e77511d0b5e703c0d41}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!Probability@{Probability}}
+\index{Probability@{Probability}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{Probability()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Probability (\begin{DoxyParamCaption}\item[{const arma\+::vec \&}]{observation }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the probability of the given observation. 
+
+
+
+Definition at line 67 of file diagonal\+\_\+gaussian\+\_\+distribution.\+hpp.
+
+
+
+References Diagonal\+Gaussian\+Distribution\+::\+Log\+Probability().
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a2c6f8d5bb4eacf7de767d2172b320756}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!Random@{Random}}
+\index{Random@{Random}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{Random()}
+{\footnotesize\ttfamily arma\+::vec Random (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return a randomly generated observation according to the probability distribution defined by this object. 
+
+\begin{DoxyReturn}{Returns}
+Random observation from this Diagonal Gaussian distribution. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a65cba07328997659bec80b9879b15a51}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!serialize@{serialize}}
+\index{serialize@{serialize}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the distribution. 
+
+
+
+Definition at line 143 of file diagonal\+\_\+gaussian\+\_\+distribution.\+hpp.
+
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_a269c6f8a40ce41a5f7b6d035aef58238}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!Train@{Train}}
+\index{Train@{Train}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{observations }\end{DoxyParamCaption})}
+
+
+
+Estimate the Gaussian distribution directly from the given observations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & Matrix of observations. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1distribution_1_1DiagonalGaussianDistribution_ad71152f8853ac60c92a165ed72384125}} 
+\index{DiagonalGaussianDistribution@{DiagonalGaussianDistribution}!Train@{Train}}
+\index{Train@{Train}!DiagonalGaussianDistribution@{DiagonalGaussianDistribution}}
+\doxysubsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{observations,  }\item[{const arma\+::vec \&}]{probabilities }\end{DoxyParamCaption})}
+
+
+
+Estimate the Gaussian distribution from the given observations, taking into account the probability of each observation actually being from this distribution. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em observations} & Matrix of observations. \\
+\hline
+{\em probabilities} & List of probability of the each observation being from this distribution. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/dists/\textbf{ diagonal\+\_\+gaussian\+\_\+distribution.\+hpp}\end{DoxyCompactItemize}

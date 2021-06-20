@@ -1,0 +1,39 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/methods/det/dt\+\_\+utils.hpp File Reference}
+\label{dt__utils_8hpp}\index{/home/aakash/mlpack/src/mlpack/methods/det/dt\_utils.hpp@{/home/aakash/mlpack/src/mlpack/methods/det/dt\_utils.hpp}}
+Include dependency graph for dt\+\_\+utils.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dt__utils_8hpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Path\+Cacher}
+\begin{DoxyCompactList}\small\item\em This class is responsible for caching the path to each node of the tree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::det}
+\begin{DoxyCompactList}\small\item\em Density Estimation Trees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type , typename Tag\+Type $>$ }\\void \textbf{ Print\+Leaf\+Membership} (DTree$<$ Mat\+Type, Tag\+Type $>$ $\ast$dtree, const Mat\+Type \&data, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const std\+::string \&leaf\+Class\+Membership\+File=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Print the membership of leaves of a density estimation tree given the labels and number of classes. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Tag\+Type $>$ }\\void \textbf{ Print\+Variable\+Importance} (const DTree$<$ Mat\+Type, Tag\+Type $>$ $\ast$dtree, const std\+::string vi\+File=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Print the variable importance of each dimension of a density estimation tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Tag\+Type $>$ }\\DTree$<$ Mat\+Type, Tag\+Type $>$ $\ast$ \textbf{ Trainer} (Mat\+Type \&dataset, const size\+\_\+t folds, const bool use\+Volume\+Reg=false, const size\+\_\+t max\+Leaf\+Size=10, const size\+\_\+t min\+Leaf\+Size=5, const std\+::string unpruned\+Tree\+Output=\char`\"{}\char`\"{}, const bool skip\+Pruning=false)
+\begin{DoxyCompactList}\small\item\em Train the optimal decision tree using cross-\/validation with the given number of folds. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Parikshit Ram ({\texttt{ pram@cc.\+gatech.\+edu}})
+\end{DoxyAuthor}
+This file implements functions to perform different tasks with the Density Tree class.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

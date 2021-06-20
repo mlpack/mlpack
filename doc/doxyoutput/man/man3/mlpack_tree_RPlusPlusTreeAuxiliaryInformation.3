@@ -1,0 +1,254 @@
+.TH "RPlusPlusTreeAuxiliaryInformation< TreeType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RPlusPlusTreeAuxiliaryInformation< TreeType >
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBbound::HRectBound\fP< \fBmetric::EuclideanDistance\fP, \fBElemType\fP > \fBBoundType\fP"
+.br
+.RI "The bound type held by the auxiliary information\&. "
+.ti -1c
+.RI "typedef TreeType::ElemType \fBElemType\fP"
+.br
+.RI "The element type held by the tree\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRPlusPlusTreeAuxiliaryInformation\fP ()"
+.br
+.RI "Construct the auxiliary information object\&. "
+.ti -1c
+.RI "\fBRPlusPlusTreeAuxiliaryInformation\fP (const \fBRPlusPlusTreeAuxiliaryInformation\fP &other, TreeType *tree, bool=true)"
+.br
+.RI "Create an auxiliary information object by copying from another object\&. "
+.ti -1c
+.RI "\fBRPlusPlusTreeAuxiliaryInformation\fP (const TreeType *)"
+.br
+.RI "Construct this as an auxiliary information for the given node\&. "
+.ti -1c
+.RI "\fBRPlusPlusTreeAuxiliaryInformation\fP (\fBRPlusPlusTreeAuxiliaryInformation\fP &&other)"
+.br
+.RI "Create an auxiliary information object by moving from another node\&. "
+.ti -1c
+.RI "bool \fBHandleNodeInsertion\fP (TreeType *, TreeType *, bool)"
+.br
+.RI "Some tree types require to save some properties at the insertion process\&. "
+.ti -1c
+.RI "bool \fBHandleNodeRemoval\fP (TreeType *, const size_t)"
+.br
+.RI "Some tree types require to save some properties at the deletion process\&. "
+.ti -1c
+.RI "bool \fBHandlePointDeletion\fP (TreeType *, const size_t)"
+.br
+.RI "Some tree types require to save some properties at the deletion process\&. "
+.ti -1c
+.RI "bool \fBHandlePointInsertion\fP (TreeType *, const size_t)"
+.br
+.RI "Some tree types require to save some properties at the insertion process\&. "
+.ti -1c
+.RI "void \fBNullifyData\fP ()"
+.br
+.RI "Nullify the auxiliary information in order to prevent an invalid free\&. "
+.ti -1c
+.RI "\fBBoundType\fP & \fBOuterBound\fP ()"
+.br
+.RI "Return the maximum bounding rectangle\&. "
+.ti -1c
+.RI "const \fBBoundType\fP & \fBOuterBound\fP () const"
+.br
+.RI "Modify the maximum bounding rectangle\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &, const uint32_t)"
+.br
+.RI "Serialize the information\&. "
+.ti -1c
+.RI "void \fBSplitAuxiliaryInfo\fP (TreeType *treeOne, TreeType *treeTwo, const size_t axis, const \fBElemType\fP cut)"
+.br
+.RI "The R++ tree requires to split the maximum bounding rectangle of a node that is being split\&. "
+.ti -1c
+.RI "bool \fBUpdateAuxiliaryInfo\fP (TreeType *)"
+.br
+.RI "Some tree types require to propagate the information upward\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename TreeType>
+.br
+class mlpack::tree::RPlusPlusTreeAuxiliaryInformation< TreeType >"
+
+.PP
+Definition at line 24 of file r_plus_plus_tree_auxiliary_information\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBbound::HRectBound\fP<\fBmetric::EuclideanDistance\fP, \fBElemType\fP> \fBBoundType\fP"
+
+.PP
+The bound type held by the auxiliary information\&. 
+.PP
+Definition at line 30 of file r_plus_plus_tree_auxiliary_information\&.hpp\&.
+.SS "typedef TreeType::ElemType \fBElemType\fP"
+
+.PP
+The element type held by the tree\&. 
+.PP
+Definition at line 28 of file r_plus_plus_tree_auxiliary_information\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRPlusPlusTreeAuxiliaryInformation\fP ()"
+
+.PP
+Construct the auxiliary information object\&. 
+.SS "\fBRPlusPlusTreeAuxiliaryInformation\fP (const TreeType *)"
+
+.PP
+Construct this as an auxiliary information for the given node\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (node) The node that stores this auxiliary information\&. 
+.RE
+.PP
+
+.SS "\fBRPlusPlusTreeAuxiliaryInformation\fP (const \fBRPlusPlusTreeAuxiliaryInformation\fP< TreeType > & other, TreeType * tree, bool = \fCtrue\fP)"
+
+.PP
+Create an auxiliary information object by copying from another object\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP Another auxiliary information object from which the information will be copied\&. 
+.br
+\fItree\fP The node that holds the auxiliary information\&. 
+.br
+\fI*\fP (deepCopy) If false, the new object uses the same memory (not used here)\&. 
+.RE
+.PP
+
+.SS "\fBRPlusPlusTreeAuxiliaryInformation\fP (\fBRPlusPlusTreeAuxiliaryInformation\fP< TreeType > && other)"
+
+.PP
+Create an auxiliary information object by moving from another node\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIother\fP The auxiliary information object from which the information will be moved\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "bool HandleNodeInsertion (TreeType *, TreeType *, bool)"
+
+.PP
+Some tree types require to save some properties at the insertion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the insertion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (node) The node in which the nodeToInsert is being inserted\&. 
+.br
+\fI*\fP (nodeToInsert) The node being inserted\&. 
+.br
+\fI*\fP (insertionLevel) The level of the tree at which the nodeToInsert should be inserted\&. 
+.RE
+.PP
+
+.SS "bool HandleNodeRemoval (TreeType *, const size_t)"
+
+.PP
+Some tree types require to save some properties at the deletion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the deletion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (node) The node from which the node is being deleted\&. 
+.br
+\fI*\fP (nodeIndex) The local index of the node being deleted\&. 
+.RE
+.PP
+
+.SS "bool HandlePointDeletion (TreeType *, const size_t)"
+
+.PP
+Some tree types require to save some properties at the deletion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the deletion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (node) The node from which the point is being deleted\&. 
+.br
+\fI*\fP (localIndex) The local index of the point being deleted\&. 
+.RE
+.PP
+
+.SS "bool HandlePointInsertion (TreeType *, const size_t)"
+
+.PP
+Some tree types require to save some properties at the insertion process\&. This method allows the auxiliary information the option of manipulating the tree in order to perform the insertion process\&. If the auxiliary information does that, then the method should return true; if the method returns false the \fBRectangleTree\fP performs its default behavior\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (node) The node in which the point is being inserted\&. 
+.br
+\fI*\fP (point) The global number of the point being inserted\&. 
+.RE
+.PP
+
+.SS "void NullifyData ()"
+
+.PP
+Nullify the auxiliary information in order to prevent an invalid free\&. 
+.SS "\fBBoundType\fP& OuterBound ()\fC [inline]\fP"
+
+.PP
+Return the maximum bounding rectangle\&. 
+.PP
+Definition at line 146 of file r_plus_plus_tree_auxiliary_information\&.hpp\&.
+.SS "const \fBBoundType\fP& OuterBound () const\fC [inline]\fP"
+
+.PP
+Modify the maximum bounding rectangle\&. 
+.PP
+Definition at line 149 of file r_plus_plus_tree_auxiliary_information\&.hpp\&.
+.SS "void serialize (Archive &, const uint32_t)"
+
+.PP
+Serialize the information\&. 
+.SS "void SplitAuxiliaryInfo (TreeType * treeOne, TreeType * treeTwo, const size_t axis, const \fBElemType\fP cut)"
+
+.PP
+The R++ tree requires to split the maximum bounding rectangle of a node that is being split\&. This method is intended for that\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fItreeOne\fP The first subtree\&. 
+.br
+\fItreeTwo\fP The second subtree\&. 
+.br
+\fIaxis\fP The axis along which the split is performed\&. 
+.br
+\fIcut\fP The coordinate at which the node is split\&. 
+.RE
+.PP
+
+.SS "bool UpdateAuxiliaryInfo (TreeType *)"
+
+.PP
+Some tree types require to propagate the information upward\&. This method should return false if this is not the case\&. If true is returned, the update will be propagated upward\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (node) The node in which the auxiliary information being update\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

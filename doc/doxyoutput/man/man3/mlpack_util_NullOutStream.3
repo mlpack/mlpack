@@ -1,0 +1,228 @@
+.TH "NullOutStream" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+NullOutStream \- Used for \fBLog::Debug\fP when not compiled with debugging symbols\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNullOutStream\fP ()"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP (const \fBNullOutStream\fP &)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (bool)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (const char *)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "template<typename T > \fBNullOutStream\fP & \fBoperator<<\fP (const T &)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (double)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (float)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (int)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (long double)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (long)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (short)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (std::ios &(*)(std::ios &))"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (std::ios_base &(*)(std::ios_base &))"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (std::ostream &(*)(std::ostream &))"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (std::streambuf *)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (std::string &)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (unsigned int)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (unsigned long)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (unsigned short)"
+.br
+.RI "Does nothing\&. "
+.ti -1c
+.RI "\fBNullOutStream\fP & \fBoperator<<\fP (void *)"
+.br
+.RI "Does nothing\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Used for \fBLog::Debug\fP when not compiled with debugging symbols\&. 
+
+This class does nothing and should be optimized out entirely by the compiler\&. 
+.PP
+Definition at line 27 of file nulloutstream\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBNullOutStream\fP ()\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 33 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP (const \fBNullOutStream\fP &)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 38 of file nulloutstream\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBNullOutStream\fP& operator<< (bool)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 41 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (const char *)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 63 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (const T &)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 78 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (double)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 57 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (float)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 55 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (int)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 47 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (long double)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 59 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (long)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 51 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (short)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 43 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (std::ios &*)(std::ios &)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 71 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (std::ios_base &*)(std::ios_base &)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 73 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (std::ostream &*)(std::ostream &)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 69 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (std::streambuf *)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 67 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (std::string &)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 65 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (unsigned int)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 49 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (unsigned long)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 53 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (unsigned short)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 45 of file nulloutstream\&.hpp\&.
+.SS "\fBNullOutStream\fP& operator<< (void *)\fC [inline]\fP"
+
+.PP
+Does nothing\&. 
+.PP
+Definition at line 61 of file nulloutstream\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

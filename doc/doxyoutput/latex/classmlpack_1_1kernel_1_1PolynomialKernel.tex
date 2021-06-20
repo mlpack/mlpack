@@ -1,0 +1,172 @@
+\doxysection{Polynomial\+Kernel Class Reference}
+\label{classmlpack_1_1kernel_1_1PolynomialKernel}\index{PolynomialKernel@{PolynomialKernel}}
+
+
+The simple polynomial kernel.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Polynomial\+Kernel} (const double degree=2.\+0, const double offset=0.\+0)
+\begin{DoxyCompactList}\small\item\em Construct the Polynomial Kernel with the given offset and degree. \end{DoxyCompactList}\item 
+double \& \textbf{ Degree} ()
+\begin{DoxyCompactList}\small\item\em Modify the degree of the polynomial. \end{DoxyCompactList}\item 
+const double \& \textbf{ Degree} () const
+\begin{DoxyCompactList}\small\item\em Get the degree of the polynomial. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\double \textbf{ Evaluate} (const Vec\+TypeA \&a, const Vec\+TypeB \&b) const
+\begin{DoxyCompactList}\small\item\em Simple evaluation of the dot product. \end{DoxyCompactList}\item 
+double \& \textbf{ Offset} ()
+\begin{DoxyCompactList}\small\item\em Modify the offset of the dot product of the arguments. \end{DoxyCompactList}\item 
+const double \& \textbf{ Offset} () const
+\begin{DoxyCompactList}\small\item\em Get the offset of the dot product of the arguments. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the kernel. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The simple polynomial kernel. 
+
+For any two vectors $ x $, $ y $, $ degree $ and $ offset $,
+
+\[ K(x, y) = (x^T * y + offset) ^ {degree}. \] 
+
+Definition at line 28 of file polynomial\+\_\+kernel.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kernel_1_1PolynomialKernel_af759f8b4e6594aed10ad2cea9435aed2}} 
+\index{PolynomialKernel@{PolynomialKernel}!PolynomialKernel@{PolynomialKernel}}
+\index{PolynomialKernel@{PolynomialKernel}!PolynomialKernel@{PolynomialKernel}}
+\doxysubsubsection{PolynomialKernel()}
+{\footnotesize\ttfamily \textbf{ Polynomial\+Kernel} (\begin{DoxyParamCaption}\item[{const double}]{degree = {\ttfamily 2.0},  }\item[{const double}]{offset = {\ttfamily 0.0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct the Polynomial Kernel with the given offset and degree. 
+
+If the arguments are omitted, the default degree is 2 and the default offset is 0.
+
+
+\begin{DoxyParams}{Parameters}
+{\em offset} & Offset of the dot product of the arguments. \\
+\hline
+{\em degree} & Degree of the polynomial. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 38 of file polynomial\+\_\+kernel.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kernel_1_1PolynomialKernel_a62edea5a8a07e7d2b54f250f03007687}} 
+\index{PolynomialKernel@{PolynomialKernel}!Degree@{Degree}}
+\index{Degree@{Degree}!PolynomialKernel@{PolynomialKernel}}
+\doxysubsubsection{Degree()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Degree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the degree of the polynomial. 
+
+
+
+Definition at line 63 of file polynomial\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1PolynomialKernel_ad897bde89ec0a2ee23fcf7202063a86d}} 
+\index{PolynomialKernel@{PolynomialKernel}!Degree@{Degree}}
+\index{Degree@{Degree}!PolynomialKernel@{PolynomialKernel}}
+\doxysubsubsection{Degree()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const double\& Degree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the degree of the polynomial. 
+
+
+
+Definition at line 61 of file polynomial\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1PolynomialKernel_a84c3aeba25ea7703bd2d4f85a54301da}} 
+\index{PolynomialKernel@{PolynomialKernel}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!PolynomialKernel@{PolynomialKernel}}
+\doxysubsubsection{Evaluate()}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const Vec\+TypeA \&}]{a,  }\item[{const Vec\+TypeB \&}]{b }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Simple evaluation of the dot product. 
+
+This evaluation uses Armadillo\textquotesingle{}s dot() function.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+TypeA} & Type of first vector (should be arma\+::vec or arma\+::sp\+\_\+vec). \\
+\hline
+{\em Vec\+TypeB} & Type of second vector (arma\+::vec / arma\+::sp\+\_\+vec). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+K(a, b). 
+\end{DoxyReturn}
+
+
+Definition at line 55 of file polynomial\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1PolynomialKernel_a37ef08fdb2295b040e6c3a59cf907249}} 
+\index{PolynomialKernel@{PolynomialKernel}!Offset@{Offset}}
+\index{Offset@{Offset}!PolynomialKernel@{PolynomialKernel}}
+\doxysubsubsection{Offset()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Offset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the offset of the dot product of the arguments. 
+
+
+
+Definition at line 68 of file polynomial\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1PolynomialKernel_a9e3dd48cd75fe62a88d7d5a74a31aef0}} 
+\index{PolynomialKernel@{PolynomialKernel}!Offset@{Offset}}
+\index{Offset@{Offset}!PolynomialKernel@{PolynomialKernel}}
+\doxysubsubsection{Offset()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const double\& Offset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the offset of the dot product of the arguments. 
+
+
+
+Definition at line 66 of file polynomial\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1PolynomialKernel_a65cba07328997659bec80b9879b15a51}} 
+\index{PolynomialKernel@{PolynomialKernel}!serialize@{serialize}}
+\index{serialize@{serialize}!PolynomialKernel@{PolynomialKernel}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the kernel. 
+
+
+
+Definition at line 72 of file polynomial\+\_\+kernel.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/kernels/\textbf{ polynomial\+\_\+kernel.\+hpp}\end{DoxyCompactItemize}

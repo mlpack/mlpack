@@ -1,0 +1,146 @@
+.TH "RSWrapperBase" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RSWrapperBase \- \fBRSWrapperBase\fP is a base wrapper class for holding all \fBRangeSearch\fP types supported by \fBRSModel\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherited by \fBRSWrapper< TreeType >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRSWrapperBase\fP ()"
+.br
+.RI "Create the \fBRSWrapperBase\fP object\&. "
+.ti -1c
+.RI "virtual \fB~RSWrapperBase\fP ()"
+.br
+.RI "Destruct the \fBRSWrapperBase\fP (nothing to do)\&. "
+.ti -1c
+.RI "virtual \fBRSWrapperBase\fP * \fBClone\fP () const =0"
+.br
+.RI "Create a new \fBRSWrapperBase\fP that is the same as this one\&. "
+.ti -1c
+.RI "virtual const arma::mat & \fBDataset\fP () const =0"
+.br
+.RI "Get the dataset\&. "
+.ti -1c
+.RI "virtual bool \fBNaive\fP () const =0"
+.br
+.RI "Get whether naive search is being used\&. "
+.ti -1c
+.RI "virtual bool & \fBNaive\fP ()=0"
+.br
+.RI "Modify whether naive search is being used\&. "
+.ti -1c
+.RI "virtual void \fBSearch\fP (arma::mat &&querySet, const \fBmath::Range\fP &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances, const size_t leafSize)=0"
+.br
+.RI "Perform bichromatic range search (i\&.e\&. "
+.ti -1c
+.RI "virtual void \fBSearch\fP (const \fBmath::Range\fP &range, std::vector< std::vector< size_t >> &neighbors, std::vector< std::vector< double >> &distances)=0"
+.br
+.RI "Perform monochromatic range search (i\&.e\&. "
+.ti -1c
+.RI "virtual bool \fBSingleMode\fP () const =0"
+.br
+.RI "Get whether single-tree search is being used\&. "
+.ti -1c
+.RI "virtual bool & \fBSingleMode\fP ()=0"
+.br
+.RI "Modify whether single-tree search is being used\&. "
+.ti -1c
+.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet, const size_t leafSize)=0"
+.br
+.RI "Train the model (build the reference tree if needed)\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBRSWrapperBase\fP is a base wrapper class for holding all \fBRangeSearch\fP types supported by \fBRSModel\fP\&. 
+
+All \fBRangeSearch\fP type wrappers inherit from this class, allowing a simple interface via inheritance for all the different types we want to support\&. 
+.PP
+Definition at line 34 of file rs_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRSWrapperBase\fP ()\fC [inline]\fP"
+
+.PP
+Create the \fBRSWrapperBase\fP object\&. The base class does not hold anything, so this constructor does nothing\&. 
+.PP
+Definition at line 39 of file rs_model\&.hpp\&.
+.SS "virtual ~\fBRSWrapperBase\fP ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Destruct the \fBRSWrapperBase\fP (nothing to do)\&. 
+.PP
+Definition at line 46 of file rs_model\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "virtual \fBRSWrapperBase\fP* Clone () const\fC [pure virtual]\fP"
+
+.PP
+Create a new \fBRSWrapperBase\fP that is the same as this one\&. This function will properly handle polymorphism\&. 
+.PP
+Implemented in \fBLeafSizeRSWrapper< TreeType >\fP, and \fBRSWrapper< TreeType >\fP\&.
+.SS "virtual const arma::mat& Dataset () const\fC [pure virtual]\fP"
+
+.PP
+Get the dataset\&. 
+.PP
+Implemented in \fBRSWrapper< TreeType >\fP\&.
+.PP
+Referenced by RSModel::Dataset()\&.
+.SS "virtual bool Naive () const\fC [pure virtual]\fP"
+
+.PP
+Get whether naive search is being used\&. 
+.PP
+Implemented in \fBRSWrapper< TreeType >\fP\&.
+.PP
+Referenced by RSModel::Naive()\&.
+.SS "virtual bool& Naive ()\fC [pure virtual]\fP"
+
+.PP
+Modify whether naive search is being used\&. 
+.PP
+Implemented in \fBRSWrapper< TreeType >\fP\&.
+.SS "virtual void Search (arma::mat && querySet, const \fBmath::Range\fP & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances, const size_t leafSize)\fC [pure virtual]\fP"
+
+.PP
+Perform bichromatic range search (i\&.e\&. a search with a separate query set)\&. 
+.PP
+Implemented in \fBRSWrapper< TreeType >\fP, and \fBLeafSizeRSWrapper< TreeType >\fP\&.
+.SS "virtual void Search (const \fBmath::Range\fP & range, std::vector< std::vector< size_t >> & neighbors, std::vector< std::vector< double >> & distances)\fC [pure virtual]\fP"
+
+.PP
+Perform monochromatic range search (i\&.e\&. a search with the reference set as the query set)\&. 
+.PP
+Implemented in \fBRSWrapper< TreeType >\fP\&.
+.SS "virtual bool SingleMode () const\fC [pure virtual]\fP"
+
+.PP
+Get whether single-tree search is being used\&. 
+.PP
+Implemented in \fBRSWrapper< TreeType >\fP\&.
+.PP
+Referenced by RSModel::SingleMode()\&.
+.SS "virtual bool& SingleMode ()\fC [pure virtual]\fP"
+
+.PP
+Modify whether single-tree search is being used\&. 
+.PP
+Implemented in \fBRSWrapper< TreeType >\fP\&.
+.SS "virtual void Train (arma::mat && referenceSet, const size_t leafSize)\fC [pure virtual]\fP"
+
+.PP
+Train the model (build the reference tree if needed)\&. 
+.PP
+Implemented in \fBRSWrapper< TreeType >\fP, and \fBLeafSizeRSWrapper< TreeType >\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

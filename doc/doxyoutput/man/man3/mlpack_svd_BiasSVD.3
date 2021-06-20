@@ -1,0 +1,102 @@
+.TH "BiasSVD< OptimizerType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+BiasSVD< OptimizerType > \- Bias SVD is an improvement on Regularized SVD which is a matrix factorization techniques\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBiasSVD\fP (const size_t iterations=10, const double alpha=0\&.02, const double lambda=0\&.05)"
+.br
+.RI "Constructor of Bias SVD\&. "
+.ti -1c
+.RI "void \fBApply\fP (const arma::mat &data, const size_t rank, arma::mat &u, arma::mat &v, arma::vec &p, arma::vec &q)"
+.br
+.RI "Trains the model and obtains user/item matrices and user/item bias\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename OptimizerType = ens::StandardSGD>
+.br
+class mlpack::svd::BiasSVD< OptimizerType >"
+Bias SVD is an improvement on Regularized SVD which is a matrix factorization techniques\&. 
+
+Bias SVD outputs user/item latent vectors and user/item bias, so that $ r_{iu} = b_i + b_u + p_i * q_u $, where b, p, q are bias, item latent, user latent respectively\&. Parameters are optmized by Stochastic Gradient Desent(SGD)\&. The updates also penalize the learning of large feature values by means of regularization\&.
+.PP
+An example of how to use the interface is shown below:
+.PP
+.PP
+.nf
+arma::mat data; // Rating data in the form of coordinate list\&.
+
+const size_t rank = 10; // Rank used for the decomposition\&.
+const size_t iterations = 10; // Number of iterations used for optimization\&.
+
+const double alpha = 0\&.005 // Learning rate for the SGD optimizer\&.
+const double lambda = 0\&.02 // Regularization parameter for the optimization\&.
+
+// Make a BiasSVD object\&.
+BiasSVD<> biasSVD(iterations, alpha, lambda);
+
+arma::mat u, v; // Item and User matrices\&.
+arma::vec p, q; // Item and User bias\&.
+
+// Use the Apply() method to get a factorization\&.
+rSVD\&.Apply(data, rank, u, v, p, q);
+.fi
+.PP
+ 
+.PP
+Definition at line 57 of file bias_svd\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBBiasSVD\fP (const size_t iterations = \fC10\fP, const double alpha = \fC0\&.02\fP, const double lambda = \fC0\&.05\fP)"
+
+.PP
+Constructor of Bias SVD\&. By default SGD optimizer is used in \fBBiasSVD\fP\&. The optimizer uses a template specialization of Optimize()\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIiterations\fP Number of optimization iterations\&. 
+.br
+\fIalpha\fP Learning rate for the SGD optimizer\&. 
+.br
+\fIlambda\fP Regularization parameter for the optimization\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Apply (const arma::mat & data, const size_t rank, arma::mat & u, arma::mat & v, arma::vec & p, arma::vec & q)"
+
+.PP
+Trains the model and obtains user/item matrices and user/item bias\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Rating data matrix\&. 
+.br
+\fIrank\fP Rank parameter to be used for optimization\&. 
+.br
+\fIu\fP Item matrix obtained on decomposition\&. 
+.br
+\fIv\fP User matrix obtained on decomposition\&. 
+.br
+\fIp\fP Item bias\&. 
+.br
+\fIq\fP User bias\&. 
+.RE
+.PP
+
+.PP
+Referenced by BiasSVDPolicy::Apply()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

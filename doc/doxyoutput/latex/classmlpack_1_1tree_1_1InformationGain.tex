@@ -1,0 +1,91 @@
+\doxysection{Information\+Gain Class Reference}
+\label{classmlpack_1_1tree_1_1InformationGain}\index{InformationGain@{InformationGain}}
+
+
+The standard information gain criterion, used for calculating gain in decision trees.  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$bool Use\+Weights$>$ }\\static double \textbf{ Evaluate} (const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const arma\+::\+Row$<$ double $>$ \&weights)
+\begin{DoxyCompactList}\small\item\em Given a set of labels, calculate the information gain of those labels. \end{DoxyCompactList}\item 
+{\footnotesize template$<$bool Use\+Weights, typename Count\+Type $>$ }\\static double \textbf{ Evaluate\+Ptr} (const Count\+Type $\ast$counts, const size\+\_\+t count\+Length, const Count\+Type total\+Count)
+\begin{DoxyCompactList}\small\item\em Evaluate the information gain given a vector of class weight counts. \end{DoxyCompactList}\item 
+static double \textbf{ Range} (const size\+\_\+t num\+Classes)
+\begin{DoxyCompactList}\small\item\em Return the range of the information gain for the given number of classes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The standard information gain criterion, used for calculating gain in decision trees. 
+
+Definition at line 25 of file information\+\_\+gain.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1InformationGain_a82f0cda1eb3b481f5fec6142e07b8053}} 
+\index{InformationGain@{InformationGain}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!InformationGain@{InformationGain}}
+\doxysubsubsection{Evaluate()}
+{\footnotesize\ttfamily static double Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const arma\+::\+Row$<$ double $>$ \&}]{weights }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Given a set of labels, calculate the information gain of those labels. 
+
+Note that it is possible that due to floating-\/point representation issues, it is possible that the gain returned can be very slightly greater than 0! Thus, if you are checking for a perfect fit, be sure to use \textquotesingle{}gain $>$= 0.\+0\textquotesingle{} not \textquotesingle{}gain == 0.\+0\textquotesingle{}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em labels} & Labels of the dataset. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em weights} & Weights associated with labels. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 60 of file information\+\_\+gain.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1InformationGain_a67d1277fdaf085606937d4b523f615ba}} 
+\index{InformationGain@{InformationGain}!EvaluatePtr@{EvaluatePtr}}
+\index{EvaluatePtr@{EvaluatePtr}!InformationGain@{InformationGain}}
+\doxysubsubsection{EvaluatePtr()}
+{\footnotesize\ttfamily static double Evaluate\+Ptr (\begin{DoxyParamCaption}\item[{const Count\+Type $\ast$}]{counts,  }\item[{const size\+\_\+t}]{count\+Length,  }\item[{const Count\+Type}]{total\+Count }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Evaluate the information gain given a vector of class weight counts. 
+
+
+
+Definition at line 32 of file information\+\_\+gain.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1InformationGain_a9d801bb1be5db5207213f846f224458f}} 
+\index{InformationGain@{InformationGain}!Range@{Range}}
+\index{Range@{Range}!InformationGain@{InformationGain}}
+\doxysubsubsection{Range()}
+{\footnotesize\ttfamily static double Range (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{num\+Classes }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Return the range of the information gain for the given number of classes. 
+
+(That is, the difference between the maximum possible value and the minimum possible value.)
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 203 of file information\+\_\+gain.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/decision\+\_\+tree/\textbf{ information\+\_\+gain.\+hpp}\end{DoxyCompactItemize}

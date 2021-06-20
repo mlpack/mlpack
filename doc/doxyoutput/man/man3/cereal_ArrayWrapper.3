@@ -1,0 +1,51 @@
+.TH "ArrayWrapper< T >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ArrayWrapper< T > \- This class is used as a shim for cereal to be able to serialize a raw pointer array\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBArrayWrapper\fP (T *&addr, std::size_t &size)"
+.br
+.ti -1c
+.RI "template<class Archive > void \fBload\fP (Archive &ar)"
+.br
+.ti -1c
+.RI "template<class Archive > void \fBsave\fP (Archive &ar) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<class T>
+.br
+class cereal::ArrayWrapper< T >"
+This class is used as a shim for cereal to be able to serialize a raw pointer array\&. 
+.PP
+Definition at line 28 of file array_wrapper\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBArrayWrapper\fP (T *& addr, std::size_t & size)\fC [inline]\fP"
+
+.PP
+Definition at line 31 of file array_wrapper\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void load (Archive & ar)\fC [inline]\fP"
+
+.PP
+Definition at line 45 of file array_wrapper\&.hpp\&.
+.SS "void save (Archive & ar) const\fC [inline]\fP"
+
+.PP
+Definition at line 37 of file array_wrapper\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

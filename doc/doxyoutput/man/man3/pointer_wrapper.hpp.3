@@ -1,0 +1,77 @@
+.TH "/home/aakash/mlpack/src/mlpack/core/cereal/pointer_wrapper.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/core/cereal/pointer_wrapper.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBPointerWrapper< T >\fP"
+.br
+.RI "The objective of this class is to create a wrapper for raw pointer by encapsulating them in a smart pointer of type unique_ptr\&. "
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBcereal\fP"
+.br
+.ti -1c
+.RI " \fBstd\fP"
+.br
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCEREAL_POINTER\fP(T)   \fBcereal::make_pointer\fP(T)"
+.br
+.RI "Cereal does not support the serialization of raw pointer\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<class T > PointerWrapper< T > \fBmake_pointer\fP (T *&t)"
+.br
+.RI "Serialize raw pointer object by encapsulating the pointer into a smart pointer\&. "
+.ti -1c
+.RI "template<typename T , typename\&.\&.\&. Args> std::unique_ptr< T > \fBmake_unique\fP (Args &&\&.\&.\&. args)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Omar Shrit
+.RE
+.PP
+Implementation of a pointer wrapper to enable the serialization of raw pointers in cereal
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBpointer_wrapper\&.hpp\fP\&.
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define CEREAL_POINTER(T)   \fBcereal::make_pointer\fP(T)"
+
+.PP
+Cereal does not support the serialization of raw pointer\&. This macro enable developers to serialize a raw pointer by using the above PointerWrapper class which replace the raw pointer by a smart pointer internally\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIT\fP Raw pointer to be serialized\&. 
+.RE
+.PP
+
+.PP
+Definition at line 96 of file pointer_wrapper\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

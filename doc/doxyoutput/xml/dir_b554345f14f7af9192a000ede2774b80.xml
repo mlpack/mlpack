@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_b554345f14f7af9192a000ede2774b80" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core/kernels</compoundname>
+    <innerfile refid="cauchy__kernel_8hpp">cauchy_kernel.hpp</innerfile>
+    <innerfile refid="cosine__distance_8hpp">cosine_distance.hpp</innerfile>
+    <innerfile refid="epanechnikov__kernel_8hpp">epanechnikov_kernel.hpp</innerfile>
+    <innerfile refid="example__kernel_8hpp">example_kernel.hpp</innerfile>
+    <innerfile refid="gaussian__kernel_8hpp">gaussian_kernel.hpp</innerfile>
+    <innerfile refid="hyperbolic__tangent__kernel_8hpp">hyperbolic_tangent_kernel.hpp</innerfile>
+    <innerfile refid="kernel__traits_8hpp">kernel_traits.hpp</innerfile>
+    <innerfile refid="laplacian__kernel_8hpp">laplacian_kernel.hpp</innerfile>
+    <innerfile refid="linear__kernel_8hpp">linear_kernel.hpp</innerfile>
+    <innerfile refid="polynomial__kernel_8hpp">polynomial_kernel.hpp</innerfile>
+    <innerfile refid="pspectrum__string__kernel_8hpp">pspectrum_string_kernel.hpp</innerfile>
+    <innerfile refid="spherical__kernel_8hpp">spherical_kernel.hpp</innerfile>
+    <innerfile refid="triangular__kernel_8hpp">triangular_kernel.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/kernels/"/>
+  </compounddef>
+</doxygen>

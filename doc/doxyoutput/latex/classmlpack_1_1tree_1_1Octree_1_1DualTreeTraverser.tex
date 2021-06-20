@@ -1,0 +1,184 @@
+\doxysection{Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser}\index{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}}
+
+
+A dual-\/tree traverser; see dual\+\_\+tree\+\_\+traverser.\+hpp.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Dual\+Tree\+Traverser} (Rule\+Type \&rule)
+\begin{DoxyCompactList}\small\item\em Instantiate the given dual-\/tree traverser with the given rule set. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Base\+Cases} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a base case was computed. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Base\+Cases} () const
+\begin{DoxyCompactList}\small\item\em Get the number of times a base case was computed. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Prunes} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of pruned nodes (i.\+e. to reset it). \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Prunes} () const
+\begin{DoxyCompactList}\small\item\em Get the number of pruned nodes. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Scores} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a node was scored. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Scores} () const
+\begin{DoxyCompactList}\small\item\em Get the number of times a node was scored. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Visited} () const
+\begin{DoxyCompactList}\small\item\em Get the number of visited node combinations. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Vistied} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of visited node combinations. \end{DoxyCompactList}\item 
+void \textbf{ Traverse} (\textbf{ Octree} \&query\+Node, \textbf{ Octree} \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Traverse the two trees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+Euclidean\+Distance, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat$>$\newline
+template$<$typename Metric\+Type, typename Statistic\+Type, typename Mat\+Type$>$\newline
+class mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$}
+
+A dual-\/tree traverser; see dual\+\_\+tree\+\_\+traverser.\+hpp. 
+
+Definition at line 25 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_abd4227fd4d7e7f3e1090233443cc265e}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}!DualTreeTraverser@{DualTreeTraverser}}
+\index{DualTreeTraverser@{DualTreeTraverser}!Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{DualTreeTraverser()}
+{\footnotesize\ttfamily \textbf{ Dual\+Tree\+Traverser} (\begin{DoxyParamCaption}\item[{Rule\+Type \&}]{rule }\end{DoxyParamCaption})}
+
+
+
+Instantiate the given dual-\/tree traverser with the given rule set. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a56b8f525584ea0bf262fa6e413fe3672}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}!NumBaseCases@{NumBaseCases}}
+\index{NumBaseCases@{NumBaseCases}!Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{NumBaseCases()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of times a base case was computed. 
+
+
+
+Definition at line 57 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_afc2a1471e0354570c99c25473d32433e}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}!NumBaseCases@{NumBaseCases}}
+\index{NumBaseCases@{NumBaseCases}!Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{NumBaseCases()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of times a base case was computed. 
+
+
+
+Definition at line 55 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_adf887190e9d9024ff244503e4aaf0732}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}!NumPrunes@{NumPrunes}}
+\index{NumPrunes@{NumPrunes}!Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{NumPrunes()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Prunes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of pruned nodes (i.\+e. to reset it). 
+
+
+
+Definition at line 42 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_ac2f6072011ee31a0a32f62e2a105a347}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}!NumPrunes@{NumPrunes}}
+\index{NumPrunes@{NumPrunes}!Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{NumPrunes()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Prunes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of pruned nodes. 
+
+
+
+Definition at line 40 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a3c4c3ca7affdd40cc224370b87417125}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}!NumScores@{NumScores}}
+\index{NumScores@{NumScores}!Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{NumScores()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of times a node was scored. 
+
+
+
+Definition at line 52 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a9adf9744b1b9b4d74e0da6570010e63e}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}!NumScores@{NumScores}}
+\index{NumScores@{NumScores}!Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{NumScores()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of times a node was scored. 
+
+
+
+Definition at line 50 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_a6a5a81524ab8e6506495bdfb2f42fb2f}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}!NumVisited@{NumVisited}}
+\index{NumVisited@{NumVisited}!Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{NumVisited()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Visited (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of visited node combinations. 
+
+
+
+Definition at line 45 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_abeccb3bfbdc9239858b54e186cd3b37e}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}!NumVistied@{NumVistied}}
+\index{NumVistied@{NumVistied}!Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{NumVistied()}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Vistied (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of visited node combinations. 
+
+
+
+Definition at line 47 of file dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1DualTreeTraverser_ab4a6e08644fedca8d9a2cf0e7a2a237c}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}!Traverse@{Traverse}}
+\index{Traverse@{Traverse}!Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::DualTreeTraverser$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{Traverse()}
+{\footnotesize\ttfamily void Traverse (\begin{DoxyParamCaption}\item[{\textbf{ Octree} \&}]{query\+Node,  }\item[{\textbf{ Octree} \&}]{reference\+Node }\end{DoxyParamCaption})}
+
+
+
+Traverse the two trees. 
+
+This does not reset the statistics of the traversals (it just adds to them). 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/octree/\textbf{ dual\+\_\+tree\+\_\+traverser.\+hpp}\end{DoxyCompactItemize}

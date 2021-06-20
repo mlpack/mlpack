@@ -1,0 +1,178 @@
+\doxysection{CVBase$<$ MLAlgorithm, Mat\+Type, Predictions\+Type, Weights\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1cv_1_1CVBase}\index{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}}
+
+
+An auxiliary class for cross-\/validation.  
+
+
+
+
+Inheritance diagram for CVBase$<$ MLAlgorithm, Mat\+Type, Predictions\+Type, Weights\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmlpack_1_1cv_1_1CVBase__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \textbf{ MIE} = \textbf{ Meta\+Info\+Extractor}$<$ MLAlgorithm, Mat\+Type, Predictions\+Type, Weights\+Type $>$
+\begin{DoxyCompactList}\small\item\em A short alias for \doxyref{Meta\+Info\+Extractor}{p.}{classmlpack_1_1cv_1_1MetaInfoExtractor}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ CVBase} ()
+\begin{DoxyCompactList}\small\item\em Assert that MLAlgorithm doesn\textquotesingle{}t take any additional basic parameters like num\+Classes. \end{DoxyCompactList}\item 
+\textbf{ CVBase} (const \textbf{ data\+::\+Dataset\+Info} \&dataset\+Info, const size\+\_\+t num\+Classes)
+\begin{DoxyCompactList}\small\item\em Assert that MLAlgorithm takes the num\+Classes parameter and a \doxyref{data\+::\+Dataset\+Info}{p.}{namespacemlpack_1_1data_aa243ad7e4d29363b858bbc92b732921d} parameter and store them. \end{DoxyCompactList}\item 
+\textbf{ CVBase} (const size\+\_\+t num\+Classes)
+\begin{DoxyCompactList}\small\item\em Assert that MLAlgorithm takes the num\+Classes parameter and store it. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... MLAlgorithm\+Args$>$ }\\MLAlgorithm \textbf{ Train} (const Mat\+Type \&xs, const Predictions\+Type \&ys, const MLAlgorithm\+Args \&... args)
+\begin{DoxyCompactList}\small\item\em Train MLAlgorithm with given data points, predictions, and hyperparameters depending on what \doxyref{CVBase}{p.}{classmlpack_1_1cv_1_1CVBase} constructor has been called. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... MLAlgorithm\+Args$>$ }\\MLAlgorithm \textbf{ Train} (const Mat\+Type \&xs, const Predictions\+Type \&ys, const Weights\+Type \&weights, const MLAlgorithm\+Args \&... args)
+\begin{DoxyCompactList}\small\item\em Train MLAlgorithm with given data points, predictions, weights, and hyperparameters depending on what \doxyref{CVBase}{p.}{classmlpack_1_1cv_1_1CVBase} constructor has been called. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \textbf{ Assert\+Data\+Consistency} (const Mat\+Type \&xs, const Predictions\+Type \&ys)
+\begin{DoxyCompactList}\small\item\em Assert there is the equal number of data points and predictions. \end{DoxyCompactList}\item 
+static void \textbf{ Assert\+Weights\+Consistency} (const Mat\+Type \&xs, const Weights\+Type \&weights)
+\begin{DoxyCompactList}\small\item\em Assert weighted learning is supported and there is the equal number of data points and weights. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename MLAlgorithm, typename Mat\+Type, typename Predictions\+Type, typename Weights\+Type$>$\newline
+class mlpack\+::cv\+::\+CVBase$<$ MLAlgorithm, Mat\+Type, Predictions\+Type, Weights\+Type $>$}
+
+An auxiliary class for cross-\/validation. 
+
+It serves to handle basic non-\/data constructor parameters of a machine learning algorithm (like dataset\+Info or num\+Classes) and to assert that the machine learning algorithm and data satisfy certain conditions.
+
+This class is not meant to be used directly by users. To cross-\/validate rather use end-\/user classes like \doxyref{Simple\+CV}{p.}{classmlpack_1_1cv_1_1SimpleCV} or \doxyref{KFold\+CV}{p.}{classmlpack_1_1cv_1_1KFoldCV}.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em MLAlgorithm} & A machine learning algorithm. \\
+\hline
+{\em Mat\+Type} & The type of data. \\
+\hline
+{\em Predictions\+Type} & The type of predictions (labels/responses). \\
+\hline
+{\em Weights\+Type} & The type of weights. It supposed to be void$\ast$ when weights are not supported. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 39 of file cv\+\_\+base.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1cv_1_1CVBase_a8136390cdbea4d1b8b3fe885c223b590}} 
+\index{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}!MIE@{MIE}}
+\index{MIE@{MIE}!CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}}
+\doxysubsubsection{MIE}
+{\footnotesize\ttfamily using \textbf{ MIE} =  \textbf{ Meta\+Info\+Extractor}$<$MLAlgorithm, Mat\+Type, Predictions\+Type, Weights\+Type$>$}
+
+
+
+A short alias for \doxyref{Meta\+Info\+Extractor}{p.}{classmlpack_1_1cv_1_1MetaInfoExtractor}. 
+
+
+
+Definition at line 43 of file cv\+\_\+base.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1cv_1_1CVBase_a0b26728db400bc58a826f99965b22adc}} 
+\index{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}!CVBase@{CVBase}}
+\index{CVBase@{CVBase}!CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}}
+\doxysubsubsection{CVBase()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ CVBase} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Assert that MLAlgorithm doesn\textquotesingle{}t take any additional basic parameters like num\+Classes. 
+
+\mbox{\label{classmlpack_1_1cv_1_1CVBase_a0767da5bbe4ffe608d7a5887533bac41}} 
+\index{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}!CVBase@{CVBase}}
+\index{CVBase@{CVBase}!CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}}
+\doxysubsubsection{CVBase()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ CVBase} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{num\+Classes }\end{DoxyParamCaption})}
+
+
+
+Assert that MLAlgorithm takes the num\+Classes parameter and store it. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1cv_1_1CVBase_ad58931db3199d060bd4b5db9268197a5}} 
+\index{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}!CVBase@{CVBase}}
+\index{CVBase@{CVBase}!CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}}
+\doxysubsubsection{CVBase()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ CVBase} (\begin{DoxyParamCaption}\item[{const \textbf{ data\+::\+Dataset\+Info} \&}]{dataset\+Info,  }\item[{const size\+\_\+t}]{num\+Classes }\end{DoxyParamCaption})}
+
+
+
+Assert that MLAlgorithm takes the num\+Classes parameter and a \doxyref{data\+::\+Dataset\+Info}{p.}{namespacemlpack_1_1data_aa243ad7e4d29363b858bbc92b732921d} parameter and store them. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset\+Info} & Type information for each dimension of the dataset. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cv_1_1CVBase_ae1e254399d702b57b117cbf834faa45a}} 
+\index{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}!AssertDataConsistency@{AssertDataConsistency}}
+\index{AssertDataConsistency@{AssertDataConsistency}!CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}}
+\doxysubsubsection{AssertDataConsistency()}
+{\footnotesize\ttfamily static void Assert\+Data\+Consistency (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{xs,  }\item[{const Predictions\+Type \&}]{ys }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Assert there is the equal number of data points and predictions. 
+
+\mbox{\label{classmlpack_1_1cv_1_1CVBase_a5039acfc2b793e2dc813a07eddb457a1}} 
+\index{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}!AssertWeightsConsistency@{AssertWeightsConsistency}}
+\index{AssertWeightsConsistency@{AssertWeightsConsistency}!CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}}
+\doxysubsubsection{AssertWeightsConsistency()}
+{\footnotesize\ttfamily static void Assert\+Weights\+Consistency (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{xs,  }\item[{const Weights\+Type \&}]{weights }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Assert weighted learning is supported and there is the equal number of data points and weights. 
+
+\mbox{\label{classmlpack_1_1cv_1_1CVBase_a31e9234a1f4e504d385dfa3870f71cad}} 
+\index{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}!Train@{Train}}
+\index{Train@{Train}!CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}}
+\doxysubsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily MLAlgorithm Train (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{xs,  }\item[{const Predictions\+Type \&}]{ys,  }\item[{const MLAlgorithm\+Args \&...}]{args }\end{DoxyParamCaption})}
+
+
+
+Train MLAlgorithm with given data points, predictions, and hyperparameters depending on what \doxyref{CVBase}{p.}{classmlpack_1_1cv_1_1CVBase} constructor has been called. 
+
+\mbox{\label{classmlpack_1_1cv_1_1CVBase_ae50527d3c3f50b7a26eb239b6a3ed655}} 
+\index{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}!Train@{Train}}
+\index{Train@{Train}!CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$@{CVBase$<$ MLAlgorithm, MatType, PredictionsType, WeightsType $>$}}
+\doxysubsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily MLAlgorithm Train (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{xs,  }\item[{const Predictions\+Type \&}]{ys,  }\item[{const Weights\+Type \&}]{weights,  }\item[{const MLAlgorithm\+Args \&...}]{args }\end{DoxyParamCaption})}
+
+
+
+Train MLAlgorithm with given data points, predictions, weights, and hyperparameters depending on what \doxyref{CVBase}{p.}{classmlpack_1_1cv_1_1CVBase} constructor has been called. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/cv/\textbf{ cv\+\_\+base.\+hpp}\end{DoxyCompactItemize}

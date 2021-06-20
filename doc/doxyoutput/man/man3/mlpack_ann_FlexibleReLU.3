@@ -1,0 +1,242 @@
+.TH "FlexibleReLU< InputDataType, OutputDataType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+FlexibleReLU< InputDataType, OutputDataType > \- The \fBFlexibleReLU\fP activation function, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBFlexibleReLU\fP (const double alpha=0)"
+.br
+.RI "Create the \fBFlexibleReLU\fP object using the specified parameters\&. "
+.ti -1c
+.RI "double & \fBAlpha\fP ()"
+.br
+.RI "Modify the parameter controlling the range of the relu function\&. "
+.ti -1c
+.RI "double const  & \fBAlpha\fP () const"
+.br
+.RI "Get the parameter controlling the range of the relu function\&. "
+.ti -1c
+.RI "template<typename DataType > void \fBBackward\fP (const DataType &input, const DataType &gy, DataType &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBForward\fP (const InputType &input, OutputType &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "OutputDataType & \fBGradient\fP ()"
+.br
+.RI "Modify the gradient\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBGradient\fP () const"
+.br
+.RI "Get the gradient\&. "
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &error, arma::Mat< eT > &gradient)"
+.br
+.RI "Calculate the gradient using the output delta and the input activation\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBParameters\fP ()"
+.br
+.RI "Modify the parameters\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBParameters\fP () const"
+.br
+.RI "Get the parameters\&. "
+.ti -1c
+.RI "void \fBReset\fP ()"
+.br
+.RI "Reset the layer parameter\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::FlexibleReLU< InputDataType, OutputDataType >"
+The \fBFlexibleReLU\fP activation function, defined by\&. 
+
+\begin{eqnarray*} f(x) &=& \max(0,x)+alpha \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ 0 & : x \le 0 \end{array} \right. \end{eqnarray*}
+.PP
+For more information, read the following paper:
+.PP
+.PP
+.nf
+@article{Qiu2018,
+ author  = {Suo Qiu, Xiangmin Xu and Bolun Cai},
+ title   = {FReLU: Flexible Rectified Linear Units for Improving
+            Convolutional Neural Networks}
+ journal = {arxiv preprint},
+ URL     = {https://arxiv\&.org/abs/1706\&.08098},
+ year    = {2018}
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mar, arma::sp_mat or arma::cube) 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube) 
+.RE
+.PP
+
+.PP
+Definition at line 59 of file flexible_relu\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBFlexibleReLU\fP (const double alpha = \fC0\fP)"
+
+.PP
+Create the \fBFlexibleReLU\fP object using the specified parameters\&. The non zero parameter can be adjusted by specifying the parameter alpha which controls the range of the relu function\&. (Default alpha = 0) This parameter is trainable\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIalpha\fP Parameter for adjusting the range of the relu function\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double& Alpha ()\fC [inline]\fP"
+
+.PP
+Modify the parameter controlling the range of the relu function\&. 
+.PP
+Definition at line 136 of file flexible_relu\&.hpp\&.
+.SS "double const& Alpha () const\fC [inline]\fP"
+
+.PP
+Get the parameter controlling the range of the relu function\&. 
+.PP
+Definition at line 134 of file flexible_relu\&.hpp\&.
+.SS "void Backward (const DataType & input, const DataType & gy, DataType & g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 126 of file flexible_relu\&.hpp\&.
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 124 of file flexible_relu\&.hpp\&.
+.SS "void Forward (const InputType & input, OutputType & output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "OutputDataType& Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 131 of file flexible_relu\&.hpp\&.
+.SS "OutputDataType const& Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 129 of file flexible_relu\&.hpp\&.
+.SS "void Gradient (const arma::Mat< eT > & input, const arma::Mat< eT > & error, arma::Mat< eT > & gradient)"
+
+.PP
+Calculate the gradient using the output delta and the input activation\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP The input parameter used for calculating the gradient\&. 
+.br
+\fIerror\fP The calculated error\&. 
+.br
+\fIgradient\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 121 of file flexible_relu\&.hpp\&.
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 119 of file flexible_relu\&.hpp\&.
+.SS "OutputDataType& Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters\&. 
+.PP
+Definition at line 116 of file flexible_relu\&.hpp\&.
+.SS "OutputDataType const& Parameters () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. 
+.PP
+Definition at line 114 of file flexible_relu\&.hpp\&.
+.SS "void Reset ()"
+
+.PP
+Reset the layer parameter\&. 
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,147 @@
+\doxysection{RAQuery\+Stat$<$ Sort\+Policy $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1RAQueryStat}\index{RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}}
+
+
+Extra data for each node in the tree.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ RAQuery\+Stat} ()
+\begin{DoxyCompactList}\small\item\em Initialize the statistic with the worst possible distance according to our sorting policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\\textbf{ RAQuery\+Stat} (const Tree\+Type \&)
+\begin{DoxyCompactList}\small\item\em Initialization for a node. \end{DoxyCompactList}\item 
+double \& \textbf{ Bound} ()
+\begin{DoxyCompactList}\small\item\em Modify the bound. \end{DoxyCompactList}\item 
+double \textbf{ Bound} () const
+\begin{DoxyCompactList}\small\item\em Get the bound. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Samples\+Made} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of samples made. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Samples\+Made} () const
+\begin{DoxyCompactList}\small\item\em Get the number of samples made. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the statistic. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Sort\+Policy$>$\newline
+class mlpack\+::neighbor\+::\+RAQuery\+Stat$<$ Sort\+Policy $>$}
+
+Extra data for each node in the tree. 
+
+For neighbor searches, each node only needs to store a bound on neighbor distances.
+
+Every query is required to make a minimum number of samples to guarantee the desired approximation error. The \textquotesingle{}num\+Samples\+Made\textquotesingle{} keeps track of the minimum number of samples made by all queries in the node in question. 
+
+Definition at line 35 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1RAQueryStat_a098a188470046d5d6616fe581f30a5ad}} 
+\index{RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}!RAQueryStat@{RAQueryStat}}
+\index{RAQueryStat@{RAQueryStat}!RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}}
+\doxysubsubsection{RAQueryStat()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ RAQuery\+Stat} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the statistic with the worst possible distance according to our sorting policy. 
+
+
+
+Definition at line 42 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAQueryStat_a8c97f34a41094a4e0ce70487fa0f161b}} 
+\index{RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}!RAQueryStat@{RAQueryStat}}
+\index{RAQueryStat@{RAQueryStat}!RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}}
+\doxysubsubsection{RAQueryStat()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ RAQuery\+Stat} (\begin{DoxyParamCaption}\item[{const Tree\+Type \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialization for a node. 
+
+
+
+Definition at line 48 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1RAQueryStat_a421b6e4a396e0c1057e297e39a7d1b8b}} 
+\index{RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}!Bound@{Bound}}
+\index{Bound@{Bound}!RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}}
+\doxysubsubsection{Bound()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the bound. 
+
+
+
+Definition at line 56 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAQueryStat_abe1eb75f967ca19571a77a1e90faa0ad}} 
+\index{RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}!Bound@{Bound}}
+\index{Bound@{Bound}!RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}}
+\doxysubsubsection{Bound()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the bound. 
+
+
+
+Definition at line 54 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAQueryStat_a022010830d2949e594c3de35b0f6e203}} 
+\index{RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}!NumSamplesMade@{NumSamplesMade}}
+\index{NumSamplesMade@{NumSamplesMade}!RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}}
+\doxysubsubsection{NumSamplesMade()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Samples\+Made (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of samples made. 
+
+
+
+Definition at line 61 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAQueryStat_abe4f5b99141d0e66fb2ca61674267659}} 
+\index{RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}!NumSamplesMade@{NumSamplesMade}}
+\index{NumSamplesMade@{NumSamplesMade}!RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}}
+\doxysubsubsection{NumSamplesMade()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Samples\+Made (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of samples made. 
+
+
+
+Definition at line 59 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAQueryStat_a65cba07328997659bec80b9879b15a51}} 
+\index{RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!RAQueryStat$<$ SortPolicy $>$@{RAQueryStat$<$ SortPolicy $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the statistic. 
+
+
+
+Definition at line 65 of file ra\+\_\+query\+\_\+stat.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/rann/\textbf{ ra\+\_\+query\+\_\+stat.\+hpp}\end{DoxyCompactItemize}

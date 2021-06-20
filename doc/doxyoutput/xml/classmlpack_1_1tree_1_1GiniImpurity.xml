@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1GiniImpurity" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::GiniImpurity</compoundname>
+    <includes refid="gini__impurity_8hpp" local="no">gini_impurity.hpp</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1GiniImpurity_1a578c636308efbd492ea30e62f05f4d63" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Evaluate</definition>
+        <argsstring>(const arma::Mat&lt; size_t &gt; &amp;counts)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>counts</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/gini_impurity.hpp" line="24" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/gini_impurity.hpp" bodystart="24" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1GiniImpurity_1a9d801bb1be5db5207213f846f224458f" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Range</definition>
+        <argsstring>(const size_t numClasses)</argsstring>
+        <name>Range</name>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <briefdescription>
+<para>Return the range of the Gini impurity for the given number of classes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>(That is, the difference between the maximum possible value and the minimum possible value.) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/gini_impurity.hpp" line="77" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/gini_impurity.hpp" bodystart="77" bodyend="83"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/gini_impurity.hpp" line="21" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/gini_impurity.hpp" bodystart="22" bodyend="84"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1GiniImpurity_1a578c636308efbd492ea30e62f05f4d63" prot="public" virt="non-virtual"><scope>mlpack::tree::GiniImpurity</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1tree_1_1GiniImpurity_1a9d801bb1be5db5207213f846f224458f" prot="public" virt="non-virtual"><scope>mlpack::tree::GiniImpurity</scope><name>Range</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

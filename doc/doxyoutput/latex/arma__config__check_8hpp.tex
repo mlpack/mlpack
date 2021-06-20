@@ -1,0 +1,25 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/core/util/arma\+\_\+config\+\_\+check.hpp File Reference}
+\label{arma__config__check_8hpp}\index{/home/aakash/mlpack/src/mlpack/core/util/arma\_config\_check.hpp@{/home/aakash/mlpack/src/mlpack/core/util/arma\_config\_check.hpp}}
+Include dependency graph for arma\+\_\+config\+\_\+check.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=179pt]{arma__config__check_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{arma__config__check_8hpp__dep__incl}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Using the contents of arma\+\_\+config.\+hpp, try to catch the condition where the user has included mlpack with ARMA\+\_\+64\+BIT\+\_\+\+WORD enabled but mlpack was compiled without ARMA\+\_\+64\+BIT\+\_\+\+WORD enabled. This should help prevent a long, drawn-\/out debugging process where nobody can figure out why the stack is getting mangled.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::amf::NMFMultiplicativeDivergenceUpdate</compoundname>
+    <includes refid="nmf__mult__div_8hpp" local="no">nmf_mult_div.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_1a18f4f81c6b7c8ab3dba34ec43ba9194e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NMFMultiplicativeDivergenceUpdate</definition>
+        <argsstring>()</argsstring>
+        <name>NMFMultiplicativeDivergenceUpdate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" line="52" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" bodystart="52" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_1aac5af164b10635addd7ff7bb934a4db3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(const MatType &amp;, const size_t)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>const MatType &amp;</type>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the factorization. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>These rules don&apos;t store any state, so the input values are ignore. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" line="59" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" bodystart="59" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the object (in this case, there is nothing to serialize). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" line="154" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" bodystart="154" bodyend="154"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_1ad2a433d7e149001f0f44caa8967d20a6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void HUpdate</definition>
+        <argsstring>(const MatType &amp;V, const arma::mat &amp;W, arma::mat &amp;H)</argsstring>
+        <name>HUpdate</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>The update rule for the encoding matrix H. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The formula used is</para>
+<para><formula id="81">\[ H_{a\mu} \leftarrow H_{a\mu} \frac{\sum_{i} W_{ia} V_{i\mu}/(WH)_{i\mu}} {\sum_{k} H_{ka}} \]</formula></para>
+<para>The function takes in all the matrices and only changes the value of the H matrix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix to updated. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" line="124" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" bodystart="124" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_1a79b17bfdd69326a4f9f7d17c698ee6af" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void WUpdate</definition>
+        <argsstring>(const MatType &amp;V, arma::mat &amp;W, const arma::mat &amp;H)</argsstring>
+        <name>WUpdate</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>The update rule for the basis matrix W. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The formula used is</para>
+<para><formula id="80">\[ W_{ia} \leftarrow W_{ia} \frac{\sum_{\mu} H_{a\mu} V_{i\mu} / (W H)_{i\mu}} {\sum_{\nu} H_{a\nu}} \]</formula></para>
+<para>The function takes in all the matrices and only changes the value of the W matrix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix to be updated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" line="80" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" bodystart="80" bodyend="106"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This follows a method described in the paper &apos;Algorithms for Non-negative. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><programlisting><codeline><highlight class="normal">@inproceedings{lee2001algorithms,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={Algorithms<sp/>for<sp/>non-negative<sp/>matrix<sp/>factorization},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Lee,<sp/>D.D.<sp/>and<sp/>Seung,<sp/>H.S.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle={Advances<sp/>in<sp/>Neural<sp/>Information<sp/>Processing<sp/>Systems<sp/>13</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>(NIPS<sp/>2000)},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages={556--562},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2001}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>This is a multiplicative rule that ensures that the Kullback-Leibler divergence</para>
+<para><formula id="79">\[ \sum_i \sum_j (V_{ij} \log\frac{V_{ij}}{(W H)_{ij}} - V_{ij} + (W H)_{ij}) \]</formula></para>
+<para>is non-increasing between subsequent iterations. Both of the update rules for W and H are defined in this file.</para>
+<para>This set of update rules is not meant to work with sparse matrices. Using sparse matrices often causes NaNs in the output, so other choices of update rules are better in that situation. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" line="48" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_div.hpp" bodystart="49" bodyend="155"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_1ad2a433d7e149001f0f44caa8967d20a6" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFMultiplicativeDivergenceUpdate</scope><name>HUpdate</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_1aac5af164b10635addd7ff7bb934a4db3" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFMultiplicativeDivergenceUpdate</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_1a18f4f81c6b7c8ab3dba34ec43ba9194e" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFMultiplicativeDivergenceUpdate</scope><name>NMFMultiplicativeDivergenceUpdate</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFMultiplicativeDivergenceUpdate</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_1a79b17bfdd69326a4f9f7d17c698ee6af" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFMultiplicativeDivergenceUpdate</scope><name>WUpdate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

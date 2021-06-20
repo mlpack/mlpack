@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_4efb564a11712fe6ab1802c27ccee872" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core/metrics</compoundname>
+    <innerfile refid="bleu_8hpp">bleu.hpp</innerfile>
+    <innerfile refid="iou__metric_8hpp">iou_metric.hpp</innerfile>
+    <innerfile refid="ip__metric_8hpp">ip_metric.hpp</innerfile>
+    <innerfile refid="lmetric_8hpp">lmetric.hpp</innerfile>
+    <innerfile refid="mahalanobis__distance_8hpp">mahalanobis_distance.hpp</innerfile>
+    <innerfile refid="non__maximal__supression_8hpp">non_maximal_supression.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/metrics/"/>
+  </compounddef>
+</doxygen>

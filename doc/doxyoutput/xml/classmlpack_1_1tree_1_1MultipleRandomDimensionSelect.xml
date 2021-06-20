@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::MultipleRandomDimensionSelect</compoundname>
+    <includes refid="multiple__random__dimension__select_8hpp" local="no">multiple_random_dimension_select.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a503c829cc0dc5c82c3ceafc938d3ffb6" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t dimensions</definition>
+        <argsstring></argsstring>
+        <name>dimensions</name>
+        <briefdescription>
+<para>Number of dimensions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" line="105" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1ae46bd26d7133dfe98f8cec7c5ac5c7a1" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t i</definition>
+        <argsstring></argsstring>
+        <name>i</name>
+        <briefdescription>
+<para>The current value we are looking at. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" line="103" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a620d76baff34a3785432d728633ee188" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numDimensions</definition>
+        <argsstring></argsstring>
+        <name>numDimensions</name>
+        <briefdescription>
+<para>The number of dimensions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" line="99" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a117cc87d668362e0703a09d0900f4a56" prot="private" static="no" mutable="no">
+        <type>arma::Col&lt; size_t &gt;</type>
+        <definition>arma::Col&lt;size_t&gt; values</definition>
+        <argsstring></argsstring>
+        <name>values</name>
+        <briefdescription>
+<para>The values we select from. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" line="101" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a74eca23f79884036a4da419c086825be" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MultipleRandomDimensionSelect</definition>
+        <argsstring>(const size_t numDimensions=0)</argsstring>
+        <name>MultipleRandomDimensionSelect</name>
+        <param>
+          <type>const size_t</type>
+          <declname>numDimensions</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Instantiate the <ref refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect" kindref="compound">MultipleRandomDimensionSelect</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>numDimensions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of random dimensions to try for each split. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" line="31" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" bodystart="31" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1aeb8e77df2c5b714e547bb7e9635b29f9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Begin</definition>
+        <argsstring>()</argsstring>
+        <name>Begin</name>
+        <briefdescription>
+<para>Get the first random value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" line="40" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" bodystart="40" bodyend="77"/>
+        <references refid="namespacemlpack_1_1math_1aad090ac225728d74c1b66bcf52f3ab95" compoundref="random_8hpp" startline="110" endline="113">mlpack::math::RandInt</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a04965eda723772715cd9668f4f18fd7b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Dimensions</definition>
+        <argsstring>()</argsstring>
+        <name>Dimensions</name>
+        <briefdescription>
+<para>Set the number of dimensions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" line="95" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" bodystart="95" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1ae1720906306f12d748df9bd6c4d75a7b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Dimensions</definition>
+        <argsstring>() const</argsstring>
+        <name>Dimensions</name>
+        <briefdescription>
+<para>Get the number of dimensions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" line="93" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" bodystart="93" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a8d5a763647411c8a0f06e031c4611a0f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t End</definition>
+        <argsstring>() const</argsstring>
+        <name>End</name>
+        <briefdescription>
+<para>Get the last random value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" line="82" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" bodystart="82" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a9832ebe5464b57064d66192c4c43b9dd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Next</definition>
+        <argsstring>()</argsstring>
+        <name>Next</name>
+        <briefdescription>
+<para>Get the next index. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" line="87" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" bodystart="87" bodyend="90"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This dimension selection policy allows the selection from a few random dimensions. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The number of random dimensions to use is specified in the constructor. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" line="23" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/multiple_random_dimension_select.hpp" bodystart="24" bodyend="106"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1aeb8e77df2c5b714e547bb7e9635b29f9" prot="public" virt="non-virtual"><scope>mlpack::tree::MultipleRandomDimensionSelect</scope><name>Begin</name></member>
+      <member refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a503c829cc0dc5c82c3ceafc938d3ffb6" prot="private" virt="non-virtual"><scope>mlpack::tree::MultipleRandomDimensionSelect</scope><name>dimensions</name></member>
+      <member refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1ae1720906306f12d748df9bd6c4d75a7b" prot="public" virt="non-virtual"><scope>mlpack::tree::MultipleRandomDimensionSelect</scope><name>Dimensions</name></member>
+      <member refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a04965eda723772715cd9668f4f18fd7b" prot="public" virt="non-virtual"><scope>mlpack::tree::MultipleRandomDimensionSelect</scope><name>Dimensions</name></member>
+      <member refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a8d5a763647411c8a0f06e031c4611a0f" prot="public" virt="non-virtual"><scope>mlpack::tree::MultipleRandomDimensionSelect</scope><name>End</name></member>
+      <member refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1ae46bd26d7133dfe98f8cec7c5ac5c7a1" prot="private" virt="non-virtual"><scope>mlpack::tree::MultipleRandomDimensionSelect</scope><name>i</name></member>
+      <member refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a74eca23f79884036a4da419c086825be" prot="public" virt="non-virtual"><scope>mlpack::tree::MultipleRandomDimensionSelect</scope><name>MultipleRandomDimensionSelect</name></member>
+      <member refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a9832ebe5464b57064d66192c4c43b9dd" prot="public" virt="non-virtual"><scope>mlpack::tree::MultipleRandomDimensionSelect</scope><name>Next</name></member>
+      <member refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a620d76baff34a3785432d728633ee188" prot="private" virt="non-virtual"><scope>mlpack::tree::MultipleRandomDimensionSelect</scope><name>numDimensions</name></member>
+      <member refid="classmlpack_1_1tree_1_1MultipleRandomDimensionSelect_1a117cc87d668362e0703a09d0900f4a56" prot="private" virt="non-virtual"><scope>mlpack::tree::MultipleRandomDimensionSelect</scope><name>values</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

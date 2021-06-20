@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01true_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::cv::TrainForm&lt; MT, PT, WT, true, true &gt;</compoundname>
+    <basecompoundref refid="structmlpack_1_1cv_1_1TrainFormBase7" prot="public" virt="non-virtual">TrainFormBase7&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t, const WT &amp; &gt;</basecompoundref>
+    <includes refid="meta__info__extractor_8hpp" local="no">meta_info_extractor.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MT</type>
+      </param>
+      <param>
+        <type>typename PT</type>
+      </param>
+      <param>
+        <type>typename WT</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>TrainFormBase7&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t, const WT &amp; &gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainFormBase7"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t, const WT &amp; &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>TrainForm&lt; MT, PT, WT, true, true &gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01true_01_4"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>TrainFormBase7&lt; PT, WT, T1, T2, T3, T4, T5 &gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainFormBase7"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>TrainFormBase7&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t, const WT &amp; &gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainFormBase7"/>
+        <childnode refid="3" relation="template-instance">
+          <edgelabel>&lt; PT, WT, const MT &amp;, const data::DatasetInfo &amp;, const PT &amp;, const size_t, const WT &amp; &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>TrainForm&lt; MT, PT, WT, true, true &gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01true_01_4"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>TrainFormBase7&lt; PT, WT, T1, T2, T3, T4, T5 &gt;</label>
+        <link refid="structmlpack_1_1cv_1_1TrainFormBase7"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="128" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="130" bodyend="130"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1cv_1_1TrainFormBase7_1adacbdda6f41a542559105d6e48d1cfc2" prot="public" virt="non-virtual"><scope>mlpack::cv::TrainForm&lt; MT, PT, WT, true, true &gt;</scope><name>MinNumberOfAdditionalArgs</name></member>
+      <member refid="structmlpack_1_1cv_1_1TrainFormBase7_1a329a0bee5f08ebbfbd6c97e4f74bdb4f" prot="public" virt="non-virtual"><scope>mlpack::cv::TrainForm&lt; MT, PT, WT, true, true &gt;</scope><name>PredictionsType</name></member>
+      <member refid="structmlpack_1_1cv_1_1TrainFormBase7_1aec0832f5ca5e0a962d03d3b5843bcf81" prot="public" virt="non-virtual"><scope>mlpack::cv::TrainForm&lt; MT, PT, WT, true, true &gt;</scope><name>Type</name></member>
+      <member refid="structmlpack_1_1cv_1_1TrainFormBase7_1aecfc3bfd62796ddd9feb857c898cefa8" prot="public" virt="non-virtual"><scope>mlpack::cv::TrainForm&lt; MT, PT, WT, true, true &gt;</scope><name>WeightsType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

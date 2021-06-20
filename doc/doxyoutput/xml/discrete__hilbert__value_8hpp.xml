@@ -1,0 +1,717 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="discrete__hilbert__value_8hpp" kind="file" language="C++">
+    <compoundname>discrete_hilbert_value.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes local="yes">discrete_hilbert_value_impl.hpp</includes>
+    <includedby refid="rectangle__tree_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree.hpp</includedby>
+    <incdepgraph>
+      <node id="59">
+        <label>list</label>
+      </node>
+      <node id="56">
+        <label>atomic</label>
+      </node>
+      <node id="39">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="15">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="58">
+        <label>iomanip</label>
+      </node>
+      <node id="24">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/discrete_hilbert_value.hpp</label>
+        <link refid="discrete__hilbert__value_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>cstdint</label>
+      </node>
+      <node id="16">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="23">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="49">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="46">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="47">
+        <label>mlpack/core/util/log.hpp</label>
+        <link refid="log_8hpp"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="3">
+        <label>cmath</label>
+      </node>
+      <node id="22">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="11">
+        <label>stdexcept</label>
+      </node>
+      <node id="31">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>string</label>
+      </node>
+      <node id="43">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>map</label>
+      </node>
+      <node id="5">
+        <label>cfloat</label>
+      </node>
+      <node id="35">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="51">
+        <label>prefixedoutstream_impl.hpp</label>
+      </node>
+      <node id="63">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="19">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="42">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="52">
+        <label>nulloutstream.hpp</label>
+        <link refid="nulloutstream_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="41">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>cstdio</label>
+      </node>
+      <node id="12">
+        <label>tuple</label>
+      </node>
+      <node id="17">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="34">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>prefixedoutstream.hpp</label>
+        <link refid="prefixedoutstream_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>streambuf</label>
+      </node>
+      <node id="13">
+        <label>utility</label>
+      </node>
+      <node id="37">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="28">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="25">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="40">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>cstdlib</label>
+      </node>
+      <node id="4">
+        <label>cctype</label>
+      </node>
+      <node id="53">
+        <label>iostream</label>
+      </node>
+      <node id="27">
+        <label>unordered_map</label>
+      </node>
+      <node id="6">
+        <label>climits</label>
+      </node>
+      <node id="61">
+        <label>mutex</label>
+      </node>
+      <node id="57">
+        <label>chrono</label>
+      </node>
+      <node id="64">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="62">
+        <label>thread</label>
+      </node>
+      <node id="44">
+        <label>type_traits</label>
+      </node>
+      <node id="65">
+        <label>discrete_hilbert_value_impl.hpp</label>
+      </node>
+      <node id="20">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="14">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="38">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>cstring</label>
+      </node>
+      <node id="29">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="18">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="18">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn_function.hpp</label>
+        <link refid="lmnn__function_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp</label>
+        <link refid="methods_2neighbor__search_2typedef_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/discrete_hilbert_value.hpp</label>
+        <link refid="discrete__hilbert__value_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="10">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
+        <link refid="regularized__svd__method_8hpp"/>
+      </node>
+      <node id="7">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
+        <link refid="bias__svd__method_8hpp"/>
+      </node>
+      <node id="5">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp</label>
+        <link refid="cosine__search_8hpp"/>
+      </node>
+      <node id="23">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="16">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp</label>
+        <link refid="dual__tree__kmeans_8hpp"/>
+      </node>
+      <node id="11">
+        <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
+        <link refid="svdplusplus_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp</label>
+        <link refid="ns__model_8hpp"/>
+      </node>
+      <node id="17">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/constraints.hpp</label>
+        <link refid="constraints_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp</label>
+        <link refid="lmetric__search_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn.hpp</label>
+        <link refid="lmnn_8hpp"/>
+      </node>
+      <node id="6">
+        <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
+        <link refid="bias__svd_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp</label>
+        <link refid="ra__model_8hpp"/>
+      </node>
+      <node id="3">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="12">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
+        <link refid="svdplusplus__method_8hpp"/>
+      </node>
+      <node id="9">
+        <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
+        <link refid="regularized__svd_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp</label>
+        <link refid="neighbor__search_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp</label>
+        <link refid="rs__model_8hpp"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp</label>
+        <link refid="pearson__search_8hpp"/>
+      </node>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree.hpp</label>
+        <link refid="rectangle__tree_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" prot="public">mlpack::tree::DiscreteHilbertValue</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Mikhail Lozhnikov</para>
+</simplesect>
+Definition of the DiscreteHilbertValue class, a class that calculates the ordering of points using the Hilbert curve.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeElemType&gt;</highlight></codeline>
+<codeline lineno="29" refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::conditional&lt;</highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(TreeElemType)<sp/>*<sp/>CHAR_BIT<sp/>&lt;=<sp/>32,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint32_t,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>uint64_t&gt;::type<sp/>HilbertElemType;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>();</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/>tree);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>&amp;<sp/>other,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType*<sp/>tree,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>deepCopy);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>(<ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>&amp;&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/>~<ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>();</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType1,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType2&gt;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ComparePoints(</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType1&amp;<sp/>pt1,</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType2&amp;<sp/>pt2,</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType1&gt;::value</ref>&gt;*<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType2&gt;::value</ref>&gt;*<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>CompareValues(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>&amp;<sp/>val1,</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>&amp;<sp/>val2);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>CompareWith(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>&amp;<sp/>val)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>CompareWith(</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>pt,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>CompareWithCachedPoint(</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>pt,</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>InsertPoint(TreeType<sp/>*node,</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>pt,</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>InsertNode(TreeType*<sp/>node);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DeletePoint(TreeType*<sp/>node,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>localIndex);</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RemoveNode(TreeType*<sp/>node,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>nodeIndex);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>&amp;<sp/>operator=(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>&amp;<sp/>operator=(<ref refid="classmlpack_1_1tree_1_1DiscreteHilbertValue" kindref="compound">DiscreteHilbertValue</ref>&amp;&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>NullifyData();</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>UpdateLargestValue(TreeType*<sp/>node);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RedistributeHilbertValues(TreeType*<sp/>parent,</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>firstSibling,</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>lastSibling);</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>arma::Col&lt;HilbertElemType&gt;<sp/>CalculateValue(</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>pt,</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>CompareValues(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Col&lt;HilbertElemType&gt;&amp;<sp/>value1,</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Col&lt;HilbertElemType&gt;&amp;<sp/>value2);</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>NumValues()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numValues;<sp/>}</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/>NumValues()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numValues;<sp/>}</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Mat&lt;HilbertElemType&gt;*<sp/>LocalHilbertValues()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="250"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>localHilbertValues;<sp/>}</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/>arma::Mat&lt;HilbertElemType&gt;*&amp;<sp/>LocalHilbertValues()</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>localHilbertValues;<sp/>}</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>OwnsLocalHilbertValues()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ownsLocalHilbertValues;<sp/>}</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/>OwnsLocalHilbertValues()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ownsLocalHilbertValues;<sp/>}</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::Col&lt;HilbertElemType&gt;*<sp/>ValueToInsert()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="262"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>valueToInsert;<sp/>}</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/>arma::Col&lt;HilbertElemType&gt;*<sp/>ValueToInsert()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>valueToInsert;<sp/>}</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>OwnsValueToInsert()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ownsValueToInsert;<sp/>}</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/>OwnsValueToInsert()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ownsValueToInsert;<sp/>}</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>constexpr<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>order<sp/>=<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(HilbertElemType)<sp/>*<sp/>CHAR_BIT;</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/>arma::Mat&lt;HilbertElemType&gt;*<sp/>localHilbertValues;</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ownsLocalHilbertValues;</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numValues;</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/>arma::Col&lt;HilbertElemType&gt;*<sp/>valueToInsert;</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ownsValueToInsert;</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>serialize(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="292"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"></highlight></codeline>
+<codeline lineno="294"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="295"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="296"><highlight class="normal"></highlight></codeline>
+<codeline lineno="297"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="298"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;discrete_hilbert_value_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_DISCRETE_HILBERT_VALUE_HPP</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/discrete_hilbert_value.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,308 @@
+\doxysection{Sparse\+Autoencoder\+Function Class Reference}
+\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction}\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+
+
+This is a class for the sparse autoencoder objective function.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Sparse\+Autoencoder\+Function} (const arma\+::mat \&data, const size\+\_\+t visible\+Size, const size\+\_\+t hidden\+Size, const double lambda=0.\+0001, const double beta=3, const double rho=0.\+01)
+\begin{DoxyCompactList}\small\item\em Construct the sparse autoencoder objective function with the given parameters. \end{DoxyCompactList}\item 
+double \textbf{ Beta} () const
+\begin{DoxyCompactList}\small\item\em Gets the KL divergence parameter. \end{DoxyCompactList}\item 
+void \textbf{ Beta} (const double b)
+\begin{DoxyCompactList}\small\item\em Sets the KL divergence parameter. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const arma\+::mat \&parameters) const
+\begin{DoxyCompactList}\small\item\em Evaluates the objective function of the sparse autoencoder model using the given parameters. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Get\+Initial\+Point} () const
+\begin{DoxyCompactList}\small\item\em Return the initial point for the optimization. \end{DoxyCompactList}\item 
+void \textbf{ Gradient} (const arma\+::mat \&parameters, arma\+::mat \&gradient) const
+\begin{DoxyCompactList}\small\item\em Evaluates the gradient values of the objective function given the current set of parameters. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Hidden\+Size} () const
+\begin{DoxyCompactList}\small\item\em Gets the size of the hidden layer. \end{DoxyCompactList}\item 
+void \textbf{ Hidden\+Size} (const size\+\_\+t hidden)
+\begin{DoxyCompactList}\small\item\em Sets size of the hidden layer. \end{DoxyCompactList}\item 
+const arma\+::mat \textbf{ Initialize\+Weights} ()
+\begin{DoxyCompactList}\small\item\em Initializes the parameters of the model to suitable values. \end{DoxyCompactList}\item 
+double \textbf{ Lambda} () const
+\begin{DoxyCompactList}\small\item\em Gets the L2-\/regularization parameter. \end{DoxyCompactList}\item 
+void \textbf{ Lambda} (const double l)
+\begin{DoxyCompactList}\small\item\em Sets the L2-\/regularization parameter. \end{DoxyCompactList}\item 
+double \textbf{ Rho} () const
+\begin{DoxyCompactList}\small\item\em Gets the sparsity parameter. \end{DoxyCompactList}\item 
+void \textbf{ Rho} (const double r)
+\begin{DoxyCompactList}\small\item\em Sets the sparsity parameter. \end{DoxyCompactList}\item 
+void \textbf{ Sigmoid} (const arma\+::mat \&x, arma\+::mat \&output) const
+\begin{DoxyCompactList}\small\item\em Returns the elementwise sigmoid of the passed matrix, where the sigmoid function of a real number \textquotesingle{}x\textquotesingle{} is [1 / (1 + exp(-\/x))]. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Visible\+Size} () const
+\begin{DoxyCompactList}\small\item\em Gets size of the visible layer. \end{DoxyCompactList}\item 
+void \textbf{ Visible\+Size} (const size\+\_\+t visible)
+\begin{DoxyCompactList}\small\item\em Sets size of the visible layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This is a class for the sparse autoencoder objective function. 
+
+It can be used to create learning models like self-\/taught learning, stacked autoencoders, conditional random fields (CRFs), and so forth. 
+
+Definition at line 26 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_a4a7a43662bc32bf255eb155815e3585c}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{SparseAutoencoderFunction()}
+{\footnotesize\ttfamily \textbf{ Sparse\+Autoencoder\+Function} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{const size\+\_\+t}]{visible\+Size,  }\item[{const size\+\_\+t}]{hidden\+Size,  }\item[{const double}]{lambda = {\ttfamily 0.0001},  }\item[{const double}]{beta = {\ttfamily 3},  }\item[{const double}]{rho = {\ttfamily 0.01} }\end{DoxyParamCaption})}
+
+
+
+Construct the sparse autoencoder objective function with the given parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The data matrix. \\
+\hline
+{\em visible\+Size} & Size of input vector expected at the visible layer. \\
+\hline
+{\em hidden\+Size} & Size of input vector expected at the hidden layer. \\
+\hline
+{\em lambda} & L2-\/regularization parameter. \\
+\hline
+{\em beta} & KL divergence parameter. \\
+\hline
+{\em rho} & Sparsity parameter. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_ad1b9206255af52171cb88dfb7c326576}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!Beta@{Beta}}
+\index{Beta@{Beta}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{Beta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Beta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the KL divergence parameter. 
+
+
+
+Definition at line 131 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_ac48f9c3723fbeb5d97e8382b706bb20d}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!Beta@{Beta}}
+\index{Beta@{Beta}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{Beta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Beta (\begin{DoxyParamCaption}\item[{const double}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the KL divergence parameter. 
+
+
+
+Definition at line 125 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_a6c7f979b684b70aab5bec8b09b5eb1a4}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{Evaluate()}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the objective function of the sparse autoencoder model using the given parameters. 
+
+The cost function has terms for the reconstruction error, regularization cost and the sparsity cost. The objective function takes a low value when the model is able to reconstruct the data well using weights which are low in value and when the average activations of neurons in the hidden layers agrees well with the sparsity parameter \textquotesingle{}rho\textquotesingle{}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Current values of the model parameters. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_ac3e9aa612cb56d0d93f3259f4a8122bb}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!GetInitialPoint@{GetInitialPoint}}
+\index{GetInitialPoint@{GetInitialPoint}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{GetInitialPoint()}
+{\footnotesize\ttfamily const arma\+::mat\& Get\+Initial\+Point (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the initial point for the optimization. 
+
+
+
+Definition at line 86 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_ab9a604f48072ce6c08443519ff787a73}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{Gradient()}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{arma\+::mat \&}]{gradient }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the gradient values of the objective function given the current set of parameters. 
+
+The function performs a feedforward pass and computes the error in reconstructing the data points. It then uses the backpropagation algorithm to compute the gradient values.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Current values of the model parameters. \\
+\hline
+{\em gradient} & Matrix where gradient values will be stored. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_a820e775a98d21ef0d06283a445e0813a}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!HiddenSize@{HiddenSize}}
+\index{HiddenSize@{HiddenSize}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{HiddenSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Hidden\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the size of the hidden layer. 
+
+
+
+Definition at line 107 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_aef6f7e6478c5268a8762768f2bed7cf3}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!HiddenSize@{HiddenSize}}
+\index{HiddenSize@{HiddenSize}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{HiddenSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Hidden\+Size (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{hidden }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets size of the hidden layer. 
+
+
+
+Definition at line 101 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_a97fbb8f95277b263fbb07eda614633ea}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!InitializeWeights@{InitializeWeights}}
+\index{InitializeWeights@{InitializeWeights}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{InitializeWeights()}
+{\footnotesize\ttfamily const arma\+::mat Initialize\+Weights (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initializes the parameters of the model to suitable values. 
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_a53535041275cedd0ec3de67ca032aa94}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{Lambda()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Lambda (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the L2-\/regularization parameter. 
+
+
+
+Definition at line 119 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_af476ed1916ad9b39eaddd7e7ac108f4b}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{Lambda()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Lambda (\begin{DoxyParamCaption}\item[{const double}]{l }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the L2-\/regularization parameter. 
+
+
+
+Definition at line 113 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_a309719b378c0bb1962982a8162e58e84}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!Rho@{Rho}}
+\index{Rho@{Rho}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{Rho()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the sparsity parameter. 
+
+
+
+Definition at line 143 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_a97ac05cf618f1f137a4aa8fcd4e48539}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!Rho@{Rho}}
+\index{Rho@{Rho}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{Rho()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Rho (\begin{DoxyParamCaption}\item[{const double}]{r }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the sparsity parameter. 
+
+
+
+Definition at line 137 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_a78a48b3c359a36dbc1d6936d7c8ba276}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!Sigmoid@{Sigmoid}}
+\index{Sigmoid@{Sigmoid}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{Sigmoid()}
+{\footnotesize\ttfamily void Sigmoid (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{x,  }\item[{arma\+::mat \&}]{output }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the elementwise sigmoid of the passed matrix, where the sigmoid function of a real number \textquotesingle{}x\textquotesingle{} is [1 / (1 + exp(-\/x))]. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Matrix of real values for which we require the sigmoid activation. \\
+\hline
+{\em output} & Output matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 80 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_a3cea635d43096bb8cd925c74dcdd1d48}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!VisibleSize@{VisibleSize}}
+\index{VisibleSize@{VisibleSize}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{VisibleSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Visible\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets size of the visible layer. 
+
+
+
+Definition at line 95 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1nn_1_1SparseAutoencoderFunction_a56ba0c1d534d55c931e725914b00a100}} 
+\index{SparseAutoencoderFunction@{SparseAutoencoderFunction}!VisibleSize@{VisibleSize}}
+\index{VisibleSize@{VisibleSize}!SparseAutoencoderFunction@{SparseAutoencoderFunction}}
+\doxysubsubsection{VisibleSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Visible\+Size (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{visible }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets size of the visible layer. 
+
+
+
+Definition at line 89 of file sparse\+\_\+autoencoder\+\_\+function.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/sparse\+\_\+autoencoder/\textbf{ sparse\+\_\+autoencoder\+\_\+function.\+hpp}\end{DoxyCompactItemize}

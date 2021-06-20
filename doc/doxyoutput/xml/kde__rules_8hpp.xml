@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="kde__rules_8hpp" kind="file" language="C++">
+    <compoundname>kde_rules.hpp</compoundname>
+    <includes refid="traversal__info_8hpp" local="no">mlpack/core/tree/traversal_info.hpp</includes>
+    <includes local="yes">kde_rules_impl.hpp</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp</label>
+        <link refid="kde__rules_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mlpack/core/tree/traversal_info.hpp</label>
+        <link refid="traversal__info_8hpp"/>
+      </node>
+      <node id="3">
+        <label>kde_rules_impl.hpp</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classmlpack_1_1kde_1_1KDECleanRules" prot="public">mlpack::kde::KDECleanRules</innerclass>
+    <innerclass refid="classmlpack_1_1kde_1_1KDERules" prot="public">mlpack::kde::KDERules</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1kde">mlpack::kde</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Roberto Hueso</para>
+</simplesect>
+Rules for Kernel Density Estimation, so that it can be done with arbitrary tree types.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_KDE_RULES_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_KDE_RULES_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="traversal__info_8hpp" kindref="compound">mlpack/core/tree/traversal_info.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">kde<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MetricType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>KernelType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="26" refid="classmlpack_1_1kde_1_1KDERules" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1kde_1_1KDERules" kindref="compound">KDERules</ref></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="49" refid="classmlpack_1_1kde_1_1KDERules_1a6049807a617e88381ec447a426a93275" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1a6049807a617e88381ec447a426a93275" kindref="member">KDERules</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>referenceSet,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>querySet,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>densities,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>relError,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>absError,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mcProb,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>initialSampleSize,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mcAccessCoef,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mcBreakCoef,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MetricType&amp;<sp/>metric,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>KernelType&amp;<sp/>kernel,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>monteCarlo,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>sameSet);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="classmlpack_1_1kde_1_1KDERules_1abac50f780bb5e1bc12dd0d16d850cacc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1abac50f780bb5e1bc12dd0d16d850cacc" kindref="member">BaseCase</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>referenceIndex);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="classmlpack_1_1kde_1_1KDERules_1a53d373b7aeee359b0e686f823c602b1c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1a53d373b7aeee359b0e686f823c602b1c" kindref="member">Score</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="classmlpack_1_1kde_1_1KDERules_1ae0ad46f30e80aadc5bc476d46886540f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1ae0ad46f30e80aadc5bc476d46886540f" kindref="member">Rescore</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType&amp;<sp/>referenceNode,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>oldScore)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="classmlpack_1_1kde_1_1KDERules_1a05b142945ef94221b628a75961f48b02" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1a05b142945ef94221b628a75961f48b02" kindref="member">Score</ref>(TreeType&amp;<sp/>queryNode,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="classmlpack_1_1kde_1_1KDERules_1a536e5a7cbce35b9be7443775d32e11f5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1a536e5a7cbce35b9be7443775d32e11f5" kindref="member">Rescore</ref>(TreeType&amp;<sp/>queryNode,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType&amp;<sp/>referenceNode,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>oldScore)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="classmlpack_1_1kde_1_1KDERules_1ab5f079db10d0a6813eefeb1115e894cb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">tree::TraversalInfo&lt;TreeType&gt;</ref><sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref>;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="classmlpack_1_1kde_1_1KDERules_1ab5c6f4ae7c3b71b808403a7b7454f26f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">TraversalInfoType</ref>&amp;<sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1ab5c6f4ae7c3b71b808403a7b7454f26f" kindref="member">TraversalInfo</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>traversalInfo;<sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="classmlpack_1_1kde_1_1KDERules_1a4027bb90e756a4520d55978459c7f83e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">TraversalInfoType</ref>&amp;<sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1a4027bb90e756a4520d55978459c7f83e" kindref="member">TraversalInfo</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>traversalInfo;<sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="classmlpack_1_1kde_1_1KDERules_1a3f4bd5d0aa64ea090796725f7755287d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1a3f4bd5d0aa64ea090796725f7755287d" kindref="member">BaseCases</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>baseCases;<sp/>}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="classmlpack_1_1kde_1_1KDERules_1a4d1e40c0bf406280a237ca1b487e3c62" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1a4d1e40c0bf406280a237ca1b487e3c62" kindref="member">Scores</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>scores;<sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="classmlpack_1_1kde_1_1KDERules_1a469f61784f9cce8f2574c23823405768" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1a469f61784f9cce8f2574c23823405768" kindref="member">MinimumBaseCases</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;<sp/>}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>EvaluateKernel(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>referenceIndex)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>EvaluateKernel(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>query,</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>reference)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>CalculateAlpha(TreeType*<sp/>node);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>referenceSet;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>querySet;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/>arma::vec&amp;<sp/>densities;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>absError;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>relError;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mcBeta;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>initialSampleSize;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mcAccessCoef;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mcBreakCoef;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/>MetricType&amp;<sp/>metric;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/>KernelType&amp;<sp/>kernel;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>monteCarlo;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/>arma::vec<sp/>accumMCAlpha;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/>arma::vec<sp/>accumError;</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>sameSet;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/>constexpr<sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>kernelIsGaussian<sp/>=</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::is_same&lt;KernelType,<sp/>kernel::GaussianKernel&gt;::value;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>absErrorTol;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>lastQueryIndex;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>lastReferenceIndex;</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1kde_1_1KDERules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref><sp/>traversalInfo;</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>baseCases;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>scores;</highlight></codeline>
+<codeline lineno="182"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="189" refid="classmlpack_1_1kde_1_1KDECleanRules" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1kde_1_1KDECleanRules" kindref="compound">KDECleanRules</ref></highlight></codeline>
+<codeline lineno="190"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="193" refid="classmlpack_1_1kde_1_1KDECleanRules_1a9b4a8d3068b51fba5a4631ef16d2d80b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1a9b4a8d3068b51fba5a4631ef16d2d80b" kindref="member">KDECleanRules</ref>()<sp/>{<sp/></highlight><highlight class="comment">/*<sp/>Nothing<sp/>to<sp/>do.<sp/>*/</highlight><highlight class="normal"><sp/>}</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="classmlpack_1_1kde_1_1KDECleanRules_1afde86a5301e751ee60e64cb7c4b65a6c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1afde86a5301e751ee60e64cb7c4b65a6c" kindref="member">BaseCase</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>queryIndex<sp/>*/</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>refIndex<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199" refid="classmlpack_1_1kde_1_1KDECleanRules_1a52fccee427560ab1cc4f6930fc1aae64" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1a52fccee427560ab1cc4f6930fc1aae64" kindref="member">Score</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>queryIndex<sp/>*/</highlight><highlight class="normal">,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202" refid="classmlpack_1_1kde_1_1KDECleanRules_1a12a9cd8472681e4db55db7d8600e16f7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1a12a9cd8472681e4db55db7d8600e16f7" kindref="member">Rescore</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>queryIndex<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType&amp;<sp/></highlight><highlight class="comment">/*<sp/>referenceNode<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>oldScore)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>oldScore;<sp/>}</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207" refid="classmlpack_1_1kde_1_1KDECleanRules_1a05b142945ef94221b628a75961f48b02" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1a05b142945ef94221b628a75961f48b02" kindref="member">Score</ref>(TreeType&amp;<sp/>queryNode,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210" refid="classmlpack_1_1kde_1_1KDECleanRules_1ae9e5b74e47db9c2035cbc10381f39d69" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1ae9e5b74e47db9c2035cbc10381f39d69" kindref="member">Rescore</ref>(TreeType&amp;<sp/></highlight><highlight class="comment">/*<sp/>queryNode<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType&amp;<sp/></highlight><highlight class="comment">/*<sp/>referenceNode*/</highlight><highlight class="normal"><sp/>,</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>oldScore)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>oldScore;<sp/>}</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="214" refid="classmlpack_1_1kde_1_1KDECleanRules_1ab5f079db10d0a6813eefeb1115e894cb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">tree::TraversalInfo&lt;TreeType&gt;</ref><sp/><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref>;</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217" refid="classmlpack_1_1kde_1_1KDECleanRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">TraversalInfoType</ref>&amp;<sp/><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" kindref="member">TraversalInfo</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>traversalInfo;<sp/>}</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220" refid="classmlpack_1_1kde_1_1KDECleanRules_1a4027bb90e756a4520d55978459c7f83e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">TraversalInfoType</ref>&amp;<sp/><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1a4027bb90e756a4520d55978459c7f83e" kindref="member">TraversalInfo</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>traversalInfo;<sp/>}</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref><sp/>traversalInfo;</highlight></codeline>
+<codeline lineno="225"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>kde</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;kde_rules_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp"/>
+  </compounddef>
+</doxygen>

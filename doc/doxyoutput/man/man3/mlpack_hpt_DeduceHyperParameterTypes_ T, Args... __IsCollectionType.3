@@ -1,0 +1,78 @@
+.TH "DeduceHyperParameterTypes< T, Args... >::IsCollectionType< Type >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DeduceHyperParameterTypes< T, Args... >::IsCollectionType< Type > \- A type function to check whether Type is a collection type (for that it should define value_type)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBNo\fP = char[2]"
+.br
+.ti -1c
+.RI "using \fBYes\fP = char[1]"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename > static \fBNo\fP & \fBCheck\fP (\&.\&.\&.)"
+.br
+.ti -1c
+.RI "template<typename TypeToCheck > static \fBYes\fP & \fBCheck\fP (typename TypeToCheck::value_type *)"
+.br
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBvalue\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T, typename\&.\&.\&. Args>
+.br
+template<typename Type>
+.br
+struct mlpack::hpt::DeduceHyperParameterTypes< T, Args\&.\&.\&. >::IsCollectionType< Type >"
+A type function to check whether Type is a collection type (for that it should define value_type)\&. 
+.PP
+Definition at line 69 of file deduce_hp_types\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBNo\fP =  char[2]"
+
+.PP
+Definition at line 72 of file deduce_hp_types\&.hpp\&.
+.SS "using \fBYes\fP =  char[1]"
+
+.PP
+Definition at line 71 of file deduce_hp_types\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static \fBNo\fP& Check ( \&.\&.\&.)\fC [static]\fP"
+
+.SS "static \fBYes\fP& Check (typename TypeToCheck::value_type *)\fC [static]\fP"
+
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool value\fC [static]\fP"
+\fBInitial value:\fP
+.PP
+.nf
+=
+      sizeof(decltype(Check<Type>(0))) == sizeof(Yes)
+.fi
+.PP
+Definition at line 79 of file deduce_hp_types\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,2388 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1DecisionTree" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::DecisionTree</compoundname>
+    <basecompoundref refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1_1AuxiliarySplitInfo" prot="public" virt="non-virtual">BestBinaryNumericSplit&lt; FitnessFunction &gt;::AuxiliarySplitInfo</basecompoundref>
+    <basecompoundref refid="classmlpack_1_1tree_1_1AllCategoricalSplit_1_1AuxiliarySplitInfo" prot="public" virt="non-virtual">AllCategoricalSplit&lt; FitnessFunction &gt;::AuxiliarySplitInfo</basecompoundref>
+    <includes refid="decision__tree_8hpp" local="no">decision_tree.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename FitnessFunction</type>
+        <defval><ref refid="classmlpack_1_1tree_1_1GiniGain" kindref="compound">GiniGain</ref></defval>
+      </param>
+      <param>
+        <type>template&lt; typename &gt; class</type>
+        <declname>NumericSplitType</declname>
+        <defname>NumericSplitType</defname>
+        <defval><ref refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit" kindref="compound">BestBinaryNumericSplit</ref></defval>
+      </param>
+      <param>
+        <type>template&lt; typename &gt; class</type>
+        <declname>CategoricalSplitType</declname>
+        <defname>CategoricalSplitType</defname>
+        <defval><ref refid="classmlpack_1_1tree_1_1AllCategoricalSplit" kindref="compound">AllCategoricalSplit</ref></defval>
+      </param>
+      <param>
+        <type>typename DimensionSelectionType</type>
+        <defval><ref refid="classmlpack_1_1tree_1_1AllDimensionSelect" kindref="compound">AllDimensionSelect</ref></defval>
+      </param>
+      <param>
+        <type>bool</type>
+        <declname>NoRecursion</declname>
+        <defname>NoRecursion</defname>
+        <defval>false</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1DecisionTree_1ac6a633f57efba5e2893f58ee9ad549d1" prot="public" static="no">
+        <type>CategoricalSplitType&lt; FitnessFunction &gt;</type>
+        <definition>typedef CategoricalSplitType&lt;FitnessFunction&gt; CategoricalSplit</definition>
+        <argsstring></argsstring>
+        <name>CategoricalSplit</name>
+        <briefdescription>
+<para>Allow access to the categorical split type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="53" column="32" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1DecisionTree_1a883756287d5ce0957ad6f806571f2815" prot="public" static="no">
+        <type>DimensionSelectionType</type>
+        <definition>typedef DimensionSelectionType DimensionSelection</definition>
+        <argsstring></argsstring>
+        <name>DimensionSelection</name>
+        <briefdescription>
+<para>Allow access to the dimension selection type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="55" column="34" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1DecisionTree_1aaa2e2873f405118872db87975cce0124" prot="public" static="no">
+        <type>NumericSplitType&lt; FitnessFunction &gt;</type>
+        <definition>typedef NumericSplitType&lt;FitnessFunction&gt; NumericSplit</definition>
+        <argsstring></argsstring>
+        <name>NumericSplit</name>
+        <briefdescription>
+<para>Allow access to the numeric split type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="51" column="28" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1DecisionTree_1a494cccd2e7139520d893747b11a7aab3" prot="private" static="no">
+        <type>CategoricalSplit::AuxiliarySplitInfo</type>
+        <definition>typedef CategoricalSplit::AuxiliarySplitInfo CategoricalAuxiliarySplitInfo</definition>
+        <argsstring></argsstring>
+        <name>CategoricalAuxiliarySplitInfo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="509" column="7" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="509" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1DecisionTree_1acb5a60716e91f30f215e742e00a4668b" prot="private" static="no">
+        <type>NumericSplit::AuxiliarySplitInfo</type>
+        <definition>typedef NumericSplit::AuxiliarySplitInfo NumericAuxiliarySplitInfo</definition>
+        <argsstring></argsstring>
+        <name>NumericAuxiliarySplitInfo</name>
+        <briefdescription>
+<para>Note that this class will also hold the members of the NumericSplit and CategoricalSplit AuxiliarySplitInfo classes, since it inherits from them. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>We&apos;ll define some convenience typedefs here. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="507" column="7" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="507" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1DecisionTree_1ab2d04bf394aa84df84e56a86d043df54" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> * &gt;</type>
+        <definition>std::vector&lt;DecisionTree*&gt; children</definition>
+        <argsstring></argsstring>
+        <name>children</name>
+        <briefdescription>
+<para>The vector of children. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="488" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="488" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1DecisionTree_1a360b25ccaf5cb0f26ec696cb1781b634" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec classProbabilities</definition>
+        <argsstring></argsstring>
+        <name>classProbabilities</name>
+        <briefdescription>
+<para>This vector may hold different things. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the node has no children, then it is guaranteed to hold the probabilities of each class. If the node has children, then it may be used arbitrarily by the split type&apos;s <ref refid="classmlpack_1_1tree_1_1DecisionTree_1a9a3cc06b52728325bd6402f7175f28e5" kindref="member">CalculateDirection()</ref> function and may not necessarily hold class probabilities. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="501" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="501" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1DecisionTree_1af92348422caa896bc857ebd6ace89cd8" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t dimensionTypeOrMajorityClass</definition>
+        <argsstring></argsstring>
+        <name>dimensionTypeOrMajorityClass</name>
+        <briefdescription>
+<para>The type of the dimension that we have split on (if we are not a leaf). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If we are a leaf, then this is the index of the majority class. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="493" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="493" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1DecisionTree_1a351b01278d3022d478536e0a84a1808e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t splitDimension</definition>
+        <argsstring></argsstring>
+        <name>splitDimension</name>
+        <briefdescription>
+<para>The dimension this node splits on. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="490" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="490" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a6e7969dd400c7138c6dfbe9aa60cf1ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DecisionTree</definition>
+        <argsstring>(const DecisionTree &amp;other)</argsstring>
+        <name>DecisionTree</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy another tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This may use a lot of memory<mdash/>be sure that it&apos;s what you want to do.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="251" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a33a796e18df021c0af3d388889986570" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+          <param>
+            <type>typename WeightsType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>DecisionTree</definition>
+        <argsstring>(const DecisionTree &amp;other, MatType data, const data::DatasetInfo &amp;datasetInfo, LabelsType labels, const size_t numClasses, WeightsType weights, const size_t minimumLeafSize=10, const double minimumGainSplit=1e-7, const std::enable_if_t&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *=0)</argsstring>
+        <name>DecisionTree</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <param>
+          <type>MatType</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>LabelsType</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>WeightsType</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Take ownership of another decision tree and train on the given data and labels with weights, where the data can be both numeric and categorical. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit.</para>
+<para>Use std::move if data, labels or weights are no longer needed to avoid copies.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to take ownership of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type information for each dimension of the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The weight list of given label. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="163" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a06062274e5618491d9170383550fe3da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+          <param>
+            <type>typename WeightsType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>DecisionTree</definition>
+        <argsstring>(const DecisionTree &amp;other, MatType data, LabelsType labels, const size_t numClasses, WeightsType weights, const size_t minimumLeafSize=10, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType(), const std::enable_if_t&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *=0)</argsstring>
+        <name>DecisionTree</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <param>
+          <type>MatType</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>LabelsType</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>WeightsType</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Take ownership of another decision tree and train on the given data and labels with weights, assuming that the data is all of the numeric type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit.</para>
+<para>Use std::move if data, labels or weights are no longer needed to avoid copies. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to take ownership of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Weight list of given labels. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="224" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a9a0cd79275bd950f9cb697bfc578db06" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DecisionTree</definition>
+        <argsstring>(const size_t numClasses=1)</argsstring>
+        <name>DecisionTree</name>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Construct a decision tree without training it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It will be a leaf node with equal probabilities for each class.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="243" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a23ec8f18d9cf97e1427afea56226b656" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>DecisionTree</definition>
+        <argsstring>(DecisionTree &amp;&amp;other)</argsstring>
+        <name>DecisionTree</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Take ownership of another tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to take ownership of. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="258" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a47a160a10881b42183f86ada9e78735f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>DecisionTree</definition>
+        <argsstring>(MatType data, const data::DatasetInfo &amp;datasetInfo, LabelsType labels, const size_t numClasses, const size_t minimumLeafSize=10, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>DecisionTree</name>
+        <param>
+          <type>MatType</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>LabelsType</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Construct the decision tree on the given data and labels, where the data can be both numeric and categorical. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit.</para>
+<para>Use std::move if data or labels are no longer needed to avoid copies.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type information for each dimension of the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="75" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1ab011cce7d07f5b26e5feafea993c346b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+          <param>
+            <type>typename WeightsType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>DecisionTree</definition>
+        <argsstring>(MatType data, const data::DatasetInfo &amp;datasetInfo, LabelsType labels, const size_t numClasses, WeightsType weights, const size_t minimumLeafSize=10, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType(), const std::enable_if_t&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *=0)</argsstring>
+        <name>DecisionTree</name>
+        <param>
+          <type>MatType</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>LabelsType</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>WeightsType</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Construct the decision tree on the given data and labels with weights, where the data can be both numeric and categorical. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit.</para>
+<para>Use std::move if data, labels or weights are no longer needed to avoid copies.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type information for each dimension of the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The weight list of given label. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="131" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a36d85b32851469b82df02ae96d5a80ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>DecisionTree</definition>
+        <argsstring>(MatType data, LabelsType labels, const size_t numClasses, const size_t minimumLeafSize=10, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>DecisionTree</name>
+        <param>
+          <type>MatType</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>LabelsType</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Construct the decision tree on the given data and labels, assuming that the data is all of the numeric type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit.</para>
+<para>Use std::move if data or labels are no longer needed to avoid copies.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="102" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a7f1af37a41b01eef41a238843f107b58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+          <param>
+            <type>typename WeightsType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>DecisionTree</definition>
+        <argsstring>(MatType data, LabelsType labels, const size_t numClasses, WeightsType weights, const size_t minimumLeafSize=10, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType(), const std::enable_if_t&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *=0)</argsstring>
+        <name>DecisionTree</name>
+        <param>
+          <type>MatType</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>LabelsType</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>WeightsType</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Construct the decision tree on the given data and labels with weights, assuming that the data is all of the numeric type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit.</para>
+<para>Use std::move if data, labels or weights are no longer needed to avoid copies.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The Weight list of given labels. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="193" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a3a25d7741519bf2fe87f19c38dd3baee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~DecisionTree</definition>
+        <argsstring>()</argsstring>
+        <name>~DecisionTree</name>
+        <briefdescription>
+<para>Clean up memory. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="278" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a9a3cc06b52728325bd6402f7175f28e5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t CalculateDirection</definition>
+        <argsstring>(const VecType &amp;point) const</argsstring>
+        <name>CalculateDirection</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Given a point and that this node is not a leaf, calculate the index of the child node this point would go towards. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This method is primarily used by the <ref refid="classmlpack_1_1tree_1_1DecisionTree_1aa610310b354b7badd88041ca07883569" kindref="member">Classify()</ref> function, but it can be used in a standalone sense too.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to classify. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="479" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a914ce4cf047ff8fdcae13fdd7311839f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
+        <definition>DecisionTree&amp; Child</definition>
+        <argsstring>(const size_t i)</argsstring>
+        <name>Child</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Modify the child of the given index (be careful!). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="465" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="465" bodyend="465"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1acb851aa7ee90f5617afe77d6942f1d35" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
+        <definition>const DecisionTree&amp; Child</definition>
+        <argsstring>(const size_t i) const</argsstring>
+        <name>Child</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Get the child of the given index. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="463" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="463" bodyend="463"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1abd3c3812715d2e249e47476782d8e95e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;data, arma::Row&lt; size_t &gt; &amp;predictions) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given points, using the entire tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The predicted labels for each point are stored in the given vector.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of points to classify. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be filled with predictions for each point. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="435" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a255d0a8b26a14cfd6a1f745568b83017" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;data, arma::Row&lt; size_t &gt; &amp;predictions, arma::mat &amp;probabilities) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given points and also return estimates of the probabilities for each class in the given matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The predicted labels for each point are stored in the given vector.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of points to classify. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be filled with predictions for each point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be filled with class probabilities for each point. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="449" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1aa610310b354b7badd88041ca07883569" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t Classify</definition>
+        <argsstring>(const VecType &amp;point) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given point, using the entire tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The predicted label is returned.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to classify. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="411" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1abddb69ee5b97027cd4eebd398bf39ac6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const VecType &amp;point, size_t &amp;prediction, arma::vec &amp;probabilities) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>size_t &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given point and also return estimates of the probability for each class in the given vector. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to classify. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be set to the predicted class of the point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be filled with class probabilities for the point. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="423" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumChildren</definition>
+        <argsstring>() const</argsstring>
+        <name>NumChildren</name>
+        <briefdescription>
+<para>Get the number of children. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="460" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="460" bodyend="460"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a088ebfdf3c7a9e7eea81716d0c55b5a3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumClasses</definition>
+        <argsstring>() const</argsstring>
+        <name>NumClasses</name>
+        <briefdescription>
+<para>Get the number of classes in the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="484" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1ad6d265fac56dc40fbd5da0f792400d73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
+        <definition>DecisionTree&amp; operator=</definition>
+        <argsstring>(const DecisionTree &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy another tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This may use a lot of memory<mdash/>be sure that it&apos;s what you want to do.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="266" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1ac1ff2d7454c0e6480e42a68b6a6d18ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;</type>
+        <definition>DecisionTree&amp; operator=</definition>
+        <argsstring>(DecisionTree &amp;&amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1DecisionTree" kindref="compound">DecisionTree</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Take ownership of another tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to take ownership of. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="273" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="457" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a92f55f07c1a09552ef79c8d8b9484af5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t SplitDimension</definition>
+        <argsstring>() const</argsstring>
+        <name>SplitDimension</name>
+        <briefdescription>
+<para>Get the split dimension (only meaningful if this is a non-leaf in a trained tree). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="469" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="469" bodyend="469"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1abf1f81b5ed54a8492b4f42166a9c6346" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(MatType data, const data::DatasetInfo &amp;datasetInfo, LabelsType labels, const size_t numClasses, const size_t minimumLeafSize=10, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>Train</name>
+        <param>
+          <type>MatType</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>LabelsType</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Train the decision tree on the given data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will overwrite the existing model. The data may have numeric and categorical types, specified by the datasetInfo parameter. Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit.</para>
+<para>Use std::move if data or labels are no longer needed to avoid copies.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type information for each dimension. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The final entropy of decision tree. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="300" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1ac63e8f9e1a6c2203b79aeb0225bac9ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+          <param>
+            <type>typename WeightsType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(MatType data, const data::DatasetInfo &amp;datasetInfo, LabelsType labels, const size_t numClasses, WeightsType weights, const size_t minimumLeafSize=10, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType(), const std::enable_if_t&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *=0)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>MatType</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>LabelsType</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>WeightsType</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Train the decision tree on the given weighted data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will overwrite the existing model. The data may have numeric and categorical types, specified by the datasetInfo parameter. Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit.</para>
+<para>Use std::move if data, labels or weights are no longer needed to avoid copies.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type information for each dimension. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weights of all the labels </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The final entropy of decision tree. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="359" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1af69d321e90bae4cc196f83467379a8ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(MatType data, LabelsType labels, const size_t numClasses, const size_t minimumLeafSize=10, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType())</argsstring>
+        <name>Train</name>
+        <param>
+          <type>MatType</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>LabelsType</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <briefdescription>
+<para>Train the decision tree on the given data, assuming that all dimensions are numeric. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will overwrite the given model. Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit.</para>
+<para>Use std::move if data or labels are no longer needed to avoid copies.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The final entropy of decision tree. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="328" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a85cf750767690c035a8cf37c7bffac65" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename LabelsType</type>
+          </param>
+          <param>
+            <type>typename WeightsType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(MatType data, LabelsType labels, const size_t numClasses, WeightsType weights, const size_t minimumLeafSize=10, const double minimumGainSplit=1e-7, const size_t maximumDepth=0, DimensionSelectionType dimensionSelector=DimensionSelectionType(), const std::enable_if_t&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *=0)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>MatType</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>LabelsType</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>WeightsType</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+          <defval>1e-7</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>DimensionSelectionType</type>
+          <declname>dimensionSelector</declname>
+          <defval>DimensionSelectionType()</defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; arma::is_arma_type&lt; typename std::remove_reference&lt; WeightsType &gt;::type &gt;::value &gt; *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Train the decision tree on the given weighted data, assuming that all dimensions are numeric. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will overwrite the given model. Setting minimumLeafSize and minimumGainSplit too small may cause the tree to overfit, but setting them too large may cause it to underfit.</para>
+<para>Use std::move if data, labels or weights are no longer needed to avoid copies.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weights of all the labels </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionSelector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated dimension selection policy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The final entropy of decision tree. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="392" column="10"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1ae48b2792a5a4157611d23905fb2dba77" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>bool</type>
+            <declname>UseWeights</declname>
+            <defname>UseWeights</defname>
+          </param>
+          <param>
+            <type>typename RowType</type>
+          </param>
+          <param>
+            <type>typename WeightsRowType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void CalculateClassProbabilities</definition>
+        <argsstring>(const RowType &amp;labels, const size_t numClasses, const WeightsRowType &amp;weights)</argsstring>
+        <name>CalculateClassProbabilities</name>
+        <param>
+          <type>const RowType &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const WeightsRowType &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <briefdescription>
+<para>Calculate the class probabilities of the given labels. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="515" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a2b6ceacf0054d7c421512056a59d5409" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>bool</type>
+            <declname>UseWeights</declname>
+            <defname>UseWeights</defname>
+          </param>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(MatType &amp;data, const size_t begin, const size_t count, arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, arma::rowvec &amp;weights, const size_t minimumLeafSize, const double minimumGainSplit, const size_t maximumDepth, DimensionSelectionType &amp;dimensionSelector)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>arma::rowvec &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+        </param>
+        <param>
+          <type>DimensionSelectionType &amp;</type>
+          <declname>dimensionSelector</declname>
+        </param>
+        <briefdescription>
+<para>Corresponding to the public <ref refid="classmlpack_1_1tree_1_1DecisionTree_1abf1f81b5ed54a8492b4f42166a9c6346" kindref="member">Train()</ref> method, this method is designed for avoiding unnecessary copies during training. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This method is called for training children.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the starting point in the dataset that belongs to this node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of points in this node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The final entropy of decision tree. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="566" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1DecisionTree_1a9252d7287c3db6e33590918d372f404e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>bool</type>
+            <declname>UseWeights</declname>
+            <defname>UseWeights</defname>
+          </param>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(MatType &amp;data, const size_t begin, const size_t count, const data::DatasetInfo &amp;datasetInfo, arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, arma::rowvec &amp;weights, const size_t minimumLeafSize, const double minimumGainSplit, const size_t maximumDepth, DimensionSelectionType &amp;dimensionSelector)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>arma::rowvec &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minimumLeafSize</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimumGainSplit</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maximumDepth</declname>
+        </param>
+        <param>
+          <type>DimensionSelectionType &amp;</type>
+          <declname>dimensionSelector</declname>
+        </param>
+        <briefdescription>
+<para>Corresponding to the public <ref refid="classmlpack_1_1tree_1_1DecisionTree_1abf1f81b5ed54a8492b4f42166a9c6346" kindref="member">Train()</ref> method, this method is designed for avoiding unnecessary copies during training. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is called to train children.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the starting point in the dataset that belongs to this node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of points in this node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type information for each dimension. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each training point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points in each leaf node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimumGainSplit</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum gain for the node to split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximumDepth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum depth for the tree. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The final entropy of decision tree. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="537" column="10"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class implements a generic decision tree learner. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Its behavior can be controlled via its template arguments.</para>
+<para>The class inherits from the auxiliary split information in order to prevent an empty auxiliary split information struct from taking any extra size.</para>
+<para>Note that <computeroutput>ElemType</computeroutput> is a template parameter controlling the type that is used to store split information. In general, you would want to set this to be the same as the type of the data that you will be using, but it&apos;s not required to do that. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;</label>
+        <link refid="classmlpack_1_1tree_1_1DecisionTree"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>AuxiliarySplitInfo</label>
+        <link refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1_1AuxiliarySplitInfo"/>
+      </node>
+      <node id="3">
+        <label>AuxiliarySplitInfo</label>
+        <link refid="classmlpack_1_1tree_1_1AllCategoricalSplit_1_1AuxiliarySplitInfo"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;</label>
+        <link refid="classmlpack_1_1tree_1_1DecisionTree"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>AuxiliarySplitInfo</label>
+        <link refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1_1AuxiliarySplitInfo"/>
+      </node>
+      <node id="3">
+        <label>AuxiliarySplitInfo</label>
+        <link refid="classmlpack_1_1tree_1_1AllCategoricalSplit_1_1AuxiliarySplitInfo"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" line="45" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/decision_tree.hpp" bodystart="48" bodyend="576"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1ae48b2792a5a4157611d23905fb2dba77" prot="private" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>CalculateClassProbabilities</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a9a3cc06b52728325bd6402f7175f28e5" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>CalculateDirection</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a494cccd2e7139520d893747b11a7aab3" prot="private" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>CategoricalAuxiliarySplitInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1ac6a633f57efba5e2893f58ee9ad549d1" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>CategoricalSplit</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1acb851aa7ee90f5617afe77d6942f1d35" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Child</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a914ce4cf047ff8fdcae13fdd7311839f" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Child</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1ab2d04bf394aa84df84e56a86d043df54" prot="private" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>children</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1aa610310b354b7badd88041ca07883569" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1abddb69ee5b97027cd4eebd398bf39ac6" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1abd3c3812715d2e249e47476782d8e95e" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a255d0a8b26a14cfd6a1f745568b83017" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a360b25ccaf5cb0f26ec696cb1781b634" prot="private" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>classProbabilities</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a47a160a10881b42183f86ada9e78735f" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>DecisionTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a36d85b32851469b82df02ae96d5a80ff" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>DecisionTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1ab011cce7d07f5b26e5feafea993c346b" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>DecisionTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a33a796e18df021c0af3d388889986570" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>DecisionTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a7f1af37a41b01eef41a238843f107b58" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>DecisionTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a06062274e5618491d9170383550fe3da" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>DecisionTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a9a0cd79275bd950f9cb697bfc578db06" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>DecisionTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a6e7969dd400c7138c6dfbe9aa60cf1ff" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>DecisionTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a23ec8f18d9cf97e1427afea56226b656" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>DecisionTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a883756287d5ce0957ad6f806571f2815" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>DimensionSelection</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1af92348422caa896bc857ebd6ace89cd8" prot="private" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>dimensionTypeOrMajorityClass</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>NumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a088ebfdf3c7a9e7eea81716d0c55b5a3" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>NumClasses</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1acb5a60716e91f30f215e742e00a4668b" prot="private" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>NumericAuxiliarySplitInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1aaa2e2873f405118872db87975cce0124" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>NumericSplit</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1ad6d265fac56dc40fbd5da0f792400d73" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1ac1ff2d7454c0e6480e42a68b6a6d18ba" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a92f55f07c1a09552ef79c8d8b9484af5" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>SplitDimension</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a351b01278d3022d478536e0a84a1808e" prot="private" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>splitDimension</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1abf1f81b5ed54a8492b4f42166a9c6346" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1af69d321e90bae4cc196f83467379a8ee" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1ac63e8f9e1a6c2203b79aeb0225bac9ed" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a85cf750767690c035a8cf37c7bffac65" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a9252d7287c3db6e33590918d372f404e" prot="private" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a2b6ceacf0054d7c421512056a59d5409" prot="private" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1DecisionTree_1a3a25d7741519bf2fe87f19c38dd3baee" prot="public" virt="non-virtual"><scope>mlpack::tree::DecisionTree</scope><name>~DecisionTree</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

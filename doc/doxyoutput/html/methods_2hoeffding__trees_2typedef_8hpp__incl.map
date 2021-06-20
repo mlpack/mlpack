@@ -1,0 +1,52 @@
+<map id="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/typedef.hpp" name="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/typedef.hpp">
+<area shape="rect" id="node1" title=" " alt="" coords="1956,5,2165,61"/>
+<area shape="rect" id="node2" title=" " alt="" coords="1901,109,2050,151"/>
+<area shape="rect" id="node3" href="$hoeffding__tree_8hpp.html" title=" " alt="" coords="2075,117,2220,143"/>
+<area shape="rect" id="node4" href="$prereqs_8hpp.html" title="The core includes that mlpack expects; standard C++ includes and Armadillo." alt="" coords="2144,377,2295,404"/>
+<area shape="rect" id="node44" href="$dataset__mapper_8hpp.html" title=" " alt="" coords="1739,199,1927,240"/>
+<area shape="rect" id="node47" href="$gini__impurity_8hpp.html" title=" " alt="" coords="2055,295,2189,322"/>
+<area shape="rect" id="node48" href="$hoeffding__numeric__split_8hpp.html" title=" " alt="" coords="2213,295,2420,322"/>
+<area shape="rect" id="node49" href="$hoeffding__categorical__split_8hpp.html" title=" " alt="" coords="2210,199,2373,240"/>
+<area shape="rect" id="node50" title=" " alt="" coords="2397,206,2578,233"/>
+<area shape="rect" id="node5" title=" " alt="" coords="4265,467,4328,493"/>
+<area shape="rect" id="node6" title=" " alt="" coords="4352,467,4417,493"/>
+<area shape="rect" id="node7" title=" " alt="" coords="4493,467,4551,493"/>
+<area shape="rect" id="node8" title=" " alt="" coords="286,467,353,493"/>
+<area shape="rect" id="node9" title=" " alt="" coords="377,467,443,493"/>
+<area shape="rect" id="node10" title=" " alt="" coords="467,467,529,493"/>
+<area shape="rect" id="node11" title=" " alt="" coords="553,467,619,493"/>
+<area shape="rect" id="node12" title=" " alt="" coords="643,467,710,493"/>
+<area shape="rect" id="node13" title=" " alt="" coords="735,467,821,493"/>
+<area shape="rect" id="node14" title=" " alt="" coords="845,467,900,493"/>
+<area shape="rect" id="node15" title=" " alt="" coords="924,467,984,493"/>
+<area shape="rect" id="node16" title=" " alt="" coords="1009,459,1201,501"/>
+<area shape="rect" id="node17" href="$arma__traits_8hpp.html" title=" " alt="" coords="1225,459,1390,501"/>
+<area shape="rect" id="node18" title=" " alt="" coords="2266,742,2458,769"/>
+<area shape="rect" id="node19" title=" " alt="" coords="2061,742,2241,769"/>
+<area shape="rect" id="node20" title=" " alt="" coords="2537,735,2715,776"/>
+<area shape="rect" id="node21" title=" " alt="" coords="2805,742,2983,769"/>
+<area shape="rect" id="node22" title=" " alt="" coords="1516,467,1683,493"/>
+<area shape="rect" id="node23" title=" " alt="" coords="1740,645,1883,687"/>
+<area shape="rect" id="node24" title=" " alt="" coords="1758,467,1929,493"/>
+<area shape="rect" id="node25" title=" " alt="" coords="1953,467,2120,493"/>
+<area shape="rect" id="node26" href="$unordered__map_8hpp.html" title="This file is backported from cereal 1.3 to support the serialization of objects of type associative c..." alt="" coords="105,459,261,501"/>
+<area shape="rect" id="node28" title=" " alt="" coords="2195,467,2366,493"/>
+<area shape="rect" id="node29" title=" " alt="" coords="3048,653,3223,679"/>
+<area shape="rect" id="node30" href="$is__loading_8hpp.html" title=" " alt="" coords="2098,645,2245,687"/>
+<area shape="rect" id="node31" href="$is__saving_8hpp.html" title=" " alt="" coords="2269,645,2415,687"/>
+<area shape="rect" id="node32" title=" " alt="" coords="2542,459,2734,501"/>
+<area shape="rect" id="node33" href="$array__wrapper_8hpp.html" title=" " alt="" coords="2440,645,2588,687"/>
+<area shape="rect" id="node34" href="$pointer__variant__wrapper_8hpp.html" title=" " alt="" coords="2491,556,2705,597"/>
+<area shape="rect" id="node35" href="$pointer__wrapper_8hpp.html" title=" " alt="" coords="2664,653,2820,679"/>
+<area shape="rect" id="node36" href="$pointer__vector__variant__wrapper_8hpp.html" title=" " alt="" coords="2758,452,2931,508"/>
+<area shape="rect" id="node37" href="$pointer__vector__wrapper_8hpp.html" title=" " alt="" coords="2831,563,3035,590"/>
+<area shape="rect" id="node38" href="$has__serialize_8hpp.html" title=" " alt="" coords="3170,556,3333,597"/>
+<area shape="rect" id="node39" href="$arma__config__check_8hpp.html" title=" " alt="" coords="3209,459,3374,501"/>
+<area shape="rect" id="node40" href="$log_8hpp.html" title=" " alt="" coords="3398,467,3577,493"/>
+<area shape="rect" id="node41" href="$timers_8hpp.html" title=" " alt="" coords="3601,467,3803,493"/>
+<area shape="rect" id="node42" href="$deprecated_8hpp.html" title=" " alt="" coords="3827,467,4059,493"/>
+<area shape="rect" id="node43" href="$size__checks_8hpp.html" title=" " alt="" coords="4083,459,4241,501"/>
+<area shape="rect" id="node27" title=" " alt="" coords="5,563,129,590"/>
+<area shape="rect" id="node45" href="$increment__policy_8hpp.html" title=" " alt="" coords="1534,288,1713,329"/>
+<area shape="rect" id="node46" title=" " alt="" coords="1737,295,1929,322"/>
+</map>

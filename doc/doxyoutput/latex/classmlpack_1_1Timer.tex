@@ -1,0 +1,126 @@
+\doxysection{Timer Class Reference}
+\label{classmlpack_1_1Timer}\index{Timer@{Timer}}
+
+
+The timer class provides a way for mlpack methods to be timed.  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \textbf{ Disable\+Timing} ()
+\begin{DoxyCompactList}\small\item\em Disable timing of mlpack programs. \end{DoxyCompactList}\item 
+static void \textbf{ Enable\+Timing} ()
+\begin{DoxyCompactList}\small\item\em Enable timing of mlpack programs. \end{DoxyCompactList}\item 
+static std\+::chrono\+::microseconds \textbf{ Get} (const std\+::string \&name)
+\begin{DoxyCompactList}\small\item\em Get the value of the given timer. \end{DoxyCompactList}\item 
+static void \textbf{ Reset\+All} ()
+\begin{DoxyCompactList}\small\item\em Stop and reset all running timers. \end{DoxyCompactList}\item 
+static void \textbf{ Start} (const std\+::string \&name)
+\begin{DoxyCompactList}\small\item\em Start the given timer. \end{DoxyCompactList}\item 
+static void \textbf{ Stop} (const std\+::string \&name)
+\begin{DoxyCompactList}\small\item\em Stop the given timer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The timer class provides a way for mlpack methods to be timed. 
+
+The three methods contained in this class allow a named timer to be started and stopped, and its value to be obtained. A named timer is specific to the thread it is running on, so if you start a timer in one thread, it cannot be stopped from a different thread. 
+
+Definition at line 46 of file timers.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1Timer_a2c8b89142749d77f82338da28267f37c}} 
+\index{Timer@{Timer}!DisableTiming@{DisableTiming}}
+\index{DisableTiming@{DisableTiming}!Timer@{Timer}}
+\doxysubsubsection{DisableTiming()}
+{\footnotesize\ttfamily static void Disable\+Timing (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Disable timing of mlpack programs. 
+
+Do not run this while timers are running! \mbox{\label{classmlpack_1_1Timer_a41f8422720891efeaf30a43f6a7bbc7f}} 
+\index{Timer@{Timer}!EnableTiming@{EnableTiming}}
+\index{EnableTiming@{EnableTiming}!Timer@{Timer}}
+\doxysubsubsection{EnableTiming()}
+{\footnotesize\ttfamily static void Enable\+Timing (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Enable timing of mlpack programs. 
+
+Do not run this while timers are running! 
+
+Referenced by mlpack\+::util\+::\+Enable\+Timers().
+
+\mbox{\label{classmlpack_1_1Timer_a12540cc60abafd8b9c2a796a9ba2ee16}} 
+\index{Timer@{Timer}!Get@{Get}}
+\index{Get@{Get}!Timer@{Timer}}
+\doxysubsubsection{Get()}
+{\footnotesize\ttfamily static std\+::chrono\+::microseconds Get (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get the value of the given timer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Name of timer to return value of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1Timer_a6335c4606497b8c63b2280b647e0dda3}} 
+\index{Timer@{Timer}!ResetAll@{ResetAll}}
+\index{ResetAll@{ResetAll}!Timer@{Timer}}
+\doxysubsubsection{ResetAll()}
+{\footnotesize\ttfamily static void Reset\+All (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Stop and reset all running timers. 
+
+This removes all knowledge of any existing timers. \mbox{\label{classmlpack_1_1Timer_aa052af5e185f178dcfd540b95d2b1d11}} 
+\index{Timer@{Timer}!Start@{Start}}
+\index{Start@{Start}!Timer@{Timer}}
+\doxysubsubsection{Start()}
+{\footnotesize\ttfamily static void Start (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Start the given timer. 
+
+If a timer is started, then stopped, then re-\/started, then re-\/stopped, the final value of the timer is the length of both runs -- that is, mlpack timers are additive for each time they are run, and do not reset.
+
+\begin{DoxyNote}{Note}
+A std\+::runtime\+\_\+error exception will be thrown if a timer is started twice.
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Name of timer to be started. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1Timer_ad5249f0e0368bf00dbd1bd6570160950}} 
+\index{Timer@{Timer}!Stop@{Stop}}
+\index{Stop@{Stop}!Timer@{Timer}}
+\doxysubsubsection{Stop()}
+{\footnotesize\ttfamily static void Stop (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Stop the given timer. 
+
+\begin{DoxyNote}{Note}
+A std\+::runtime\+\_\+error exception will be thrown if a timer is started twice.
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Name of timer to be stopped. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/util/\textbf{ timers.\+hpp}\end{DoxyCompactItemize}

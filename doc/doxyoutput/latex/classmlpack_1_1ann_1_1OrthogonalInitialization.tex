@@ -1,0 +1,155 @@
+\doxysection{Orthogonal\+Initialization Class Reference}
+\label{classmlpack_1_1ann_1_1OrthogonalInitialization}\index{OrthogonalInitialization@{OrthogonalInitialization}}
+
+
+This class is used to initialize the weight matrix with the orthogonal matrix initialization.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Orthogonal\+Initialization} (const double gain=1.\+0)
+\begin{DoxyCompactList}\small\item\em Initialize the orthogonal matrix initialization rule with the given gain. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Cube$<$ eT $>$ \&W)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight 3rd order tensor with the orthogonal matrix initialization method. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Cube$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols, const size\+\_\+t slices)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight 3rd order tensor with the orthogonal matrix initialization method. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Mat$<$ eT $>$ \&W)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight matrix with the orthogonal matrix initialization method. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Mat$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight matrix with the orthogonal matrix initialization method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is used to initialize the weight matrix with the orthogonal matrix initialization. 
+
+Definition at line 24 of file orthogonal\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1OrthogonalInitialization_a817ae9d4d72deee10477cb6e79dc535a}} 
+\index{OrthogonalInitialization@{OrthogonalInitialization}!OrthogonalInitialization@{OrthogonalInitialization}}
+\index{OrthogonalInitialization@{OrthogonalInitialization}!OrthogonalInitialization@{OrthogonalInitialization}}
+\doxysubsubsection{OrthogonalInitialization()}
+{\footnotesize\ttfamily \textbf{ Orthogonal\+Initialization} (\begin{DoxyParamCaption}\item[{const double}]{gain = {\ttfamily 1.0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the orthogonal matrix initialization rule with the given gain. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em gain} & The gain value. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 32 of file orthogonal\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1OrthogonalInitialization_ae2f3e6d570824a160b687ff9f734f83c}} 
+\index{OrthogonalInitialization@{OrthogonalInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!OrthogonalInitialization@{OrthogonalInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Cube$<$ eT $>$ \&}]{W }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the specified weight 3rd order tensor with the orthogonal matrix initialization method. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 97 of file orthogonal\+\_\+init.\+hpp.
+
+
+
+References Log\+::\+Fatal, and Orthogonal\+Initialization\+::\+Initialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1OrthogonalInitialization_a40a2b6466bdba0f6aab4eb92b6e65934}} 
+\index{OrthogonalInitialization@{OrthogonalInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!OrthogonalInitialization@{OrthogonalInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Cube$<$ eT $>$ \&}]{W,  }\item[{const size\+\_\+t}]{rows,  }\item[{const size\+\_\+t}]{cols,  }\item[{const size\+\_\+t}]{slices }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the specified weight 3rd order tensor with the orthogonal matrix initialization method. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+{\em slices} & Number of slices. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 78 of file orthogonal\+\_\+init.\+hpp.
+
+
+
+References Orthogonal\+Initialization\+::\+Initialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1OrthogonalInitialization_af2d770912321b8b9ca7b03ab98f735c0}} 
+\index{OrthogonalInitialization@{OrthogonalInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!OrthogonalInitialization@{OrthogonalInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Mat$<$ eT $>$ \&}]{W }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the specified weight matrix with the orthogonal matrix initialization method. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 59 of file orthogonal\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1OrthogonalInitialization_a5cfe472251a41fffd45b170bb0d3c1bd}} 
+\index{OrthogonalInitialization@{OrthogonalInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!OrthogonalInitialization@{OrthogonalInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Mat$<$ eT $>$ \&}]{W,  }\item[{const size\+\_\+t}]{rows,  }\item[{const size\+\_\+t}]{cols }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the specified weight matrix with the orthogonal matrix initialization method. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 43 of file orthogonal\+\_\+init.\+hpp.
+
+
+
+Referenced by Orthogonal\+Initialization\+::\+Initialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/init\+\_\+rules/\textbf{ orthogonal\+\_\+init.\+hpp}\end{DoxyCompactItemize}

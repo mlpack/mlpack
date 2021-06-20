@@ -1,0 +1,79 @@
+.TH "R2Score< AdjustedR2 >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+R2Score< AdjustedR2 > \- The R2 Score is a metric of performance for regression algorithms that represents the proportion of variance (here y) that has been explained by the independent variables in the model\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MLAlgorithm , typename DataType , typename ResponsesType > static double \fBEvaluate\fP (MLAlgorithm &model, const DataType &data, const ResponsesType &responses)"
+.br
+.RI "Run prediction and calculate the R squared or Adjusted R squared error\&. "
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBNeedsMinimization\fP = false"
+.br
+.RI "Information for hyper-parameter tuning code\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<bool AdjustedR2>
+.br
+class mlpack::cv::R2Score< AdjustedR2 >"
+The R2 Score is a metric of performance for regression algorithms that represents the proportion of variance (here y) that has been explained by the independent variables in the model\&. 
+
+It provides an indication of goodness of fit and therefore a measure of how well unseen samples are likely to be predicted by the model, through the proportion of explained variance\&. As R2 Score is dataset dependent it can have wide range of values\&. The best possible score is $R^2 =1.0$\&. Values of R2 outside the range 0 to 1 can occur when the model fits the data worse than a horizontal hyperplane\&. This would occur when the wrong model was chosen, or nonsensical constraints were applied by mistake\&. A model which predicts exactly the expected value of y, disregarding the input features, gets a R2 Score equals to 0\&.0\&. If a model predicts $ \hat{y}_i $ of the $ i $-th sample for a true $ y_i $ for total n samples, the R2 Score is calculated by \begin{eqnarray*} R^{2} \left( y, \hat{y} \right) &=& 1-\frac{\sum_{i=1}^{n} \left( y_i - \hat{y_i} \right)^2 } {\sum_{i=1}^{n} \left( y_i - \bar{y}\right)^2}\\ \end{eqnarray*}
+.PP
+where $ \bar{y} = frac{1}{y}\sum_{i=1}^{n} y_i $\&. For example, a model having \fBR2Score\fP = 0\&.85, explains 85 % variability of the response data around its mean\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIAdjustedR2\fP If true, then the Adjusted R2 score will be used\&. Otherwise, the regular R2 score is used\&. 
+.RE
+.PP
+
+.PP
+Definition at line 51 of file r2_score\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Evaluate (MLAlgorithm & model, const DataType & data, const ResponsesType & responses)\fC [static]\fP"
+
+.PP
+Run prediction and calculate the R squared or Adjusted R squared error\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImodel\fP A regression model\&. 
+.br
+\fIdata\fP Column-major data containing test items\&. 
+.br
+\fIresponses\fP Ground truth (correct) target values for the test items, should be either a row vector or a column-major matrix\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+calculated R2 Score\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool NeedsMinimization = false\fC [static]\fP"
+
+.PP
+Information for hyper-parameter tuning code\&. It indicates that we want to maximize the measurement\&. 
+.PP
+Definition at line 72 of file r2_score\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,82 @@
+\doxysection{Backtrace Class Reference}
+\label{classmlpack_1_1Backtrace}\index{Backtrace@{Backtrace}}
+
+
+Provides a backtrace.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Backtrace} ()
+\begin{DoxyCompactList}\small\item\em Constructor initialize fields and call Get\+Address to retrieve addresses for each frame of backtrace. \end{DoxyCompactList}\item 
+std\+::string \textbf{ To\+String} ()
+\begin{DoxyCompactList}\small\item\em Returns string of backtrace. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Provides a backtrace. 
+
+The \doxyref{Backtrace}{p.}{classmlpack_1_1Backtrace} class retrieve addresses of each called function from the stack and decode file name, function \& line number. Retrieved information can be printed in form\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{[b]: (count) /directory/to/file.cpp:\textcolor{keyword}{function}(args):line\_number}
+
+\end{DoxyCode}
+
+
+\doxyref{Backtrace}{p.}{classmlpack_1_1Backtrace} is printed always when \doxyref{Log\+::\+Assert}{p.}{classmlpack_1_1Log_acf2da487d1dac6cd100996cf82eba5e8} failed. An example is given below.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (!someImportantCondition())}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  Log::Fatal << \textcolor{stringliteral}{"{}someImportantCondition() is not satisfied! Terminating."{}};}
+\DoxyCodeLine{  Log::Fatal << std::endl;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+\doxyref{Log\+::\+Assert}{p.}{classmlpack_1_1Log_acf2da487d1dac6cd100996cf82eba5e8} will not be shown when compiling in non-\/debug mode.
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+Prefixed\+Out\+Stream, \doxyref{Log}{p.}{classmlpack_1_1Log} 
+\end{DoxySeeAlso}
+
+
+Definition at line 46 of file backtrace.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1Backtrace_a56f5712848b4d5b5d2ad8f940750faa8}} 
+\index{Backtrace@{Backtrace}!Backtrace@{Backtrace}}
+\index{Backtrace@{Backtrace}!Backtrace@{Backtrace}}
+\doxysubsubsection{Backtrace()}
+{\footnotesize\ttfamily \textbf{ Backtrace} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Constructor initialize fields and call Get\+Address to retrieve addresses for each frame of backtrace. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1Backtrace_a7ef596a0c429a1a74709cf14d8fa15d2}} 
+\index{Backtrace@{Backtrace}!ToString@{ToString}}
+\index{ToString@{ToString}!Backtrace@{Backtrace}}
+\doxysubsubsection{ToString()}
+{\footnotesize\ttfamily std\+::string To\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns string of backtrace. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/util/\textbf{ backtrace.\+hpp}\end{DoxyCompactItemize}

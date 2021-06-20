@@ -1,0 +1,655 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1fastmks_1_1FastMKSModel" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::fastmks::FastMKSModel</compoundname>
+    <includes refid="fastmks__model_8hpp" local="no">fastmks_model.hpp</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61" prot="public" static="no" strong="no">
+        <type></type>
+        <name>KernelTypes</name>
+        <enumvalue id="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a44c19885e8509cdfeb89db38bb74e4bb" prot="public">
+          <name>LINEAR_KERNEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a3dad25df2f289d42ade9aff75e71803b" prot="public">
+          <name>POLYNOMIAL_KERNEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61aedac786ed71e2c8f30bcad905a65f5ee" prot="public">
+          <name>COSINE_DISTANCE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61af52665cc69ef62c8ad00a49c8e259c13" prot="public">
+          <name>GAUSSIAN_KERNEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61af0f03a73eb0dce407b0b027dc8f98cdc" prot="public">
+          <name>EPANECHNIKOV_KERNEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a54d012af1c18f0d33fc7b76ee3d164fe" prot="public">
+          <name>TRIANGULAR_KERNEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61aa8b1a75b45fd61561787952bff37e591" prot="public">
+          <name>HYPTAN_KERNEL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>A list of all the kernels we support. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="38" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="39" bodyend="47"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a3bf05c20ce2cc2b23a7d617d786961a7" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1CosineDistance" kindref="compound">kernel::CosineDistance</ref> &gt; *</type>
+        <definition>FastMKS&lt;kernel::CosineDistance&gt;* cosine</definition>
+        <argsstring></argsstring>
+        <name>cosine</name>
+        <briefdescription>
+<para>This will only be non-NULL if this is the type of kernel we are using. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="143" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1acd485d0d3dde754e20d321bcf416aabc" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1EpanechnikovKernel" kindref="compound">kernel::EpanechnikovKernel</ref> &gt; *</type>
+        <definition>FastMKS&lt;kernel::EpanechnikovKernel&gt;* epan</definition>
+        <argsstring></argsstring>
+        <name>epan</name>
+        <briefdescription>
+<para>This will only be non-NULL if this is the type of kernel we are using. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="147" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a21401dc72fe1e1d593bd76b7407a738c" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1GaussianKernel" kindref="compound">kernel::GaussianKernel</ref> &gt; *</type>
+        <definition>FastMKS&lt;kernel::GaussianKernel&gt;* gaussian</definition>
+        <argsstring></argsstring>
+        <name>gaussian</name>
+        <briefdescription>
+<para>This will only be non-NULL if this is the type of kernel we are using. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="145" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a2332056f6bc89dc986fb65efdbbc853d" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1HyperbolicTangentKernel" kindref="compound">kernel::HyperbolicTangentKernel</ref> &gt; *</type>
+        <definition>FastMKS&lt;kernel::HyperbolicTangentKernel&gt;* hyptan</definition>
+        <argsstring></argsstring>
+        <name>hyptan</name>
+        <briefdescription>
+<para>This will only be non-NULL if this is the type of kernel we are using. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="151" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1ac9c1988063c3ac15fd407e48fcfd847b" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int kernelType</definition>
+        <argsstring></argsstring>
+        <name>kernelType</name>
+        <briefdescription>
+<para>The type of kernel we are using. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="136" column="7" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a4db5ef6a5d3becd3b8e468452a2cec01" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1LinearKernel" kindref="compound">kernel::LinearKernel</ref> &gt; *</type>
+        <definition>FastMKS&lt;kernel::LinearKernel&gt;* linear</definition>
+        <argsstring></argsstring>
+        <name>linear</name>
+        <briefdescription>
+<para>This will only be non-NULL if this is the type of kernel we are using. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="139" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a1feda7c24969733165c6a553e97dfb2c" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1PolynomialKernel" kindref="compound">kernel::PolynomialKernel</ref> &gt; *</type>
+        <definition>FastMKS&lt;kernel::PolynomialKernel&gt;* polynomial</definition>
+        <argsstring></argsstring>
+        <name>polynomial</name>
+        <briefdescription>
+<para>This will only be non-NULL if this is the type of kernel we are using. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="141" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a6c78a6d0b3d8601f2a4027f36cae3bb3" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref>&lt; <ref refid="classmlpack_1_1kernel_1_1TriangularKernel" kindref="compound">kernel::TriangularKernel</ref> &gt; *</type>
+        <definition>FastMKS&lt;kernel::TriangularKernel&gt;* triangular</definition>
+        <argsstring></argsstring>
+        <name>triangular</name>
+        <briefdescription>
+<para>This will only be non-NULL if this is the type of kernel we are using. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="149" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1ae4060d2c27f69eea2438f25bc24eeddb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FastMKSModel</definition>
+        <argsstring>(const FastMKSModel &amp;other)</argsstring>
+        <name>FastMKSModel</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="55" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a785f40ed57385b87326e500c92e6e919" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FastMKSModel</definition>
+        <argsstring>(const int kernelType=LINEAR_KERNEL)</argsstring>
+        <name>FastMKSModel</name>
+        <param>
+          <type>const int</type>
+          <declname>kernelType</declname>
+          <defval><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a44c19885e8509cdfeb89db38bb74e4bb" kindref="member">LINEAR_KERNEL</ref></defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref> with the given kernel type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="52" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1af44dc1dc47f204f5163feaae0da6d0c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>FastMKSModel</definition>
+        <argsstring>(FastMKSModel &amp;&amp;other)</argsstring>
+        <name>FastMKSModel</name>
+        <param>
+          <type><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="58" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a901e6c34f535118d384a4ae938a44f90" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~FastMKSModel</definition>
+        <argsstring>()</argsstring>
+        <name>~FastMKSModel</name>
+        <briefdescription>
+<para>Clean memory. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="69" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1af6633d1be8fcc6fb3c24722505310828" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TKernelType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void BuildModel</definition>
+        <argsstring>(arma::mat &amp;&amp;referenceData, TKernelType &amp;kernel, const bool singleMode, const bool naive, const double base)</argsstring>
+        <name>BuildModel</name>
+        <param>
+          <type>arma::mat &amp;&amp;</type>
+          <declname>referenceData</declname>
+        </param>
+        <param>
+          <type>TKernelType &amp;</type>
+          <declname>kernel</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>singleMode</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>naive</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>base</declname>
+        </param>
+        <briefdescription>
+<para>Build the model on the given reference set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Make sure kernelType is equal to the correct entry in KernelTypes for the given KernelType class! </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="76" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a15c6e02f9ef88544804eab512e383407" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int &amp;</type>
+        <definition>int&amp; KernelType</definition>
+        <argsstring>()</argsstring>
+        <name>KernelType</name>
+        <briefdescription>
+<para>Modify the kernel type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="95" column="7" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="95" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1aaefce8a6d9804780c3ba76387743bfa1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int KernelType</definition>
+        <argsstring>() const</argsstring>
+        <name>KernelType</name>
+        <briefdescription>
+<para>Get the kernel type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="93" column="7" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="93" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1af7d397adca3f411b4e2d2f977b280ce6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Naive</definition>
+        <argsstring>()</argsstring>
+        <name>Naive</name>
+        <briefdescription>
+<para>Set whether or not naive search is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="85" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a343230e7d7344e3f7d5f5f2eb89cf2c5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Naive</definition>
+        <argsstring>() const</argsstring>
+        <name>Naive</name>
+        <briefdescription>
+<para>Get whether or not naive search is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="83" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a1679bc06e54e078ade0d854db6daa912" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref> &amp;</type>
+        <definition>FastMKSModel&amp; operator=</definition>
+        <argsstring>(const FastMKSModel &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="61" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a7efa63563a3b3934e96ab230902a744f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref> &amp;</type>
+        <definition>FastMKSModel&amp; operator=</definition>
+        <argsstring>(FastMKSModel &amp;&amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1fastmks_1_1FastMKSModel" kindref="compound">FastMKSModel</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="64" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a812b069578882b07c71b9ce5ab977bab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const arma::mat &amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;kernels, const double base)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>indices</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>kernels</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>base</declname>
+        </param>
+        <briefdescription>
+<para>Search with a different query set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>querySet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set to search with. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of max-kernel candidates to search for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>indices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A matrix in which to store the indices of max-kernel candidates. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A matrix in which to store the max-kernel candidate kernel values. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>base</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Base to use for cover tree building (if in dual-tree search mode). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="109" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1af21ed3dd588e5375f7fb5b69819b60bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;kernels)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>indices</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>kernels</declname>
+        </param>
+        <briefdescription>
+<para>Search with the reference set as the query set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of max-kernel candidates to search for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>indices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A matrix in which to store the indices of max-kernel candidates. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A matrix in which to store the max-kernel candidate kernel values. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="124" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="132" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1adadacd63ddeadf138d834b1fdc632773" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; SingleMode</definition>
+        <argsstring>()</argsstring>
+        <name>SingleMode</name>
+        <briefdescription>
+<para>Set whether or not single-tree search is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="90" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool SingleMode</definition>
+        <argsstring>() const</argsstring>
+        <name>SingleMode</name>
+        <briefdescription>
+<para>Get whether or not single-tree search is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="88" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1fastmks_1_1FastMKSModel_1a6fe4c483a11bb3c80db7ca5171044707" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename FastMKSType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(FastMKSType &amp;f, const arma::mat &amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;indices, arma::mat &amp;kernels, const double base)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>FastMKSType &amp;</type>
+          <declname>f</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>indices</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>kernels</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>base</declname>
+        </param>
+        <briefdescription>
+<para>Build a query tree and execute the search. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="155" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A utility struct to contain all the possible <ref refid="classmlpack_1_1fastmks_1_1FastMKS" kindref="compound">FastMKS</ref> models, for use by the mlpack_fastmks program. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" line="34" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/fastmks/fastmks_model.hpp" bodystart="35" bodyend="161"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1af6633d1be8fcc6fb3c24722505310828" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>BuildModel</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a3bf05c20ce2cc2b23a7d617d786961a7" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>cosine</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61aedac786ed71e2c8f30bcad905a65f5ee" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>COSINE_DISTANCE</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1acd485d0d3dde754e20d321bcf416aabc" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>epan</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61af0f03a73eb0dce407b0b027dc8f98cdc" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>EPANECHNIKOV_KERNEL</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a785f40ed57385b87326e500c92e6e919" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>FastMKSModel</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1ae4060d2c27f69eea2438f25bc24eeddb" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>FastMKSModel</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1af44dc1dc47f204f5163feaae0da6d0c8" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>FastMKSModel</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a21401dc72fe1e1d593bd76b7407a738c" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>gaussian</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61af52665cc69ef62c8ad00a49c8e259c13" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>GAUSSIAN_KERNEL</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a2332056f6bc89dc986fb65efdbbc853d" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>hyptan</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61aa8b1a75b45fd61561787952bff37e591" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>HYPTAN_KERNEL</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1ac9c1988063c3ac15fd407e48fcfd847b" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>kernelType</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1aaefce8a6d9804780c3ba76387743bfa1" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>KernelType</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a15c6e02f9ef88544804eab512e383407" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>KernelType</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>KernelTypes</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a4db5ef6a5d3becd3b8e468452a2cec01" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>linear</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a44c19885e8509cdfeb89db38bb74e4bb" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>LINEAR_KERNEL</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a343230e7d7344e3f7d5f5f2eb89cf2c5" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>Naive</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1af7d397adca3f411b4e2d2f977b280ce6" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>Naive</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a1679bc06e54e078ade0d854db6daa912" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a7efa63563a3b3934e96ab230902a744f" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a1feda7c24969733165c6a553e97dfb2c" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>polynomial</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a3dad25df2f289d42ade9aff75e71803b" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>POLYNOMIAL_KERNEL</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a812b069578882b07c71b9ce5ab977bab" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1af21ed3dd588e5375f7fb5b69819b60bb" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a6fe4c483a11bb3c80db7ca5171044707" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>SingleMode</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1adadacd63ddeadf138d834b1fdc632773" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>SingleMode</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a6c78a6d0b3d8601f2a4027f36cae3bb3" prot="private" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>triangular</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a0d0c6dc6893ad3824d5d31d87e69fb61a54d012af1c18f0d33fc7b76ee3d164fe" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>TRIANGULAR_KERNEL</name></member>
+      <member refid="classmlpack_1_1fastmks_1_1FastMKSModel_1a901e6c34f535118d384a4ae938a44f90" prot="public" virt="non-virtual"><scope>mlpack::fastmks::FastMKSModel</scope><name>~FastMKSModel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

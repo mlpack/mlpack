@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="methods_2reinforcement__learning_2environment_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="methods_2reinforcement__learning_2environment_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}) endforeach() set(MLPACK_SRCS $</argsstring>
+        <name>set</name>
+        <param>
+          <type>DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/CMakeLists.txt" line="19" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/CMakeLists.txt" bodystart="19" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="methods_2reinforcement__learning_2environment_2CMakeLists_8txt_1ac20d32df760deb243b70893bf53d6d03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(SOURCES env_type.hpp env_type.cpp mountain_car.hpp cart_pole.hpp continuous_mountain_car.hpp double_pole_cart.hpp continuous_double_pole_cart.hpp acrobot.hpp pendulum.hpp reward_clipping.hpp) set(DIR_SRCS) foreach(file $</argsstring>
+        <name>set</name>
+        <param>
+          <type>SOURCES env_type.hpp env_type.cpp mountain_car.hpp cart_pole.hpp continuous_mountain_car.hpp double_pole_cart.hpp continuous_double_pole_cart.hpp acrobot.hpp pendulum.hpp reward_clipping.</type>
+          <declname>hpp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/CMakeLists.txt" line="3" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/CMakeLists.txt" bodystart="3" bodyend="18"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#<sp/>Define<sp/>the<sp/>files<sp/>we<sp/>need<sp/>to<sp/>compile</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Anything<sp/>not<sp/>in<sp/>this<sp/>list<sp/>will<sp/>not<sp/>be<sp/>compiled<sp/>into<sp/>mlpack.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3" refid="methods_2reinforcement__learning_2environment_2CMakeLists_8txt_1ac20d32df760deb243b70893bf53d6d03" refkind="member"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(SOURCES</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"><sp/><sp/>env_type.hpp</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/>env_type.cpp</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/>mountain_car.hpp</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/>cart_pole.hpp</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/>continuous_mountain_car.hpp</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/>double_pole_cart.hpp</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/>continuous_double_pole_cart.hpp</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/>acrobot.hpp</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/>pendulum.hpp</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/>reward_clipping.hpp</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Add<sp/>directory<sp/>name<sp/>to<sp/>sources.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS)</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal">(file<sp/>${SOURCES})</highlight></codeline>
+<codeline lineno="19" refid="methods_2reinforcement__learning_2environment_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS<sp/>${DIR_SRCS}<sp/>${CMAKE_CURRENT_SOURCE_DIR}/${file})</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">endforeach()</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Append<sp/>sources<sp/>(with<sp/>directory<sp/>name)<sp/>to<sp/>list<sp/>of<sp/>all<sp/>mlpack<sp/>sources<sp/>(used<sp/>at</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>the<sp/>parent<sp/>scope).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(MLPACK_SRCS<sp/>${MLPACK_SRCS}<sp/>${DIR_SRCS}<sp/>PARENT_SCOPE)</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

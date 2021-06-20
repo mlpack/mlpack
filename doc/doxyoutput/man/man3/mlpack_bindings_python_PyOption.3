@@ -1,0 +1,40 @@
+.TH "PyOption< T >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PyOption< T > \- The Python option class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBPyOption\fP (const T defaultValue, const std::string &identifier, const std::string &description, const std::string &alias, const std::string &cppName, const bool required=false, const bool input=true, const bool noTranspose=false, const std::string &='')"
+.br
+.RI "Construct a \fBPyOption\fP object\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T>
+.br
+class mlpack::bindings::python::PyOption< T >"
+The Python option class\&. 
+.PP
+Definition at line 37 of file py_option\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBPyOption\fP (const T defaultValue, const std::string & identifier, const std::string & description, const std::string & alias, const std::string & cppName, const bool required = \fCfalse\fP, const bool input = \fCtrue\fP, const bool noTranspose = \fCfalse\fP, const std::string & = \fC''\fP)\fC [inline]\fP"
+
+.PP
+Construct a \fBPyOption\fP object\&. When constructed, it will register itself with \fBIO\fP\&. The testName parameter is not used and added for compatibility reasons\&. 
+.PP
+Definition at line 45 of file py_option\&.hpp\&.
+.PP
+References IO::Add(), ParamData::alias, IO::ClearSettings(), ParamData::cppType, ParamData::desc, IO::functionMap, IO::GetSingleton(), ParamData::input, ParamData::loaded, ParamData::name, ParamData::noTranspose, ParamData::persistent, mlpack::bindings::python::programName, ParamData::required, IO::RestoreSettings(), IO::StoreSettings(), ParamData::tname, TYPENAME, ParamData::value, and ParamData::wasPassed\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,144 @@
+\doxysection{Dual\+Tree\+KMeans$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1kmeans_1_1DualTreeKMeans}\index{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}}
+
+
+An algorithm for an exact Lloyd iteration which simply uses dual-\/tree nearest-\/neighbor search to find the nearest centroid for each point in the dataset.  
+
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Metric\+Type , typename Ignored\+Stat\+Type , typename Tree\+Mat\+Type $>$ }\\using \textbf{ NNSTree\+Type} = Tree\+Type$<$ Tree\+Metric\+Type, \textbf{ Dual\+Tree\+KMeans\+Statistic}, Tree\+Mat\+Type $>$
+\item 
+typedef Tree\+Type$<$ Metric\+Type, \textbf{ Dual\+Tree\+KMeans\+Statistic}, Mat\+Type $>$ \textbf{ Tree}
+\begin{DoxyCompactList}\small\item\em Convenience typedef. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Dual\+Tree\+KMeans} (const Mat\+Type \&dataset, Metric\+Type \&metric)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Dual\+Tree\+KMeans}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} object, which will construct a tree on the points. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+Dual\+Tree\+KMeans} ()
+\begin{DoxyCompactList}\small\item\em Delete the tree constructed by the \doxyref{Dual\+Tree\+KMeans}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} object. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Distance\+Calculations} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of distance calculations. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Distance\+Calculations} () const
+\begin{DoxyCompactList}\small\item\em Return the number of distance calculations. \end{DoxyCompactList}\item 
+double \textbf{ Iterate} (const arma\+::mat \&centroids, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&counts)
+\begin{DoxyCompactList}\small\item\em Run a single iteration of the dual-\/tree nearest neighbor algorithm for k-\/means, updating the given centroids into the new\+Centroids matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Mat\+Type, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+KDTree$>$\newline
+class mlpack\+::kmeans\+::\+Dual\+Tree\+KMeans$<$ Metric\+Type, Mat\+Type, Tree\+Type $>$}
+
+An algorithm for an exact Lloyd iteration which simply uses dual-\/tree nearest-\/neighbor search to find the nearest centroid for each point in the dataset. 
+
+The conditions under which this will perform best are probably limited to the case where k is close to the number of points in the dataset, and the number of iterations of the k-\/means algorithm will be few. 
+
+Definition at line 41 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a5b3ef294d06f18f1075d54975f0e7aad}} 
+\index{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}!NNSTreeType@{NNSTreeType}}
+\index{NNSTreeType@{NNSTreeType}!DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}}
+\doxysubsubsection{NNSTreeType}
+{\footnotesize\ttfamily using \textbf{ NNSTree\+Type} =  Tree\+Type$<$Tree\+Metric\+Type, \textbf{ Dual\+Tree\+KMeans\+Statistic}, Tree\+Mat\+Type$>$}
+
+
+
+Definition at line 50 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_acaad795a6a26818330dd2476ec5e8731}} 
+\index{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}!Tree@{Tree}}
+\index{Tree@{Tree}!DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}}
+\doxysubsubsection{Tree}
+{\footnotesize\ttfamily typedef Tree\+Type$<$Metric\+Type, \textbf{ Dual\+Tree\+KMeans\+Statistic}, Mat\+Type$>$ \textbf{ Tree}}
+
+
+
+Convenience typedef. 
+
+
+
+Definition at line 45 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a6c9ca881ce3156575e49ee41509c9e84}} 
+\index{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}!DualTreeKMeans@{DualTreeKMeans}}
+\index{DualTreeKMeans@{DualTreeKMeans}!DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}}
+\doxysubsubsection{DualTreeKMeans()}
+{\footnotesize\ttfamily \textbf{ Dual\+Tree\+KMeans} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{dataset,  }\item[{Metric\+Type \&}]{metric }\end{DoxyParamCaption})}
+
+
+
+Construct the \doxyref{Dual\+Tree\+KMeans}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} object, which will construct a tree on the points. 
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a41aea8db220102203364a89819766541}} 
+\index{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}!````~DualTreeKMeans@{$\sim$DualTreeKMeans}}
+\index{````~DualTreeKMeans@{$\sim$DualTreeKMeans}!DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}}
+\doxysubsubsection{$\sim$DualTreeKMeans()}
+{\footnotesize\ttfamily $\sim$\textbf{ Dual\+Tree\+KMeans} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Delete the tree constructed by the \doxyref{Dual\+Tree\+KMeans}{p.}{classmlpack_1_1kmeans_1_1DualTreeKMeans} object. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a7fd6d18544595d62025c4b740f8664ab}} 
+\index{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}!DistanceCalculations@{DistanceCalculations}}
+\index{DistanceCalculations@{DistanceCalculations}!DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}}
+\doxysubsubsection{DistanceCalculations()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Distance\+Calculations (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of distance calculations. 
+
+
+
+Definition at line 79 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a6ab05a40f496b49e405530a1d39120ef}} 
+\index{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}!DistanceCalculations@{DistanceCalculations}}
+\index{DistanceCalculations@{DistanceCalculations}!DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}}
+\doxysubsubsection{DistanceCalculations()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Distance\+Calculations (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of distance calculations. 
+
+
+
+Definition at line 77 of file dual\+\_\+tree\+\_\+kmeans.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1DualTreeKMeans_a1618db5fb0d2893a50f0c8614d970453}} 
+\index{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}!Iterate@{Iterate}}
+\index{Iterate@{Iterate}!DualTreeKMeans$<$ MetricType, MatType, TreeType $>$@{DualTreeKMeans$<$ MetricType, MatType, TreeType $>$}}
+\doxysubsubsection{Iterate()}
+{\footnotesize\ttfamily double Iterate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{centroids,  }\item[{arma\+::mat \&}]{new\+Centroids,  }\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{counts }\end{DoxyParamCaption})}
+
+
+
+Run a single iteration of the dual-\/tree nearest neighbor algorithm for k-\/means, updating the given centroids into the new\+Centroids matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em centroids} & Current cluster centroids. \\
+\hline
+{\em new\+Centroids} & New cluster centroids. \\
+\hline
+{\em counts} & Current counts, to be overwritten with new counts. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kmeans/\textbf{ dual\+\_\+tree\+\_\+kmeans.\+hpp}\end{DoxyCompactItemize}

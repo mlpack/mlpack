@@ -1,0 +1,102 @@
+.TH "InitHMMModel" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+InitHMMModel
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename HMMType > static void \fBApply\fP (HMMType &hmm, vector< mat > *trainSeq)"
+.br
+.ti -1c
+.RI "static void \fBCreate\fP (HMM< DiagonalGMM > &hmm, vector< mat > &trainSeq, size_t states, double tolerance=1e\-05)"
+.br
+.RI "Helper function to create Diagonal GMM HMM\&. "
+.ti -1c
+.RI "static void \fBCreate\fP (HMM< DiscreteDistribution > &hmm, vector< mat > &trainSeq, size_t states, double tolerance=1e\-05)"
+.br
+.RI "Helper function to create discrete HMM\&. "
+.ti -1c
+.RI "static void \fBCreate\fP (HMM< GaussianDistribution > &hmm, vector< mat > &trainSeq, size_t states, double tolerance=1e\-05)"
+.br
+.ti -1c
+.RI "static void \fBCreate\fP (HMM< GMM > &hmm, vector< mat > &trainSeq, size_t states, double tolerance=1e\-05)"
+.br
+.ti -1c
+.RI "static void \fBRandomInitialize\fP (vector< DiagonalGMM > &e)"
+.br
+.RI "Helper function for diagonal GMM emission distributions\&. "
+.ti -1c
+.RI "static void \fBRandomInitialize\fP (vector< DiscreteDistribution > &e)"
+.br
+.RI "Helper function for discrete emission distributions\&. "
+.ti -1c
+.RI "static void \fBRandomInitialize\fP (vector< GaussianDistribution > &e)"
+.br
+.ti -1c
+.RI "static void \fBRandomInitialize\fP (vector< GMM > &e)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 21 of file hmm_test_utils\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static void Apply (HMMType & hmm, vector< mat > * trainSeq)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 24 of file hmm_test_utils\&.hpp\&.
+.PP
+References Create(), and RandomInitialize()\&.
+.SS "static void Create (HMM< DiagonalGMM > & hmm, vector< mat > & trainSeq, size_t states, double tolerance = \fC1e\-05\fP)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Helper function to create Diagonal GMM HMM\&. 
+.PP
+Definition at line 109 of file hmm_test_utils\&.hpp\&.
+.SS "static void Create (HMM< DiscreteDistribution > & hmm, vector< mat > & trainSeq, size_t states, double tolerance = \fC1e\-05\fP)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Helper function to create discrete HMM\&. 
+.PP
+Definition at line 37 of file hmm_test_utils\&.hpp\&.
+.PP
+Referenced by Apply()\&.
+.SS "static void Create (HMM< GaussianDistribution > & hmm, vector< mat > & trainSeq, size_t states, double tolerance = \fC1e\-05\fP)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 58 of file hmm_test_utils\&.hpp\&.
+.SS "static void Create (HMM< GMM > & hmm, vector< mat > & trainSeq, size_t states, double tolerance = \fC1e\-05\fP)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 82 of file hmm_test_utils\&.hpp\&.
+.SS "static void RandomInitialize (vector< DiagonalGMM > & e)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Helper function for diagonal GMM emission distributions\&. 
+.PP
+Definition at line 180 of file hmm_test_utils\&.hpp\&.
+.SS "static void RandomInitialize (vector< DiscreteDistribution > & e)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Helper function for discrete emission distributions\&. 
+.PP
+Definition at line 136 of file hmm_test_utils\&.hpp\&.
+.PP
+Referenced by Apply()\&.
+.SS "static void RandomInitialize (vector< GaussianDistribution > & e)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 145 of file hmm_test_utils\&.hpp\&.
+.SS "static void RandomInitialize (vector< GMM > & e)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 157 of file hmm_test_utils\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

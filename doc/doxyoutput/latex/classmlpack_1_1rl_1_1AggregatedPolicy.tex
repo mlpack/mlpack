@@ -1,0 +1,118 @@
+\doxysection{Aggregated\+Policy$<$ Policy\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1rl_1_1AggregatedPolicy}\index{AggregatedPolicy$<$ PolicyType $>$@{AggregatedPolicy$<$ PolicyType $>$}}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \textbf{ Action\+Type} = typename Policy\+Type\+::\+Action\+Type
+\begin{DoxyCompactList}\small\item\em Convenient typedef for action. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Aggregated\+Policy} (std\+::vector$<$ Policy\+Type $>$ policies, const arma\+::colvec \&distribution)
+\item 
+void \textbf{ Anneal} ()
+\begin{DoxyCompactList}\small\item\em Exploration probability will anneal at each step. \end{DoxyCompactList}\item 
+\textbf{ Action\+Type} \textbf{ Sample} (const arma\+::colvec \&action\+Value, bool deterministic=false)
+\begin{DoxyCompactList}\small\item\em Sample an action based on given action values. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Policy\+Type$>$\newline
+class mlpack\+::rl\+::\+Aggregated\+Policy$<$ Policy\+Type $>$}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Policy\+Type} & The type of the child policy. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 27 of file aggregated\+\_\+policy.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1AggregatedPolicy_afb9320b245a1358ab02e3f57e3b0a597}} 
+\index{AggregatedPolicy$<$ PolicyType $>$@{AggregatedPolicy$<$ PolicyType $>$}!ActionType@{ActionType}}
+\index{ActionType@{ActionType}!AggregatedPolicy$<$ PolicyType $>$@{AggregatedPolicy$<$ PolicyType $>$}}
+\doxysubsubsection{ActionType}
+{\footnotesize\ttfamily using \textbf{ Action\+Type} =  typename Policy\+Type\+::\+Action\+Type}
+
+
+
+Convenient typedef for action. 
+
+
+
+Definition at line 31 of file aggregated\+\_\+policy.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1AggregatedPolicy_aee7c1ebbfd95024c0b1d2a580ceebb14}} 
+\index{AggregatedPolicy$<$ PolicyType $>$@{AggregatedPolicy$<$ PolicyType $>$}!AggregatedPolicy@{AggregatedPolicy}}
+\index{AggregatedPolicy@{AggregatedPolicy}!AggregatedPolicy$<$ PolicyType $>$@{AggregatedPolicy$<$ PolicyType $>$}}
+\doxysubsubsection{AggregatedPolicy()}
+{\footnotesize\ttfamily \textbf{ Aggregated\+Policy} (\begin{DoxyParamCaption}\item[{std\+::vector$<$ Policy\+Type $>$}]{policies,  }\item[{const arma\+::colvec \&}]{distribution }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em policies} & Child policies. \\
+\hline
+{\em distribution} & Probability distribution for each child policy. User should make sure its size is same as the number of policies and the sum of its element is equal to 1. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 39 of file aggregated\+\_\+policy.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1AggregatedPolicy_a280278726ff7d32f2b7eff5c92a1767a}} 
+\index{AggregatedPolicy$<$ PolicyType $>$@{AggregatedPolicy$<$ PolicyType $>$}!Anneal@{Anneal}}
+\index{Anneal@{Anneal}!AggregatedPolicy$<$ PolicyType $>$@{AggregatedPolicy$<$ PolicyType $>$}}
+\doxysubsubsection{Anneal()}
+{\footnotesize\ttfamily void Anneal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Exploration probability will anneal at each step. 
+
+
+
+Definition at line 63 of file aggregated\+\_\+policy.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1AggregatedPolicy_a631fe506e7d81fba96697ba11c6ace84}} 
+\index{AggregatedPolicy$<$ PolicyType $>$@{AggregatedPolicy$<$ PolicyType $>$}!Sample@{Sample}}
+\index{Sample@{Sample}!AggregatedPolicy$<$ PolicyType $>$@{AggregatedPolicy$<$ PolicyType $>$}}
+\doxysubsubsection{Sample()}
+{\footnotesize\ttfamily \textbf{ Action\+Type} Sample (\begin{DoxyParamCaption}\item[{const arma\+::colvec \&}]{action\+Value,  }\item[{bool}]{deterministic = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sample an action based on given action values. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em action\+Value} & Values for each action. \\
+\hline
+{\em deterministic} & Always select the action greedily. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Sampled action. 
+\end{DoxyReturn}
+
+
+Definition at line 52 of file aggregated\+\_\+policy.\+hpp.
+
+
+
+References Discrete\+Distribution\+::\+Random().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/policy/\textbf{ aggregated\+\_\+policy.\+hpp}\end{DoxyCompactItemize}

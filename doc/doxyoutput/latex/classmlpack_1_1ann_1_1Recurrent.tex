@@ -1,0 +1,358 @@
+\doxysection{Recurrent$<$ Input\+Data\+Type, Output\+Data\+Type, Custom\+Layers $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Recurrent}\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+
+
+Implementation of the Recurrent\+Layer class.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Recurrent} ()
+\begin{DoxyCompactList}\small\item\em Default constructor---this will create a \doxyref{Recurrent}{p.}{classmlpack_1_1ann_1_1Recurrent} object that can\textquotesingle{}t be used, so be careful! Make sure to set all the parameters before use. \end{DoxyCompactList}\item 
+\textbf{ Recurrent} (const \textbf{ Recurrent} \&)
+\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Start\+Module\+Type , typename Input\+Module\+Type , typename Feedback\+Module\+Type , typename Transfer\+Module\+Type $>$ }\\\textbf{ Recurrent} (const Start\+Module\+Type \&start, const Input\+Module\+Type \&input, const Feedback\+Module\+Type \&feedback, const Transfer\+Module\+Type \&transfer, const size\+\_\+t rho)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Recurrent}{p.}{classmlpack_1_1ann_1_1Recurrent} object using the specified modules. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+bool \& \textbf{ Deterministic} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of the deterministic parameter. \end{DoxyCompactList}\item 
+bool \textbf{ Deterministic} () const
+\begin{DoxyCompactList}\small\item\em The value of the deterministic parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Gradient} () const
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&)
+\item 
+size\+\_\+t \textbf{ Input\+Shape} () const
+\begin{DoxyCompactList}\small\item\em Get the shape of the input. \end{DoxyCompactList}\item 
+std\+::vector$<$ \textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ $>$ \& \textbf{ Model} ()
+\begin{DoxyCompactList}\small\item\em Get the model modules. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ Rho} () const
+\begin{DoxyCompactList}\small\item\em Get the number of steps to backpropagate through time. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat, typename... Custom\+Layers$>$\newline
+class mlpack\+::ann\+::\+Recurrent$<$ Input\+Data\+Type, Output\+Data\+Type, Custom\+Layers $>$}
+
+Implementation of the Recurrent\+Layer class. 
+
+\doxyref{Recurrent}{p.}{classmlpack_1_1ann_1_1Recurrent} layers can be used similarly to feed-\/forward layers.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 44 of file recurrent.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a5671131c5430476ae0858dcd20d1de7b}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Recurrent@{Recurrent}}
+\index{Recurrent@{Recurrent}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Recurrent()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ Recurrent} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Default constructor---this will create a \doxyref{Recurrent}{p.}{classmlpack_1_1ann_1_1Recurrent} object that can\textquotesingle{}t be used, so be careful! Make sure to set all the parameters before use. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_ac3f5ea76a45873f275c930a315f245ab}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Recurrent@{Recurrent}}
+\index{Recurrent@{Recurrent}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Recurrent()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ Recurrent} (\begin{DoxyParamCaption}\item[{const \textbf{ Recurrent}$<$ Input\+Data\+Type, Output\+Data\+Type, Custom\+Layers $>$ \&}]{ }\end{DoxyParamCaption})}
+
+
+
+Copy constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a54ecbd61ac94b2a19933ea84bead5de9}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Recurrent@{Recurrent}}
+\index{Recurrent@{Recurrent}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Recurrent()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ Recurrent} (\begin{DoxyParamCaption}\item[{const Start\+Module\+Type \&}]{start,  }\item[{const Input\+Module\+Type \&}]{input,  }\item[{const Feedback\+Module\+Type \&}]{feedback,  }\item[{const Transfer\+Module\+Type \&}]{transfer,  }\item[{const size\+\_\+t}]{rho }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Recurrent}{p.}{classmlpack_1_1ann_1_1Recurrent} object using the specified modules. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em start} & The start module. \\
+\hline
+{\em input} & The input module. \\
+\hline
+{\em feedback} & The feedback module. \\
+\hline
+{\em transfer} & The transfer module. \\
+\hline
+{\em rho} & Maximum number of steps to backpropagate through time (BPTT). \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_ad6601342d560219ce951d554e69e5e87}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 132 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 130 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a42d4ee3da432cff20d3a41b8b1ec801c}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Deterministic()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& Deterministic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of the deterministic parameter. 
+
+
+
+Definition at line 117 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a9f4103707f4d199ce5594d239b60443e}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Deterministic()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Deterministic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The value of the deterministic parameter. 
+
+
+
+Definition at line 115 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a19abce4739c3b0b658b612537e21956a}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the gradient. 
+
+
+
+Definition at line 137 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a0f1f4e6d93472d83852731a96c8c3f59}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradient. 
+
+
+
+Definition at line 135 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a505acb56ef67da2fc73190d3d4931969}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a13ab93f234244a68f6ade76287284447}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!InputShape@{InputShape}}
+\index{InputShape@{InputShape}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{InputShape()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Shape (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the shape of the input. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a4cb1e93bff99ccf1f8f974065a3b13c3}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Model@{Model}}
+\index{Model@{Model}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Model()}
+{\footnotesize\ttfamily std\+::vector$<$\textbf{ Layer\+Types}$<$Custom\+Layers...$>$ $>$\& Model (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the model modules. 
+
+
+
+Definition at line 112 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 127 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 125 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a9c5c5900772a689d5a6b59778ec67120}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parameters. 
+
+
+
+Definition at line 122 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_aa530552c7ef915c952fbacc77b965c90}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the parameters. 
+
+
+
+Definition at line 120 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_aae052295a422d4030c3eacfc1255b1b6}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!Rho@{Rho}}
+\index{Rho@{Rho}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Rho()}
+{\footnotesize\ttfamily size\+\_\+t const\& Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of steps to backpropagate through time. 
+
+
+
+Definition at line 140 of file recurrent.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Recurrent_a65cba07328997659bec80b9879b15a51}} 
+\index{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$@{Recurrent$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ layer\+\_\+types.\+hpp}\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ recurrent.\+hpp}\end{DoxyCompactItemize}

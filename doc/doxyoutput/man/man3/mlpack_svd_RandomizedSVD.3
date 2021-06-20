@@ -1,0 +1,258 @@
+.TH "RandomizedSVD" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RandomizedSVD \- Randomized SVD is a matrix factorization that is based on randomized matrix approximation techniques, developed in in 'Finding structure with randomness:
+Probabilistic algorithms for constructing approximate matrix decompositions'\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRandomizedSVD\fP (const arma::mat &data, arma::mat &u, arma::vec &s, arma::mat &v, const size_t iteratedPower=0, const size_t maxIterations=2, const size_t rank=0, const double eps=1e\-7)"
+.br
+.RI "Create object for the randomized SVD method\&. "
+.ti -1c
+.RI "\fBRandomizedSVD\fP (const size_t iteratedPower=0, const size_t maxIterations=2, const double eps=1e\-7)"
+.br
+.RI "Create object for the randomized SVD method\&. "
+.ti -1c
+.RI "void \fBApply\fP (const arma::mat &data, arma::mat &u, arma::vec &s, arma::mat &v, const size_t rank)"
+.br
+.RI "Center the data to apply Principal Component Analysis on given matrix dataset using randomized SVD\&. "
+.ti -1c
+.RI "void \fBApply\fP (const arma::sp_mat &data, arma::mat &u, arma::vec &s, arma::mat &v, const size_t rank)"
+.br
+.RI "Center the data to apply Principal Component Analysis on given sparse matrix dataset using randomized SVD\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBApply\fP (const MatType &data, arma::mat &u, arma::vec &s, arma::mat &v, const size_t rank, MatType rowMean)"
+.br
+.RI "Apply Principal Component Analysis to the provided matrix data set using the randomized SVD\&. "
+.ti -1c
+.RI "double & \fBEpsilon\fP ()"
+.br
+.RI "Modify the value used for decomposition stability\&. "
+.ti -1c
+.RI "double \fBEpsilon\fP () const"
+.br
+.RI "Get the value used for decomposition stability\&. "
+.ti -1c
+.RI "size_t & \fBIteratedPower\fP ()"
+.br
+.RI "Modify the size of the normalized power iterations\&. "
+.ti -1c
+.RI "size_t \fBIteratedPower\fP () const"
+.br
+.RI "Get the size of the normalized power iterations\&. "
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "Modify the number of iterations for the power method\&. "
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const"
+.br
+.RI "Get the number of iterations for the power method\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Randomized SVD is a matrix factorization that is based on randomized matrix approximation techniques, developed in in 'Finding structure with randomness:
+Probabilistic algorithms for constructing approximate matrix decompositions'\&. 
+
+For more information, see the following\&.
+.PP
+.PP
+.nf
+@article{Halko2011,
+  author  = {Halko, N\&. and Martinsson, P\&. G\&. and Tropp, J\&. A\&.},
+  title   = {Finding Structure with Randomness: Probabilistic Algorithms for
+             Constructing Approximate Matrix Decompositions},
+  journal = {SIAM Rev\&.},
+  volume  = {53},
+  year    = {2011},
+}
+.fi
+.PP
+.PP
+.PP
+.nf
+@article{Szlam2014,
+  author  = {Arthur Szlam Yuval Kluger and Mark Tygert},
+  title   = {An implementation of a randomized algorithm for principal
+             component analysis},
+  journal = {CoRR},
+  volume  = {abs/1412\&.3510},
+  year    = {2014},
+}
+.fi
+.PP
+.PP
+An example of how to use the interface is shown below:
+.PP
+.PP
+.nf
+arma::mat data; // Rating data in the form of coordinate list\&.
+
+const size_t rank = 20; // Rank used for the decomposition\&.
+
+// Make a RandomizedSVD object\&.
+RandomizedSVD rSVD();
+
+arma::mat u, s, v;
+
+// Use the Apply() method to get a factorization\&.
+rSVD\&.Apply(data, u, s, v, rank);
+.fi
+.PP
+ 
+.PP
+Definition at line 66 of file randomized_svd\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRandomizedSVD\fP (const arma::mat & data, arma::mat & u, arma::vec & s, arma::mat & v, const size_t iteratedPower = \fC0\fP, const size_t maxIterations = \fC2\fP, const size_t rank = \fC0\fP, const double eps = \fC1e\-7\fP)"
+
+.PP
+Create object for the randomized SVD method\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Data matrix\&. 
+.br
+\fIu\fP First unitary matrix\&. 
+.br
+\fIv\fP Second unitary matrix\&. 
+.br
+\fIs\fP Diagonal 'Sigma' matrix of singular values\&. 
+.br
+\fIiteratedPower\fP Size of the normalized power iterations (Default: rank + 2)\&. 
+.br
+\fImaxIterations\fP Number of iterations for the power method (Default: 2)\&. 
+.br
+\fIrank\fP Rank of the approximation (Default: number of rows\&.) 
+.br
+\fIeps\fP The eps coefficient to avoid division by zero (numerical stability)\&. 
+.RE
+.PP
+
+.SS "\fBRandomizedSVD\fP (const size_t iteratedPower = \fC0\fP, const size_t maxIterations = \fC2\fP, const double eps = \fC1e\-7\fP)"
+
+.PP
+Create object for the randomized SVD method\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIiteratedPower\fP Size of the normalized power iterations (Default: rank + 2)\&. 
+.br
+\fImaxIterations\fP Number of iterations for the power method (Default: 2)\&. 
+.br
+\fIeps\fP The eps coefficient to avoid division by zero (numerical stability)\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Apply (const arma::mat & data, arma::mat & u, arma::vec & s, arma::mat & v, const size_t rank)"
+
+.PP
+Center the data to apply Principal Component Analysis on given matrix dataset using randomized SVD\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Data matrix\&. 
+.br
+\fIu\fP First unitary matrix\&. 
+.br
+\fIv\fP Second unitary matrix\&. 
+.br
+\fIs\fP Diagonal 'Sigma' matrix of singular values\&. 
+.br
+\fIrank\fP Rank of the approximation\&. 
+.RE
+.PP
+
+.SS "void Apply (const arma::sp_mat & data, arma::mat & u, arma::vec & s, arma::mat & v, const size_t rank)"
+
+.PP
+Center the data to apply Principal Component Analysis on given sparse matrix dataset using randomized SVD\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Sparse data matrix\&. 
+.br
+\fIu\fP First unitary matrix\&. 
+.br
+\fIv\fP Second unitary matrix\&. 
+.br
+\fIs\fP Diagonal 'Sigma' matrix of singular values\&. 
+.br
+\fIrank\fP Rank of the approximation\&. 
+.RE
+.PP
+
+.PP
+Referenced by RandomizedSVDPolicy::Apply()\&.
+.SS "void Apply (const MatType & data, arma::mat & u, arma::vec & s, arma::mat & v, const size_t rank, MatType rowMean)\fC [inline]\fP"
+
+.PP
+Apply Principal Component Analysis to the provided matrix data set using the randomized SVD\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Data matrix\&. 
+.br
+\fIu\fP First unitary matrix\&. 
+.br
+\fIv\fP Second unitary matrix\&. 
+.br
+\fIs\fP Diagonal 'Sigma' matrix of singular values\&. 
+.br
+\fIrank\fP Rank of the approximation\&. 
+.br
+\fIrowMean\fP Centered mean value matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 151 of file randomized_svd\&.hpp\&.
+.SS "double& Epsilon ()\fC [inline]\fP"
+
+.PP
+Modify the value used for decomposition stability\&. 
+.PP
+Definition at line 247 of file randomized_svd\&.hpp\&.
+.SS "double Epsilon () const\fC [inline]\fP"
+
+.PP
+Get the value used for decomposition stability\&. 
+.PP
+Definition at line 245 of file randomized_svd\&.hpp\&.
+.SS "size_t& IteratedPower ()\fC [inline]\fP"
+
+.PP
+Modify the size of the normalized power iterations\&. 
+.PP
+Definition at line 237 of file randomized_svd\&.hpp\&.
+.SS "size_t IteratedPower () const\fC [inline]\fP"
+
+.PP
+Get the size of the normalized power iterations\&. 
+.PP
+Definition at line 235 of file randomized_svd\&.hpp\&.
+.SS "size_t& MaxIterations ()\fC [inline]\fP"
+
+.PP
+Modify the number of iterations for the power method\&. 
+.PP
+Definition at line 242 of file randomized_svd\&.hpp\&.
+.SS "size_t MaxIterations () const\fC [inline]\fP"
+
+.PP
+Get the number of iterations for the power method\&. 
+.PP
+Definition at line 240 of file randomized_svd\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

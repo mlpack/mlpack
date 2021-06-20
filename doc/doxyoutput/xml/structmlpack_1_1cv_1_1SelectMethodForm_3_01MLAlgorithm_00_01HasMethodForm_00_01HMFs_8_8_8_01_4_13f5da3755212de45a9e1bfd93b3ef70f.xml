@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_13f5da3755212de45a9e1bfd93b3ef70f" kind="struct" language="C++" prot="private">
+    <compoundname>mlpack::cv::SelectMethodForm&lt; MLAlgorithm, HasMethodForm, HMFs... &gt;::From::Implementation&lt; Form, RemainingForms... &gt;</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename Form</type>
+      </param>
+      <param>
+        <type>typename...</type>
+        <declname>RemainingForms</declname>
+        <defname>RemainingForms</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_13f5da3755212de45a9e1bfd93b3ef70f_1aab48cc9f472c1402bebf4b0a0f469342" prot="public" static="no">
+        <type>typename std::conditional&lt; HasMethodForm&lt; MLAlgorithm, Form::template Type, Form::MinNumberOfAdditionalArgs &gt;::value, Form, typename Implementation&lt; RemainingForms... &gt;::Type &gt;::type</type>
+        <definition>using Type =  typename std::conditional&lt; HasMethodForm&lt;MLAlgorithm, Form::template Type, Form::MinNumberOfAdditionalArgs&gt;::value, Form, typename Implementation&lt;RemainingForms...&gt;::Type&gt;::type</definition>
+        <argsstring></argsstring>
+        <name>Type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="221" column="7" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="219" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="220" bodyend="226"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_13f5da3755212de45a9e1bfd93b3ef70f_1aab48cc9f472c1402bebf4b0a0f469342" prot="public" virt="non-virtual"><scope>mlpack::cv::SelectMethodForm&lt; MLAlgorithm, HasMethodForm, HMFs... &gt;::From::Implementation&lt; Form, RemainingForms... &gt;</scope><name>Type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

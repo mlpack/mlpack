@@ -1,0 +1,756 @@
+\doxysection{Decision\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Dimension\+Selection\+Type, No\+Recursion $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1DecisionTree}\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+
+
+This class implements a generic decision tree learner.  
+
+
+
+
+Inheritance diagram for Decision\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Dimension\+Selection\+Type, No\+Recursion $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=288pt]{classmlpack_1_1tree_1_1DecisionTree__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Categorical\+Split\+Type$<$ Fitness\+Function $>$ \textbf{ Categorical\+Split}
+\begin{DoxyCompactList}\small\item\em Allow access to the categorical split type. \end{DoxyCompactList}\item 
+typedef Dimension\+Selection\+Type \textbf{ Dimension\+Selection}
+\begin{DoxyCompactList}\small\item\em Allow access to the dimension selection type. \end{DoxyCompactList}\item 
+typedef Numeric\+Split\+Type$<$ Fitness\+Function $>$ \textbf{ Numeric\+Split}
+\begin{DoxyCompactList}\small\item\em Allow access to the numeric split type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Decision\+Tree} (const \textbf{ Decision\+Tree} \&other)
+\begin{DoxyCompactList}\small\item\em Copy another tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type , typename Weights\+Type $>$ }\\\textbf{ Decision\+Tree} (const \textbf{ Decision\+Tree} \&other, Mat\+Type data, const \textbf{ data\+::\+Dataset\+Info} \&dataset\+Info, Labels\+Type labels, const size\+\_\+t num\+Classes, Weights\+Type weights, const size\+\_\+t minimum\+Leaf\+Size=10, const double minimum\+Gain\+Split=1e-\/7, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Take ownership of another decision tree and train on the given data and labels with weights, where the data can be both numeric and categorical. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type , typename Weights\+Type $>$ }\\\textbf{ Decision\+Tree} (const \textbf{ Decision\+Tree} \&other, Mat\+Type data, Labels\+Type labels, const size\+\_\+t num\+Classes, Weights\+Type weights, const size\+\_\+t minimum\+Leaf\+Size=10, const double minimum\+Gain\+Split=1e-\/7, const size\+\_\+t maximum\+Depth=0, Dimension\+Selection\+Type dimension\+Selector=Dimension\+Selection\+Type(), const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Take ownership of another decision tree and train on the given data and labels with weights, assuming that the data is all of the numeric type. \end{DoxyCompactList}\item 
+\textbf{ Decision\+Tree} (const size\+\_\+t num\+Classes=1)
+\begin{DoxyCompactList}\small\item\em Construct a decision tree without training it. \end{DoxyCompactList}\item 
+\textbf{ Decision\+Tree} (\textbf{ Decision\+Tree} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of another tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type $>$ }\\\textbf{ Decision\+Tree} (Mat\+Type data, const \textbf{ data\+::\+Dataset\+Info} \&dataset\+Info, Labels\+Type labels, const size\+\_\+t num\+Classes, const size\+\_\+t minimum\+Leaf\+Size=10, const double minimum\+Gain\+Split=1e-\/7, const size\+\_\+t maximum\+Depth=0, Dimension\+Selection\+Type dimension\+Selector=Dimension\+Selection\+Type())
+\begin{DoxyCompactList}\small\item\em Construct the decision tree on the given data and labels, where the data can be both numeric and categorical. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type , typename Weights\+Type $>$ }\\\textbf{ Decision\+Tree} (Mat\+Type data, const \textbf{ data\+::\+Dataset\+Info} \&dataset\+Info, Labels\+Type labels, const size\+\_\+t num\+Classes, Weights\+Type weights, const size\+\_\+t minimum\+Leaf\+Size=10, const double minimum\+Gain\+Split=1e-\/7, const size\+\_\+t maximum\+Depth=0, Dimension\+Selection\+Type dimension\+Selector=Dimension\+Selection\+Type(), const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Construct the decision tree on the given data and labels with weights, where the data can be both numeric and categorical. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type $>$ }\\\textbf{ Decision\+Tree} (Mat\+Type data, Labels\+Type labels, const size\+\_\+t num\+Classes, const size\+\_\+t minimum\+Leaf\+Size=10, const double minimum\+Gain\+Split=1e-\/7, const size\+\_\+t maximum\+Depth=0, Dimension\+Selection\+Type dimension\+Selector=Dimension\+Selection\+Type())
+\begin{DoxyCompactList}\small\item\em Construct the decision tree on the given data and labels, assuming that the data is all of the numeric type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type , typename Weights\+Type $>$ }\\\textbf{ Decision\+Tree} (Mat\+Type data, Labels\+Type labels, const size\+\_\+t num\+Classes, Weights\+Type weights, const size\+\_\+t minimum\+Leaf\+Size=10, const double minimum\+Gain\+Split=1e-\/7, const size\+\_\+t maximum\+Depth=0, Dimension\+Selection\+Type dimension\+Selector=Dimension\+Selection\+Type(), const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Construct the decision tree on the given data and labels with weights, assuming that the data is all of the numeric type. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+Decision\+Tree} ()
+\begin{DoxyCompactList}\small\item\em Clean up memory. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t \textbf{ Calculate\+Direction} (const Vec\+Type \&point) const
+\begin{DoxyCompactList}\small\item\em Given a point and that this node is not a leaf, calculate the index of the child node this point would go towards. \end{DoxyCompactList}\item 
+\textbf{ Decision\+Tree} \& \textbf{ Child} (const size\+\_\+t i)
+\begin{DoxyCompactList}\small\item\em Modify the child of the given index (be careful!). \end{DoxyCompactList}\item 
+const \textbf{ Decision\+Tree} \& \textbf{ Child} (const size\+\_\+t i) const
+\begin{DoxyCompactList}\small\item\em Get the child of the given index. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Classify} (const Mat\+Type \&data, arma\+::\+Row$<$ size\+\_\+t $>$ \&predictions) const
+\begin{DoxyCompactList}\small\item\em Classify the given points, using the entire tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Classify} (const Mat\+Type \&data, arma\+::\+Row$<$ size\+\_\+t $>$ \&predictions, arma\+::mat \&probabilities) const
+\begin{DoxyCompactList}\small\item\em Classify the given points and also return estimates of the probabilities for each class in the given matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\size\+\_\+t \textbf{ Classify} (const Vec\+Type \&point) const
+\begin{DoxyCompactList}\small\item\em Classify the given point, using the entire tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+Type $>$ }\\void \textbf{ Classify} (const Vec\+Type \&point, size\+\_\+t \&prediction, arma\+::vec \&probabilities) const
+\begin{DoxyCompactList}\small\item\em Classify the given point and also return estimates of the probability for each class in the given vector. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Children} () const
+\begin{DoxyCompactList}\small\item\em Get the number of children. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Classes} () const
+\begin{DoxyCompactList}\small\item\em Get the number of classes in the tree. \end{DoxyCompactList}\item 
+\textbf{ Decision\+Tree} \& \textbf{ operator=} (const \textbf{ Decision\+Tree} \&other)
+\begin{DoxyCompactList}\small\item\em Copy another tree. \end{DoxyCompactList}\item 
+\textbf{ Decision\+Tree} \& \textbf{ operator=} (\textbf{ Decision\+Tree} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of another tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the tree. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Split\+Dimension} () const
+\begin{DoxyCompactList}\small\item\em Get the split dimension (only meaningful if this is a non-\/leaf in a trained tree). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type $>$ }\\double \textbf{ Train} (Mat\+Type data, const \textbf{ data\+::\+Dataset\+Info} \&dataset\+Info, Labels\+Type labels, const size\+\_\+t num\+Classes, const size\+\_\+t minimum\+Leaf\+Size=10, const double minimum\+Gain\+Split=1e-\/7, const size\+\_\+t maximum\+Depth=0, Dimension\+Selection\+Type dimension\+Selector=Dimension\+Selection\+Type())
+\begin{DoxyCompactList}\small\item\em Train the decision tree on the given data. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type , typename Weights\+Type $>$ }\\double \textbf{ Train} (Mat\+Type data, const \textbf{ data\+::\+Dataset\+Info} \&dataset\+Info, Labels\+Type labels, const size\+\_\+t num\+Classes, Weights\+Type weights, const size\+\_\+t minimum\+Leaf\+Size=10, const double minimum\+Gain\+Split=1e-\/7, const size\+\_\+t maximum\+Depth=0, Dimension\+Selection\+Type dimension\+Selector=Dimension\+Selection\+Type(), const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Train the decision tree on the given weighted data. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type $>$ }\\double \textbf{ Train} (Mat\+Type data, Labels\+Type labels, const size\+\_\+t num\+Classes, const size\+\_\+t minimum\+Leaf\+Size=10, const double minimum\+Gain\+Split=1e-\/7, const size\+\_\+t maximum\+Depth=0, Dimension\+Selection\+Type dimension\+Selector=Dimension\+Selection\+Type())
+\begin{DoxyCompactList}\small\item\em Train the decision tree on the given data, assuming that all dimensions are numeric. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type , typename Weights\+Type $>$ }\\double \textbf{ Train} (Mat\+Type data, Labels\+Type labels, const size\+\_\+t num\+Classes, Weights\+Type weights, const size\+\_\+t minimum\+Leaf\+Size=10, const double minimum\+Gain\+Split=1e-\/7, const size\+\_\+t maximum\+Depth=0, Dimension\+Selection\+Type dimension\+Selector=Dimension\+Selection\+Type(), const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Train the decision tree on the given weighted data, assuming that all dimensions are numeric. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Fitness\+Function = Gini\+Gain, template$<$ typename $>$ class Numeric\+Split\+Type = Best\+Binary\+Numeric\+Split, template$<$ typename $>$ class Categorical\+Split\+Type = All\+Categorical\+Split, typename Dimension\+Selection\+Type = All\+Dimension\+Select, bool No\+Recursion = false$>$\newline
+class mlpack\+::tree\+::\+Decision\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Dimension\+Selection\+Type, No\+Recursion $>$}
+
+This class implements a generic decision tree learner. 
+
+Its behavior can be controlled via its template arguments.
+
+The class inherits from the auxiliary split information in order to prevent an empty auxiliary split information struct from taking any extra size.
+
+Note that {\ttfamily Elem\+Type} is a template parameter controlling the type that is used to store split information. In general, you would want to set this to be the same as the type of the data that you will be using, but it\textquotesingle{}s not required to do that. 
+
+Definition at line 45 of file decision\+\_\+tree.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_ac6a633f57efba5e2893f58ee9ad549d1}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!CategoricalSplit@{CategoricalSplit}}
+\index{CategoricalSplit@{CategoricalSplit}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{CategoricalSplit}
+{\footnotesize\ttfamily typedef Categorical\+Split\+Type$<$Fitness\+Function$>$ \textbf{ Categorical\+Split}}
+
+
+
+Allow access to the categorical split type. 
+
+
+
+Definition at line 53 of file decision\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a883756287d5ce0957ad6f806571f2815}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!DimensionSelection@{DimensionSelection}}
+\index{DimensionSelection@{DimensionSelection}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{DimensionSelection}
+{\footnotesize\ttfamily typedef Dimension\+Selection\+Type \textbf{ Dimension\+Selection}}
+
+
+
+Allow access to the dimension selection type. 
+
+
+
+Definition at line 55 of file decision\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_aaa2e2873f405118872db87975cce0124}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!NumericSplit@{NumericSplit}}
+\index{NumericSplit@{NumericSplit}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{NumericSplit}
+{\footnotesize\ttfamily typedef Numeric\+Split\+Type$<$Fitness\+Function$>$ \textbf{ Numeric\+Split}}
+
+
+
+Allow access to the numeric split type. 
+
+
+
+Definition at line 51 of file decision\+\_\+tree.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a47a160a10881b42183f86ada9e78735f}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!DecisionTree@{DecisionTree}}
+\index{DecisionTree@{DecisionTree}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{DecisionTree()\hspace{0.1cm}{\footnotesize\ttfamily [1/9]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree} (\begin{DoxyParamCaption}\item[{Mat\+Type}]{data,  }\item[{const \textbf{ data\+::\+Dataset\+Info} \&}]{dataset\+Info,  }\item[{Labels\+Type}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const size\+\_\+t}]{minimum\+Leaf\+Size = {\ttfamily 10},  }\item[{const double}]{minimum\+Gain\+Split = {\ttfamily 1e-\/7},  }\item[{const size\+\_\+t}]{maximum\+Depth = {\ttfamily 0},  }\item[{Dimension\+Selection\+Type}]{dimension\+Selector = {\ttfamily DimensionSelectionType()} }\end{DoxyParamCaption})}
+
+
+
+Construct the decision tree on the given data and labels, where the data can be both numeric and categorical. 
+
+Setting minimum\+Leaf\+Size and minimum\+Gain\+Split too small may cause the tree to overfit, but setting them too large may cause it to underfit.
+
+Use std\+::move if data or labels are no longer needed to avoid copies.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to train on. \\
+\hline
+{\em dataset\+Info} & Type information for each dimension of the dataset. \\
+\hline
+{\em labels} & Labels for each training point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em minimum\+Leaf\+Size} & Minimum number of points in each leaf node. \\
+\hline
+{\em minimum\+Gain\+Split} & Minimum gain for the node to split. \\
+\hline
+{\em maximum\+Depth} & Maximum depth for the tree. \\
+\hline
+{\em dimension\+Selector} & Instantiated dimension selection policy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a36d85b32851469b82df02ae96d5a80ff}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!DecisionTree@{DecisionTree}}
+\index{DecisionTree@{DecisionTree}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{DecisionTree()\hspace{0.1cm}{\footnotesize\ttfamily [2/9]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree} (\begin{DoxyParamCaption}\item[{Mat\+Type}]{data,  }\item[{Labels\+Type}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const size\+\_\+t}]{minimum\+Leaf\+Size = {\ttfamily 10},  }\item[{const double}]{minimum\+Gain\+Split = {\ttfamily 1e-\/7},  }\item[{const size\+\_\+t}]{maximum\+Depth = {\ttfamily 0},  }\item[{Dimension\+Selection\+Type}]{dimension\+Selector = {\ttfamily DimensionSelectionType()} }\end{DoxyParamCaption})}
+
+
+
+Construct the decision tree on the given data and labels, assuming that the data is all of the numeric type. 
+
+Setting minimum\+Leaf\+Size and minimum\+Gain\+Split too small may cause the tree to overfit, but setting them too large may cause it to underfit.
+
+Use std\+::move if data or labels are no longer needed to avoid copies.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to train on. \\
+\hline
+{\em labels} & Labels for each training point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em minimum\+Leaf\+Size} & Minimum number of points in each leaf node. \\
+\hline
+{\em minimum\+Gain\+Split} & Minimum gain for the node to split. \\
+\hline
+{\em maximum\+Depth} & Maximum depth for the tree. \\
+\hline
+{\em dimension\+Selector} & Instantiated dimension selection policy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_ab011cce7d07f5b26e5feafea993c346b}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!DecisionTree@{DecisionTree}}
+\index{DecisionTree@{DecisionTree}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{DecisionTree()\hspace{0.1cm}{\footnotesize\ttfamily [3/9]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree} (\begin{DoxyParamCaption}\item[{Mat\+Type}]{data,  }\item[{const \textbf{ data\+::\+Dataset\+Info} \&}]{dataset\+Info,  }\item[{Labels\+Type}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{Weights\+Type}]{weights,  }\item[{const size\+\_\+t}]{minimum\+Leaf\+Size = {\ttfamily 10},  }\item[{const double}]{minimum\+Gain\+Split = {\ttfamily 1e-\/7},  }\item[{const size\+\_\+t}]{maximum\+Depth = {\ttfamily 0},  }\item[{Dimension\+Selection\+Type}]{dimension\+Selector = {\ttfamily DimensionSelectionType()},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Construct the decision tree on the given data and labels with weights, where the data can be both numeric and categorical. 
+
+Setting minimum\+Leaf\+Size and minimum\+Gain\+Split too small may cause the tree to overfit, but setting them too large may cause it to underfit.
+
+Use std\+::move if data, labels or weights are no longer needed to avoid copies.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to train on. \\
+\hline
+{\em dataset\+Info} & Type information for each dimension of the dataset. \\
+\hline
+{\em labels} & Labels for each training point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em weights} & The weight list of given label. \\
+\hline
+{\em minimum\+Leaf\+Size} & Minimum number of points in each leaf node. \\
+\hline
+{\em minimum\+Gain\+Split} & Minimum gain for the node to split. \\
+\hline
+{\em maximum\+Depth} & Maximum depth for the tree. \\
+\hline
+{\em dimension\+Selector} & Instantiated dimension selection policy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a33a796e18df021c0af3d388889986570}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!DecisionTree@{DecisionTree}}
+\index{DecisionTree@{DecisionTree}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{DecisionTree()\hspace{0.1cm}{\footnotesize\ttfamily [4/9]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree} (\begin{DoxyParamCaption}\item[{const \textbf{ Decision\+Tree}$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Dimension\+Selection\+Type, No\+Recursion $>$ \&}]{other,  }\item[{Mat\+Type}]{data,  }\item[{const \textbf{ data\+::\+Dataset\+Info} \&}]{dataset\+Info,  }\item[{Labels\+Type}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{Weights\+Type}]{weights,  }\item[{const size\+\_\+t}]{minimum\+Leaf\+Size = {\ttfamily 10},  }\item[{const double}]{minimum\+Gain\+Split = {\ttfamily 1e-\/7},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Take ownership of another decision tree and train on the given data and labels with weights, where the data can be both numeric and categorical. 
+
+Setting minimum\+Leaf\+Size and minimum\+Gain\+Split too small may cause the tree to overfit, but setting them too large may cause it to underfit.
+
+Use std\+::move if data, labels or weights are no longer needed to avoid copies.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to take ownership of. \\
+\hline
+{\em data} & Dataset to train on. \\
+\hline
+{\em dataset\+Info} & Type information for each dimension of the dataset. \\
+\hline
+{\em labels} & Labels for each training point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em weights} & The weight list of given label. \\
+\hline
+{\em minimum\+Leaf\+Size} & Minimum number of points in each leaf node. \\
+\hline
+{\em minimum\+Gain\+Split} & Minimum gain for the node to split. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a7f1af37a41b01eef41a238843f107b58}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!DecisionTree@{DecisionTree}}
+\index{DecisionTree@{DecisionTree}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{DecisionTree()\hspace{0.1cm}{\footnotesize\ttfamily [5/9]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree} (\begin{DoxyParamCaption}\item[{Mat\+Type}]{data,  }\item[{Labels\+Type}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{Weights\+Type}]{weights,  }\item[{const size\+\_\+t}]{minimum\+Leaf\+Size = {\ttfamily 10},  }\item[{const double}]{minimum\+Gain\+Split = {\ttfamily 1e-\/7},  }\item[{const size\+\_\+t}]{maximum\+Depth = {\ttfamily 0},  }\item[{Dimension\+Selection\+Type}]{dimension\+Selector = {\ttfamily DimensionSelectionType()},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Construct the decision tree on the given data and labels with weights, assuming that the data is all of the numeric type. 
+
+Setting minimum\+Leaf\+Size and minimum\+Gain\+Split too small may cause the tree to overfit, but setting them too large may cause it to underfit.
+
+Use std\+::move if data, labels or weights are no longer needed to avoid copies.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to train on. \\
+\hline
+{\em labels} & Labels for each training point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em weights} & The Weight list of given labels. \\
+\hline
+{\em minimum\+Leaf\+Size} & Minimum number of points in each leaf node. \\
+\hline
+{\em minimum\+Gain\+Split} & Minimum gain for the node to split. \\
+\hline
+{\em maximum\+Depth} & Maximum depth for the tree. \\
+\hline
+{\em dimension\+Selector} & Instantiated dimension selection policy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a06062274e5618491d9170383550fe3da}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!DecisionTree@{DecisionTree}}
+\index{DecisionTree@{DecisionTree}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{DecisionTree()\hspace{0.1cm}{\footnotesize\ttfamily [6/9]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree} (\begin{DoxyParamCaption}\item[{const \textbf{ Decision\+Tree}$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Dimension\+Selection\+Type, No\+Recursion $>$ \&}]{other,  }\item[{Mat\+Type}]{data,  }\item[{Labels\+Type}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{Weights\+Type}]{weights,  }\item[{const size\+\_\+t}]{minimum\+Leaf\+Size = {\ttfamily 10},  }\item[{const double}]{minimum\+Gain\+Split = {\ttfamily 1e-\/7},  }\item[{const size\+\_\+t}]{maximum\+Depth = {\ttfamily 0},  }\item[{Dimension\+Selection\+Type}]{dimension\+Selector = {\ttfamily DimensionSelectionType()},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Take ownership of another decision tree and train on the given data and labels with weights, assuming that the data is all of the numeric type. 
+
+Setting minimum\+Leaf\+Size and minimum\+Gain\+Split too small may cause the tree to overfit, but setting them too large may cause it to underfit.
+
+Use std\+::move if data, labels or weights are no longer needed to avoid copies. 
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to take ownership of. \\
+\hline
+{\em data} & Dataset to train on. \\
+\hline
+{\em labels} & Labels for each training point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em weights} & The Weight list of given labels. \\
+\hline
+{\em minimum\+Leaf\+Size} & Minimum number of points in each leaf node. \\
+\hline
+{\em minimum\+Gain\+Split} & Minimum gain for the node to split. \\
+\hline
+{\em maximum\+Depth} & Maximum depth for the tree. \\
+\hline
+{\em dimension\+Selector} & Instantiated dimension selection policy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a9a0cd79275bd950f9cb697bfc578db06}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!DecisionTree@{DecisionTree}}
+\index{DecisionTree@{DecisionTree}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{DecisionTree()\hspace{0.1cm}{\footnotesize\ttfamily [7/9]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{num\+Classes = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+Construct a decision tree without training it. 
+
+It will be a leaf node with equal probabilities for each class.
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a6e7969dd400c7138c6dfbe9aa60cf1ff}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!DecisionTree@{DecisionTree}}
+\index{DecisionTree@{DecisionTree}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{DecisionTree()\hspace{0.1cm}{\footnotesize\ttfamily [8/9]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree} (\begin{DoxyParamCaption}\item[{const \textbf{ Decision\+Tree}$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Dimension\+Selection\+Type, No\+Recursion $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy another tree. 
+
+This may use a lot of memory---be sure that it\textquotesingle{}s what you want to do.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a23ec8f18d9cf97e1427afea56226b656}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!DecisionTree@{DecisionTree}}
+\index{DecisionTree@{DecisionTree}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{DecisionTree()\hspace{0.1cm}{\footnotesize\ttfamily [9/9]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree} (\begin{DoxyParamCaption}\item[{\textbf{ Decision\+Tree}$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Dimension\+Selection\+Type, No\+Recursion $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of another tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a3a25d7741519bf2fe87f19c38dd3baee}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!````~DecisionTree@{$\sim$DecisionTree}}
+\index{````~DecisionTree@{$\sim$DecisionTree}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{$\sim$DecisionTree()}
+{\footnotesize\ttfamily $\sim$\textbf{ Decision\+Tree} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clean up memory. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a9a3cc06b52728325bd6402f7175f28e5}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!CalculateDirection@{CalculateDirection}}
+\index{CalculateDirection@{CalculateDirection}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{CalculateDirection()}
+{\footnotesize\ttfamily size\+\_\+t Calculate\+Direction (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point }\end{DoxyParamCaption}) const}
+
+
+
+Given a point and that this node is not a leaf, calculate the index of the child node this point would go towards. 
+
+This method is primarily used by the \doxyref{Classify()}{p.}{classmlpack_1_1tree_1_1DecisionTree_aa610310b354b7badd88041ca07883569} function, but it can be used in a standalone sense too.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to classify. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a914ce4cf047ff8fdcae13fdd7311839f}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!Child@{Child}}
+\index{Child@{Child}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{Child()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree}\& Child (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the child of the given index (be careful!). 
+
+
+
+Definition at line 465 of file decision\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_acb851aa7ee90f5617afe77d6942f1d35}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!Child@{Child}}
+\index{Child@{Child}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{Child()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const \textbf{ Decision\+Tree}\& Child (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the child of the given index. 
+
+
+
+Definition at line 463 of file decision\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_abd3c3812715d2e249e47476782d8e95e}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!Classify@{Classify}}
+\index{Classify@{Classify}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{predictions }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given points, using the entire tree. 
+
+The predicted labels for each point are stored in the given vector.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Set of points to classify. \\
+\hline
+{\em predictions} & This will be filled with predictions for each point. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a255d0a8b26a14cfd6a1f745568b83017}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!Classify@{Classify}}
+\index{Classify@{Classify}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{predictions,  }\item[{arma\+::mat \&}]{probabilities }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given points and also return estimates of the probabilities for each class in the given matrix. 
+
+The predicted labels for each point are stored in the given vector.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Set of points to classify. \\
+\hline
+{\em predictions} & This will be filled with predictions for each point. \\
+\hline
+{\em probabilities} & This will be filled with class probabilities for each point. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_aa610310b354b7badd88041ca07883569}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!Classify@{Classify}}
+\index{Classify@{Classify}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily size\+\_\+t Classify (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given point, using the entire tree. 
+
+The predicted label is returned.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to classify. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_abddb69ee5b97027cd4eebd398bf39ac6}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!Classify@{Classify}}
+\index{Classify@{Classify}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{Classify()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Vec\+Type \&}]{point,  }\item[{size\+\_\+t \&}]{prediction,  }\item[{arma\+::vec \&}]{probabilities }\end{DoxyParamCaption}) const}
+
+
+
+Classify the given point and also return estimates of the probability for each class in the given vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to classify. \\
+\hline
+{\em prediction} & This will be set to the predicted class of the point. \\
+\hline
+{\em probabilities} & This will be filled with class probabilities for the point. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a1f7ec083be66d58a3e02e12956bf005e}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!NumChildren@{NumChildren}}
+\index{NumChildren@{NumChildren}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{NumChildren()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of children. 
+
+
+
+Definition at line 460 of file decision\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a088ebfdf3c7a9e7eea81716d0c55b5a3}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!NumClasses@{NumClasses}}
+\index{NumClasses@{NumClasses}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{NumClasses()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Classes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the number of classes in the tree. 
+
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_ad6d265fac56dc40fbd5da0f792400d73}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ Decision\+Tree}$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Dimension\+Selection\+Type, No\+Recursion $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy another tree. 
+
+This may use a lot of memory---be sure that it\textquotesingle{}s what you want to do.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_ac1ff2d7454c0e6480e42a68b6a6d18ba}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Decision\+Tree}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ Decision\+Tree}$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Dimension\+Selection\+Type, No\+Recursion $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of another tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Tree to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a65cba07328997659bec80b9879b15a51}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the tree. 
+
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a92f55f07c1a09552ef79c8d8b9484af5}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!SplitDimension@{SplitDimension}}
+\index{SplitDimension@{SplitDimension}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{SplitDimension()}
+{\footnotesize\ttfamily size\+\_\+t Split\+Dimension (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the split dimension (only meaningful if this is a non-\/leaf in a trained tree). 
+
+
+
+Definition at line 469 of file decision\+\_\+tree.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_abf1f81b5ed54a8492b4f42166a9c6346}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!Train@{Train}}
+\index{Train@{Train}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily double Train (\begin{DoxyParamCaption}\item[{Mat\+Type}]{data,  }\item[{const \textbf{ data\+::\+Dataset\+Info} \&}]{dataset\+Info,  }\item[{Labels\+Type}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const size\+\_\+t}]{minimum\+Leaf\+Size = {\ttfamily 10},  }\item[{const double}]{minimum\+Gain\+Split = {\ttfamily 1e-\/7},  }\item[{const size\+\_\+t}]{maximum\+Depth = {\ttfamily 0},  }\item[{Dimension\+Selection\+Type}]{dimension\+Selector = {\ttfamily DimensionSelectionType()} }\end{DoxyParamCaption})}
+
+
+
+Train the decision tree on the given data. 
+
+This will overwrite the existing model. The data may have numeric and categorical types, specified by the dataset\+Info parameter. Setting minimum\+Leaf\+Size and minimum\+Gain\+Split too small may cause the tree to overfit, but setting them too large may cause it to underfit.
+
+Use std\+::move if data or labels are no longer needed to avoid copies.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to train on. \\
+\hline
+{\em dataset\+Info} & Type information for each dimension. \\
+\hline
+{\em labels} & Labels for each training point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em minimum\+Leaf\+Size} & Minimum number of points in each leaf node. \\
+\hline
+{\em minimum\+Gain\+Split} & Minimum gain for the node to split. \\
+\hline
+{\em maximum\+Depth} & Maximum depth for the tree. \\
+\hline
+{\em dimension\+Selector} & Instantiated dimension selection policy. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The final entropy of decision tree. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_ac63e8f9e1a6c2203b79aeb0225bac9ed}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!Train@{Train}}
+\index{Train@{Train}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily double Train (\begin{DoxyParamCaption}\item[{Mat\+Type}]{data,  }\item[{const \textbf{ data\+::\+Dataset\+Info} \&}]{dataset\+Info,  }\item[{Labels\+Type}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{Weights\+Type}]{weights,  }\item[{const size\+\_\+t}]{minimum\+Leaf\+Size = {\ttfamily 10},  }\item[{const double}]{minimum\+Gain\+Split = {\ttfamily 1e-\/7},  }\item[{const size\+\_\+t}]{maximum\+Depth = {\ttfamily 0},  }\item[{Dimension\+Selection\+Type}]{dimension\+Selector = {\ttfamily DimensionSelectionType()},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Train the decision tree on the given weighted data. 
+
+This will overwrite the existing model. The data may have numeric and categorical types, specified by the dataset\+Info parameter. Setting minimum\+Leaf\+Size and minimum\+Gain\+Split too small may cause the tree to overfit, but setting them too large may cause it to underfit.
+
+Use std\+::move if data, labels or weights are no longer needed to avoid copies.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to train on. \\
+\hline
+{\em dataset\+Info} & Type information for each dimension. \\
+\hline
+{\em labels} & Labels for each training point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em weights} & Weights of all the labels \\
+\hline
+{\em minimum\+Leaf\+Size} & Minimum number of points in each leaf node. \\
+\hline
+{\em minimum\+Gain\+Split} & Minimum gain for the node to split. \\
+\hline
+{\em maximum\+Depth} & Maximum depth for the tree. \\
+\hline
+{\em dimension\+Selector} & Instantiated dimension selection policy. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The final entropy of decision tree. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_af69d321e90bae4cc196f83467379a8ee}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!Train@{Train}}
+\index{Train@{Train}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily double Train (\begin{DoxyParamCaption}\item[{Mat\+Type}]{data,  }\item[{Labels\+Type}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const size\+\_\+t}]{minimum\+Leaf\+Size = {\ttfamily 10},  }\item[{const double}]{minimum\+Gain\+Split = {\ttfamily 1e-\/7},  }\item[{const size\+\_\+t}]{maximum\+Depth = {\ttfamily 0},  }\item[{Dimension\+Selection\+Type}]{dimension\+Selector = {\ttfamily DimensionSelectionType()} }\end{DoxyParamCaption})}
+
+
+
+Train the decision tree on the given data, assuming that all dimensions are numeric. 
+
+This will overwrite the given model. Setting minimum\+Leaf\+Size and minimum\+Gain\+Split too small may cause the tree to overfit, but setting them too large may cause it to underfit.
+
+Use std\+::move if data or labels are no longer needed to avoid copies.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to train on. \\
+\hline
+{\em labels} & Labels for each training point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em minimum\+Leaf\+Size} & Minimum number of points in each leaf node. \\
+\hline
+{\em minimum\+Gain\+Split} & Minimum gain for the node to split. \\
+\hline
+{\em maximum\+Depth} & Maximum depth for the tree. \\
+\hline
+{\em dimension\+Selector} & Instantiated dimension selection policy. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The final entropy of decision tree. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1tree_1_1DecisionTree_a85cf750767690c035a8cf37c7bffac65}} 
+\index{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}!Train@{Train}}
+\index{Train@{Train}!DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$@{DecisionTree$<$ FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion $>$}}
+\doxysubsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily double Train (\begin{DoxyParamCaption}\item[{Mat\+Type}]{data,  }\item[{Labels\+Type}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{Weights\+Type}]{weights,  }\item[{const size\+\_\+t}]{minimum\+Leaf\+Size = {\ttfamily 10},  }\item[{const double}]{minimum\+Gain\+Split = {\ttfamily 1e-\/7},  }\item[{const size\+\_\+t}]{maximum\+Depth = {\ttfamily 0},  }\item[{Dimension\+Selection\+Type}]{dimension\+Selector = {\ttfamily DimensionSelectionType()},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+arma\+\_\+type$<$ typename std\+::remove\+\_\+reference$<$ Weights\+Type $>$\+::type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Train the decision tree on the given weighted data, assuming that all dimensions are numeric. 
+
+This will overwrite the given model. Setting minimum\+Leaf\+Size and minimum\+Gain\+Split too small may cause the tree to overfit, but setting them too large may cause it to underfit.
+
+Use std\+::move if data, labels or weights are no longer needed to avoid copies.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to train on. \\
+\hline
+{\em labels} & Labels for each training point. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em weights} & Weights of all the labels \\
+\hline
+{\em minimum\+Leaf\+Size} & Minimum number of points in each leaf node. \\
+\hline
+{\em minimum\+Gain\+Split} & Minimum gain for the node to split. \\
+\hline
+{\em maximum\+Depth} & Maximum depth for the tree. \\
+\hline
+{\em dimension\+Selector} & Instantiated dimension selection policy. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The final entropy of decision tree. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/decision\+\_\+tree/\textbf{ decision\+\_\+tree.\+hpp}\end{DoxyCompactItemize}

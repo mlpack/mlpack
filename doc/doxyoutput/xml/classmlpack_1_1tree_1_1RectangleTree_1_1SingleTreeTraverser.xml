@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::RectangleTree::SingleTreeTraverser</compoundname>
+    <includes refid="rectangle__tree_2single__tree__traverser_8hpp" local="no">single_tree_traverser.hpp</includes>
+    <innerclass refid="structmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1_1NodeAndScore" prot="private">mlpack::tree::RectangleTree::SingleTreeTraverser::NodeAndScore</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename RuleType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1ae3cc7436bacc3143d78bb743c7b4aa85" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numPrunes</definition>
+        <argsstring></argsstring>
+        <name>numPrunes</name>
+        <briefdescription>
+<para>The number of nodes which have been prenud during traversal. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" line="72" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1a4b32da53facc7d5c2ddf39b9d7dcf166" prot="private" static="no" mutable="no">
+        <type>RuleType &amp;</type>
+        <definition>RuleType&amp; rule</definition>
+        <argsstring></argsstring>
+        <name>rule</name>
+        <briefdescription>
+<para>Reference to the rules with which the tree will be traversed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" line="69" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1aef3b0527dc7ff514b7b658b1108abae9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SingleTreeTraverser</definition>
+        <argsstring>(RuleType &amp;rule)</argsstring>
+        <name>SingleTreeTraverser</name>
+        <param>
+          <type>RuleType &amp;</type>
+          <declname>rule</declname>
+        </param>
+        <briefdescription>
+<para>Instantiate the traverser with the given rule set. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" line="38" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1adf887190e9d9024ff244503e4aaf0732" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; NumPrunes</definition>
+        <argsstring>()</argsstring>
+        <name>NumPrunes</name>
+        <briefdescription>
+<para>Modify the number of prunes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" line="52" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" bodystart="52" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1ac2f6072011ee31a0a32f62e2a105a347" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumPrunes</definition>
+        <argsstring>() const</argsstring>
+        <name>NumPrunes</name>
+        <briefdescription>
+<para>Get the number of prunes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" line="50" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" bodystart="50" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1ac0666ded6a40aaa0711e91e890f9f69f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Traverse</definition>
+        <argsstring>(const size_t queryIndex, const RectangleTree &amp;referenceNode)</argsstring>
+        <name>Traverse</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref> &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Traverse the tree with the given point. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of the point in the query set which is being used as the query point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tree node to be traversed. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" line="47" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1aa7a224319dde9610901f4b94a91dd2c3" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool NodeComparator</definition>
+        <argsstring>(const NodeAndScore &amp;obj1, const NodeAndScore &amp;obj2)</argsstring>
+        <name>NodeComparator</name>
+        <param>
+          <type>const NodeAndScore &amp;</type>
+          <declname>obj1</declname>
+        </param>
+        <param>
+          <type>const NodeAndScore &amp;</type>
+          <declname>obj2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" line="63" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" bodystart="63" bodyend="66"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A single traverser for rectangle type trees. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>See single_tree_traverser.hpp for implementation. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" line="31" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp" bodystart="33" bodyend="73"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1aa7a224319dde9610901f4b94a91dd2c3" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree::SingleTreeTraverser</scope><name>NodeComparator</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1ae3cc7436bacc3143d78bb743c7b4aa85" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree::SingleTreeTraverser</scope><name>numPrunes</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1ac2f6072011ee31a0a32f62e2a105a347" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree::SingleTreeTraverser</scope><name>NumPrunes</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1adf887190e9d9024ff244503e4aaf0732" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree::SingleTreeTraverser</scope><name>NumPrunes</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1a4b32da53facc7d5c2ddf39b9d7dcf166" prot="private" virt="non-virtual"><scope>mlpack::tree::RectangleTree::SingleTreeTraverser</scope><name>rule</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1aef3b0527dc7ff514b7b658b1108abae9" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree::SingleTreeTraverser</scope><name>SingleTreeTraverser</name></member>
+      <member refid="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser_1ac0666ded6a40aaa0711e91e890f9f69f" prot="public" virt="non-virtual"><scope>mlpack::tree::RectangleTree::SingleTreeTraverser</scope><name>Traverse</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

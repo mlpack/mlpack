@@ -1,0 +1,385 @@
+\doxysection{XTree\+Auxiliary\+Information$<$ Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation}\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+
+
+The \doxyref{XTree\+Auxiliary\+Information}{p.}{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation} class provides information specific to X trees for each node in a \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree}.  
+
+
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ Split\+History\+Struct}
+\begin{DoxyCompactList}\small\item\em The X tree requires that the tree records it\textquotesingle{}s \char`\"{}split history\char`\"{}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \textbf{ mlpack\+::tree\+::\+XTree\+Auxiliary\+Information\+::\+Split\+History\+Struct} \textbf{ Split\+History\+Struct}
+\begin{DoxyCompactList}\small\item\em The X tree requires that the tree records it\textquotesingle{}s \char`\"{}split history\char`\"{}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ XTree\+Auxiliary\+Information} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\item 
+\textbf{ XTree\+Auxiliary\+Information} (const Tree\+Type $\ast$node)
+\begin{DoxyCompactList}\small\item\em Construct this with the specified node. \end{DoxyCompactList}\item 
+\textbf{ XTree\+Auxiliary\+Information} (const \textbf{ XTree\+Auxiliary\+Information} \&other, Tree\+Type $\ast$=NULL, bool=true)
+\begin{DoxyCompactList}\small\item\em Create an auxiliary information object by copying from another object. \end{DoxyCompactList}\item 
+\textbf{ XTree\+Auxiliary\+Information} (\textbf{ XTree\+Auxiliary\+Information} \&\&other)
+\begin{DoxyCompactList}\small\item\em Create an auxiliary information object by moving from the other node. \end{DoxyCompactList}\item 
+bool \textbf{ Handle\+Node\+Insertion} (Tree\+Type $\ast$, Tree\+Type $\ast$, bool)
+\begin{DoxyCompactList}\small\item\em Some tree types require to save some properties at the insertion process. \end{DoxyCompactList}\item 
+bool \textbf{ Handle\+Node\+Removal} (Tree\+Type $\ast$, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Some tree types require to save some properties at the deletion process. \end{DoxyCompactList}\item 
+bool \textbf{ Handle\+Point\+Deletion} (Tree\+Type $\ast$, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Some tree types require to save some properties at the deletion process. \end{DoxyCompactList}\item 
+bool \textbf{ Handle\+Point\+Insertion} (Tree\+Type $\ast$, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Some tree types require to save some properties at the insertion process. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Normal\+Node\+Max\+Num\+Children} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum number of a normal node\textquotesingle{}s children. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Normal\+Node\+Max\+Num\+Children} () const
+\begin{DoxyCompactList}\small\item\em Return the maximum number of a normal node\textquotesingle{}s children. \end{DoxyCompactList}\item 
+void \textbf{ Nullify\+Data} ()
+\begin{DoxyCompactList}\small\item\em Nullify the auxiliary information in order to prevent an invalid free. \end{DoxyCompactList}\item 
+\textbf{ XTree\+Auxiliary\+Information} \& \textbf{ operator=} (const \textbf{ XTree\+Auxiliary\+Information} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the auxiliary information object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the information. \end{DoxyCompactList}\item 
+\textbf{ Split\+History\+Struct} \& \textbf{ Split\+History} ()
+\begin{DoxyCompactList}\small\item\em Modify the split history of the node associated with this object. \end{DoxyCompactList}\item 
+const \textbf{ Split\+History\+Struct} \& \textbf{ Split\+History} () const
+\begin{DoxyCompactList}\small\item\em Return the split history of the node associated with this object. \end{DoxyCompactList}\item 
+bool \textbf{ Update\+Auxiliary\+Info} (Tree\+Type $\ast$)
+\begin{DoxyCompactList}\small\item\em Some tree types require to propagate the information upward. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Tree\+Type$>$\newline
+class mlpack\+::tree\+::\+XTree\+Auxiliary\+Information$<$ Tree\+Type $>$}
+
+The \doxyref{XTree\+Auxiliary\+Information}{p.}{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation} class provides information specific to X trees for each node in a \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree}. 
+
+Definition at line 24 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a0df6023a5e7dc3cf548bb28321445792}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!SplitHistoryStruct@{SplitHistoryStruct}}
+\index{SplitHistoryStruct@{SplitHistoryStruct}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{SplitHistoryStruct}
+{\footnotesize\ttfamily typedef struct \textbf{ mlpack\+::tree\+::\+XTree\+Auxiliary\+Information\+::\+Split\+History\+Struct} \textbf{ Split\+History\+Struct}}
+
+
+
+The X tree requires that the tree records it\textquotesingle{}s \char`\"{}split history\char`\"{}. 
+
+To make this easy, we use the following structure. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a447af4206e6531d05a33c781605df5a6}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!XTreeAuxiliaryInformation@{XTreeAuxiliaryInformation}}
+\index{XTreeAuxiliaryInformation@{XTreeAuxiliaryInformation}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{XTreeAuxiliaryInformation()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily \textbf{ XTree\+Auxiliary\+Information} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default constructor. 
+
+
+
+Definition at line 28 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_ac3c8313c6ccc921ddaebb5a27c9874fb}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!XTreeAuxiliaryInformation@{XTreeAuxiliaryInformation}}
+\index{XTreeAuxiliaryInformation@{XTreeAuxiliaryInformation}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{XTreeAuxiliaryInformation()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily \textbf{ XTree\+Auxiliary\+Information} (\begin{DoxyParamCaption}\item[{const Tree\+Type $\ast$}]{node }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct this with the specified node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & The node that stores this auxiliary information. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 38 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a885b27a78236f6feea431a7eb365777d}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!XTreeAuxiliaryInformation@{XTreeAuxiliaryInformation}}
+\index{XTreeAuxiliaryInformation@{XTreeAuxiliaryInformation}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{XTreeAuxiliaryInformation()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily \textbf{ XTree\+Auxiliary\+Information} (\begin{DoxyParamCaption}\item[{const \textbf{ XTree\+Auxiliary\+Information}$<$ Tree\+Type $>$ \&}]{other,  }\item[{Tree\+Type $\ast$}]{ = {\ttfamily NULL},  }\item[{bool}]{ = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create an auxiliary information object by copying from another object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Another auxiliary information object from which the information will be copied. \\
+\hline
+{\em $\ast$} & (tree) The node that holds the auxiliary information. \\
+\hline
+{\em $\ast$} & (deep\+Copy) If false, the new object uses the same memory (not used here). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 54 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a5e9948e2da6e3bc0ab99f0d10a2f4b44}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!XTreeAuxiliaryInformation@{XTreeAuxiliaryInformation}}
+\index{XTreeAuxiliaryInformation@{XTreeAuxiliaryInformation}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{XTreeAuxiliaryInformation()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily \textbf{ XTree\+Auxiliary\+Information} (\begin{DoxyParamCaption}\item[{\textbf{ XTree\+Auxiliary\+Information}$<$ Tree\+Type $>$ \&\&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create an auxiliary information object by moving from the other node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The object from which the information will be moved. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 79 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a351a1390fe22a0466044a786ac810799}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!HandleNodeInsertion@{HandleNodeInsertion}}
+\index{HandleNodeInsertion@{HandleNodeInsertion}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{HandleNodeInsertion()}
+{\footnotesize\ttfamily bool Handle\+Node\+Insertion (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{,  }\item[{Tree\+Type $\ast$}]{,  }\item[{bool}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Some tree types require to save some properties at the insertion process. 
+
+This method allows the auxiliary information the option of manipulating the tree in order to perform the insertion process. If the auxiliary information does that, then the method should return true; if the method returns false the \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} performs its default behavior.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (node) The node in which the node\+To\+Insert is being inserted. \\
+\hline
+{\em $\ast$} & (node\+To\+Insert) The node being inserted. \\
+\hline
+{\em $\ast$} & (insertion\+Level) The level of the tree at which the node\+To\+Insert should be inserted. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 113 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a559b369ceed572ded92e741de7ec0ad6}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!HandleNodeRemoval@{HandleNodeRemoval}}
+\index{HandleNodeRemoval@{HandleNodeRemoval}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{HandleNodeRemoval()}
+{\footnotesize\ttfamily bool Handle\+Node\+Removal (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{,  }\item[{const}]{size\+\_\+t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Some tree types require to save some properties at the deletion process. 
+
+This method allows the auxiliary information the option of manipulating the tree in order to perform the deletion process. If the auxiliary information does that, then the method should return true; if the method returns false the \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} performs its default behavior. 
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (node) The node from which the node is being deleted. \\
+\hline
+{\em $\ast$} & (node\+Index) The local index of the node being deleted. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 143 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a2a0b51ff5e8b14372750e4554a2155c7}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!HandlePointDeletion@{HandlePointDeletion}}
+\index{HandlePointDeletion@{HandlePointDeletion}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{HandlePointDeletion()}
+{\footnotesize\ttfamily bool Handle\+Point\+Deletion (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{,  }\item[{const}]{size\+\_\+t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Some tree types require to save some properties at the deletion process. 
+
+This method allows the auxiliary information the option of manipulating the tree in order to perform the deletion process. If the auxiliary information does that, then the method should return true; if the method returns false the \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} performs its default behavior. 
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (node) The node from which the point is being deleted. \\
+\hline
+{\em $\ast$} & (local\+Index) The local index of the point being deleted. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 129 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_af0332e7aa289d540dc2bfb89687d87f1}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!HandlePointInsertion@{HandlePointInsertion}}
+\index{HandlePointInsertion@{HandlePointInsertion}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{HandlePointInsertion()}
+{\footnotesize\ttfamily bool Handle\+Point\+Insertion (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{,  }\item[{const}]{size\+\_\+t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Some tree types require to save some properties at the insertion process. 
+
+This method allows the auxiliary information the option of manipulating the tree in order to perform the insertion process. If the auxiliary information does that, then the method should return true; if the method returns false the \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} performs its default behavior.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (node) The node in which the point is being inserted. \\
+\hline
+{\em $\ast$} & (point) The global number of the point being inserted. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 96 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a9e3991283a62a37519fc173b68f1772a}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!NormalNodeMaxNumChildren@{NormalNodeMaxNumChildren}}
+\index{NormalNodeMaxNumChildren@{NormalNodeMaxNumChildren}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{NormalNodeMaxNumChildren()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Normal\+Node\+Max\+Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the maximum number of a normal node\textquotesingle{}s children. 
+
+
+
+Definition at line 217 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a9a2e15604b4dca6e21285ad8d0053602}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!NormalNodeMaxNumChildren@{NormalNodeMaxNumChildren}}
+\index{NormalNodeMaxNumChildren@{NormalNodeMaxNumChildren}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{NormalNodeMaxNumChildren()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Normal\+Node\+Max\+Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the maximum number of a normal node\textquotesingle{}s children. 
+
+
+
+Definition at line 215 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+Referenced by XTree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::operator=().
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a8dbe26c4727e347359f1da279659f0cd}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!NullifyData@{NullifyData}}
+\index{NullifyData@{NullifyData}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{NullifyData()}
+{\footnotesize\ttfamily void Nullify\+Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Nullify the auxiliary information in order to prevent an invalid free. 
+
+
+
+Definition at line 162 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a61b7dcbdeb22a94c36b1e7bec5218d9c}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{operator=()}
+{\footnotesize\ttfamily \textbf{ XTree\+Auxiliary\+Information}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ XTree\+Auxiliary\+Information}$<$ Tree\+Type $>$ \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy the auxiliary information object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The node from which the information will be copied. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 66 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+References XTree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Normal\+Node\+Max\+Num\+Children(), and XTree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::\+Split\+History().
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a65cba07328997659bec80b9879b15a51}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the information. 
+
+
+
+Definition at line 227 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_af3461799d0e7576bb28f597b20a97d63}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!SplitHistory@{SplitHistory}}
+\index{SplitHistory@{SplitHistory}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{SplitHistory()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Split\+History\+Struct}\& Split\+History (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the split history of the node associated with this object. 
+
+
+
+Definition at line 221 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_ab0e40d0a7c59a7aea65725e14b79faff}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!SplitHistory@{SplitHistory}}
+\index{SplitHistory@{SplitHistory}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{SplitHistory()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const \textbf{ Split\+History\+Struct}\& Split\+History (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the split history of the node associated with this object. 
+
+
+
+Definition at line 219 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+Referenced by XTree\+Auxiliary\+Information$<$ Tree\+Type $>$\+::operator=().
+
+\mbox{\label{classmlpack_1_1tree_1_1XTreeAuxiliaryInformation_a2278181aedc87de10e09f467c794ef5e}} 
+\index{XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}!UpdateAuxiliaryInfo@{UpdateAuxiliaryInfo}}
+\index{UpdateAuxiliaryInfo@{UpdateAuxiliaryInfo}!XTreeAuxiliaryInformation$<$ TreeType $>$@{XTreeAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{UpdateAuxiliaryInfo()}
+{\footnotesize\ttfamily bool Update\+Auxiliary\+Info (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Some tree types require to propagate the information upward. 
+
+This method should return false if this is not the case. If true is returned, the update will be propagated upward. 
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (node) The node in which the auxiliary information being update. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 154 of file x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/rectangle\+\_\+tree/\textbf{ x\+\_\+tree\+\_\+auxiliary\+\_\+information.\+hpp}\end{DoxyCompactItemize}

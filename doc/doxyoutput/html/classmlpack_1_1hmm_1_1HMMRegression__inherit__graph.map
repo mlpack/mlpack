@@ -1,0 +1,5 @@
+<map id="HMMRegression" name="HMMRegression">
+<area shape="rect" id="node1" title="A class that represents a Hidden Markov Model Regression (HMMR)." alt="" coords="34,200,162,227"/>
+<area shape="rect" id="node2" href="$classmlpack_1_1hmm_1_1HMM.html" title=" " alt="" coords="5,109,191,151"/>
+<area shape="rect" id="node3" href="$classmlpack_1_1hmm_1_1HMM.html" title="A class that represents a Hidden Markov Model with an arbitrary type of emission distribution." alt="" coords="17,5,179,32"/>
+</map>

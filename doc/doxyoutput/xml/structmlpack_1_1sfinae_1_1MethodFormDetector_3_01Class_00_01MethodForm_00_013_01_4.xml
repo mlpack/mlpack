@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1sfinae_1_1MethodFormDetector_3_01Class_00_01MethodForm_00_013_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::sfinae::MethodFormDetector&lt; Class, MethodForm, 3 &gt;</compoundname>
+    <includes refid="sfinae__utility_8hpp" local="no">sfinae_utility.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename Class</type>
+      </param>
+      <param>
+        <type>template&lt; typename... &gt; class</type>
+        <declname>MethodForm</declname>
+        <defname>MethodForm</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structmlpack_1_1sfinae_1_1MethodFormDetector_3_01Class_00_01MethodForm_00_013_01_4_1a9232854f75da42612a11d82951f0c3e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T1</type>
+          </param>
+          <param>
+            <type>class T2</type>
+          </param>
+          <param>
+            <type>class T3</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void operator()</definition>
+        <argsstring>(MethodForm&lt; Class, T1, T2, T3 &gt;)</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>MethodForm&lt; Class, T1, T2, T3 &gt;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/sfinae_utility.hpp" line="71" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/sfinae_utility.hpp" line="68" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/sfinae_utility.hpp" bodystart="69" bodyend="72"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1sfinae_1_1MethodFormDetector_3_01Class_00_01MethodForm_00_013_01_4_1a9232854f75da42612a11d82951f0c3e0" prot="public" virt="non-virtual"><scope>mlpack::sfinae::MethodFormDetector&lt; Class, MethodForm, 3 &gt;</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

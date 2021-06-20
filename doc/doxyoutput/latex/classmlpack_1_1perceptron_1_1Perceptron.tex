@@ -1,0 +1,287 @@
+\doxysection{Perceptron$<$ Learn\+Policy, Weight\+Initialization\+Policy, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1perceptron_1_1Perceptron}\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+
+
+This class implements a simple perceptron (i.\+e., a single layer neural network).  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Perceptron} (const Mat\+Type \&data, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const size\+\_\+t max\+Iterations=1000)
+\begin{DoxyCompactList}\small\item\em Constructor\+: constructs the perceptron by building the weights matrix, which is later used in classification. \end{DoxyCompactList}\item 
+\textbf{ Perceptron} (const \textbf{ Perceptron} \&other, const Mat\+Type \&data, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const arma\+::rowvec \&instance\+Weights)
+\begin{DoxyCompactList}\small\item\em Alternate constructor which copies parameters from an already initiated perceptron. \end{DoxyCompactList}\item 
+\textbf{ Perceptron} (const size\+\_\+t num\+Classes=0, const size\+\_\+t dimensionality=0, const size\+\_\+t max\+Iterations=1000)
+\begin{DoxyCompactList}\small\item\em Constructor\+: create the perceptron with the given number of classes and initialize the weight matrix, but do not perform any training. \end{DoxyCompactList}\item 
+arma\+::vec \& \textbf{ Biases} ()
+\begin{DoxyCompactList}\small\item\em Modify the biases. You had better know what you are doing! \end{DoxyCompactList}\item 
+const arma\+::vec \& \textbf{ Biases} () const
+\begin{DoxyCompactList}\small\item\em Get the biases. \end{DoxyCompactList}\item 
+void \textbf{ Classify} (const Mat\+Type \&test, arma\+::\+Row$<$ size\+\_\+t $>$ \&predicted\+Labels)
+\begin{DoxyCompactList}\small\item\em Classification function. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Max\+Iterations} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum number of iterations. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Max\+Iterations} () const
+\begin{DoxyCompactList}\small\item\em Get the maximum number of iterations. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Classes} () const
+\begin{DoxyCompactList}\small\item\em Get the number of classes this perceptron has been trained for. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the perceptron. \end{DoxyCompactList}\item 
+void \textbf{ Train} (const Mat\+Type \&data, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const arma\+::rowvec \&instance\+Weights=arma\+::rowvec())
+\begin{DoxyCompactList}\small\item\em Train the perceptron on the given data for up to the maximum number of iterations (specified in the constructor or through \doxyref{Max\+Iterations()}{p.}{classmlpack_1_1perceptron_1_1Perceptron_acda675ab4ab86b95c92bc33bc391a61b}). \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Weights} ()
+\begin{DoxyCompactList}\small\item\em Modify the weight matrix. You had better know what you are doing! \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Weights} () const
+\begin{DoxyCompactList}\small\item\em Get the weight matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Learn\+Policy = Simple\+Weight\+Update, typename Weight\+Initialization\+Policy = Zero\+Initialization, typename Mat\+Type = arma\+::mat$>$\newline
+class mlpack\+::perceptron\+::\+Perceptron$<$ Learn\+Policy, Weight\+Initialization\+Policy, Mat\+Type $>$}
+
+This class implements a simple perceptron (i.\+e., a single layer neural network). 
+
+It converges if the supplied training dataset is linearly separable.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Learn\+Policy} & Options of \doxyref{Simple\+Weight\+Update}{p.}{classmlpack_1_1perceptron_1_1SimpleWeightUpdate} and Gradient\+Descent. \\
+\hline
+{\em Weight\+Initialization\+Policy} & Option of \doxyref{Zero\+Initialization}{p.}{classmlpack_1_1perceptron_1_1ZeroInitialization} and \doxyref{Random\+Initialization}{p.}{classmlpack_1_1perceptron_1_1RandomInitialization}. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 36 of file perceptron.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_afb05a42d7d7f430b1243af7b45eff050}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!Perceptron@{Perceptron}}
+\index{Perceptron@{Perceptron}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{Perceptron()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ Perceptron} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{num\+Classes = {\ttfamily 0},  }\item[{const size\+\_\+t}]{dimensionality = {\ttfamily 0},  }\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 1000} }\end{DoxyParamCaption})}
+
+
+
+Constructor\+: create the perceptron with the given number of classes and initialize the weight matrix, but do not perform any training. 
+
+(Call the \doxyref{Train()}{p.}{classmlpack_1_1perceptron_1_1Perceptron_a949c54b4d4873f2ad0aaef9ca9572a7a} function to perform training.)
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em dimensionality} & Dimensionality of the dataset. \\
+\hline
+{\em max\+Iterations} & Maximum number of iterations for the perceptron learning algorithm. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_a9c07dd0448fb853fa3a27a3c6e45a7b0}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!Perceptron@{Perceptron}}
+\index{Perceptron@{Perceptron}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{Perceptron()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ Perceptron} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 1000} }\end{DoxyParamCaption})}
+
+
+
+Constructor\+: constructs the perceptron by building the weights matrix, which is later used in classification. 
+
+The number of classes should be specified separately, and the labels vector should contain values in the range [0, num\+Classes -\/ 1]. The \doxyref{data\+::\+Normalize\+Labels()}{p.}{namespacemlpack_1_1data_a664b3fa5243889e2aed47ee750f840ed} function can be used if the labels vector does not contain values in the required range.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Input, training data. \\
+\hline
+{\em labels} & Labels of dataset. \\
+\hline
+{\em num\+Classes} & Number of classes in the dataset. \\
+\hline
+{\em max\+Iterations} & Maximum number of iterations for the perceptron learning algorithm. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_af848be7d79b355aabd033029e9dda539}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!Perceptron@{Perceptron}}
+\index{Perceptron@{Perceptron}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{Perceptron()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ Perceptron} (\begin{DoxyParamCaption}\item[{const \textbf{ Perceptron}$<$ Learn\+Policy, Weight\+Initialization\+Policy, Mat\+Type $>$ \&}]{other,  }\item[{const Mat\+Type \&}]{data,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const arma\+::rowvec \&}]{instance\+Weights }\end{DoxyParamCaption})}
+
+
+
+Alternate constructor which copies parameters from an already initiated perceptron. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & The other initiated \doxyref{Perceptron}{p.}{classmlpack_1_1perceptron_1_1Perceptron} object from which we copy the values from. \\
+\hline
+{\em data} & The data on which to train this \doxyref{Perceptron}{p.}{classmlpack_1_1perceptron_1_1Perceptron} object on. \\
+\hline
+{\em labels} & The labels of data. \\
+\hline
+{\em num\+Classes} & Number of classes in the data. \\
+\hline
+{\em instance\+Weights} & Weight vector to use while training. For boosting purposes. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_ab6edaa6e34b69382b776ad80a70508a7}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!Biases@{Biases}}
+\index{Biases@{Biases}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{Biases()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::vec\& Biases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the biases. You had better know what you are doing! 
+
+
+
+Definition at line 141 of file perceptron.\+hpp.
+
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_ab0de0c2cd97b7ec0c19098b50cb769ee}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!Biases@{Biases}}
+\index{Biases@{Biases}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{Biases()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const arma\+::vec\& Biases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the biases. 
+
+
+
+Definition at line 139 of file perceptron.\+hpp.
+
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_a407f9c281dab80fffd49251d3907838d}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!Classify@{Classify}}
+\index{Classify@{Classify}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{Classify()}
+{\footnotesize\ttfamily void Classify (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{test,  }\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{predicted\+Labels }\end{DoxyParamCaption})}
+
+
+
+Classification function. 
+
+After training, use the weights matrix to classify test, and put the predicted classes in predicted\+Labels.
+
+
+\begin{DoxyParams}{Parameters}
+{\em test} & Testing data or data to classify. \\
+\hline
+{\em predicted\+Labels} & Vector to store the predicted classes after classifying test. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_acda675ab4ab86b95c92bc33bc391a61b}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!MaxIterations@{MaxIterations}}
+\index{MaxIterations@{MaxIterations}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{MaxIterations()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Max\+Iterations (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the maximum number of iterations. 
+
+
+
+Definition at line 128 of file perceptron.\+hpp.
+
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_a420770944a5b0c7a852c4ec372c4a2d1}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!MaxIterations@{MaxIterations}}
+\index{MaxIterations@{MaxIterations}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{MaxIterations()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Max\+Iterations (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the maximum number of iterations. 
+
+
+
+Definition at line 126 of file perceptron.\+hpp.
+
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_a088ebfdf3c7a9e7eea81716d0c55b5a3}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!NumClasses@{NumClasses}}
+\index{NumClasses@{NumClasses}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{NumClasses()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Classes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of classes this perceptron has been trained for. 
+
+
+
+Definition at line 131 of file perceptron.\+hpp.
+
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_a65cba07328997659bec80b9879b15a51}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the perceptron. 
+
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_a949c54b4d4873f2ad0aaef9ca9572a7a}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!Train@{Train}}
+\index{Train@{Train}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{Train()}
+{\footnotesize\ttfamily void Train (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const arma\+::rowvec \&}]{instance\+Weights = {\ttfamily arma\+:\+:rowvec()} }\end{DoxyParamCaption})}
+
+
+
+Train the perceptron on the given data for up to the maximum number of iterations (specified in the constructor or through \doxyref{Max\+Iterations()}{p.}{classmlpack_1_1perceptron_1_1Perceptron_acda675ab4ab86b95c92bc33bc391a61b}). 
+
+A single iteration corresponds to a single pass through the data, so if you want to pass through the dataset only once, set \doxyref{Max\+Iterations()}{p.}{classmlpack_1_1perceptron_1_1Perceptron_acda675ab4ab86b95c92bc33bc391a61b} to 1.
+
+This training does not reset the model weights, so you can call \doxyref{Train()}{p.}{classmlpack_1_1perceptron_1_1Perceptron_a949c54b4d4873f2ad0aaef9ca9572a7a} on multiple datasets sequentially.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset on which training should be performed. \\
+\hline
+{\em labels} & Labels of the dataset. \\
+\hline
+{\em num\+Classes} & Number of classes in the data. \\
+\hline
+{\em instance\+Weights} & Cost matrix. Stores the cost of mispredicting instances. This is useful for boosting. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_adb90a12c4180f2bb283f4a8820f26f9f}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!Weights@{Weights}}
+\index{Weights@{Weights}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{Weights()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Weights (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the weight matrix. You had better know what you are doing! 
+
+
+
+Definition at line 136 of file perceptron.\+hpp.
+
+\mbox{\label{classmlpack_1_1perceptron_1_1Perceptron_a3b90705a96848b77f63e61a664293a18}} 
+\index{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}!Weights@{Weights}}
+\index{Weights@{Weights}!Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$@{Perceptron$<$ LearnPolicy, WeightInitializationPolicy, MatType $>$}}
+\doxysubsubsection{Weights()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const arma\+::mat\& Weights (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the weight matrix. 
+
+
+
+Definition at line 134 of file perceptron.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/perceptron/\textbf{ perceptron.\+hpp}\end{DoxyCompactItemize}

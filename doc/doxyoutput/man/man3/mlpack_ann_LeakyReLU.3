@@ -1,0 +1,170 @@
+.TH "LeakyReLU< InputDataType, OutputDataType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+LeakyReLU< InputDataType, OutputDataType > \- The \fBLeakyReLU\fP activation function, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLeakyReLU\fP (const double alpha=0\&.03)"
+.br
+.RI "Create the \fBLeakyReLU\fP object using the specified parameters\&. "
+.ti -1c
+.RI "double & \fBAlpha\fP ()"
+.br
+.RI "Modify the non zero gradient\&. "
+.ti -1c
+.RI "double const  & \fBAlpha\fP () const"
+.br
+.RI "Get the non zero gradient\&. "
+.ti -1c
+.RI "template<typename DataType > void \fBBackward\fP (const DataType &input, const DataType &gy, DataType &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "template<typename InputType , typename OutputType > void \fBForward\fP (const InputType &input, OutputType &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.ti -1c
+.RI "size_t \fBWeightSize\fP () const"
+.br
+.RI "Get size of weights\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::LeakyReLU< InputDataType, OutputDataType >"
+The \fBLeakyReLU\fP activation function, defined by\&. 
+
+\begin{eqnarray*} f(x) &=& \max(x, alpha*x) \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ alpha & : x \le 0 \end{array} \right. \end{eqnarray*}
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 44 of file leaky_relu\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBLeakyReLU\fP (const double alpha = \fC0\&.03\fP)"
+
+.PP
+Create the \fBLeakyReLU\fP object using the specified parameters\&. The non zero gradient can be adjusted by specifying the parameter alpha in the range 0 to 1\&. Default (alpha = 0\&.03)
+.PP
+\fBParameters\fP
+.RS 4
+\fIalpha\fP Non zero gradient 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double& Alpha ()\fC [inline]\fP"
+
+.PP
+Modify the non zero gradient\&. 
+.PP
+Definition at line 91 of file leaky_relu\&.hpp\&.
+.SS "double const& Alpha () const\fC [inline]\fP"
+
+.PP
+Get the non zero gradient\&. 
+.PP
+Definition at line 89 of file leaky_relu\&.hpp\&.
+.SS "void Backward (const DataType & input, const DataType & gy, DataType & g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 86 of file leaky_relu\&.hpp\&.
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 84 of file leaky_relu\&.hpp\&.
+.SS "void Forward (const InputType & input, OutputType & output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 81 of file leaky_relu\&.hpp\&.
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 79 of file leaky_relu\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.SS "size_t WeightSize () const\fC [inline]\fP"
+
+.PP
+Get size of weights\&. 
+.PP
+Definition at line 94 of file leaky_relu\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,193 @@
+\doxysection{Introduction}\label{go_quickstart_go_quickstart_intro}
+This page describes how you can quickly get started using mlpack from Go and gives a few examples of usage, and pointers to deeper documentation.
+
+This quickstart guide is also available for \doxyref{Python}{p.}{python_quickstart}, \doxyref{the command-\/line}{p.}{cli_quickstart}, \doxyref{Julia}{p.}{julia_quickstart} and \doxyref{R}{p.}{r_quickstart}.\doxysection{Installing mlpack}\label{go_quickstart_go_quickstart_install}
+Installing the mlpack bindings for Go is somewhat time-\/consuming as the library must be built; you can run the following code\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{go get -\/u -\/d mlpack.org/v1/mlpack}
+\DoxyCodeLine{cd \$\{GOPATH\}/src/mlpack.org/v1/mlpack}
+\DoxyCodeLine{make install}
+
+\end{DoxyCode}
+
+
+Building the Go bindings from scratch is a little more in-\/depth, though. For information on that, follow the instructions on the \doxyref{Building mlpack From Source}{p.}{build} page, and be sure to specify {\ttfamily -\/DBUILD\+\_\+\+GO\+\_\+\+BINDINGS=ON} to CMake;\doxysection{Simple mlpack quickstart example}\label{go_quickstart_go_quickstart_example}
+As a really simple example of how to use mlpack from Go, let\textquotesingle{}s do some simple classification on a subset of the standard machine learning {\ttfamily covertype} dataset. We\textquotesingle{}ll first split the dataset into a training set and a testing set, then we\textquotesingle{}ll train an mlpack random forest on the training data, and finally we\textquotesingle{}ll print the accuracy of the random forest on the test dataset.
+
+You can copy-\/paste this code directly into main.\+go to run it. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{package main}
+\DoxyCodeLine{}
+\DoxyCodeLine{import (}
+\DoxyCodeLine{  "{}mlpack.org/v1/mlpack"{}}
+\DoxyCodeLine{  "{}fmt"{}}
+\DoxyCodeLine{)}
+\DoxyCodeLine{func main() \{}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Download dataset.}
+\DoxyCodeLine{  mlpack.DownloadFile("{}https://www.mlpack.org/datasets/covertype-\/small.data.csv.gz"{},}
+\DoxyCodeLine{                      "{}data.csv.gz"{})}
+\DoxyCodeLine{  mlpack.DownloadFile("{}https://www.mlpack.org/datasets/covertype-\/small.labels.csv.gz"{},}
+\DoxyCodeLine{                      "{}labels.csv.gz"{})}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Extract/Unzip the dataset.}
+\DoxyCodeLine{  mlpack.UnZip("{}data.csv.gz"{}, "{}data.csv"{})}
+\DoxyCodeLine{  dataset, \_ := mlpack.Load("{}data.csv"{})}
+\DoxyCodeLine{}
+\DoxyCodeLine{  mlpack.UnZip("{}labels.csv.gz"{}, "{}labels.csv"{})}
+\DoxyCodeLine{  labels, \_ := mlpack.Load("{}labels.csv"{})}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Split the dataset using mlpack.}
+\DoxyCodeLine{  params := mlpack.PreprocessSplitOptions()}
+\DoxyCodeLine{  params.InputLabels = labels}
+\DoxyCodeLine{  params.TestRatio = 0.3}
+\DoxyCodeLine{  params.Verbose = true}
+\DoxyCodeLine{  test, test\_labels, train, train\_labels :=}
+\DoxyCodeLine{      mlpack.PreprocessSplit(dataset, params)}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Train a random forest.}
+\DoxyCodeLine{  rf\_params := mlpack.RandomForestOptions()}
+\DoxyCodeLine{  rf\_params.NumTrees = 10}
+\DoxyCodeLine{  rf\_params.MinimumLeafSize = 3}
+\DoxyCodeLine{  rf\_params.PrintTrainingAccuracy = true}
+\DoxyCodeLine{  rf\_params.Training = train}
+\DoxyCodeLine{  rf\_params.Labels = train\_labels}
+\DoxyCodeLine{  rf\_params.Verbose = true}
+\DoxyCodeLine{  rf\_model, \_, \_ := mlpack.RandomForest(rf\_params)}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Predict the labels of the test points.}
+\DoxyCodeLine{  rf\_params\_2 := mlpack.RandomForestOptions()}
+\DoxyCodeLine{  rf\_params\_2.Test = test}
+\DoxyCodeLine{  rf\_params\_2.InputModel = \&rf\_model}
+\DoxyCodeLine{  rf\_params\_2.Verbose = true}
+\DoxyCodeLine{  \_, predictions, \_ := mlpack.RandomForest(rf\_params\_2)}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Now print the accuracy.}
+\DoxyCodeLine{  rows, \_ := predictions.Dims()}
+\DoxyCodeLine{  var sum int = 0}
+\DoxyCodeLine{  for i := 0; i < rows; i++ \{}
+\DoxyCodeLine{    if (predictions.At(i, 0) == test\_labels.At(i, 0)) \{}
+\DoxyCodeLine{      sum = sum + 1}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{  fmt.Print(sum, "{} correct out of "{}, rows, "{} ("{},}
+\DoxyCodeLine{      (float64(sum) / float64(rows)) * 100, "{}\%).\(\backslash\)n"{})}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+We can see that we achieve reasonably good accuracy on the test dataset (80\%+); if we use the full {\ttfamily covertype.\+csv.\+gz}, the accuracy should increase significantly (but training will take longer).
+
+It\textquotesingle{}s easy to modify the code above to do more complex things, or to use different mlpack learners, or to interface with other machine learning toolkits.\doxysection{What else does mlpack implement?}\label{go_quickstart_go_quickstart_whatelse}
+The example above has only shown a little bit of the functionality of mlpack. Lots of other commands are available with different functionality. A full list of each of these commands and full documentation can be found on the following page\+:
+
+
+\begin{DoxyItemize}
+\item {\texttt{ Go documentation}}
+\end{DoxyItemize}
+
+You can also use the Go\+Doc to explore the {\ttfamily mlpack} module and its functions; every function comes with comprehensive documentation.
+
+For more information on what mlpack does, see {\texttt{ https\+://www.\+mlpack.\+org/}}. Next, let\textquotesingle{}s go through another example for providing movie recommendations with mlpack.\doxysection{Using mlpack for movie recommendations}\label{go_quickstart_go_quickstart_movierecs}
+In this example, we\textquotesingle{}ll train a collaborative filtering model using mlpack\textquotesingle{}s {\ttfamily {\texttt{ Cf()}}} method. We\textquotesingle{}ll train this on the Movie\+Lens dataset from {\texttt{ https\+://grouplens.\+org/datasets/movielens/}}, and then we\textquotesingle{}ll use the model that we train to give recommendations.
+
+You can copy-\/paste this code directly into main.\+go to run it.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{package main}
+\DoxyCodeLine{}
+\DoxyCodeLine{import (}
+\DoxyCodeLine{  "{}github.com/frictionlessdata/tableschema-\/go/csv"{}}
+\DoxyCodeLine{  "{}mlpack.org/v1/mlpack"{}}
+\DoxyCodeLine{  "{}gonum.org/v1/gonum/mat"{}}
+\DoxyCodeLine{  "{}fmt"{}}
+\DoxyCodeLine{)}
+\DoxyCodeLine{func main() \{}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Download dataset.}
+\DoxyCodeLine{  mlpack.DownloadFile("{}https://www.mlpack.org/datasets/ml-\/20m/ratings-\/only.csv.gz"{},}
+\DoxyCodeLine{                      "{}ratings-\/only.csv.gz"{})}
+\DoxyCodeLine{  mlpack.DownloadFile("{}https://www.mlpack.org/datasets/ml-\/20m/movies.csv.gz"{},}
+\DoxyCodeLine{                      "{}movies.csv.gz"{})}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Extract dataset.}
+\DoxyCodeLine{  mlpack.UnZip("{}ratings-\/only.csv.gz"{}, "{}ratings-\/only.csv"{})}
+\DoxyCodeLine{  ratings, \_ := mlpack.Load("{}ratings-\/only.csv"{})}
+\DoxyCodeLine{}
+\DoxyCodeLine{  mlpack.UnZip("{}movies.csv.gz"{}, "{}movies.csv"{})}
+\DoxyCodeLine{  table, \_ := csv.NewTable(csv.FromFile("{}movies.csv"{}), csv.LoadHeaders())}
+\DoxyCodeLine{  movies, \_ := table.ReadColumn("{}title"{})}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Split the dataset using mlpack.}
+\DoxyCodeLine{  params := mlpack.PreprocessSplitOptions()}
+\DoxyCodeLine{  params.TestRatio = 0.1}
+\DoxyCodeLine{  params.Verbose = true}
+\DoxyCodeLine{  ratings\_test, \_, ratings\_train, \_ := mlpack.PreprocessSplit(ratings, params)}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Train the model.  Change the rank to increase/decrease the complexity of the}
+\DoxyCodeLine{  // model.}
+\DoxyCodeLine{  cf\_params := mlpack.CfOptions()}
+\DoxyCodeLine{  cf\_params.Training = ratings\_train}
+\DoxyCodeLine{  cf\_params.Test = ratings\_test}
+\DoxyCodeLine{  cf\_params.Rank = 10}
+\DoxyCodeLine{  cf\_params.Verbose = true}
+\DoxyCodeLine{  cf\_params.Algorithm = "{}RegSVD"{}}
+\DoxyCodeLine{  \_, cf\_model := mlpack.Cf(cf\_params)}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Now query the 5 top movies for user 1.}
+\DoxyCodeLine{  cf\_params\_2 := mlpack.CfOptions()}
+\DoxyCodeLine{  cf\_params\_2.InputModel = \&cf\_model}
+\DoxyCodeLine{  cf\_params\_2.Recommendations = 10}
+\DoxyCodeLine{  cf\_params\_2.Query = mat.NewDense(1, 1, []float64\{1\})}
+\DoxyCodeLine{  cf\_params\_2.Verbose = true}
+\DoxyCodeLine{  cf\_params\_2.MaxIterations = 10}
+\DoxyCodeLine{  output, \_ := mlpack.Cf(cf\_params\_2)}
+\DoxyCodeLine{}
+\DoxyCodeLine{  // Get the names of the movies for user 1.}
+\DoxyCodeLine{  fmt.Println("{}Recommendations for user 1"{})}
+\DoxyCodeLine{  for i := 0; i < 10; i++ \{}
+\DoxyCodeLine{    fmt.Println(i, "{}:"{}, movies[int(output.At(0 , i))])}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Here is some example output, showing that user 1 seems to have good taste in movies\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Recommendations for user 1:}
+\DoxyCodeLine{  0: Casablanca (1942)}
+\DoxyCodeLine{  1: Pan's Labyrinth (Laberinto del fauno, El) (2006)}
+\DoxyCodeLine{  2: Godfather, The (1972)}
+\DoxyCodeLine{  3: Answer This! (2010)}
+\DoxyCodeLine{  4: Life Is Beautiful (La Vita è bella) (1997)}
+\DoxyCodeLine{  5: Adventures of Tintin, The (2011)}
+\DoxyCodeLine{  6: Dark Knight, The (2008)}
+\DoxyCodeLine{  7: Out for Justice (1991)}
+\DoxyCodeLine{  8: Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)}
+\DoxyCodeLine{  9: Schindler's List (1993)}
+
+\end{DoxyCode}
+\doxysection{Next steps with mlpack}\label{go_quickstart_go_quickstart_nextsteps}
+Now that you have done some simple work with mlpack, you have seen how it can easily plug into a data science workflow in Go. A great thing to do next would be to look at more documentation for the Go mlpack bindings\+:
+
+
+\begin{DoxyItemize}
+\item {\texttt{ Go mlpack binding documentation}}
+\end{DoxyItemize}
+
+Also, mlpack is much more flexible from C++ and allows much greater functionality. So, more complicated tasks are possible if you are willing to write C++. To get started learning about mlpack in C++, the following resources might be helpful\+:
+
+
+\begin{DoxyItemize}
+\item {\texttt{ mlpack C++ tutorials}}
+\item {\texttt{ mlpack build and installation guide}}
+\item {\texttt{ Simple sample C++ mlpack programs}}
+\item {\texttt{ mlpack Doxygen documentation homepage}} 
+\end{DoxyItemize}

@@ -1,0 +1,387 @@
+\doxysection{Softmax\+Regression\+Function Class Reference}
+\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction}\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Softmax\+Regression\+Function} (const arma\+::mat \&data, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, const size\+\_\+t num\+Classes, const double lambda=0.\+0001, const bool fit\+Intercept=false)
+\begin{DoxyCompactList}\small\item\em Construct the Softmax Regression objective function with the given parameters. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const arma\+::mat \&parameters) const
+\begin{DoxyCompactList}\small\item\em Evaluates the objective function of the softmax regression model using the given parameters. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const arma\+::mat \&parameters, const size\+\_\+t start, const size\+\_\+t batch\+Size=1) const
+\begin{DoxyCompactList}\small\item\em Evaluate the objective function of the softmax regression model for a subset of the data points using the given parameters. \end{DoxyCompactList}\item 
+bool \textbf{ Fit\+Intercept} () const
+\begin{DoxyCompactList}\small\item\em Gets the intercept flag. \end{DoxyCompactList}\item 
+void \textbf{ Get\+Ground\+Truth\+Matrix} (const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, arma\+::sp\+\_\+mat \&ground\+Truth)
+\begin{DoxyCompactList}\small\item\em Constructs the ground truth label matrix with the passed labels. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Get\+Initial\+Point} () const
+\begin{DoxyCompactList}\small\item\em Return the initial point for the optimization. \end{DoxyCompactList}\item 
+void \textbf{ Get\+Probabilities\+Matrix} (const arma\+::mat \&parameters, arma\+::mat \&probabilities, const size\+\_\+t start, const size\+\_\+t batch\+Size) const
+\begin{DoxyCompactList}\small\item\em Evaluate the probabilities matrix with the passed parameters. \end{DoxyCompactList}\item 
+void \textbf{ Gradient} (const arma\+::mat \&parameters, arma\+::mat \&gradient) const
+\begin{DoxyCompactList}\small\item\em Evaluates the gradient values of the objective function given the current set of parameters. \end{DoxyCompactList}\item 
+void \textbf{ Gradient} (const arma\+::mat \&parameters, const size\+\_\+t start, arma\+::mat \&gradient, const size\+\_\+t batch\+Size=1) const
+\begin{DoxyCompactList}\small\item\em Evaluate the gradient of the objective function given the current set of parameters, on a subset of the data. \end{DoxyCompactList}\item 
+const arma\+::mat \textbf{ Initialize\+Weights} ()
+\begin{DoxyCompactList}\small\item\em Initializes the parameters of the model to suitable values. \end{DoxyCompactList}\item 
+double \& \textbf{ Lambda} ()
+\begin{DoxyCompactList}\small\item\em Sets the regularization parameter. \end{DoxyCompactList}\item 
+double \textbf{ Lambda} () const
+\begin{DoxyCompactList}\small\item\em Gets the regularization parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Classes} () const
+\begin{DoxyCompactList}\small\item\em Gets the number of classes. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Features} () const
+\begin{DoxyCompactList}\small\item\em Gets the features size of the training data. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Functions} () const
+\begin{DoxyCompactList}\small\item\em Return the number of separable functions (the number of predictor points). \end{DoxyCompactList}\item 
+void \textbf{ Partial\+Gradient} (const arma\+::mat \&parameters, size\+\_\+t j, arma\+::sp\+\_\+mat \&gradient) const
+\begin{DoxyCompactList}\small\item\em Evaluates the gradient values of the objective function given the current set of parameters for a single feature indexed by j. \end{DoxyCompactList}\item 
+void \textbf{ Shuffle} ()
+\begin{DoxyCompactList}\small\item\em Shuffle the dataset. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \textbf{ Initialize\+Weights} (arma\+::mat \&weights, const size\+\_\+t feature\+Size, const size\+\_\+t num\+Classes, const bool fit\+Intercept=false)
+\begin{DoxyCompactList}\small\item\em Initialize Softmax Regression weights (trainable parameters) with the given parameters. \end{DoxyCompactList}\item 
+static const arma\+::mat \textbf{ Initialize\+Weights} (const size\+\_\+t feature\+Size, const size\+\_\+t num\+Classes, const bool fit\+Intercept=false)
+\begin{DoxyCompactList}\small\item\em Initialize Softmax Regression weights (trainable parameters) with the given parameters. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 21 of file softmax\+\_\+regression\+\_\+function.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_ad91be7fff0c78244b24191b92fe5fcfd}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{SoftmaxRegressionFunction()}
+{\footnotesize\ttfamily \textbf{ Softmax\+Regression\+Function} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const double}]{lambda = {\ttfamily 0.0001},  }\item[{const bool}]{fit\+Intercept = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Construct the Softmax Regression objective function with the given parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Input training data, each column associate with one sample \\
+\hline
+{\em labels} & Labels associated with the feature data. \\
+\hline
+{\em num\+Classes} & Number of classes for classification. \\
+\hline
+{\em lambda} & L2-\/regularization constant. \\
+\hline
+{\em fit\+Intercept} & Intercept term flag. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_a6c7f979b684b70aab5bec8b09b5eb1a4}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the objective function of the softmax regression model using the given parameters. 
+
+The cost function has terms for the log likelihood error and the regularization cost. The objective function takes a low value when the model generalizes well for the given training data, while having small parameter values.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Current values of the model parameters. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_a12589583139057b24a415995079f6ffe}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{start,  }\item[{const size\+\_\+t}]{batch\+Size = {\ttfamily 1} }\end{DoxyParamCaption}) const}
+
+
+
+Evaluate the objective function of the softmax regression model for a subset of the data points using the given parameters. 
+
+The cost function has terms for the log likelihood error and the regularization cost. The objective function takes a low value when the model generalizes well for the given training data, while having small parameter values.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Current values of the model parameters. \\
+\hline
+{\em start} & First index of the data points to use. \\
+\hline
+{\em batch\+Size} & Number of data points to evaluate objective for. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_a2878e0828ecdc1d486b0f43a81f95059}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!FitIntercept@{FitIntercept}}
+\index{FitIntercept@{FitIntercept}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{FitIntercept()}
+{\footnotesize\ttfamily bool Fit\+Intercept (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the intercept flag. 
+
+
+
+Definition at line 188 of file softmax\+\_\+regression\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_afb090fbee5f880dd69edde4cdd0797cd}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!GetGroundTruthMatrix@{GetGroundTruthMatrix}}
+\index{GetGroundTruthMatrix@{GetGroundTruthMatrix}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{GetGroundTruthMatrix()}
+{\footnotesize\ttfamily void Get\+Ground\+Truth\+Matrix (\begin{DoxyParamCaption}\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{arma\+::sp\+\_\+mat \&}]{ground\+Truth }\end{DoxyParamCaption})}
+
+
+
+Constructs the ground truth label matrix with the passed labels. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em labels} & Labels associated with the training data. \\
+\hline
+{\em ground\+Truth} & Pointer to arma\+::mat which stores the computed matrix. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_ac3e9aa612cb56d0d93f3259f4a8122bb}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!GetInitialPoint@{GetInitialPoint}}
+\index{GetInitialPoint@{GetInitialPoint}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{GetInitialPoint()}
+{\footnotesize\ttfamily const arma\+::mat\& Get\+Initial\+Point (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the initial point for the optimization. 
+
+
+
+Definition at line 167 of file softmax\+\_\+regression\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_ab7a1e4a3f61c8476cb508491173e97ea}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!GetProbabilitiesMatrix@{GetProbabilitiesMatrix}}
+\index{GetProbabilitiesMatrix@{GetProbabilitiesMatrix}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{GetProbabilitiesMatrix()}
+{\footnotesize\ttfamily void Get\+Probabilities\+Matrix (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{arma\+::mat \&}]{probabilities,  }\item[{const size\+\_\+t}]{start,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption}) const}
+
+
+
+Evaluate the probabilities matrix with the passed parameters. 
+
+probabilities(i, j) = $ exp(\theta_i * data_j) / sum_k(exp(\theta_k * data_j)) $. It represents the probability of data\+\_\+j belongs to class i.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Current values of the model parameters. \\
+\hline
+{\em probabilities} & Pointer to arma\+::mat which stores the probabilities. \\
+\hline
+{\em start} & Index of point to start at. \\
+\hline
+{\em batch\+Size} & Number of points to calculate probabilities for. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_ab9a604f48072ce6c08443519ff787a73}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{arma\+::mat \&}]{gradient }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the gradient values of the objective function given the current set of parameters. 
+
+The function calculates the probabilities for each class given the parameters, and computes the gradients based on the difference from the ground truth.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Current values of the model parameters. \\
+\hline
+{\em gradient} & Matrix where gradient values will be stored. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_af4a328e12f2604b1409241764b214cda}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{start,  }\item[{arma\+::mat \&}]{gradient,  }\item[{const size\+\_\+t}]{batch\+Size = {\ttfamily 1} }\end{DoxyParamCaption}) const}
+
+
+
+Evaluate the gradient of the objective function given the current set of parameters, on a subset of the data. 
+
+The function calculates the probabilities for each class given the parameters, and computes the gradients based on the difference from the ground truth.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Current values of the model parameters. \\
+\hline
+{\em start} & First index of the data points to use. \\
+\hline
+{\em gradient} & Matrix to store gradient into. \\
+\hline
+{\em batch\+Size} & Number of data points to evaluate gradient for. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_a97fbb8f95277b263fbb07eda614633ea}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!InitializeWeights@{InitializeWeights}}
+\index{InitializeWeights@{InitializeWeights}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{InitializeWeights()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily const arma\+::mat Initialize\+Weights (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Initializes the parameters of the model to suitable values. 
+
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_af39490b2ae62f54b6a4c25a3d92ab0ce}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!InitializeWeights@{InitializeWeights}}
+\index{InitializeWeights@{InitializeWeights}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{InitializeWeights()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily static void Initialize\+Weights (\begin{DoxyParamCaption}\item[{arma\+::mat \&}]{weights,  }\item[{const size\+\_\+t}]{feature\+Size,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const bool}]{fit\+Intercept = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Initialize Softmax Regression weights (trainable parameters) with the given parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em weights} & This will be filled with the initialized model weights. \\
+\hline
+{\em feature\+Size} & The number of features in the training set. \\
+\hline
+{\em num\+Classes} & Number of classes for classification. \\
+\hline
+{\em fit\+Intercept} & Intercept term flag. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_a517f514d8c586f660510a1d78c3a8ac6}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!InitializeWeights@{InitializeWeights}}
+\index{InitializeWeights@{InitializeWeights}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{InitializeWeights()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily static const arma\+::mat Initialize\+Weights (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{feature\+Size,  }\item[{const size\+\_\+t}]{num\+Classes,  }\item[{const bool}]{fit\+Intercept = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Initialize Softmax Regression weights (trainable parameters) with the given parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em feature\+Size} & The number of features in the training set. \\
+\hline
+{\em num\+Classes} & Number of classes for classification. \\
+\hline
+{\em fit\+Intercept} & If true, an intercept is fitted. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Initialized model weights. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_aaf66629b989a326453647f42443c6a0c}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{Lambda()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Lambda (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the regularization parameter. 
+
+
+
+Definition at line 183 of file softmax\+\_\+regression\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_a53535041275cedd0ec3de67ca032aa94}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{Lambda()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Lambda (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the regularization parameter. 
+
+
+
+Definition at line 185 of file softmax\+\_\+regression\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_a088ebfdf3c7a9e7eea81716d0c55b5a3}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!NumClasses@{NumClasses}}
+\index{NumClasses@{NumClasses}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{NumClasses()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Classes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the number of classes. 
+
+
+
+Definition at line 170 of file softmax\+\_\+regression\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_a351704783f122196cf5dc7fb408b8522}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!NumFeatures@{NumFeatures}}
+\index{NumFeatures@{NumFeatures}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{NumFeatures()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Features (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the features size of the training data. 
+
+
+
+Definition at line 173 of file softmax\+\_\+regression\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_a1fa76af34a6e3ea927b307f0c318ee4b}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!NumFunctions@{NumFunctions}}
+\index{NumFunctions@{NumFunctions}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{NumFunctions()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Functions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of separable functions (the number of predictor points). 
+
+
+
+Definition at line 180 of file softmax\+\_\+regression\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_a063626210e7484e95655702487e3feed}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!PartialGradient@{PartialGradient}}
+\index{PartialGradient@{PartialGradient}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{PartialGradient()}
+{\footnotesize\ttfamily void Partial\+Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{size\+\_\+t}]{j,  }\item[{arma\+::sp\+\_\+mat \&}]{gradient }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the gradient values of the objective function given the current set of parameters for a single feature indexed by j. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Current values of the model parameters. \\
+\hline
+{\em j} & The index of the feature with respect to which the partial gradient is to be computed. \\
+\hline
+{\em gradient} & Out param for the gradient value. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1regression_1_1SoftmaxRegressionFunction_a2697cc8b37d7bca7c055228382a9b208}} 
+\index{SoftmaxRegressionFunction@{SoftmaxRegressionFunction}!Shuffle@{Shuffle}}
+\index{Shuffle@{Shuffle}!SoftmaxRegressionFunction@{SoftmaxRegressionFunction}}
+\doxysubsubsection{Shuffle()}
+{\footnotesize\ttfamily void Shuffle (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Shuffle the dataset. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/softmax\+\_\+regression/\textbf{ softmax\+\_\+regression\+\_\+function.\+hpp}\end{DoxyCompactItemize}

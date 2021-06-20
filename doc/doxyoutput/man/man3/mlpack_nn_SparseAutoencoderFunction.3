@@ -1,0 +1,222 @@
+.TH "SparseAutoencoderFunction" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SparseAutoencoderFunction \- This is a class for the sparse autoencoder objective function\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSparseAutoencoderFunction\fP (const arma::mat &data, const size_t visibleSize, const size_t hiddenSize, const double lambda=0\&.0001, const double beta=3, const double rho=0\&.01)"
+.br
+.RI "Construct the sparse autoencoder objective function with the given parameters\&. "
+.ti -1c
+.RI "double \fBBeta\fP () const"
+.br
+.RI "Gets the KL divergence parameter\&. "
+.ti -1c
+.RI "void \fBBeta\fP (const double b)"
+.br
+.RI "Sets the KL divergence parameter\&. "
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &parameters) const"
+.br
+.RI "Evaluates the objective function of the sparse autoencoder model using the given parameters\&. "
+.ti -1c
+.RI "const arma::mat & \fBGetInitialPoint\fP () const"
+.br
+.RI "Return the initial point for the optimization\&. "
+.ti -1c
+.RI "void \fBGradient\fP (const arma::mat &parameters, arma::mat &gradient) const"
+.br
+.RI "Evaluates the gradient values of the objective function given the current set of parameters\&. "
+.ti -1c
+.RI "size_t \fBHiddenSize\fP () const"
+.br
+.RI "Gets the size of the hidden layer\&. "
+.ti -1c
+.RI "void \fBHiddenSize\fP (const size_t hidden)"
+.br
+.RI "Sets size of the hidden layer\&. "
+.ti -1c
+.RI "const arma::mat \fBInitializeWeights\fP ()"
+.br
+.RI "Initializes the parameters of the model to suitable values\&. "
+.ti -1c
+.RI "double \fBLambda\fP () const"
+.br
+.RI "Gets the L2-regularization parameter\&. "
+.ti -1c
+.RI "void \fBLambda\fP (const double l)"
+.br
+.RI "Sets the L2-regularization parameter\&. "
+.ti -1c
+.RI "double \fBRho\fP () const"
+.br
+.RI "Gets the sparsity parameter\&. "
+.ti -1c
+.RI "void \fBRho\fP (const double r)"
+.br
+.RI "Sets the sparsity parameter\&. "
+.ti -1c
+.RI "void \fBSigmoid\fP (const arma::mat &x, arma::mat &output) const"
+.br
+.RI "Returns the elementwise sigmoid of the passed matrix, where the sigmoid function of a real number 'x' is [1 / (1 + exp(-x))]\&. "
+.ti -1c
+.RI "size_t \fBVisibleSize\fP () const"
+.br
+.RI "Gets size of the visible layer\&. "
+.ti -1c
+.RI "void \fBVisibleSize\fP (const size_t visible)"
+.br
+.RI "Sets size of the visible layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This is a class for the sparse autoencoder objective function\&. 
+
+It can be used to create learning models like self-taught learning, stacked autoencoders, conditional random fields (CRFs), and so forth\&. 
+.PP
+Definition at line 26 of file sparse_autoencoder_function\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSparseAutoencoderFunction\fP (const arma::mat & data, const size_t visibleSize, const size_t hiddenSize, const double lambda = \fC0\&.0001\fP, const double beta = \fC3\fP, const double rho = \fC0\&.01\fP)"
+
+.PP
+Construct the sparse autoencoder objective function with the given parameters\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP The data matrix\&. 
+.br
+\fIvisibleSize\fP Size of input vector expected at the visible layer\&. 
+.br
+\fIhiddenSize\fP Size of input vector expected at the hidden layer\&. 
+.br
+\fIlambda\fP L2-regularization parameter\&. 
+.br
+\fIbeta\fP KL divergence parameter\&. 
+.br
+\fIrho\fP Sparsity parameter\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double Beta () const\fC [inline]\fP"
+
+.PP
+Gets the KL divergence parameter\&. 
+.PP
+Definition at line 131 of file sparse_autoencoder_function\&.hpp\&.
+.SS "void Beta (const double b)\fC [inline]\fP"
+
+.PP
+Sets the KL divergence parameter\&. 
+.PP
+Definition at line 125 of file sparse_autoencoder_function\&.hpp\&.
+.SS "double Evaluate (const arma::mat & parameters) const"
+
+.PP
+Evaluates the objective function of the sparse autoencoder model using the given parameters\&. The cost function has terms for the reconstruction error, regularization cost and the sparsity cost\&. The objective function takes a low value when the model is able to reconstruct the data well using weights which are low in value and when the average activations of neurons in the hidden layers agrees well with the sparsity parameter 'rho'\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIparameters\fP Current values of the model parameters\&. 
+.RE
+.PP
+
+.SS "const arma::mat& GetInitialPoint () const\fC [inline]\fP"
+
+.PP
+Return the initial point for the optimization\&. 
+.PP
+Definition at line 86 of file sparse_autoencoder_function\&.hpp\&.
+.SS "void Gradient (const arma::mat & parameters, arma::mat & gradient) const"
+
+.PP
+Evaluates the gradient values of the objective function given the current set of parameters\&. The function performs a feedforward pass and computes the error in reconstructing the data points\&. It then uses the backpropagation algorithm to compute the gradient values\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIparameters\fP Current values of the model parameters\&. 
+.br
+\fIgradient\fP Matrix where gradient values will be stored\&. 
+.RE
+.PP
+
+.SS "size_t HiddenSize () const\fC [inline]\fP"
+
+.PP
+Gets the size of the hidden layer\&. 
+.PP
+Definition at line 107 of file sparse_autoencoder_function\&.hpp\&.
+.SS "void HiddenSize (const size_t hidden)\fC [inline]\fP"
+
+.PP
+Sets size of the hidden layer\&. 
+.PP
+Definition at line 101 of file sparse_autoencoder_function\&.hpp\&.
+.SS "const arma::mat InitializeWeights ()"
+
+.PP
+Initializes the parameters of the model to suitable values\&. 
+.SS "double Lambda () const\fC [inline]\fP"
+
+.PP
+Gets the L2-regularization parameter\&. 
+.PP
+Definition at line 119 of file sparse_autoencoder_function\&.hpp\&.
+.SS "void Lambda (const double l)\fC [inline]\fP"
+
+.PP
+Sets the L2-regularization parameter\&. 
+.PP
+Definition at line 113 of file sparse_autoencoder_function\&.hpp\&.
+.SS "double Rho () const\fC [inline]\fP"
+
+.PP
+Gets the sparsity parameter\&. 
+.PP
+Definition at line 143 of file sparse_autoencoder_function\&.hpp\&.
+.SS "void Rho (const double r)\fC [inline]\fP"
+
+.PP
+Sets the sparsity parameter\&. 
+.PP
+Definition at line 137 of file sparse_autoencoder_function\&.hpp\&.
+.SS "void Sigmoid (const arma::mat & x, arma::mat & output) const\fC [inline]\fP"
+
+.PP
+Returns the elementwise sigmoid of the passed matrix, where the sigmoid function of a real number 'x' is [1 / (1 + exp(-x))]\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Matrix of real values for which we require the sigmoid activation\&. 
+.br
+\fIoutput\fP Output matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 80 of file sparse_autoencoder_function\&.hpp\&.
+.SS "size_t VisibleSize () const\fC [inline]\fP"
+
+.PP
+Gets size of the visible layer\&. 
+.PP
+Definition at line 95 of file sparse_autoencoder_function\&.hpp\&.
+.SS "void VisibleSize (const size_t visible)\fC [inline]\fP"
+
+.PP
+Sets size of the visible layer\&. 
+.PP
+Definition at line 89 of file sparse_autoencoder_function\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

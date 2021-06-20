@@ -1,0 +1,51 @@
+\doxysection{RTree\+Split Class Reference}
+\label{classmlpack_1_1tree_1_1RTreeSplit}\index{RTreeSplit@{RTreeSplit}}
+
+
+A Rectangle Tree has new points inserted at the bottom.  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void \textbf{ Split\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a leaf node using the \char`\"{}default\char`\"{} algorithm. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static bool \textbf{ Split\+Non\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A Rectangle Tree has new points inserted at the bottom. 
+
+When these nodes overflow, we split them, moving up the tree and splitting nodes as necessary. 
+
+Definition at line 26 of file r\+\_\+tree\+\_\+split.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1RTreeSplit_af73652d9536a1715364bbb0e4a9ba04e}} 
+\index{RTreeSplit@{RTreeSplit}!SplitLeafNode@{SplitLeafNode}}
+\index{SplitLeafNode@{SplitLeafNode}!RTreeSplit@{RTreeSplit}}
+\doxysubsubsection{SplitLeafNode()}
+{\footnotesize\ttfamily static void Split\+Leaf\+Node (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{tree,  }\item[{std\+::vector$<$ bool $>$ \&}]{relevels }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Split a leaf node using the \char`\"{}default\char`\"{} algorithm. 
+
+If necessary, this split will propagate upwards through the tree. \mbox{\label{classmlpack_1_1tree_1_1RTreeSplit_a73ff1eaa94449d763847fff1f537922f}} 
+\index{RTreeSplit@{RTreeSplit}!SplitNonLeafNode@{SplitNonLeafNode}}
+\index{SplitNonLeafNode@{SplitNonLeafNode}!RTreeSplit@{RTreeSplit}}
+\doxysubsubsection{SplitNonLeafNode()}
+{\footnotesize\ttfamily static bool Split\+Non\+Leaf\+Node (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{tree,  }\item[{std\+::vector$<$ bool $>$ \&}]{relevels }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. 
+
+If this is a root node, the tree increases in depth. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/rectangle\+\_\+tree/\textbf{ r\+\_\+tree\+\_\+split.\+hpp}\end{DoxyCompactItemize}

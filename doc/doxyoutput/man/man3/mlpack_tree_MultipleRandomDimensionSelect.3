@@ -1,0 +1,97 @@
+.TH "MultipleRandomDimensionSelect" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MultipleRandomDimensionSelect \- This dimension selection policy allows the selection from a few random dimensions\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMultipleRandomDimensionSelect\fP (const size_t numDimensions=0)"
+.br
+.RI "Instantiate the \fBMultipleRandomDimensionSelect\fP object\&. "
+.ti -1c
+.RI "size_t \fBBegin\fP ()"
+.br
+.RI "Get the first random value\&. "
+.ti -1c
+.RI "size_t & \fBDimensions\fP ()"
+.br
+.RI "Set the number of dimensions\&. "
+.ti -1c
+.RI "size_t \fBDimensions\fP () const"
+.br
+.RI "Get the number of dimensions\&. "
+.ti -1c
+.RI "size_t \fBEnd\fP () const"
+.br
+.RI "Get the last random value\&. "
+.ti -1c
+.RI "size_t \fBNext\fP ()"
+.br
+.RI "Get the next index\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This dimension selection policy allows the selection from a few random dimensions\&. 
+
+The number of random dimensions to use is specified in the constructor\&. 
+.PP
+Definition at line 23 of file multiple_random_dimension_select\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBMultipleRandomDimensionSelect\fP (const size_t numDimensions = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Instantiate the \fBMultipleRandomDimensionSelect\fP object\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fInumDimensions\fP Number of random dimensions to try for each split\&. 
+.RE
+.PP
+
+.PP
+Definition at line 31 of file multiple_random_dimension_select\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t Begin ()\fC [inline]\fP"
+
+.PP
+Get the first random value\&. 
+.PP
+Definition at line 40 of file multiple_random_dimension_select\&.hpp\&.
+.PP
+References mlpack::math::RandInt()\&.
+.SS "size_t& Dimensions ()\fC [inline]\fP"
+
+.PP
+Set the number of dimensions\&. 
+.PP
+Definition at line 95 of file multiple_random_dimension_select\&.hpp\&.
+.SS "size_t Dimensions () const\fC [inline]\fP"
+
+.PP
+Get the number of dimensions\&. 
+.PP
+Definition at line 93 of file multiple_random_dimension_select\&.hpp\&.
+.SS "size_t End () const\fC [inline]\fP"
+
+.PP
+Get the last random value\&. 
+.PP
+Definition at line 82 of file multiple_random_dimension_select\&.hpp\&.
+.SS "size_t Next ()\fC [inline]\fP"
+
+.PP
+Get the next index\&. 
+.PP
+Definition at line 87 of file multiple_random_dimension_select\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

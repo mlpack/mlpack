@@ -1,0 +1,54 @@
+\doxysection{Is\+Vector$<$ Vec\+Type $>$ Struct Template Reference}
+\label{structIsVector}\index{IsVector$<$ VecType $>$@{IsVector$<$ VecType $>$}}
+
+
+If value == true, then Vec\+Type is some sort of Armadillo vector or subview.  
+
+
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool \textbf{ value} = false
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Vec\+Type$>$\newline
+struct Is\+Vector$<$ Vec\+Type $>$}
+
+If value == true, then Vec\+Type is some sort of Armadillo vector or subview. 
+
+You might use this struct like this\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Only accepts VecTypes that are actually Armadillo vector types.}}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{typename} VecType>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} Function(\textcolor{keyword}{const} VecType\& argumentA,}
+\DoxyCodeLine{              \textcolor{keyword}{typename} std::enable\_if\_t<IsVector<VecType>::value>* = 0);}
+
+\end{DoxyCode}
+
+
+The use of the enable\+\_\+if\+\_\+t object allows the compiler to instantiate Function() only if Vec\+Type is one of the Armadillo vector types. It has a default argument because it isn\textquotesingle{}t meant to be used in either the function call or the function body. 
+
+Definition at line 35 of file arma\+\_\+traits.\+hpp.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{structIsVector_a11ddd051208250c32dc4985abcafa86d}} 
+\index{IsVector$<$ VecType $>$@{IsVector$<$ VecType $>$}!value@{value}}
+\index{value@{value}!IsVector$<$ VecType $>$@{IsVector$<$ VecType $>$}}
+\doxysubsubsection{value}
+{\footnotesize\ttfamily const bool value = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 37 of file arma\+\_\+traits.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/util/\textbf{ arma\+\_\+traits.\+hpp}\end{DoxyCompactItemize}

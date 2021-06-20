@@ -1,0 +1,48 @@
+\doxysection{Py\+Option$<$ T $>$ Class Template Reference}
+\label{classmlpack_1_1bindings_1_1python_1_1PyOption}\index{PyOption$<$ T $>$@{PyOption$<$ T $>$}}
+
+
+The Python option class.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Py\+Option} (const T default\+Value, const std\+::string \&identifier, const std\+::string \&description, const std\+::string \&alias, const std\+::string \&cpp\+Name, const bool required=false, const bool input=true, const bool no\+Transpose=false, const std\+::string \&=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Construct a \doxyref{Py\+Option}{p.}{classmlpack_1_1bindings_1_1python_1_1PyOption} object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class mlpack\+::bindings\+::python\+::\+Py\+Option$<$ T $>$}
+
+The Python option class. 
+
+Definition at line 37 of file py\+\_\+option.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1bindings_1_1python_1_1PyOption_a046281af7e5fcabb167599ddf9f77355}} 
+\index{PyOption$<$ T $>$@{PyOption$<$ T $>$}!PyOption@{PyOption}}
+\index{PyOption@{PyOption}!PyOption$<$ T $>$@{PyOption$<$ T $>$}}
+\doxysubsubsection{PyOption()}
+{\footnotesize\ttfamily \textbf{ Py\+Option} (\begin{DoxyParamCaption}\item[{const T}]{default\+Value,  }\item[{const std\+::string \&}]{identifier,  }\item[{const std\+::string \&}]{description,  }\item[{const std\+::string \&}]{alias,  }\item[{const std\+::string \&}]{cpp\+Name,  }\item[{const bool}]{required = {\ttfamily false},  }\item[{const bool}]{input = {\ttfamily true},  }\item[{const bool}]{no\+Transpose = {\ttfamily false},  }\item[{const std\+::string \&}]{ = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a \doxyref{Py\+Option}{p.}{classmlpack_1_1bindings_1_1python_1_1PyOption} object. 
+
+When constructed, it will register itself with \doxyref{IO}{p.}{classmlpack_1_1IO}. The test\+Name parameter is not used and added for compatibility reasons. 
+
+Definition at line 45 of file py\+\_\+option.\+hpp.
+
+
+
+References IO\+::\+Add(), Param\+Data\+::alias, IO\+::\+Clear\+Settings(), Param\+Data\+::cpp\+Type, Param\+Data\+::desc, IO\+::function\+Map, IO\+::\+Get\+Singleton(), Param\+Data\+::input, Param\+Data\+::loaded, Param\+Data\+::name, Param\+Data\+::no\+Transpose, Param\+Data\+::persistent, mlpack\+::bindings\+::python\+::program\+Name, Param\+Data\+::required, IO\+::\+Restore\+Settings(), IO\+::\+Store\+Settings(), Param\+Data\+::tname, TYPENAME, Param\+Data\+::value, and Param\+Data\+::was\+Passed.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/bindings/python/\textbf{ py\+\_\+option.\+hpp}\end{DoxyCompactItemize}

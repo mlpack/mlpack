@@ -1,0 +1,272 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="no__auxiliary__information_8hpp" kind="file" language="C++">
+    <compoundname>no_auxiliary_information.hpp</compoundname>
+    <includedby refid="rectangle__tree_2rectangle__tree_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp</includedby>
+    <includedby refid="rectangle__tree_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree.hpp</includedby>
+    <invincdepgraph>
+      <node id="20">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn_function.hpp</label>
+        <link refid="lmnn__function_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp</label>
+        <link refid="methods_2neighbor__search_2typedef_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/typedef.hpp</label>
+        <link refid="core_2tree_2rectangle__tree_2typedef_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="27">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp</label>
+        <link refid="rectangle__tree_2single__tree__traverser_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
+        <link refid="regularized__svd__method_8hpp"/>
+      </node>
+      <node id="9">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
+        <link refid="bias__svd__method_8hpp"/>
+      </node>
+      <node id="7">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/no_auxiliary_information.hpp</label>
+        <link refid="no__auxiliary__information_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp</label>
+        <link refid="rectangle__tree_2rectangle__tree_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp</label>
+        <link refid="cosine__search_8hpp"/>
+      </node>
+      <node id="25">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="18">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp</label>
+        <link refid="dual__tree__kmeans_8hpp"/>
+      </node>
+      <node id="13">
+        <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
+        <link refid="svdplusplus_8hpp"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/dual_tree_traverser.hpp</label>
+        <link refid="rectangle__tree_2dual__tree__traverser_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp</label>
+        <link refid="ns__model_8hpp"/>
+      </node>
+      <node id="19">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/constraints.hpp</label>
+        <link refid="constraints_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp</label>
+        <link refid="lmetric__search_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn.hpp</label>
+        <link refid="lmnn_8hpp"/>
+      </node>
+      <node id="8">
+        <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
+        <link refid="bias__svd_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp</label>
+        <link refid="ra__model_8hpp"/>
+      </node>
+      <node id="5">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="14">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
+        <link refid="svdplusplus__method_8hpp"/>
+      </node>
+      <node id="11">
+        <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
+        <link refid="regularized__svd_8hpp"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp</label>
+        <link refid="neighbor__search_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp</label>
+        <link refid="rs__model_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp</label>
+        <link refid="pearson__search_8hpp"/>
+      </node>
+      <node id="4">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree.hpp</label>
+        <link refid="rectangle__tree_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation" prot="public">mlpack::tree::NoAuxiliaryInformation</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Mikhail Lozhnikov</para>
+</simplesect>
+Definition of the NoAuxiliaryInformation class, a class that provides no additional information about the nodes.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="20" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation" kindref="compound">NoAuxiliaryInformation</ref></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="24" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a41bbcaf6c630c32c837415189b56d729" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a41bbcaf6c630c32c837415189b56d729" kindref="member">NoAuxiliaryInformation</ref>()<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="26" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a4b4ff1c5ac7199e4f3860718f711b508" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a4b4ff1c5ac7199e4f3860718f711b508" kindref="member">NoAuxiliaryInformation</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType*<sp/></highlight><highlight class="comment">/*<sp/>node<sp/>*/</highlight><highlight class="normal">)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="28" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a2c921a4942d57e69e5957fa085cb79ae" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a2c921a4942d57e69e5957fa085cb79ae" kindref="member">NoAuxiliaryInformation</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation" kindref="compound">NoAuxiliaryInformation</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>other<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType*<sp/></highlight><highlight class="comment">/*<sp/>tree<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>deepCopy<sp/>*/</highlight><highlight class="normal"><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="32" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1af02670784348a6a76a19d05e5929d20a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1af02670784348a6a76a19d05e5929d20a" kindref="member">NoAuxiliaryInformation</ref>(<ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation" kindref="compound">NoAuxiliaryInformation</ref>&amp;&amp;<sp/></highlight><highlight class="comment">/*<sp/>other<sp/>*/</highlight><highlight class="normal">)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a4d41e9be1cf2d39444c8e26e3fb262b3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation" kindref="compound">NoAuxiliaryInformation</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a4d41e9be1cf2d39444c8e26e3fb262b3" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation" kindref="compound">NoAuxiliaryInformation</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>other<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1af0332e7aa289d540dc2bfb89687d87f1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1af0332e7aa289d540dc2bfb89687d87f1" kindref="member">HandlePointInsertion</ref>(TreeType*<sp/></highlight><highlight class="comment">/*<sp/>node<sp/>*/</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>point<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a351a1390fe22a0466044a786ac810799" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a351a1390fe22a0466044a786ac810799" kindref="member">HandleNodeInsertion</ref>(TreeType*<sp/></highlight><highlight class="comment">/*<sp/>node<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType*<sp/></highlight><highlight class="comment">/*<sp/>nodeToInsert<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>insertionLevel<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a2a0b51ff5e8b14372750e4554a2155c7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a2a0b51ff5e8b14372750e4554a2155c7" kindref="member">HandlePointDeletion</ref>(TreeType*<sp/></highlight><highlight class="comment">/*<sp/>node<sp/>*/</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>localIndex<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a559b369ceed572ded92e741de7ec0ad6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a559b369ceed572ded92e741de7ec0ad6" kindref="member">HandleNodeRemoval</ref>(TreeType*<sp/></highlight><highlight class="comment">/*<sp/>node<sp/>*/</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>nodeIndex<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a2278181aedc87de10e09f467c794ef5e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a2278181aedc87de10e09f467c794ef5e" kindref="member">UpdateAuxiliaryInfo</ref>(TreeType*<sp/></highlight><highlight class="comment">/*<sp/>node<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a93fdc21f9f8e1a1cf97827af31be784e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a93fdc21f9f8e1a1cf97827af31be784e" kindref="member">SplitAuxiliaryInfo</ref>(TreeType*<sp/></highlight><highlight class="comment">/*<sp/>treeOne<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType*<sp/></highlight><highlight class="comment">/*<sp/>treeTwo<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">/*<sp/>axis<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType::ElemType<sp/></highlight><highlight class="comment">/*<sp/>cut<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a8dbe26c4727e347359f1da279659f0cd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1a8dbe26c4727e347359f1da279659f0cd" kindref="member">NullifyData</ref>()</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="144" refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1NoAuxiliaryInformation_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" kindref="member">serialize</ref>(Archive<sp/>&amp;,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">)<sp/>{<sp/>}</highlight></codeline>
+<codeline lineno="145"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_NO_AUXILIARY_INFORMATION_HPP</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/no_auxiliary_information.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,47 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/bindings/cli/get\+\_\+printable\+\_\+param.hpp File Reference}
+\label{cli_2get__printable__param_8hpp}\index{/home/aakash/mlpack/src/mlpack/bindings/cli/get\_printable\_param.hpp@{/home/aakash/mlpack/src/mlpack/bindings/cli/get\_printable\_param.hpp}}
+Include dependency graph for get\+\_\+printable\+\_\+param.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cli_2get__printable__param_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{cli_2get__printable__param_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::bindings}
+\item 
+ \textbf{ mlpack\+::bindings\+::cli}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (util\+::\+Param\+Data \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ util\+::\+Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (util\+::\+Param\+Data \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a model option (this just prints the filename). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (util\+::\+Param\+Data \&data, const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a matrix/tuple option (this just prints the filename). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (util\+::\+Param\+Data \&data, const typename std\+::enable\+\_\+if$<$ util\+::\+Is\+Std\+Vector$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a vector option, with spaces between it. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Get\+Printable\+Param} (util\+::\+Param\+Data \&data, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Print an option into a std\+::string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Print the parameter to stdout, using template metaprogramming to enforce different behavior for different parameter types.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

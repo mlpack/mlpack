@@ -1,0 +1,93 @@
+\doxysection{RPlus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1RPlusTreeSplit}\index{RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$@{RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$}}
+
+
+The \doxyref{RPlus\+Tree\+Split}{p.}{classmlpack_1_1tree_1_1RPlusTreeSplit} class performs the split process of a node on overflow.  
+
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Split\+Policy\+Type \textbf{ Split\+Policy}
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static void \textbf{ Split\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a leaf node using the \char`\"{}default\char`\"{} algorithm. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\static bool \textbf{ Split\+Non\+Leaf\+Node} (Tree\+Type $\ast$tree, std\+::vector$<$ bool $>$ \&relevels)
+\begin{DoxyCompactList}\small\item\em Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Split\+Policy\+Type, template$<$ typename $>$ class Sweep\+Type$>$\newline
+class mlpack\+::tree\+::\+RPlus\+Tree\+Split$<$ Split\+Policy\+Type, Sweep\+Type $>$}
+
+The \doxyref{RPlus\+Tree\+Split}{p.}{classmlpack_1_1tree_1_1RPlusTreeSplit} class performs the split process of a node on overflow. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Split\+Policy\+Type} & The class that helps to determine the subtree into which we should insert a child node. \\
+\hline
+{\em Sweep\+Type} & The class that finds the partition of a node along a given axis. The partition algorithm tries to find a partition along each axis, evaluates each partition and chooses the best one. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 32 of file r\+\_\+plus\+\_\+tree\+\_\+split.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1RPlusTreeSplit_a0b150bc0b3a177f0ca7f3c4ce2d551f9}} 
+\index{RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$@{RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$}!SplitPolicy@{SplitPolicy}}
+\index{SplitPolicy@{SplitPolicy}!RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$@{RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$}}
+\doxysubsubsection{SplitPolicy}
+{\footnotesize\ttfamily typedef Split\+Policy\+Type \textbf{ Split\+Policy}}
+
+
+
+Definition at line 35 of file r\+\_\+plus\+\_\+tree\+\_\+split.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1RPlusTreeSplit_af73652d9536a1715364bbb0e4a9ba04e}} 
+\index{RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$@{RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$}!SplitLeafNode@{SplitLeafNode}}
+\index{SplitLeafNode@{SplitLeafNode}!RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$@{RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$}}
+\doxysubsubsection{SplitLeafNode()}
+{\footnotesize\ttfamily static void Split\+Leaf\+Node (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{tree,  }\item[{std\+::vector$<$ bool $>$ \&}]{relevels }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Split a leaf node using the \char`\"{}default\char`\"{} algorithm. 
+
+If necessary, this split will propagate upwards through the tree. 
+\begin{DoxyParams}{Parameters}
+{\em tree} & The node that is being split. \\
+\hline
+{\em relevels} & Not used. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1RPlusTreeSplit_a73ff1eaa94449d763847fff1f537922f}} 
+\index{RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$@{RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$}!SplitNonLeafNode@{SplitNonLeafNode}}
+\index{SplitNonLeafNode@{SplitNonLeafNode}!RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$@{RPlusTreeSplit$<$ SplitPolicyType, SweepType $>$}}
+\doxysubsubsection{SplitNonLeafNode()}
+{\footnotesize\ttfamily static bool Split\+Non\+Leaf\+Node (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{tree,  }\item[{std\+::vector$<$ bool $>$ \&}]{relevels }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Split a non-\/leaf node using the \char`\"{}default\char`\"{} algorithm. 
+
+If this is a root node, the tree increases in depth. 
+\begin{DoxyParams}{Parameters}
+{\em tree} & The node that is being split. \\
+\hline
+{\em relevels} & Not used. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/rectangle\+\_\+tree/\textbf{ r\+\_\+plus\+\_\+tree\+\_\+split.\+hpp}\end{DoxyCompactItemize}

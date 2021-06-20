@@ -1,0 +1,9 @@
+<map id="HMM&lt; Distribution &gt;" name="HMM&lt; Distribution &gt;">
+<area shape="rect" id="node1" title="A class that represents a Hidden Markov Model with an arbitrary type of emission distribution." alt="" coords="5,145,168,172"/>
+<area shape="rect" id="node2" href="$classmlpack_1_1hmm_1_1HMM.html" title=" " alt="" coords="454,14,655,55"/>
+<area shape="rect" id="node3" href="$classmlpack_1_1hmm_1_1HMM.html" title=" " alt="" coords="462,79,647,121"/>
+<area shape="rect" id="node5" href="$classmlpack_1_1hmm_1_1HMM.html" title=" " alt="" coords="445,145,664,172"/>
+<area shape="rect" id="node6" href="$classmlpack_1_1hmm_1_1HMM.html" title=" " alt="" coords="441,197,668,238"/>
+<area shape="rect" id="node7" href="$classmlpack_1_1hmm_1_1HMM.html" title=" " alt="" coords="454,262,655,303"/>
+<area shape="rect" id="node4" href="$classmlpack_1_1hmm_1_1HMMRegression.html" title="A class that represents a Hidden Markov Model Regression (HMMR)." alt="" coords="717,87,845,113"/>
+</map>

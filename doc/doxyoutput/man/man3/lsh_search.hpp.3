@@ -1,0 +1,77 @@
+.TH "/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/methods/lsh/lsh_search.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBLSHSearch< SortPolicy, MatType >\fP"
+.br
+.RI "The \fBLSHSearch\fP class; this class builds a hash on the reference set and uses this hash to compute the distance-approximate nearest-neighbors of the given queries\&. "
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::neighbor\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Parikshit Ram
+.RE
+.PP
+Defines the LSHSearch class, which performs an approximate nearest neighbor search for a queries in a query set over a given dataset using Locality-sensitive hashing with 2-stable distributions\&.
+.PP
+The details of this method can be found in the following paper:
+.PP
+.PP
+.nf
+@inproceedings{datar2004locality,
+ title={Locality-sensitive hashing scheme based on p-stable distributions},
+ author={Datar, M\&. and Immorlica, N\&. and Indyk, P\&. and Mirrokni, V\&.S\&.},
+ booktitle=
+     {Proceedings of the 12th Annual Symposium on Computational Geometry},
+ pages={253--262},
+ year={2004},
+ organization={ACM}
+}
+.fi
+.PP
+.PP
+Additionally, the class implements Multiprobe LSH, which improves approximation results during the search for approximate nearest neighbors\&. The Multiprobe LSH algorithm was presented in the paper:
+.PP
+.PP
+.nf
+@inproceedings{Lv2007multiprobe,
+ tile={Multi-probe LSH: efficient indexing for high-dimensional similarity
+ search},
+ author={Lv, Qin and Josephson, William and Wang, Zhe and Charikar, Moses and
+ Li, Kai},
+ booktitle={Proceedings of the 33rd international conference on Very large
+ data bases},
+ year={2007},
+ pages={950--961}
+}
+.fi
+.PP
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBlsh_search\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

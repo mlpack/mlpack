@@ -1,0 +1,207 @@
+\doxysection{CRe\+LU$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1CReLU}\index{CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}}
+
+
+A concatenated Re\+LU has two outputs, one Re\+LU and one negative Re\+LU, concatenated together.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ CRe\+LU} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{CRe\+LU}{p.}{classmlpack_1_1ann_1_1CReLU} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Data\+Type $>$ }\\void \textbf{ Backward} (const Data\+Type \&input, const Data\+Type \&gy, Data\+Type \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Type , typename Output\+Type $>$ }\\void \textbf{ Forward} (const Input\+Type \&input, Output\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Weight\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get size of weights. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+CRe\+LU$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+A concatenated Re\+LU has two outputs, one Re\+LU and one negative Re\+LU, concatenated together. 
+
+In other words, for positive x it produces [x, 0], and for negative x it produces [0, x]. Because it has two outputs, \doxyref{CRe\+LU}{p.}{classmlpack_1_1ann_1_1CReLU} doubles the output dimension.
+
+Note\+: The \doxyref{CRe\+LU}{p.}{classmlpack_1_1ann_1_1CReLU} doubles the output size.
+
+For more information, see the following.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@inproceedings\{ICML2016,}
+\DoxyCodeLine{  title  = \{Understanding and Improving Convolutional Neural Networks}
+\DoxyCodeLine{            via Concatenated Rectified Linear Units\},}
+\DoxyCodeLine{  author = \{LWenling Shang, Kihyuk Sohn, Diogo Almeida, Honglak Lee\},}
+\DoxyCodeLine{  year   = \{2016\},}
+\DoxyCodeLine{  url    = \{https:\textcolor{comment}{//arxiv.org/abs/1603.05201\}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 50 of file c\+\_\+relu.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1CReLU_a25aa935d5a2be5066422e9dc6d5e80b8}} 
+\index{CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}!CReLU@{CReLU}}
+\index{CReLU@{CReLU}!CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{CReLU()}
+{\footnotesize\ttfamily \textbf{ CRe\+LU} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{CRe\+LU}{p.}{classmlpack_1_1ann_1_1CReLU} object. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1CReLU_aef8c56f1f8624bd006afec8b3bcda9d6}} 
+\index{CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const Data\+Type \&}]{input,  }\item[{const Data\+Type \&}]{gy,  }\item[{Data\+Type \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1CReLU_ad6601342d560219ce951d554e69e5e87}} 
+\index{CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 89 of file c\+\_\+relu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CReLU_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 87 of file c\+\_\+relu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CReLU_a09440df0a90bdcc766e56e097d91205b}} 
+\index{CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const Input\+Type \&}]{input,  }\item[{Output\+Type \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+Works only for 2D Tensors.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1CReLU_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 84 of file c\+\_\+relu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CReLU_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 82 of file c\+\_\+relu.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1CReLU_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+\mbox{\label{classmlpack_1_1ann_1_1CReLU_a7a2704698a50d9e00dfb083f3a863579}} 
+\index{CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}!WeightSize@{WeightSize}}
+\index{WeightSize@{WeightSize}!CReLU$<$ InputDataType, OutputDataType $>$@{CReLU$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{WeightSize()}
+{\footnotesize\ttfamily size\+\_\+t Weight\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get size of weights. 
+
+
+
+Definition at line 92 of file c\+\_\+relu.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ c\+\_\+relu.\+hpp}\end{DoxyCompactItemize}

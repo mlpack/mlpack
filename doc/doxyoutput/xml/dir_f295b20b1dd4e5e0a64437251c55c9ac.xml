@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_f295b20b1dd4e5e0a64437251c55c9ac" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/decision_tree</compoundname>
+    <innerfile refid="all__categorical__split_8hpp">all_categorical_split.hpp</innerfile>
+    <innerfile refid="all__dimension__select_8hpp">all_dimension_select.hpp</innerfile>
+    <innerfile refid="best__binary__numeric__split_8hpp">best_binary_numeric_split.hpp</innerfile>
+    <innerfile refid="decision__tree_8hpp">decision_tree.hpp</innerfile>
+    <innerfile refid="gini__gain_8hpp">gini_gain.hpp</innerfile>
+    <innerfile refid="decision__tree_2information__gain_8hpp">information_gain.hpp</innerfile>
+    <innerfile refid="multiple__random__dimension__select_8hpp">multiple_random_dimension_select.hpp</innerfile>
+    <innerfile refid="random__binary__numeric__split_8hpp">random_binary_numeric_split.hpp</innerfile>
+    <innerfile refid="random__dimension__select_8hpp">random_dimension_select.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/"/>
+  </compounddef>
+</doxygen>

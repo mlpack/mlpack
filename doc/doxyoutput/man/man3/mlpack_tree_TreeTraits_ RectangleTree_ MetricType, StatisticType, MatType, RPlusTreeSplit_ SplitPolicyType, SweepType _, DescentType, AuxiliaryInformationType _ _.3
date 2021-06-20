@@ -1,0 +1,98 @@
+.TH "TreeTraits< RectangleTree< MetricType, StatisticType, MatType, RPlusTreeSplit< SplitPolicyType, SweepType >, DescentType, AuxiliaryInformationType > >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+TreeTraits< RectangleTree< MetricType, StatisticType, MatType, RPlusTreeSplit< SplitPolicyType, SweepType >, DescentType, AuxiliaryInformationType > > \- Since the R+/R++ tree can not have overlapping children, we should define traits for the R+/R++ tree\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBBinaryTree\fP = false"
+.br
+.RI "This tree is not necessarily a binary tree\&. "
+.ti -1c
+.RI "static const bool \fBFirstPointIsCentroid\fP = false"
+.br
+.RI "There is no guarantee that the first point in a node is its centroid\&. "
+.ti -1c
+.RI "static const bool \fBHasDuplicatedPoints\fP = false"
+.br
+.RI "An R-tree node doesn't share points with another node\&. "
+.ti -1c
+.RI "static const bool \fBHasOverlappingChildren\fP = false"
+.br
+.RI "The R+/R++ tree can't have overlapping children\&. "
+.ti -1c
+.RI "static const bool \fBHasSelfChildren\fP = false"
+.br
+.RI "Points are not contained at multiple levels of the R-tree\&. "
+.ti -1c
+.RI "static const bool \fBRearrangesDataset\fP = false"
+.br
+.RI "Points are rearranged during building of the tree\&. "
+.ti -1c
+.RI "static const bool \fBUniqueNumDescendants\fP = true"
+.br
+.RI "Rectangle trees don't have duplicated points, so NumDescendants() represents the number of unique descendant points\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename StatisticType, typename MatType, typename SplitPolicyType, template< typename > class SweepType, typename DescentType, template< typename > class AuxiliaryInformationType>
+.br
+class mlpack::tree::TreeTraits< RectangleTree< MetricType, StatisticType, MatType, RPlusTreeSplit< SplitPolicyType, SweepType >, DescentType, AuxiliaryInformationType > >"
+Since the R+/R++ tree can not have overlapping children, we should define traits for the R+/R++ tree\&. 
+.PP
+Definition at line 86 of file traits\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool BinaryTree = false\fC [static]\fP"
+
+.PP
+This tree is not necessarily a binary tree\&. 
+.PP
+Definition at line 125 of file traits\&.hpp\&.
+.SS "const bool FirstPointIsCentroid = false\fC [static]\fP"
+
+.PP
+There is no guarantee that the first point in a node is its centroid\&. 
+.PP
+Definition at line 108 of file traits\&.hpp\&.
+.SS "const bool HasDuplicatedPoints = false\fC [static]\fP"
+
+.PP
+An R-tree node doesn't share points with another node\&. 
+.PP
+Definition at line 103 of file traits\&.hpp\&.
+.SS "const bool HasOverlappingChildren = false\fC [static]\fP"
+
+.PP
+The R+/R++ tree can't have overlapping children\&. 
+.PP
+Definition at line 98 of file traits\&.hpp\&.
+.SS "const bool HasSelfChildren = false\fC [static]\fP"
+
+.PP
+Points are not contained at multiple levels of the R-tree\&. 
+.PP
+Definition at line 113 of file traits\&.hpp\&.
+.SS "const bool RearrangesDataset = false\fC [static]\fP"
+
+.PP
+Points are rearranged during building of the tree\&. THIS MAY NOT BE TRUE\&. IT'S HARD TO DYNAMICALLY INSERT POINTS AND REARRANGE THE MATRIX 
+.PP
+Definition at line 120 of file traits\&.hpp\&.
+.SS "const bool UniqueNumDescendants = true\fC [static]\fP"
+
+.PP
+Rectangle trees don't have duplicated points, so NumDescendants() represents the number of unique descendant points\&. 
+.PP
+Definition at line 131 of file traits\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

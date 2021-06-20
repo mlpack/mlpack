@@ -1,0 +1,121 @@
+\doxysection{Elish\+Function Class Reference}
+\label{classmlpack_1_1ann_1_1ElishFunction}\index{ElishFunction@{ElishFunction}}
+
+
+The ELi\+SH function, defined by.  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double \textbf{ Deriv} (const double y)
+\begin{DoxyCompactList}\small\item\em Computes the first derivatives of ELi\+SH function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void \textbf{ Deriv} (const Input\+Vec\+Type \&y, Output\+Vec\+Type \&x)
+\begin{DoxyCompactList}\small\item\em Computes the first derivatives of the ELi\+SH function. \end{DoxyCompactList}\item 
+static double \textbf{ Fn} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the ELi\+SH function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void \textbf{ Fn} (const Input\+Vec\+Type \&x, Output\+Vec\+Type \&y)
+\begin{DoxyCompactList}\small\item\em Computes the ELi\+SH function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The ELi\+SH function, defined by. 
+
+\begin{eqnarray*} f(x) &=& \begin{cases} x / (1 + e^{-x}) & x \geq 0\\ (e^{x} - 1) / (1 + e^{-x}) & x < 0.\\ \end{cases} \\ f\textnormal{\textquotesingle}(x) &=& \begin{cases} 1 / (1 + e^{-y}) + y * e^{-y} / (1 + e^{-y})^2 & x \geq 0\\ e^y - 2 / (1 + e^y) + 2 / (1 + e^y)^2 & x < 0.\\ \end{cases} \end{eqnarray*} 
+
+Definition at line 48 of file elish\+\_\+function.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1ElishFunction_a163d34fd09f8edf457164f5033c635cf}} 
+\index{ElishFunction@{ElishFunction}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!ElishFunction@{ElishFunction}}
+\doxysubsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Deriv (\begin{DoxyParamCaption}\item[{const double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivatives of ELi\+SH function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f\textquotesingle{}(x). 
+\end{DoxyReturn}
+
+
+Definition at line 84 of file elish\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ElishFunction_ad442502c34b67303b74c735641dab790}} 
+\index{ElishFunction@{ElishFunction}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!ElishFunction@{ElishFunction}}
+\doxysubsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Deriv (\begin{DoxyParamCaption}\item[{const Input\+Vec\+Type \&}]{y,  }\item[{Output\+Vec\+Type \&}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivatives of the ELi\+SH function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input data. \\
+\hline
+{\em x} & The resulting derivatives. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 103 of file elish\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ElishFunction_a11bd9a1195e6b107f9fee73643bc328b}} 
+\index{ElishFunction@{ElishFunction}!Fn@{Fn}}
+\index{Fn@{Fn}!ElishFunction@{ElishFunction}}
+\doxysubsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Fn (\begin{DoxyParamCaption}\item[{const double}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the ELi\+SH function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f(x). 
+\end{DoxyReturn}
+
+
+Definition at line 57 of file elish\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ElishFunction_af6cf5da90eb6312e3e25c9b8bd9c3527}} 
+\index{ElishFunction@{ElishFunction}!Fn@{Fn}}
+\index{Fn@{Fn}!ElishFunction@{ElishFunction}}
+\doxysubsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Fn (\begin{DoxyParamCaption}\item[{const Input\+Vec\+Type \&}]{x,  }\item[{Output\+Vec\+Type \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the ELi\+SH function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+{\em y} & The resulting output activations. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 72 of file elish\+\_\+function.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/activation\+\_\+functions/\textbf{ elish\+\_\+function.\+hpp}\end{DoxyCompactItemize}

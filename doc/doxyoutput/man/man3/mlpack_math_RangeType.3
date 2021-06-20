@@ -1,0 +1,324 @@
+.TH "RangeType< T >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RangeType< T > \- Simple real-valued range\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRangeType\fP ()"
+.br
+.RI "The upper bound\&. "
+.ti -1c
+.RI "\fBRangeType\fP (const T lo, const T hi)"
+.br
+.RI "Initializes to specified range\&. "
+.ti -1c
+.RI "\fBRangeType\fP (const T point)"
+.br
+.ti -1c
+.RI "bool \fBContains\fP (const \fBRangeType\fP &r) const"
+.br
+.RI "Determines if another range overlaps with this one\&. "
+.ti -1c
+.RI "bool \fBContains\fP (const T d) const"
+.br
+.RI "Determines if a point is contained within the range\&. "
+.ti -1c
+.RI "T & \fBHi\fP ()"
+.br
+.RI "Modify the upper bound\&. "
+.ti -1c
+.RI "T \fBHi\fP () const"
+.br
+.RI "Get the upper bound\&. "
+.ti -1c
+.RI "T & \fBLo\fP ()"
+.br
+.RI "Modify the lower bound\&. "
+.ti -1c
+.RI "T \fBLo\fP () const"
+.br
+.RI "Get the lower bound\&. "
+.ti -1c
+.RI "T \fBMid\fP () const"
+.br
+.RI "Gets the midpoint of this range\&. "
+.ti -1c
+.RI "bool \fBoperator!=\fP (const \fBRangeType\fP &rhs) const"
+.br
+.RI "Compare with another range for strict equality\&. "
+.ti -1c
+.RI "\fBRangeType\fP \fBoperator&\fP (const \fBRangeType\fP &rhs) const"
+.br
+.RI "Shrinks this range to be the overlap with another range; this makes an empty set if there is no overlap\&. "
+.ti -1c
+.RI "\fBRangeType\fP & \fBoperator&=\fP (const \fBRangeType\fP &rhs)"
+.br
+.RI "Shrinks this range to be the overlap with another range; this makes an empty set if there is no overlap\&. "
+.ti -1c
+.RI "\fBRangeType\fP \fBoperator*\fP (const T d) const"
+.br
+.RI "Scale the bounds by the given double\&. "
+.ti -1c
+.RI "\fBRangeType\fP & \fBoperator*=\fP (const T d)"
+.br
+.RI "Scale the bounds by the given double\&. "
+.ti -1c
+.RI "bool \fBoperator<\fP (const \fBRangeType\fP &rhs) const"
+.br
+.RI "Compare with another range\&. "
+.ti -1c
+.RI "bool \fBoperator==\fP (const \fBRangeType\fP &rhs) const"
+.br
+.RI "Compare with another range for strict equality\&. "
+.ti -1c
+.RI "bool \fBoperator>\fP (const \fBRangeType\fP &rhs) const"
+.br
+.RI "Compare with another range\&. "
+.ti -1c
+.RI "\fBRangeType\fP \fBoperator|\fP (const \fBRangeType\fP &rhs) const"
+.br
+.RI "Expands this range to include another range\&. "
+.ti -1c
+.RI "\fBRangeType\fP & \fBoperator|=\fP (const \fBRangeType\fP &rhs)"
+.br
+.RI "Expands this range to include another range\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t version)"
+.br
+.RI "Serialize the range object\&. "
+.ti -1c
+.RI "T \fBWidth\fP () const"
+.br
+.RI "Gets the span of the range (hi - lo)\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T = double>
+.br
+class mlpack::math::RangeType< T >"
+Simple real-valued range\&. 
+
+It contains an upper and lower bound\&.
+.PP
+Note that until mlpack 3\&.0\&.0, this class is named RangeType<> and for the specification where T is double, you can use \fBmath::Range\fP\&. As of mlpack 3\&.0\&.0, this class will be renamed \fBmath::Range<>\fP\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIT\fP type of element held by this range\&. 
+.RE
+.PP
+
+.PP
+Definition at line 34 of file range\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRangeType\fP ()\fC [inline]\fP"
+
+.PP
+The upper bound\&. Initialize to an empty set (where lo > hi)\&. 
+.SS "\fBRangeType\fP (const T point)\fC [inline]\fP"
+
+.SS "\fBRangeType\fP (const T lo, const T hi)\fC [inline]\fP"
+
+.PP
+Initializes to specified range\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIlo\fP Lower bound of the range\&. 
+.br
+\fIhi\fP Upper bound of the range\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "bool Contains (const \fBRangeType\fP< T > & r) const\fC [inline]\fP"
+
+.PP
+Determines if another range overlaps with this one\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIr\fP Other range\&.
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+true if ranges overlap at all\&. 
+.RE
+.PP
+
+.SS "bool Contains (const T d) const\fC [inline]\fP"
+
+.PP
+Determines if a point is contained within the range\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Point to check\&. 
+.RE
+.PP
+
+.SS "T& Hi ()\fC [inline]\fP"
+
+.PP
+Modify the upper bound\&. 
+.PP
+Definition at line 68 of file range\&.hpp\&.
+.SS "T Hi () const\fC [inline]\fP"
+
+.PP
+Get the upper bound\&. 
+.PP
+Definition at line 66 of file range\&.hpp\&.
+.PP
+Referenced by HollowBallBound< TMetricType, ElemType >::Diameter(), HollowBallBound< TMetricType, ElemType >::MinWidth(), and HollowBallBound< TMetricType, ElemType >::OuterRadius()\&.
+.SS "T& Lo ()\fC [inline]\fP"
+
+.PP
+Modify the lower bound\&. 
+.PP
+Definition at line 63 of file range\&.hpp\&.
+.SS "T Lo () const\fC [inline]\fP"
+
+.PP
+Get the lower bound\&. 
+.PP
+Definition at line 61 of file range\&.hpp\&.
+.PP
+Referenced by HollowBallBound< TMetricType, ElemType >::InnerRadius()\&.
+.SS "T Mid () const\fC [inline]\fP"
+
+.PP
+Gets the midpoint of this range\&. 
+.SS "bool operator!= (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Compare with another range for strict equality\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.SS "\fBRangeType\fP operator& (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Shrinks this range to be the overlap with another range; this makes an empty set if there is no overlap\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.SS "\fBRangeType\fP& operator&= (const \fBRangeType\fP< T > & rhs)\fC [inline]\fP"
+
+.PP
+Shrinks this range to be the overlap with another range; this makes an empty set if there is no overlap\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.SS "\fBRangeType\fP operator* (const T d) const\fC [inline]\fP"
+
+.PP
+Scale the bounds by the given double\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Scaling factor\&. 
+.RE
+.PP
+
+.SS "\fBRangeType\fP& operator*= (const T d)\fC [inline]\fP"
+
+.PP
+Scale the bounds by the given double\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Scaling factor\&. 
+.RE
+.PP
+
+.SS "bool operator< (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Compare with another range\&. For Range objects x and y, x < y means that x is strictly less than y and does not overlap at all\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.SS "bool operator== (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Compare with another range for strict equality\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.SS "bool operator> (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Compare with another range\&. For Range objects x and y, x < y means that x is strictly less than y and does not overlap at all\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIrhs\fP Other range\&. 
+.RE
+.PP
+
+.SS "\fBRangeType\fP operator| (const \fBRangeType\fP< T > & rhs) const\fC [inline]\fP"
+
+.PP
+Expands this range to include another range\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIrhs\fP Range to include\&. 
+.RE
+.PP
+
+.SS "\fBRangeType\fP& operator|= (const \fBRangeType\fP< T > & rhs)\fC [inline]\fP"
+
+.PP
+Expands this range to include another range\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIrhs\fP Range to include\&. 
+.RE
+.PP
+
+.SS "void serialize (Archive & ar, const uint32_t version)"
+
+.PP
+Serialize the range object\&. 
+.SS "T Width () const\fC [inline]\fP"
+
+.PP
+Gets the span of the range (hi - lo)\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

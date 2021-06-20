@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1util_1_1BindingDetails" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::util::BindingDetails</compoundname>
+    <includes refid="binding__details_8hpp" local="no">binding_details.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1BindingDetails_1acf4d20054a17220a36a6418e0cdff11a" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; std::function&lt; std::string()&gt; &gt;</type>
+        <definition>std::vector&lt;std::function&lt;std::string()&gt; &gt; example</definition>
+        <argsstring></argsstring>
+        <name>example</name>
+        <briefdescription>
+<para>Documentation on how to use the binding. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" line="35" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1BindingDetails_1ababf20afc82683b024c91a20c8c62e17" prot="public" static="no" mutable="no">
+        <type>std::function&lt; std::string()&gt;</type>
+        <definition>std::function&lt;std::string()&gt; longDescription</definition>
+        <argsstring></argsstring>
+        <name>longDescription</name>
+        <briefdescription>
+<para>Long string containing documentation on what it is. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>No newline characters are necessary; this is taken care of by <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> later. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" line="33" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1BindingDetails_1a24d855d329269931b59bdf1b36706a88" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string programName</definition>
+        <argsstring></argsstring>
+        <name>programName</name>
+        <briefdescription>
+<para>Name of the binding. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" line="27" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1BindingDetails_1afe5093e1898efe46d8079526cfe632a9" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; std::pair&lt; std::string, std::string &gt; &gt;</type>
+        <definition>std::vector&lt;std::pair&lt;std::string, std::string&gt; &gt; seeAlso</definition>
+        <argsstring></argsstring>
+        <name>seeAlso</name>
+        <briefdescription>
+<para>A set of pairs of strings with useful &quot;see also&quot; information; each pair is &lt;description, url&gt;. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" line="38" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1BindingDetails_1ac20a505628c4d6eeebb65be874e3abe2" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string shortDescription</definition>
+        <argsstring></argsstring>
+        <name>shortDescription</name>
+        <briefdescription>
+<para>A short two-sentence description of the binding, what it does, and what it is useful for. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" line="30" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This structure holds all of the information about bindings documentation. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" line="24" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" bodystart="25" bodyend="39"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1util_1_1BindingDetails_1acf4d20054a17220a36a6418e0cdff11a" prot="public" virt="non-virtual"><scope>mlpack::util::BindingDetails</scope><name>example</name></member>
+      <member refid="structmlpack_1_1util_1_1BindingDetails_1ababf20afc82683b024c91a20c8c62e17" prot="public" virt="non-virtual"><scope>mlpack::util::BindingDetails</scope><name>longDescription</name></member>
+      <member refid="structmlpack_1_1util_1_1BindingDetails_1a24d855d329269931b59bdf1b36706a88" prot="public" virt="non-virtual"><scope>mlpack::util::BindingDetails</scope><name>programName</name></member>
+      <member refid="structmlpack_1_1util_1_1BindingDetails_1afe5093e1898efe46d8079526cfe632a9" prot="public" virt="non-virtual"><scope>mlpack::util::BindingDetails</scope><name>seeAlso</name></member>
+      <member refid="structmlpack_1_1util_1_1BindingDetails_1ac20a505628c4d6eeebb65be874e3abe2" prot="public" virt="non-virtual"><scope>mlpack::util::BindingDetails</scope><name>shortDescription</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

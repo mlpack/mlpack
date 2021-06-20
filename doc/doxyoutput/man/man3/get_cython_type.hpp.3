@@ -1,0 +1,70 @@
+.TH "/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::bindings\fP"
+.br
+.ti -1c
+.RI " \fBmlpack::bindings::python\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > std::string \fBGetCythonType\fP (util::ParamData &, const typename boost::disable_if< util::IsStdVector< T >>::type *=0, const typename boost::disable_if< data::HasSerialize< T >>::type *=0, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetCythonType\fP (util::ParamData &d, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< data::HasSerialize< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetCythonType\fP (util::ParamData &d, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetCythonType\fP (util::ParamData &d, const typename boost::enable_if< util::IsStdVector< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetCythonType< bool >\fP (util::ParamData &, const typename boost::disable_if< util::IsStdVector< bool >>::type *, const typename boost::disable_if< data::HasSerialize< bool >>::type *, const typename boost::disable_if< arma::is_arma_type< bool >>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetCythonType< double >\fP (util::ParamData &, const typename boost::disable_if< util::IsStdVector< double >>::type *, const typename boost::disable_if< data::HasSerialize< double >>::type *, const typename boost::disable_if< arma::is_arma_type< double >>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetCythonType< int >\fP (util::ParamData &, const typename boost::disable_if< util::IsStdVector< int >>::type *, const typename boost::disable_if< data::HasSerialize< int >>::type *, const typename boost::disable_if< arma::is_arma_type< int >>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetCythonType< size_t >\fP (util::ParamData &, const typename boost::disable_if< util::IsStdVector< size_t >>::type *, const typename boost::disable_if< data::HasSerialize< size_t >>::type *, const typename boost::disable_if< arma::is_arma_type< size_t >>::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetCythonType< std::string >\fP (util::ParamData &, const typename boost::disable_if< util::IsStdVector< std::string >>::type *, const typename boost::disable_if< data::HasSerialize< std::string >>::type *, const typename boost::disable_if< arma::is_arma_type< std::string >>::type *)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Template metaprogramming to return the string representation of the Cython type for a given Cython binding parameter\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBget_cython_type\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,493 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1neighbor_1_1FurthestNS" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::neighbor::FurthestNS</compoundname>
+    <includes refid="furthest__neighbor__sort_8hpp" local="no">furthest_neighbor_sort.hpp</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1a9401e4c5bc0469cfc6d6ba9a38ae2232" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double BestDistance</definition>
+        <argsstring>()</argsstring>
+        <name>BestDistance</name>
+        <briefdescription>
+<para>Return what should represent the best possible distance with this particular sort policy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In our case, this should be the maximum possible distance, DBL_MAX.</para>
+<para><simplesect kind="return"><para>DBL_MAX </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="138" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" bodystart="138" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1ab3488bd4db6360aa8b81c01a8ccd160b" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>static double BestNodeToNodeDistance</definition>
+        <argsstring>(const TreeType *queryNode, const TreeType *referenceNode)</argsstring>
+        <name>BestNodeToNodeDistance</name>
+        <param>
+          <type>const TreeType *</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type>const TreeType *</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Return the best possible distance between two nodes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In our case, this is the maximum distance between the two tree nodes using the given distance function. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="50" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1a210421d3cace586032391cc41a6de405" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>static double BestNodeToNodeDistance</definition>
+        <argsstring>(const TreeType *queryNode, const TreeType *referenceNode, const double centerToCenterDistance)</argsstring>
+        <name>BestNodeToNodeDistance</name>
+        <param>
+          <type>const TreeType *</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type>const TreeType *</type>
+          <declname>referenceNode</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>centerToCenterDistance</declname>
+        </param>
+        <briefdescription>
+<para>Return the best possible distance between two nodes, given that the distance between the centers of the two nodes has already been calculated. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is used in conjunction with trees that have self-children (like cover trees). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="60" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1a2eba13ccfd4831fcaa4e0a51e7a66c5f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>static double BestNodeToNodeDistance</definition>
+        <argsstring>(const TreeType *queryNode, const TreeType *referenceNode, const TreeType *referenceChildNode, const double centerToCenterDistance)</argsstring>
+        <name>BestNodeToNodeDistance</name>
+        <param>
+          <type>const TreeType *</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type>const TreeType *</type>
+          <declname>referenceNode</declname>
+        </param>
+        <param>
+          <type>const TreeType *</type>
+          <declname>referenceChildNode</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>centerToCenterDistance</declname>
+        </param>
+        <briefdescription>
+<para>Return the best possible distance between the query node and the reference child node given the base case distance between the query node and the reference node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>TreeType::ParentDistance() must be implemented to use this.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Query node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceChildNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Child of reference node which is being inspected. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>centerToCenterDistance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Distance between centers of query node and reference node. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="77" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1a3b7936770cdc5aa5774be12a70ea4c48" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>static double BestPointToNodeDistance</definition>
+        <argsstring>(const VecType &amp;queryPoint, const TreeType *referenceNode)</argsstring>
+        <name>BestPointToNodeDistance</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>queryPoint</declname>
+        </param>
+        <param>
+          <type>const TreeType *</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Return the best possible distance between a node and a point. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In our case, this is the maximum distance between the tree node and the point using the given distance function. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="88" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1a99e612ac4aa750029c0561091f3cb75e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>static double BestPointToNodeDistance</definition>
+        <argsstring>(const VecType &amp;queryPoint, const TreeType *referenceNode, const double pointToCenterDistance)</argsstring>
+        <name>BestPointToNodeDistance</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>queryPoint</declname>
+        </param>
+        <param>
+          <type>const TreeType *</type>
+          <declname>referenceNode</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>pointToCenterDistance</declname>
+        </param>
+        <briefdescription>
+<para>Return the best possible distance between a point and a node, given that the distance between the point and the center of the node has already been calculated. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is used in conjunction with trees that have self-children (like cover trees). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="98" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1a3815f7d4249f21f143c0fd4dc6926b4e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double CombineBest</definition>
+        <argsstring>(const double a, const double b)</argsstring>
+        <name>CombineBest</name>
+        <param>
+          <type>const double</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Return the best combination of the two distances. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="143" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" bodystart="143" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1a2d925d236656a7aa6fe93598b0eebd9b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double CombineWorst</definition>
+        <argsstring>(const double a, const double b)</argsstring>
+        <name>CombineWorst</name>
+        <param>
+          <type>const double</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Return the worst combination of the two distances. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="153" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" bodystart="153" bodyend="154"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1aa48361089e2ea1bf224936e4e9a0346d" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double ConvertToDistance</definition>
+        <argsstring>(const double score)</argsstring>
+        <name>ConvertToDistance</name>
+        <param>
+          <type>const double</type>
+          <declname>score</declname>
+        </param>
+        <briefdescription>
+<para>Convert the given score back to a distance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is the inverse of the operation of converting a distance to a score, and again, for furthest neighbor search, corresponds to inverting the value. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="193" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" bodystart="193" bodyend="196"/>
+        <references refid="classmlpack_1_1neighbor_1_1FurthestNS_1a083b68fea1178ece3b6e5376ac31c9e3" compoundref="furthest__neighbor__sort_8hpp" startline="178" endline="186">FurthestNS::ConvertToScore</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1a083b68fea1178ece3b6e5376ac31c9e3" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double ConvertToScore</definition>
+        <argsstring>(const double distance)</argsstring>
+        <name>ConvertToScore</name>
+        <param>
+          <type>const double</type>
+          <declname>distance</declname>
+        </param>
+        <briefdescription>
+<para>Convert the given distance to a score. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Lower scores are better, but for furthest neighbor search, larger distances are better. Therefore we must invert the given distance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="178" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" bodystart="178" bodyend="186"/>
+        <referencedby refid="classmlpack_1_1neighbor_1_1FurthestNS_1aa48361089e2ea1bf224936e4e9a0346d" compoundref="furthest__neighbor__sort_8hpp" startline="193" endline="196">FurthestNS::ConvertToDistance</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1a6765bea9cdad09d6d8109b030bdd8d13" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>static size_t GetBestChild</definition>
+        <argsstring>(const TreeType &amp;queryNode, TreeType &amp;referenceNode)</argsstring>
+        <name>GetBestChild</name>
+        <param>
+          <type>const TreeType &amp;</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Return the best child according to this sort policy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In this case it will return the one with the maximum distance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="117" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" bodystart="117" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1ad5705d2f8301e6ecf09ac1c1be9cbb09" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>static size_t GetBestChild</definition>
+        <argsstring>(const VecType &amp;queryPoint, TreeType &amp;referenceNode)</argsstring>
+        <name>GetBestChild</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>queryPoint</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Return the best child according to this sort policy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In this case it will return the one with the maximum distance. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="107" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" bodystart="107" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1a412d62a94fad8425114314285bf573ec" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool IsBetter</definition>
+        <argsstring>(const double value, const double ref)</argsstring>
+        <name>IsBetter</name>
+        <param>
+          <type>const double</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>ref</declname>
+        </param>
+        <briefdescription>
+<para>Return whether or not value is &quot;better&quot; than ref. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In this case, that means that the value is greater than or equal to the reference.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to compare </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ref</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to compare with</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>bool indicating whether or not (value &gt;= ref). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="39" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" bodystart="39" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1ac005ea5fc8e296ab86ea247d7de5b747" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Relax</definition>
+        <argsstring>(const double value, const double epsilon)</argsstring>
+        <name>Relax</name>
+        <param>
+          <type>const double</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>epsilon</declname>
+        </param>
+        <briefdescription>
+<para>Return the given value relaxed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to relax. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>epsilon</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Relative error (non-negative).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>double Value relaxed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="164" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" bodystart="164" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1FurthestNS_1acd1717b7877007f086da8ffaf3ad44f0" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double WorstDistance</definition>
+        <argsstring>()</argsstring>
+        <name>WorstDistance</name>
+        <briefdescription>
+<para>Return what should represent the worst possible distance with this particular sort policy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In our case, this should be the minimum possible distance, 0.</para>
+<para><simplesect kind="return"><para>0 </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="129" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" bodystart="129" bodyend="129"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class implements the necessary methods for the SortPolicy template parameter of the <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> class. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The sorting policy here is that the minimum distance is the best (so, when used with <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref>, the output is furthest neighbors). </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" line="27" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/sort_policies/furthest_neighbor_sort.hpp" bodystart="28" bodyend="197"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1a9401e4c5bc0469cfc6d6ba9a38ae2232" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>BestDistance</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1ab3488bd4db6360aa8b81c01a8ccd160b" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>BestNodeToNodeDistance</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1a210421d3cace586032391cc41a6de405" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>BestNodeToNodeDistance</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1a2eba13ccfd4831fcaa4e0a51e7a66c5f" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>BestNodeToNodeDistance</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1a3b7936770cdc5aa5774be12a70ea4c48" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>BestPointToNodeDistance</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1a99e612ac4aa750029c0561091f3cb75e" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>BestPointToNodeDistance</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1a3815f7d4249f21f143c0fd4dc6926b4e" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>CombineBest</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1a2d925d236656a7aa6fe93598b0eebd9b" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>CombineWorst</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1aa48361089e2ea1bf224936e4e9a0346d" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>ConvertToDistance</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1a083b68fea1178ece3b6e5376ac31c9e3" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>ConvertToScore</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1ad5705d2f8301e6ecf09ac1c1be9cbb09" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>GetBestChild</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1a6765bea9cdad09d6d8109b030bdd8d13" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>GetBestChild</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1a412d62a94fad8425114314285bf573ec" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>IsBetter</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1ac005ea5fc8e296ab86ea247d7de5b747" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>Relax</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1FurthestNS_1acd1717b7877007f086da8ffaf3ad44f0" prot="public" virt="non-virtual"><scope>mlpack::neighbor::FurthestNS</scope><name>WorstDistance</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

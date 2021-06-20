@@ -1,0 +1,128 @@
+.TH "MeanAbsolutePercentageError< InputDataType, OutputDataType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MeanAbsolutePercentageError< InputDataType, OutputDataType > \- The mean absolute percentage error performance function measures the network's performance according to the mean of the absolute difference between input and target divided by target\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMeanAbsolutePercentageError\fP ()"
+.br
+.RI "Create the \fBMeanAbsolutePercentageError\fP object\&. "
+.ti -1c
+.RI "template<typename PredictionType , typename TargetType , typename LossType > void \fBBackward\fP (const PredictionType &prediction, const TargetType &target, LossType &loss)"
+.br
+.RI "Ordinary feed backward pass of a neural network\&. "
+.ti -1c
+.RI "template<typename PredictionType , typename TargetType > PredictionType::elem_type \fBForward\fP (const PredictionType &prediction, const TargetType &target)"
+.br
+.RI "Computes the mean absolute percentage error function\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "Serialize the layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::MeanAbsolutePercentageError< InputDataType, OutputDataType >"
+The mean absolute percentage error performance function measures the network's performance according to the mean of the absolute difference between input and target divided by target\&. 
+
+For more information, refer to the following paper,
+.PP
+.PP
+.nf
+@article{de_Myttenaere_2016,
+   author    = {de Myttenaere, Arnaud and Golden, Boris and Le Grand,
+                Bénédicte and Rossi, Fabrice},
+   title     = {Mean Absolute Percentage Error for regression models},
+   journal   = {Neurocomputing},
+   volume    = {abs/1605\&.02541},
+   year      = {2016},
+   url       = {https://arxiv\&.org/abs/1605\&.02541},
+   eprint    = {1605\&.02541},
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 49 of file mean_absolute_percentage_error\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBMeanAbsolutePercentageError\fP ()"
+
+.PP
+Create the \fBMeanAbsolutePercentageError\fP object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const PredictionType & prediction, const TargetType & target, LossType & loss)"
+
+.PP
+Ordinary feed backward pass of a neural network\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIprediction\fP Predictions used for evaluating the specified loss function\&. 
+.br
+\fItarget\fP The target vector\&. 
+.br
+\fIloss\fP The calculated error\&. 
+.RE
+.PP
+
+.SS "PredictionType::elem_type Forward (const PredictionType & prediction, const TargetType & target)"
+
+.PP
+Computes the mean absolute percentage error function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIprediction\fP Predictions used for evaluating the specified loss function\&. 
+.br
+\fItarget\fP The target vector\&. 
+.RE
+.PP
+
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 84 of file mean_absolute_percentage_error\&.hpp\&.
+.SS "OutputDataType& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 82 of file mean_absolute_percentage_error\&.hpp\&.
+.SS "void serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

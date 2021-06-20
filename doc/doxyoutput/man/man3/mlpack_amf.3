@@ -1,0 +1,199 @@
+.TH "mlpack::amf" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::amf \- Alternating Matrix Factorization\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAMF\fP"
+.br
+.RI "This class implements \fBAMF\fP (alternating matrix factorization) on the given matrix V\&. "
+.ti -1c
+.RI "class \fBAverageInitialization\fP"
+.br
+.RI "This initialization rule initializes matrix W and H to root of the average of V, perturbed with uniform noise\&. "
+.ti -1c
+.RI "class \fBCompleteIncrementalTermination\fP"
+.br
+.RI "This class acts as a wrapper for basic termination policies to be used by \fBSVDCompleteIncrementalLearning\fP\&. "
+.ti -1c
+.RI "class \fBGivenInitialization\fP"
+.br
+.RI "This initialization rule for \fBAMF\fP simply fills the W and H matrices with the matrices given to the constructor of this object\&. "
+.ti -1c
+.RI "class \fBIncompleteIncrementalTermination\fP"
+.br
+.RI "This class acts as a wrapper for basic termination policies to be used by \fBSVDIncompleteIncrementalLearning\fP\&. "
+.ti -1c
+.RI "class \fBMaxIterationTermination\fP"
+.br
+.RI "This termination policy only terminates when the maximum number of iterations has been reached\&. "
+.ti -1c
+.RI "class \fBMergeInitialization\fP"
+.br
+.RI "This initialization rule for \fBAMF\fP simply takes in two initialization rules, and initialize W with the first rule and H with the second rule\&. "
+.ti -1c
+.RI "class \fBNMFALSUpdate\fP"
+.br
+.RI "This class implements a method titled 'Alternating Least Squares' described in the following paper: "
+.ti -1c
+.RI "class \fBNMFMultiplicativeDistanceUpdate\fP"
+.br
+.RI "The multiplicative distance update rules for matrices W and H\&. "
+.ti -1c
+.RI "class \fBNMFMultiplicativeDivergenceUpdate\fP"
+.br
+.RI "This follows a method described in the paper 'Algorithms for Non-negative\&. "
+.ti -1c
+.RI "class \fBRandomAcolInitialization\fP"
+.br
+.RI "This class initializes the W matrix of the \fBAMF\fP algorithm by averaging p randomly chosen columns of V\&. "
+.ti -1c
+.RI "class \fBRandomInitialization\fP"
+.br
+.RI "This initialization rule for \fBAMF\fP simply fills the W and H matrices with uniform random noise in [0, 1]\&. "
+.ti -1c
+.RI "class \fBSimpleResidueTermination\fP"
+.br
+.RI "This class implements a simple residue-based termination policy\&. "
+.ti -1c
+.RI "class \fBSimpleToleranceTermination\fP"
+.br
+.RI "This class implements residue tolerance termination policy\&. "
+.ti -1c
+.RI "class \fBSVDBatchLearning\fP"
+.br
+.RI "This class implements SVD batch learning with momentum\&. "
+.ti -1c
+.RI "class \fBSVDCompleteIncrementalLearning\fP"
+.br
+.RI "This class computes SVD using complete incremental batch learning, as described in the following paper: "
+.ti -1c
+.RI "class \fBSVDCompleteIncrementalLearning< arma::sp_mat >\fP"
+.br
+.RI "TODO : Merge this template specialized function for sparse matrix using common row_col_iterator\&. "
+.ti -1c
+.RI "class \fBSVDIncompleteIncrementalLearning\fP"
+.br
+.RI "This class computes SVD using incomplete incremental batch learning, as described in the following paper: "
+.ti -1c
+.RI "class \fBValidationRMSETermination\fP"
+.br
+.RI "This class implements validation termination policy based on RMSE index\&. "
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBamf::AMF\fP< \fBamf::SimpleResidueTermination\fP, \fBamf::RandomAcolInitialization\fP<>, \fBamf::NMFALSUpdate\fP > \fBNMFALSFactorizer\fP"
+.br
+.ti -1c
+.RI "template<typename MatType  = arma::mat> using \fBSVDBatchFactorizer\fP = \fBamf::AMF\fP< \fBamf::SimpleResidueTermination\fP, \fBamf::RandomAcolInitialization\fP<>, \fBamf::SVDBatchLearning\fP >"
+.br
+.RI "Convenience typedefs\&. "
+.ti -1c
+.RI "template<class MatType  = arma::mat> using \fBSVDCompleteIncrementalFactorizer\fP = \fBamf::AMF\fP< \fBamf::SimpleResidueTermination\fP, \fBamf::RandomAcolInitialization\fP<>, \fBamf::SVDCompleteIncrementalLearning\fP< MatType > >"
+.br
+.RI "SVDCompleteIncrementalFactorizer factorizes given matrix V into two matrices W and H by complete incremental gradient descent\&. "
+.ti -1c
+.RI "template<class MatType  = arma::mat> using \fBSVDIncompleteIncrementalFactorizer\fP = \fBamf::AMF\fP< \fBamf::SimpleResidueTermination\fP, \fBamf::RandomAcolInitialization\fP<>, \fBamf::SVDIncompleteIncrementalLearning\fP >"
+.br
+.RI "SVDIncompleteIncrementalFactorizer factorizes given matrix V into two matrices W and H by incomplete incremental gradient descent\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<> void \fBSVDBatchLearning::HUpdate< arma::sp_mat >\fP (const arma::sp_mat &V, const arma::mat &W, arma::mat &H)"
+.br
+.ti -1c
+.RI "template<> void \fBSVDBatchLearning::WUpdate< arma::sp_mat >\fP (const arma::sp_mat &V, arma::mat &W, const arma::mat &H)"
+.br
+.RI "TODO : Merge this template specialized function for sparse matrix using common row_col_iterator\&. "
+.ti -1c
+.RI "template<> void \fBSVDIncompleteIncrementalLearning::HUpdate< arma::sp_mat >\fP (const arma::sp_mat &V, const arma::mat &W, arma::mat &H)"
+.br
+.ti -1c
+.RI "template<> void \fBSVDIncompleteIncrementalLearning::WUpdate< arma::sp_mat >\fP (const arma::sp_mat &V, arma::mat &W, const arma::mat &H)"
+.br
+.RI "TODO : Merge this template specialized function for sparse matrix using common row_col_iterator\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Alternating Matrix Factorization\&. 
+.SH "Typedef Documentation"
+.PP 
+.SS "typedef \fBamf::AMF\fP<\fBamf::SimpleResidueTermination\fP, \fBamf::RandomAcolInitialization\fP<>, \fBamf::NMFALSUpdate\fP> \fBNMFALSFactorizer\fP"
+
+.PP
+Definition at line 143 of file amf\&.hpp\&.
+.SS "using \fBSVDBatchFactorizer\fP =  \fBamf::AMF\fP< \fBamf::SimpleResidueTermination\fP, \fBamf::RandomAcolInitialization\fP<>, \fBamf::SVDBatchLearning\fP>"
+
+.PP
+Convenience typedefs\&. SVDBatchFactorizer factorizes given matrix V into two matrices W and H by gradient descent\&. SVD batch learning is described in paper 'A Guide to singular Value Decomposition' by Chih-Chao Ma\&.
+.PP
+\fBSee also\fP
+.RS 4
+\fBSVDBatchLearning\fP 
+.RE
+.PP
+
+.PP
+Definition at line 155 of file amf\&.hpp\&.
+.SS "using \fBSVDCompleteIncrementalFactorizer\fP =  \fBamf::AMF\fP< \fBamf::SimpleResidueTermination\fP, \fBamf::RandomAcolInitialization\fP<>, \fBamf::SVDCompleteIncrementalLearning\fP<MatType> >"
+
+.PP
+SVDCompleteIncrementalFactorizer factorizes given matrix V into two matrices W and H by complete incremental gradient descent\&. SVD complete incremental learning is described in paper 'A Guide to singular Value Decomposition' by Chih-Chao Ma\&.
+.PP
+\fBSee also\fP
+.RS 4
+\fBSVDCompleteIncrementalLearning\fP 
+.RE
+.PP
+
+.PP
+Definition at line 182 of file amf\&.hpp\&.
+.SS "using \fBSVDIncompleteIncrementalFactorizer\fP =  \fBamf::AMF\fP< \fBamf::SimpleResidueTermination\fP, \fBamf::RandomAcolInitialization\fP<>, \fBamf::SVDIncompleteIncrementalLearning\fP>"
+
+.PP
+SVDIncompleteIncrementalFactorizer factorizes given matrix V into two matrices W and H by incomplete incremental gradient descent\&. SVD incomplete incremental learning is described in paper 'A Guide to singular Value Decomposition' by Chih-Chao Ma\&.
+.PP
+\fBSee also\fP
+.RS 4
+\fBSVDIncompleteIncrementalLearning\fP 
+.RE
+.PP
+
+.PP
+Definition at line 169 of file amf\&.hpp\&.
+.SH "Function Documentation"
+.PP 
+.SS "void \fBmlpack::amf::SVDBatchLearning::HUpdate\fP< arma::sp_mat > (const arma::sp_mat & V, const arma::mat & W, arma::mat & H)\fC [inline]\fP"
+
+.PP
+Definition at line 230 of file svd_batch_learning\&.hpp\&.
+.SS "void \fBmlpack::amf::SVDBatchLearning::WUpdate\fP< arma::sp_mat > (const arma::sp_mat & V, arma::mat & W, const arma::mat & H)\fC [inline]\fP"
+
+.PP
+TODO : Merge this template specialized function for sparse matrix using common row_col_iterator\&. WUpdate function specialization for sparse matrix 
+.PP
+Definition at line 202 of file svd_batch_learning\&.hpp\&.
+.SS "void \fBmlpack::amf::SVDIncompleteIncrementalLearning::HUpdate\fP< arma::sp_mat > (const arma::sp_mat & V, const arma::mat & W, arma::mat & H)\fC [inline]\fP"
+
+.PP
+Definition at line 185 of file svd_incomplete_incremental_learning\&.hpp\&.
+.SS "void \fBmlpack::amf::SVDIncompleteIncrementalLearning::WUpdate\fP< arma::sp_mat > (const arma::sp_mat & V, arma::mat & W, const arma::mat & H)\fC [inline]\fP"
+
+.PP
+TODO : Merge this template specialized function for sparse matrix using common row_col_iterator\&. template specialiazed functions for sparse matrices 
+.PP
+Definition at line 166 of file svd_incomplete_incremental_learning\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

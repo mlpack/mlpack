@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1MinimalCoverageSweep" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::MinimalCoverageSweep</compoundname>
+    <includes refid="minimal__coverage__sweep_8hpp" local="no">minimal_coverage_sweep.hpp</includes>
+    <innerclass refid="structmlpack_1_1tree_1_1MinimalCoverageSweep_1_1SweepCost" prot="public">mlpack::tree::MinimalCoverageSweep::SweepCost</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename SplitPolicy</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1MinimalCoverageSweep_1a6c49c80b6769514caa02e87c90f25637" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>static bool CheckLeafSweep</definition>
+        <argsstring>(const TreeType *node, const size_t cutAxis, const ElemType cut)</argsstring>
+        <name>CheckLeafSweep</name>
+        <param>
+          <type>const TreeType *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cutAxis</declname>
+        </param>
+        <param>
+          <type>const ElemType</type>
+          <declname>cut</declname>
+        </param>
+        <briefdescription>
+<para>Check if a leaf node can be split along the axis at the provided coordinate. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The node that is being split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cutAxis</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The axis that we want to check. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cut</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The coordinate that we want to check. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/minimal_coverage_sweep.hpp" line="90" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1MinimalCoverageSweep_1afafb079580672ba37b91473d7663b4b4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>static bool CheckNonLeafSweep</definition>
+        <argsstring>(const TreeType *node, const size_t cutAxis, const ElemType cut)</argsstring>
+        <name>CheckNonLeafSweep</name>
+        <param>
+          <type>const TreeType *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cutAxis</declname>
+        </param>
+        <param>
+          <type>const ElemType</type>
+          <declname>cut</declname>
+        </param>
+        <briefdescription>
+<para>Check if an intermediate node can be split along the axis at the provided coordinate. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The node that is being split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cutAxis</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The axis that we want to check. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cut</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The coordinate that we want to check. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/minimal_coverage_sweep.hpp" line="77" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1MinimalCoverageSweep_1a1d1300e043da6e6fcda11d351b3909ad" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>TreeType::ElemType</type>
+        <definition>static TreeType::ElemType SweepLeafNode</definition>
+        <argsstring>(const size_t axis, const TreeType *node, typename TreeType::ElemType &amp;axisCut)</argsstring>
+        <name>SweepLeafNode</name>
+        <param>
+          <type>const size_t</type>
+          <declname>axis</declname>
+        </param>
+        <param>
+          <type>const TreeType *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>typename TreeType::ElemType &amp;</type>
+          <declname>axisCut</declname>
+        </param>
+        <briefdescription>
+<para>Find a suitable partition of a leaf node along the provided axis. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The method returns the cost of the split.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>axis</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The axis along which we are finding a partition. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The node that is being split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>axisCut</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The coordinate at which the node may be split. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/minimal_coverage_sweep.hpp" line="63" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1MinimalCoverageSweep_1a03332fa22fbbb3ed883e3ae305dce89f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>TreeType::ElemType</type>
+        <definition>static TreeType::ElemType SweepNonLeafNode</definition>
+        <argsstring>(const size_t axis, const TreeType *node, typename TreeType::ElemType &amp;axisCut)</argsstring>
+        <name>SweepNonLeafNode</name>
+        <param>
+          <type>const size_t</type>
+          <declname>axis</declname>
+        </param>
+        <param>
+          <type>const TreeType *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>typename TreeType::ElemType &amp;</type>
+          <declname>axisCut</declname>
+        </param>
+        <briefdescription>
+<para>Find a suitable partition of a non-leaf node along the provided axis. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The method returns the cost of the split.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>axis</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The axis along which we are finding a partition. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The node that is being split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>axisCut</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The coordinate at which the node may be split. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/minimal_coverage_sweep.hpp" line="49" column="38"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1tree_1_1MinimalCoverageSweep" kindref="compound">MinimalCoverageSweep</ref> class finds a partition along which we can split a node according to the coverage of two resulting nodes. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The class finds a partition along a given axis. Moreover, the class evaluates the cost of each split. The cost is proportional to the total coverage of resulting nodes. If the resulting nodes are overflowed the maximum cost is returned.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>SplitPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The class that provides rules for inserting children of a node that is being split into two new subtrees. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/minimal_coverage_sweep.hpp" line="30" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/minimal_coverage_sweep.hpp" bodystart="31" bodyend="93"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1MinimalCoverageSweep_1a6c49c80b6769514caa02e87c90f25637" prot="public" virt="non-virtual"><scope>mlpack::tree::MinimalCoverageSweep</scope><name>CheckLeafSweep</name></member>
+      <member refid="classmlpack_1_1tree_1_1MinimalCoverageSweep_1afafb079580672ba37b91473d7663b4b4" prot="public" virt="non-virtual"><scope>mlpack::tree::MinimalCoverageSweep</scope><name>CheckNonLeafSweep</name></member>
+      <member refid="classmlpack_1_1tree_1_1MinimalCoverageSweep_1a1d1300e043da6e6fcda11d351b3909ad" prot="public" virt="non-virtual"><scope>mlpack::tree::MinimalCoverageSweep</scope><name>SweepLeafNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1MinimalCoverageSweep_1a03332fa22fbbb3ed883e3ae305dce89f" prot="public" virt="non-virtual"><scope>mlpack::tree::MinimalCoverageSweep</scope><name>SweepNonLeafNode</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

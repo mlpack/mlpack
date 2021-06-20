@@ -1,0 +1,86 @@
+\doxysection{Precision$<$ AS, Positive\+Class $>$ Class Template Reference}
+\label{classmlpack_1_1cv_1_1Precision}\index{Precision$<$ AS, PositiveClass $>$@{Precision$<$ AS, PositiveClass $>$}}
+
+
+\doxyref{Precision}{p.}{classmlpack_1_1cv_1_1Precision} is a metric of performance for classification algorithms that for binary classification is equal to $ tp / (tp + fp) $, where $ tp $ and $ fp $ are the numbers of true positives and false positives respectively.  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename MLAlgorithm , typename Data\+Type $>$ }\\static double \textbf{ Evaluate} (MLAlgorithm \&model, const Data\+Type \&data, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels)
+\begin{DoxyCompactList}\small\item\em Run classification and calculate precision. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool \textbf{ Needs\+Minimization} = false
+\begin{DoxyCompactList}\small\item\em Information for hyper-\/parameter tuning code. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$Average\+Strategy AS, size\+\_\+t Positive\+Class = 1$>$\newline
+class mlpack\+::cv\+::\+Precision$<$ AS, Positive\+Class $>$}
+
+\doxyref{Precision}{p.}{classmlpack_1_1cv_1_1Precision} is a metric of performance for classification algorithms that for binary classification is equal to $ tp / (tp + fp) $, where $ tp $ and $ fp $ are the numbers of true positives and false positives respectively. 
+
+For multiclass classification the precision metric can be used with the following strategies for averaging.
+\begin{DoxyEnumerate}
+\item Micro. If there are $ N + 1 $ classes in total, the result is equal to \[ (tp_0 + tp_1 + \ldots + tp_N) / (tp_0 + tp_1 + \ldots + tp_N + fp_0 + fp_1 + \ldots + fp_N), \] where $ tp_i $ and $ fp_i $ are the numbers of true positives and false positives respectively for the class (label) $ i $.
+\item Macro. If there are $ N + 1 $ classes in total, the result is equal to the mean of the values \[ tp_0 / (tp_0 + fp_0), tp_1 / (tp_1 + fp_1), \ldots, tp_N / (tp_N + fp_N), \] where $ tp_i $ and $ fp_i $ are the numbers of true positives and false positives respectively for the class (label) $ i $.
+\end{DoxyEnumerate}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em AS} & An average strategy. \\
+\hline
+{\em Positive\+Class} & In the case of binary classification (AS = Binary) positives are assumed to have labels equal to this value. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 48 of file precision.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cv_1_1Precision_a77b6a9eb952b01bfc5c0d854da700465}} 
+\index{Precision$<$ AS, PositiveClass $>$@{Precision$<$ AS, PositiveClass $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!Precision$<$ AS, PositiveClass $>$@{Precision$<$ AS, PositiveClass $>$}}
+\doxysubsubsection{Evaluate()}
+{\footnotesize\ttfamily static double Evaluate (\begin{DoxyParamCaption}\item[{MLAlgorithm \&}]{model,  }\item[{const Data\+Type \&}]{data,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Run classification and calculate precision. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em model} & A classification model. \\
+\hline
+{\em data} & Column-\/major data containing test items. \\
+\hline
+{\em labels} & Ground truth (correct) labels for the test items. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1cv_1_1Precision_a59117419810548f86c24651ffa3500d5}} 
+\index{Precision$<$ AS, PositiveClass $>$@{Precision$<$ AS, PositiveClass $>$}!NeedsMinimization@{NeedsMinimization}}
+\index{NeedsMinimization@{NeedsMinimization}!Precision$<$ AS, PositiveClass $>$@{Precision$<$ AS, PositiveClass $>$}}
+\doxysubsubsection{NeedsMinimization}
+{\footnotesize\ttfamily const bool Needs\+Minimization = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Information for hyper-\/parameter tuning code. 
+
+It indicates that we want to maximize the metric. 
+
+Definition at line 67 of file precision.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/cv/metrics/\textbf{ precision.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,56 @@
+.TH "/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBSVDBatchLearning\fP"
+.br
+.RI "This class implements SVD batch learning with momentum\&. "
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::amf\fP"
+.br
+.RI "Alternating Matrix Factorization\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<> void \fBSVDBatchLearning::HUpdate< arma::sp_mat >\fP (const arma::sp_mat &V, const arma::mat &W, arma::mat &H)"
+.br
+.ti -1c
+.RI "template<> void \fBSVDBatchLearning::WUpdate< arma::sp_mat >\fP (const arma::sp_mat &V, arma::mat &W, const arma::mat &H)"
+.br
+.RI "TODO : Merge this template specialized function for sparse matrix using common row_col_iterator\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Sumedh Ghaisas
+.RE
+.PP
+SVD factorizer used in AMF (Alternating Matrix Factorization)\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBsvd_batch_learning\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

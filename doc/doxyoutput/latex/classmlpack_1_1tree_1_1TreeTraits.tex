@@ -1,0 +1,189 @@
+\doxysection{Tree\+Traits$<$ Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1TreeTraits}\index{TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}}
+
+
+The \doxyref{Tree\+Traits}{p.}{classmlpack_1_1tree_1_1TreeTraits} class provides compile-\/time information on the characteristics of a given tree type.  
+
+
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool \textbf{ Binary\+Tree} = false
+\begin{DoxyCompactList}\small\item\em This is true if the tree always has only two children. \end{DoxyCompactList}\item 
+static const bool \textbf{ First\+Point\+Is\+Centroid} = false
+\begin{DoxyCompactList}\small\item\em This is true if the first point of each node is the centroid of its bound. \end{DoxyCompactList}\item 
+static const bool \textbf{ Has\+Duplicated\+Points} = false
+\begin{DoxyCompactList}\small\item\em This is true if a point can be included in more than one node. \end{DoxyCompactList}\item 
+static const bool \textbf{ Has\+Overlapping\+Children} = true
+\begin{DoxyCompactList}\small\item\em This is true if the subspaces represented by the children of a node can overlap. \end{DoxyCompactList}\item 
+static const bool \textbf{ Has\+Self\+Children} = false
+\begin{DoxyCompactList}\small\item\em This is true if the points contained in the first child of a node (Child(0)) are also contained in that node. \end{DoxyCompactList}\item 
+static const bool \textbf{ Rearranges\+Dataset} = false
+\begin{DoxyCompactList}\small\item\em This is true if the tree rearranges points in the dataset when it is built. \end{DoxyCompactList}\item 
+static const bool \textbf{ Unique\+Num\+Descendants} = true
+\begin{DoxyCompactList}\small\item\em This is true if the Num\+Descendants() method doesn\textquotesingle{}t include duplicated points. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Tree\+Type$>$\newline
+class mlpack\+::tree\+::\+Tree\+Traits$<$ Tree\+Type $>$}
+
+The \doxyref{Tree\+Traits}{p.}{classmlpack_1_1tree_1_1TreeTraits} class provides compile-\/time information on the characteristics of a given tree type. 
+
+These include traits such as whether or not a node knows the distance to its parent node, or whether or not the subspaces represented by children can overlap.
+
+These traits can be used for static compile-\/time optimization\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// This if statement will be optimized out at compile time!}}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (TreeTraits<TreeType>::HasOverlappingChildren == \textcolor{keyword}{false})}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{// Do a simpler computation because no children overlap.}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{keywordflow}{else}}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{// Do the full, complex calculation.}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+The traits can also be used in conjunction with SFINAE to write specialized versions of functions\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{typename} TreeType>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} Compute(TreeType\& node,}
+\DoxyCodeLine{             std::enable\_if\_t<}
+\DoxyCodeLine{                 TreeTraits<TreeType>::RearrangesDataset>*)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{// Computation where special dataset-\/rearranging tree constructor is}}
+\DoxyCodeLine{  \textcolor{comment}{// called.}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{typename} TreeType>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} Compute(TreeType\& node,}
+\DoxyCodeLine{             std::enable\_if\_t<}
+\DoxyCodeLine{                 !TreeTraits<TreeType>::RearrangesDataset>*)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{// Computation where normal tree constructor is called.}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+In those two examples, the \doxyref{std\+::enable\+\_\+if\+\_\+t$<$$>$}{p.}{namespacestd_a93e9cb7fadbcfaa2afb5b94058b8e34c} class takes a boolean template parameter which allows that function to be called when the boolean is true.
+
+Each trait must be a static const value and not a function; only const values can be used as template parameters (or constexprs can be used too). By default (the unspecialized implementation of \doxyref{Tree\+Traits}{p.}{classmlpack_1_1tree_1_1TreeTraits}), each parameter is set to make as few assumptions about the tree as possible; so, even if \doxyref{Tree\+Traits}{p.}{classmlpack_1_1tree_1_1TreeTraits} is not specialized for a particular tree type, tree-\/based algorithms should still work.
+
+When you write your own tree, you must specialize the \doxyref{Tree\+Traits}{p.}{classmlpack_1_1tree_1_1TreeTraits} class to your tree type and set the corresponding values appropriately. See \doxyref{mlpack/core/tree/binary\+\_\+space\+\_\+tree/traits.\+hpp}{p.}{binary__space__tree_2traits_8hpp} for an example. 
+
+Definition at line 77 of file tree\+\_\+traits.\+hpp.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_ae435fd522971cd7cfd3064636aad08f8}} 
+\index{TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}!BinaryTree@{BinaryTree}}
+\index{BinaryTree@{BinaryTree}!TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}}
+\doxysubsubsection{BinaryTree}
+{\footnotesize\ttfamily const bool Binary\+Tree = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This is true if the tree always has only two children. 
+
+
+
+Definition at line 110 of file tree\+\_\+traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_a74d33aa1842a86c50e913427bce29f04}} 
+\index{TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}!FirstPointIsCentroid@{FirstPointIsCentroid}}
+\index{FirstPointIsCentroid@{FirstPointIsCentroid}!TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}}
+\doxysubsubsection{FirstPointIsCentroid}
+{\footnotesize\ttfamily const bool First\+Point\+Is\+Centroid = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This is true if the first point of each node is the centroid of its bound. 
+
+
+
+Definition at line 94 of file tree\+\_\+traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_af080c27547c6b45c37173e0df36d63be}} 
+\index{TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}!HasDuplicatedPoints@{HasDuplicatedPoints}}
+\index{HasDuplicatedPoints@{HasDuplicatedPoints}!TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}}
+\doxysubsubsection{HasDuplicatedPoints}
+{\footnotesize\ttfamily const bool Has\+Duplicated\+Points = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This is true if a point can be included in more than one node. 
+
+
+
+Definition at line 89 of file tree\+\_\+traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_aace4b7477b18c336612f4f4d3046eb37}} 
+\index{TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}!HasOverlappingChildren@{HasOverlappingChildren}}
+\index{HasOverlappingChildren@{HasOverlappingChildren}!TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}}
+\doxysubsubsection{HasOverlappingChildren}
+{\footnotesize\ttfamily const bool Has\+Overlapping\+Children = true\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This is true if the subspaces represented by the children of a node can overlap. 
+
+
+
+Definition at line 84 of file tree\+\_\+traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_ad3cb9cb573f3b0e51f99664fb8d29fef}} 
+\index{TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}!HasSelfChildren@{HasSelfChildren}}
+\index{HasSelfChildren@{HasSelfChildren}!TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}}
+\doxysubsubsection{HasSelfChildren}
+{\footnotesize\ttfamily const bool Has\+Self\+Children = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This is true if the points contained in the first child of a node (Child(0)) are also contained in that node. 
+
+
+
+Definition at line 100 of file tree\+\_\+traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_aba7aca795787a6fe3e8bbdae13edc70b}} 
+\index{TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}!RearrangesDataset@{RearrangesDataset}}
+\index{RearrangesDataset@{RearrangesDataset}!TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}}
+\doxysubsubsection{RearrangesDataset}
+{\footnotesize\ttfamily const bool Rearranges\+Dataset = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This is true if the tree rearranges points in the dataset when it is built. 
+
+
+
+Definition at line 105 of file tree\+\_\+traits.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1TreeTraits_a416bd78d7883fd5c3bc22b858f7d7064}} 
+\index{TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}!UniqueNumDescendants@{UniqueNumDescendants}}
+\index{UniqueNumDescendants@{UniqueNumDescendants}!TreeTraits$<$ TreeType $>$@{TreeTraits$<$ TreeType $>$}}
+\doxysubsubsection{UniqueNumDescendants}
+{\footnotesize\ttfamily const bool Unique\+Num\+Descendants = true\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+This is true if the Num\+Descendants() method doesn\textquotesingle{}t include duplicated points. 
+
+
+
+Definition at line 116 of file tree\+\_\+traits.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/\textbf{ tree\+\_\+traits.\+hpp}\end{DoxyCompactItemize}

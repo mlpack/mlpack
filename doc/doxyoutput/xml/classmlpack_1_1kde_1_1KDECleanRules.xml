@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1kde_1_1KDECleanRules" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::kde::KDECleanRules</compoundname>
+    <includes refid="kde__rules_8hpp" local="no">kde_rules.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename TreeType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1kde_1_1KDECleanRules_1ab5f079db10d0a6813eefeb1115e894cb" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">tree::TraversalInfo</ref>&lt; TreeType &gt;</type>
+        <definition>typedef tree::TraversalInfo&lt;TreeType&gt; TraversalInfoType</definition>
+        <argsstring></argsstring>
+        <name>TraversalInfoType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" line="214" column="40" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDECleanRules_1aa987143b3965542c77c85c8212abedbe" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref></type>
+        <definition>TraversalInfoType traversalInfo</definition>
+        <argsstring></argsstring>
+        <name>traversalInfo</name>
+        <briefdescription>
+<para>Traversal information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" line="224" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDECleanRules_1a9b4a8d3068b51fba5a4631ef16d2d80b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>KDECleanRules</definition>
+        <argsstring>()</argsstring>
+        <name>KDECleanRules</name>
+        <briefdescription>
+<para>Construct <ref refid="classmlpack_1_1kde_1_1KDECleanRules" kindref="compound">KDECleanRules</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" line="193" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" bodystart="193" bodyend="193"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDECleanRules_1afde86a5301e751ee60e64cb7c4b65a6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BaseCase</definition>
+        <argsstring>(const size_t, const size_t)</argsstring>
+        <name>BaseCase</name>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <briefdescription>
+<para>Base Case. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" line="196" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDECleanRules_1a12a9cd8472681e4db55db7d8600e16f7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Rescore</definition>
+        <argsstring>(const size_t, TreeType &amp;, const double oldScore) const</argsstring>
+        <name>Rescore</name>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>oldScore</declname>
+        </param>
+        <briefdescription>
+<para>SingleTree Rescore. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" line="202" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" bodystart="202" bodyend="204"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDECleanRules_1ae9e5b74e47db9c2035cbc10381f39d69" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Rescore</definition>
+        <argsstring>(TreeType &amp;, TreeType &amp;, const double oldScore) const</argsstring>
+        <name>Rescore</name>
+        <param>
+          <type>TreeType &amp;</type>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>oldScore</declname>
+        </param>
+        <briefdescription>
+<para>Dual-Tree Rescore. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" line="210" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" bodystart="210" bodyend="212"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDECleanRules_1a52fccee427560ab1cc4f6930fc1aae64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Score</definition>
+        <argsstring>(const size_t, TreeType &amp;referenceNode)</argsstring>
+        <name>Score</name>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>SingleTree Score. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" line="199" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDECleanRules_1a05b142945ef94221b628a75961f48b02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Score</definition>
+        <argsstring>(TreeType &amp;queryNode, TreeType &amp;referenceNode)</argsstring>
+        <name>Score</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Dual-Tree Score. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" line="207" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDECleanRules_1a4027bb90e756a4520d55978459c7f83e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1kde_1_1KDECleanRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref> &amp;</type>
+        <definition>TraversalInfoType&amp; TraversalInfo</definition>
+        <argsstring>()</argsstring>
+        <name>TraversalInfo</name>
+        <briefdescription>
+<para>Modify traversal information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" line="220" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" bodystart="220" bodyend="220"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDECleanRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1kde_1_1KDECleanRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref> &amp;</type>
+        <definition>const TraversalInfoType&amp; TraversalInfo</definition>
+        <argsstring>() const</argsstring>
+        <name>TraversalInfo</name>
+        <briefdescription>
+<para>Get traversal information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" line="217" column="27" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" bodystart="217" bodyend="217"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A dual-tree traversal Rules class for cleaning used trees before performing kernel density estimation. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" line="189" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_rules.hpp" bodystart="190" bodyend="225"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1kde_1_1KDECleanRules_1afde86a5301e751ee60e64cb7c4b65a6c" prot="public" virt="non-virtual"><scope>mlpack::kde::KDECleanRules</scope><name>BaseCase</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDECleanRules_1a9b4a8d3068b51fba5a4631ef16d2d80b" prot="public" virt="non-virtual"><scope>mlpack::kde::KDECleanRules</scope><name>KDECleanRules</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDECleanRules_1a12a9cd8472681e4db55db7d8600e16f7" prot="public" virt="non-virtual"><scope>mlpack::kde::KDECleanRules</scope><name>Rescore</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDECleanRules_1ae9e5b74e47db9c2035cbc10381f39d69" prot="public" virt="non-virtual"><scope>mlpack::kde::KDECleanRules</scope><name>Rescore</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDECleanRules_1a52fccee427560ab1cc4f6930fc1aae64" prot="public" virt="non-virtual"><scope>mlpack::kde::KDECleanRules</scope><name>Score</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDECleanRules_1a05b142945ef94221b628a75961f48b02" prot="public" virt="non-virtual"><scope>mlpack::kde::KDECleanRules</scope><name>Score</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDECleanRules_1aa987143b3965542c77c85c8212abedbe" prot="private" virt="non-virtual"><scope>mlpack::kde::KDECleanRules</scope><name>traversalInfo</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDECleanRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" prot="public" virt="non-virtual"><scope>mlpack::kde::KDECleanRules</scope><name>TraversalInfo</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDECleanRules_1a4027bb90e756a4520d55978459c7f83e" prot="public" virt="non-virtual"><scope>mlpack::kde::KDECleanRules</scope><name>TraversalInfo</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDECleanRules_1ab5f079db10d0a6813eefeb1115e894cb" prot="public" virt="non-virtual"><scope>mlpack::kde::KDECleanRules</scope><name>TraversalInfoType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

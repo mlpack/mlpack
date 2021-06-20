@@ -1,0 +1,738 @@
+\doxysection{FFN$<$ Output\+Layer\+Type, Initialization\+Rule\+Type, Custom\+Layers $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1FFN}\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+
+
+Implementation of a standard feed forward network.  
+
+
+
+
+Inheritance diagram for FFN$<$ Output\+Layer\+Type, Initialization\+Rule\+Type, Custom\+Layers $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmlpack_1_1ann_1_1FFN__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \textbf{ Network\+Type} = \textbf{ FFN}$<$ Output\+Layer\+Type, Initialization\+Rule\+Type $>$
+\begin{DoxyCompactList}\small\item\em Convenience typedef for the internal model construction. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ FFN} (const \textbf{ FFN} \&)
+\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
+\textbf{ FFN} (\textbf{ FFN} \&\&)
+\begin{DoxyCompactList}\small\item\em Move constructor. \end{DoxyCompactList}\item 
+\textbf{ FFN} (Output\+Layer\+Type output\+Layer=Output\+Layer\+Type(), Initialization\+Rule\+Type initialize\+Rule=Initialization\+Rule\+Type())
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{FFN}{p.}{classmlpack_1_1ann_1_1FFN} object. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+FFN} ()
+\begin{DoxyCompactList}\small\item\em Destructor to release allocated memory. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Layer\+Type , class... Args$>$ }\\void \textbf{ Add} (Args... args)
+\item 
+void \textbf{ Add} (\textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ layer)
+\item 
+{\footnotesize template$<$typename Predictors\+Type , typename Targets\+Type , typename Gradients\+Type $>$ }\\double \textbf{ Backward} (const Predictors\+Type \&inputs, const Targets\+Type \&targets, Gradients\+Type \&gradients)
+\begin{DoxyCompactList}\small\item\em Perform the backward pass of the data in real batch mode. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const arma\+::mat \&parameters)
+\begin{DoxyCompactList}\small\item\em Evaluate the feedforward network with the given parameters. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const arma\+::mat \&parameters, const size\+\_\+t begin, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Evaluate the feedforward network with the given parameters, but using only a number of data points. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const arma\+::mat \&parameters, const size\+\_\+t begin, const size\+\_\+t batch\+Size, const bool deterministic)
+\begin{DoxyCompactList}\small\item\em Evaluate the feedforward network with the given parameters, but using only a number of data points. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Predictors\+Type , typename Responses\+Type $>$ }\\double \textbf{ Evaluate} (const Predictors\+Type \&predictors, const Responses\+Type \&responses)
+\begin{DoxyCompactList}\small\item\em Evaluate the feedforward network with the given predictors and responses. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Grad\+Type $>$ }\\double \textbf{ Evaluate\+With\+Gradient} (const arma\+::mat \&parameters, const size\+\_\+t begin, Grad\+Type \&gradient, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Evaluate the feedforward network with the given parameters, but using only a number of data points. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Grad\+Type $>$ }\\double \textbf{ Evaluate\+With\+Gradient} (const arma\+::mat \&parameters, Grad\+Type \&gradient)
+\begin{DoxyCompactList}\small\item\em Evaluate the feedforward network with the given parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Predictors\+Type , typename Responses\+Type $>$ }\\void \textbf{ Forward} (const Predictors\+Type \&inputs, Responses\+Type \&results)
+\begin{DoxyCompactList}\small\item\em Perform the forward pass of the data in real batch mode. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Predictors\+Type , typename Responses\+Type $>$ }\\void \textbf{ Forward} (const Predictors\+Type \&inputs, Responses\+Type \&results, const size\+\_\+t begin, const size\+\_\+t end)
+\begin{DoxyCompactList}\small\item\em Perform a partial forward pass of the data. \end{DoxyCompactList}\item 
+void \textbf{ Gradient} (const arma\+::mat \&parameters, const size\+\_\+t begin, arma\+::mat \&gradient, const size\+\_\+t batch\+Size)
+\begin{DoxyCompactList}\small\item\em Evaluate the gradient of the feedforward network with the given parameters, and with respect to only a number of points in the dataset. \end{DoxyCompactList}\item 
+std\+::vector$<$ \textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ $>$ \& \textbf{ Model} ()
+\begin{DoxyCompactList}\small\item\em Modify the network model. \end{DoxyCompactList}\item 
+const std\+::vector$<$ \textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ $>$ \& \textbf{ Model} () const
+\begin{DoxyCompactList}\small\item\em Get the network model. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Functions} () const
+\begin{DoxyCompactList}\small\item\em Return the number of separable functions (the number of predictor points). \end{DoxyCompactList}\item 
+\textbf{ FFN} \& \textbf{ operator=} (\textbf{ FFN})
+\begin{DoxyCompactList}\small\item\em Copy/move assignment operator. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the initial point for the optimization. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Return the initial point for the optimization. \end{DoxyCompactList}\item 
+void \textbf{ Predict} (arma\+::mat predictors, arma\+::mat \&results)
+\begin{DoxyCompactList}\small\item\em Predict the responses to a given set of predictors. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Predictors} ()
+\begin{DoxyCompactList}\small\item\em Modify the matrix of data points (predictors). \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Predictors} () const
+\begin{DoxyCompactList}\small\item\em Get the matrix of data points (predictors). \end{DoxyCompactList}\item 
+void \textbf{ Reset\+Parameters} ()
+\begin{DoxyCompactList}\small\item\em Reset the module infomration (weights/parameters). \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Responses} ()
+\begin{DoxyCompactList}\small\item\em Modify the matrix of responses to the input data points. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Responses} () const
+\begin{DoxyCompactList}\small\item\em Get the matrix of responses to the input data points. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+void \textbf{ Shuffle} ()
+\begin{DoxyCompactList}\small\item\em Shuffle the order of function visitation. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Optimizer\+Type  = ens\+::\+RMSProp, typename... Callback\+Types$>$ }\\double \textbf{ Train} (arma\+::mat predictors, arma\+::mat responses, Callback\+Types \&\&... callbacks)
+\begin{DoxyCompactList}\small\item\em Train the feedforward network on the given input data. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Optimizer\+Type , typename... Callback\+Types$>$ }\\double \textbf{ Train} (arma\+::mat predictors, arma\+::mat responses, Optimizer\+Type \&optimizer, Callback\+Types \&\&... callbacks)
+\begin{DoxyCompactList}\small\item\em Train the feedforward network on the given input data using the given optimizer. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Optimizer\+Type $>$ }\\std\+::enable\+\_\+if$<$ Has\+Max\+Iterations$<$ Optimizer\+Type, size\+\_\+t \&(Optimizer\+Type\+::$\ast$)()$>$\+::value, void $>$\+::type \textbf{ Warn\+Message\+Max\+Iterations} (Optimizer\+Type \&optimizer, size\+\_\+t samples) const
+\begin{DoxyCompactList}\small\item\em Check if the optimizer has Max\+Iterations() parameter, if it does then check if it\textquotesingle{}s value is less than the number of datapoints in the dataset. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Optimizer\+Type $>$ }\\std\+::enable\+\_\+if$<$ !Has\+Max\+Iterations$<$ Optimizer\+Type, size\+\_\+t \&(Optimizer\+Type\+::$\ast$)()$>$\+::value, void $>$\+::type \textbf{ Warn\+Message\+Max\+Iterations} (Optimizer\+Type \&optimizer, size\+\_\+t samples) const
+\begin{DoxyCompactList}\small\item\em Check if the optimizer has Max\+Iterations() parameter, if it doesn\textquotesingle{}t then simply return from the function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Output\+Layer\+Type = Negative\+Log\+Likelihood$<$$>$, typename Initialization\+Rule\+Type = Random\+Initialization, typename... Custom\+Layers$>$\newline
+class mlpack\+::ann\+::\+FFN$<$ Output\+Layer\+Type, Initialization\+Rule\+Type, Custom\+Layers $>$}
+
+Implementation of a standard feed forward network. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Output\+Layer\+Type} & The output layer type used to evaluate the network. \\
+\hline
+{\em Initialization\+Rule\+Type} & Rule used to initialize the weight matrix. \\
+\hline
+{\em Custom\+Layers} & Any set of custom layers that could be a part of the feed forward network. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 52 of file ffn.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_aa628987cefe24b56f3c1551d0588a329}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!NetworkType@{NetworkType}}
+\index{NetworkType@{NetworkType}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{NetworkType}
+{\footnotesize\ttfamily using \textbf{ Network\+Type} =  \textbf{ FFN}$<$Output\+Layer\+Type, Initialization\+Rule\+Type$>$}
+
+
+
+Convenience typedef for the internal model construction. 
+
+
+
+Definition at line 56 of file ffn.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a8a1597bba65304f53ae1cecd73b395a6}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!FFN@{FFN}}
+\index{FFN@{FFN}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{FFN()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ FFN} (\begin{DoxyParamCaption}\item[{Output\+Layer\+Type}]{output\+Layer = {\ttfamily OutputLayerType()},  }\item[{Initialization\+Rule\+Type}]{initialize\+Rule = {\ttfamily InitializationRuleType()} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{FFN}{p.}{classmlpack_1_1ann_1_1FFN} object. 
+
+Optionally, specify which initialize rule and performance function should be used.
+
+If you want to pass in a parameter and discard the original parameter object, be sure to use std\+::move to avoid unnecessary copy.
+
+
+\begin{DoxyParams}{Parameters}
+{\em output\+Layer} & Output layer used to evaluate the network. \\
+\hline
+{\em initialize\+Rule} & Optional instantiated Initialization\+Rule object for initializing the network parameter. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a747c838260bf79c9b08e310660792800}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!FFN@{FFN}}
+\index{FFN@{FFN}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{FFN()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ FFN} (\begin{DoxyParamCaption}\item[{const \textbf{ FFN}$<$ Output\+Layer\+Type, Initialization\+Rule\+Type, Custom\+Layers $>$ \&}]{ }\end{DoxyParamCaption})}
+
+
+
+Copy constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a8aa14d013d2855c06df5d78b31a126ef}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!FFN@{FFN}}
+\index{FFN@{FFN}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{FFN()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ FFN} (\begin{DoxyParamCaption}\item[{\textbf{ FFN}$<$ Output\+Layer\+Type, Initialization\+Rule\+Type, Custom\+Layers $>$ \&\&}]{ }\end{DoxyParamCaption})}
+
+
+
+Move constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a45450c5c89a5be407cbaa16523c1533d}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!````~FFN@{$\sim$FFN}}
+\index{````~FFN@{$\sim$FFN}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{$\sim$FFN()}
+{\footnotesize\ttfamily $\sim$\textbf{ FFN} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Destructor to release allocated memory. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a8b5234495846c00f6b2c8296ca6bc718}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Add@{Add}}
+\index{Add@{Add}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Add()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void \textbf{ Add} (\begin{DoxyParamCaption}\item[{Args...}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 290 of file ffn.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a503a807740e6c729be9efc89520db728}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Add@{Add}}
+\index{Add@{Add}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Add()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void \textbf{ Add} (\begin{DoxyParamCaption}\item[{\textbf{ Layer\+Types}$<$ Custom\+Layers... $>$}]{layer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 297 of file ffn.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_aa470bcf2d35a2b8489ee1be4d0485bf7}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily double Backward (\begin{DoxyParamCaption}\item[{const Predictors\+Type \&}]{inputs,  }\item[{const Targets\+Type \&}]{targets,  }\item[{Gradients\+Type \&}]{gradients }\end{DoxyParamCaption})}
+
+
+
+Perform the backward pass of the data in real batch mode. 
+
+Forward and Backward should be used as a pair, and they are designed mainly for advanced users. User should try to use Predict and Train unless those two functions can\textquotesingle{}t satisfy some special requirements.
+
+
+\begin{DoxyParams}{Parameters}
+{\em inputs} & Inputs of current pass. \\
+\hline
+{\em targets} & The training target. \\
+\hline
+{\em gradients} & Computed gradients. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Training error of the current pass. 
+\end{DoxyReturn}
+
+
+References FFN$<$ Output\+Layer\+Type, Initialization\+Rule\+Type, Custom\+Layers $>$\+::\+Backward().
+
+
+
+Referenced by FFN$<$ Output\+Layer\+Type, Initialization\+Rule\+Type, Custom\+Layers $>$\+::\+Backward().
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a1ca0efaedbc2e7e7542c89901cdcf2ee}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters }\end{DoxyParamCaption})}
+
+
+
+Evaluate the feedforward network with the given parameters. 
+
+This function is usually called by the optimizer to train the model.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Matrix model parameters. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a8a04cfd951b52327d7f2e148c68f365d}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{begin,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Evaluate the feedforward network with the given parameters, but using only a number of data points. 
+
+This is useful for optimizers such as SGD, which require a separable objective function. This just calls the overload of \doxyref{Evaluate()}{p.}{classmlpack_1_1ann_1_1FFN_a3eb237d1741e9c450dd695a84d9e8f50} with deterministic = true.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Matrix model parameters. \\
+\hline
+{\em begin} & Index of the starting point to use for objective function evaluation. \\
+\hline
+{\em batch\+Size} & Number of points to be passed at a time to use for objective function evaluation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a3e02a8743fd14b2a902a2e090da2df47}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{begin,  }\item[{const size\+\_\+t}]{batch\+Size,  }\item[{const bool}]{deterministic }\end{DoxyParamCaption})}
+
+
+
+Evaluate the feedforward network with the given parameters, but using only a number of data points. 
+
+This is useful for optimizers such as SGD, which require a separable objective function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Matrix model parameters. \\
+\hline
+{\em begin} & Index of the starting point to use for objective function evaluation. \\
+\hline
+{\em batch\+Size} & Number of points to be passed at a time to use for objective function evaluation. \\
+\hline
+{\em deterministic} & Whether or not to train or test the model. Note some layer act differently in training or testing mode. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a3eb237d1741e9c450dd695a84d9e8f50}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const Predictors\+Type \&}]{predictors,  }\item[{const Responses\+Type \&}]{responses }\end{DoxyParamCaption})}
+
+
+
+Evaluate the feedforward network with the given predictors and responses. 
+
+This functions is usually used to monitor progress while training.
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Input variables. \\
+\hline
+{\em responses} & Target outputs for input variables. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a3e01e9e3fe4f5bd8cfc78521567a0f5a}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!EvaluateWithGradient@{EvaluateWithGradient}}
+\index{EvaluateWithGradient@{EvaluateWithGradient}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{EvaluateWithGradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Evaluate\+With\+Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{begin,  }\item[{Grad\+Type \&}]{gradient,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Evaluate the feedforward network with the given parameters, but using only a number of data points. 
+
+This is useful for optimizers such as SGD, which require a separable objective function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Matrix model parameters. \\
+\hline
+{\em begin} & Index of the starting point to use for objective function evaluation. \\
+\hline
+{\em gradient} & Matrix to output gradient into. \\
+\hline
+{\em batch\+Size} & Number of points to be passed at a time to use for objective function evaluation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a8e99a4877511dea38ab32a2de7afe125}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!EvaluateWithGradient@{EvaluateWithGradient}}
+\index{EvaluateWithGradient@{EvaluateWithGradient}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{EvaluateWithGradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Evaluate\+With\+Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{Grad\+Type \&}]{gradient }\end{DoxyParamCaption})}
+
+
+
+Evaluate the feedforward network with the given parameters. 
+
+This function is usually called by the optimizer to train the model. This just calls the overload of \doxyref{Evaluate\+With\+Gradient()}{p.}{classmlpack_1_1ann_1_1FFN_a8e99a4877511dea38ab32a2de7afe125} with batch\+Size = 1.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Matrix model parameters. \\
+\hline
+{\em gradient} & Matrix to output gradient into. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a2f9b7c651427add841fa6ce2fa3f68e1}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Forward()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const Predictors\+Type \&}]{inputs,  }\item[{Responses\+Type \&}]{results }\end{DoxyParamCaption})}
+
+
+
+Perform the forward pass of the data in real batch mode. 
+
+Forward and Backward should be used as a pair, and they are designed mainly for advanced users. User should try to use Predict and Train unless those two functions can\textquotesingle{}t satisfy some special requirements.
+
+
+\begin{DoxyParams}{Parameters}
+{\em inputs} & The input data. \\
+\hline
+{\em results} & The predicted results. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a5f146cf28feb9ad8cb4891114536d97d}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Forward()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const Predictors\+Type \&}]{inputs,  }\item[{Responses\+Type \&}]{results,  }\item[{const size\+\_\+t}]{begin,  }\item[{const size\+\_\+t}]{end }\end{DoxyParamCaption})}
+
+
+
+Perform a partial forward pass of the data. 
+
+This function is meant for the cases when users require a forward pass only through certain layers and not the entire network.
+
+
+\begin{DoxyParams}{Parameters}
+{\em inputs} & The input data for the specified first layer. \\
+\hline
+{\em results} & The predicted results from the specified last layer. \\
+\hline
+{\em begin} & The index of the first layer. \\
+\hline
+{\em end} & The index of the last layer. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_aca73798d93d56b280185c01502d8bd13}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Gradient()}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{begin,  }\item[{arma\+::mat \&}]{gradient,  }\item[{const size\+\_\+t}]{batch\+Size }\end{DoxyParamCaption})}
+
+
+
+Evaluate the gradient of the feedforward network with the given parameters, and with respect to only a number of points in the dataset. 
+
+This is useful for optimizers such as SGD, which require a separable objective function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Matrix of the model parameters to be optimized. \\
+\hline
+{\em begin} & Index of the starting point to use for objective function gradient evaluation. \\
+\hline
+{\em gradient} & Matrix to output gradient into. \\
+\hline
+{\em batch\+Size} & Number of points to be processed as a batch for objective function gradient evaluation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a4cb1e93bff99ccf1f8f974065a3b13c3}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Model@{Model}}
+\index{Model@{Model}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Model()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::vector$<$\textbf{ Layer\+Types}$<$Custom\+Layers...$>$ $>$\& Model (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the network model. 
+
+Be careful! If you change the structure of the network or parameters for layers, its state may become invalid, so be sure to call \doxyref{Reset\+Parameters()}{p.}{classmlpack_1_1ann_1_1FFN_a7178038c3cb8d247eadb94cd2058c432} afterwards. 
+
+Definition at line 307 of file ffn.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a13efc1008a3923a70c7785e9470853a7}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Model@{Model}}
+\index{Model@{Model}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Model()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const std\+::vector$<$\textbf{ Layer\+Types}$<$Custom\+Layers...$>$ $>$\& Model (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the network model. 
+
+
+
+Definition at line 300 of file ffn.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a1fa76af34a6e3ea927b307f0c318ee4b}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!NumFunctions@{NumFunctions}}
+\index{NumFunctions@{NumFunctions}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{NumFunctions()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Functions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of separable functions (the number of predictor points). 
+
+
+
+Definition at line 310 of file ffn.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_ad3218e6a988d7203fd6a0ced3e457057}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{operator=()}
+{\footnotesize\ttfamily \textbf{ FFN}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ FFN}$<$ Output\+Layer\+Type, Initialization\+Rule\+Type, Custom\+Layers $>$}]{ }\end{DoxyParamCaption})}
+
+
+
+Copy/move assignment operator. 
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a043f0ccd62e6711a18e0d81047be9a0a}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the initial point for the optimization. 
+
+
+
+Definition at line 315 of file ffn.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_aa68d74dc1e86e4352e00a3cab83a0e4a}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const arma\+::mat\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the initial point for the optimization. 
+
+
+
+Definition at line 313 of file ffn.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_abf82c92c2116f34fb36118155da42a4e}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Predict@{Predict}}
+\index{Predict@{Predict}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Predict()}
+{\footnotesize\ttfamily void Predict (\begin{DoxyParamCaption}\item[{arma\+::mat}]{predictors,  }\item[{arma\+::mat \&}]{results }\end{DoxyParamCaption})}
+
+
+
+Predict the responses to a given set of predictors. 
+
+The responses will reflect the output of the given output layer as returned by the output layer function.
+
+If you want to pass in a parameter and discard the original parameter object, be sure to use std\+::move to avoid unnecessary copy.
+
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Input predictors. \\
+\hline
+{\em results} & Matrix to put output predictions of responses into. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a5b2b9103f156a387b74164f143e63ce7}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Predictors@{Predictors}}
+\index{Predictors@{Predictors}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Predictors()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Predictors (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the matrix of data points (predictors). 
+
+
+
+Definition at line 325 of file ffn.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_af63d9ce84ba796336c0abce63ff9be1c}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Predictors@{Predictors}}
+\index{Predictors@{Predictors}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Predictors()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const arma\+::mat\& Predictors (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the matrix of data points (predictors). 
+
+
+
+Definition at line 323 of file ffn.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a7178038c3cb8d247eadb94cd2058c432}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!ResetParameters@{ResetParameters}}
+\index{ResetParameters@{ResetParameters}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{ResetParameters()}
+{\footnotesize\ttfamily void Reset\+Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Reset the module infomration (weights/parameters). 
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a94a56f6f545988833a4ae9906f8aa197}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Responses@{Responses}}
+\index{Responses@{Responses}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Responses()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Responses (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the matrix of responses to the input data points. 
+
+
+
+Definition at line 320 of file ffn.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a5702d7dbe418472e341da9c8d8ff0e01}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Responses@{Responses}}
+\index{Responses@{Responses}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Responses()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const arma\+::mat\& Responses (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the matrix of responses to the input data points. 
+
+
+
+Definition at line 318 of file ffn.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a65cba07328997659bec80b9879b15a51}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the model. 
+
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a2697cc8b37d7bca7c055228382a9b208}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Shuffle@{Shuffle}}
+\index{Shuffle@{Shuffle}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Shuffle()}
+{\footnotesize\ttfamily void Shuffle (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Shuffle the order of function visitation. 
+
+This may be called by the optimizer. \mbox{\label{classmlpack_1_1ann_1_1FFN_a4b7575e89c27b66658f50510ef2e639b}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Train@{Train}}
+\index{Train@{Train}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Train (\begin{DoxyParamCaption}\item[{arma\+::mat}]{predictors,  }\item[{arma\+::mat}]{responses,  }\item[{Callback\+Types \&\&...}]{callbacks }\end{DoxyParamCaption})}
+
+
+
+Train the feedforward network on the given input data. 
+
+By default, the RMSProp optimization algorithm is used, but others can be specified (such as ens\+::\+SGD).
+
+This will use the existing model parameters as a starting point for the optimization. If this is not what you want, then you should access the parameters vector directly with \doxyref{Parameters()}{p.}{classmlpack_1_1ann_1_1FFN_a043f0ccd62e6711a18e0d81047be9a0a} and modify it as desired.
+
+If you want to pass in a parameter and discard the original parameter object, be sure to use std\+::move to avoid unnecessary copy.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Optimizer\+Type} & Type of optimizer to use to train the model. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Input training variables. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Callback\+Types} & Types of Callback Functions. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em responses} & Outputs results from input training variables. \\
+\hline
+{\em callbacks} & Callback function for ensmallen optimizer {\ttfamily Optimizer\+Type}. See {\texttt{ https\+://www.\+ensmallen.\+org/docs.\+html\#callback-\/documentation}}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The final objective of the trained model (NaN or Inf on error). 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_adafbb7eca07a0b852cca46b154c5aab8}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!Train@{Train}}
+\index{Train@{Train}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Train()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Train (\begin{DoxyParamCaption}\item[{arma\+::mat}]{predictors,  }\item[{arma\+::mat}]{responses,  }\item[{Optimizer\+Type \&}]{optimizer,  }\item[{Callback\+Types \&\&...}]{callbacks }\end{DoxyParamCaption})}
+
+
+
+Train the feedforward network on the given input data using the given optimizer. 
+
+This will use the existing model parameters as a starting point for the optimization. If this is not what you want, then you should access the parameters vector directly with \doxyref{Parameters()}{p.}{classmlpack_1_1ann_1_1FFN_a043f0ccd62e6711a18e0d81047be9a0a} and modify it as desired.
+
+If you want to pass in a parameter and discard the original parameter object, be sure to use std\+::move to avoid unnecessary copy.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Optimizer\+Type} & Type of optimizer to use to train the model. \\
+\hline
+{\em Callback\+Types} & Types of Callback Functions. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em predictors} & Input training variables. \\
+\hline
+{\em responses} & Outputs results from input training variables. \\
+\hline
+{\em optimizer} & Instantiated optimizer used to train the model. \\
+\hline
+{\em callbacks} & Callback function for ensmallen optimizer {\ttfamily Optimizer\+Type}. See {\texttt{ https\+://www.\+ensmallen.\+org/docs.\+html\#callback-\/documentation}}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The final objective of the trained model (NaN or Inf on error). 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a5a15e2d0145f9a32c5b439d9d1949908}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!WarnMessageMaxIterations@{WarnMessageMaxIterations}}
+\index{WarnMessageMaxIterations@{WarnMessageMaxIterations}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{WarnMessageMaxIterations()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::enable\+\_\+if$<$ Has\+Max\+Iterations$<$Optimizer\+Type, size\+\_\+t\&(Optimizer\+Type\+::$\ast$)()$>$\+::value, void$>$\+::type Warn\+Message\+Max\+Iterations (\begin{DoxyParamCaption}\item[{Optimizer\+Type \&}]{optimizer,  }\item[{size\+\_\+t}]{samples }\end{DoxyParamCaption}) const}
+
+
+
+Check if the optimizer has Max\+Iterations() parameter, if it does then check if it\textquotesingle{}s value is less than the number of datapoints in the dataset. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Optimizer\+Type} & Type of optimizer to use to train the model. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em optimizer} & optimizer used in the training process. \\
+\hline
+{\em samples} & Number of datapoints in the dataset. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1FFN_a02d59875a99c37ae210353881619d1af}} 
+\index{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}!WarnMessageMaxIterations@{WarnMessageMaxIterations}}
+\index{WarnMessageMaxIterations@{WarnMessageMaxIterations}!FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$@{FFN$<$ OutputLayerType, InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{WarnMessageMaxIterations()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::enable\+\_\+if$<$ !Has\+Max\+Iterations$<$Optimizer\+Type, size\+\_\+t\&(Optimizer\+Type\+::$\ast$)()$>$\+::value, void$>$\+::type Warn\+Message\+Max\+Iterations (\begin{DoxyParamCaption}\item[{Optimizer\+Type \&}]{optimizer,  }\item[{size\+\_\+t}]{samples }\end{DoxyParamCaption}) const}
+
+
+
+Check if the optimizer has Max\+Iterations() parameter, if it doesn\textquotesingle{}t then simply return from the function. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Optimizer\+Type} & Type of optimizer to use to train the model. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em optimizer} & optimizer used in the training process. \\
+\hline
+{\em samples} & Number of datapoints in the dataset. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/\textbf{ ffn.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,44 @@
+\doxysection{Cell\+Bound$<$ Metric\+Type, Elem\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1bound_1_1CellBound}\index{CellBound$<$ MetricType, ElemType $>$@{CellBound$<$ MetricType, ElemType $>$}}
+
+
+The \doxyref{Cell\+Bound}{p.}{classmlpack_1_1bound_1_1CellBound} class describes a bound that consists of a number of hyperrectangles.  
+
+
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+LMetric$<$2, true$>$, typename Elem\+Type = double$>$\newline
+class mlpack\+::bound\+::\+Cell\+Bound$<$ Metric\+Type, Elem\+Type $>$}
+
+The \doxyref{Cell\+Bound}{p.}{classmlpack_1_1bound_1_1CellBound} class describes a bound that consists of a number of hyperrectangles. 
+
+These hyperrectangles do not overlap each other. The bound is limited by an outer hyperrectangle and two addresses, the lower address and the high address. Thus, the bound contains all points included between the lower and the high addresses. The class caches the minimum bounding rectangle, the lower and the high addresses and the hyperrectangles that are described by the addresses.
+
+The notion of addresses is described in the following paper. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@inproceedings\{bayer1997,}
+\DoxyCodeLine{  author = \{Bayer, Rudolf\},}
+\DoxyCodeLine{  title = \{The Universal B-\/Tree \textcolor{keywordflow}{for} Multidimensional Indexing: General}
+\DoxyCodeLine{      Concepts\},}
+\DoxyCodeLine{  booktitle = \{Proceedings of the International Conference on Worldwide}
+\DoxyCodeLine{      Computing and Its Applications\},}
+\DoxyCodeLine{  series = \{WWCA \textcolor{stringliteral}{'97\},}}
+\DoxyCodeLine{\textcolor{stringliteral}{  year = \{1997\},}}
+\DoxyCodeLine{\textcolor{stringliteral}{  isbn = \{3-\/540-\/63343-\/X\},}}
+\DoxyCodeLine{\textcolor{stringliteral}{  pages = \{198-\/-\/209\},}}
+\DoxyCodeLine{\textcolor{stringliteral}{  numpages = \{12\},}}
+\DoxyCodeLine{\textcolor{stringliteral}{  publisher = \{Springer-\/Verlag\},}}
+\DoxyCodeLine{\textcolor{stringliteral}{  address = \{London, UK, UK\},}}
+\DoxyCodeLine{\textcolor{stringliteral}{\}}}
+
+\end{DoxyCode}
+ 
+
+Definition at line 75 of file cellbound.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/\textbf{ cellbound.\+hpp}\end{DoxyCompactItemize}

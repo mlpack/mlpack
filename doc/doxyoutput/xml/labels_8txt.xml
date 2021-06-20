@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="labels_8txt" kind="file" language="C++">
+    <compoundname>labels.txt</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal">lab1.csv</highlight></codeline>
+<codeline lineno="2"><highlight class="normal">lab2.csv</highlight></codeline>
+<codeline lineno="3"><highlight class="normal">lab3.csv</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/tests/data/labels.txt"/>
+  </compounddef>
+</doxygen>

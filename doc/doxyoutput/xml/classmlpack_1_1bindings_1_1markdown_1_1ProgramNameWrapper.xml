@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1bindings_1_1markdown_1_1ProgramNameWrapper" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::bindings::markdown::ProgramNameWrapper</compoundname>
+    <includes refid="program__doc__wrapper_8hpp" local="no">program_doc_wrapper.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1bindings_1_1markdown_1_1ProgramNameWrapper_1a0f651f952111e6db381e63443a067b02" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ProgramNameWrapper</definition>
+        <argsstring>(const std::string &amp;bindingName, const std::string &amp;programName)</argsstring>
+        <name>ProgramNameWrapper</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>programName</declname>
+        </param>
+        <briefdescription>
+<para>Register programName. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" line="29" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" bodystart="29" bodyend="34"/>
+        <references refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a10e347723a80667c48bd5a3c60d9b870">BindingInfo::GetSingleton</references>
+        <references refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a11738b577fb016e05929ab8b548d436e" compoundref="binding__info_8hpp" startline="44">BindingInfo::map</references>
+        <references refid="namespacemlpack_1_1bindings_1_1go_1a24d855d329269931b59bdf1b36706a88">mlpack::bindings::go::programName</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" line="23" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" bodystart="24" bodyend="35"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1bindings_1_1markdown_1_1ProgramNameWrapper_1a0f651f952111e6db381e63443a067b02" prot="public" virt="non-virtual"><scope>mlpack::bindings::markdown::ProgramNameWrapper</scope><name>ProgramNameWrapper</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

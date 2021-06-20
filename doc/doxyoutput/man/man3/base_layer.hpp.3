@@ -1,0 +1,113 @@
+.TH "/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/base_layer.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBBaseLayer< ActivationFunction, InputDataType, OutputDataType >\fP"
+.br
+.RI "Implementation of the base layer\&. "
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::ann\fP"
+.br
+.RI "Artificial Neural Network\&. "
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<class ActivationFunction  = ElishFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBElishFunctionLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard ELiSH-Layer using the ELiSH activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = ElliotFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBElliotFunctionLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Elliot-Layer using the Elliot activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = GaussianFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBGaussianFunctionLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Gaussian-Layer using the Gaussian activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = GELUFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBGELUFunctionLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard GELU-Layer using the GELU activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = HardSigmoidFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBHardSigmoidLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard HardSigmoid-Layer using the HardSigmoid activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = HardSwishFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBHardSwishFunctionLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard HardSwish-Layer using the HardSwish activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = IdentityFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBIdentityLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Identity-Layer using the identity activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = LiSHTFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBLiSHTFunctionLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard LiSHT-Layer using the LiSHT activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = MishFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBMishFunctionLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Mish-Layer using the Mish activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = RectifierFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBReLULayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard rectified linear unit non-linearity layer\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = LogisticFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBSigmoidLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Sigmoid-Layer using the logistic activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = SILUFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBSILUFunctionLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard SILU-Layer using the SILU activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = SoftplusFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBSoftPlusLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Softplus-Layer using the Softplus activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = SwishFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBSwishFunctionLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard Swish-Layer using the Swish activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = TanhExpFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBTanhExpFunctionLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard TanhExp-Layer using the TanhExp activation function\&. "
+.ti -1c
+.RI "template<class ActivationFunction  = TanhFunction, typename InputDataType  = arma::mat, typename OutputDataType  = arma::mat> using \fBTanHLayer\fP = BaseLayer< ActivationFunction, InputDataType, OutputDataType >"
+.br
+.RI "Standard hyperbolic tangent layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Marcus Edel
+.RE
+.PP
+Definition of the BaseLayer class, which attaches various functions to the embedding layer\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBbase_layer\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

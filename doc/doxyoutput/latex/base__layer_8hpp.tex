@@ -1,0 +1,72 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/methods/ann/layer/base\+\_\+layer.hpp File Reference}
+\label{base__layer_8hpp}\index{/home/aakash/mlpack/src/mlpack/methods/ann/layer/base\_layer.hpp@{/home/aakash/mlpack/src/mlpack/methods/ann/layer/base\_layer.hpp}}
+Include dependency graph for base\+\_\+layer.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{base__layer_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{base__layer_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$}
+\begin{DoxyCompactList}\small\item\em Implementation of the base layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::ann}
+\begin{DoxyCompactList}\small\item\em Artificial Neural Network. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$class Activation\+Function  = Elish\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Elish\+Function\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard ELi\+SH-\/\+Layer using the ELi\+SH activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Elliot\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Elliot\+Function\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard Elliot-\/\+Layer using the Elliot activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Gaussian\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Gaussian\+Function\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard Gaussian-\/\+Layer using the Gaussian activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = GELUFunction, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ GELUFunction\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard GELU-\/\+Layer using the GELU activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Hard\+Sigmoid\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Hard\+Sigmoid\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard Hard\+Sigmoid-\/\+Layer using the Hard\+Sigmoid activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Hard\+Swish\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Hard\+Swish\+Function\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard Hard\+Swish-\/\+Layer using the Hard\+Swish activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Identity\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Identity\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard Identity-\/\+Layer using the identity activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Li\+SHTFunction, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Li\+SHTFunction\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard Li\+SHT-\/\+Layer using the Li\+SHT activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Mish\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Mish\+Function\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard Mish-\/\+Layer using the Mish activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Rectifier\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Re\+LULayer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard rectified linear unit non-\/linearity layer. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Logistic\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Sigmoid\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard Sigmoid-\/\+Layer using the logistic activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = SILUFunction, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ SILUFunction\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard SILU-\/\+Layer using the SILU activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Softplus\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Soft\+Plus\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard Softplus-\/\+Layer using the Softplus activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Swish\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Swish\+Function\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard Swish-\/\+Layer using the Swish activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Tanh\+Exp\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Tanh\+Exp\+Function\+Layer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard Tanh\+Exp-\/\+Layer using the Tanh\+Exp activation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Activation\+Function  = Tanh\+Function, typename Input\+Data\+Type  = arma\+::mat, typename Output\+Data\+Type  = arma\+::mat$>$ }\\using \textbf{ Tan\+HLayer} = Base\+Layer$<$ Activation\+Function, Input\+Data\+Type, Output\+Data\+Type $>$
+\begin{DoxyCompactList}\small\item\em Standard hyperbolic tangent layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Marcus Edel
+\end{DoxyAuthor}
+Definition of the Base\+Layer class, which attaches various functions to the embedding layer.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

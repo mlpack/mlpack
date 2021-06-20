@@ -1,0 +1,288 @@
+\doxysection{Concatenate$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Concatenate}\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+
+
+Implementation of the \doxyref{Concatenate}{p.}{classmlpack_1_1ann_1_1Concatenate} module class.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Concatenate} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Concatenate}{p.}{classmlpack_1_1ann_1_1Concatenate} object using the specified number of output units. \end{DoxyCompactList}\item 
+\textbf{ Concatenate} (\textbf{ Concatenate} \&\&layer)
+\begin{DoxyCompactList}\small\item\em Move constructor. \end{DoxyCompactList}\item 
+\textbf{ Concatenate} (const \textbf{ Concatenate} \&layer)
+\begin{DoxyCompactList}\small\item\em Copy constructor. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Concat} ()
+\begin{DoxyCompactList}\small\item\em Modify the concat. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Concat} () const
+\begin{DoxyCompactList}\small\item\em Get the concat matrix. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+\textbf{ Concatenate} \& \textbf{ operator=} (\textbf{ Concatenate} \&\&layer)
+\begin{DoxyCompactList}\small\item\em Operator= move constructor. \end{DoxyCompactList}\item 
+\textbf{ Concatenate} \& \textbf{ operator=} (const \textbf{ Concatenate} \&layer)
+\begin{DoxyCompactList}\small\item\em Operator= copy constructor. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Concatenate$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the \doxyref{Concatenate}{p.}{classmlpack_1_1ann_1_1Concatenate} module class. 
+
+The \doxyref{Concatenate}{p.}{classmlpack_1_1ann_1_1Concatenate} module concatenates a constant given matrix to the incoming data. Note\+: Users need to use the \doxyref{Concat()}{p.}{classmlpack_1_1ann_1_1Concatenate_ab6d00c9e20fe864a635afeee80267c66} function to provide the concat matrix.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 36 of file concatenate.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_ab589994946f9646efb33115d53bbb7b3}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!Concatenate@{Concatenate}}
+\index{Concatenate@{Concatenate}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Concatenate()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ Concatenate} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Concatenate}{p.}{classmlpack_1_1ann_1_1Concatenate} object using the specified number of output units. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_a5383a98632f81f199f6be2de6ac7d70d}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!Concatenate@{Concatenate}}
+\index{Concatenate@{Concatenate}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Concatenate()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ Concatenate} (\begin{DoxyParamCaption}\item[{const \textbf{ Concatenate}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Copy constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_a6cdb568b9c5f21708da26f2f63108d23}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!Concatenate@{Concatenate}}
+\index{Concatenate@{Concatenate}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Concatenate()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ Concatenate} (\begin{DoxyParamCaption}\item[{\textbf{ Concatenate}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&\&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Move constructor. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_ab6d00c9e20fe864a635afeee80267c66}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!Concat@{Concat}}
+\index{Concat@{Concat}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Concat()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& \textbf{ Concat} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the concat. 
+
+
+
+Definition at line 98 of file concatenate.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_a2a3b8cc991cfeb4c68616ca8542efe99}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!Concat@{Concat}}
+\index{Concat@{Concat}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Concat()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& \textbf{ Concat} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the concat matrix. 
+
+
+
+Definition at line 96 of file concatenate.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_ad6601342d560219ce951d554e69e5e87}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 93 of file concatenate.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 91 of file concatenate.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_a9fae613c9c4f38339a6ea65feb01f017}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Concatenate}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ Concatenate}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&\&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Operator= move constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_a399bc61a5d9b5a2d3798c98465d177a0}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Concatenate}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ Concatenate}$<$ Input\+Data\+Type, Output\+Data\+Type $>$ \&}]{layer }\end{DoxyParamCaption})}
+
+
+
+Operator= copy constructor. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 88 of file concatenate.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 86 of file concatenate.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_a9c5c5900772a689d5a6b59778ec67120}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parameters. 
+
+
+
+Definition at line 83 of file concatenate.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_aa530552c7ef915c952fbacc77b965c90}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the parameters. 
+
+
+
+Definition at line 81 of file concatenate.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concatenate_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!Concatenate$<$ InputDataType, OutputDataType $>$@{Concatenate$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the layer. 
+
+
+
+Definition at line 104 of file concatenate.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ concatenate.\+hpp}\end{DoxyCompactItemize}

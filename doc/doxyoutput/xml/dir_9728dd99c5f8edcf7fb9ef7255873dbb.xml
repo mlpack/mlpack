@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_9728dd99c5f8edcf7fb9ef7255873dbb" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees</compoundname>
+    <innerfile refid="binary__numeric__split_8hpp">binary_numeric_split.hpp</innerfile>
+    <innerfile refid="binary__numeric__split__info_8hpp">binary_numeric_split_info.hpp</innerfile>
+    <innerfile refid="categorical__split__info_8hpp">categorical_split_info.hpp</innerfile>
+    <innerfile refid="gini__impurity_8hpp">gini_impurity.hpp</innerfile>
+    <innerfile refid="hoeffding__categorical__split_8hpp">hoeffding_categorical_split.hpp</innerfile>
+    <innerfile refid="hoeffding__numeric__split_8hpp">hoeffding_numeric_split.hpp</innerfile>
+    <innerfile refid="hoeffding__tree_8hpp">hoeffding_tree.hpp</innerfile>
+    <innerfile refid="hoeffding__tree__model_8hpp">hoeffding_tree_model.hpp</innerfile>
+    <innerfile refid="hoeffding__trees_2information__gain_8hpp">information_gain.hpp</innerfile>
+    <innerfile refid="numeric__split__info_8hpp">numeric_split_info.hpp</innerfile>
+    <innerfile refid="methods_2hoeffding__trees_2typedef_8hpp">typedef.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/"/>
+  </compounddef>
+</doxygen>

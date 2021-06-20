@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1gmm_1_1NoConstraint" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::gmm::NoConstraint</compoundname>
+    <includes refid="no__constraint_8hpp" local="no">no_constraint.hpp</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1NoConstraint_1a8d4f28dc4f28a693d03c5b3d7fd64cd3" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ApplyConstraint</definition>
+        <argsstring>(const arma::mat &amp;)</argsstring>
+        <name>ApplyConstraint</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+        </param>
+        <briefdescription>
+<para>Do nothing, and do not modify the covariance matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/no_constraint.hpp" line="29" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/no_constraint.hpp" bodystart="29" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1gmm_1_1NoConstraint_1a408eb4ebf27591742383f36e84641a80" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the object (nothing to do). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/no_constraint.hpp" line="33" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/no_constraint.hpp" bodystart="33" bodyend="33"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class enforces no constraint on the covariance matrix. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It&apos;s faster this way, although depending on your situation you may end up with a non-invertible covariance matrix. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/gmm/no_constraint.hpp" line="25" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/gmm/no_constraint.hpp" bodystart="26" bodyend="34"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1gmm_1_1NoConstraint_1a8d4f28dc4f28a693d03c5b3d7fd64cd3" prot="public" virt="non-virtual"><scope>mlpack::gmm::NoConstraint</scope><name>ApplyConstraint</name></member>
+      <member refid="classmlpack_1_1gmm_1_1NoConstraint_1a408eb4ebf27591742383f36e84641a80" prot="public" virt="non-virtual"><scope>mlpack::gmm::NoConstraint</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

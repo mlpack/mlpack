@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="iodoc_8hpp" kind="file" language="C++">
+    <compoundname>iodoc.hpp</compoundname>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/doc/guide/iodoc.hpp"/>
+  </compounddef>
+</doxygen>

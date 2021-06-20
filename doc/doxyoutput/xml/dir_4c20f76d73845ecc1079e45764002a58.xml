@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_4c20f76d73845ecc1079e45764002a58" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies</compoundname>
+    <innerfile refid="cosine__search_8hpp">cosine_search.hpp</innerfile>
+    <innerfile refid="lmetric__search_8hpp">lmetric_search.hpp</innerfile>
+    <innerfile refid="pearson__search_8hpp">pearson_search.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/"/>
+  </compounddef>
+</doxygen>

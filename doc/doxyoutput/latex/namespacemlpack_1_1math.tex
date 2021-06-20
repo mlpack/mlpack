@@ -1,0 +1,1093 @@
+\doxysection{mlpack\+::math Namespace Reference}
+\label{namespacemlpack_1_1math}\index{mlpack::math@{mlpack::math}}
+
+
+Miscellaneous math routines.  
+
+
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Columns\+To\+Blocks}
+\begin{DoxyCompactList}\small\item\em Transform the columns of the given matrix into a block format. \end{DoxyCompactList}\item 
+class \textbf{ Range\+Type}
+\begin{DoxyCompactList}\small\item\em Simple real-\/valued range. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef \textbf{ Range\+Type}$<$ double $>$ \textbf{ Range}
+\begin{DoxyCompactList}\small\item\em 3.\+0.\+0 TODO\+: break reverse-\/compatibility by changing \doxyref{Range\+Type}{p.}{classmlpack_1_1math_1_1RangeType} to Range. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\T\+::elem\+\_\+type \textbf{ Accu\+Log} (const T \&x)
+\begin{DoxyCompactList}\small\item\em Log-\/sum a vector of log values. \end{DoxyCompactList}\item 
+void \textbf{ Center} (const arma\+::mat \&x, arma\+::mat \&x\+Centered)
+\begin{DoxyCompactList}\small\item\em Creates a centered matrix, where centering is done by subtracting the sum over the columns (a column vector) from each column of the matrix. \end{DoxyCompactList}\item 
+double \textbf{ Clamp\+Non\+Negative} (const double d)
+\begin{DoxyCompactList}\small\item\em Forces a number to be non-\/negative, turning negative numbers into zero. \end{DoxyCompactList}\item 
+double \textbf{ Clamp\+Non\+Positive} (const double d)
+\begin{DoxyCompactList}\small\item\em Forces a number to be non-\/positive, turning positive numbers into zero. \end{DoxyCompactList}\item 
+double \textbf{ Clamp\+Range} (double value, const double range\+Min, const double range\+Max)
+\begin{DoxyCompactList}\small\item\em Clamp a number between a particular range. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\void \textbf{ Clear\+Alias} (arma\+::\+Mat$<$ Elem\+Type $>$ \&mat)
+\begin{DoxyCompactList}\small\item\em Clear an alias so that no data is overwritten. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\void \textbf{ Clear\+Alias} (arma\+::\+Sp\+Mat$<$ Elem\+Type $>$ \&)
+\begin{DoxyCompactList}\small\item\em Clear an alias for a sparse matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\arma\+::\+Mat$<$ eT $>$ \textbf{ Column\+Covariance} (const arma\+::\+Mat$<$ eT $>$ \&A, const size\+\_\+t norm\+\_\+type=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\arma\+::\+Mat$<$ std\+::complex$<$ T $>$ $>$ \textbf{ Column\+Covariance} (const arma\+::\+Mat$<$ std\+::complex$<$ T $>$ $>$ \&A, const size\+\_\+t norm\+\_\+type=0)
+\item 
+void \textbf{ Custom\+Random\+Seed} (const size\+\_\+t seed)
+\item 
+void \textbf{ Fixed\+Random\+Seed} ()
+\begin{DoxyCompactList}\small\item\em Set the random seed to a fixed number. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \textbf{ Log\+Add} (T x, T y)
+\begin{DoxyCompactList}\small\item\em Internal log-\/addition. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , bool In\+Place = false$>$ }\\void \textbf{ Log\+Sum\+Exp} (const T \&x, arma\+::\+Col$<$ typename T\+::elem\+\_\+type $>$ \&y)
+\begin{DoxyCompactList}\small\item\em Compute the sum of exponentials of each element in each column, then compute the log of that. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , bool In\+Place = false$>$ }\\void \textbf{ Log\+Sum\+ExpT} (const T \&x, arma\+::\+Col$<$ typename T\+::elem\+\_\+type $>$ \&y)
+\begin{DoxyCompactList}\small\item\em Compute the sum of exponentials of each element in each row, then compute the log of that. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Col$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (arma\+::\+Col$<$ Elem\+Type $>$ \&input, const bool strict=true)
+\begin{DoxyCompactList}\small\item\em Make an alias of a dense column. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Cube$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (arma\+::\+Cube$<$ Elem\+Type $>$ \&input, const bool strict=true)
+\begin{DoxyCompactList}\small\item\em Make an alias of a dense cube. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Mat$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (arma\+::\+Mat$<$ Elem\+Type $>$ \&input, const bool strict=true)
+\begin{DoxyCompactList}\small\item\em Make an alias of a dense matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Row$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (arma\+::\+Row$<$ Elem\+Type $>$ \&input, const bool strict=true)
+\begin{DoxyCompactList}\small\item\em Make an alias of a dense row. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Sp\+Col$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (const arma\+::\+Sp\+Col$<$ Elem\+Type $>$ \&input, const bool=true)
+\begin{DoxyCompactList}\small\item\em Make a copy of a sparse column (an alias is not possible). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Sp\+Mat$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (const arma\+::\+Sp\+Mat$<$ Elem\+Type $>$ \&input, const bool=true)
+\begin{DoxyCompactList}\small\item\em Make a copy of a sparse matrix (an alias is not possible). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Elem\+Type $>$ }\\arma\+::\+Sp\+Row$<$ Elem\+Type $>$ \textbf{ Make\+Alias} (const arma\+::\+Sp\+Row$<$ Elem\+Type $>$ \&input, const bool=true)
+\begin{DoxyCompactList}\small\item\em Make a copy of a sparse row (an alias is not possible). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Cube\+Type $>$ }\\Cube\+Type \textbf{ Multiply\+Cube2\+Cube} (const Cube\+Type \&cubeA, const Cube\+Type \&cubeB, const bool a\+Transpose=false, const bool b\+Transpose=false)
+\begin{DoxyCompactList}\small\item\em Matrix multiplication of slices of two cubes. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Cube\+Type , typename Mat\+Type $>$ }\\Cube\+Type \textbf{ Multiply\+Cube2\+Mat} (const Cube\+Type \&cubeA, const Mat\+Type \&matB, const bool a\+Transpose=false, const bool b\+Transpose=false)
+\begin{DoxyCompactList}\small\item\em Matrix multiplication of all slices of a cube with a matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Cube\+Type $>$ }\\Cube\+Type \textbf{ Multiply\+Mat2\+Cube} (const Mat\+Type \&matA, const Cube\+Type \&cubeB, const bool a\+Transpose=false, const bool b\+Transpose=false)
+\begin{DoxyCompactList}\small\item\em Matrix multiplication of a matrix and all the slices of a cube. \end{DoxyCompactList}\item 
+void \textbf{ Obtain\+Distinct\+Samples} (const size\+\_\+t lo\+Inclusive, const size\+\_\+t hi\+Exclusive, const size\+\_\+t max\+Num\+Samples, arma\+::uvec \&distinct\+Samples)
+\begin{DoxyCompactList}\small\item\em Obtains no more than max\+Num\+Samples distinct samples. \end{DoxyCompactList}\item 
+void \textbf{ Orthogonalize} (arma\+::mat \&x)
+\begin{DoxyCompactList}\small\item\em Orthogonalize x in-\/place. \end{DoxyCompactList}\item 
+void \textbf{ Orthogonalize} (const arma\+::mat \&x, arma\+::mat \&W)
+\begin{DoxyCompactList}\small\item\em Orthogonalize x and return the result in W, using eigendecomposition. \end{DoxyCompactList}\item 
+double \textbf{ Rand\+Bernoulli} (const double input)
+\begin{DoxyCompactList}\small\item\em Generates a 0/1 specified by the input. \end{DoxyCompactList}\item 
+int \textbf{ Rand\+Int} (const int hi\+Exclusive)
+\begin{DoxyCompactList}\small\item\em Generates a uniform random integer. \end{DoxyCompactList}\item 
+int \textbf{ Rand\+Int} (const int lo, const int hi\+Exclusive)
+\begin{DoxyCompactList}\small\item\em Generates a uniform random integer. \end{DoxyCompactList}\item 
+double \textbf{ Rand\+Normal} ()
+\begin{DoxyCompactList}\small\item\em Generates a normally distributed random number with mean 0 and variance 1. \end{DoxyCompactList}\item 
+double \textbf{ Rand\+Normal} (const double mean, const double variance)
+\begin{DoxyCompactList}\small\item\em Generates a normally distributed random number with specified mean and variance. \end{DoxyCompactList}\item 
+double \textbf{ Random} ()
+\begin{DoxyCompactList}\small\item\em Generates a uniform random number between 0 and 1. \end{DoxyCompactList}\item 
+double \textbf{ Random} (const double lo, const double hi)
+\begin{DoxyCompactList}\small\item\em Generates a uniform random number in the specified range. \end{DoxyCompactList}\item 
+void \textbf{ Random\+Basis} (arma\+::mat \&basis, const size\+\_\+t d)
+\begin{DoxyCompactList}\small\item\em Create a random d-\/dimensional orthogonal basis, storing it in the given matrix. \end{DoxyCompactList}\item 
+void \textbf{ Random\+Seed} (const size\+\_\+t seed)
+\begin{DoxyCompactList}\small\item\em Set the random seed used by the random functions (\doxyref{Random()}{p.}{namespacemlpack_1_1math_a305db122ade561ba1fe874bd51e9797d} and \doxyref{Rand\+Int()}{p.}{namespacemlpack_1_1math_aad090ac225728d74c1b66bcf52f3ab95}). \end{DoxyCompactList}\item 
+void \textbf{ Rand\+Vector} (arma\+::vec \&v)
+\begin{DoxyCompactList}\small\item\em Overwrites a dimension-\/N vector to a random vector on the unit sphere in R$^\wedge$N. \end{DoxyCompactList}\item 
+void \textbf{ Remove\+Rows} (const arma\+::mat \&input, const std\+::vector$<$ size\+\_\+t $>$ \&rows\+To\+Remove, arma\+::mat \&output)
+\begin{DoxyCompactList}\small\item\em Remove a certain set of rows in a matrix while copying to a second matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type , typename Weights\+Type $>$ }\\void \textbf{ Shuffle\+Data} (const Mat\+Type \&input\+Points, const Labels\+Type \&input\+Labels, const Weights\+Type \&input\+Weights, Mat\+Type \&output\+Points, Labels\+Type \&output\+Labels, Weights\+Type \&output\+Weights, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Shuffle a sparse dataset and associated labels (or responses) and weights. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type , typename Weights\+Type $>$ }\\void \textbf{ Shuffle\+Data} (const Mat\+Type \&input\+Points, const Labels\+Type \&input\+Labels, const Weights\+Type \&input\+Weights, Mat\+Type \&output\+Points, Labels\+Type \&output\+Labels, Weights\+Type \&output\+Weights, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Shuffle a dataset and associated labels (or responses) and weights. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type $>$ }\\void \textbf{ Shuffle\+Data} (const Mat\+Type \&input\+Points, const Labels\+Type \&input\+Labels, Mat\+Type \&output\+Points, Labels\+Type \&output\+Labels, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Shuffle a sparse dataset and associated labels (or responses). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type $>$ }\\void \textbf{ Shuffle\+Data} (const Mat\+Type \&input\+Points, const Labels\+Type \&input\+Labels, Mat\+Type \&output\+Points, Labels\+Type \&output\+Labels, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Cube$<$ Labels\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Shuffle a cube-\/shaped dataset and associated labels (or responses) which are also cube-\/shaped. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type , typename Labels\+Type $>$ }\\void \textbf{ Shuffle\+Data} (const Mat\+Type \&input\+Points, const Labels\+Type \&input\+Labels, Mat\+Type \&output\+Points, Labels\+Type \&output\+Labels, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$=0, const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Shuffle a dataset and associated labels (or responses). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \textbf{ Sign} (const T x)
+\begin{DoxyCompactList}\small\item\em Signum function. \end{DoxyCompactList}\item 
+void \textbf{ Smat} (const arma\+::vec \&input, arma\+::mat \&output)
+\begin{DoxyCompactList}\small\item\em The inverse of Svec. \end{DoxyCompactList}\item 
+void \textbf{ Svec} (const arma\+::mat \&input, arma\+::vec \&output)
+\begin{DoxyCompactList}\small\item\em Upper triangular representation of a symmetric matrix, scaled such that, dot(Svec(\+A), Svec(\+B)) == dot(\+A, B) for symmetric A, B. \end{DoxyCompactList}\item 
+void \textbf{ Svec} (const arma\+::sp\+\_\+mat \&input, arma\+::sp\+\_\+vec \&output)
+\item 
+size\+\_\+t \textbf{ Svec\+Index} (size\+\_\+t i, size\+\_\+t j, size\+\_\+t n)
+\begin{DoxyCompactList}\small\item\em Return the index such that A[i,j] == factr(i, j) $\ast$ svec(\+A)[pos(i, j)], where factr(i, j) = sqrt(2) if i != j and 1 otherwise. \end{DoxyCompactList}\item 
+void \textbf{ Sym\+Kron\+Id} (const arma\+::mat \&A, arma\+::mat \&op)
+\begin{DoxyCompactList}\small\item\em If A is a symmetric matrix, then Sym\+Kron\+Id returns an operator Op such that. \end{DoxyCompactList}\item 
+void \textbf{ Vector\+Power} (arma\+::vec \&vec, const double power)
+\begin{DoxyCompactList}\small\item\em Auxiliary function to raise vector elements to a specific power. \end{DoxyCompactList}\item 
+void \textbf{ Whiten\+Using\+SVD} (const arma\+::mat \&x, arma\+::mat \&x\+Whitened, arma\+::mat \&whitening\+Matrix)
+\begin{DoxyCompactList}\small\item\em Whitens a matrix using the singular value decomposition of the covariance matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+MLPACK\+\_\+\+EXPORT std\+::mt19937 \textbf{ rand\+Gen}
+\begin{DoxyCompactList}\small\item\em MLPACK\+\_\+\+EXPORT is required for global variables; it exports the symbols correctly on Windows. \end{DoxyCompactList}\item 
+MLPACK\+\_\+\+EXPORT std\+::normal\+\_\+distribution \textbf{ rand\+Normal\+Dist}
+\item 
+MLPACK\+\_\+\+EXPORT std\+::uniform\+\_\+real\+\_\+distribution \textbf{ rand\+Uniform\+Dist}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Miscellaneous math routines. 
+
+\doxysubsection{Typedef Documentation}
+\mbox{\label{namespacemlpack_1_1math_ad17d9cabd4fd82cbed4ccd5e53b47d70}} 
+\index{mlpack::math@{mlpack::math}!Range@{Range}}
+\index{Range@{Range}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{Range}
+{\footnotesize\ttfamily typedef \textbf{ Range\+Type}$<$double$>$ \textbf{ Range}}
+
+
+
+3.\+0.\+0 TODO\+: break reverse-\/compatibility by changing \doxyref{Range\+Type}{p.}{classmlpack_1_1math_1_1RangeType} to Range. 
+
+
+
+Definition at line 22 of file range.\+hpp.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\label{namespacemlpack_1_1math_ae537d6afdea1348abf317d7761319a14}} 
+\index{mlpack::math@{mlpack::math}!AccuLog@{AccuLog}}
+\index{AccuLog@{AccuLog}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{AccuLog()}
+{\footnotesize\ttfamily T\+::elem\+\_\+type mlpack\+::math\+::\+Accu\+Log (\begin{DoxyParamCaption}\item[{const T \&}]{x }\end{DoxyParamCaption})}
+
+
+
+Log-\/sum a vector of log values. 
+
+(T should be an Armadillo type.)
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & vector of log values \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+log(e$^\wedge$x0 + e$^\wedge$x1 + ...) 
+\end{DoxyReturn}
+\mbox{\label{namespacemlpack_1_1math_af20ca29adeac02601e8f4386bda3588e}} 
+\index{mlpack::math@{mlpack::math}!Center@{Center}}
+\index{Center@{Center}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{Center()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Center (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{x,  }\item[{arma\+::mat \&}]{x\+Centered }\end{DoxyParamCaption})}
+
+
+
+Creates a centered matrix, where centering is done by subtracting the sum over the columns (a column vector) from each column of the matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input matrix \\
+\hline
+{\em x\+Centered} & Matrix to write centered output into \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Nystroem\+Kernel\+Rule$<$ Kernel\+Type, Point\+Selection\+Policy $>$\+::\+Apply\+Kernel\+Matrix().
+
+\mbox{\label{namespacemlpack_1_1math_a6d16c12e401f859c53595d709892b2a2}} 
+\index{mlpack::math@{mlpack::math}!ClampNonNegative@{ClampNonNegative}}
+\index{ClampNonNegative@{ClampNonNegative}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ClampNonNegative()}
+{\footnotesize\ttfamily double mlpack\+::math\+::\+Clamp\+Non\+Negative (\begin{DoxyParamCaption}\item[{const double}]{d }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Forces a number to be non-\/negative, turning negative numbers into zero. 
+
+Avoids branching costs (this is a measurable improvement).
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & Double to clamp. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 if d $<$ 0, d otherwise. 
+\end{DoxyReturn}
+
+
+Definition at line 28 of file clamp.\+hpp.
+
+
+
+Referenced by Clamp\+Range().
+
+\mbox{\label{namespacemlpack_1_1math_a10bd2254595feb073cdfd55e31c1231b}} 
+\index{mlpack::math@{mlpack::math}!ClampNonPositive@{ClampNonPositive}}
+\index{ClampNonPositive@{ClampNonPositive}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ClampNonPositive()}
+{\footnotesize\ttfamily double mlpack\+::math\+::\+Clamp\+Non\+Positive (\begin{DoxyParamCaption}\item[{const double}]{d }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Forces a number to be non-\/positive, turning positive numbers into zero. 
+
+Avoids branching costs (this is a measurable improvement).
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & Double to clamp. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 if d $>$ 0, d otherwise. 
+\end{DoxyReturn}
+
+
+Definition at line 40 of file clamp.\+hpp.
+
+
+
+Referenced by Clamp\+Range().
+
+\mbox{\label{namespacemlpack_1_1math_a0fa7f378ef122a2fc2b82009b436cdeb}} 
+\index{mlpack::math@{mlpack::math}!ClampRange@{ClampRange}}
+\index{ClampRange@{ClampRange}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ClampRange()}
+{\footnotesize\ttfamily double mlpack\+::math\+::\+Clamp\+Range (\begin{DoxyParamCaption}\item[{double}]{value,  }\item[{const double}]{range\+Min,  }\item[{const double}]{range\+Max }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Clamp a number between a particular range. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The number to clamp. \\
+\hline
+{\em range\+Min} & The first of the range. \\
+\hline
+{\em range\+Max} & The last of the range. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+max(range\+Min, min(range\+Max, d)). 
+\end{DoxyReturn}
+
+
+Definition at line 53 of file clamp.\+hpp.
+
+
+
+References Clamp\+Non\+Negative(), and Clamp\+Non\+Positive().
+
+
+
+Referenced by Acrobot\+::\+Sample(), Continuous\+Mountain\+Car\+::\+Sample(), Mountain\+Car\+::\+Sample(), Pendulum\+::\+Sample(), and Reward\+Clipping$<$ Environment\+Type $>$\+::\+Sample().
+
+\mbox{\label{namespacemlpack_1_1math_a61d04fbb64cb618da2dc4305b1e7024f}} 
+\index{mlpack::math@{mlpack::math}!ClearAlias@{ClearAlias}}
+\index{ClearAlias@{ClearAlias}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ClearAlias()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Clear\+Alias (\begin{DoxyParamCaption}\item[{arma\+::\+Mat$<$ Elem\+Type $>$ \&}]{mat }\end{DoxyParamCaption})}
+
+
+
+Clear an alias so that no data is overwritten. 
+
+This resets the matrix if it is an alias (and does nothing otherwise). 
+
+Definition at line 110 of file make\+\_\+alias.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_aa25733e8424870f1be6b1eb0492503a2}} 
+\index{mlpack::math@{mlpack::math}!ClearAlias@{ClearAlias}}
+\index{ClearAlias@{ClearAlias}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ClearAlias()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Clear\+Alias (\begin{DoxyParamCaption}\item[{arma\+::\+Sp\+Mat$<$ Elem\+Type $>$ \&}]{ }\end{DoxyParamCaption})}
+
+
+
+Clear an alias for a sparse matrix. 
+
+This does nothing because no sparse matrices can have aliases. 
+
+Definition at line 121 of file make\+\_\+alias.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_a5b2ddc31187ec7a449b6ebcd71b2e52b}} 
+\index{mlpack::math@{mlpack::math}!ColumnCovariance@{ColumnCovariance}}
+\index{ColumnCovariance@{ColumnCovariance}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ColumnCovariance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::\+Mat$<$eT$>$ mlpack\+::math\+::\+Column\+Covariance (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{A,  }\item[{const size\+\_\+t}]{norm\+\_\+type = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Referenced by PCAWhitening\+::\+Fit().
+
+\mbox{\label{namespacemlpack_1_1math_afe55df16c60f2f3ae0a4e37320821e83}} 
+\index{mlpack::math@{mlpack::math}!ColumnCovariance@{ColumnCovariance}}
+\index{ColumnCovariance@{ColumnCovariance}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ColumnCovariance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::\+Mat$<$ std\+::complex$<$T$>$ $>$ mlpack\+::math\+::\+Column\+Covariance (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ std\+::complex$<$ T $>$ $>$ \&}]{A,  }\item[{const size\+\_\+t}]{norm\+\_\+type = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1math_ac9cdbda323da580d360c4532db71f9f7}} 
+\index{mlpack::math@{mlpack::math}!CustomRandomSeed@{CustomRandomSeed}}
+\index{CustomRandomSeed@{CustomRandomSeed}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{CustomRandomSeed()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Custom\+Random\+Seed (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{seed }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 72 of file random.\+hpp.
+
+
+
+References rand\+Gen.
+
+\mbox{\label{namespacemlpack_1_1math_a1ca2678f931cc4bba542a17136d98437}} 
+\index{mlpack::math@{mlpack::math}!FixedRandomSeed@{FixedRandomSeed}}
+\index{FixedRandomSeed@{FixedRandomSeed}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{FixedRandomSeed()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Fixed\+Random\+Seed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the random seed to a fixed number. 
+
+This function is used in binding tests to set a fixed random seed before calling mlpack(). In this way we can test whether a certain parameter makes a difference to execution of CLI binding. Refer to pull request \#1306 for discussion on this function. 
+
+Definition at line 64 of file random.\+hpp.
+
+
+
+References rand\+Gen.
+
+\mbox{\label{namespacemlpack_1_1math_a973f88fb3695c2d92af88f354742697e}} 
+\index{mlpack::math@{mlpack::math}!LogAdd@{LogAdd}}
+\index{LogAdd@{LogAdd}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{LogAdd()}
+{\footnotesize\ttfamily T mlpack\+::math\+::\+Log\+Add (\begin{DoxyParamCaption}\item[{T}]{x,  }\item[{T}]{y }\end{DoxyParamCaption})}
+
+
+
+Internal log-\/addition. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & log value \\
+\hline
+{\em y} & log value \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+log(e$^\wedge$x + e$^\wedge$y) 
+\end{DoxyReturn}
+\mbox{\label{namespacemlpack_1_1math_aba4fbea089adba32a303aa9ed06b55c0}} 
+\index{mlpack::math@{mlpack::math}!LogSumExp@{LogSumExp}}
+\index{LogSumExp@{LogSumExp}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{LogSumExp()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Log\+Sum\+Exp (\begin{DoxyParamCaption}\item[{const T \&}]{x,  }\item[{arma\+::\+Col$<$ typename T\+::elem\+\_\+type $>$ \&}]{y }\end{DoxyParamCaption})}
+
+
+
+Compute the sum of exponentials of each element in each column, then compute the log of that. 
+
+If In\+Place is true, then the values of {\ttfamily y} will also be added to the sum.
+
+That is, if In\+Place is false, then this method will set {\ttfamily y} such that\+: \begin{DoxyVerb}`y_i = log(sum(exp(x.col(i))))`
+\end{DoxyVerb}
+ and if In\+Place is true, then {\ttfamily y} will be set such that\+: \begin{DoxyVerb}`y_i = log(sum(exp(x.col(i))) + exp(y_i))`.
+\end{DoxyVerb}
+ \mbox{\label{namespacemlpack_1_1math_ac1a42cc6cfc3318eae5b0b1948b4f5e8}} 
+\index{mlpack::math@{mlpack::math}!LogSumExpT@{LogSumExpT}}
+\index{LogSumExpT@{LogSumExpT}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{LogSumExpT()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Log\+Sum\+ExpT (\begin{DoxyParamCaption}\item[{const T \&}]{x,  }\item[{arma\+::\+Col$<$ typename T\+::elem\+\_\+type $>$ \&}]{y }\end{DoxyParamCaption})}
+
+
+
+Compute the sum of exponentials of each element in each row, then compute the log of that. 
+
+If In\+Place is true, then the values of {\ttfamily y} will also be added to the sum.
+
+That is, if In\+Place is false, then this method will set {\ttfamily y} such that\+: \begin{DoxyVerb}`y_i = log(sum(exp(x.row(i))))`
+\end{DoxyVerb}
+ and if In\+Place is true, then {\ttfamily y} will be set such that\+: \begin{DoxyVerb}`y_i = log(sum(exp(x.row(i))) + exp(y_i))`.
+\end{DoxyVerb}
+ \mbox{\label{namespacemlpack_1_1math_acd2b618f5a0ec77ccb94cf43a06846e9}} 
+\index{mlpack::math@{mlpack::math}!MakeAlias@{MakeAlias}}
+\index{MakeAlias@{MakeAlias}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{MakeAlias()\hspace{0.1cm}{\footnotesize\ttfamily [1/7]}}
+{\footnotesize\ttfamily arma\+::\+Col$<$Elem\+Type$>$ mlpack\+::math\+::\+Make\+Alias (\begin{DoxyParamCaption}\item[{arma\+::\+Col$<$ Elem\+Type $>$ \&}]{input,  }\item[{const bool}]{strict = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Make an alias of a dense column. 
+
+If strict is true, then the alias cannot be resized or pointed at new memory. 
+
+Definition at line 62 of file make\+\_\+alias.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_ae977d6bbdbe1e2a26017645a7ee18433}} 
+\index{mlpack::math@{mlpack::math}!MakeAlias@{MakeAlias}}
+\index{MakeAlias@{MakeAlias}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{MakeAlias()\hspace{0.1cm}{\footnotesize\ttfamily [2/7]}}
+{\footnotesize\ttfamily arma\+::\+Cube$<$Elem\+Type$>$ mlpack\+::math\+::\+Make\+Alias (\begin{DoxyParamCaption}\item[{arma\+::\+Cube$<$ Elem\+Type $>$ \&}]{input,  }\item[{const bool}]{strict = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Make an alias of a dense cube. 
+
+If strict is true, then the alias cannot be resized or pointed at new memory. 
+
+Definition at line 24 of file make\+\_\+alias.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_a6611a3cfd0aad124d0ca5bf45b44801c}} 
+\index{mlpack::math@{mlpack::math}!MakeAlias@{MakeAlias}}
+\index{MakeAlias@{MakeAlias}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{MakeAlias()\hspace{0.1cm}{\footnotesize\ttfamily [3/7]}}
+{\footnotesize\ttfamily arma\+::\+Mat$<$Elem\+Type$>$ mlpack\+::math\+::\+Make\+Alias (\begin{DoxyParamCaption}\item[{arma\+::\+Mat$<$ Elem\+Type $>$ \&}]{input,  }\item[{const bool}]{strict = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Make an alias of a dense matrix. 
+
+If strict is true, then the alias cannot be resized or pointed at new memory. 
+
+Definition at line 37 of file make\+\_\+alias.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_ae0f2bc84fae09e2232931990bcb3fc08}} 
+\index{mlpack::math@{mlpack::math}!MakeAlias@{MakeAlias}}
+\index{MakeAlias@{MakeAlias}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{MakeAlias()\hspace{0.1cm}{\footnotesize\ttfamily [4/7]}}
+{\footnotesize\ttfamily arma\+::\+Row$<$Elem\+Type$>$ mlpack\+::math\+::\+Make\+Alias (\begin{DoxyParamCaption}\item[{arma\+::\+Row$<$ Elem\+Type $>$ \&}]{input,  }\item[{const bool}]{strict = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Make an alias of a dense row. 
+
+If strict is true, then the alias cannot be resized or pointed at new memory. 
+
+Definition at line 50 of file make\+\_\+alias.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_a42a8a4c43e657af6d3557fdaa3082f93}} 
+\index{mlpack::math@{mlpack::math}!MakeAlias@{MakeAlias}}
+\index{MakeAlias@{MakeAlias}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{MakeAlias()\hspace{0.1cm}{\footnotesize\ttfamily [5/7]}}
+{\footnotesize\ttfamily arma\+::\+Sp\+Col$<$Elem\+Type$>$ mlpack\+::math\+::\+Make\+Alias (\begin{DoxyParamCaption}\item[{const arma\+::\+Sp\+Col$<$ Elem\+Type $>$ \&}]{input,  }\item[{const bool}]{ = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Make a copy of a sparse column (an alias is not possible). 
+
+The strict parameter is ignored. 
+
+Definition at line 98 of file make\+\_\+alias.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_a327a59b10b6b84ea4c3eec3469644bec}} 
+\index{mlpack::math@{mlpack::math}!MakeAlias@{MakeAlias}}
+\index{MakeAlias@{MakeAlias}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{MakeAlias()\hspace{0.1cm}{\footnotesize\ttfamily [6/7]}}
+{\footnotesize\ttfamily arma\+::\+Sp\+Mat$<$Elem\+Type$>$ mlpack\+::math\+::\+Make\+Alias (\begin{DoxyParamCaption}\item[{const arma\+::\+Sp\+Mat$<$ Elem\+Type $>$ \&}]{input,  }\item[{const bool}]{ = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Make a copy of a sparse matrix (an alias is not possible). 
+
+The strict parameter is ignored. 
+
+Definition at line 74 of file make\+\_\+alias.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_a6b3f7eb08a72a99cd338824b85276e0f}} 
+\index{mlpack::math@{mlpack::math}!MakeAlias@{MakeAlias}}
+\index{MakeAlias@{MakeAlias}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{MakeAlias()\hspace{0.1cm}{\footnotesize\ttfamily [7/7]}}
+{\footnotesize\ttfamily arma\+::\+Sp\+Row$<$Elem\+Type$>$ mlpack\+::math\+::\+Make\+Alias (\begin{DoxyParamCaption}\item[{const arma\+::\+Sp\+Row$<$ Elem\+Type $>$ \&}]{input,  }\item[{const bool}]{ = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Make a copy of a sparse row (an alias is not possible). 
+
+The strict parameter is ignored. 
+
+Definition at line 86 of file make\+\_\+alias.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_a047dc14951af6707554936acb575ecdd}} 
+\index{mlpack::math@{mlpack::math}!MultiplyCube2Cube@{MultiplyCube2Cube}}
+\index{MultiplyCube2Cube@{MultiplyCube2Cube}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{MultiplyCube2Cube()}
+{\footnotesize\ttfamily Cube\+Type mlpack\+::math\+::\+Multiply\+Cube2\+Cube (\begin{DoxyParamCaption}\item[{const Cube\+Type \&}]{cubeA,  }\item[{const Cube\+Type \&}]{cubeB,  }\item[{const bool}]{a\+Transpose = {\ttfamily false},  }\item[{const bool}]{b\+Transpose = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Matrix multiplication of slices of two cubes. 
+
+This function expects both cubes to have the same number of slices. For example, a valid operation would be\+: cube A of shape (m, p, s) multiplied by cube B of shape (p, n, s) resulting in a cube of shape (m, n, s).
+
+
+\begin{DoxyParams}{Parameters}
+{\em cubeA} & First cube. \\
+\hline
+{\em cubeB} & Second cube. \\
+\hline
+{\em a\+Transpose} & Whether slices of first cube have to be transposed. \\
+\hline
+{\em b\+Transpose} & Whether slices of second cube have to be transposed. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{namespacemlpack_1_1math_a75d67d2fe4e1046bfdc903f32a4b0230}} 
+\index{mlpack::math@{mlpack::math}!MultiplyCube2Mat@{MultiplyCube2Mat}}
+\index{MultiplyCube2Mat@{MultiplyCube2Mat}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{MultiplyCube2Mat()}
+{\footnotesize\ttfamily Cube\+Type mlpack\+::math\+::\+Multiply\+Cube2\+Mat (\begin{DoxyParamCaption}\item[{const Cube\+Type \&}]{cubeA,  }\item[{const Mat\+Type \&}]{matB,  }\item[{const bool}]{a\+Transpose = {\ttfamily false},  }\item[{const bool}]{b\+Transpose = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Matrix multiplication of all slices of a cube with a matrix. 
+
+This function is used when the first object is a cube and the second object is a matrix. For example, a valid operation would be\+: cube A of shape (m, p, s) multiplied by a matrix of shape (p, n) resulting in a cube of shape (m, n, s).
+
+
+\begin{DoxyParams}{Parameters}
+{\em cubeA} & The cube as the first operand. \\
+\hline
+{\em matB} & The matrix as the second operand. \\
+\hline
+{\em a\+Transpose} & Whether slices of cube have to be transposed. \\
+\hline
+{\em b\+Transpose} & Whether matrix has to be transposed. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{namespacemlpack_1_1math_a6921a2dfaeb07fc6c47616b9fabdffce}} 
+\index{mlpack::math@{mlpack::math}!MultiplyMat2Cube@{MultiplyMat2Cube}}
+\index{MultiplyMat2Cube@{MultiplyMat2Cube}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{MultiplyMat2Cube()}
+{\footnotesize\ttfamily Cube\+Type mlpack\+::math\+::\+Multiply\+Mat2\+Cube (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{matA,  }\item[{const Cube\+Type \&}]{cubeB,  }\item[{const bool}]{a\+Transpose = {\ttfamily false},  }\item[{const bool}]{b\+Transpose = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Matrix multiplication of a matrix and all the slices of a cube. 
+
+This function is used when the first object is a matrix and the second object is a cube. For example, a valid operation would be\+: matrix A of shape (m, p) multiplied by cube B of shape (p, n, s) resulting in a cube of shape (m, n, s).
+
+
+\begin{DoxyParams}{Parameters}
+{\em matA} & The matrix as the first operand. \\
+\hline
+{\em cubeB} & The cube as the second operand. \\
+\hline
+{\em a\+Transpose} & Whether matrix has to be transposed. \\
+\hline
+{\em b\+Transpose} & Whether slices of cube have to be transposed. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{namespacemlpack_1_1math_a9f6fa0072288d9c1139394683e0c3636}} 
+\index{mlpack::math@{mlpack::math}!ObtainDistinctSamples@{ObtainDistinctSamples}}
+\index{ObtainDistinctSamples@{ObtainDistinctSamples}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ObtainDistinctSamples()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Obtain\+Distinct\+Samples (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{lo\+Inclusive,  }\item[{const size\+\_\+t}]{hi\+Exclusive,  }\item[{const size\+\_\+t}]{max\+Num\+Samples,  }\item[{arma\+::uvec \&}]{distinct\+Samples }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Obtains no more than max\+Num\+Samples distinct samples. 
+
+Each sample belongs to [lo\+Inclusive, hi\+Exclusive).
+
+
+\begin{DoxyParams}{Parameters}
+{\em lo\+Inclusive} & The lower bound (inclusive). \\
+\hline
+{\em hi\+Exclusive} & The high bound (exclusive). \\
+\hline
+{\em max\+Num\+Samples} & The maximum number of samples to obtain. \\
+\hline
+{\em distinct\+Samples} & The samples that will be obtained. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 153 of file random.\+hpp.
+
+
+
+References Rand\+Int().
+
+\mbox{\label{namespacemlpack_1_1math_a532da68daa876aaa1060fbe54eaa3722}} 
+\index{mlpack::math@{mlpack::math}!Orthogonalize@{Orthogonalize}}
+\index{Orthogonalize@{Orthogonalize}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{Orthogonalize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Orthogonalize (\begin{DoxyParamCaption}\item[{arma\+::mat \&}]{x }\end{DoxyParamCaption})}
+
+
+
+Orthogonalize x in-\/place. 
+
+This could be sped up by a custom implementation. \mbox{\label{namespacemlpack_1_1math_a33495d8fdb79a9b5783d683cf11b0d6b}} 
+\index{mlpack::math@{mlpack::math}!Orthogonalize@{Orthogonalize}}
+\index{Orthogonalize@{Orthogonalize}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{Orthogonalize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Orthogonalize (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{x,  }\item[{arma\+::mat \&}]{W }\end{DoxyParamCaption})}
+
+
+
+Orthogonalize x and return the result in W, using eigendecomposition. 
+
+We will be using the formula $ W = x (x^T x)^{-0.5} $. \mbox{\label{namespacemlpack_1_1math_a6b25c05d1e1c066d6b33aa55bdfd39f6}} 
+\index{mlpack::math@{mlpack::math}!RandBernoulli@{RandBernoulli}}
+\index{RandBernoulli@{RandBernoulli}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{RandBernoulli()}
+{\footnotesize\ttfamily double mlpack\+::math\+::\+Rand\+Bernoulli (\begin{DoxyParamCaption}\item[{const double}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Generates a 0/1 specified by the input. 
+
+
+
+Definition at line 99 of file random.\+hpp.
+
+
+
+References Random().
+
+\mbox{\label{namespacemlpack_1_1math_aad090ac225728d74c1b66bcf52f3ab95}} 
+\index{mlpack::math@{mlpack::math}!RandInt@{RandInt}}
+\index{RandInt@{RandInt}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{RandInt()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily int mlpack\+::math\+::\+Rand\+Int (\begin{DoxyParamCaption}\item[{const int}]{hi\+Exclusive }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Generates a uniform random integer. 
+
+
+
+Definition at line 110 of file random.\+hpp.
+
+
+
+References rand\+Gen, and rand\+Uniform\+Dist.
+
+
+
+Referenced by Multiple\+Random\+Dimension\+Select\+::\+Begin(), Random\+Dimension\+Select\+::\+Begin(), KMeans\+Plus\+Plus\+Initialization\+::\+Cluster(), Sample\+Initialization\+::\+Cluster(), Data\+Dependent\+Random\+Initializer\+::\+Initialize(), Random\+Acol\+Initialization$<$ columns\+To\+Average $>$\+::\+Initialize(), Obtain\+Distinct\+Samples(), Greedy\+Policy$<$ Environment\+Type $>$\+::\+Sample(), Random\+Selection\+::\+Select(), and Random\+Point\+Selection\+::\+Select().
+
+\mbox{\label{namespacemlpack_1_1math_a2befbd48db5691a0ed3b87bb4b423095}} 
+\index{mlpack::math@{mlpack::math}!RandInt@{RandInt}}
+\index{RandInt@{RandInt}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{RandInt()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily int mlpack\+::math\+::\+Rand\+Int (\begin{DoxyParamCaption}\item[{const int}]{lo,  }\item[{const int}]{hi\+Exclusive }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Generates a uniform random integer. 
+
+
+
+Definition at line 118 of file random.\+hpp.
+
+
+
+References rand\+Gen, and rand\+Uniform\+Dist.
+
+\mbox{\label{namespacemlpack_1_1math_a4ad431d20545de6887998188074989af}} 
+\index{mlpack::math@{mlpack::math}!RandNormal@{RandNormal}}
+\index{RandNormal@{RandNormal}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{RandNormal()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double mlpack\+::math\+::\+Rand\+Normal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Generates a normally distributed random number with mean 0 and variance 1. 
+
+
+
+Definition at line 127 of file random.\+hpp.
+
+
+
+References rand\+Gen, and rand\+Normal\+Dist.
+
+
+
+Referenced by Gaussian\+Initialization\+::\+Initialize().
+
+\mbox{\label{namespacemlpack_1_1math_a731e1fe0fb09c263299222a594a73e7f}} 
+\index{mlpack::math@{mlpack::math}!RandNormal@{RandNormal}}
+\index{RandNormal@{RandNormal}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{RandNormal()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double mlpack\+::math\+::\+Rand\+Normal (\begin{DoxyParamCaption}\item[{const double}]{mean,  }\item[{const double}]{variance }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Generates a normally distributed random number with specified mean and variance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mean} & Mean of distribution. \\
+\hline
+{\em variance} & Variance of distribution. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 139 of file random.\+hpp.
+
+
+
+References rand\+Gen, and rand\+Normal\+Dist.
+
+\mbox{\label{namespacemlpack_1_1math_a305db122ade561ba1fe874bd51e9797d}} 
+\index{mlpack::math@{mlpack::math}!Random@{Random}}
+\index{Random@{Random}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{Random()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double mlpack\+::math\+::\+Random (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Generates a uniform random number between 0 and 1. 
+
+
+
+Definition at line 83 of file random.\+hpp.
+
+
+
+References rand\+Gen, and rand\+Uniform\+Dist.
+
+
+
+Referenced by KMeans\+Plus\+Plus\+Initialization\+::\+Cluster(), Continuous\+Mountain\+Car\+::\+Initial\+Sample(), Pendulum\+::\+Initial\+Sample(), Mock\+Categorical\+Data(), Rand\+Bernoulli(), Greedy\+Policy$<$ Environment\+Type $>$\+::\+Sample(), and Acrobot\+::\+Torque().
+
+\mbox{\label{namespacemlpack_1_1math_a73063c4b5f50db033266cd16afaceca9}} 
+\index{mlpack::math@{mlpack::math}!Random@{Random}}
+\index{Random@{Random}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{Random()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double mlpack\+::math\+::\+Random (\begin{DoxyParamCaption}\item[{const double}]{lo,  }\item[{const double}]{hi }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Generates a uniform random number in the specified range. 
+
+
+
+Definition at line 91 of file random.\+hpp.
+
+
+
+References rand\+Gen, and rand\+Uniform\+Dist.
+
+\mbox{\label{namespacemlpack_1_1math_ae197a3d057c10401e3a1f30f94ff0934}} 
+\index{mlpack::math@{mlpack::math}!RandomBasis@{RandomBasis}}
+\index{RandomBasis@{RandomBasis}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{RandomBasis()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Random\+Basis (\begin{DoxyParamCaption}\item[{arma\+::mat \&}]{basis,  }\item[{const size\+\_\+t}]{d }\end{DoxyParamCaption})}
+
+
+
+Create a random d-\/dimensional orthogonal basis, storing it in the given matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em basis} & Matrix to store basis in. \\
+\hline
+{\em d} & Desired number of dimensions in the basis. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{namespacemlpack_1_1math_a99560c3cf9c2db393309a31933b8d480}} 
+\index{mlpack::math@{mlpack::math}!RandomSeed@{RandomSeed}}
+\index{RandomSeed@{RandomSeed}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{RandomSeed()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Random\+Seed (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{seed }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the random seed used by the random functions (\doxyref{Random()}{p.}{namespacemlpack_1_1math_a305db122ade561ba1fe874bd51e9797d} and \doxyref{Rand\+Int()}{p.}{namespacemlpack_1_1math_aad090ac225728d74c1b66bcf52f3ab95}). 
+
+The seed is casted to a 32-\/bit integer before being given to the random number generator, but a size\+\_\+t is taken as a parameter for API consistency.
+
+
+\begin{DoxyParams}{Parameters}
+{\em seed} & Seed for the random number generator. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 40 of file random.\+hpp.
+
+
+
+References rand\+Gen.
+
+\mbox{\label{namespacemlpack_1_1math_a27732f0088e81d179a8e6c92c4f9c4b8}} 
+\index{mlpack::math@{mlpack::math}!RandVector@{RandVector}}
+\index{RandVector@{RandVector}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{RandVector()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Rand\+Vector (\begin{DoxyParamCaption}\item[{arma\+::vec \&}]{v }\end{DoxyParamCaption})}
+
+
+
+Overwrites a dimension-\/N vector to a random vector on the unit sphere in R$^\wedge$N. 
+
+\mbox{\label{namespacemlpack_1_1math_ac03fe146911a97bef099efc9e99296ff}} 
+\index{mlpack::math@{mlpack::math}!RemoveRows@{RemoveRows}}
+\index{RemoveRows@{RemoveRows}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{RemoveRows()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Remove\+Rows (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{input,  }\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{rows\+To\+Remove,  }\item[{arma\+::mat \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Remove a certain set of rows in a matrix while copying to a second matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input matrix to copy. \\
+\hline
+{\em rows\+To\+Remove} & Vector containing indices of rows to be removed. \\
+\hline
+{\em output} & Matrix to copy non-\/removed rows into. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{namespacemlpack_1_1math_a522c0905bf5015a7eebac8fdddb6452b}} 
+\index{mlpack::math@{mlpack::math}!ShuffleData@{ShuffleData}}
+\index{ShuffleData@{ShuffleData}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ShuffleData()\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Shuffle\+Data (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input\+Points,  }\item[{const Labels\+Type \&}]{input\+Labels,  }\item[{const Weights\+Type \&}]{input\+Weights,  }\item[{Mat\+Type \&}]{output\+Points,  }\item[{Labels\+Type \&}]{output\+Labels,  }\item[{Weights\+Type \&}]{output\+Weights,  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Shuffle a sparse dataset and associated labels (or responses) and weights. 
+
+It is expected that input\+Points and input\+Labels and input\+Weights have the same number of columns (so, be sure that input\+Labels, if it is a vector, is a row vector).
+
+Shuffled data will be output into output\+Points and output\+Labels and output\+Weights. 
+
+Definition at line 188 of file shuffle\+\_\+data.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_a4e6818ee1202660968eeda80040b5d0e}} 
+\index{mlpack::math@{mlpack::math}!ShuffleData@{ShuffleData}}
+\index{ShuffleData@{ShuffleData}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ShuffleData()\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Shuffle\+Data (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input\+Points,  }\item[{const Labels\+Type \&}]{input\+Labels,  }\item[{const Weights\+Type \&}]{input\+Weights,  }\item[{Mat\+Type \&}]{output\+Points,  }\item[{Labels\+Type \&}]{output\+Labels,  }\item[{Weights\+Type \&}]{output\+Weights,  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Shuffle a dataset and associated labels (or responses) and weights. 
+
+It is expected that input\+Points and input\+Labels and input\+Weights have the same number of columns (so, be sure that input\+Labels, if it is a vector, is a row vector).
+
+Shuffled data will be output into output\+Points and output\+Labels and output\+Weights. 
+
+Definition at line 160 of file shuffle\+\_\+data.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_a3d51da0ee510a507855d587b91645a2e}} 
+\index{mlpack::math@{mlpack::math}!ShuffleData@{ShuffleData}}
+\index{ShuffleData@{ShuffleData}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ShuffleData()\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Shuffle\+Data (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input\+Points,  }\item[{const Labels\+Type \&}]{input\+Labels,  }\item[{Mat\+Type \&}]{output\+Points,  }\item[{Labels\+Type \&}]{output\+Labels,  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Shuffle a sparse dataset and associated labels (or responses). 
+
+It is expected that input\+Points and input\+Labels have the same number of columns (so, be sure that input\+Labels, if it is a vector, is a row vector).
+
+Shuffled data will be output into output\+Points and output\+Labels. 
+
+Definition at line 51 of file shuffle\+\_\+data.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_ae867d408a4e6bd4f6c6efa6ad46f699d}} 
+\index{mlpack::math@{mlpack::math}!ShuffleData@{ShuffleData}}
+\index{ShuffleData@{ShuffleData}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ShuffleData()\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Shuffle\+Data (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input\+Points,  }\item[{const Labels\+Type \&}]{input\+Labels,  }\item[{Mat\+Type \&}]{output\+Points,  }\item[{Labels\+Type \&}]{output\+Labels,  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$ arma\+::is\+\_\+\+Cube$<$ Labels\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Shuffle a cube-\/shaped dataset and associated labels (or responses) which are also cube-\/shaped. 
+
+It is expected that input\+Points and input\+Labels have the same number of columns.
+
+Shuffled data will be output into output\+Points and output\+Labels. 
+
+Definition at line 103 of file shuffle\+\_\+data.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_a9fd573f30f3cd68f82f51ba57506d169}} 
+\index{mlpack::math@{mlpack::math}!ShuffleData@{ShuffleData}}
+\index{ShuffleData@{ShuffleData}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{ShuffleData()\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Shuffle\+Data (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input\+Points,  }\item[{const Labels\+Type \&}]{input\+Labels,  }\item[{Mat\+Type \&}]{output\+Points,  }\item[{Labels\+Type \&}]{output\+Labels,  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Sp\+Mat$<$ Mat\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0},  }\item[{const \textbf{ std\+::enable\+\_\+if\+\_\+t}$<$!arma\+::is\+\_\+\+Cube$<$ Mat\+Type $>$\+::value $>$ $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Shuffle a dataset and associated labels (or responses). 
+
+It is expected that input\+Points and input\+Labels have the same number of columns (so, be sure that input\+Labels, if it is a vector, is a row vector).
+
+Shuffled data will be output into output\+Points and output\+Labels. 
+
+Definition at line 28 of file shuffle\+\_\+data.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_a5a69e6e582ac415528f3a219e5336b83}} 
+\index{mlpack::math@{mlpack::math}!Sign@{Sign}}
+\index{Sign@{Sign}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{Sign()}
+{\footnotesize\ttfamily T mlpack\+::math\+::\+Sign (\begin{DoxyParamCaption}\item[{const T}]{x }\end{DoxyParamCaption})}
+
+
+
+Signum function. 
+
+Return 1 if x$>$0; return 0 if x=0; return -\/1 if x$<$0. Return type are the same as input type.
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Number of any type. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 128 of file lin\+\_\+alg.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1math_acf1d819071707267cdce9c78abd32e2e}} 
+\index{mlpack::math@{mlpack::math}!Smat@{Smat}}
+\index{Smat@{Smat}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{Smat()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Smat (\begin{DoxyParamCaption}\item[{const arma\+::vec \&}]{input,  }\item[{arma\+::mat \&}]{output }\end{DoxyParamCaption})}
+
+
+
+The inverse of Svec. 
+
+That is, Smat(\+Svec(\+A)) == A.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & \\
+\hline
+{\em output} & A symmetric matrix \\
+\hline
+\end{DoxyParams}
+\mbox{\label{namespacemlpack_1_1math_a76535efa4f447182fed1a2ad789d5340}} 
+\index{mlpack::math@{mlpack::math}!Svec@{Svec}}
+\index{Svec@{Svec}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{Svec()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Svec (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{input,  }\item[{arma\+::vec \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Upper triangular representation of a symmetric matrix, scaled such that, dot(Svec(\+A), Svec(\+B)) == dot(\+A, B) for symmetric A, B. 
+
+Specifically,
+
+Svec(\+K) = [ K\+\_\+11, sqrt(2) K\+\_\+12, ..., sqrt(2) K\+\_\+1n, K\+\_\+22, ..., sqrt(2) K\+\_\+2n, ..., K\+\_\+nn ]$^\wedge$T
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & A symmetric matrix \\
+\hline
+{\em output} & \\
+\hline
+\end{DoxyParams}
+\mbox{\label{namespacemlpack_1_1math_a2e46372873806bdfef7d596dcc78a5ea}} 
+\index{mlpack::math@{mlpack::math}!Svec@{Svec}}
+\index{Svec@{Svec}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{Svec()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Svec (\begin{DoxyParamCaption}\item[{const arma\+::sp\+\_\+mat \&}]{input,  }\item[{arma\+::sp\+\_\+vec \&}]{output }\end{DoxyParamCaption})}
+
+\mbox{\label{namespacemlpack_1_1math_a630a16e49385717a8fef7d25d0093c37}} 
+\index{mlpack::math@{mlpack::math}!SvecIndex@{SvecIndex}}
+\index{SvecIndex@{SvecIndex}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{SvecIndex()}
+{\footnotesize\ttfamily size\+\_\+t mlpack\+::math\+::\+Svec\+Index (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{i,  }\item[{size\+\_\+t}]{j,  }\item[{size\+\_\+t}]{n }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the index such that A[i,j] == factr(i, j) $\ast$ svec(\+A)[pos(i, j)], where factr(i, j) = sqrt(2) if i != j and 1 otherwise. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em i} & \\
+\hline
+{\em j} & \\
+\hline
+{\em n} & \\
+\hline
+\end{DoxyParams}
+\mbox{\label{namespacemlpack_1_1math_a99efc34a8a0f9ed477baf86cb62adb3f}} 
+\index{mlpack::math@{mlpack::math}!SymKronId@{SymKronId}}
+\index{SymKronId@{SymKronId}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{SymKronId()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Sym\+Kron\+Id (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{A,  }\item[{arma\+::mat \&}]{op }\end{DoxyParamCaption})}
+
+
+
+If A is a symmetric matrix, then Sym\+Kron\+Id returns an operator Op such that. 
+
+Op $\ast$ svec(\+X) == svec(0.\+5 $\ast$ (AX + XA))
+
+for every symmetric matrix X
+
+
+\begin{DoxyParams}{Parameters}
+{\em A} & \\
+\hline
+{\em op} & \\
+\hline
+\end{DoxyParams}
+\mbox{\label{namespacemlpack_1_1math_a1afb9b62743ad2c961a4f240d8694e1e}} 
+\index{mlpack::math@{mlpack::math}!VectorPower@{VectorPower}}
+\index{VectorPower@{VectorPower}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{VectorPower()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Vector\+Power (\begin{DoxyParamCaption}\item[{arma\+::vec \&}]{vec,  }\item[{const double}]{power }\end{DoxyParamCaption})}
+
+
+
+Auxiliary function to raise vector elements to a specific power. 
+
+The sign is ignored in the power operation and then re-\/added. Useful for eigenvalues. \mbox{\label{namespacemlpack_1_1math_a9498ec73c0c6b0f151a10b2357a11468}} 
+\index{mlpack::math@{mlpack::math}!WhitenUsingSVD@{WhitenUsingSVD}}
+\index{WhitenUsingSVD@{WhitenUsingSVD}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{WhitenUsingSVD()}
+{\footnotesize\ttfamily void mlpack\+::math\+::\+Whiten\+Using\+SVD (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{x,  }\item[{arma\+::mat \&}]{x\+Whitened,  }\item[{arma\+::mat \&}]{whitening\+Matrix }\end{DoxyParamCaption})}
+
+
+
+Whitens a matrix using the singular value decomposition of the covariance matrix. 
+
+Whitening means the covariance matrix of the result is the identity matrix. 
+
+\doxysubsection{Variable Documentation}
+\mbox{\label{namespacemlpack_1_1math_a56ce900a37460cea29bd0359aeaaff34}} 
+\index{mlpack::math@{mlpack::math}!randGen@{randGen}}
+\index{randGen@{randGen}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{randGen}
+{\footnotesize\ttfamily MLPACK\+\_\+\+EXPORT std\+::mt19937 rand\+Gen\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+MLPACK\+\_\+\+EXPORT is required for global variables; it exports the symbols correctly on Windows. 
+
+
+
+Referenced by Custom\+Random\+Seed(), Fixed\+Random\+Seed(), Rand\+Int(), Rand\+Normal(), Random(), and Random\+Seed().
+
+\mbox{\label{namespacemlpack_1_1math_a109a494ed74138c2d02d64bb3ebe6f9f}} 
+\index{mlpack::math@{mlpack::math}!randNormalDist@{randNormalDist}}
+\index{randNormalDist@{randNormalDist}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{randNormalDist}
+{\footnotesize\ttfamily MLPACK\+\_\+\+EXPORT std\+::normal\+\_\+distribution rand\+Normal\+Dist\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Referenced by Rand\+Normal().
+
+\mbox{\label{namespacemlpack_1_1math_a7793dcf6af53048459e80aa26780afa0}} 
+\index{mlpack::math@{mlpack::math}!randUniformDist@{randUniformDist}}
+\index{randUniformDist@{randUniformDist}!mlpack::math@{mlpack::math}}
+\doxysubsubsection{randUniformDist}
+{\footnotesize\ttfamily MLPACK\+\_\+\+EXPORT std\+::uniform\+\_\+real\+\_\+distribution rand\+Uniform\+Dist\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Referenced by Rand\+Int(), and Random().
+

@@ -1,0 +1,198 @@
+.TH "MountainCar" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MountainCar \- Implementation of Mountain Car task\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAction\fP"
+.br
+.RI "Implementation of action of Mountain Car\&. "
+.ti -1c
+.RI "class \fBState\fP"
+.br
+.RI "Implementation of state of Mountain Car\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMountainCar\fP (const size_t maxSteps=200, const double positionMin=\-1\&.2, const double positionMax=0\&.6, const double positionGoal=0\&.5, const double velocityMin=\-0\&.07, const double velocityMax=0\&.07, const double doneReward=0)"
+.br
+.RI "Construct a Mountain Car instance using the given constant\&. "
+.ti -1c
+.RI "\fBState\fP \fBInitialSample\fP ()"
+.br
+.RI "Initial position is randomly generated within [-0\&.6, -0\&.4]\&. "
+.ti -1c
+.RI "bool \fBIsTerminal\fP (const \fBState\fP &state) const"
+.br
+.RI "This function checks if the car has reached the terminal state\&. "
+.ti -1c
+.RI "size_t & \fBMaxSteps\fP ()"
+.br
+.RI "Set the maximum number of steps allowed\&. "
+.ti -1c
+.RI "size_t \fBMaxSteps\fP () const"
+.br
+.RI "Get the maximum number of steps allowed\&. "
+.ti -1c
+.RI "double \fBSample\fP (const \fBState\fP &state, const \fBAction\fP &action)"
+.br
+.RI "Dynamics of Mountain Car\&. "
+.ti -1c
+.RI "double \fBSample\fP (const \fBState\fP &state, const \fBAction\fP &action, \fBState\fP &nextState)"
+.br
+.RI "Dynamics of Mountain Car\&. "
+.ti -1c
+.RI "size_t \fBStepsPerformed\fP () const"
+.br
+.RI "Get the number of steps performed\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Implementation of Mountain Car task\&. 
+.PP
+Definition at line 28 of file mountain_car\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBMountainCar\fP (const size_t maxSteps = \fC200\fP, const double positionMin = \fC\-1\&.2\fP, const double positionMax = \fC0\&.6\fP, const double positionGoal = \fC0\&.5\fP, const double velocityMin = \fC\-0\&.07\fP, const double velocityMax = \fC0\&.07\fP, const double doneReward = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Construct a Mountain Car instance using the given constant\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImaxSteps\fP The number of steps after which the episode terminates\&. If the value is 0, there is no limit\&. 
+.br
+\fIpositionMin\fP Minimum legal position\&. 
+.br
+\fIpositionMax\fP Maximum legal position\&. 
+.br
+\fIpositionGoal\fP Final target position\&. 
+.br
+\fIvelocityMin\fP Minimum legal velocity\&. 
+.br
+\fIvelocityMax\fP Maximum legal velocity\&. 
+.br
+\fIdoneReward\fP The reward recieved by the agent on success\&. 
+.RE
+.PP
+
+.PP
+Definition at line 107 of file mountain_car\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBState\fP InitialSample ()\fC [inline]\fP"
+
+.PP
+Initial position is randomly generated within [-0\&.6, -0\&.4]\&. Initial velocity is 0\&.
+.PP
+\fBReturns\fP
+.RS 4
+Initial state for each episode\&. 
+.RE
+.PP
+
+.PP
+Definition at line 187 of file mountain_car\&.hpp\&.
+.PP
+References MountainCar::State::Position(), and MountainCar::State::Velocity()\&.
+.SS "bool IsTerminal (const \fBState\fP & state) const\fC [inline]\fP"
+
+.PP
+This function checks if the car has reached the terminal state\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIstate\fP desired state\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+true if state is a terminal state, otherwise false\&. 
+.RE
+.PP
+
+.PP
+Definition at line 202 of file mountain_car\&.hpp\&.
+.PP
+References Log::Info, and MountainCar::State::Position()\&.
+.PP
+Referenced by MountainCar::Sample()\&.
+.SS "size_t& MaxSteps ()\fC [inline]\fP"
+
+.PP
+Set the maximum number of steps allowed\&. 
+.PP
+Definition at line 224 of file mountain_car\&.hpp\&.
+.SS "size_t MaxSteps () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of steps allowed\&. 
+.PP
+Definition at line 222 of file mountain_car\&.hpp\&.
+.SS "double Sample (const \fBState\fP & state, const \fBAction\fP & action)\fC [inline]\fP"
+
+.PP
+Dynamics of Mountain Car\&. Get reward based on current state and current action\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIstate\fP The current state\&. 
+.br
+\fIaction\fP The current action\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+reward, it's always -1\&.0\&. 
+.RE
+.PP
+
+.PP
+Definition at line 175 of file mountain_car\&.hpp\&.
+.PP
+References MountainCar::Sample()\&.
+.SS "double Sample (const \fBState\fP & state, const \fBAction\fP & action, \fBState\fP & nextState)\fC [inline]\fP"
+
+.PP
+Dynamics of Mountain Car\&. Get reward and next state based on current state and current action\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIstate\fP The current state\&. 
+.br
+\fIaction\fP The current action\&. 
+.br
+\fInextState\fP The next state\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+reward, it's always -1\&.0\&. 
+.RE
+.PP
+
+.PP
+Definition at line 133 of file mountain_car\&.hpp\&.
+.PP
+References MountainCar::Action::action, mlpack::math::ClampRange(), MountainCar::IsTerminal(), MountainCar::State::Position(), and MountainCar::State::Velocity()\&.
+.PP
+Referenced by MountainCar::Sample()\&.
+.SS "size_t StepsPerformed () const\fC [inline]\fP"
+
+.PP
+Get the number of steps performed\&. 
+.PP
+Definition at line 219 of file mountain_car\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

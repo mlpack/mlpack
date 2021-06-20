@@ -1,0 +1,454 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="kmtutorial" kind="page">
+    <compoundname>kmtutorial</compoundname>
+    <title>K-Means tutorial (kmeans)</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="kmtutorial_1intro_kmtut">
+<title>Introduction</title>
+<para>The popular k-means algorithm for clustering has been around since the late 1950s, and the standard algorithm was proposed by Stuart Lloyd in 1957. Given a set of points <formula id="154">$ X $</formula>, k-means clustering aims to partition each point <formula id="201">$ x_i $</formula> into a cluster <formula id="202">$ c_j $</formula> (where <formula id="203">$ j \le k $</formula> and <formula id="204">$ k $</formula>, the number of clusters, is a parameter). The partitioning is done to minimize the objective function</para>
+<para><formula id="205">\[ \sum_{j = 1}^{k} \sum_{x_i \in c_j} \| x_i - \mu_j \|^2 \]</formula></para>
+<para>where <formula id="206">$\mu_j$</formula> is the centroid of cluster <formula id="207">$c_j$</formula>. The standard algorithm is a two-step algorithm:</para>
+<para><itemizedlist>
+<listitem><para><bold>Assignment</bold> <bold>step</bold>. Each point <formula id="208">$x_i$</formula> in <formula id="209">$X$</formula> is assigned to the cluster whose centroid it is closest to.</para>
+</listitem><listitem><para><bold>Update</bold> <bold>step</bold>. Using the new cluster assignments, the centroids of each cluster are recalculated.</para>
+</listitem></itemizedlist>
+</para>
+<para>The algorithm has converged when no more assignment changes are happening with each iteration. However, this algorithm can get stuck in local minima of the objective function and is particularly sensitive to the initial cluster assignments. Also, situations can arise where the algorithm will never converge but reaches steady state <ndash/> for instance, one point may be changing between two cluster assignments.</para>
+<para>There is vast literature on the k-means algorithm and its uses, as well as strategies for choosing initial points effectively and keeping the algorithm from converging in local minima. <bold>mlpack</bold> does implement some of these, notably the Bradley-Fayyad algorithm (see the reference below) for choosing refined initial points. Importantly, the C++ <computeroutput>KMeans</computeroutput> class makes it very easy to improve the k-means algorithm in a modular way.</para>
+<para><programlisting><codeline><highlight class="normal">@inproceedings{bradley1998refining,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={Refining<sp/>initial<sp/>points<sp/>for<sp/>k-means<sp/>clustering},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Bradley,<sp/>Paul<sp/>S.<sp/>and<sp/>Fayyad,<sp/>Usama<sp/>M.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle={Proceedings<sp/>of<sp/>the<sp/>Fifteenth<sp/>International<sp/>Conference<sp/>on<sp/>Machine</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Learning<sp/>(ICML<sp/>1998)},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>volume={66},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={1998}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><bold>mlpack</bold> provides:</para>
+<para><itemizedlist>
+<listitem><para>a <ref refid="kmtutorial_1cli_kmtut" kindref="member">simple command-line executable</ref> to run k-means</para>
+</listitem><listitem><para>a <ref refid="kmtutorial_1kmeans_kmtut" kindref="member">simple C++ interface</ref> to run k-means</para>
+</listitem><listitem><para>a <ref refid="kmtutorial_1kmeans_template_kmtut" kindref="member">generic, extensible, and powerful C++ class</ref> for complex usage</para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+<sect1 id="kmtutorial_1toc_kmtut">
+<title>Table of Contents</title>
+<para>A list of all the sections this tutorial contains.</para>
+<para><itemizedlist>
+<listitem><para><ref refid="kmtutorial_1intro_kmtut" kindref="member">Introduction</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1toc_kmtut" kindref="member">Table of Contents</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1cli_kmtut" kindref="member">Command-Line &apos;kmeans&apos;</ref><itemizedlist>
+<listitem><para><ref refid="kmtutorial_1cli_ex1_kmtut" kindref="member">Simple k-means clustering</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1cli_ex2_kmtut" kindref="member">Saving the resulting centroids</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1cli_ex3_kmtut" kindref="member">Allowing empty clusters</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1cli_ex4_kmtut" kindref="member">Limiting the maximum number of iterations</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1cli_ex6_kmtut" kindref="member">Using Bradley-Fayyad &quot;refined start&quot;</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1cli_ex7_kmtut" kindref="member">Using different k-means algorithms</ref></para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para><ref refid="kmtutorial_1kmeans_kmtut" kindref="member">The &apos;KMeans&apos; class</ref><itemizedlist>
+<listitem><para><ref refid="kmtutorial_1kmeans_ex1_kmtut" kindref="member">Running k-means and getting cluster assignments</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1kmeans_ex2_kmtut" kindref="member">Running k-means and getting centroids of clusters</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1kmeans_ex3_kmtut" kindref="member">Limiting the maximum number of iterations</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1kmeans_ex5_kmtut" kindref="member">Setting initial cluster assignments</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1kmeans_ex6_kmtut" kindref="member">Setting initial cluster centroids</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1kmeans_ex7_kmtut" kindref="member">Running sparse k-means</ref></para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para><ref refid="kmtutorial_1kmeans_template_kmtut" kindref="member">Template parameters for the &apos;KMeans&apos; class</ref><itemizedlist>
+<listitem><para><ref refid="kmtutorial_1kmeans_metric_kmtut" kindref="member">Changing the distance metric used for k-means</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1kmeans_initial_partition_kmtut" kindref="member">Changing the initial partitioning strategy used for k-means</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1kmeans_empty_cluster_kmtut" kindref="member">Changing the action taken when an empty cluster is encountered</ref></para>
+</listitem><listitem><para><ref refid="kmtutorial_1kmeans_lloyd_kmtut" kindref="member">The LloydStepType template parameter</ref></para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para><ref refid="kmtutorial_1further_doc_kmtut" kindref="member">Further documentation</ref></para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+<sect1 id="kmtutorial_1cli_kmtut">
+<title>Command-Line &apos;kmeans&apos;</title>
+<para><bold>mlpack</bold> provides a command-line executable, <computeroutput>mlpack_kmeans</computeroutput>, to allow easy execution of the k-means algorithm on data. Complete documentation of the executable can be found by typing</para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_kmeans<sp/>--help</highlight></codeline>
+</programlisting></para>
+<para>As of October 2014, support for overclustering has been removed due to bugs and lack of usage. If this is support you were using, or are interested, please file a bug or get in touch with the <bold>mlpack</bold> developers in some way so that the support can be re-implemented.</para>
+<para>Below are several examples demonstrating simple use of the <computeroutput>mlpack_kmeans</computeroutput> executable.</para>
+<sect2 id="kmtutorial_1cli_ex1_kmtut">
+<title>Simple k-means clustering</title>
+<para>We want to find 5 clusters using the points in the file dataset.csv. By default, if any of the clusters end up empty, that cluster will be reinitialized to contain the point furthest from the cluster with maximum variance. The cluster assignments of each point will be stored in assignments.csv. Each row in assignments.csv will correspond to the row in dataset.csv.</para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_kmeans<sp/>-c<sp/>5<sp/>-i<sp/>dataset.csv<sp/>-v<sp/>-o<sp/>assignments.csv</highlight></codeline>
+</programlisting></para>
+</sect2>
+<sect2 id="kmtutorial_1cli_ex2_kmtut">
+<title>Saving the resulting centroids</title>
+<para>Sometimes it is useful to save the centroids of the clusters found by k-means; one example might be for plotting the points. The <computeroutput>-C</computeroutput> (<computeroutput><ndash/>centroid_file</computeroutput>) option allows specification of a file into which the centroids will be saved (one centroid per line, if it is a CSV or other text format).</para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_kmeans<sp/>-c<sp/>5<sp/>-i<sp/>dataset.csv<sp/>-v<sp/>-o<sp/>assignments.csv<sp/>-C<sp/>centroids.csv</highlight></codeline>
+</programlisting></para>
+</sect2>
+<sect2 id="kmtutorial_1cli_ex3_kmtut">
+<title>Allowing empty clusters</title>
+<para>If you would like to allow empty clusters to exist, instead of reinitializing them, simply specify the <computeroutput>-e</computeroutput> (<computeroutput><ndash/>allow_empty_clusters</computeroutput>) option. Note that when you save your clusters, even empty clusters will still have centroids. The centroids of the empty cluster will be the same as what they were on the last iteration when the cluster was not empty.</para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_kmeans<sp/>-c<sp/>5<sp/>-i<sp/>dataset.csv<sp/>-v<sp/>-e<sp/>-o<sp/>assignments.csv<sp/>-C<sp/>centroids.csv</highlight></codeline>
+</programlisting></para>
+</sect2>
+<sect2 id="kmtutorial_1cli_ex3a_kmtut">
+<title>Killing empty clusters</title>
+<para>If you would like to kill empty clusters , instead of reinitializing them, simply specify the <computeroutput>-E</computeroutput> (<computeroutput><ndash/>kill_empty_clusters</computeroutput>) option. Note that when you save your clusters, all the empty clusters will be removed and the final result may contain less than specified number of clusters.</para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_kmeans<sp/>-c<sp/>5<sp/>-i<sp/>dataset.csv<sp/>-v<sp/>-E<sp/>-o<sp/>assignments.csv<sp/>-C<sp/>centroids.csv</highlight></codeline>
+</programlisting></para>
+</sect2>
+<sect2 id="kmtutorial_1cli_ex4_kmtut">
+<title>Limiting the maximum number of iterations</title>
+<para>As mentioned earlier, the k-means algorithm can often fail to converge. In such a situation, it may be useful to stop the algorithm by way of limiting the maximum number of iterations. This can be done with the <computeroutput>-m</computeroutput> (<computeroutput><ndash/>max_iterations</computeroutput>) parameter, which is set to 1000 by default. If the maximum number of iterations is 0, the algorithm will run until convergence <ndash/> or potentially forever. The example below sets a maximum of 250 iterations.</para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_kmeans<sp/>-c<sp/>5<sp/>-i<sp/>dataset.csv<sp/>-v<sp/>-o<sp/>assignments.csv<sp/>-m<sp/>250</highlight></codeline>
+</programlisting></para>
+</sect2>
+<sect2 id="kmtutorial_1cli_ex6_kmtut">
+<title>Using Bradley-Fayyad &quot;refined start&quot;</title>
+<para>The method proposed by Bradley and Fayyad in their paper &quot;Refining initial
+points for k-means clustering&quot; is implemented in <bold>mlpack</bold>. This strategy samples points from the dataset and runs k-means clustering on those points multiple times, saving the resulting clusters. Then, k-means clustering is run on those clusters, yielding the original number of clusters. The centroids of those resulting clusters are used as initial centroids for k-means clustering on the entire dataset.</para>
+<para>This technique generally gives better initial points than the default random partitioning, but depending on the parameters, it can take much longer. This initialization technique is enabled with the <computeroutput>-r</computeroutput> (<computeroutput><ndash/>refined_start</computeroutput>) option. The <computeroutput>-S</computeroutput> (<computeroutput><ndash/>samplings</computeroutput>) parameter controls how many samplings of the dataset are performed, and the <computeroutput>-p</computeroutput> (<computeroutput><ndash/>percentage</computeroutput>) parameter controls how much of the dataset is randomly sampled for each sampling (it must be between 0.0 and 1.0). For more information on the refined start technique, see the paper referenced in the introduction of this tutorial.</para>
+<para>The example below performs k-means clustering, giving 5 clusters, using the refined start technique, sampling 10% of the dataset 25 times to produce the initial centroids.</para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_kmeans<sp/>-c<sp/>5<sp/>-i<sp/>dataset.csv<sp/>-v<sp/>-o<sp/>assignments.csv<sp/>-r<sp/>-S<sp/>25<sp/>-p<sp/>0.2</highlight></codeline>
+</programlisting></para>
+</sect2>
+<sect2 id="kmtutorial_1cli_ex7_kmtut">
+<title>Using different k-means algorithms</title>
+<para>The <computeroutput>mlpack_kmeans</computeroutput> program implements six different strategies for clustering; each of these gives the exact same results, but will have different runtimes. The particular algorithm to use can be specified with the <computeroutput>-a</computeroutput> or <computeroutput><ndash/>algorithm</computeroutput> option. The choices are:</para>
+<para><itemizedlist>
+<listitem><para><computeroutput>naive:</computeroutput> the standard Lloyd iteration; takes <formula id="210">$O(kN)$</formula> time per iteration.</para>
+</listitem><listitem><para><computeroutput>pelleg-moore</computeroutput>: the &apos;blacklist&apos; algorithm, which builds a kd-tree on the data. This can be fast when k is small and the dimensionality is reasonably low.</para>
+</listitem><listitem><para><computeroutput>elkan:</computeroutput> Elkan&apos;s algorithm for k-means, which maintains upper and lower distance bounds between each point and each centroid. This can be very fast, but it does not scale well to the case of large N or k, and uses a lot of memory.</para>
+</listitem><listitem><para><computeroutput>hamerly:</computeroutput> Hamerly&apos;s algorithm is a variant of Elkan&apos;s algorithm that handles memory usage much better and thus can operate with much larger datasets than Elkan&apos;s algorithm.</para>
+</listitem><listitem><para><computeroutput>dualtree:</computeroutput> The dual-tree algorithm for k-means builds a kd-tree on both the centroids and the points in order to prune away as much work as possible. This algorithm is most effective when both N and k are large.</para>
+</listitem><listitem><para><computeroutput>dualtree-covertree</computeroutput>: This is the dual-tree algorithm using cover trees instead of kd-trees. It satisfies the runtime guarantees specified in the dual-tree k-means paper.</para>
+</listitem></itemizedlist>
+</para>
+<para>In general, the <computeroutput>naive</computeroutput> algorithm will be much slower than the others on datasets that are larger than tiny.</para>
+<para>The example below uses the <computeroutput>dualtree</computeroutput> algorithm to perform k-means clustering with 5 clusters on the dataset in <computeroutput>dataset.csv</computeroutput>, using the initial centroids in <computeroutput>initial_centroids.csv</computeroutput>, saving the resulting cluster assignments to <computeroutput>assignments.csv:</computeroutput> </para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_kmeans<sp/>-i<sp/>dataset.csv<sp/>-c<sp/>5<sp/>-v<sp/>-I<sp/>initial_centroids.csv<sp/>-a<sp/>dualtree<sp/>\</highlight></codeline>
+<codeline><highlight class="normal">&gt;<sp/>-o<sp/>assignments.csv</highlight></codeline>
+</programlisting></para>
+</sect2>
+</sect1>
+<sect1 id="kmtutorial_1kmeans_kmtut">
+<title>The &apos;KMeans&apos; class</title>
+<para>The <computeroutput>KMeans&lt;&gt;</computeroutput> class (with default template parameters) provides a simple way to run k-means clustering using <bold>mlpack</bold> in C++. The default template parameters for <computeroutput>KMeans&lt;&gt;</computeroutput> will initialize cluster assignments randomly and disallow empty clusters. When an empty cluster is encountered, the point furthest from the cluster with maximum variance is set to the centroid of the empty cluster.</para>
+<sect2 id="kmtutorial_1kmeans_ex1_kmtut">
+<title>Running k-means and getting cluster assignments</title>
+<para>The simplest way to use the <computeroutput>KMeans&lt;&gt;</computeroutput> class is to pass in a dataset and a number of clusters, and receive the cluster assignments in return. Note that the dataset must be column-major <ndash/> that is, one column corresponds to one point. See <ref refid="matrices" kindref="compound">the matrices guide</ref> for more information.</para>
+<para><programlisting><codeline><highlight class="normal">#include<sp/>&lt;mlpack/methods/kmeans/kmeans.hpp&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack::kmeans;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>dataset<sp/>we<sp/>are<sp/>clustering.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::mat<sp/>data;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>number<sp/>of<sp/>clusters<sp/>we<sp/>are<sp/>getting.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>size_t<sp/>clusters;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>assignments<sp/>will<sp/>be<sp/>stored<sp/>in<sp/>this<sp/>vector.</highlight></codeline>
+<codeline><highlight class="normal">arma::Row&lt;size_t&gt;<sp/>assignments;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Initialize<sp/>with<sp/>the<sp/>default<sp/>arguments.</highlight></codeline>
+<codeline><highlight class="normal">KMeans&lt;&gt;<sp/>k;</highlight></codeline>
+<codeline><highlight class="normal">k.Cluster(data,<sp/>clusters,<sp/>assignments);</highlight></codeline>
+</programlisting></para>
+<para>Now, the vector <computeroutput>assignments</computeroutput> holds the cluster assignments of each point in the dataset.</para>
+</sect2>
+<sect2 id="kmtutorial_1kmeans_ex2_kmtut">
+<title>Running k-means and getting centroids of clusters</title>
+<para>Often it is useful to not only have the cluster assignments, but the centroids of each cluster. Another overload of <computeroutput>Cluster()</computeroutput> makes this easily possible:</para>
+<para><programlisting><codeline><highlight class="normal">#include<sp/>&lt;mlpack/methods/kmeans/kmeans.hpp&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack::kmeans;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>dataset<sp/>we<sp/>are<sp/>clustering.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::mat<sp/>data;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>number<sp/>of<sp/>clusters<sp/>we<sp/>are<sp/>getting.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>size_t<sp/>clusters;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>assignments<sp/>will<sp/>be<sp/>stored<sp/>in<sp/>this<sp/>vector.</highlight></codeline>
+<codeline><highlight class="normal">arma::Row&lt;size_t&gt;<sp/>assignments;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>centroids<sp/>will<sp/>be<sp/>stored<sp/>in<sp/>this<sp/>matrix.</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>centroids;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Initialize<sp/>with<sp/>the<sp/>default<sp/>arguments.</highlight></codeline>
+<codeline><highlight class="normal">KMeans&lt;&gt;<sp/>k;</highlight></codeline>
+<codeline><highlight class="normal">k.Cluster(data,<sp/>clusters,<sp/>assignments,<sp/>centroids);</highlight></codeline>
+</programlisting></para>
+<para>Note that the centroids matrix has columns equal to the number of clusters and rows equal to the dimensionality of the dataset. Each column represents the centroid of the according cluster <ndash/> <computeroutput>centroids.col(0)</computeroutput> represents the centroid of the first cluster.</para>
+</sect2>
+<sect2 id="kmtutorial_1kmeans_ex3_kmtut">
+<title>Limiting the maximum number of iterations</title>
+<para>The first argument to the constructor allows specification of the maximum number of iterations. This is useful because often, the k-means algorithm does not converge, and is terminated after a number of iterations. Setting this parameter to 0 indicates that the algorithm will run until convergence <ndash/> note that in some cases, convergence may never happen. The default maximum number of iterations is 1000.</para>
+<para><programlisting><codeline><highlight class="normal">//<sp/>The<sp/>first<sp/>argument<sp/>is<sp/>the<sp/>maximum<sp/>number<sp/>of<sp/>iterations.<sp/><sp/>Here<sp/>we<sp/>set<sp/>it<sp/>to</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>500<sp/>iterations.</highlight></codeline>
+<codeline><highlight class="normal">KMeans&lt;&gt;<sp/>k(500);</highlight></codeline>
+</programlisting></para>
+<para>Then you can run <computeroutput>Cluster()</computeroutput> as normal.</para>
+</sect2>
+<sect2 id="kmtutorial_1kmeans_ex5_kmtut">
+<title>Setting initial cluster assignments</title>
+<para>If you have an initial guess for the cluster assignments for each point, you can fill the assignments vector with the guess and then pass an extra boolean (initialAssignmentGuess) as true to the <computeroutput>Cluster()</computeroutput> method. Below are examples for either overload of <computeroutput>Cluster()</computeroutput>.</para>
+<para><programlisting><codeline><highlight class="normal">#include<sp/>&lt;mlpack/methods/kmeans/kmeans.hpp&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack::kmeans;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>dataset<sp/>we<sp/>are<sp/>clustering<sp/>on.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::mat<sp/>dataset;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>number<sp/>of<sp/>clusters<sp/>we<sp/>are<sp/>obtaining.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>size_t<sp/>clusters;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>A<sp/>vector<sp/>pre-filled<sp/>with<sp/>initial<sp/>assignment<sp/>guesses.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::Row&lt;size_t&gt;<sp/>assignments;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">KMeans&lt;&gt;<sp/>k;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>boolean<sp/>set<sp/>to<sp/>true<sp/>indicates<sp/>that<sp/>our<sp/>assignments<sp/>vector<sp/>is<sp/>filled<sp/>with</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>initial<sp/>guesses.</highlight></codeline>
+<codeline><highlight class="normal">k.Cluster(dataset,<sp/>clusters,<sp/>assignments,<sp/>true);</highlight></codeline>
+</programlisting></para>
+<para><programlisting><codeline><highlight class="normal">#include<sp/>&lt;mlpack/methods/kmeans/kmeans.hpp&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack::kmeans;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>dataset<sp/>we<sp/>are<sp/>clustering<sp/>on.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::mat<sp/>dataset;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>number<sp/>of<sp/>clusters<sp/>we<sp/>are<sp/>obtaining.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>size_t<sp/>clusters;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>A<sp/>vector<sp/>pre-filled<sp/>with<sp/>initial<sp/>assignment<sp/>guesses.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::Row&lt;size_t&gt;<sp/>assignments;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>This<sp/>will<sp/>hold<sp/>the<sp/>centroids<sp/>of<sp/>the<sp/>finished<sp/>clusters.</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>centroids;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">KMeans&lt;&gt;<sp/>k;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>boolean<sp/>set<sp/>to<sp/>true<sp/>indicates<sp/>that<sp/>our<sp/>assignments<sp/>vector<sp/>is<sp/>filled<sp/>with</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>initial<sp/>guesses.</highlight></codeline>
+<codeline><highlight class="normal">k.Cluster(dataset,<sp/>clusters,<sp/>assignments,<sp/>centroids,<sp/>true);</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="note"><para>If you have a heuristic or algorithm which makes initial guesses, a more elegant solution is to create a new class fulfilling the InitialPartitionPolicy template policy. See <ref refid="kmtutorial_1kmeans_initial_partition_kmtut" kindref="member">the section about changing the initial partitioning strategy</ref> for more details.</para>
+</simplesect>
+<simplesect kind="par"><title></title><para></para>
+</simplesect>
+<simplesect kind="note"><para>If you set the InitialPartitionPolicy parameter to something other than the default but give an initial cluster assignment guess, the InitialPartitionPolicy will not be used to initialize the algorithm. See <ref refid="kmtutorial_1kmeans_initial_partition_kmtut" kindref="member">the section about changing the initial partitioning strategy</ref> for more details.</para>
+</simplesect>
+</para>
+</sect2>
+<sect2 id="kmtutorial_1kmeans_ex6_kmtut">
+<title>Setting initial cluster centroids</title>
+<para>An equally important option to being able to make initial cluster assignment guesses is to make initial cluster centroid guesses without having to assign each point in the dataset to an initial cluster. This is similar to the previous section, but now you must pass two extra booleans <ndash/> the first (initialAssignmentGuess) as false, indicating that there are not initial cluster assignment guesses, and the second (initialCentroidGuess) as true, indicating that the centroids matrix is filled with initial centroid guesses.</para>
+<para>This, of course, only works with the overload of <computeroutput>Cluster()</computeroutput> that takes a matrix to put the resulting centroids in. Below is an example.</para>
+<para><programlisting><codeline><highlight class="normal">#include<sp/>&lt;mlpack/methods/kmeans/kmeans.hpp&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">using<sp/>namespace<sp/>mlpack::kmeans;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>dataset<sp/>we<sp/>are<sp/>clustering<sp/>on.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::mat<sp/>dataset;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>number<sp/>of<sp/>clusters<sp/>we<sp/>are<sp/>obtaining.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>size_t<sp/>clusters;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>A<sp/>matrix<sp/>pre-filled<sp/>with<sp/>guesses<sp/>for<sp/>the<sp/>initial<sp/>cluster<sp/>centroids.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::mat<sp/>centroids;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>This<sp/>will<sp/>be<sp/>filled<sp/>with<sp/>the<sp/>final<sp/>cluster<sp/>assignments<sp/>for<sp/>each<sp/>point.</highlight></codeline>
+<codeline><highlight class="normal">arma::Row&lt;size_t&gt;<sp/>assignments;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">KMeans&lt;&gt;<sp/>k;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Remember,<sp/>the<sp/>first<sp/>boolean<sp/>indicates<sp/>that<sp/>we<sp/>are<sp/>not<sp/>giving<sp/>initial</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>assignment<sp/>guesses,<sp/>and<sp/>the<sp/>second<sp/>boolean<sp/>indicates<sp/>that<sp/>we<sp/>are<sp/>giving</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>initial<sp/>centroid<sp/>guesses.</highlight></codeline>
+<codeline><highlight class="normal">k.Cluster(dataset,<sp/>clusters,<sp/>assignments,<sp/>centroids,<sp/>false,<sp/>true);</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="note"><para>If you have a heuristic or algorithm which makes initial guesses, a more elegant solution is to create a new class fulfilling the InitialPartitionPolicy template policy. See <ref refid="kmtutorial_1kmeans_initial_partition_kmtut" kindref="member">the section about changing the initial partitioning strategy</ref> for more details.</para>
+</simplesect>
+<simplesect kind="par"><title></title><para></para>
+</simplesect>
+<simplesect kind="note"><para>If you set the InitialPartitionPolicy parameter to something other than the default but give an initial cluster centroid guess, the InitialPartitionPolicy will not be used to initialize the algorithm. See <ref refid="kmtutorial_1kmeans_initial_partition_kmtut" kindref="member">the section about changing the initial partitioning strategy</ref> for more details.</para>
+</simplesect>
+</para>
+</sect2>
+<sect2 id="kmtutorial_1kmeans_ex7_kmtut">
+<title>Running sparse k-means</title>
+<para>The <computeroutput>Cluster()</computeroutput> function can work on both sparse and dense matrices, so all of the above examples can be used with sparse matrices instead, if the fifth template parameter is modified. Below is a simple example. Note that the centroids are returned as a dense matrix, because the centroids of collections of sparse points are not generally sparse.</para>
+<para><programlisting><codeline><highlight class="normal">//<sp/>The<sp/>sparse<sp/>dataset.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::sp_mat<sp/>sparseDataset;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>number<sp/>of<sp/>clusters.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>size_t<sp/>clusters;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>assignments<sp/>will<sp/>be<sp/>stored<sp/>in<sp/>this<sp/>vector.</highlight></codeline>
+<codeline><highlight class="normal">arma::Row&lt;size_t&gt;<sp/>assignments;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>The<sp/>centroids<sp/>of<sp/>each<sp/>cluster<sp/>will<sp/>be<sp/>stored<sp/>in<sp/>this<sp/>sparse<sp/>matrix.</highlight></codeline>
+<codeline><highlight class="normal">arma::sp_mat<sp/>sparseCentroids;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>We<sp/>must<sp/>change<sp/>the<sp/>fifth<sp/>(and<sp/>last)<sp/>template<sp/>parameter.</highlight></codeline>
+<codeline><highlight class="normal">KMeans&lt;metric::EuclideanDistance,<sp/>SampleInitialization,<sp/>MaxVarianceNewCluster,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NaiveKMeans,<sp/>arma::sp_mat&gt;<sp/>k;</highlight></codeline>
+<codeline><highlight class="normal">k.Cluster(sparseDataset,<sp/>clusters,<sp/>assignments,<sp/>sparseCentroids);</highlight></codeline>
+</programlisting></para>
+</sect2>
+</sect1>
+<sect1 id="kmtutorial_1kmeans_template_kmtut">
+<title>Template parameters for the &apos;KMeans&apos; class</title>
+<para>The <computeroutput>KMeans&lt;&gt;</computeroutput> class also takes three template parameters, which can be modified to change the behavior of the k-means algorithm. There are three template parameters:</para>
+<para><itemizedlist>
+<listitem><para><computeroutput>MetricType:</computeroutput> controls the distance metric used for clustering (by default, the squared Euclidean distance is used)</para>
+</listitem><listitem><para><computeroutput>InitialPartitionPolicy:</computeroutput> the method by which initial clusters are set; by default, <ref refid="classmlpack_1_1kmeans_1_1SampleInitialization" kindref="compound">SampleInitialization</ref> is used</para>
+</listitem><listitem><para><computeroutput>EmptyClusterPolicy:</computeroutput> the action taken when an empty cluster is encountered; by default, <ref refid="classmlpack_1_1kmeans_1_1MaxVarianceNewCluster" kindref="compound">MaxVarianceNewCluster</ref> is used</para>
+</listitem><listitem><para><computeroutput>LloydStepType:</computeroutput> this defines the strategy used to make a single Lloyd iteration; by default this is the typical Lloyd iteration specified in <ref refid="classmlpack_1_1kmeans_1_1NaiveKMeans" kindref="compound">NaiveKMeans</ref></para>
+</listitem><listitem><para><computeroutput>MatType:</computeroutput> type of data matrix to use for clustering</para>
+</listitem></itemizedlist>
+</para>
+<para>The class is defined like below:</para>
+<para><programlisting><codeline><highlight class="normal">template&lt;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>typename<sp/>DistanceMetric<sp/>=<sp/>mlpack::metric::SquaredEuclideanDistance,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>typename<sp/>InitialPartitionPolicy<sp/>=<sp/>SampleInitialization,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>typename<sp/>EmptyClusterPolicy<sp/>=<sp/>MaxVarianceNewCluster,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>template&lt;class,<sp/>class&gt;<sp/>class<sp/>LloydStepType<sp/>=<sp/>NaiveKMeans,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>typename<sp/>MatType<sp/>=<sp/>arma::mat</highlight></codeline>
+<codeline><highlight class="normal">&gt;</highlight></codeline>
+<codeline><highlight class="normal">class<sp/>KMeans;</highlight></codeline>
+</programlisting></para>
+<para>In the following sections, each policy is described further, with examples of how to modify them.</para>
+<sect2 id="kmtutorial_1kmeans_metric_kmtut">
+<title>Changing the distance metric used for k-means</title>
+<para>Most machine learning algorithms in <bold>mlpack</bold> support modifying the distance metric, and <computeroutput>KMeans&lt;&gt;</computeroutput> is no exception. Similar to <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> (see <ref refid="nstutorial_1metric_type_doc_nstut" kindref="member">the section in the NeighborSearch tutorial</ref>), any class in <ref refid="namespacemlpack_1_1metric" kindref="compound">mlpack::metric</ref> can be given as an argument. The <ref refid="classmlpack_1_1metric_1_1LMetric" kindref="compound">mlpack::metric::LMetric</ref> class is a good example implementation.</para>
+<para>A class fulfilling the MetricType policy must provide the following two functions:</para>
+<para><programlisting><codeline><highlight class="normal">//<sp/>Empty<sp/>constructor<sp/>is<sp/>required.</highlight></codeline>
+<codeline><highlight class="normal">MetricType();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Computer<sp/>the<sp/>distance<sp/>between<sp/>two<sp/>points.</highlight></codeline>
+<codeline><highlight class="normal">template&lt;typename<sp/>VecType&gt;</highlight></codeline>
+<codeline><highlight class="normal">double<sp/>Evaluate(const<sp/>VecType&amp;<sp/>a,<sp/>const<sp/>VecType&amp;<sp/>b);</highlight></codeline>
+</programlisting></para>
+<para>Most of the standard metrics that could be used are stateless and therefore the <computeroutput>Evaluate()</computeroutput> method is implemented statically. However, there are metrics, such as the Mahalanobis distance (<ref refid="classmlpack_1_1metric_1_1MahalanobisDistance" kindref="compound">mlpack::metric::MahalanobisDistance</ref>), that store state. To this end, an instantiated MetricType object is stored within the <computeroutput>KMeans</computeroutput> class. The example below shows how to pass an instantiated MahalanobisDistance in the constructor.</para>
+<para><programlisting><codeline><highlight class="normal">//<sp/>The<sp/>initialized<sp/>Mahalanobis<sp/>distance.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>mlpack::metric::MahalanobisDistance<sp/>distance;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>We<sp/>keep<sp/>the<sp/>default<sp/>arguments<sp/>for<sp/>the<sp/>maximum<sp/>number<sp/>of<sp/>iterations,<sp/>but<sp/>pass</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>our<sp/>instantiated<sp/>metric.</highlight></codeline>
+<codeline><highlight class="normal">KMeans&lt;mlpack::metric::MahalanobisDistance&gt;<sp/>k(1000,<sp/>distance);</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="note"><para>While the MetricType policy only requires two methods, one of which is an empty constructor, more can always be added. <ref refid="classmlpack_1_1metric_1_1MahalanobisDistance" kindref="compound">mlpack::metric::MahalanobisDistance</ref> also has constructors with parameters, because it is a stateful metric.</para>
+</simplesect>
+</para>
+</sect2>
+<sect2 id="kmtutorial_1kmeans_initial_partition_kmtut">
+<title>Changing the initial partitioning strategy used for k-means</title>
+<para>There have been many initial cluster strategies for k-means proposed in the literature. Fortunately, the <computeroutput>KMeans&lt;&gt;</computeroutput> class makes it very easy to implement one of these methods and plug it in without needing to modify the existing algorithm code at all.</para>
+<para>By default, the <computeroutput>KMeans&lt;&gt;</computeroutput> class uses <ref refid="classmlpack_1_1kmeans_1_1SampleInitialization" kindref="compound">mlpack::kmeans::SampleInitialization</ref>, which randomly samples points as initial centroids. However, writing a new policy is simple; it needs to only implement the following functions:</para>
+<para><programlisting><codeline><highlight class="normal">//<sp/>Empty<sp/>constructor<sp/>is<sp/>required.</highlight></codeline>
+<codeline><highlight class="normal">InitialPartitionPolicy();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Only<sp/>*one*<sp/>of<sp/>the<sp/>following<sp/>two<sp/>functions<sp/>is<sp/>required!<sp/><sp/>You<sp/>should<sp/>implement</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>whichever<sp/>you<sp/>find<sp/>more<sp/>convenient<sp/>to<sp/>implement.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>This<sp/>function<sp/>is<sp/>called<sp/>to<sp/>initialize<sp/>the<sp/>clusters<sp/>and<sp/>returns<sp/>centroids.</highlight></codeline>
+<codeline><highlight class="normal">template&lt;typename<sp/>MatType&gt;</highlight></codeline>
+<codeline><highlight class="normal">void<sp/>Cluster(MatType&amp;<sp/>data,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>size_t<sp/>clusters,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>centroids);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>This<sp/>function<sp/>is<sp/>called<sp/>to<sp/>initialize<sp/>the<sp/>clusters<sp/>and<sp/>returns<sp/>individual</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>point<sp/>assignments.<sp/><sp/>The<sp/>centroids<sp/>will<sp/>then<sp/>be<sp/>calculated<sp/>from<sp/>the<sp/>given</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>assignments.</highlight></codeline>
+<codeline><highlight class="normal">template&lt;typename<sp/>MatType&gt;</highlight></codeline>
+<codeline><highlight class="normal">void<sp/>Cluster(MatType&amp;<sp/>data,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>size_t<sp/>clusters,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Row&lt;size_t&gt;<sp/>assignments);</highlight></codeline>
+</programlisting></para>
+<para>The templatization of the <computeroutput>Cluster()</computeroutput> function allows both dense and sparse matrices to be passed in. If the desired policy does not work with sparse (or dense) matrices, then the method can be written specifically for one type of matrix <ndash/> however, be warned that if you try to use <computeroutput>KMeans</computeroutput> with that policy and the wrong type of matrix, you will get many ugly compilation errors!</para>
+<para><programlisting><codeline><highlight class="normal">//<sp/>The<sp/>Cluster()<sp/>function<sp/>specialized<sp/>for<sp/>dense<sp/>matrices.</highlight></codeline>
+<codeline><highlight class="normal">void<sp/>Cluster(arma::mat&amp;<sp/>data,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>size_t<sp/>clusters,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Row&lt;size_t&gt;<sp/>assignments);</highlight></codeline>
+</programlisting></para>
+<para>Note that only one of the two possible <computeroutput>Cluster()</computeroutput> functions are required. This is because sometimes it is easier to express an initial partitioning policy as something that returns point assignments, and sometimes it is easier to express the policy as something that returns centroids. The KMeans&lt;&gt; class will use whichever of these two functions is given; if both are given, the overload that returns centroids will be preferred.</para>
+<para>One alternate to the default SampleInitialization policy is the RefinedStart policy, which is an implementation of the Bradley and Fayyad approach for finding initial points detailed in &quot;Refined initial points for k-means
+clustering&quot; and other places in this document. Another option is the RandomPartition class, which randomly assigns points to clusters, but this may not work very well for most settings. See the documentation for <ref refid="classmlpack_1_1kmeans_1_1RefinedStart" kindref="compound">mlpack::kmeans::RefinedStart</ref> and <ref refid="classmlpack_1_1kmeans_1_1RandomPartition" kindref="compound">mlpack::kmeans::RandomPartition</ref> for more information.</para>
+<para>If the <computeroutput>Cluster()</computeroutput> method returns point assignments instead of centroids, then valid initial assignments must be returned for every point in the dataset.</para>
+<para>As with the MetricType template parameter, an initialized InitialPartitionPolicy can be passed to the constructor of <computeroutput>KMeans</computeroutput> as a fourth argument.</para>
+</sect2>
+<sect2 id="kmtutorial_1kmeans_empty_cluster_kmtut">
+<title>Changing the action taken when an empty cluster is encountered</title>
+<para>Sometimes, during clustering, a situation will arise where a cluster has no points in it. The <computeroutput>KMeans</computeroutput> class allows easy customization of the action to be taken when this occurs. By default, the point furthest from the centroid of the cluster with maximum variance is taken as the centroid of the empty cluster; this is implemented in the <ref refid="classmlpack_1_1kmeans_1_1MaxVarianceNewCluster" kindref="compound">mlpack::kmeans::MaxVarianceNewCluster</ref> class. Another alternate choice is the <ref refid="classmlpack_1_1kmeans_1_1AllowEmptyClusters" kindref="compound">mlpack::kmeans::AllowEmptyClusters</ref> class, which simply allows empty clusters to persist.</para>
+<para>A custom policy can be written and it must implement the following methods:</para>
+<para><programlisting><codeline><highlight class="normal">//<sp/>Empty<sp/>constructor<sp/>is<sp/>required.</highlight></codeline>
+<codeline><highlight class="normal">EmptyClusterPolicy();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>This<sp/>function<sp/>is<sp/>called<sp/>when<sp/>an<sp/>empty<sp/>cluster<sp/>is<sp/>encountered.<sp/><sp/>emptyCluster</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>indicates<sp/>the<sp/>cluster<sp/>which<sp/>is<sp/>empty,<sp/>and<sp/>then<sp/>the<sp/>clusterCounts<sp/>and</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>assignments<sp/>are<sp/>meant<sp/>to<sp/>be<sp/>modified<sp/>by<sp/>the<sp/>function.<sp/><sp/>The<sp/>function<sp/>should</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>return<sp/>the<sp/>number<sp/>of<sp/>modified<sp/>points.</highlight></codeline>
+<codeline><highlight class="normal">template&lt;typename<sp/>MatType&gt;</highlight></codeline>
+<codeline><highlight class="normal">size_t<sp/>EmptyCluster(const<sp/>MatType&amp;<sp/>data,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>size_t<sp/>emptyCluster,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>MatType&amp;<sp/>centroids,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Col&lt;size_t&gt;&amp;<sp/>clusterCounts,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>assignments);</highlight></codeline>
+</programlisting></para>
+<para>The <computeroutput>EmptyCluster()</computeroutput> function is called for each cluster that is empty at each iteration of the algorithm. As with InitialPartitionPolicy, the <computeroutput>EmptyCluster()</computeroutput> function does not need to be generalized to support both dense and sparse matrices <ndash/> but usage with the wrong type of matrix will cause compilation errors.</para>
+<para>Like the other template parameters to <computeroutput>KMeans</computeroutput>, EmptyClusterPolicy implementations that have state can be passed to the constructor of <computeroutput>KMeans</computeroutput> as a fifth argument. See the kmeans::KMeans documentation for further details.</para>
+</sect2>
+<sect2 id="kmtutorial_1kmeans_lloyd_kmtut">
+<title>The LloydStepType template parameter</title>
+<para>The internal algorithm used for a single step of the k-means algorithm can easily be changed; <bold>mlpack</bold> implements several existing classes that satisfy the <computeroutput>LloydStepType</computeroutput> policy:</para>
+<para><itemizedlist>
+<listitem><para><ref refid="classmlpack_1_1kmeans_1_1NaiveKMeans" kindref="compound">mlpack::kmeans::NaiveKMeans</ref></para>
+</listitem><listitem><para><ref refid="classmlpack_1_1kmeans_1_1ElkanKMeans" kindref="compound">mlpack::kmeans::ElkanKMeans</ref></para>
+</listitem><listitem><para><ref refid="classmlpack_1_1kmeans_1_1HamerlyKMeans" kindref="compound">mlpack::kmeans::HamerlyKMeans</ref></para>
+</listitem><listitem><para><ref refid="classmlpack_1_1kmeans_1_1PellegMooreKMeans" kindref="compound">mlpack::kmeans::PellegMooreKMeans</ref></para>
+</listitem><listitem><para><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeans" kindref="compound">mlpack::kmeans::DualTreeKMeans</ref></para>
+</listitem></itemizedlist>
+</para>
+<para>Note that the <computeroutput>LloydStepType</computeroutput> policy is itself a template template parameter, and must accept two template parameters of its own:</para>
+<para><itemizedlist>
+<listitem><para><computeroutput>MetricType:</computeroutput> the type of metric to use</para>
+</listitem><listitem><para><computeroutput>MatType:</computeroutput> the type of data matrix to use</para>
+</listitem></itemizedlist>
+</para>
+<para>The <computeroutput>LloydStepType</computeroutput> policy also mandates three functions:</para>
+<para><itemizedlist>
+<listitem><para>a constructor: <computeroutput>LloydStepType(const MatType&amp; dataset, MetricType&amp; metric);</computeroutput></para>
+</listitem><listitem><para>an <computeroutput>Iterate()</computeroutput> function:</para>
+</listitem></itemizedlist>
+</para>
+<para><programlisting><codeline><highlight class="normal">/**</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>Run<sp/>a<sp/>single<sp/>iteration<sp/>of<sp/>the<sp/>Lloyd<sp/>algorithm,<sp/>updating<sp/>the<sp/>given<sp/>centroids</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>into<sp/>the<sp/>newCentroids<sp/>matrix.<sp/><sp/>If<sp/>any<sp/>cluster<sp/>is<sp/>empty<sp/>(that<sp/>is,<sp/>if<sp/>any</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>cluster<sp/>has<sp/>no<sp/>points<sp/>assigned<sp/>to<sp/>it),<sp/>then<sp/>the<sp/>centroid<sp/>associated<sp/>with</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>that<sp/>cluster<sp/>may<sp/>be<sp/>filled<sp/>with<sp/>invalid<sp/>data<sp/>(it<sp/>will<sp/>be<sp/>corrected<sp/>later).</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>@param<sp/>centroids<sp/>Current<sp/>cluster<sp/>centroids.</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>@param<sp/>newCentroids<sp/>New<sp/>cluster<sp/>centroids.</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*<sp/>@param<sp/>counts<sp/>Number<sp/>of<sp/>points<sp/>in<sp/>each<sp/>cluster<sp/>at<sp/>the<sp/>end<sp/>of<sp/>the<sp/>iteration.</highlight></codeline>
+<codeline><highlight class="normal"><sp/>*/</highlight></codeline>
+<codeline><highlight class="normal">double<sp/>Iterate(const<sp/>arma::mat&amp;<sp/>centroids,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>newCentroids,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Col&lt;size_t&gt;&amp;<sp/>counts);</highlight></codeline>
+</programlisting></para>
+<para><itemizedlist>
+<listitem><para>a function to get the number of distance calculations:</para>
+</listitem></itemizedlist>
+</para>
+<para><programlisting><codeline><highlight class="normal">size_t<sp/>DistanceCalculations()<sp/>const<sp/>{<sp/>return<sp/>distanceCalculations;<sp/>}</highlight></codeline>
+</programlisting></para>
+<para>Note that <computeroutput>Iterate()</computeroutput> does not need to return valid centroids if the cluster is empty. This is because <computeroutput>EmptyClusterPolicy</computeroutput> will handle the empty centroid. This behavior can be used to avoid small amounts of computation.</para>
+<para>For examples, see the five aforementioned implementations of classes that satisfy the <computeroutput>LloydStepType</computeroutput> policy.</para>
+</sect2>
+</sect1>
+<sect1 id="kmtutorial_1further_doc_kmtut">
+<title>Further documentation</title>
+<para>For further documentation on the KMeans class, consult the <ref refid="classmlpack_1_1kmeans_1_1KMeans" kindref="compound">complete API documentation</ref>. </para>
+</sect1>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/doc/tutorials/kmeans/kmeans.txt"/>
+  </compounddef>
+</doxygen>

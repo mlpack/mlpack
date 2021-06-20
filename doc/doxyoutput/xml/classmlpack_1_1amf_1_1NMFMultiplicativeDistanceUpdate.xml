@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::amf::NMFMultiplicativeDistanceUpdate</compoundname>
+    <includes refid="nmf__mult__dist_8hpp" local="no">nmf_mult_dist.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_1ab617f348654db931f85c1c60066d8f4d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NMFMultiplicativeDistanceUpdate</definition>
+        <argsstring>()</argsstring>
+        <name>NMFMultiplicativeDistanceUpdate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" line="43" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" bodystart="43" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_1aac5af164b10635addd7ff7bb934a4db3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(const MatType &amp;, const size_t)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>const MatType &amp;</type>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the factorization. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>These update rules hold no information, so the input parameters are ignored. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" line="50" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" bodystart="50" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the object (in this case, there is nothing to serialize). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" line="101" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" bodystart="101" bodyend="101"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_1ad2a433d7e149001f0f44caa8967d20a6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void HUpdate</definition>
+        <argsstring>(const MatType &amp;V, const arma::mat &amp;W, arma::mat &amp;H)</argsstring>
+        <name>HUpdate</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>The update rule for the encoding matrix H. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The formula used is</para>
+<para><formula id="78">\[ H_{a\mu} \leftarrow H_{a\mu} \frac{(W^T V)_{a\mu}}{(W^T WH)_{a\mu}} \]</formula></para>
+<para>The function takes in all the matrices and only changes the value of the H matrix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix to be updated. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" line="92" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" bodystart="92" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_1a79b17bfdd69326a4f9f7d17c698ee6af" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void WUpdate</definition>
+        <argsstring>(const MatType &amp;V, arma::mat &amp;W, const arma::mat &amp;H)</argsstring>
+        <name>WUpdate</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>The update rule for the basis matrix W. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The formula used isa</para>
+<para><formula id="77">\[ W_{ia} \leftarrow W_{ia} \frac{(VH^T)_{ia}}{(WHH^T)_{ia}} \]</formula></para>
+<para>The function takes in all the matrices and only changes the value of the W matrix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix to be updated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" line="70" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" bodystart="70" bodyend="75"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The multiplicative distance update rules for matrices W and H. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This follows a method described in the following paper:</para>
+<para><programlisting><codeline><highlight class="normal">@inproceedings{lee2001algorithms,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={Algorithms<sp/>for<sp/>non-negative<sp/>matrix<sp/>factorization},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Lee,<sp/>D.D.<sp/>and<sp/>Seung,<sp/>H.S.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle={Advances<sp/>in<sp/>Neural<sp/>Information<sp/>Processing<sp/>Systems<sp/>13</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>(NIPS<sp/>2000)},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages={556--562},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2001}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>This is a multiplicative rule that ensures that the Frobenius norm <formula id="74">$ \sqrt{\sum_i \sum_j(V-WH)^2} $</formula> is non-increasing between subsequent iterations. Both of the update rules for W and H are defined in this file. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_mult_dist.hpp" bodystart="40" bodyend="102"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_1ad2a433d7e149001f0f44caa8967d20a6" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFMultiplicativeDistanceUpdate</scope><name>HUpdate</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_1aac5af164b10635addd7ff7bb934a4db3" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFMultiplicativeDistanceUpdate</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_1ab617f348654db931f85c1c60066d8f4d" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFMultiplicativeDistanceUpdate</scope><name>NMFMultiplicativeDistanceUpdate</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFMultiplicativeDistanceUpdate</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate_1a79b17bfdd69326a4f9f7d17c698ee6af" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFMultiplicativeDistanceUpdate</scope><name>WUpdate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_7885d606d8b1a0dffd0803506714ca0e" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/bias_svd</compoundname>
+    <innerfile refid="bias__svd_8hpp">bias_svd.hpp</innerfile>
+    <innerfile refid="bias__svd__function_8hpp">bias_svd_function.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/"/>
+  </compounddef>
+</doxygen>

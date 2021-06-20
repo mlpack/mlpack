@@ -1,0 +1,130 @@
+.TH "GreedyPolicy< EnvironmentType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GreedyPolicy< EnvironmentType > \- Implementation for epsilon greedy policy\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBActionType\fP = typename EnvironmentType::Action"
+.br
+.RI "Convenient typedef for action\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGreedyPolicy\fP (const double initialEpsilon, const size_t annealInterval, const double minEpsilon, const double decayRate=1\&.0)"
+.br
+.RI "Constructor for epsilon greedy policy class\&. "
+.ti -1c
+.RI "void \fBAnneal\fP ()"
+.br
+.RI "Exploration probability will anneal at each step\&. "
+.ti -1c
+.RI "const double & \fBEpsilon\fP () const"
+.br
+.ti -1c
+.RI "\fBActionType\fP \fBSample\fP (const arma::colvec &actionValue, bool deterministic=false, const bool isNoisy=false)"
+.br
+.RI "Sample an action based on given action values\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename EnvironmentType>
+.br
+class mlpack::rl::GreedyPolicy< EnvironmentType >"
+Implementation for epsilon greedy policy\&. 
+
+In general we will select an action greedily based on the action value, however sometimes we will also randomly select an action to encourage exploration\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIEnvironmentType\fP The reinforcement learning task\&. 
+.RE
+.PP
+
+.PP
+Definition at line 31 of file greedy_policy\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBActionType\fP =  typename EnvironmentType::Action"
+
+.PP
+Convenient typedef for action\&. 
+.PP
+Definition at line 35 of file greedy_policy\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBGreedyPolicy\fP (const double initialEpsilon, const size_t annealInterval, const double minEpsilon, const double decayRate = \fC1\&.0\fP)\fC [inline]\fP"
+
+.PP
+Constructor for epsilon greedy policy class\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinitialEpsilon\fP The initial probability to explore (select a random action)\&. 
+.br
+\fIannealInterval\fP The steps during which the probability to explore will anneal\&. 
+.br
+\fIminEpsilon\fP Epsilon will never be less than this value\&. 
+.br
+\fIdecayRate\fP How much to change the model in response to the estimated error each time the model weights are updated\&. 
+.RE
+.PP
+
+.PP
+Definition at line 48 of file greedy_policy\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Anneal ()\fC [inline]\fP"
+
+.PP
+Exploration probability will anneal at each step\&. 
+.PP
+Definition at line 90 of file greedy_policy\&.hpp\&.
+.SS "const double& Epsilon () const\fC [inline]\fP"
+
+.PP
+\fBReturns\fP
+.RS 4
+Current possibility to explore\&. 
+.RE
+.PP
+
+.PP
+Definition at line 99 of file greedy_policy\&.hpp\&.
+.SS "\fBActionType\fP Sample (const arma::colvec & actionValue, bool deterministic = \fCfalse\fP, const bool isNoisy = \fCfalse\fP)\fC [inline]\fP"
+
+.PP
+Sample an action based on given action values\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIactionValue\fP Values for each action\&. 
+.br
+\fIdeterministic\fP Always select the action greedily\&. 
+.br
+\fIisNoisy\fP Specifies whether the network used is noisy\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Sampled action\&. 
+.RE
+.PP
+
+.PP
+Definition at line 65 of file greedy_policy\&.hpp\&.
+.PP
+References mlpack::math::RandInt(), and mlpack::math::Random()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

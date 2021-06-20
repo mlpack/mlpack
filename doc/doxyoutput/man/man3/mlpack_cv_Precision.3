@@ -1,0 +1,79 @@
+.TH "Precision< AS, PositiveClass >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Precision< AS, PositiveClass > \- \fBPrecision\fP is a metric of performance for classification algorithms that for binary classification is equal to $ tp / (tp + fp) $, where $ tp $ and $ fp $ are the numbers of true positives and false positives respectively\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MLAlgorithm , typename DataType > static double \fBEvaluate\fP (MLAlgorithm &model, const DataType &data, const arma::Row< size_t > &labels)"
+.br
+.RI "Run classification and calculate precision\&. "
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBNeedsMinimization\fP = false"
+.br
+.RI "Information for hyper-parameter tuning code\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<AverageStrategy AS, size_t PositiveClass = 1>
+.br
+class mlpack::cv::Precision< AS, PositiveClass >"
+\fBPrecision\fP is a metric of performance for classification algorithms that for binary classification is equal to $ tp / (tp + fp) $, where $ tp $ and $ fp $ are the numbers of true positives and false positives respectively\&. 
+
+For multiclass classification the precision metric can be used with the following strategies for averaging\&.
+.IP "1." 4
+Micro\&. If there are $ N + 1 $ classes in total, the result is equal to \[ (tp_0 + tp_1 + \ldots + tp_N) / (tp_0 + tp_1 + \ldots + tp_N + fp_0 + fp_1 + \ldots + fp_N), \] where $ tp_i $ and $ fp_i $ are the numbers of true positives and false positives respectively for the class (label) $ i $\&.
+.IP "2." 4
+Macro\&. If there are $ N + 1 $ classes in total, the result is equal to the mean of the values \[ tp_0 / (tp_0 + fp_0), tp_1 / (tp_1 + fp_1), \ldots, tp_N / (tp_N + fp_N), \] where $ tp_i $ and $ fp_i $ are the numbers of true positives and false positives respectively for the class (label) $ i $\&.
+.PP
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIAS\fP An average strategy\&. 
+.br
+\fIPositiveClass\fP In the case of binary classification (AS = Binary) positives are assumed to have labels equal to this value\&. 
+.RE
+.PP
+
+.PP
+Definition at line 48 of file precision\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Evaluate (MLAlgorithm & model, const DataType & data, const arma::Row< size_t > & labels)\fC [static]\fP"
+
+.PP
+Run classification and calculate precision\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImodel\fP A classification model\&. 
+.br
+\fIdata\fP Column-major data containing test items\&. 
+.br
+\fIlabels\fP Ground truth (correct) labels for the test items\&. 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool NeedsMinimization = false\fC [static]\fP"
+
+.PP
+Information for hyper-parameter tuning code\&. It indicates that we want to maximize the metric\&. 
+.PP
+Definition at line 67 of file precision\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,256 @@
+.TH "RAWrapperBase" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RAWrapperBase \- \fBRAWrapperBase\fP is a base wrapper class for holding all \fBRASearch\fP types supported by \fBRAModel\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherited by \fBRAWrapper< TreeType >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRAWrapperBase\fP ()"
+.br
+.RI "Create the \fBRAWrapperBase\fP object\&. "
+.ti -1c
+.RI "virtual \fB~RAWrapperBase\fP ()"
+.br
+.RI "Destruct the \fBRAWrapperBase\fP (nothing to do)\&. "
+.ti -1c
+.RI "virtual double \fBAlpha\fP () const =0"
+.br
+.RI "Get the value of alpha\&. "
+.ti -1c
+.RI "virtual double & \fBAlpha\fP ()=0"
+.br
+.RI "Modify the value of alpha\&. "
+.ti -1c
+.RI "virtual \fBRAWrapperBase\fP * \fBClone\fP () const =0"
+.br
+.RI "Create a new \fBRAWrapperBase\fP that is the same as this one\&. "
+.ti -1c
+.RI "virtual const arma::mat & \fBDataset\fP () const =0"
+.br
+.RI "Return a reference to the dataset\&. "
+.ti -1c
+.RI "virtual bool \fBFirstLeafExact\fP () const =0"
+.br
+.RI "Get whether to do exact search at the first leaf\&. "
+.ti -1c
+.RI "virtual bool & \fBFirstLeafExact\fP ()=0"
+.br
+.RI "Modify whether to do exact search at the first leaf\&. "
+.ti -1c
+.RI "virtual bool \fBNaive\fP () const =0"
+.br
+.RI "Get whether naive search is being used\&. "
+.ti -1c
+.RI "virtual bool & \fBNaive\fP ()=0"
+.br
+.RI "Modify whether naive search is being used\&. "
+.ti -1c
+.RI "virtual bool \fBSampleAtLeaves\fP () const =0"
+.br
+.RI "Get whether to do sampling at leaves\&. "
+.ti -1c
+.RI "virtual bool & \fBSampleAtLeaves\fP ()=0"
+.br
+.RI "Modify whether to do sampling at leaves\&. "
+.ti -1c
+.RI "virtual void \fBSearch\fP (arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances, const size_t leafSize)=0"
+.br
+.RI "Perform bichromatic rank-approximate nearest neighbor search (i\&.e\&. "
+.ti -1c
+.RI "virtual void \fBSearch\fP (const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)=0"
+.br
+.RI "Perform monochromatic rank-approximate nearest neighbor search (i\&.e\&. "
+.ti -1c
+.RI "virtual bool \fBSingleMode\fP () const =0"
+.br
+.RI "Get whether single-tree search is being used\&. "
+.ti -1c
+.RI "virtual bool & \fBSingleMode\fP ()=0"
+.br
+.RI "Modify whether single-tree search is being used\&. "
+.ti -1c
+.RI "virtual size_t \fBSingleSampleLimit\fP () const =0"
+.br
+.RI "Get the single sample limit\&. "
+.ti -1c
+.RI "virtual size_t & \fBSingleSampleLimit\fP ()=0"
+.br
+.RI "Modify the single sample limit\&. "
+.ti -1c
+.RI "virtual double \fBTau\fP () const =0"
+.br
+.RI "Get the value of tau\&. "
+.ti -1c
+.RI "virtual double & \fBTau\fP ()=0"
+.br
+.RI "Modify the value of tau\&. "
+.ti -1c
+.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet, const size_t leafSize)=0"
+.br
+.RI "Train the \fBRASearch\fP model with the given parameters\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBRAWrapperBase\fP is a base wrapper class for holding all \fBRASearch\fP types supported by \fBRAModel\fP\&. 
+
+All \fBRASearch\fP type wrappers inherit from this class, allowing a simple interface via inheritance for all the different types we want to support\&. 
+.PP
+Definition at line 32 of file ra_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRAWrapperBase\fP ()\fC [inline]\fP"
+
+.PP
+Create the \fBRAWrapperBase\fP object\&. The base class does not hold anything, so this constructor does nothing\&. 
+.PP
+Definition at line 37 of file ra_model\&.hpp\&.
+.SS "virtual ~\fBRAWrapperBase\fP ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Destruct the \fBRAWrapperBase\fP (nothing to do)\&. 
+.PP
+Definition at line 44 of file ra_model\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "virtual double Alpha () const\fC [pure virtual]\fP"
+
+.PP
+Get the value of alpha\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.PP
+Referenced by RAModel::Alpha()\&.
+.SS "virtual double& Alpha ()\fC [pure virtual]\fP"
+
+.PP
+Modify the value of alpha\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.SS "virtual \fBRAWrapperBase\fP* Clone () const\fC [pure virtual]\fP"
+
+.PP
+Create a new \fBRAWrapperBase\fP that is the same as this one\&. This function will properly handle polymorphism\&. 
+.PP
+Implemented in \fBLeafSizeRAWrapper< TreeType >\fP, and \fBRAWrapper< TreeType >\fP\&.
+.SS "virtual const arma::mat& Dataset () const\fC [pure virtual]\fP"
+
+.PP
+Return a reference to the dataset\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.PP
+Referenced by RAModel::Dataset()\&.
+.SS "virtual bool FirstLeafExact () const\fC [pure virtual]\fP"
+
+.PP
+Get whether to do exact search at the first leaf\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.PP
+Referenced by RAModel::FirstLeafExact()\&.
+.SS "virtual bool& FirstLeafExact ()\fC [pure virtual]\fP"
+
+.PP
+Modify whether to do exact search at the first leaf\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.SS "virtual bool Naive () const\fC [pure virtual]\fP"
+
+.PP
+Get whether naive search is being used\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.PP
+Referenced by RAModel::Naive()\&.
+.SS "virtual bool& Naive ()\fC [pure virtual]\fP"
+
+.PP
+Modify whether naive search is being used\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.SS "virtual bool SampleAtLeaves () const\fC [pure virtual]\fP"
+
+.PP
+Get whether to do sampling at leaves\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.PP
+Referenced by RAModel::SampleAtLeaves()\&.
+.SS "virtual bool& SampleAtLeaves ()\fC [pure virtual]\fP"
+
+.PP
+Modify whether to do sampling at leaves\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.SS "virtual void Search (arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances, const size_t leafSize)\fC [pure virtual]\fP"
+
+.PP
+Perform bichromatic rank-approximate nearest neighbor search (i\&.e\&. search with a separate query set)\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP, and \fBLeafSizeRAWrapper< TreeType >\fP\&.
+.SS "virtual void Search (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)\fC [pure virtual]\fP"
+
+.PP
+Perform monochromatic rank-approximate nearest neighbor search (i\&.e\&. a search with the reference set as the query set)\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.SS "virtual bool SingleMode () const\fC [pure virtual]\fP"
+
+.PP
+Get whether single-tree search is being used\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.PP
+Referenced by RAModel::SingleMode()\&.
+.SS "virtual bool& SingleMode ()\fC [pure virtual]\fP"
+
+.PP
+Modify whether single-tree search is being used\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.SS "virtual size_t SingleSampleLimit () const\fC [pure virtual]\fP"
+
+.PP
+Get the single sample limit\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.PP
+Referenced by RAModel::SingleSampleLimit()\&.
+.SS "virtual size_t& SingleSampleLimit ()\fC [pure virtual]\fP"
+
+.PP
+Modify the single sample limit\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.SS "virtual double Tau () const\fC [pure virtual]\fP"
+
+.PP
+Get the value of tau\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.PP
+Referenced by RAModel::Tau()\&.
+.SS "virtual double& Tau ()\fC [pure virtual]\fP"
+
+.PP
+Modify the value of tau\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP\&.
+.SS "virtual void Train (arma::mat && referenceSet, const size_t leafSize)\fC [pure virtual]\fP"
+
+.PP
+Train the \fBRASearch\fP model with the given parameters\&. 
+.PP
+Implemented in \fBRAWrapper< TreeType >\fP, and \fBLeafSizeRAWrapper< TreeType >\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

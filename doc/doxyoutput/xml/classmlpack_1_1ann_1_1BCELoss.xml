@@ -1,0 +1,365 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1BCELoss" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::BCELoss</compoundname>
+    <includes refid="binary__cross__entropy__loss_8hpp" local="no">binary_cross_entropy_loss.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BCELoss_1a974b448c3d0a13d483d36ef15de369b5" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double eps</definition>
+        <argsstring></argsstring>
+        <name>eps</name>
+        <briefdescription>
+<para>The minimum value used for computing logarithms and denominators. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="96" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BCELoss_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="93" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BCELoss_1a6bcc6fd50c7eaf4ae545e76dd28d826a" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool reduction</definition>
+        <argsstring></argsstring>
+        <name>reduction</name>
+        <briefdescription>
+<para>Reduction type. If true, performs mean of loss else sum. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="99" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BCELoss_1a402089b368c1139c98bf07852e36987f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BCELoss</definition>
+        <argsstring>(const double eps=1e-10, const bool reduction=true)</argsstring>
+        <name>BCELoss</name>
+        <param>
+          <type>const double</type>
+          <declname>eps</declname>
+          <defval>1e-10</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>reduction</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Create the BinaryCrossEntropyLoss object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>eps</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The minimum value used for computing logarithms and denominators in a numerically stable way. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>reduction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reduction type. If true, it returns the mean of the loss. Else, it returns the sum. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="44" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BCELoss_1add41dbaf358dc099750dc6064cb7e0d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename PredictionType</type>
+          </param>
+          <param>
+            <type>typename TargetType</type>
+          </param>
+          <param>
+            <type>typename LossType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const PredictionType &amp;prediction, const TargetType &amp;target, LossType &amp;loss)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const PredictionType &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>const TargetType &amp;</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type>LossType &amp;</type>
+          <declname>loss</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions used for evaluating the specified loss function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The target vector. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>loss</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated error. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="66" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BCELoss_1ab50f77742d49705ce1a2a0fa1feff24e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Eps</definition>
+        <argsstring>()</argsstring>
+        <name>Eps</name>
+        <briefdescription>
+<para>Modify the epsilon. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="78" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" bodystart="78" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BCELoss_1a6b1a203165d5e3a6a30534a95c5ea339" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Eps</definition>
+        <argsstring>() const</argsstring>
+        <name>Eps</name>
+        <briefdescription>
+<para>Get the epsilon. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="76" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" bodystart="76" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BCELoss_1ab3640059898ea76c13709b8099316fe8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename PredictionType</type>
+          </param>
+          <param>
+            <type>typename TargetType</type>
+          </param>
+        </templateparamlist>
+        <type>PredictionType::elem_type</type>
+        <definition>PredictionType::elem_type Forward</definition>
+        <argsstring>(const PredictionType &amp;prediction, const TargetType &amp;target)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const PredictionType &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>const TargetType &amp;</type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+<para>Computes the cross-entropy function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions used for evaluating the specified loss function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The target vector. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="54" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BCELoss_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="73" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" bodystart="73" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BCELoss_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="71" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" bodystart="71" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BCELoss_1ace5e97393cf08c81177ad0929d1c3496" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Reduction</definition>
+        <argsstring>()</argsstring>
+        <name>Reduction</name>
+        <briefdescription>
+<para>Set the reduction. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="83" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" bodystart="83" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BCELoss_1afb1123035456ff8aa73e7f7c08e6acbc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Reduction</definition>
+        <argsstring>() const</argsstring>
+        <name>Reduction</name>
+        <briefdescription>
+<para>Get the reduction. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="81" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BCELoss_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="89" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The binary-cross-entropy performance function measures the Binary Cross Entropy between the target and the output. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/binary_cross_entropy_loss.hpp" bodystart="34" bodyend="100"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1add41dbaf358dc099750dc6064cb7e0d7" prot="public" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1a402089b368c1139c98bf07852e36987f" prot="public" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>BCELoss</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1a974b448c3d0a13d483d36ef15de369b5" prot="private" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>eps</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1a6b1a203165d5e3a6a30534a95c5ea339" prot="public" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>Eps</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1ab50f77742d49705ce1a2a0fa1feff24e" prot="public" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>Eps</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1ab3640059898ea76c13709b8099316fe8" prot="public" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1a6bcc6fd50c7eaf4ae545e76dd28d826a" prot="private" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>reduction</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1afb1123035456ff8aa73e7f7c08e6acbc" prot="public" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>Reduction</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1ace5e97393cf08c81177ad0929d1c3496" prot="public" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>Reduction</name></member>
+      <member refid="classmlpack_1_1ann_1_1BCELoss_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::BCELoss</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

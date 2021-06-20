@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1amf_1_1NMFALSUpdate" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::amf::NMFALSUpdate</compoundname>
+    <includes refid="nmf__als_8hpp" local="no">nmf_als.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFALSUpdate_1a3482d9d8fc18996cee80de1f698b3a09" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NMFALSUpdate</definition>
+        <argsstring>()</argsstring>
+        <name>NMFALSUpdate</name>
+        <briefdescription>
+<para>Empty constructor required for the UpdateRule template. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" line="45" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" bodystart="45" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFALSUpdate_1aac5af164b10635addd7ff7bb934a4db3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(const MatType &amp;, const size_t)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>const MatType &amp;</type>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <briefdescription>
+<para>Set initial values for the factorization. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In this case, we don&apos;t need to set anything. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" line="52" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" bodystart="52" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFALSUpdate_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the object (in this case, there is nothing to serialize). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" line="123" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" bodystart="123" bodyend="123"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFALSUpdate_1ad2a433d7e149001f0f44caa8967d20a6" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void HUpdate</definition>
+        <argsstring>(const MatType &amp;V, const arma::mat &amp;W, arma::mat &amp;H)</argsstring>
+        <name>HUpdate</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>The update rule for the encoding matrix H. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The formula used is</para>
+<para><formula id="76">\[ H = \frac{W^T V}{W^T W} \]</formula></para>
+<para>The function takes in all the matrices and only changes the value of the H matrix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix to be updated. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" line="105" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" bodystart="105" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1NMFALSUpdate_1a79b17bfdd69326a4f9f7d17c698ee6af" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void WUpdate</definition>
+        <argsstring>(const MatType &amp;V, arma::mat &amp;W, const arma::mat &amp;H)</argsstring>
+        <name>WUpdate</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>The update rule for the basis matrix W. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The formula used isa</para>
+<para><formula id="75">\[ W^T = \frac{H V^T}{H H^T} \]</formula></para>
+<para>The function takes in all the matrices and only changes the value of the W matrix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix to be updated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" line="72" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" bodystart="72" bodyend="88"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class implements a method titled &apos;Alternating Least Squares&apos; described in the following paper: </para>
+    </briefdescription>
+    <detaileddescription>
+<para><programlisting><codeline><highlight class="normal">@article{paatero1994positive,</highlight></codeline>
+<codeline><highlight class="normal"><sp/>title={Positive<sp/>matrix<sp/>factorization:<sp/>A<sp/>non-negative<sp/>factor<sp/>model<sp/>with</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>optimal<sp/>utilization<sp/>of<sp/>error<sp/>estimates<sp/>of<sp/>data<sp/>values},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>author={Paatero,<sp/>P.<sp/>and<sp/>Tapper,<sp/>U.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>journal={Environmetrics},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>volume={5},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>number={2},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>pages={111--126},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>year={1994}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>It uses the least squares projection formula to reduce the error value of <formula id="74">$ \sqrt{\sum_i \sum_j(V-WH)^2} $</formula> by alternately calculating W and H respectively while holding the other matrix constant. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" line="41" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/nmf_als.hpp" bodystart="42" bodyend="124"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1amf_1_1NMFALSUpdate_1ad2a433d7e149001f0f44caa8967d20a6" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFALSUpdate</scope><name>HUpdate</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFALSUpdate_1aac5af164b10635addd7ff7bb934a4db3" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFALSUpdate</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFALSUpdate_1a3482d9d8fc18996cee80de1f698b3a09" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFALSUpdate</scope><name>NMFALSUpdate</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFALSUpdate_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFALSUpdate</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1NMFALSUpdate_1a79b17bfdd69326a4f9f7d17c698ee6af" prot="public" virt="non-virtual"><scope>mlpack::amf::NMFALSUpdate</scope><name>WUpdate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

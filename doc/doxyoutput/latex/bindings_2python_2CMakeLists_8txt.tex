@@ -1,0 +1,86 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/bindings/python/\+CMake\+Lists.txt File Reference}
+\label{bindings_2python_2CMakeLists_8txt}\index{/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt@{/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+PROPERTY INCLUDE\+\_\+\+DIRECTORIES \textbf{ add\+\_\+custom\+\_\+target} (python\+\_\+configure COMMAND \$\{CMAKE\+\_\+\+COMMAND\} -\/D GENERATE\+\_\+\+CPP\+\_\+\+IN=\$\{CMAKE\+\_\+\+SOURCE\+\_\+\+DIR\}/src/mlpack/bindings/\textbf{ python}/setup.\+py.\+in -\/D GENERATE\+\_\+\+CPP\+\_\+\+OUT=\$\{CMAKE\+\_\+\+BINARY\+\_\+\+DIR\}/src/mlpack/bindings/\textbf{ python}/setup.\+py -\/D PACKAGE\+\_\+\+VERSION=\char`\"{}\$\{PACKAGE\+\_\+\+VERSION\}\char`\"{} -\/D ARMADILLO\+\_\+\+LIBRARIES=\char`\"{}\$\{ARMADILLO\+\_\+\+LIBRARIES\}\char`\"{} -\/D MLPACK\+\_\+\+LIBRARY=\$$<$ TARGET\+\_\+\+LINKER\+\_\+\+FILE\+:mlpack $>$ -\/D MLPACK\+\_\+\+LIBDIR=\$$<$ TARGET\+\_\+\+LINKER\+\_\+\+FILE\+\_\+\+DIR\+:mlpack $>$ -\/D MLPACK\+\_\+\+PYXS=\char`\"{}\$\{MLPACK\+\_\+\+PYXS\}\char`\"{} -\/D Open\+MP\+\_\+\+CXX\+\_\+\+FLAGS=\char`\"{}\$\{Open\+MP\+\_\+\+CXX\+\_\+\+FLAGS\}\char`\"{} -\/D DISABLE\+\_\+\+CFLAGS=\char`\"{}\$\{DISABLE\+\_\+\+CFLAGS\}\char`\"{} -\/D CYTHON\+\_\+\+INCLUDE\+\_\+\+DIRECTORIES=\char`\"{}\$\{CYTHON\+\_\+\+INCLUDE\+\_\+\+DIRECTORIES\}\char`\"{} -\/D CMAKE\+\_\+\+CXX\+\_\+\+FLAGS=\$\{CMAKE\+\_\+\+CXX\+\_\+\+FLAGS\} -\/D OUTPUT\+\_\+\+DIR=\$\{CMAKE\+\_\+\+BINARY\+\_\+\+DIR\} -\/P \char`\"{}\$\{CMAKE\+\_\+\+SOURCE\+\_\+\+DIR\}/CMake/Configure\+File.\+cmake\char`\"{} BYPRODUCTS \char`\"{}\$\{CMAKE\+\_\+\+BINARY\+\_\+\+DIR\}/src/mlpack/bindings/\textbf{ python}/setup.\+py\char`\"{} COMMENT \char`\"{}Configuring setup.\+py...\char`\"{}) add\+\_\+dependencies(python\+\_\+configure python\+\_\+copy) add\+\_\+dependencies(python\+\_\+configured python\+\_\+configure) file(APPEND \$
+\item 
+HAS\+\_\+\+BFD\+\_\+\+DL PARENT\+\_\+\+SCOPE \textbf{ endif} () \textbf{ add\+\_\+custom\+\_\+target}(\textbf{ python} ALL DEPENDS mlpack) \textbf{ add\+\_\+custom\+\_\+target}(python\+\_\+copy ALL DEPENDS mlpack) \textbf{ add\+\_\+custom\+\_\+target}(python\+\_\+configured ALL) add\+\_\+custom\+\_\+command(TARGET python\+\_\+copy PRE\+\_\+\+BUILD COMMAND \$
+\item 
+\textbf{ macro} (add\+\_\+python\+\_\+binding name) endmacro() return() endmacro() macro(post\+\_\+python\+\_\+bindings) \textbf{ if}(BUILDING\+\_\+\+PYTHON\+\_\+\+BINDINGS) \textbf{ get\+\_\+property}(CYTHON\+\_\+\+INCLUDE\+\_\+\+DIRECTORIES DIRECTORY \$
+\item 
+\textbf{ macro} (not\+\_\+found\+\_\+return message) message(STATUS \char`\"{}\$
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+src mlpack bindings \textbf{ python} mlpack \+\_\+\+\_\+init\+\_\+\+\_\+ py \textbf{ \+\_\+\+\_\+version\+\_\+\+\_\+}
+\item 
+the following modules are not \textbf{ available}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\label{bindings_2python_2CMakeLists_8txt_a5b4074bc3828c30b7aacd91ad914c7ba}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!add\_custom\_target@{add\_custom\_target}}
+\index{add\_custom\_target@{add\_custom\_target}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{add\_custom\_target()}
+{\footnotesize\ttfamily PROPERTY INCLUDE\+\_\+\+DIRECTORIES add\+\_\+custom\+\_\+target (\begin{DoxyParamCaption}\item[{python\+\_\+configure COMMAND \$\{CMAKE\+\_\+\+COMMAND\} -\/D}]{GENERATE\+\_\+\+CPP\+\_\+\+IN = {\ttfamily \$\{CMAKE\+\_\+SOURCE\+\_\+DIR\}/src/mlpack/bindings/\textbf{ python}/setup.py.in~-\/D~GENERATE\+\_\+CPP\+\_\+OUT=\$\{CMAKE\+\_\+BINARY\+\_\+DIR\}/src/mlpack/bindings/\textbf{ python}/setup.py~-\/D~PACKAGE\+\_\+VERSION=\char`\"{}\$\{PACKAGE\+\_\+VERSION\}\char`\"{}~-\/D~ARMADILLO\+\_\+LIBRARIES=\char`\"{}\$\{ARMADILLO\+\_\+LIBRARIES\}\char`\"{}~-\/D~MLPACK\+\_\+LIBRARY=\$$<$TARGET\+\_\+LINKER\+\_\+FILE\+:mlpack$>$~-\/D~MLPACK\+\_\+LIBDIR=\$$<$TARGET\+\_\+LINKER\+\_\+FILE\+\_\+DIR\+:mlpack$>$~-\/D~MLPACK\+\_\+PYXS=\char`\"{}\$\{MLPACK\+\_\+PYXS\}\char`\"{}~-\/D~OpenMP\+\_\+CXX\+\_\+FLAGS=\char`\"{}\$\{OpenMP\+\_\+CXX\+\_\+FLAGS\}\char`\"{}~-\/D~DISABLE\+\_\+CFLAGS=\char`\"{}\$\{DISABLE\+\_\+CFLAGS\}\char`\"{}~-\/D~CYTHON\+\_\+INCLUDE\+\_\+DIRECTORIES=\char`\"{}\$\{CYTHON\+\_\+INCLUDE\+\_\+DIRECTORIES\}\char`\"{}~-\/D~CMAKE\+\_\+CXX\+\_\+FLAGS=\$\{CMAKE\+\_\+CXX\+\_\+FLAGS\}~-\/D~OUTPUT\+\_\+DIR=\$\{CMAKE\+\_\+BINARY\+\_\+DIR\}~-\/P~\char`\"{}\$\{CMAKE\+\_\+SOURCE\+\_\+DIR\}/CMake/ConfigureFile.cmake\char`\"{}~BYPRODUCTS~\char`\"{}\$\{CMAKE\+\_\+BINARY\+\_\+DIR\}/src/mlpack/bindings/\textbf{ python}/setup.py\char`\"{}~COMMENT~\char`\"{}Configuring~setup.py...\char`\"{}} }\end{DoxyParamCaption})}
+
+
+
+Definition at line 16 of file CMake\+Lists.\+txt.
+
+\mbox{\label{bindings_2python_2CMakeLists_8txt_a9fe2d0ea8f3f1034c797bb18dc2bb9b8}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!endif@{endif}}
+\index{endif@{endif}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{endif()}
+{\footnotesize\ttfamily HAS\+\_\+\+BFD\+\_\+\+DL PARENT\+\_\+\+SCOPE endif (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 152 of file CMake\+Lists.\+txt.
+
+\mbox{\label{bindings_2python_2CMakeLists_8txt_a08ab313cc658fc8c2a6a9899f77e7382}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!macro@{macro}}
+\index{macro@{macro}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{macro()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily macro (\begin{DoxyParamCaption}\item[{add\+\_\+python\+\_\+binding}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3 of file CMake\+Lists.\+txt.
+
+\mbox{\label{bindings_2python_2CMakeLists_8txt_a9119971a8d6df98dd1edabc89b0107f5}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!macro@{macro}}
+\index{macro@{macro}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{macro()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily macro (\begin{DoxyParamCaption}\item[{not\+\_\+found\+\_\+return}]{message }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1 of file CMake\+Lists.\+txt.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\label{bindings_2python_2CMakeLists_8txt_aef4e690914aa86a4abe04e8e9928871b}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!\_\_version\_\_@{\_\_version\_\_}}
+\index{\_\_version\_\_@{\_\_version\_\_}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{\_\_version\_\_}
+{\footnotesize\ttfamily src mlpack bindings \textbf{ python} mlpack \+\_\+\+\_\+init\+\_\+\+\_\+ py \+\_\+\+\_\+version\+\_\+\+\_\+}
+
+
+
+Definition at line 38 of file CMake\+Lists.\+txt.
+
+\mbox{\label{bindings_2python_2CMakeLists_8txt_ad866171b6bf1f2f02d150f72971bc67a}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!available@{available}}
+\index{available@{available}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{available}
+{\footnotesize\ttfamily n testthat Following modules are not Following modules are not available}
+
+
+
+Definition at line 78 of file CMake\+Lists.\+txt.
+

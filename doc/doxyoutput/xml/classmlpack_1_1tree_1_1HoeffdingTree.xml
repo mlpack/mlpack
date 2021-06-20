@@ -1,0 +1,1687 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1HoeffdingTree" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::HoeffdingTree</compoundname>
+    <includes refid="hoeffding__tree_8hpp" local="no">hoeffding_tree.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename FitnessFunction</type>
+        <defval><ref refid="classmlpack_1_1tree_1_1GiniImpurity" kindref="compound">GiniImpurity</ref></defval>
+      </param>
+      <param>
+        <type>template&lt; typename &gt; class</type>
+        <declname>NumericSplitType</declname>
+        <defname>NumericSplitType</defname>
+        <defval><ref refid="namespacemlpack_1_1tree_1adab87fde9829454616f519ea70291b62" kindref="member">HoeffdingDoubleNumericSplit</ref></defval>
+      </param>
+      <param>
+        <type>template&lt; typename &gt; class</type>
+        <declname>CategoricalSplitType</declname>
+        <defname>CategoricalSplitType</defname>
+        <defval><ref refid="classmlpack_1_1tree_1_1HoeffdingCategoricalSplit" kindref="compound">HoeffdingCategoricalSplit</ref></defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1HoeffdingTree_1ac6a633f57efba5e2893f58ee9ad549d1" prot="public" static="no">
+        <type>CategoricalSplitType&lt; FitnessFunction &gt;</type>
+        <definition>typedef CategoricalSplitType&lt;FitnessFunction&gt; CategoricalSplit</definition>
+        <argsstring></argsstring>
+        <name>CategoricalSplit</name>
+        <briefdescription>
+<para>Allow access to the categorical split type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="67" column="32" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1tree_1_1HoeffdingTree_1aaa2e2873f405118872db87975cce0124" prot="public" static="no">
+        <type>NumericSplitType&lt; FitnessFunction &gt;</type>
+        <definition>typedef NumericSplitType&lt;FitnessFunction&gt; NumericSplit</definition>
+        <argsstring></argsstring>
+        <name>NumericSplit</name>
+        <briefdescription>
+<para>Allow access to the numeric split type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="65" column="28" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1af67c6d34a4654a5bcf857dba4f601595" prot="private" static="no" mutable="no">
+        <type>CategoricalSplitType&lt; FitnessFunction &gt;::SplitInfo</type>
+        <definition>CategoricalSplitType&lt;FitnessFunction&gt;::SplitInfo categoricalSplit</definition>
+        <argsstring></argsstring>
+        <name>categoricalSplit</name>
+        <briefdescription>
+<para>If the split is categorical, this holds the splitting information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="401" column="45" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="401" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1afab2d7ed973b4cc2aad29a239899fb82" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; CategoricalSplitType&lt; FitnessFunction &gt; &gt;</type>
+        <definition>std::vector&lt;CategoricalSplitType&lt;FitnessFunction&gt; &gt; categoricalSplits</definition>
+        <argsstring></argsstring>
+        <name>categoricalSplits</name>
+        <briefdescription>
+<para>Information for splitting of categorical features (used before split). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="367" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="367" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a8da0c7aa4598870aebadfa79e844ed8d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t checkInterval</definition>
+        <argsstring></argsstring>
+        <name>checkInterval</name>
+        <briefdescription>
+<para>The number of samples that should be seen before checking for a split. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="381" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="381" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a3d5b17c4ae9150a38bcaef7b729de6d7" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref> * &gt;</type>
+        <definition>std::vector&lt;HoeffdingTree*&gt; children</definition>
+        <argsstring></argsstring>
+        <name>children</name>
+        <briefdescription>
+<para>If the split has occurred, these are the children. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="405" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="405" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a3c0e44251481859c3bc5953d646d576b" prot="private" static="no" mutable="no">
+        <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> *</type>
+        <definition>const data::DatasetInfo* datasetInfo</definition>
+        <argsstring></argsstring>
+        <name>datasetInfo</name>
+        <briefdescription>
+<para>The dataset information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="385" column="27" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="385" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1ac6df957fd91a4acd942e63aa0d2611a9" prot="private" static="no" mutable="no">
+        <type>std::unordered_map&lt; size_t, std::pair&lt; size_t, size_t &gt; &gt; *</type>
+        <definition>std::unordered_map&lt;size_t, std::pair&lt;size_t, size_t&gt; &gt;* dimensionMappings</definition>
+        <argsstring></argsstring>
+        <name>dimensionMappings</name>
+        <briefdescription>
+<para>This structure is owned by this node only if it is the root of the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="370" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="370" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a742e3f31777fcca0c614d8830a3d3271" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t majorityClass</definition>
+        <argsstring></argsstring>
+        <name>majorityClass</name>
+        <briefdescription>
+<para>The majority class of this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="396" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="396" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1aebee4f4019cbcde3e83ba8eca01ddcba" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double majorityProbability</definition>
+        <argsstring></argsstring>
+        <name>majorityProbability</name>
+        <briefdescription>
+<para>The empirical probability of a point this node saw having the majority class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="399" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="399" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a9cba901759220c2cb21b2630c07c3db0" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxSamples</definition>
+        <argsstring></argsstring>
+        <name>maxSamples</name>
+        <briefdescription>
+<para>The maximum number of samples we can see before splitting. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="379" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="379" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1ad0afda399253f1a1bed20a5ade733b64" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t minSamples</definition>
+        <argsstring></argsstring>
+        <name>minSamples</name>
+        <briefdescription>
+<para>The minimum number of samples for splitting. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="383" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="383" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a4dd554142bdfbb014ddcac55577facef" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numClasses</definition>
+        <argsstring></argsstring>
+        <name>numClasses</name>
+        <briefdescription>
+<para>The number of classes this node is trained on. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="377" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="377" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1ae18dccac5b095164d95c1edb6a5dd5e1" prot="private" static="no" mutable="no">
+        <type>NumericSplitType&lt; FitnessFunction &gt;::SplitInfo</type>
+        <definition>NumericSplitType&lt;FitnessFunction&gt;::SplitInfo numericSplit</definition>
+        <argsstring></argsstring>
+        <name>numericSplit</name>
+        <briefdescription>
+<para>If the split is numeric, this holds the splitting information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="403" column="41" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="403" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a3fb88cdcd8883baf6c4007f71da337cb" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; NumericSplitType&lt; FitnessFunction &gt; &gt;</type>
+        <definition>std::vector&lt;NumericSplitType&lt;FitnessFunction&gt; &gt; numericSplits</definition>
+        <argsstring></argsstring>
+        <name>numericSplits</name>
+        <briefdescription>
+<para>Information for splitting of numeric features (used before split). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="365" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="365" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a49442635d558f5915a3b1445772e4def" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numSamples</definition>
+        <argsstring></argsstring>
+        <name>numSamples</name>
+        <briefdescription>
+<para>The number of samples seen so far by this node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="375" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="375" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a00b03ecabd83e24facd6b7a83ceb0f0f" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool ownsInfo</definition>
+        <argsstring></argsstring>
+        <name>ownsInfo</name>
+        <briefdescription>
+<para>Whether or not we own the dataset information. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="387" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="387" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a156028f004993def325ea6f8c816ad2a" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool ownsMappings</definition>
+        <argsstring></argsstring>
+        <name>ownsMappings</name>
+        <briefdescription>
+<para>Indicates whether or not we own the mappings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="372" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="372" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a351b01278d3022d478536e0a84a1808e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t splitDimension</definition>
+        <argsstring></argsstring>
+        <name>splitDimension</name>
+        <briefdescription>
+<para>The dimension that this node has split on. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="394" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="394" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1HoeffdingTree_1a6ee7a813576f6d1d405c1d4685fa82b2" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double successProbability</definition>
+        <argsstring></argsstring>
+        <name>successProbability</name>
+        <briefdescription>
+<para>The required probability of success for a split to be performed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="389" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="389" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1aac1ba531eabbb50e0c340880c6c4e7de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HoeffdingTree</definition>
+        <argsstring>()</argsstring>
+        <name>HoeffdingTree</name>
+        <briefdescription>
+<para>Construct a Hoeffding tree with no data and no information. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Be sure to call <ref refid="classmlpack_1_1tree_1_1HoeffdingTree_1a3e179af081a7fa6ea02e48025c7671f4" kindref="member">Train()</ref> before trying to use the tree. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="148" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1af4bbb88c28be3e248120193a31549013" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HoeffdingTree</definition>
+        <argsstring>(const data::DatasetInfo &amp;datasetInfo, const size_t numClasses, const double successProbability=0.95, const size_t maxSamples=0, const size_t checkInterval=100, const size_t minSamples=100, const CategoricalSplitType&lt; FitnessFunction &gt; &amp;categoricalSplitIn=CategoricalSplitType&lt; FitnessFunction &gt;(0, 0), const NumericSplitType&lt; FitnessFunction &gt; &amp;numericSplitIn=NumericSplitType&lt; FitnessFunction &gt;(0), std::unordered_map&lt; size_t, std::pair&lt; size_t, size_t &gt;&gt; *dimensionMappings=NULL, const bool copyDatasetInfo=true)</argsstring>
+        <name>HoeffdingTree</name>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>successProbability</declname>
+          <defval>0.95</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxSamples</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>checkInterval</declname>
+          <defval>100</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minSamples</declname>
+          <defval>100</defval>
+        </param>
+        <param>
+          <type>const CategoricalSplitType&lt; FitnessFunction &gt; &amp;</type>
+          <declname>categoricalSplitIn</declname>
+          <defval>CategoricalSplitType&lt; FitnessFunction &gt;(0, 0)</defval>
+        </param>
+        <param>
+          <type>const NumericSplitType&lt; FitnessFunction &gt; &amp;</type>
+          <declname>numericSplitIn</declname>
+          <defval>NumericSplitType&lt; FitnessFunction &gt;(0)</defval>
+        </param>
+        <param>
+          <type>std::unordered_map&lt; size_t, std::pair&lt; size_t, size_t &gt;&gt; *</type>
+          <declname>dimensionMappings</declname>
+          <defval>NULL</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>copyDatasetInfo</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Construct the Hoeffding tree with the given parameters, but training on no data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The dimensionMappings parameter is only used if it is desired that this node does not create its own dimensionMappings object (for instance, if this is a child of another node in the tree).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Information on the dataset (types of each feature). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>successProbability</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Probability of success required in Hoeffding bound before a split can happen. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxSamples</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of samples before a split is forced. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>checkInterval</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of samples required before each split check. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minSamples</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the node has seen this many points or fewer, no split will be allowed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dimensionMappings</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Mappings from dimension indices to positions in numeric and categorical split vectors. If left NULL, a new one will be created. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>copyDatasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, then a copy of the datasetInfo will be made. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>categoricalSplitIn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional instantiated categorical split object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numericSplitIn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional instantiated numeric split object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="130" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a51f7c3eafb07107e8a52d61d37a89e38" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HoeffdingTree</definition>
+        <argsstring>(const HoeffdingTree &amp;other)</argsstring>
+        <name>HoeffdingTree</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy another tree (warning: this will duplicate the tree entirely, and may use a lot of memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Make sure it&apos;s what you want before you do it).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="156" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a43b1e1ab502bb20ac8a23e85f21b467a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>HoeffdingTree</definition>
+        <argsstring>(const MatType &amp;data, const data::DatasetInfo &amp;datasetInfo, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const bool batchTraining=true, const double successProbability=0.95, const size_t maxSamples=0, const size_t checkInterval=100, const size_t minSamples=100, const CategoricalSplitType&lt; FitnessFunction &gt; &amp;categoricalSplitIn=CategoricalSplitType&lt; FitnessFunction &gt;(0, 0), const NumericSplitType&lt; FitnessFunction &gt; &amp;numericSplitIn=NumericSplitType&lt; FitnessFunction &gt;(0))</argsstring>
+        <name>HoeffdingTree</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>batchTraining</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>successProbability</declname>
+          <defval>0.95</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxSamples</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>checkInterval</declname>
+          <defval>100</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minSamples</declname>
+          <defval>100</defval>
+        </param>
+        <param>
+          <type>const CategoricalSplitType&lt; FitnessFunction &gt; &amp;</type>
+          <declname>categoricalSplitIn</declname>
+          <defval>CategoricalSplitType&lt; FitnessFunction &gt;(0, 0)</defval>
+        </param>
+        <param>
+          <type>const NumericSplitType&lt; FitnessFunction &gt; &amp;</type>
+          <declname>numericSplitIn</declname>
+          <defval>NumericSplitType&lt; FitnessFunction &gt;(0)</defval>
+        </param>
+        <briefdescription>
+<para>Construct the Hoeffding tree with the given parameters and given training data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The tree may be trained either in batch mode (which looks at all points before splitting, and propagates these points to the created children for further training), or in streaming mode, where each point is only considered once. (In general, batch mode will give better-performing trees, but will have higher memory and runtime costs for the same dataset.)</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Information on the dataset (types of each feature). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels of each point in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchTraining</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to train in batch. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>successProbability</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Probability of success required in Hoeffding bounds before a split can happen. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxSamples</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of samples before a split is forced (0 never forces a split); ignored in batch training mode. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>checkInterval</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of samples required before each split; ignored in batch training mode. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minSamples</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the node has seen this many points or fewer, no split will be allowed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>categoricalSplitIn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional instantiated categorical split object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numericSplitIn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional instantiated numeric split object. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="94" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a40f11320c02bdd2f37d1a8ef0579f683" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HoeffdingTree</definition>
+        <argsstring>(HoeffdingTree &amp;&amp;other)</argsstring>
+        <name>HoeffdingTree</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move another tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to move. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="163" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a2e454de523755b8d31ccf2cc58d76039" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~HoeffdingTree</definition>
+        <argsstring>()</argsstring>
+        <name>~HoeffdingTree</name>
+        <briefdescription>
+<para>Clean up memory. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="182" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a9a3cc06b52728325bd6402f7175f28e5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t CalculateDirection</definition>
+        <argsstring>(const VecType &amp;point) const</argsstring>
+        <name>CalculateDirection</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Given a point and that this node is not a leaf, calculate the index of the child node this point would go towards. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This method is primarily used by the <ref refid="classmlpack_1_1tree_1_1HoeffdingTree_1aa610310b354b7badd88041ca07883569" kindref="member">Classify()</ref> function, but it can be used in a standalone sense too.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to classify. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="296" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a2655285daed526882041f78ef006d76d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t CheckInterval</definition>
+        <argsstring>() const</argsstring>
+        <name>CheckInterval</name>
+        <briefdescription>
+<para>Get the number of samples before a split check is performed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="284" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="284" bodyend="284"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a8557df308cade77f57d8ffbe48f72869" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CheckInterval</definition>
+        <argsstring>(const size_t checkInterval)</argsstring>
+        <name>CheckInterval</name>
+        <param>
+          <type>const size_t</type>
+          <declname>checkInterval</declname>
+        </param>
+        <briefdescription>
+<para>Modify the number of samples before a split check is performed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="286" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1ac862eca4b9417c16131284709c45ab53" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref> &amp;</type>
+        <definition>HoeffdingTree&amp; Child</definition>
+        <argsstring>(const size_t i)</argsstring>
+        <name>Child</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Modify a child. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="266" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="266" bodyend="266"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a99e81a5c647c0c5c32c1f9f90a158d8b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref> &amp;</type>
+        <definition>const HoeffdingTree&amp; Child</definition>
+        <argsstring>(const size_t i) const</argsstring>
+        <name>Child</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Get a child. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="264" column="23" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="264" bodyend="264"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1abd3c3812715d2e249e47476782d8e95e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;data, arma::Row&lt; size_t &gt; &amp;predictions) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given points, using this node and the entire (sub)tree beneath it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The predicted labels for each point are returned.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Points to classify. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predicted labels for each point. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="334" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a238674a53fcb905ca88e21e2e48a44e3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;data, arma::Row&lt; size_t &gt; &amp;predictions, arma::rowvec &amp;probabilities) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <param>
+          <type>arma::rowvec &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given points, using this node and the entire (sub)tree beneath it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The predicted labels for each point are returned, as well as an estimate of the probability that the prediction is correct for each point. This estimate is simply the <ref refid="classmlpack_1_1tree_1_1HoeffdingTree_1aa2bbbde0090c614316d5c8bf88ac69ce" kindref="member">MajorityProbability()</ref> for the leaf that each point bins to.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Points to classify. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predicted labels for each point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Probability estimates for each predicted label. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="348" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1aa610310b354b7badd88041ca07883569" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t Classify</definition>
+        <argsstring>(const VecType &amp;point) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given point, using this node and the entire (sub)tree beneath it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The predicted label is returned.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to classify. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Predicted label of point. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="306" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a8f2a86d2cdc57fc6a940c704b0f9241e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const VecType &amp;point, size_t &amp;prediction, double &amp;probability) const</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>size_t &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>probability</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given point and also return an estimate of the probability that the prediction is correct. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>(This estimate is simply the probability that a training point was from the majority class in the leaf that this point binned to.)</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to classify. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predicted label of point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probability</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An estimate of the probability that the prediction is correct. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="323" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1aa97b2f77f4c7888a38b2aadc7ff7b286" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CreateChildren</definition>
+        <argsstring>()</argsstring>
+        <name>CreateChildren</name>
+        <briefdescription>
+<para>Given that this node should split, create the children. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="355" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1ae199c935b2978454a2775a5dae0bd7d8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MajorityClass</definition>
+        <argsstring>()</argsstring>
+        <name>MajorityClass</name>
+        <briefdescription>
+<para>Modify the majority class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="253" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="253" bodyend="253"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a2fbf818eb68075c92655a22904b7ee1a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MajorityClass</definition>
+        <argsstring>() const</argsstring>
+        <name>MajorityClass</name>
+        <briefdescription>
+<para>Get the majority class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="251" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="251" bodyend="251"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1aa2bbbde0090c614316d5c8bf88ac69ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; MajorityProbability</definition>
+        <argsstring>()</argsstring>
+        <name>MajorityProbability</name>
+        <briefdescription>
+<para>Modify the probability of the majority class. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="258" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="258" bodyend="258"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a68e5f5a4d8c6194482a83440619be83b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double MajorityProbability</definition>
+        <argsstring>() const</argsstring>
+        <name>MajorityProbability</name>
+        <briefdescription>
+<para>Get the probability of the majority class (based on training samples). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="256" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="256" bodyend="256"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a521a83a74375f482507d99c913300386" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MaxSamples</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxSamples</name>
+        <briefdescription>
+<para>Get the maximum number of samples before a split is forced. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="279" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="279" bodyend="279"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a72b5944dab9b0345e4f1f1f192e05d02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MaxSamples</definition>
+        <argsstring>(const size_t maxSamples)</argsstring>
+        <name>MaxSamples</name>
+        <param>
+          <type>const size_t</type>
+          <declname>maxSamples</declname>
+        </param>
+        <briefdescription>
+<para>Modify the maximum number of samples before a split is forced. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="281" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1afc8cf684935878c953b8adaeae5d8b01" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MinSamples</definition>
+        <argsstring>() const</argsstring>
+        <name>MinSamples</name>
+        <briefdescription>
+<para>Get the minimum number of samples for a split. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="274" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="274" bodyend="274"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a29326784daa0e93a1273270cdd51f74e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void MinSamples</definition>
+        <argsstring>(const size_t minSamples)</argsstring>
+        <name>MinSamples</name>
+        <param>
+          <type>const size_t</type>
+          <declname>minSamples</declname>
+        </param>
+        <briefdescription>
+<para>Modify the minimum number of samples for a split. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="276" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumChildren</definition>
+        <argsstring>() const</argsstring>
+        <name>NumChildren</name>
+        <briefdescription>
+<para>Get the number of children. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="261" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="261" bodyend="261"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a2a85eb34222f1fc073940e8c89274e81" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumDescendants</definition>
+        <argsstring>() const</argsstring>
+        <name>NumDescendants</name>
+        <briefdescription>
+<para>Get the size of the Hoeffding Tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="309" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1af74b457da6b4b83725776bb4873f8257" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref> &amp;</type>
+        <definition>HoeffdingTree&amp; operator=</definition>
+        <argsstring>(const HoeffdingTree &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="170" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a980e69d16150271c73161ea7f1abaac7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref> &amp;</type>
+        <definition>HoeffdingTree&amp; operator=</definition>
+        <argsstring>(HoeffdingTree &amp;&amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to move. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="177" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the split. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="359" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a8f65d2bc3361efb913b6e169b3994a60" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t SplitCheck</definition>
+        <argsstring>()</argsstring>
+        <name>SplitCheck</name>
+        <briefdescription>
+<para>Check if a split would satisfy the conditions of the Hoeffding bound with the node&apos;s specified success probability. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If so, the number of children that would be created is returned. If not, 0 is returned. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="245" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a92f55f07c1a09552ef79c8d8b9484af5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t SplitDimension</definition>
+        <argsstring>() const</argsstring>
+        <name>SplitDimension</name>
+        <briefdescription>
+<para>Get the splitting dimension (size_t(-1) if no split). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="248" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="248" bodyend="248"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1ae74313c4769005a25f7b2ef1749d88f1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double SuccessProbability</definition>
+        <argsstring>() const</argsstring>
+        <name>SuccessProbability</name>
+        <briefdescription>
+<para>Get the confidence required for a split. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="269" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="269" bodyend="269"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a46af26c161b31299eb574796ed2b00cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SuccessProbability</definition>
+        <argsstring>(const double successProbability)</argsstring>
+        <name>SuccessProbability</name>
+        <param>
+          <type>const double</type>
+          <declname>successProbability</declname>
+        </param>
+        <briefdescription>
+<para>Modify the confidence required for a split. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="271" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a3e179af081a7fa6ea02e48025c7671f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const bool batchTraining=true, const bool resetTree=false, const size_t numClasses=0)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>batchTraining</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>resetTree</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Train on a set of points, either in streaming mode or in batch mode, with the given labels. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If <computeroutput>resetTree</computeroutput> is set to <computeroutput>true</computeroutput>, then reset the state of the tree to an empty tree before training.</para>
+<para>Note that the tree will be automatically reset if the dimensionality of <computeroutput>data</computeroutput> does not match the dimensionality that the tree was currently trained with. The tree will also be reset if <computeroutput>numClasses</computeroutput> is passed.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data points to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels of data points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchTraining</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, perform training in batch. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>resetTree</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, reset the tree to an empty tree before training. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of classes in <computeroutput>labels</computeroutput>. Passing this will reset the tree. If not given and <computeroutput>resetTree</computeroutput> is <computeroutput>true</computeroutput>, then the number of classes will be computed from <computeroutput>labels</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="202" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a0b50e004f98e381503fb1a989291c694" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const MatType &amp;data, const data::DatasetInfo &amp;info, const arma::Row&lt; size_t &gt; &amp;labels, const bool batchTraining=true, const size_t numClasses=0)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>info</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>batchTraining</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Train on a set of points, either in streaming mode or in batch mode, with the given labels and the given <computeroutput>DatasetInfo</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will reset the tree. This only needs to be called when the <computeroutput>DatasetInfo</computeroutput> has changed<mdash/>if you are training incrementally but have already passed the DatasetInfo once, use the overload of <computeroutput><ref refid="classmlpack_1_1tree_1_1HoeffdingTree_1a3e179af081a7fa6ea02e48025c7671f4" kindref="member">Train()</ref></computeroutput> that does not take a <computeroutput>DatasetInfo</computeroutput> and make sure <computeroutput>resetTree</computeroutput> is set to <computeroutput>false</computeroutput>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data points to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>DatasetInfo object with information about each dimension. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels of data points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchTraining</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, perform training in batch. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in <computeroutput>labels</computeroutput>. If not specified, it is computed from <computeroutput>labels</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="224" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1a4be1a071b03a017654ecced62e354e02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VecType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const VecType &amp;point, const size_t label)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const VecType &amp;</type>
+          <declname>point</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>label</declname>
+        </param>
+        <briefdescription>
+<para>Train on a single point in streaming mode, with the given label. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The tree will not be reset before training.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>point</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>label</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Label of point to train on. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="238" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1aa5d92c39fd29c92f9d0b2079aadf46fc" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ResetTree</definition>
+        <argsstring>(const CategoricalSplitType&lt; FitnessFunction &gt; &amp;categoricalSplitIn=CategoricalSplitType&lt; FitnessFunction &gt;(0, 0), const NumericSplitType&lt; FitnessFunction &gt; &amp;numericSplitIn=NumericSplitType&lt; FitnessFunction &gt;(0))</argsstring>
+        <name>ResetTree</name>
+        <param>
+          <type>const CategoricalSplitType&lt; FitnessFunction &gt; &amp;</type>
+          <declname>categoricalSplitIn</declname>
+          <defval>CategoricalSplitType&lt; FitnessFunction &gt;(0, 0)</defval>
+        </param>
+        <param>
+          <type>const NumericSplitType&lt; FitnessFunction &gt; &amp;</type>
+          <declname>numericSplitIn</declname>
+          <defval>NumericSplitType&lt; FitnessFunction &gt;(0)</defval>
+        </param>
+        <briefdescription>
+<para>Reset the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This assumes datasetInfo is set correctly. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="419" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1HoeffdingTree_1abe5c034ea11cba7b71e3370a5e22fc68" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void TrainInternal</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const bool batchTraining)</argsstring>
+        <name>TrainInternal</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>batchTraining</declname>
+        </param>
+        <briefdescription>
+<para>Perform training (typically after a reset, but not necessarily). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This assumes datasetInfo and dimensionMappings are set correctly. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="412" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1tree_1_1HoeffdingTree" kindref="compound">HoeffdingTree</ref> object represents all of the necessary information for a Hoeffding-bound-based decision tree. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This class is able to train on samples in streaming settings and batch settings, and perform splits based on the Hoeffding bound. The Hoeffding tree (also known as the &quot;very fast decision
+tree&quot; <ndash/> VFDT) is described in the following paper:</para>
+<para><programlisting><codeline><highlight class="normal">@inproceedings{domingos2000mining,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>title={{Mining<sp/>High-Speed<sp/>Data<sp/>Streams}},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>author={Domingos,<sp/>P.<sp/>and<sp/>Hulten,<sp/>G.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>year={2000},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>booktitle={Proceedings<sp/>of<sp/>the<sp/>Sixth<sp/>ACM<sp/>SIGKDD<sp/>International<sp/>Conference</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>on<sp/>Knowledge<sp/>Discovery<sp/>and<sp/>Data<sp/>Mining<sp/>(KDD<sp/>&apos;00)},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>pages={71--80}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>The class is modular, and takes three template parameters. The first, FitnessFunction, is the fitness function that should be used to determine whether a split is beneficial; examples might be <ref refid="classmlpack_1_1tree_1_1GiniImpurity" kindref="compound">GiniImpurity</ref> or <ref refid="classmlpack_1_1tree_1_1HoeffdingInformationGain" kindref="compound">HoeffdingInformationGain</ref>. The NumericSplitType determines how numeric attributes are handled, and the CategoricalSplitType determines how categorical attributes are handled. As far as the actual splitting goes, the meat of the splitting procedure will be contained in those two classes.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>FitnessFunction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Fitness function to use. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>NumericSplitType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Technique for splitting numeric features. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>CategoricalSplitType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Technique for splitting categorical features. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" line="61" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hoeffding_trees/hoeffding_tree.hpp" bodystart="62" bodyend="424"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a9a3cc06b52728325bd6402f7175f28e5" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>CalculateDirection</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1ac6a633f57efba5e2893f58ee9ad549d1" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>CategoricalSplit</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1af67c6d34a4654a5bcf857dba4f601595" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>categoricalSplit</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1afab2d7ed973b4cc2aad29a239899fb82" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>categoricalSplits</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a2655285daed526882041f78ef006d76d" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>CheckInterval</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a8557df308cade77f57d8ffbe48f72869" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>CheckInterval</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a8da0c7aa4598870aebadfa79e844ed8d" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>checkInterval</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a99e81a5c647c0c5c32c1f9f90a158d8b" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>Child</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1ac862eca4b9417c16131284709c45ab53" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>Child</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a3d5b17c4ae9150a38bcaef7b729de6d7" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>children</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1aa610310b354b7badd88041ca07883569" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a8f2a86d2cdc57fc6a940c704b0f9241e" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1abd3c3812715d2e249e47476782d8e95e" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a238674a53fcb905ca88e21e2e48a44e3" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1aa97b2f77f4c7888a38b2aadc7ff7b286" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>CreateChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a3c0e44251481859c3bc5953d646d576b" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>datasetInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1ac6df957fd91a4acd942e63aa0d2611a9" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>dimensionMappings</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a43b1e1ab502bb20ac8a23e85f21b467a" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>HoeffdingTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1af4bbb88c28be3e248120193a31549013" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>HoeffdingTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1aac1ba531eabbb50e0c340880c6c4e7de" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>HoeffdingTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a51f7c3eafb07107e8a52d61d37a89e38" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>HoeffdingTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a40f11320c02bdd2f37d1a8ef0579f683" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>HoeffdingTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a742e3f31777fcca0c614d8830a3d3271" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>majorityClass</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a2fbf818eb68075c92655a22904b7ee1a" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>MajorityClass</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1ae199c935b2978454a2775a5dae0bd7d8" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>MajorityClass</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1aebee4f4019cbcde3e83ba8eca01ddcba" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>majorityProbability</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a68e5f5a4d8c6194482a83440619be83b" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>MajorityProbability</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1aa2bbbde0090c614316d5c8bf88ac69ce" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>MajorityProbability</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a521a83a74375f482507d99c913300386" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>MaxSamples</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a72b5944dab9b0345e4f1f1f192e05d02" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>MaxSamples</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a9cba901759220c2cb21b2630c07c3db0" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>maxSamples</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1afc8cf684935878c953b8adaeae5d8b01" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>MinSamples</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a29326784daa0e93a1273270cdd51f74e" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>MinSamples</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1ad0afda399253f1a1bed20a5ade733b64" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>minSamples</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a1f7ec083be66d58a3e02e12956bf005e" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>NumChildren</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a4dd554142bdfbb014ddcac55577facef" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>numClasses</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a2a85eb34222f1fc073940e8c89274e81" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>NumDescendants</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1aaa2e2873f405118872db87975cce0124" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>NumericSplit</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1ae18dccac5b095164d95c1edb6a5dd5e1" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>numericSplit</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a3fb88cdcd8883baf6c4007f71da337cb" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>numericSplits</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a49442635d558f5915a3b1445772e4def" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>numSamples</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1af74b457da6b4b83725776bb4873f8257" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a980e69d16150271c73161ea7f1abaac7" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a00b03ecabd83e24facd6b7a83ceb0f0f" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>ownsInfo</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a156028f004993def325ea6f8c816ad2a" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>ownsMappings</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1aa5d92c39fd29c92f9d0b2079aadf46fc" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>ResetTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a8f65d2bc3361efb913b6e169b3994a60" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>SplitCheck</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a92f55f07c1a09552ef79c8d8b9484af5" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>SplitDimension</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a351b01278d3022d478536e0a84a1808e" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>splitDimension</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1ae74313c4769005a25f7b2ef1749d88f1" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>SuccessProbability</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a46af26c161b31299eb574796ed2b00cc" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>SuccessProbability</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a6ee7a813576f6d1d405c1d4685fa82b2" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>successProbability</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a3e179af081a7fa6ea02e48025c7671f4" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a0b50e004f98e381503fb1a989291c694" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a4be1a071b03a017654ecced62e354e02" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1abe5c034ea11cba7b71e3370a5e22fc68" prot="private" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>TrainInternal</name></member>
+      <member refid="classmlpack_1_1tree_1_1HoeffdingTree_1a2e454de523755b8d31ccf2cc58d76039" prot="public" virt="non-virtual"><scope>mlpack::tree::HoeffdingTree</scope><name>~HoeffdingTree</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

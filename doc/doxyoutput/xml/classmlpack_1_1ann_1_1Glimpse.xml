@@ -1,0 +1,1104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1Glimpse" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::Glimpse</compoundname>
+    <includes refid="glimpse_8hpp" local="no">glimpse.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="408" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="408" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a820c167ceaaa9759b0ca2695d22db55c" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t depth</definition>
+        <argsstring></argsstring>
+        <name>depth</name>
+        <briefdescription>
+<para>The number of patches to crop per glimpse. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="390" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="390" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool deterministic</definition>
+        <argsstring></argsstring>
+        <name>deterministic</name>
+        <briefdescription>
+<para>If true use maximum a posteriori during the forward pass. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="435" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="435" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1acff45188c35aab01df4b868ccb60380a" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube gTemp</definition>
+        <argsstring></argsstring>
+        <name>gTemp</name>
+        <briefdescription>
+<para>Location-stored transformed gradient paramter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="432" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="432" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a286aa3a5ff8d91e108acf0c2b17d884e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inputDepth</definition>
+        <argsstring></argsstring>
+        <name>inputDepth</name>
+        <briefdescription>
+<para>Locally-stored depth of the input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="414" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="414" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a2ec74fab321e9f3405ab039bfc076ad5" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inputHeight</definition>
+        <argsstring></argsstring>
+        <name>inputHeight</name>
+        <briefdescription>
+<para>Locally-stored input height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="399" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="399" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a492e653a89ab30e8bfe15bd81f06f1a6" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube inputTemp</definition>
+        <argsstring></argsstring>
+        <name>inputTemp</name>
+        <briefdescription>
+<para>Locally-stored transformed input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="417" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="417" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a31d1d11207207222fa86f463515dd5dd" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inputWidth</definition>
+        <argsstring></argsstring>
+        <name>inputWidth</name>
+        <briefdescription>
+<para>Locally-stored input width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="396" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="396" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1ad8790e1135ba331e561e2151f527a9d7" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inSize</definition>
+        <argsstring></argsstring>
+        <name>inSize</name>
+        <briefdescription>
+<para>The size of the input units. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="384" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="384" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a9e9d366b30f17287a211795936d9cc68" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat location</definition>
+        <argsstring></argsstring>
+        <name>location</name>
+        <briefdescription>
+<para>The x and y coordinate of the center of the output glimpse. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="423" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="423" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a5c0a89c04b3795c8dab3849d9ea03465" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; arma::mat &gt;</type>
+        <definition>std::vector&lt;arma::mat&gt; locationParameter</definition>
+        <argsstring></argsstring>
+        <name>locationParameter</name>
+        <briefdescription>
+<para>Location-stored module location parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="429" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="429" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1afe9f432eaa87ede5b515d7fb11c9ad9d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t outputHeight</definition>
+        <argsstring></argsstring>
+        <name>outputHeight</name>
+        <briefdescription>
+<para>Locally-stored output height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="405" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="405" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="411" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="411" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a1e995f0561d7a30db4ee6a0273a1d778" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube outputTemp</definition>
+        <argsstring></argsstring>
+        <name>outputTemp</name>
+        <briefdescription>
+<para>Locally-stored transformed output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="420" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="420" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a446dd57a9f4815cd276990ee17d72d0b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t outputWidth</definition>
+        <argsstring></argsstring>
+        <name>outputWidth</name>
+        <briefdescription>
+<para>Locally-stored output width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="402" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="402" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1aeaddbf4454f8a45c68a019f77f96aa2e" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1MeanPoolingRule" kindref="compound">MeanPoolingRule</ref></type>
+        <definition>MeanPoolingRule pooling</definition>
+        <argsstring></argsstring>
+        <name>pooling</name>
+        <briefdescription>
+<para>Locally-stored object to perform the mean pooling operation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="426" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="426" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a5c3fae94f71a4c1617c052e19ab79d67" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t scale</definition>
+        <argsstring></argsstring>
+        <name>scale</name>
+        <briefdescription>
+<para>The scale fraction. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="393" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="393" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1Glimpse_1a854352f53b148adc24983a58a1866d66" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+<para>The used glimpse size (height = width). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="387" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="387" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a19c2ef07809ce53bd8eef72ed2c6e1eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Glimpse</definition>
+        <argsstring>(const size_t inSize=0, const size_t size=0, const size_t depth=3, const size_t scale=2, const size_t inputWidth=0, const size_t inputHeight=0)</argsstring>
+        <name>Glimpse</name>
+        <param>
+          <type>const size_t</type>
+          <declname>inSize</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>size</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>depth</declname>
+          <defval>3</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>scale</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>inputWidth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>inputHeight</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Create the GlimpseLayer object using the specified ratio and rescale parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>inSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The size of the input units. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The used glimpse size (height = width). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>depth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of patches to crop per glimpse. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>scale</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The scaling factor used to create the increasing retina-like representation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>inputWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input width of the given input data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>inputHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input height of the given input data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="103" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of the glimpse layer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) The propagated input activation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="127" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="139" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="139" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1ae7c8eba5764f021cd93e30efe638e63c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the detla. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="137" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="137" bodyend="137"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1ab642344aea1cea1d2a9469d1ab2c34fd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t const  &amp;</type>
+        <definition>size_t const&amp; Depth</definition>
+        <argsstring>() const</argsstring>
+        <name>Depth</name>
+        <briefdescription>
+<para>Get the number of patches to crop per glimpse. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="174" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="174" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Deterministic</definition>
+        <argsstring>()</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Modify the value of the deterministic parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="171" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="171" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a9f4103707f4d199ce5594d239b60443e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Deterministic</definition>
+        <argsstring>() const</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Get the value of the deterministic parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="169" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="169" bodyend="169"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of the glimpse layer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="117" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a467c62da8a379d3066e836636a128036" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t GlimpseSize</definition>
+        <argsstring>() const</argsstring>
+        <name>GlimpseSize</name>
+        <briefdescription>
+<para>Get the used glimpse size (height = width). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="183" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="183" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1aefbba724eec397a928d5460bb209a360" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; InputHeight</definition>
+        <argsstring>()</argsstring>
+        <name>InputHeight</name>
+        <briefdescription>
+<para>Modify the input height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="156" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="156" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1afb3fd4ed60dd057e7852221b89206f15" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t const  &amp;</type>
+        <definition>size_t const&amp; InputHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>InputHeight</name>
+        <briefdescription>
+<para>Get the input height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="154" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="154" bodyend="154"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a13ab93f234244a68f6ade76287284447" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputShape</definition>
+        <argsstring>() const</argsstring>
+        <name>InputShape</name>
+        <briefdescription>
+<para>Get the shape of the input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="186" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="186" bodyend="189"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a238e9d308df611a9300a4ca6756fef4d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; InputWidth</definition>
+        <argsstring>()</argsstring>
+        <name>InputWidth</name>
+        <briefdescription>
+<para>Modify input the width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="151" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="151" bodyend="151"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a29346e3064da8f9e5f10596bedae0ba8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t const  &amp;</type>
+        <definition>size_t const&amp; InputWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>InputWidth</name>
+        <briefdescription>
+<para>Get the input width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="149" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="149" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1adc2669016a821704c4c4aeb4651e9e87" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InSize</definition>
+        <argsstring>() const</argsstring>
+        <name>InSize</name>
+        <briefdescription>
+<para>Get the size of the input units. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="180" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="180" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a8f32d484de0d3abca25a1aa77a7ab855" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Location</definition>
+        <argsstring>(const arma::mat &amp;location)</argsstring>
+        <name>Location</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>location</declname>
+        </param>
+        <briefdescription>
+<para>Set the locationthe x and y coordinate of the center of the output glimpse. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="143" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="143" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1ac5112abf9f5e1face13ed965a8755b1d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; OutputHeight</definition>
+        <argsstring>()</argsstring>
+        <name>OutputHeight</name>
+        <briefdescription>
+<para>Modify the output height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="166" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="166" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a5ad7dbcaf1a622dafd897f79ab77890c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t const  &amp;</type>
+        <definition>size_t const&amp; OutputHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputHeight</name>
+        <briefdescription>
+<para>Get the output height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="164" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="164" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="134" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="134" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="132" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="132" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a54579ec9924e2a4a5bc0a4fb822ce80c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; OutputWidth</definition>
+        <argsstring>()</argsstring>
+        <name>OutputWidth</name>
+        <briefdescription>
+<para>Modify the output width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="161" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="161" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a32b3e3fe787456847fc3b2c39586ecb1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t const  &amp;</type>
+        <definition>size_t const&amp; OutputWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputWidth</name>
+        <briefdescription>
+<para>Get the output width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="159" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="159" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a5672c05ae5dd46d3887b137e2368b121" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t const  &amp;</type>
+        <definition>size_t const&amp; Scale</definition>
+        <argsstring>() const</argsstring>
+        <name>Scale</name>
+        <briefdescription>
+<para>Get the scale fraction. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="177" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="177" bodyend="177"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="195" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a65deef1255286ee5f140f374f9968915" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void DownwardReSampling</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;error, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>DownwardReSampling</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Apply DownwardReSampling to the input and store the results into the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input to be apply the DownwardReSampling rule. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The error used to perform the DownwardReSampling operation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The DownwardReSampled result. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="341" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="341" bodyend="381"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a985fa8b86ec5edabdb3ac38e3d7fe0fa" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Pooling</definition>
+        <argsstring>(const size_t kSize, const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Pooling</name>
+        <param>
+          <type>const size_t</type>
+          <declname>kSize</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Apply pooling to the input and store the results to the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>kSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the kernel size used to perform the pooling operation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input to be apply the pooling rule. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pooled result. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="239" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="239" bodyend="254"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a6060fd0ce27eb3f2e5499930167cf6ac" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void ReSampling</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>ReSampling</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Apply ReSampling to the input and store the results in the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input to be apply the ReSampling rule. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pooled result. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="296" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="296" bodyend="330"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a7fa9c1ba80823e77b4cdee63f7cfecd6" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Transform</definition>
+        <argsstring>(arma::cube &amp;w)</argsstring>
+        <name>Transform</name>
+        <param>
+          <type>arma::cube &amp;</type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="221" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="221" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a845a698ef1f1042ea06b0e1cf112f17b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Transform</definition>
+        <argsstring>(arma::mat &amp;w)</argsstring>
+        <name>Transform</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="203" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="203" bodyend="214"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Glimpse_1a1d3b1cbbb2c33d437bb800031a8fec5e" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Unpooling</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;error, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Unpooling</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Apply unpooling to the input and store the results. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input to be apply the unpooling rule. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The error used to perform the unpooling operation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The pooled result. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="264" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="264" bodyend="286"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The glimpse layer returns a retina-like representation (down-scaled cropped images) of increasing scale around a given location in a given image. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" line="88" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp" bodystart="89" bodyend="436"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1ae7c8eba5764f021cd93e30efe638e63c" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1ab642344aea1cea1d2a9469d1ab2c34fd" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Depth</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a820c167ceaaa9759b0ca2695d22db55c" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>depth</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a9f4103707f4d199ce5594d239b60443e" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a65deef1255286ee5f140f374f9968915" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>DownwardReSampling</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a19c2ef07809ce53bd8eef72ed2c6e1eb" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Glimpse</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a467c62da8a379d3066e836636a128036" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>GlimpseSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1acff45188c35aab01df4b868ccb60380a" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>gTemp</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a286aa3a5ff8d91e108acf0c2b17d884e" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>inputDepth</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1afb3fd4ed60dd057e7852221b89206f15" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>InputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1aefbba724eec397a928d5460bb209a360" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>InputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a2ec74fab321e9f3405ab039bfc076ad5" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>inputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a13ab93f234244a68f6ade76287284447" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>InputShape</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a492e653a89ab30e8bfe15bd81f06f1a6" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>inputTemp</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a29346e3064da8f9e5f10596bedae0ba8" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>InputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a238e9d308df611a9300a4ca6756fef4d" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>InputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a31d1d11207207222fa86f463515dd5dd" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>inputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1ad8790e1135ba331e561e2151f527a9d7" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>inSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1adc2669016a821704c4c4aeb4651e9e87" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>InSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a8f32d484de0d3abca25a1aa77a7ab855" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Location</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a9e9d366b30f17287a211795936d9cc68" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>location</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a5c0a89c04b3795c8dab3849d9ea03465" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>locationParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1afe9f432eaa87ede5b515d7fb11c9ad9d" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>outputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a5ad7dbcaf1a622dafd897f79ab77890c" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>OutputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1ac5112abf9f5e1face13ed965a8755b1d" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>OutputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a1e995f0561d7a30db4ee6a0273a1d778" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>outputTemp</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a446dd57a9f4815cd276990ee17d72d0b" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>outputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a32b3e3fe787456847fc3b2c39586ecb1" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>OutputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a54579ec9924e2a4a5bc0a4fb822ce80c" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>OutputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a985fa8b86ec5edabdb3ac38e3d7fe0fa" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Pooling</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1aeaddbf4454f8a45c68a019f77f96aa2e" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>pooling</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a6060fd0ce27eb3f2e5499930167cf6ac" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>ReSampling</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a5672c05ae5dd46d3887b137e2368b121" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Scale</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a5c3fae94f71a4c1617c052e19ab79d67" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>scale</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a854352f53b148adc24983a58a1866d66" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>size</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a845a698ef1f1042ea06b0e1cf112f17b" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Transform</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a7fa9c1ba80823e77b4cdee63f7cfecd6" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Transform</name></member>
+      <member refid="classmlpack_1_1ann_1_1Glimpse_1a1d3b1cbbb2c33d437bb800031a8fec5e" prot="private" virt="non-virtual"><scope>mlpack::ann::Glimpse</scope><name>Unpooling</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

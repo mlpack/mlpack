@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHolder" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;::ResultHolder</compoundname>
+    <includes refid="deduce__hp__types_8hpp" local="no">deduce_hp_types.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename...</type>
+        <declname>HPTypes</declname>
+        <defname>HPTypes</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHolder_1a2f1706932f0f0a3ac0f4da29b7672abf" prot="public" static="no">
+        <type>typename <ref refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes" kindref="compound">DeduceHyperParameterTypes</ref>&lt; Args... &gt;::template ResultHolder&lt; HPTypes..., typename ResultHPType&lt; T &gt;::Type &gt;::<ref refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHolder_1a2f1706932f0f0a3ac0f4da29b7672abf" kindref="member">TupleType</ref></type>
+        <definition>using TupleType =  typename DeduceHyperParameterTypes&lt;Args...&gt;::template ResultHolder&lt;HPTypes..., typename ResultHPType&lt;T&gt;::Type&gt;::TupleType</definition>
+        <argsstring></argsstring>
+        <name>TupleType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" line="96" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" line="94" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" bodystart="95" bodyend="98"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_3_01T_00_01Args_8_8_8_01_4_1_1ResultHolder_1a2f1706932f0f0a3ac0f4da29b7672abf" prot="public" virt="non-virtual"><scope>mlpack::hpt::DeduceHyperParameterTypes&lt; T, Args... &gt;::ResultHolder</scope><name>TupleType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

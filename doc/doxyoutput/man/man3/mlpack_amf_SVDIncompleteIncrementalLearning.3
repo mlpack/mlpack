@@ -1,0 +1,131 @@
+.TH "SVDIncompleteIncrementalLearning" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SVDIncompleteIncrementalLearning \- This class computes SVD using incomplete incremental batch learning, as described in the following paper:  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSVDIncompleteIncrementalLearning\fP (double u=0\&.001, double kw=0, double kh=0)"
+.br
+.RI "Initialize the parameters of \fBSVDIncompleteIncrementalLearning\fP\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBHUpdate\fP (const MatType &V, const arma::mat &W, arma::mat &H)"
+.br
+.RI "The update rule for the encoding matrix H\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBInitialize\fP (const MatType &, const size_t)"
+.br
+.RI "Initialize parameters before factorization\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBWUpdate\fP (const MatType &V, arma::mat &W, const arma::mat &H)"
+.br
+.RI "The update rule for the basis matrix W\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class computes SVD using incomplete incremental batch learning, as described in the following paper: 
+
+
+.PP
+.nf
+@techreport{ma2008guide,
+  title={A Guide to Singular Value Decomposition for Collaborative
+      Filtering},
+  author={Ma, Chih-Chao},
+  year={2008},
+  institution={Department of Computer Science, National Taiwan University}
+}
+
+.fi
+.PP
+.PP
+This class implements 'Algorithm 2' as given in the paper\&. Incremental learning modifies only some feature values in W and H after scanning part of the input matrix (V)\&. This differs from batch learning, which considers every element in V for each update of W and H\&. The regularization technique is also different: in incomplete incremental learning, regularization takes into account the number of elements in a given column of V\&.
+.PP
+\fBSee also\fP
+.RS 4
+\fBSVDBatchLearning\fP 
+.RE
+.PP
+
+.PP
+Definition at line 43 of file svd_incomplete_incremental_learning\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSVDIncompleteIncrementalLearning\fP (double u = \fC0\&.001\fP, double kw = \fC0\fP, double kh = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Initialize the parameters of \fBSVDIncompleteIncrementalLearning\fP\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIu\fP Step value used in batch learning\&. 
+.br
+\fIkw\fP Regularization constant for W matrix\&. 
+.br
+\fIkh\fP Regularization constant for H matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 53 of file svd_incomplete_incremental_learning\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void HUpdate (const MatType & V, const arma::mat & W, arma::mat & H)\fC [inline]\fP"
+
+.PP
+The update rule for the encoding matrix H\&. The function takes in all the matrices and only changes the value of the H matrix\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.br
+\fIW\fP Basis matrix\&. 
+.br
+\fIH\fP Encoding matrix to be updated\&. 
+.RE
+.PP
+
+.PP
+Definition at line 121 of file svd_incomplete_incremental_learning\&.hpp\&.
+.SS "void Initialize (const MatType &, const size_t)\fC [inline]\fP"
+
+.PP
+Initialize parameters before factorization\&. This function must be called before a new factorization\&. This simply sets the column being considered to 0, so the input matrix and rank are not used\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (dataset) Input matrix to be factorized\&. 
+.br
+\fI*\fP (rank) of factorization 
+.RE
+.PP
+
+.PP
+Definition at line 70 of file svd_incomplete_incremental_learning\&.hpp\&.
+.SS "void WUpdate (const MatType & V, arma::mat & W, const arma::mat & H)\fC [inline]\fP"
+
+.PP
+The update rule for the basis matrix W\&. The function takes in all the matrices and only changes the value of the W matrix\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.br
+\fIW\fP Basis matrix to be updated\&. 
+.br
+\fIH\fP Encoding matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 86 of file svd_incomplete_incremental_learning\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

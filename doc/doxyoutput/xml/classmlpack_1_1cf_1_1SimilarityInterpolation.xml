@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1cf_1_1SimilarityInterpolation" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cf::SimilarityInterpolation</compoundname>
+    <includes refid="similarity__interpolation_8hpp" local="no">similarity_interpolation.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1SimilarityInterpolation_1ab99374fec70d75cbdfbeca8e2dd1080f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SimilarityInterpolation</definition>
+        <argsstring>()</argsstring>
+        <name>SimilarityInterpolation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/similarity_interpolation.hpp" line="45" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/similarity_interpolation.hpp" bodystart="45" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1SimilarityInterpolation_1acd25ecec89988ea7753240516e798aec" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SimilarityInterpolation</definition>
+        <argsstring>(const arma::sp_mat &amp;)</argsstring>
+        <name>SimilarityInterpolation</name>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+        </param>
+        <briefdescription>
+<para>This constructor is needed for interface consistency. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/similarity_interpolation.hpp" line="50" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/similarity_interpolation.hpp" bodystart="50" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1SimilarityInterpolation_1af7b773858d4545121a8a09195d0b7a2e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename VectorType</type>
+          </param>
+          <param>
+            <type>typename DecompositionPolicy</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void GetWeights</definition>
+        <argsstring>(VectorType &amp;&amp;weights, const DecompositionPolicy &amp;, const size_t, const arma::Col&lt; size_t &gt; &amp;neighbors, const arma::vec &amp;similarities, const arma::sp_mat &amp;)</argsstring>
+        <name>GetWeights</name>
+        <param>
+          <type>VectorType &amp;&amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const DecompositionPolicy &amp;</type>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <param>
+          <type>const arma::Col&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>const arma::vec &amp;</type>
+          <declname>similarities</declname>
+        </param>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+        </param>
+        <briefdescription>
+<para>Interpolation weights are computed as normalized similarities. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>After getting the weights, CF algorithm multiplies each neighbor&apos;s rating by its corresponding weight and sums them to get predicted rating.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting interpolation weights. The size of weights should be set to the number of neighbors before calling <ref refid="classmlpack_1_1cf_1_1SimilarityInterpolation_1af7b773858d4545121a8a09195d0b7a2e" kindref="member">GetWeights()</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(decomposition) Decomposition object. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(queryUser) Queried user. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Neighbors of queried user. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>similarities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Similarities between query user and neighbors. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(cleanedData) Sparse rating matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/similarity_interpolation.hpp" line="67" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/similarity_interpolation.hpp" bodystart="67" bodyend="96"/>
+        <references refid="classmlpack_1_1Log_1a5b72fcdfa48547883454fbc59be9caf1" compoundref="log_8hpp" startline="90">Log::Fatal</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>With <ref refid="classmlpack_1_1cf_1_1SimilarityInterpolation" kindref="compound">SimilarityInterpolation</ref>, interpolation weights are based on similarities between query user and its neighbors. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>All interpolation weights sum up to one.</para>
+<para>An example of how to use <ref refid="classmlpack_1_1cf_1_1SimilarityInterpolation" kindref="compound">SimilarityInterpolation</ref> in CF is shown below:</para>
+<para><programlisting><codeline><highlight class="normal">extern<sp/>arma::mat<sp/>data;<sp/>//<sp/>data<sp/>is<sp/>a<sp/>(user,<sp/>item,<sp/>rating)<sp/>table.</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Users<sp/>for<sp/>whom<sp/>recommendations<sp/>are<sp/>generated.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::Col&lt;size_t&gt;<sp/>users;</highlight></codeline>
+<codeline><highlight class="normal">arma::Mat&lt;size_t&gt;<sp/>recommendations;<sp/>//<sp/>Resulting<sp/>recommendations.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">CFType&lt;&gt;<sp/>cf(data);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Generate<sp/>10<sp/>recommendations<sp/>for<sp/>all<sp/>users.</highlight></codeline>
+<codeline><highlight class="normal">cf.template<sp/>GetRecommendations&lt;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>EuclideanSearch,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>SimilarityInterpolation&gt;(10,<sp/>recommendations);</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/similarity_interpolation.hpp" line="41" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/interpolation_policies/similarity_interpolation.hpp" bodystart="42" bodyend="97"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cf_1_1SimilarityInterpolation_1af7b773858d4545121a8a09195d0b7a2e" prot="public" virt="non-virtual"><scope>mlpack::cf::SimilarityInterpolation</scope><name>GetWeights</name></member>
+      <member refid="classmlpack_1_1cf_1_1SimilarityInterpolation_1ab99374fec70d75cbdfbeca8e2dd1080f" prot="public" virt="non-virtual"><scope>mlpack::cf::SimilarityInterpolation</scope><name>SimilarityInterpolation</name></member>
+      <member refid="classmlpack_1_1cf_1_1SimilarityInterpolation_1acd25ecec89988ea7753240516e798aec" prot="public" virt="non-virtual"><scope>mlpack::cf::SimilarityInterpolation</scope><name>SimilarityInterpolation</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

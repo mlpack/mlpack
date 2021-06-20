@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_199a51b2d898abcb68f0ab4545dd316d" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core/data/imputation_methods</compoundname>
+    <innerfile refid="custom__imputation_8hpp">custom_imputation.hpp</innerfile>
+    <innerfile refid="listwise__deletion_8hpp">listwise_deletion.hpp</innerfile>
+    <innerfile refid="mean__imputation_8hpp">mean_imputation.hpp</innerfile>
+    <innerfile refid="median__imputation_8hpp">median_imputation.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/imputation_methods/"/>
+  </compounddef>
+</doxygen>

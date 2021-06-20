@@ -1,0 +1,176 @@
+\doxysection{LMetric$<$ TPower, TTake\+Root $>$ Class Template Reference}
+\label{classmlpack_1_1metric_1_1LMetric}\index{LMetric$<$ TPower, TTakeRoot $>$@{LMetric$<$ TPower, TTakeRoot $>$}}
+
+
+The L\+\_\+p metric for arbitrary integer p, with an option to take the root.  
+
+
+
+
+Inheritance diagram for LMetric$<$ TPower, TTake\+Root $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=211pt]{classmlpack_1_1metric_1_1LMetric__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ LMetric} ()
+\begin{DoxyCompactList}\small\item\em Default constructor does nothing, but is required to satisfy the Metric policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the metric (nothing to do). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\static Vec\+Type\+A\+::elem\+\_\+type \textbf{ Evaluate} (const Vec\+TypeA \&a, const Vec\+TypeB \&b)
+\begin{DoxyCompactList}\small\item\em Computes the distance between two points. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const int \textbf{ Power} = TPower
+\begin{DoxyCompactList}\small\item\em The power of the metric. \end{DoxyCompactList}\item 
+static const bool \textbf{ Take\+Root} = TTake\+Root
+\begin{DoxyCompactList}\small\item\em Whether or not the root is taken. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$int TPower, bool TTake\+Root = true$>$\newline
+class mlpack\+::metric\+::\+LMetric$<$ TPower, TTake\+Root $>$}
+
+The L\+\_\+p metric for arbitrary integer p, with an option to take the root. 
+
+This class implements the standard L\+\_\+p metric for two arbitrary vectors $ x $ and $ y $ of dimensionality $ n $\+:
+
+\[ d(x, y) = \left( \sum_{i = 1}^{n} | x_i - y_i |^p \right)^{\frac{1}{p}}. \]
+
+The value of p is given as a template parameter.
+
+In addition, the function $ d(x, y) $ can be simplified, neglecting the p-\/root calculation. This is done by specifying the Take\+Root template parameter to be false. Then,
+
+\[ d(x, y) = \sum_{i = 1}^{n} | x_i - y_i |^p \]
+
+It is faster to compute that distance, so Take\+Root is by default off. However, when Take\+Root is false, the distance given is not actually a true metric -- it does not satisfy the triangle inequality. Some mlpack methods do not require the triangle inequality to operate correctly (such as the Binary\+Space\+Tree), but setting Take\+Root = false in some cases will cause incorrect results.
+
+A few convenience typedefs are given\+:
+
+
+\begin{DoxyItemize}
+\item Manhattan\+Distance
+\item Euclidean\+Distance
+\item Squared\+Euclidean\+Distance
+\end{DoxyItemize}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Power} & Power of metric; i.\+e. Power = 1 gives the L1-\/norm (Manhattan distance). \\
+\hline
+{\em Take\+Root} & If true, the Power\textquotesingle{}th root of the result is taken before it is returned. Setting this to false causes the metric to not satisfy the Triangle Inequality (be careful!). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 63 of file lmetric.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1metric_1_1LMetric_ad296b4c8538551ddcef38a49d0842ca7}} 
+\index{LMetric$<$ TPower, TTakeRoot $>$@{LMetric$<$ TPower, TTakeRoot $>$}!LMetric@{LMetric}}
+\index{LMetric@{LMetric}!LMetric$<$ TPower, TTakeRoot $>$@{LMetric$<$ TPower, TTakeRoot $>$}}
+\doxysubsubsection{LMetric()}
+{\footnotesize\ttfamily \textbf{ LMetric} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default constructor does nothing, but is required to satisfy the Metric policy. 
+
+
+
+Definition at line 70 of file lmetric.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1metric_1_1LMetric_af39380107875eb94f0efef7d37cc57df}} 
+\index{LMetric$<$ TPower, TTakeRoot $>$@{LMetric$<$ TPower, TTakeRoot $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!LMetric$<$ TPower, TTakeRoot $>$@{LMetric$<$ TPower, TTakeRoot $>$}}
+\doxysubsubsection{Evaluate()}
+{\footnotesize\ttfamily static Vec\+Type\+A\+::elem\+\_\+type Evaluate (\begin{DoxyParamCaption}\item[{const Vec\+TypeA \&}]{a,  }\item[{const Vec\+TypeB \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Computes the distance between two points. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+TypeA} & Type of first vector (generally arma\+::vec or arma\+::sp\+\_\+vec). \\
+\hline
+{\em Vec\+TypeB} & Type of second vector. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Distance between vectors a and b. 
+\end{DoxyReturn}
+
+
+Referenced by KMeans\+Plus\+Plus\+Initialization\+::\+Cluster(), Gaussian\+Kernel\+::\+Convolution\+Integral(), Spherical\+Kernel\+::\+Convolution\+Integral(), Gaussian\+Kernel\+::\+Evaluate(), and Spherical\+Kernel\+::\+Evaluate().
+
+\mbox{\label{classmlpack_1_1metric_1_1LMetric_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{LMetric$<$ TPower, TTakeRoot $>$@{LMetric$<$ TPower, TTakeRoot $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!LMetric$<$ TPower, TTakeRoot $>$@{LMetric$<$ TPower, TTakeRoot $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the metric (nothing to do). 
+
+
+
+Definition at line 88 of file lmetric.\+hpp.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1metric_1_1LMetric_add828b673634e896b13f47cc7fb331f5}} 
+\index{LMetric$<$ TPower, TTakeRoot $>$@{LMetric$<$ TPower, TTakeRoot $>$}!Power@{Power}}
+\index{Power@{Power}!LMetric$<$ TPower, TTakeRoot $>$@{LMetric$<$ TPower, TTakeRoot $>$}}
+\doxysubsubsection{Power}
+{\footnotesize\ttfamily const int Power = TPower\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The power of the metric. 
+
+
+
+Definition at line 91 of file lmetric.\+hpp.
+
+\mbox{\label{classmlpack_1_1metric_1_1LMetric_a0615e7186f9a9847e2f71d2d2622579d}} 
+\index{LMetric$<$ TPower, TTakeRoot $>$@{LMetric$<$ TPower, TTakeRoot $>$}!TakeRoot@{TakeRoot}}
+\index{TakeRoot@{TakeRoot}!LMetric$<$ TPower, TTakeRoot $>$@{LMetric$<$ TPower, TTakeRoot $>$}}
+\doxysubsubsection{TakeRoot}
+{\footnotesize\ttfamily const bool Take\+Root = TTake\+Root\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Whether or not the root is taken. 
+
+
+
+Definition at line 93 of file lmetric.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/metrics/\textbf{ lmetric.\+hpp}\end{DoxyCompactItemize}

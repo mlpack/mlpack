@@ -1,0 +1,153 @@
+\doxysection{Introduction}\label{amftutorial_intro_amftut}
+Alternating Matrix Factorization
+
+Alternating matrix factorization decomposes matrx V in the form $ V \approx WH $ where W is called the basis matrix and H is called the encoding matrix. V is taken to be of size n x m and the obtained W is n x r and H is r x m. The size r is called the rank of the factorization. Factorization is done by alternately calculating W and H respectively while holding the other matrix constant.
+
+{\bfseries{mlpack}} provides\+:
+
+
+\begin{DoxyItemize}
+\item a \doxyref{simple C++ interface}{p.}{amftutorial_amf_amftut} to perform Alternating Matrix Factorization
+\end{DoxyItemize}\doxysection{Table of Contents}\label{amftutorial_toc_amftut}
+A list of all the sections this tutorial contains.
+
+
+\begin{DoxyItemize}
+\item \doxyref{Introduction}{p.}{amftutorial_intro_amftut}
+\item \doxyref{Table of Contents}{p.}{amftutorial_toc_amftut}
+\item \doxyref{The \textquotesingle{}AMF\textquotesingle{} class}{p.}{amftutorial_amf_amftut}
+\begin{DoxyItemize}
+\item \doxyref{Using different termination policies}{p.}{amftutorial_t_policy_amftut}
+\item \doxyref{Using different initialization policies}{p.}{amftutorial_init_rule_amftut}
+\item \doxyref{Using different update rules}{p.}{amftutorial_update_rule_amftut}
+\item \doxyref{Using Non-\/\+Negative Matrix Factorization with AMF}{p.}{amftutorial_nmf_amftut}
+\item \doxyref{Using Singular Value Decomposition with AMF}{p.}{amftutorial_svd_amftut}
+\end{DoxyItemize}
+\item \doxyref{Further documentation}{p.}{amftutorial_further_doc_amftut}
+\end{DoxyItemize}\doxysection{The \textquotesingle{}\+AMF\textquotesingle{} class}\label{amftutorial_amf_amftut}
+The AMF class is templatized with 3 parameters; the first contains the policy used to determine when the algorithm has converged; the second contains the initialization rule for the W and H matrix; the last contains the update rule to be used during each iteration. This templatization allows the user to try various update rules, initialization rules, and termination policies (including ones not supplied with mlpack) for factorization.
+
+The class provides the following method that performs factorization 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{typename} MatType> \textcolor{keywordtype}{double} Apply(\textcolor{keyword}{const} MatType\& V,}
+\DoxyCodeLine{                                        \textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} r,}
+\DoxyCodeLine{                                        arma::mat\& W,}
+\DoxyCodeLine{                                        arma::mat\& H);}
+
+\end{DoxyCode}
+\doxysubsection{Using different termination policies}\label{amftutorial_t_policy_amftut}
+The AMF implementation comes with different termination policies to support many implemented algorithms. Every termination policy implements the following method which returns the status of convergence. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{bool} IsConverged(arma::mat\& W, arma::mat\& H)}
+
+\end{DoxyCode}
+
+
+Below is a list of all the termination policies that mlpack contains.
+
+
+\begin{DoxyItemize}
+\item \doxyref{mlpack\+::amf\+::\+Simple\+Residue\+Termination}{p.}{classmlpack_1_1amf_1_1SimpleResidueTermination}
+\item \doxyref{mlpack\+::amf\+::\+Simple\+Tolerance\+Termination}{p.}{classmlpack_1_1amf_1_1SimpleToleranceTermination}
+\item \doxyref{mlpack\+::amf\+::\+Validation\+RMSETermination}{p.}{classmlpack_1_1amf_1_1ValidationRMSETermination}
+\end{DoxyItemize}
+
+In {\ttfamily Simple\+Residue\+Termination}, termination decision depends on two factors, value of residue and number of iteration. If the current value of residue drops below the threshold or the number of iterations goes beyond the threshold, positive termination signal is passed to AMF.
+
+In {\ttfamily Simple\+Tolerance\+Termination}, termination criterion is met when the increase in residue value drops below the given tolerance. To accommodate spikes, certain number of successive residue drops are accepted. Secondary termination criterion terminates algorithm when iteration count goes beyond the threshold.
+
+{\ttfamily Validation\+RMSETermination} divides the data into 2 sets, training set and validation set. Entries of validation set are nullifed in the input matrix. Termination criterion is met when increase in validation set RMSe value drops below the given tolerance. To accommodate spikes certain number of successive validation RMSE drops are accepted. This upper imit on successive drops can be adjusted with {\ttfamily reverse\+Step\+Count}. A secondary termination criterion terminates the algorithm when the iteration count goes above the threshold. Though this termination policy is better measure of convergence than the above 2 termination policies, it may cause a decrease in performance since it is computationally expensive.
+
+On the other hand, \doxyref{Complete\+Incremental\+Termination}{p.}{classmlpack_1_1amf_1_1CompleteIncrementalTermination} and \doxyref{Incomplete\+Incremental\+Termination}{p.}{classmlpack_1_1amf_1_1IncompleteIncrementalTermination} are just wrapper classes for other termination policies. These policies are used when AMF is applied with \doxyref{SVDComplete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning} and \doxyref{SVDIncomplete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDIncompleteIncrementalLearning}, respectively.\doxysubsection{Using different initialization policies}\label{amftutorial_init_rule_amftut}
+mlpack currently has 2 initialization policies implemented for AMF\+:
+
+
+\begin{DoxyItemize}
+\item \doxyref{Random\+Initialization}{p.}{classmlpack_1_1amf_1_1RandomInitialization}
+\item \doxyref{Random\+Acol\+Initialization}{p.}{classmlpack_1_1amf_1_1RandomAcolInitialization}
+\end{DoxyItemize}
+
+{\ttfamily Random\+Initialization} initializes matrices W and H with random uniform distribution while {\ttfamily Random\+Acol\+Initialization} initializes the W matrix by averaging p randomly chosen columns of V. In the case of {\ttfamily Random\+Acol\+Initialization}, p is a template parameter.
+
+To implement their own initialization policy, users need to define the following function in their class.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{template}<\textcolor{keyword}{typename} MatType>}
+\DoxyCodeLine{\textcolor{keyword}{inline} \textcolor{keyword}{static} \textcolor{keywordtype}{void} Initialize(\textcolor{keyword}{const} MatType\& V,}
+\DoxyCodeLine{                              \textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} r,}
+\DoxyCodeLine{                              arma::mat\& W,}
+\DoxyCodeLine{                              arma::mat\& H)}
+
+\end{DoxyCode}
+\doxysubsection{Using different update rules}\label{amftutorial_update_rule_amftut}
+mlpack implements the following update rules for the AMF class\+:
+
+
+\begin{DoxyItemize}
+\item \doxyref{AMFALSUpdate}{p.}{classmlpack_1_1amf_1_1NMFALSUpdate}
+\item \doxyref{NMFMultiplicative\+Distance\+Update}{p.}{classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate}
+\item \doxyref{NMFMultiplicative\+Divergence\+Update}{p.}{classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate}
+\item \doxyref{SVDBatch\+Learning}{p.}{classmlpack_1_1amf_1_1SVDBatchLearning}
+\item \doxyref{SVDIncomplete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDIncompleteIncrementalLearning}
+\item \doxyref{SVDComplete\+Incremental\+Learning}{p.}{classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning}
+\end{DoxyItemize}
+
+Non-\/\+Negative Matrix factorization can be achieved with {\ttfamily NMFALSUpdate}, {\ttfamily NMFMultiplicative\+Divergence\+Update} or {\ttfamily NMFMultiplicative\+Divergence\+Update}. {\ttfamily NMFALSUpdate} implements a simple Alternating Least Squares optimization while the other rules implement algorithms given in the paper \textquotesingle{}Algorithms for Non-\/negative Matrix Factorization\textquotesingle{}.
+
+The remaining update rules perform the singular value decomposition of the matrix V. This SVD factorization is optimized for use by mlpack\textquotesingle{}s collaborative filtering code (\doxyref{Collaborative filtering tutorial}{p.}{cftutorial}). This use of SVD factorizers for collaborative filtering is described in the paper \textquotesingle{}A Guide to Singular Value Decomposition for Collaborative Filtering\textquotesingle{} by Chih-\/\+Chao Ma. For further details about the algorithms refer to the respective class documentation.\doxysubsection{Using Non-\/\+Negative Matrix Factorization with AMF}\label{amftutorial_nmf_amftut}
+The use of AMF for Non-\/\+Negative Matrix factorization is simple. The AMF module defines \doxyref{NMFALSFactorizer}{p.}{namespacemlpack_1_1amf_a3e3179901b352438bc974218b6ba0fab} which can be used directly without knowing the internal structure of AMF. For example\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <mlpack/core.hpp>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <mlpack/methods/amf/amf.hpp>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }arma;}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack::amf;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  NMFALSFactorizer nmf;}
+\DoxyCodeLine{  mat W, H;}
+\DoxyCodeLine{  mat V = randu<mat>(100, 100);}
+\DoxyCodeLine{  \textcolor{keywordtype}{double} residue = nmf.Apply(V, W, H);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+{\ttfamily NMFALSFactorizer} uses {\ttfamily Simple\+Residue\+Termination}, which is most preferred with Non-\/\+Negative Matrix factorizers. The initialization of W and H in {\ttfamily NMFALSFactorizer} is random. The {\ttfamily Apply()} function returns the residue obtained by comparing the constructed matrix W $\ast$ H with the original matrix V.\doxysubsection{Using Singular Value Decomposition with AMF}\label{amftutorial_svd_amftut}
+mlpack has the following SVD factorizers implemented for AMF\+:
+
+
+\begin{DoxyItemize}
+\item \doxyref{SVDBatch\+Factorizer}{p.}{namespacemlpack_1_1amf_aedb113157f87759c24e2368dfd7b9216}
+\item \doxyref{SVDIncomplete\+Incremental\+Factorizer}{p.}{namespacemlpack_1_1amf_a681ac877cb603d00766e015ff4d4c294}
+\item \doxyref{SVDComplete\+Incremental\+Factorizer}{p.}{namespacemlpack_1_1amf_aeaa4b749fc1afc70451f096dca4228b5}
+\end{DoxyItemize}
+
+Each of these factorizers takes a template parameter {\ttfamily Mat\+Type}, which specifies the type of the matrix V (dense or sparse---these have types {\ttfamily arma\+::mat} and {\ttfamily arma\+::sp\+\_\+mat}, respectively). When the matrix to be factorized is relatively sparse, specifying {\ttfamily Mat\+Type} {\ttfamily =} {\ttfamily arma\+::sp\+\_\+mat} can provide a runtime boost.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <mlpack/core.hpp>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <mlpack/methods/amf/amf.hpp>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }arma;}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack::amf;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  sp\_mat V = randu<sp\_mat>(100,100);}
+\DoxyCodeLine{  mat W, H;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  SVDBatchFactorizer<sp\_mat> svd;}
+\DoxyCodeLine{  \textcolor{keywordtype}{double} residue = svd.Apply(V, W, H);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\doxysection{Further documentation}\label{amftutorial_further_doc_amftut}
+For further documentation on the AMF class, consult the \doxyref{complete API documentation}{p.}{classmlpack_1_1amf_1_1AMF}. 

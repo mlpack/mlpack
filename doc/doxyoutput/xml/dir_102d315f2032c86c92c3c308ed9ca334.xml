@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_102d315f2032c86c92c3c308ed9ca334" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/ann/augmented/tasks</compoundname>
+    <innerfile refid="augmented_2tasks_2add_8hpp">add.hpp</innerfile>
+    <innerfile refid="copy_8hpp">copy.hpp</innerfile>
+    <innerfile refid="score_8hpp">score.hpp</innerfile>
+    <innerfile refid="sort_8hpp">sort.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/augmented/tasks/"/>
+  </compounddef>
+</doxygen>

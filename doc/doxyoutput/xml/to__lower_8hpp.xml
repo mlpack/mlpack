@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="to__lower_8hpp" kind="file" language="C++">
+    <compoundname>to_lower.hpp</compoundname>
+    <includedby refid="atrous__convolution_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/layer/atrous_convolution.hpp</includedby>
+    <includedby refid="convolution_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/layer/convolution.hpp</includedby>
+    <includedby refid="transposed__convolution_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp</includedby>
+    <invincdepgraph>
+      <node id="13">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/convolution.hpp</label>
+        <link refid="convolution_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</label>
+        <link refid="layer_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</label>
+        <link refid="rnn_8hpp"/>
+      </node>
+      <node id="7">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
+        <link refid="categorical__dqn_8hpp"/>
+      </node>
+      <node id="14">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp</label>
+        <link refid="transposed__convolution_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</label>
+        <link refid="brnn_8hpp"/>
+      </node>
+      <node id="10">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp</label>
+        <link refid="layer__names_8hpp"/>
+      </node>
+      <node id="12">
+        <label>/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp</label>
+        <link refid="custom__layer_8hpp"/>
+      </node>
+      <node id="5">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</label>
+        <link refid="ffn_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp</label>
+        <link refid="dueling__dqn_8hpp"/>
+      </node>
+      <node id="6">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
+        <link refid="gan_8hpp"/>
+      </node>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/atrous_convolution.hpp</label>
+        <link refid="atrous__convolution_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp</label>
+        <link refid="simple__dqn_8hpp"/>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/core/util/to_lower.hpp</label>
+        <link refid="to__lower_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1util">mlpack::util</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Himanshu Pathak</para>
+</simplesect>
+Convert a string to lowercase.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_UTIL_LOWER_STRING_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_UTIL_LOWER_STRING_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">util<sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="namespacemlpack_1_1util_1a17299c3035aca77759743f241cefd4c7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1util_1a17299c3035aca77759743f241cefd4c7" kindref="member">ToLower</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>input)</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/>std::string<sp/>output;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/>std::transform(input.begin(),<sp/>input.end(),<sp/>std::back_inserter(output),</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>[](</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>c){<sp/>return<sp/>std::tolower(c);<sp/>});</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>output;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>util</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/to_lower.hpp"/>
+  </compounddef>
+</doxygen>

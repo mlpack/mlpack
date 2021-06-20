@@ -1,0 +1,72 @@
+.TH "InformationGain" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+InformationGain \- The standard information gain criterion, used for calculating gain in decision trees\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<bool UseWeights> static double \fBEvaluate\fP (const arma::Row< size_t > &labels, const size_t numClasses, const arma::Row< double > &weights)"
+.br
+.RI "Given a set of labels, calculate the information gain of those labels\&. "
+.ti -1c
+.RI "template<bool UseWeights, typename CountType > static double \fBEvaluatePtr\fP (const CountType *counts, const size_t countLength, const CountType totalCount)"
+.br
+.RI "Evaluate the information gain given a vector of class weight counts\&. "
+.ti -1c
+.RI "static double \fBRange\fP (const size_t numClasses)"
+.br
+.RI "Return the range of the information gain for the given number of classes\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The standard information gain criterion, used for calculating gain in decision trees\&. 
+.PP
+Definition at line 25 of file information_gain\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static double Evaluate (const arma::Row< size_t > & labels, const size_t numClasses, const arma::Row< double > & weights)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Given a set of labels, calculate the information gain of those labels\&. Note that it is possible that due to floating-point representation issues, it is possible that the gain returned can be very slightly greater than 0! Thus, if you are checking for a perfect fit, be sure to use 'gain >= 0\&.0' not 'gain == 0\&.0'\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIlabels\fP Labels of the dataset\&. 
+.br
+\fInumClasses\fP Number of classes in the dataset\&. 
+.br
+\fIweights\fP Weights associated with labels\&. 
+.RE
+.PP
+
+.PP
+Definition at line 60 of file information_gain\&.hpp\&.
+.SS "static double EvaluatePtr (const CountType * counts, const size_t countLength, const CountType totalCount)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Evaluate the information gain given a vector of class weight counts\&. 
+.PP
+Definition at line 32 of file information_gain\&.hpp\&.
+.SS "static double Range (const size_t numClasses)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Return the range of the information gain for the given number of classes\&. (That is, the difference between the maximum possible value and the minimum possible value\&.)
+.PP
+\fBParameters\fP
+.RS 4
+\fInumClasses\fP Number of classes in the dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 203 of file information_gain\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

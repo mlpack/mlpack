@@ -1,0 +1,87 @@
+\doxysection{mlpack\+::metric Namespace Reference}
+\label{namespacemlpack_1_1metric}\index{mlpack::metric@{mlpack::metric}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ BLEU}
+\begin{DoxyCompactList}\small\item\em \doxyref{BLEU}{p.}{classmlpack_1_1metric_1_1BLEU}, or the Bilingual Evaluation Understudy, is an algorithm for evaluating the quality of text which has been machine translated from one natural language to another. \end{DoxyCompactList}\item 
+class \textbf{ IoU}
+\begin{DoxyCompactList}\small\item\em Definition of Intersection over Union metric. \end{DoxyCompactList}\item 
+class \textbf{ IPMetric}
+\begin{DoxyCompactList}\small\item\em The inner product metric, \doxyref{IPMetric}{p.}{classmlpack_1_1metric_1_1IPMetric}, takes a given Mercer kernel (Kernel\+Type), and when \doxyref{Evaluate()}{p.}{classmlpack_1_1metric_1_1IPMetric_a55e03560fb8c7923de4a43df9a265437} is called, returns the distance between the two points in kernel space\+: \end{DoxyCompactList}\item 
+class \textbf{ LMetric}
+\begin{DoxyCompactList}\small\item\em The L\+\_\+p metric for arbitrary integer p, with an option to take the root. \end{DoxyCompactList}\item 
+class \textbf{ Mahalanobis\+Distance}
+\begin{DoxyCompactList}\small\item\em The Mahalanobis distance, which is essentially a stretched Euclidean distance. \end{DoxyCompactList}\item 
+class \textbf{ NMS}
+\begin{DoxyCompactList}\small\item\em Definition of Non Maximal Supression. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef \textbf{ LMetric}$<$ INT\+\_\+\+MAX, false $>$ \textbf{ Chebyshev\+Distance}
+\begin{DoxyCompactList}\small\item\em The L-\/infinity distance. \end{DoxyCompactList}\item 
+typedef \textbf{ LMetric}$<$ 2, true $>$ \textbf{ Euclidean\+Distance}
+\begin{DoxyCompactList}\small\item\em The Euclidean (L2) distance. \end{DoxyCompactList}\item 
+typedef \textbf{ LMetric}$<$ 1, false $>$ \textbf{ Manhattan\+Distance}
+\begin{DoxyCompactList}\small\item\em The Manhattan (L1) distance. \end{DoxyCompactList}\item 
+typedef \textbf{ LMetric}$<$ 2, false $>$ \textbf{ Squared\+Euclidean\+Distance}
+\begin{DoxyCompactList}\small\item\em The squared Euclidean (L2) distance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\label{namespacemlpack_1_1metric_ad0e0d71e65dddac145245399cb7b0b15}} 
+\index{mlpack::metric@{mlpack::metric}!ChebyshevDistance@{ChebyshevDistance}}
+\index{ChebyshevDistance@{ChebyshevDistance}!mlpack::metric@{mlpack::metric}}
+\doxysubsubsection{ChebyshevDistance}
+{\footnotesize\ttfamily typedef \textbf{ LMetric}$<$INT\+\_\+\+MAX, false$>$ \textbf{ Chebyshev\+Distance}}
+
+
+
+The L-\/infinity distance. 
+
+
+
+Definition at line 117 of file lmetric.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1metric_a0306f114fdf32dcdfa8f015408cfc37d}} 
+\index{mlpack::metric@{mlpack::metric}!EuclideanDistance@{EuclideanDistance}}
+\index{EuclideanDistance@{EuclideanDistance}!mlpack::metric@{mlpack::metric}}
+\doxysubsubsection{EuclideanDistance}
+{\footnotesize\ttfamily typedef \textbf{ LMetric}$<$2, true$>$ \textbf{ Euclidean\+Distance}}
+
+
+
+The Euclidean (L2) distance. 
+
+
+
+Definition at line 112 of file lmetric.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1metric_a70063851fc04406ab432862576463215}} 
+\index{mlpack::metric@{mlpack::metric}!ManhattanDistance@{ManhattanDistance}}
+\index{ManhattanDistance@{ManhattanDistance}!mlpack::metric@{mlpack::metric}}
+\doxysubsubsection{ManhattanDistance}
+{\footnotesize\ttfamily typedef \textbf{ LMetric}$<$1, false$>$ \textbf{ Manhattan\+Distance}}
+
+
+
+The Manhattan (L1) distance. 
+
+
+
+Definition at line 101 of file lmetric.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1metric_a42614a1b47a4de6037e67742b94dd24d}} 
+\index{mlpack::metric@{mlpack::metric}!SquaredEuclideanDistance@{SquaredEuclideanDistance}}
+\index{SquaredEuclideanDistance@{SquaredEuclideanDistance}!mlpack::metric@{mlpack::metric}}
+\doxysubsubsection{SquaredEuclideanDistance}
+{\footnotesize\ttfamily typedef \textbf{ LMetric}$<$2, false$>$ \textbf{ Squared\+Euclidean\+Distance}}
+
+
+
+The squared Euclidean (L2) distance. 
+
+Note that this is not technically a metric! But it can sometimes be used when distances are required. 
+
+Definition at line 107 of file lmetric.\+hpp.
+

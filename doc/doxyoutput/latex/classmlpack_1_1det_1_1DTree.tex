@@ -1,0 +1,767 @@
+\doxysection{DTree$<$ Mat\+Type, Tag\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1det_1_1DTree}\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+
+
+A density estimation tree is similar to both a decision tree and a space partitioning tree (like a kd-\/tree).  
+
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef Mat\+Type\+::elem\+\_\+type \textbf{ Elem\+Type}
+\begin{DoxyCompactList}\small\item\em The actual, underlying type we\textquotesingle{}re working with. \end{DoxyCompactList}\item 
+typedef arma\+::\+Col$<$ \textbf{ Elem\+Type} $>$ \textbf{ Stat\+Type}
+\begin{DoxyCompactList}\small\item\em The statistic type we are holding. \end{DoxyCompactList}\item 
+typedef Mat\+Type\+::vec\+\_\+type \textbf{ Vec\+Type}
+\begin{DoxyCompactList}\small\item\em The type of vector we are using. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ DTree} ()
+\begin{DoxyCompactList}\small\item\em Create an empty density estimation tree. \end{DoxyCompactList}\item 
+\textbf{ DTree} (const \textbf{ DTree} \&obj)
+\begin{DoxyCompactList}\small\item\em Create a tree that is the copy of the given tree. \end{DoxyCompactList}\item 
+\textbf{ DTree} (const \textbf{ Stat\+Type} \&max\+Vals, const \textbf{ Stat\+Type} \&min\+Vals, const size\+\_\+t start, const size\+\_\+t end, const double log\+Neg\+Error)
+\begin{DoxyCompactList}\small\item\em Create a child node of a density estimation tree given the bounding box specified by max\+Vals and min\+Vals, using the size given in start and end and the specified error. \end{DoxyCompactList}\item 
+\textbf{ DTree} (const \textbf{ Stat\+Type} \&max\+Vals, const \textbf{ Stat\+Type} \&min\+Vals, const size\+\_\+t total\+Points)
+\begin{DoxyCompactList}\small\item\em Create a density estimation tree with the given bounds and the given number of total points. \end{DoxyCompactList}\item 
+\textbf{ DTree} (const \textbf{ Stat\+Type} \&max\+Vals, const \textbf{ Stat\+Type} \&min\+Vals, const size\+\_\+t total\+Points, const size\+\_\+t start, const size\+\_\+t end)
+\begin{DoxyCompactList}\small\item\em Create a child node of a density estimation tree given the bounding box specified by max\+Vals and min\+Vals, using the size given in start and end, and calculating the error with the total number of points given. \end{DoxyCompactList}\item 
+\textbf{ DTree} (\textbf{ DTree} \&\&obj)
+\begin{DoxyCompactList}\small\item\em Create a tree by taking ownership of another tree (move constructor). \end{DoxyCompactList}\item 
+\textbf{ DTree} (Mat\+Type \&data)
+\begin{DoxyCompactList}\small\item\em Create a density estimation tree on the given data. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+DTree} ()
+\begin{DoxyCompactList}\small\item\em Clean up memory allocated by the tree. \end{DoxyCompactList}\item 
+double \textbf{ Alpha\+Upper} () const
+\begin{DoxyCompactList}\small\item\em Return the upper part of the alpha sum. \end{DoxyCompactList}\item 
+Tag\+Type \textbf{ Bucket\+Tag} () const
+\begin{DoxyCompactList}\small\item\em Return the current bucket\textquotesingle{}s ID, if leaf, or -\/1 otherwise. \end{DoxyCompactList}\item 
+\textbf{ DTree} \& \textbf{ Child} (const size\+\_\+t child) const
+\begin{DoxyCompactList}\small\item\em Return the specified child (0 will be left, 1 will be right). \end{DoxyCompactList}\item 
+\textbf{ DTree} $\ast$\& \textbf{ Child\+Ptr} (const size\+\_\+t child)
+\item 
+double \textbf{ Compute\+Value} (const \textbf{ Vec\+Type} \&query) const
+\begin{DoxyCompactList}\small\item\em Compute the logarithm of the density estimate of a given query point. \end{DoxyCompactList}\item 
+void \textbf{ Compute\+Variable\+Importance} (arma\+::vec \&importances) const
+\begin{DoxyCompactList}\small\item\em Compute the variable importance of each dimension in the learned tree. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ End} () const
+\begin{DoxyCompactList}\small\item\em Return the first index of a point not contained in this node. \end{DoxyCompactList}\item 
+Tag\+Type \textbf{ Find\+Bucket} (const \textbf{ Vec\+Type} \&query) const
+\begin{DoxyCompactList}\small\item\em Return the tag of the leaf containing the query. \end{DoxyCompactList}\item 
+double \textbf{ Grow} (Mat\+Type \&data, arma\+::\+Col$<$ size\+\_\+t $>$ \&old\+From\+New, const bool use\+Vol\+Reg=false, const size\+\_\+t max\+Leaf\+Size=10, const size\+\_\+t min\+Leaf\+Size=5)
+\begin{DoxyCompactList}\small\item\em Greedily expand the tree. \end{DoxyCompactList}\item 
+\textbf{ DTree} $\ast$ \textbf{ Left} () const
+\begin{DoxyCompactList}\small\item\em Return the left child. \end{DoxyCompactList}\item 
+double \textbf{ Log\+Negative\+Error} (const size\+\_\+t total\+Points) const
+\begin{DoxyCompactList}\small\item\em Compute the log-\/negative-\/error for this point, given the total number of points in the dataset. \end{DoxyCompactList}\item 
+double \textbf{ Log\+Neg\+Error} () const
+\begin{DoxyCompactList}\small\item\em Return the log negative error of this node. \end{DoxyCompactList}\item 
+double \textbf{ Log\+Volume} () const
+\begin{DoxyCompactList}\small\item\em Return the inverse of the volume of this node. \end{DoxyCompactList}\item 
+const \textbf{ Stat\+Type} \& \textbf{ Max\+Vals} () const
+\begin{DoxyCompactList}\small\item\em Return the maximum values. \end{DoxyCompactList}\item 
+const \textbf{ Stat\+Type} \& \textbf{ Min\+Vals} () const
+\begin{DoxyCompactList}\small\item\em Return the minimum values. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Children} () const
+\begin{DoxyCompactList}\small\item\em Return the number of children in this node. \end{DoxyCompactList}\item 
+\textbf{ DTree} \& \textbf{ operator=} (const \textbf{ DTree} \&obj)
+\begin{DoxyCompactList}\small\item\em Copy the given tree. \end{DoxyCompactList}\item 
+\textbf{ DTree} \& \textbf{ operator=} (\textbf{ DTree} \&\&obj)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given tree (move operator). \end{DoxyCompactList}\item 
+double \textbf{ Prune\+And\+Update} (const double old\+Alpha, const size\+\_\+t points, const bool use\+Vol\+Reg=false)
+\begin{DoxyCompactList}\small\item\em Perform alpha pruning on a tree. \end{DoxyCompactList}\item 
+double \textbf{ Ratio} () const
+\begin{DoxyCompactList}\small\item\em Return the ratio of points in this node to the points in the whole dataset. \end{DoxyCompactList}\item 
+\textbf{ DTree} $\ast$ \textbf{ Right} () const
+\begin{DoxyCompactList}\small\item\em Return the right child. \end{DoxyCompactList}\item 
+bool \textbf{ Root} () const
+\begin{DoxyCompactList}\small\item\em Return whether or not this is the root of the tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the density estimation tree. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Split\+Dim} () const
+\begin{DoxyCompactList}\small\item\em Return the split dimension of this node. \end{DoxyCompactList}\item 
+\textbf{ Elem\+Type} \textbf{ Split\+Value} () const
+\begin{DoxyCompactList}\small\item\em Return the split value of this node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Start} () const
+\begin{DoxyCompactList}\small\item\em Return the starting index of points contained in this node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Subtree\+Leaves} () const
+\begin{DoxyCompactList}\small\item\em Return the number of leaves which are descendants of this node. \end{DoxyCompactList}\item 
+double \textbf{ Subtree\+Leaves\+Log\+Neg\+Error} () const
+\begin{DoxyCompactList}\small\item\em Return the log negative error of all descendants of this node. \end{DoxyCompactList}\item 
+Tag\+Type \textbf{ Tag\+Tree} (const Tag\+Type \&tag=0, bool every\+Node=false)
+\begin{DoxyCompactList}\small\item\em Index the buckets for possible usage later; this results in every leaf in the tree having a specific tag (accessible with \doxyref{Bucket\+Tag()}{p.}{classmlpack_1_1det_1_1DTree_a2376602e2b6dec1df59d2fc967452870}). \end{DoxyCompactList}\item 
+bool \textbf{ Within\+Range} (const \textbf{ Vec\+Type} \&query) const
+\begin{DoxyCompactList}\small\item\em Return whether a query point is within the range of this node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Mat\+Type = arma\+::mat, typename Tag\+Type = int$>$\newline
+class mlpack\+::det\+::\+DTree$<$ Mat\+Type, Tag\+Type $>$}
+
+A density estimation tree is similar to both a decision tree and a space partitioning tree (like a kd-\/tree). 
+
+Each leaf represents a constant-\/density hyper-\/rectangle. The tree is constructed in such a way as to minimize the integrated square error between the probability distribution of the tree and the observed probability distribution of the data. Because the tree is similar to a decision tree, the density estimation tree can provide very fast density estimates for a given point.
+
+For more information, see the following paper\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@incollection\{ram2011,}
+\DoxyCodeLine{  author = \{Ram, Parikshit and Gray, Alexander G.\},}
+\DoxyCodeLine{  title = \{Density estimation trees\},}
+\DoxyCodeLine{  booktitle = \{\{Proceedings of the 17th ACM SIGKDD International Conference}
+\DoxyCodeLine{      on Knowledge Discovery and Data Mining\}\},}
+\DoxyCodeLine{  series = \{KDD \textcolor{stringliteral}{'11\},}}
+\DoxyCodeLine{\textcolor{stringliteral}{  year = \{2011\},}}
+\DoxyCodeLine{\textcolor{stringliteral}{  pages = \{627-\/-\/635\}}}
+\DoxyCodeLine{\textcolor{stringliteral}{\}}}
+
+\end{DoxyCode}
+ 
+
+Definition at line 46 of file dtree.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a227d0c7e23e98fcd6c81ecab357a791f}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!ElemType@{ElemType}}
+\index{ElemType@{ElemType}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{ElemType}
+{\footnotesize\ttfamily typedef Mat\+Type\+::elem\+\_\+type \textbf{ Elem\+Type}}
+
+
+
+The actual, underlying type we\textquotesingle{}re working with. 
+
+
+
+Definition at line 50 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a5932a1a525043a5f2679749a681dc51f}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!StatType@{StatType}}
+\index{StatType@{StatType}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{StatType}
+{\footnotesize\ttfamily typedef arma\+::\+Col$<$\textbf{ Elem\+Type}$>$ \textbf{ Stat\+Type}}
+
+
+
+The statistic type we are holding. 
+
+
+
+Definition at line 54 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a528fde5f43fe390e444521297a503089}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!VecType@{VecType}}
+\index{VecType@{VecType}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{VecType}
+{\footnotesize\ttfamily typedef Mat\+Type\+::vec\+\_\+type \textbf{ Vec\+Type}}
+
+
+
+The type of vector we are using. 
+
+
+
+Definition at line 52 of file dtree.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1det_1_1DTree_aeb922a13b4645b611d04538638632b6e}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!DTree@{DTree}}
+\index{DTree@{DTree}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{DTree()\hspace{0.1cm}{\footnotesize\ttfamily [1/7]}}
+{\footnotesize\ttfamily \textbf{ DTree} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create an empty density estimation tree. 
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a202734b3555cef7a0fc346ba8abb719d}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!DTree@{DTree}}
+\index{DTree@{DTree}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{DTree()\hspace{0.1cm}{\footnotesize\ttfamily [2/7]}}
+{\footnotesize\ttfamily \textbf{ DTree} (\begin{DoxyParamCaption}\item[{const \textbf{ DTree}$<$ Mat\+Type, Tag\+Type $>$ \&}]{obj }\end{DoxyParamCaption})}
+
+
+
+Create a tree that is the copy of the given tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em obj} & Tree to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a2fa51451baba8caec9c5d91fc798203c}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!DTree@{DTree}}
+\index{DTree@{DTree}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{DTree()\hspace{0.1cm}{\footnotesize\ttfamily [3/7]}}
+{\footnotesize\ttfamily \textbf{ DTree} (\begin{DoxyParamCaption}\item[{\textbf{ DTree}$<$ Mat\+Type, Tag\+Type $>$ \&\&}]{obj }\end{DoxyParamCaption})}
+
+
+
+Create a tree by taking ownership of another tree (move constructor). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em obj} & Tree to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_add20405870ac7af34582f789b988a3ab}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!DTree@{DTree}}
+\index{DTree@{DTree}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{DTree()\hspace{0.1cm}{\footnotesize\ttfamily [4/7]}}
+{\footnotesize\ttfamily \textbf{ DTree} (\begin{DoxyParamCaption}\item[{const \textbf{ Stat\+Type} \&}]{max\+Vals,  }\item[{const \textbf{ Stat\+Type} \&}]{min\+Vals,  }\item[{const size\+\_\+t}]{total\+Points }\end{DoxyParamCaption})}
+
+
+
+Create a density estimation tree with the given bounds and the given number of total points. 
+
+Children will not be created.
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Vals} & Maximum values of the bounding box. \\
+\hline
+{\em min\+Vals} & Minimum values of the bounding box. \\
+\hline
+{\em total\+Points} & Total number of points in the dataset. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_af84844af66ccc68af167e35e1beab91f}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!DTree@{DTree}}
+\index{DTree@{DTree}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{DTree()\hspace{0.1cm}{\footnotesize\ttfamily [5/7]}}
+{\footnotesize\ttfamily \textbf{ DTree} (\begin{DoxyParamCaption}\item[{Mat\+Type \&}]{data }\end{DoxyParamCaption})}
+
+
+
+Create a density estimation tree on the given data. 
+
+Children will be created following the procedure outlined in the paper. The data will be modified; it will be reordered similar to the way Binary\+Space\+Tree modifies datasets.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to build tree on. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a0c03d5fb1f36b32039df0bd07c9facc4}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!DTree@{DTree}}
+\index{DTree@{DTree}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{DTree()\hspace{0.1cm}{\footnotesize\ttfamily [6/7]}}
+{\footnotesize\ttfamily \textbf{ DTree} (\begin{DoxyParamCaption}\item[{const \textbf{ Stat\+Type} \&}]{max\+Vals,  }\item[{const \textbf{ Stat\+Type} \&}]{min\+Vals,  }\item[{const size\+\_\+t}]{start,  }\item[{const size\+\_\+t}]{end,  }\item[{const double}]{log\+Neg\+Error }\end{DoxyParamCaption})}
+
+
+
+Create a child node of a density estimation tree given the bounding box specified by max\+Vals and min\+Vals, using the size given in start and end and the specified error. 
+
+Children of this node will not be created recursively.
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Vals} & Upper bound of bounding box. \\
+\hline
+{\em min\+Vals} & Lower bound of bounding box. \\
+\hline
+{\em start} & Start of points represented by this node in the data matrix. \\
+\hline
+{\em end} & End of points represented by this node in the data matrix. \\
+\hline
+{\em log\+Neg\+Error} & log-\/negative error of this node. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a4dbae2510438c52132ee54812beaaffc}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!DTree@{DTree}}
+\index{DTree@{DTree}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{DTree()\hspace{0.1cm}{\footnotesize\ttfamily [7/7]}}
+{\footnotesize\ttfamily \textbf{ DTree} (\begin{DoxyParamCaption}\item[{const \textbf{ Stat\+Type} \&}]{max\+Vals,  }\item[{const \textbf{ Stat\+Type} \&}]{min\+Vals,  }\item[{const size\+\_\+t}]{total\+Points,  }\item[{const size\+\_\+t}]{start,  }\item[{const size\+\_\+t}]{end }\end{DoxyParamCaption})}
+
+
+
+Create a child node of a density estimation tree given the bounding box specified by max\+Vals and min\+Vals, using the size given in start and end, and calculating the error with the total number of points given. 
+
+Children of this node will not be created recursively.
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Vals} & Upper bound of bounding box. \\
+\hline
+{\em min\+Vals} & Lower bound of bounding box. \\
+\hline
+{\em total\+Points} & Total number of points. \\
+\hline
+{\em start} & Start of points represented by this node in the data matrix. \\
+\hline
+{\em end} & End of points represented by this node in the data matrix. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_afdcf08945ef6a9e395acc1cea13582b1}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!````~DTree@{$\sim$DTree}}
+\index{````~DTree@{$\sim$DTree}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{$\sim$DTree()}
+{\footnotesize\ttfamily $\sim$\textbf{ DTree} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clean up memory allocated by the tree. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1det_1_1DTree_ac68e0c97d89449fb5b376c5efea143af}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!AlphaUpper@{AlphaUpper}}
+\index{AlphaUpper@{AlphaUpper}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{AlphaUpper()}
+{\footnotesize\ttfamily double Alpha\+Upper (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the upper part of the alpha sum. 
+
+
+
+Definition at line 307 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a2376602e2b6dec1df59d2fc967452870}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!BucketTag@{BucketTag}}
+\index{BucketTag@{BucketTag}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{BucketTag()}
+{\footnotesize\ttfamily Tag\+Type Bucket\+Tag (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the current bucket\textquotesingle{}s ID, if leaf, or -\/1 otherwise. 
+
+
+
+Definition at line 309 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a638d657170d691d9f1558a18510cd1a3}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!Child@{Child}}
+\index{Child@{Child}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{Child()}
+{\footnotesize\ttfamily \textbf{ DTree}\& Child (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{child }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the specified child (0 will be left, 1 will be right). 
+
+If the index is greater than 1, this will return the right child.
+
+
+\begin{DoxyParams}{Parameters}
+{\em child} & Index of child to return. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 319 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a16587a63237ee25fe1fd3ab68e9b3386}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!ChildPtr@{ChildPtr}}
+\index{ChildPtr@{ChildPtr}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{ChildPtr()}
+{\footnotesize\ttfamily \textbf{ DTree}$\ast$\& Child\+Ptr (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{child }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 321 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a460008bb2c0ae3a0f30ed8dc5584064c}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!ComputeValue@{ComputeValue}}
+\index{ComputeValue@{ComputeValue}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{ComputeValue()}
+{\footnotesize\ttfamily double Compute\+Value (\begin{DoxyParamCaption}\item[{const \textbf{ Vec\+Type} \&}]{query }\end{DoxyParamCaption}) const}
+
+
+
+Compute the logarithm of the density estimate of a given query point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em query} & Point to estimate density of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a1adcb64ec2d66b8299df1271a1ed1cac}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!ComputeVariableImportance@{ComputeVariableImportance}}
+\index{ComputeVariableImportance@{ComputeVariableImportance}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{ComputeVariableImportance()}
+{\footnotesize\ttfamily void Compute\+Variable\+Importance (\begin{DoxyParamCaption}\item[{arma\+::vec \&}]{importances }\end{DoxyParamCaption}) const}
+
+
+
+Compute the variable importance of each dimension in the learned tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em importances} & Vector to store the calculated importances in. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a8d5a763647411c8a0f06e031c4611a0f}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!End@{End}}
+\index{End@{End}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{End()}
+{\footnotesize\ttfamily size\+\_\+t End (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the first index of a point not contained in this node. 
+
+
+
+Definition at line 284 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_aca51d21d7b498e518a14668c1158df37}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!FindBucket@{FindBucket}}
+\index{FindBucket@{FindBucket}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{FindBucket()}
+{\footnotesize\ttfamily Tag\+Type Find\+Bucket (\begin{DoxyParamCaption}\item[{const \textbf{ Vec\+Type} \&}]{query }\end{DoxyParamCaption}) const}
+
+
+
+Return the tag of the leaf containing the query. 
+
+This is useful for generating class memberships.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query} & Query to search for. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a25cf9236f42d3a49303271e7809dd222}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!Grow@{Grow}}
+\index{Grow@{Grow}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{Grow()}
+{\footnotesize\ttfamily double Grow (\begin{DoxyParamCaption}\item[{Mat\+Type \&}]{data,  }\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{old\+From\+New,  }\item[{const bool}]{use\+Vol\+Reg = {\ttfamily false},  }\item[{const size\+\_\+t}]{max\+Leaf\+Size = {\ttfamily 10},  }\item[{const size\+\_\+t}]{min\+Leaf\+Size = {\ttfamily 5} }\end{DoxyParamCaption})}
+
+
+
+Greedily expand the tree. 
+
+The points in the dataset will be reordered during tree growth.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset to build tree on. \\
+\hline
+{\em old\+From\+New} & Mappings from old points to new points. \\
+\hline
+{\em use\+Vol\+Reg} & If true, volume regularization is used. \\
+\hline
+{\em max\+Leaf\+Size} & Maximum size of a leaf. \\
+\hline
+{\em min\+Leaf\+Size} & Minimum size of a leaf. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a79cce69b3ecde079bd57239a87c64c19}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!Left@{Left}}
+\index{Left@{Left}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{Left()}
+{\footnotesize\ttfamily \textbf{ DTree}$\ast$ Left (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the left child. 
+
+
+
+Definition at line 301 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a0bc8836adf076875ac64f2e74cef34bb}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!LogNegativeError@{LogNegativeError}}
+\index{LogNegativeError@{LogNegativeError}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{LogNegativeError()}
+{\footnotesize\ttfamily double Log\+Negative\+Error (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{total\+Points }\end{DoxyParamCaption}) const}
+
+
+
+Compute the log-\/negative-\/error for this point, given the total number of points in the dataset. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em total\+Points} & Total number of points in the dataset. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a38a7244bcf0177609f89719fab505337}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!LogNegError@{LogNegError}}
+\index{LogNegError@{LogNegError}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{LogNegError()}
+{\footnotesize\ttfamily double Log\+Neg\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the log negative error of this node. 
+
+
+
+Definition at line 290 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a7b35659c3302722bb6ecb80dccba9cb6}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!LogVolume@{LogVolume}}
+\index{LogVolume@{LogVolume}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{LogVolume()}
+{\footnotesize\ttfamily double Log\+Volume (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the inverse of the volume of this node. 
+
+
+
+Definition at line 299 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a8b237dd32e6d7606276b495e55c323e4}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!MaxVals@{MaxVals}}
+\index{MaxVals@{MaxVals}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{MaxVals()}
+{\footnotesize\ttfamily const \textbf{ Stat\+Type}\& Max\+Vals (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the maximum values. 
+
+
+
+Definition at line 324 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a936a9325f501d7eae72eda0b13359e92}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!MinVals@{MinVals}}
+\index{MinVals@{MinVals}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{MinVals()}
+{\footnotesize\ttfamily const \textbf{ Stat\+Type}\& Min\+Vals (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the minimum values. 
+
+
+
+Definition at line 327 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a1f7ec083be66d58a3e02e12956bf005e}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!NumChildren@{NumChildren}}
+\index{NumChildren@{NumChildren}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{NumChildren()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of children in this node. 
+
+
+
+Definition at line 311 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a35c6e5aef1d33499c875e794245e834d}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ DTree}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ DTree}$<$ Mat\+Type, Tag\+Type $>$ \&}]{obj }\end{DoxyParamCaption})}
+
+
+
+Copy the given tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em obj} & Tree to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a44a35572d5d5bbdc6286d0b45e2e4220}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ DTree}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ DTree}$<$ Mat\+Type, Tag\+Type $>$ \&\&}]{obj }\end{DoxyParamCaption})}
+
+
+
+Take ownership of the given tree (move operator). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em obj} & Tree to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_ac6a3d2b5cdf33af3808b659e45750203}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!PruneAndUpdate@{PruneAndUpdate}}
+\index{PruneAndUpdate@{PruneAndUpdate}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{PruneAndUpdate()}
+{\footnotesize\ttfamily double Prune\+And\+Update (\begin{DoxyParamCaption}\item[{const double}]{old\+Alpha,  }\item[{const size\+\_\+t}]{points,  }\item[{const bool}]{use\+Vol\+Reg = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Perform alpha pruning on a tree. 
+
+Returns the new value of alpha.
+
+
+\begin{DoxyParams}{Parameters}
+{\em old\+Alpha} & Old value of alpha. \\
+\hline
+{\em points} & Total number of points in dataset. \\
+\hline
+{\em use\+Vol\+Reg} & If true, volume regularization is used. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+New value of alpha. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a0052f2d1427761ea25fb01a05d966a40}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!Ratio@{Ratio}}
+\index{Ratio@{Ratio}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{Ratio()}
+{\footnotesize\ttfamily double Ratio (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the ratio of points in this node to the points in the whole dataset. 
+
+
+
+Definition at line 297 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a307f2b17aaa261c5ad13c9ede094da2a}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!Right@{Right}}
+\index{Right@{Right}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{Right()}
+{\footnotesize\ttfamily \textbf{ DTree}$\ast$ Right (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the right child. 
+
+
+
+Definition at line 303 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_ae294c1fd88f903e9d9869d8cface6b39}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!Root@{Root}}
+\index{Root@{Root}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{Root()}
+{\footnotesize\ttfamily bool Root (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return whether or not this is the root of the tree. 
+
+
+
+Definition at line 305 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a65cba07328997659bec80b9879b15a51}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the density estimation tree. 
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a46ee4cbf7c7a198da7b47edb54fb39ad}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!SplitDim@{SplitDim}}
+\index{SplitDim@{SplitDim}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{SplitDim()}
+{\footnotesize\ttfamily size\+\_\+t Split\+Dim (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the split dimension of this node. 
+
+
+
+Definition at line 286 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a36af2c64784fb9719046edd8fcba57c8}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!SplitValue@{SplitValue}}
+\index{SplitValue@{SplitValue}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{SplitValue()}
+{\footnotesize\ttfamily \textbf{ Elem\+Type} Split\+Value (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the split value of this node. 
+
+
+
+Definition at line 288 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_af08dc5cd1920c643d789d89f8386d24e}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!Start@{Start}}
+\index{Start@{Start}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{Start()}
+{\footnotesize\ttfamily size\+\_\+t Start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the starting index of points contained in this node. 
+
+
+
+Definition at line 282 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_a2328d45aa8b19c2aa22b4cf0f3ec9c02}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!SubtreeLeaves@{SubtreeLeaves}}
+\index{SubtreeLeaves@{SubtreeLeaves}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{SubtreeLeaves()}
+{\footnotesize\ttfamily size\+\_\+t Subtree\+Leaves (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of leaves which are descendants of this node. 
+
+
+
+Definition at line 294 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_ace34bbc6045e759256ddb44ceb7e457c}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!SubtreeLeavesLogNegError@{SubtreeLeavesLogNegError}}
+\index{SubtreeLeavesLogNegError@{SubtreeLeavesLogNegError}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{SubtreeLeavesLogNegError()}
+{\footnotesize\ttfamily double Subtree\+Leaves\+Log\+Neg\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the log negative error of all descendants of this node. 
+
+
+
+Definition at line 292 of file dtree.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1DTree_aefc8f6cc31c99760ada618ed3b3976f8}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!TagTree@{TagTree}}
+\index{TagTree@{TagTree}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{TagTree()}
+{\footnotesize\ttfamily Tag\+Type Tag\+Tree (\begin{DoxyParamCaption}\item[{const Tag\+Type \&}]{tag = {\ttfamily 0},  }\item[{bool}]{every\+Node = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Index the buckets for possible usage later; this results in every leaf in the tree having a specific tag (accessible with \doxyref{Bucket\+Tag()}{p.}{classmlpack_1_1det_1_1DTree_a2376602e2b6dec1df59d2fc967452870}). 
+
+This function calls itself recursively. The tag is incremented with {\ttfamily operator++()}, so any {\ttfamily Tag\+Type} overriding it will do.
+
+
+\begin{DoxyParams}{Parameters}
+{\em tag} & Tag for the next leaf; leave at 0 for the initial call. \\
+\hline
+{\em every\+Node} & Whether to increment on every node, not just leaves. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1det_1_1DTree_a79f2c56cc6146455d078590734bee5f7}} 
+\index{DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}!WithinRange@{WithinRange}}
+\index{WithinRange@{WithinRange}!DTree$<$ MatType, TagType $>$@{DTree$<$ MatType, TagType $>$}}
+\doxysubsubsection{WithinRange()}
+{\footnotesize\ttfamily bool Within\+Range (\begin{DoxyParamCaption}\item[{const \textbf{ Vec\+Type} \&}]{query }\end{DoxyParamCaption}) const}
+
+
+
+Return whether a query point is within the range of this node. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/det/\textbf{ dtree.\+hpp}\end{DoxyCompactItemize}

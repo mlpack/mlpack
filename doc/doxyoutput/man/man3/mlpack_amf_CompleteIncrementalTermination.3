@@ -1,0 +1,169 @@
+.TH "CompleteIncrementalTermination< TerminationPolicy >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CompleteIncrementalTermination< TerminationPolicy > \- This class acts as a wrapper for basic termination policies to be used by \fBSVDCompleteIncrementalLearning\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBCompleteIncrementalTermination\fP (TerminationPolicy tPolicy=TerminationPolicy())"
+.br
+.RI "Empty constructor\&. "
+.ti -1c
+.RI "const double & \fBIndex\fP () const"
+.br
+.RI "Get current value of residue\&. "
+.ti -1c
+.RI "void \fBInitialize\fP (const arma::sp_mat &V)"
+.br
+.RI "Initializes the termination policy before stating the factorization\&. "
+.ti -1c
+.RI "template<class MatType > void \fBInitialize\fP (const MatType &V)"
+.br
+.RI "Initializes the termination policy before stating the factorization\&. "
+.ti -1c
+.RI "bool \fBIsConverged\fP (arma::mat &W, arma::mat &H)"
+.br
+.RI "Check if termination criterion is met, if the current iteration means that each point has been visited\&. "
+.ti -1c
+.RI "const size_t & \fBIteration\fP () const"
+.br
+.RI "Get current iteration count\&. "
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "Modify maximum number of iterations\&. "
+.ti -1c
+.RI "const size_t & \fBMaxIterations\fP () const"
+.br
+.RI "Access upper limit of iteration count\&. "
+.ti -1c
+.RI "TerminationPolicy & \fBTPolicy\fP ()"
+.br
+.RI "Modify the wrapped termination policy\&. "
+.ti -1c
+.RI "const TerminationPolicy & \fBTPolicy\fP () const"
+.br
+.RI "Access the wrapped termination policy\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<class TerminationPolicy>
+.br
+class mlpack::amf::CompleteIncrementalTermination< TerminationPolicy >"
+This class acts as a wrapper for basic termination policies to be used by \fBSVDCompleteIncrementalLearning\fP\&. 
+
+This class calls the wrapped class functions after every n calls to main class functions where n is the number of non-zero entries in the matrix being factorized\&. This is necessary for \fBSVDCompleteIncrementalLearning\fP, because otherwise \fBIsConverged()\fP is called after every point, which is very slow\&.
+.PP
+\fBSee also\fP
+.RS 4
+\fBAMF\fP, \fBSVDCompleteIncrementalLearning\fP 
+.RE
+.PP
+
+.PP
+Definition at line 29 of file complete_incremental_termination\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBCompleteIncrementalTermination\fP (TerminationPolicy tPolicy = \fCTerminationPolicy()\fP)\fC [inline]\fP"
+
+.PP
+Empty constructor\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fItPolicy\fP object of wrapped class\&. 
+.RE
+.PP
+
+.PP
+Definition at line 37 of file complete_incremental_termination\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "const double& Index () const\fC [inline]\fP"
+
+.PP
+Get current value of residue\&. 
+.PP
+Definition at line 93 of file complete_incremental_termination\&.hpp\&.
+.SS "void Initialize (const arma::sp_mat & V)\fC [inline]\fP"
+
+.PP
+Initializes the termination policy before stating the factorization\&. This is a specialization for sparse matrices\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.RE
+.PP
+
+.PP
+Definition at line 63 of file complete_incremental_termination\&.hpp\&.
+.SS "void Initialize (const MatType & V)\fC [inline]\fP"
+
+.PP
+Initializes the termination policy before stating the factorization\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.RE
+.PP
+
+.PP
+Definition at line 48 of file complete_incremental_termination\&.hpp\&.
+.SS "bool IsConverged (arma::mat & W, arma::mat & H)\fC [inline]\fP"
+
+.PP
+Check if termination criterion is met, if the current iteration means that each point has been visited\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIW\fP Basis matrix of output\&. 
+.br
+\fIH\fP Encoding matrix of output\&. 
+.RE
+.PP
+
+.PP
+Definition at line 79 of file complete_incremental_termination\&.hpp\&.
+.SS "const size_t& Iteration () const\fC [inline]\fP"
+
+.PP
+Get current iteration count\&. 
+.PP
+Definition at line 96 of file complete_incremental_termination\&.hpp\&.
+.SS "size_t& MaxIterations ()\fC [inline]\fP"
+
+.PP
+Modify maximum number of iterations\&. 
+.PP
+Definition at line 101 of file complete_incremental_termination\&.hpp\&.
+.SS "const size_t& MaxIterations () const\fC [inline]\fP"
+
+.PP
+Access upper limit of iteration count\&. 
+.PP
+Definition at line 99 of file complete_incremental_termination\&.hpp\&.
+.SS "TerminationPolicy& TPolicy ()\fC [inline]\fP"
+
+.PP
+Modify the wrapped termination policy\&. 
+.PP
+Definition at line 106 of file complete_incremental_termination\&.hpp\&.
+.SS "const TerminationPolicy& TPolicy () const\fC [inline]\fP"
+
+.PP
+Access the wrapped termination policy\&. 
+.PP
+Definition at line 104 of file complete_incremental_termination\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

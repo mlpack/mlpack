@@ -1,0 +1,51 @@
+\doxysection{Bound\+Traits$<$ Bound\+Type $>$ Struct Template Reference}
+\label{structmlpack_1_1bound_1_1BoundTraits}\index{BoundTraits$<$ BoundType $>$@{BoundTraits$<$ BoundType $>$}}
+
+
+A class to obtain compile-\/time traits about Bound\+Type classes.  
+
+
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool \textbf{ Has\+Tight\+Bounds} = false
+\begin{DoxyCompactList}\small\item\em If true, then the bounds for each dimension are tight. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Bound\+Type$>$\newline
+struct mlpack\+::bound\+::\+Bound\+Traits$<$ Bound\+Type $>$}
+
+A class to obtain compile-\/time traits about Bound\+Type classes. 
+
+If you are writing your own Bound\+Type class, you should make a template specialization in order to set the values correctly.
+
+\begin{DoxySeeAlso}{See also}
+Tree\+Traits, Kernel\+Traits 
+\end{DoxySeeAlso}
+
+
+Definition at line 26 of file bound\+\_\+traits.\+hpp.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{structmlpack_1_1bound_1_1BoundTraits_af41e456bf5ea6c0557730318fe660d2d}} 
+\index{BoundTraits$<$ BoundType $>$@{BoundTraits$<$ BoundType $>$}!HasTightBounds@{HasTightBounds}}
+\index{HasTightBounds@{HasTightBounds}!BoundTraits$<$ BoundType $>$@{BoundTraits$<$ BoundType $>$}}
+\doxysubsubsection{HasTightBounds}
+{\footnotesize\ttfamily const bool Has\+Tight\+Bounds = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+If true, then the bounds for each dimension are tight. 
+
+If false, then the bounds for each dimension may be looser than the range of all points held in the bound. This defaults to false. 
+
+Definition at line 31 of file bound\+\_\+traits.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/\textbf{ bound\+\_\+traits.\+hpp}\end{DoxyCompactItemize}

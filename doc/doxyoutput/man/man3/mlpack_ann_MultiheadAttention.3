@@ -1,0 +1,362 @@
+.TH "MultiheadAttention< InputDataType, OutputDataType, RegularizerType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MultiheadAttention< InputDataType, OutputDataType, RegularizerType > \- Multihead Attention allows the model to jointly attend to information from different representation subspaces at different positions\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMultiheadAttention\fP ()"
+.br
+.RI "Default constructor\&. "
+.ti -1c
+.RI "\fBMultiheadAttention\fP (const size_t tgtSeqLen, const size_t srcSeqLen, const size_t embedDim, const size_t numHeads)"
+.br
+.RI "Create the \fBMultiheadAttention\fP object using the specified modules\&. "
+.ti -1c
+.RI "OutputDataType & \fBAttentionMask\fP ()"
+.br
+.RI "Modify the two dimensional Attention Mask\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBAttentionMask\fP () const"
+.br
+.RI "Get the two dimensional Attention Mask\&. "
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &, const arma::Mat< eT > &gy, arma::Mat< eT > &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "size_t & \fBEmbedDim\fP ()"
+.br
+.RI "Modify the embedding dimension\&. "
+.ti -1c
+.RI "size_t \fBEmbedDim\fP () const"
+.br
+.RI "Get the embedding dimension\&. "
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "OutputDataType & \fBGradient\fP ()"
+.br
+.RI "Modify the gradient\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBGradient\fP () const"
+.br
+.RI "Get the gradient\&. "
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &error, arma::Mat< eT > &gradient)"
+.br
+.RI "Calculate the gradient using the output delta and the input activation\&. "
+.ti -1c
+.RI "size_t \fBInputShape\fP () const"
+.br
+.ti -1c
+.RI "OutputDataType & \fBKeyPaddingMask\fP ()"
+.br
+.RI "Modify the Key \fBPadding\fP Mask\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBKeyPaddingMask\fP () const"
+.br
+.RI "Get Key \fBPadding\fP Mask\&. "
+.ti -1c
+.RI "size_t & \fBNumHeads\fP ()"
+.br
+.RI "Modify the number of attention heads\&. "
+.ti -1c
+.RI "size_t \fBNumHeads\fP () const"
+.br
+.RI "Get the number of attention heads\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBParameters\fP ()"
+.br
+.RI "Modify the parameters\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBParameters\fP () const"
+.br
+.RI "Get the parameters\&. "
+.ti -1c
+.RI "void \fBReset\fP ()"
+.br
+.RI "Reset the layer parameters\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.ti -1c
+.RI "size_t & \fBSrcSeqLen\fP ()"
+.br
+.RI "Modify the source sequence length\&. "
+.ti -1c
+.RI "size_t \fBSrcSeqLen\fP () const"
+.br
+.RI "Get the source sequence length\&. "
+.ti -1c
+.RI "size_t & \fBTgtSeqLen\fP ()"
+.br
+.RI "Modify the target sequence length\&. "
+.ti -1c
+.RI "size_t \fBTgtSeqLen\fP () const"
+.br
+.RI "Get the target sequence length\&. "
+.ti -1c
+.RI "size_t \fBWeightSize\fP () const"
+.br
+.RI "Get the size of the weights\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat, typename RegularizerType = NoRegularizer>
+.br
+class mlpack::ann::MultiheadAttention< InputDataType, OutputDataType, RegularizerType >"
+Multihead Attention allows the model to jointly attend to information from different representation subspaces at different positions\&. 
+
+With a single attention head, averaging inhibits this\&. [arxiv\&.org:1706\&.03762v5]
+.PP
+The \fBMultiheadAttention\fP class takes concatenated form of query, key and value\&. The query, key and value are concatenated into single matrix and fed to the Forward function as input\&.
+.PP
+The query, key and value are matrices of shapes \fC(embedDim * tgtSeqLen, batchSize)\fP, \fC(embedDim * srcSeqLen, batchSize)\fP and \fC(embedDim * srcSeqLen, batchSize)\fP respectively\&. The output is a matrix of shape \fC(embedDim * tgtSeqLen, batchSize)\fP\&. The embeddings are stored consequently\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIRegularizerType\fP Type of the regularizer to be used\&. 
+.RE
+.PP
+
+.PP
+Definition at line 62 of file multihead_attention\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBMultiheadAttention\fP ()"
+
+.PP
+Default constructor\&. 
+.SS "\fBMultiheadAttention\fP (const size_t tgtSeqLen, const size_t srcSeqLen, const size_t embedDim, const size_t numHeads)"
+
+.PP
+Create the \fBMultiheadAttention\fP object using the specified modules\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fItgtSeqLen\fP Target sequence length\&. 
+.br
+\fIsrcSeqLen\fP Source sequence length\&. 
+.br
+\fIembedDim\fP Total dimension of the model\&. 
+.br
+\fInumHeads\fP Number of parallel attention heads\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "OutputDataType& AttentionMask ()\fC [inline]\fP"
+
+.PP
+Modify the two dimensional Attention Mask\&. 
+.PP
+Definition at line 155 of file multihead_attention\&.hpp\&.
+.SS "OutputDataType const& AttentionMask () const\fC [inline]\fP"
+
+.PP
+Get the two dimensional Attention Mask\&. 
+.PP
+Definition at line 153 of file multihead_attention\&.hpp\&.
+.SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 170 of file multihead_attention\&.hpp\&.
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 168 of file multihead_attention\&.hpp\&.
+.SS "size_t& EmbedDim ()\fC [inline]\fP"
+
+.PP
+Modify the embedding dimension\&. 
+.PP
+Definition at line 145 of file multihead_attention\&.hpp\&.
+.SS "size_t EmbedDim () const\fC [inline]\fP"
+
+.PP
+Get the embedding dimension\&. 
+.PP
+Definition at line 143 of file multihead_attention\&.hpp\&.
+.SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP The query matrix\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "OutputDataType& Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 175 of file multihead_attention\&.hpp\&.
+.SS "OutputDataType const& Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 173 of file multihead_attention\&.hpp\&.
+.SS "void Gradient (const arma::Mat< eT > & input, const arma::Mat< eT > & error, arma::Mat< eT > & gradient)"
+
+.PP
+Calculate the gradient using the output delta and the input activation\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP The input data used for evaluating specified function\&. 
+.br
+\fIerror\fP The calculated error\&. 
+.br
+\fIgradient\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "size_t InputShape () const\fC [inline]\fP"
+
+.PP
+Definition at line 182 of file multihead_attention\&.hpp\&.
+.SS "OutputDataType& KeyPaddingMask ()\fC [inline]\fP"
+
+.PP
+Modify the Key \fBPadding\fP Mask\&. 
+.PP
+Definition at line 160 of file multihead_attention\&.hpp\&.
+.SS "OutputDataType const& KeyPaddingMask () const\fC [inline]\fP"
+
+.PP
+Get Key \fBPadding\fP Mask\&. 
+.PP
+Definition at line 158 of file multihead_attention\&.hpp\&.
+.SS "size_t& NumHeads ()\fC [inline]\fP"
+
+.PP
+Modify the number of attention heads\&. 
+.PP
+Definition at line 150 of file multihead_attention\&.hpp\&.
+.SS "size_t NumHeads () const\fC [inline]\fP"
+
+.PP
+Get the number of attention heads\&. 
+.PP
+Definition at line 148 of file multihead_attention\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 165 of file multihead_attention\&.hpp\&.
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 163 of file multihead_attention\&.hpp\&.
+.SS "OutputDataType& Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters\&. 
+.PP
+Definition at line 180 of file multihead_attention\&.hpp\&.
+.SS "OutputDataType const& Parameters () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. 
+.PP
+Definition at line 178 of file multihead_attention\&.hpp\&.
+.SS "void Reset ()"
+
+.PP
+Reset the layer parameters\&. 
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.SS "size_t& SrcSeqLen ()\fC [inline]\fP"
+
+.PP
+Modify the source sequence length\&. 
+.PP
+Definition at line 140 of file multihead_attention\&.hpp\&.
+.SS "size_t SrcSeqLen () const\fC [inline]\fP"
+
+.PP
+Get the source sequence length\&. 
+.PP
+Definition at line 138 of file multihead_attention\&.hpp\&.
+.SS "size_t& TgtSeqLen ()\fC [inline]\fP"
+
+.PP
+Modify the target sequence length\&. 
+.PP
+Definition at line 135 of file multihead_attention\&.hpp\&.
+.SS "size_t TgtSeqLen () const\fC [inline]\fP"
+
+.PP
+Get the target sequence length\&. 
+.PP
+Definition at line 133 of file multihead_attention\&.hpp\&.
+.SS "size_t WeightSize () const\fC [inline]\fP"
+
+.PP
+Get the size of the weights\&. 
+.PP
+Definition at line 124 of file multihead_attention\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

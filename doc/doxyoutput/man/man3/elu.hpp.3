@@ -1,0 +1,60 @@
+.TH "/home/aakash/mlpack/src/mlpack/methods/ann/layer/elu.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/elu.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBELU< InputDataType, OutputDataType >\fP"
+.br
+.RI "The \fBELU\fP activation function, defined by\&. "
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::ann\fP"
+.br
+.RI "Artificial Neural Network\&. "
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "using \fBSELU\fP = ELU< arma::mat, arma::mat >"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Vivek Pal 
+.PP
+Dakshit Agrawal
+.RE
+.PP
+Definition of the ELU activation function as described by Djork-Arne Clevert, Thomas Unterthiner and Sepp Hochreiter\&.
+.PP
+Definition of the SELU function as introduced by Klambauer et\&. al\&. in Self Neural Networks\&. The SELU activation function keeps the mean and variance of the input invariant\&.
+.PP
+In short, SELU = lambda * ELU, with 'alpha' and 'lambda' fixed for normalized inputs\&.
+.PP
+Hence both ELU and SELU are implemented in the same file, with lambda = 1 for ELU function\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBelu\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

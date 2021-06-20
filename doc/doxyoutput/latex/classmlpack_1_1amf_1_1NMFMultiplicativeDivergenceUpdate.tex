@@ -1,0 +1,159 @@
+\doxysection{NMFMultiplicative\+Divergence\+Update Class Reference}
+\label{classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate}\index{NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}}
+
+
+This follows a method described in the paper \textquotesingle{}Algorithms for Non-\/negative.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ NMFMultiplicative\+Divergence\+Update} ()
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Initialize} (const Mat\+Type \&, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Initialize the factorization. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the object (in this case, there is nothing to serialize). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void \textbf{ HUpdate} (const Mat\+Type \&V, const arma\+::mat \&W, arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the encoding matrix H. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void \textbf{ WUpdate} (const Mat\+Type \&V, arma\+::mat \&W, const arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the basis matrix W. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This follows a method described in the paper \textquotesingle{}Algorithms for Non-\/negative. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@inproceedings\{lee2001algorithms,}
+\DoxyCodeLine{  title=\{Algorithms \textcolor{keywordflow}{for} non-\/negative matrix factorization\},}
+\DoxyCodeLine{  author=\{Lee, D.D. and Seung, H.S.\},}
+\DoxyCodeLine{  booktitle=\{Advances in Neural Information Processing Systems 13}
+\DoxyCodeLine{      (NIPS 2000)\},}
+\DoxyCodeLine{  pages=\{556-\/-\/562\},}
+\DoxyCodeLine{  year=\{2001\}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+This is a multiplicative rule that ensures that the Kullback-\/\+Leibler divergence
+
+\[ \sum_i \sum_j (V_{ij} \log\frac{V_{ij}}{(W H)_{ij}} - V_{ij} + (W H)_{ij}) \]
+
+is non-\/increasing between subsequent iterations. Both of the update rules for W and H are defined in this file.
+
+This set of update rules is not meant to work with sparse matrices. Using sparse matrices often causes Na\+Ns in the output, so other choices of update rules are better in that situation. 
+
+Definition at line 48 of file nmf\+\_\+mult\+\_\+div.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_a18f4f81c6b7c8ab3dba34ec43ba9194e}} 
+\index{NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}!NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}}
+\index{NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}!NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}}
+\doxysubsubsection{NMFMultiplicativeDivergenceUpdate()}
+{\footnotesize\ttfamily \textbf{ NMFMultiplicative\+Divergence\+Update} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 52 of file nmf\+\_\+mult\+\_\+div.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_ad2a433d7e149001f0f44caa8967d20a6}} 
+\index{NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}!HUpdate@{HUpdate}}
+\index{HUpdate@{HUpdate}!NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}}
+\doxysubsubsection{HUpdate()}
+{\footnotesize\ttfamily static void HUpdate (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{V,  }\item[{const arma\+::mat \&}]{W,  }\item[{arma\+::mat \&}]{H }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The update rule for the encoding matrix H. 
+
+The formula used is
+
+\[ H_{a\mu} \leftarrow H_{a\mu} \frac{\sum_{i} W_{ia} V_{i\mu}/(WH)_{i\mu}} {\sum_{k} H_{ka}} \]
+
+The function takes in all the matrices and only changes the value of the H matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix. \\
+\hline
+{\em H} & Encoding matrix to updated. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 124 of file nmf\+\_\+mult\+\_\+div.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_aac5af164b10635addd7ff7bb934a4db3}} 
+\index{NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}}
+\doxysubsubsection{Initialize()}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{,  }\item[{const}]{size\+\_\+t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the factorization. 
+
+These rules don\textquotesingle{}t store any state, so the input values are ignore. 
+
+Definition at line 59 of file nmf\+\_\+mult\+\_\+div.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}!serialize@{serialize}}
+\index{serialize@{serialize}!NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the object (in this case, there is nothing to serialize). 
+
+
+
+Definition at line 154 of file nmf\+\_\+mult\+\_\+div.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate_a79b17bfdd69326a4f9f7d17c698ee6af}} 
+\index{NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}!WUpdate@{WUpdate}}
+\index{WUpdate@{WUpdate}!NMFMultiplicativeDivergenceUpdate@{NMFMultiplicativeDivergenceUpdate}}
+\doxysubsubsection{WUpdate()}
+{\footnotesize\ttfamily static void WUpdate (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{V,  }\item[{arma\+::mat \&}]{W,  }\item[{const arma\+::mat \&}]{H }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The update rule for the basis matrix W. 
+
+The formula used is
+
+\[ W_{ia} \leftarrow W_{ia} \frac{\sum_{\mu} H_{a\mu} V_{i\mu} / (W H)_{i\mu}} {\sum_{\nu} H_{a\nu}} \]
+
+The function takes in all the matrices and only changes the value of the W matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix to be updated. \\
+\hline
+{\em H} & Encoding matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 80 of file nmf\+\_\+mult\+\_\+div.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/amf/update\+\_\+rules/\textbf{ nmf\+\_\+mult\+\_\+div.\+hpp}\end{DoxyCompactItemize}

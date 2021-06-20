@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="methods_2ann_2visitor_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="methods_2ann_2visitor_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}) endforeach() set(MLPACK_SRCS $</argsstring>
+        <name>set</name>
+        <param>
+          <type>DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/CMakeLists.txt" line="67" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/CMakeLists.txt" bodystart="67" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="methods_2ann_2visitor_2CMakeLists_8txt_1a7f87cd158650f000d2e6998050e1fd98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(SOURCES add_visitor.hpp add_visitor_impl.hpp backward_visitor.hpp backward_visitor_impl.hpp bias_set_visitor.hpp bias_set_visitor_impl.hpp copy_visitor.hpp copy_visitor_impl.hpp delete_visitor.hpp delete_visitor_impl.hpp delta_visitor.hpp delta_visitor_impl.hpp deterministic_set_visitor.hpp deterministic_set_visitor_impl.hpp forward_visitor.hpp forward_visitor_impl.hpp gradient_set_visitor.hpp gradient_set_visitor_impl.hpp gradient_update_visitor.hpp gradient_update_visitor_impl.hpp gradient_visitor.hpp gradient_visitor_impl.hpp gradient_zero_visitor.hpp gradient_zero_visitor_impl.hpp load_output_parameter_visitor.hpp load_output_parameter_visitor_impl.hpp loss_visitor.hpp loss_visitor_impl.hpp output_height_visitor.hpp output_height_visitor_impl.hpp output_parameter_visitor.hpp output_parameter_visitor_impl.hpp output_width_visitor.hpp output_width_visitor_impl.hpp parameters_set_visitor.hpp parameters_set_visitor_impl.hpp parameters_visitor.hpp parameters_visitor_impl.hpp reset_cell_visitor.hpp reset_cell_visitor_impl.hpp reset_visitor.hpp reset_visitor_impl.hpp reward_set_visitor.hpp reward_set_visitor_impl.hpp run_set_visitor.hpp run_set_visitor_impl.hpp save_output_parameter_visitor.hpp save_output_parameter_visitor_impl.hpp set_input_height_visitor.hpp set_input_height_visitor_impl.hpp set_input_width_visitor.hpp set_input_width_visitor_impl.hpp weight_set_visitor.hpp weight_set_visitor_impl.hpp weight_size_visitor.hpp weight_size_visitor_impl.hpp input_shape_visitor.hpp input_shape_visitor_impl.hpp) set(DIR_SRCS) foreach(file $</argsstring>
+        <name>set</name>
+        <param>
+          <type>SOURCES add_visitor.hpp add_visitor_impl.hpp backward_visitor.hpp backward_visitor_impl.hpp bias_set_visitor.hpp bias_set_visitor_impl.hpp copy_visitor.hpp copy_visitor_impl.hpp delete_visitor.hpp delete_visitor_impl.hpp delta_visitor.hpp delta_visitor_impl.hpp deterministic_set_visitor.hpp deterministic_set_visitor_impl.hpp forward_visitor.hpp forward_visitor_impl.hpp gradient_set_visitor.hpp gradient_set_visitor_impl.hpp gradient_update_visitor.hpp gradient_update_visitor_impl.hpp gradient_visitor.hpp gradient_visitor_impl.hpp gradient_zero_visitor.hpp gradient_zero_visitor_impl.hpp load_output_parameter_visitor.hpp load_output_parameter_visitor_impl.hpp loss_visitor.hpp loss_visitor_impl.hpp output_height_visitor.hpp output_height_visitor_impl.hpp output_parameter_visitor.hpp output_parameter_visitor_impl.hpp output_width_visitor.hpp output_width_visitor_impl.hpp parameters_set_visitor.hpp parameters_set_visitor_impl.hpp parameters_visitor.hpp parameters_visitor_impl.hpp reset_cell_visitor.hpp reset_cell_visitor_impl.hpp reset_visitor.hpp reset_visitor_impl.hpp reward_set_visitor.hpp reward_set_visitor_impl.hpp run_set_visitor.hpp run_set_visitor_impl.hpp save_output_parameter_visitor.hpp save_output_parameter_visitor_impl.hpp set_input_height_visitor.hpp set_input_height_visitor_impl.hpp set_input_width_visitor.hpp set_input_width_visitor_impl.hpp weight_set_visitor.hpp weight_set_visitor_impl.hpp weight_size_visitor.hpp weight_size_visitor_impl.hpp input_shape_visitor.hpp input_shape_visitor_impl.</type>
+          <declname>hpp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/CMakeLists.txt" line="3" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/CMakeLists.txt" bodystart="3" bodyend="66"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#<sp/>Define<sp/>the<sp/>files<sp/>we<sp/>need<sp/>to<sp/>compile</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Anything<sp/>not<sp/>in<sp/>this<sp/>list<sp/>will<sp/>not<sp/>be<sp/>compiled<sp/>into<sp/>mlpack.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3" refid="methods_2ann_2visitor_2CMakeLists_8txt_1a7f87cd158650f000d2e6998050e1fd98" refkind="member"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(SOURCES</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"><sp/><sp/>add_visitor.hpp</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/>add_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/>backward_visitor.hpp</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/>backward_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/>bias_set_visitor.hpp</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/>bias_set_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/>copy_visitor.hpp</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/>copy_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/>delete_visitor.hpp</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/>delete_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/>delta_visitor.hpp</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/>delta_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/>deterministic_set_visitor.hpp</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/>deterministic_set_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/>forward_visitor.hpp</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/>forward_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/>gradient_set_visitor.hpp</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/>gradient_set_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/>gradient_update_visitor.hpp</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/>gradient_update_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/>gradient_visitor.hpp</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/>gradient_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/>gradient_zero_visitor.hpp</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/>gradient_zero_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/>load_output_parameter_visitor.hpp</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/>load_output_parameter_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/>loss_visitor.hpp</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/>loss_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>output_height_visitor.hpp</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>output_height_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/>output_parameter_visitor.hpp</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>output_parameter_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>output_width_visitor.hpp</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/>output_width_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/>parameters_set_visitor.hpp</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/>parameters_set_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/>parameters_visitor.hpp</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>parameters_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>reset_cell_visitor.hpp</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/>reset_cell_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>reset_visitor.hpp</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>reset_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>reward_set_visitor.hpp</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>reward_set_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>run_set_visitor.hpp</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>run_set_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>save_output_parameter_visitor.hpp</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/>save_output_parameter_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>set_input_height_visitor.hpp</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>set_input_height_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>set_input_width_visitor.hpp</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/>set_input_width_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>weight_set_visitor.hpp</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>weight_set_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>weight_size_visitor.hpp</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>weight_size_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/>input_shape_visitor.hpp</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>input_shape_visitor_impl.hpp</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Add<sp/>directory<sp/>name<sp/>to<sp/>sources.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal">(file<sp/>${SOURCES})</highlight></codeline>
+<codeline lineno="67" refid="methods_2ann_2visitor_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS<sp/>${DIR_SRCS}<sp/>${CMAKE_CURRENT_SOURCE_DIR}/${file})</highlight></codeline>
+<codeline lineno="68"><highlight class="normal">endforeach()</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Append<sp/>sources<sp/>(with<sp/>directory<sp/>name)<sp/>to<sp/>list<sp/>of<sp/>all<sp/>mlpack<sp/>sources<sp/>(used<sp/>at</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>the<sp/>parent<sp/>scope).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(MLPACK_SRCS<sp/>${MLPACK_SRCS}<sp/>${DIR_SRCS}<sp/>PARENT_SCOPE)</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

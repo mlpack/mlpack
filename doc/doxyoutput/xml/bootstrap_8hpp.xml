@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="bootstrap_8hpp" kind="file" language="C++">
+    <compoundname>bootstrap.hpp</compoundname>
+    <includedby refid="random__forest_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp</includedby>
+    <invincdepgraph>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/methods/random_forest/random_forest.hpp</label>
+        <link refid="random__forest_8hpp"/>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/methods/random_forest/bootstrap.hpp</label>
+        <link refid="bootstrap_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para>
+</simplesect>
+Implementation of the <ref refid="namespacemlpack_1_1tree_1aebb06bf0ada277e56a77d80cd1985dbe" kindref="member">Bootstrap()</ref> function, which creates a bootstrapped dataset from the given input dataset.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_RANDOM_FOREST_BOOTSTRAP_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_RANDOM_FOREST_BOOTSTRAP_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>UseWeights,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType,</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LabelsType,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WeightsType&gt;</highlight></codeline>
+<codeline lineno="26" refid="namespacemlpack_1_1tree_1aebb06bf0ada277e56a77d80cd1985dbe" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1tree_1aebb06bf0ada277e56a77d80cd1985dbe" kindref="member">Bootstrap</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>dataset,</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>LabelsType&amp;<sp/>labels,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>WeightsType&amp;<sp/>weights,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatType&amp;<sp/>bootstrapDataset,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>LabelsType&amp;<sp/>bootstrapLabels,</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>WeightsType&amp;<sp/>bootstrapWeights)</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>bootstrapDataset.set_size(dataset.n_rows,<sp/>dataset.n_cols);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/>bootstrapLabels.set_size(labels.n_elem);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(UseWeights)</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>bootstrapWeights.set_size(weights.n_elem);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Random<sp/>sampling<sp/>with<sp/>replacement.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/>arma::uvec<sp/>indices<sp/>=<sp/>arma::randi&lt;arma::uvec&gt;(dataset.n_cols,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>arma::distr_param(0,<sp/>dataset.n_cols<sp/>-<sp/>1));</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>bootstrapDataset<sp/>=<sp/>dataset.cols(indices);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>bootstrapLabels<sp/>=<sp/>labels.cols(indices);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(UseWeights)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>bootstrapWeights<sp/>=<sp/>weights.cols(indices);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/random_forest/bootstrap.hpp"/>
+  </compounddef>
+</doxygen>

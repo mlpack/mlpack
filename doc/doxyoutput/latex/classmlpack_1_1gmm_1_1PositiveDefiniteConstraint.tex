@@ -1,0 +1,84 @@
+\doxysection{Positive\+Definite\+Constraint Class Reference}
+\label{classmlpack_1_1gmm_1_1PositiveDefiniteConstraint}\index{PositiveDefiniteConstraint@{PositiveDefiniteConstraint}}
+
+
+Given a covariance matrix, force the matrix to be positive definite.  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \textbf{ Apply\+Constraint} (arma\+::mat \&covariance)
+\begin{DoxyCompactList}\small\item\em Apply the positive definiteness constraint to the given covariance matrix, and ensure each value on the diagonal is at least 1e-\/50. \end{DoxyCompactList}\item 
+static void \textbf{ Apply\+Constraint} (arma\+::vec \&diag\+Covariance)
+\begin{DoxyCompactList}\small\item\em Apply the positive definiteness constraint to the given diagonal covariance matrix (which is represented as a vector), and ensure each value on the diagonal is at least 1e-\/50. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\static void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the constraint (which stores nothing, so, nothing to do). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Given a covariance matrix, force the matrix to be positive definite. 
+
+Also force a minimum value on the diagonal, so that even if the matrix is invertible, it doesn\textquotesingle{}t cause problems with Cholesky decompositions. The forcing here is also done in order to bring the condition number of the matrix under 1e5 (10k), which should help with numerical stability. 
+
+Definition at line 27 of file positive\+\_\+definite\+\_\+constraint.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1gmm_1_1PositiveDefiniteConstraint_a1e68c9489180b84b3a8d1e265a3d8a8f}} 
+\index{PositiveDefiniteConstraint@{PositiveDefiniteConstraint}!ApplyConstraint@{ApplyConstraint}}
+\index{ApplyConstraint@{ApplyConstraint}!PositiveDefiniteConstraint@{PositiveDefiniteConstraint}}
+\doxysubsubsection{ApplyConstraint()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static void Apply\+Constraint (\begin{DoxyParamCaption}\item[{arma\+::mat \&}]{covariance }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Apply the positive definiteness constraint to the given covariance matrix, and ensure each value on the diagonal is at least 1e-\/50. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em covariance} & Covariance matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 36 of file positive\+\_\+definite\+\_\+constraint.\+hpp.
+
+
+
+References Log\+::\+Fatal.
+
+\mbox{\label{classmlpack_1_1gmm_1_1PositiveDefiniteConstraint_a5262e4a927a389167cfc7714de4df883}} 
+\index{PositiveDefiniteConstraint@{PositiveDefiniteConstraint}!ApplyConstraint@{ApplyConstraint}}
+\index{ApplyConstraint@{ApplyConstraint}!PositiveDefiniteConstraint@{PositiveDefiniteConstraint}}
+\doxysubsubsection{ApplyConstraint()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Apply\+Constraint (\begin{DoxyParamCaption}\item[{arma\+::vec \&}]{diag\+Covariance }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Apply the positive definiteness constraint to the given diagonal covariance matrix (which is represented as a vector), and ensure each value on the diagonal is at least 1e-\/50. 
+
+
+
+Definition at line 75 of file positive\+\_\+definite\+\_\+constraint.\+hpp.
+
+\mbox{\label{classmlpack_1_1gmm_1_1PositiveDefiniteConstraint_a408eb4ebf27591742383f36e84641a80}} 
+\index{PositiveDefiniteConstraint@{PositiveDefiniteConstraint}!serialize@{serialize}}
+\index{serialize@{serialize}!PositiveDefiniteConstraint@{PositiveDefiniteConstraint}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily static void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Serialize the constraint (which stores nothing, so, nothing to do). 
+
+
+
+Definition at line 100 of file positive\+\_\+definite\+\_\+constraint.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/gmm/\textbf{ positive\+\_\+definite\+\_\+constraint.\+hpp}\end{DoxyCompactItemize}

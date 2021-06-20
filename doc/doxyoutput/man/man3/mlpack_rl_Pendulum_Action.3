@@ -1,0 +1,62 @@
+.TH "Pendulum::Action" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Pendulum::Action \- Implementation of action of \fBPendulum\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAction\fP ()"
+.br
+.RI "Construct an action instance\&. "
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "std::vector< double > \fBaction\fP"
+.br
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const size_t \fBsize\fP = 1"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Implementation of action of \fBPendulum\fP\&. 
+
+In \fBPendulum\fP, the action represents the torque to be applied\&. This value is bounded in range -2\&.0 to 2\&.0 by default\&. 
+.PP
+Definition at line 95 of file pendulum\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBAction\fP ()\fC [inline]\fP"
+
+.PP
+Construct an action instance\&. 
+.PP
+Definition at line 101 of file pendulum\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "std::vector<double> action"
+
+.PP
+Definition at line 103 of file pendulum\&.hpp\&.
+.PP
+Referenced by Pendulum::Sample()\&.
+.SS "const size_t size = 1\fC [static]\fP"
+
+.PP
+Definition at line 105 of file pendulum\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

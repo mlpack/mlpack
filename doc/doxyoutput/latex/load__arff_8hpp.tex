@@ -1,0 +1,32 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/core/data/load\+\_\+arff.hpp File Reference}
+\label{load__arff_8hpp}\index{/home/aakash/mlpack/src/mlpack/core/data/load\_arff.hpp@{/home/aakash/mlpack/src/mlpack/core/data/load\_arff.hpp}}
+Include dependency graph for load\+\_\+arff.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{load__arff_8hpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::data}
+\begin{DoxyCompactList}\small\item\em Functions to load and save matrices and models. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Load\+ARFF} (const std\+::string \&filename, arma\+::\+Mat$<$ eT $>$ \&matrix)
+\begin{DoxyCompactList}\small\item\em A utility function to load an ARFF dataset as numeric features (that is, as an Armadillo matrix without any modification). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT , typename Policy\+Type $>$ }\\void \textbf{ Load\+ARFF} (const std\+::string \&filename, arma\+::\+Mat$<$ eT $>$ \&matrix, Dataset\+Mapper$<$ Policy\+Type $>$ \&info)
+\begin{DoxyCompactList}\small\item\em A utility function to load an ARFF dataset as numeric and categorical features, using the Dataset\+Info structure for mapping. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Load an ARFF dataset.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

@@ -1,0 +1,662 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1PixelShuffle" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::PixelShuffle</compoundname>
+    <includes refid="pixel__shuffle_8hpp" local="no">pixel_shuffle.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PixelShuffle_1acc8b6b6879b002e34f544046de374ce8" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t batchSize</definition>
+        <argsstring></argsstring>
+        <name>batchSize</name>
+        <briefdescription>
+<para>The number of images in the batch. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="160" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PixelShuffle_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="142" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PixelShuffle_1a02afeaaf8574e7a78d6b466ff2695052" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t height</definition>
+        <argsstring></argsstring>
+        <name>height</name>
+        <briefdescription>
+<para>The height of each input image. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="151" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PixelShuffle_1afe9f432eaa87ede5b515d7fb11c9ad9d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t outputHeight</definition>
+        <argsstring></argsstring>
+        <name>outputHeight</name>
+        <briefdescription>
+<para>The height of each output image. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="163" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PixelShuffle_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="145" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PixelShuffle_1a446dd57a9f4815cd276990ee17d72d0b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t outputWidth</definition>
+        <argsstring></argsstring>
+        <name>outputWidth</name>
+        <briefdescription>
+<para>The width of each output image. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="166" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PixelShuffle_1a8409a0d351d4fba2eeef26a7dcc585a8" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool reset</definition>
+        <argsstring></argsstring>
+        <name>reset</name>
+        <briefdescription>
+<para>A boolean used to do some internal calculations once initially. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="172" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PixelShuffle_1a854352f53b148adc24983a58a1866d66" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+<para>The number of channels of each input image. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="157" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PixelShuffle_1a8b12d5b7f00850030a6ef7253045710e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t sizeOut</definition>
+        <argsstring></argsstring>
+        <name>sizeOut</name>
+        <briefdescription>
+<para>The number of channels of each output image. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="169" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="169" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PixelShuffle_1a46b9738f841efeb5e638906aaf554aec" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t upscaleFactor</definition>
+        <argsstring></argsstring>
+        <name>upscaleFactor</name>
+        <briefdescription>
+<para>The scaling factor for Pixel Shuffle. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="148" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PixelShuffle_1a02bed8590a9ddf520e58a060059518ec" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t width</definition>
+        <argsstring></argsstring>
+        <name>width</name>
+        <briefdescription>
+<para>The width of each input image. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="154" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a0f7353f73460bf5a490768a22105a3bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>PixelShuffle</definition>
+        <argsstring>()</argsstring>
+        <name>PixelShuffle</name>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1PixelShuffle" kindref="compound">PixelShuffle</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="53" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1ada1a658041eb75a1f4d77fcb40d604d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>PixelShuffle</definition>
+        <argsstring>(const size_t upscaleFactor, const size_t height, const size_t width, const size_t size)</argsstring>
+        <name>PixelShuffle</name>
+        <param>
+          <type>const size_t</type>
+          <declname>upscaleFactor</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>height</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>width</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1PixelShuffle" kindref="compound">PixelShuffle</ref> object using the specified parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of input channels should be an integral multiple of the square of the upscale factor.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>upscaleFactor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The scaling factor for Pixel Shuffle. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>height</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The height of each input image. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>width</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The width of each input image. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of channels of each input image. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="65" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a78dbad83871f43db1975e45a9a69c376" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of the <ref refid="classmlpack_1_1ann_1_1PixelShuffle" kindref="compound">PixelShuffle</ref> layer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The propagated input activation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="87" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="99" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="97" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="97" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of the <ref refid="classmlpack_1_1ann_1_1PixelShuffle" kindref="compound">PixelShuffle</ref> layer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="77" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a8414286892d75f63293d257a7fde37d5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; InputChannels</definition>
+        <argsstring>()</argsstring>
+        <name>InputChannels</name>
+        <briefdescription>
+<para>Modify the number of input channels. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="123" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="123" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1ae19d2ae537a3897277f8b66f5e27f0a1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputChannels</definition>
+        <argsstring>() const</argsstring>
+        <name>InputChannels</name>
+        <briefdescription>
+<para>Get the number of input channels. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="120" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1aefbba724eec397a928d5460bb209a360" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; InputHeight</definition>
+        <argsstring>()</argsstring>
+        <name>InputHeight</name>
+        <briefdescription>
+<para>Modify the input image height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="111" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="111" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1ac34354aab4ed6f9145908b19eade6a24" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>InputHeight</name>
+        <briefdescription>
+<para>Get the input image height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="108" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="108" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a238e9d308df611a9300a4ca6756fef4d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; InputWidth</definition>
+        <argsstring>()</argsstring>
+        <name>InputWidth</name>
+        <briefdescription>
+<para>Modify the input image width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="117" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="117" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a432efdff77411903044ae87ec3aec70f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>InputWidth</name>
+        <briefdescription>
+<para>Get the input image width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="114" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="114" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a1890d5841c36fb959a47b2389bb45955" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t OutputChannels</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputChannels</name>
+        <briefdescription>
+<para>Get the number of output channels. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="132" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="132" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a96a6294ed9ca8d24be9bb5eb53db7f25" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t OutputHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputHeight</name>
+        <briefdescription>
+<para>Get the output image height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="126" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="126" bodyend="126"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="94" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="94" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="92" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="92" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1aa2b647f9e029826314b4f572fe96878d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t OutputWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputWidth</name>
+        <briefdescription>
+<para>Get the output image width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="129" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="129" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1af0dd9205158ccf7bcfcd8ff81f79c927" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const unsigned int)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const unsigned int</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="138" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1a57e852c6adee1e556e3886cda2f34913" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; UpscaleFactor</definition>
+        <argsstring>()</argsstring>
+        <name>UpscaleFactor</name>
+        <briefdescription>
+<para>Modify the upscale factor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="105" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="105" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PixelShuffle_1acc782bae08f532369a073e60b8cf2894" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t UpscaleFactor</definition>
+        <argsstring>() const</argsstring>
+        <name>UpscaleFactor</name>
+        <briefdescription>
+<para>Get the upscale factor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="102" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="102" bodyend="102"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the <ref refid="classmlpack_1_1ann_1_1PixelShuffle" kindref="compound">PixelShuffle</ref> layer. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>For more information, refer to the following paper,</para>
+<para><programlisting><codeline><highlight class="normal">@article{Shi16,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/><sp/><sp/>=<sp/>{Wenzhe<sp/>Shi,<sp/>Jose<sp/>Caballero,Ferenc<sp/>Huszár,<sp/>Johannes<sp/>Totz,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Andrew<sp/>P.<sp/>Aitken,<sp/>Rob<sp/>Bishop,<sp/>Daniel<sp/>Rueckert,<sp/>Zehan<sp/>Wang},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/><sp/><sp/>=<sp/>{Real-Time<sp/>Single<sp/>Image<sp/>and<sp/>Video<sp/>Super-Resolution<sp/>Using<sp/>an</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Efficient<sp/>Sub-Pixel<sp/>Convolutional<sp/>Neural<sp/>Network},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>journal<sp/><sp/><sp/>=<sp/>{CoRR},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>volume<sp/><sp/><sp/><sp/>=<sp/>{abs/1609.05158},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{2016},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>url<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{https://arxiv.org/abs/1609.05158},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>eprint<sp/><sp/><sp/><sp/>=<sp/>{1609.05158},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" line="49" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/pixel_shuffle.hpp" bodystart="50" bodyend="173"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a78dbad83871f43db1975e45a9a69c376" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1acc8b6b6879b002e34f544046de374ce8" prot="private" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>batchSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a02afeaaf8574e7a78d6b466ff2695052" prot="private" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>height</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1ae19d2ae537a3897277f8b66f5e27f0a1" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>InputChannels</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a8414286892d75f63293d257a7fde37d5" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>InputChannels</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1ac34354aab4ed6f9145908b19eade6a24" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>InputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1aefbba724eec397a928d5460bb209a360" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>InputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a432efdff77411903044ae87ec3aec70f" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>InputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a238e9d308df611a9300a4ca6756fef4d" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>InputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a1890d5841c36fb959a47b2389bb45955" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>OutputChannels</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a96a6294ed9ca8d24be9bb5eb53db7f25" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>OutputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1afe9f432eaa87ede5b515d7fb11c9ad9d" prot="private" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>outputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a446dd57a9f4815cd276990ee17d72d0b" prot="private" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>outputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1aa2b647f9e029826314b4f572fe96878d" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>OutputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a0f7353f73460bf5a490768a22105a3bf" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>PixelShuffle</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1ada1a658041eb75a1f4d77fcb40d604d5" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>PixelShuffle</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a8409a0d351d4fba2eeef26a7dcc585a8" prot="private" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>reset</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1af0dd9205158ccf7bcfcd8ff81f79c927" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a854352f53b148adc24983a58a1866d66" prot="private" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>size</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a8b12d5b7f00850030a6ef7253045710e" prot="private" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>sizeOut</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1acc782bae08f532369a073e60b8cf2894" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>UpscaleFactor</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a57e852c6adee1e556e3886cda2f34913" prot="public" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>UpscaleFactor</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a46b9738f841efeb5e638906aaf554aec" prot="private" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>upscaleFactor</name></member>
+      <member refid="classmlpack_1_1ann_1_1PixelShuffle_1a02bed8590a9ddf520e58a060059518ec" prot="private" virt="non-virtual"><scope>mlpack::ann::PixelShuffle</scope><name>width</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

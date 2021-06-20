@@ -1,0 +1,272 @@
+.TH "Reparametrization< InputDataType, OutputDataType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Reparametrization< InputDataType, OutputDataType > \- Implementation of the \fBReparametrization\fP layer class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBReparametrization\fP ()"
+.br
+.RI "Create the \fBReparametrization\fP object\&. "
+.ti -1c
+.RI "\fBReparametrization\fP (const \fBReparametrization\fP &layer)"
+.br
+.RI "Copy Constructor\&. "
+.ti -1c
+.RI "\fBReparametrization\fP (const size_t latentSize, const bool stochastic=true, const bool includeKl=true, const double beta=1)"
+.br
+.RI "Create the \fBReparametrization\fP layer object using the specified sample vector size\&. "
+.ti -1c
+.RI "\fBReparametrization\fP (\fBReparametrization\fP &&layer)"
+.br
+.RI "Move Constructor\&. "
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &gy, arma::Mat< eT > &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. "
+.ti -1c
+.RI "double \fBBeta\fP () const"
+.br
+.RI "Get the value of the beta hyperparameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "bool \fBIncludeKL\fP () const"
+.br
+.RI "Get the value of the includeKl parameter\&. "
+.ti -1c
+.RI "size_t \fBInputShape\fP () const"
+.br
+.ti -1c
+.RI "double \fBLoss\fP ()"
+.br
+.RI "Get the KL divergence with standard normal\&. "
+.ti -1c
+.RI "\fBReparametrization\fP & \fBoperator=\fP (const \fBReparametrization\fP &layer)"
+.br
+.RI "Copy assignment operator\&. "
+.ti -1c
+.RI "\fBReparametrization\fP & \fBoperator=\fP (\fBReparametrization\fP &&layer)"
+.br
+.RI "Move assignment operator\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "size_t & \fBOutputSize\fP ()"
+.br
+.RI "Modify the output size\&. "
+.ti -1c
+.RI "size_t const  & \fBOutputSize\fP () const"
+.br
+.RI "Get the output size\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.ti -1c
+.RI "bool \fBStochastic\fP () const"
+.br
+.RI "Get the value of the stochastic parameter\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::Reparametrization< InputDataType, OutputDataType >"
+Implementation of the \fBReparametrization\fP layer class\&. 
+
+This layer samples from the given parameters of a normal distribution\&.
+.PP
+This class also supports beta-VAE, a state-of-the-art framework for automated discovery of interpretable factorised latent representations from raw image data in a completely unsupervised manner\&.
+.PP
+For more information, refer the following paper\&.
+.PP
+.PP
+.nf
+@article{ICLR2017,
+  title   = {beta-VAE: Learning basic visual concepts with a constrained
+             variational framework},
+  author  = {Irina Higgins, Loic Matthey, Arka Pal, Christopher Burgess,
+             Xavier Glorot, Matthew Botvinick, Shakir Mohamed and
+             Alexander Lerchner | Google DeepMind},
+  journal = {2017 International Conference on Learning Representations(ICLR)},
+  year    = {2017},
+  url     = {https://deepmind\&.com/research/publications/beta-VAE-Learning-Basic-Visual-Concepts-with-a-Constrained-Variational-Framework}
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 56 of file reparametrization\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBReparametrization\fP ()"
+
+.PP
+Create the \fBReparametrization\fP object\&. 
+.SS "\fBReparametrization\fP (const size_t latentSize, const bool stochastic = \fCtrue\fP, const bool includeKl = \fCtrue\fP, const double beta = \fC1\fP)"
+
+.PP
+Create the \fBReparametrization\fP layer object using the specified sample vector size\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIlatentSize\fP The number of output latent units\&. 
+.br
+\fIstochastic\fP Whether we want random sample or constant\&. 
+.br
+\fIincludeKl\fP Whether we want to include KL loss in backward function\&. 
+.br
+\fIbeta\fP The beta (hyper)parameter for beta-VAE mentioned above\&. 
+.RE
+.PP
+
+.SS "\fBReparametrization\fP (const \fBReparametrization\fP< InputDataType, OutputDataType > & layer)"
+
+.PP
+Copy Constructor\&. 
+.SS "\fBReparametrization\fP (\fBReparametrization\fP< InputDataType, OutputDataType > && layer)"
+
+.PP
+Move Constructor\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const arma::Mat< eT > & input, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "double Beta () const\fC [inline]\fP"
+
+.PP
+Get the value of the beta hyperparameter\&. 
+.PP
+Definition at line 143 of file reparametrization\&.hpp\&.
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 119 of file reparametrization\&.hpp\&.
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 117 of file reparametrization\&.hpp\&.
+.SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "bool IncludeKL () const\fC [inline]\fP"
+
+.PP
+Get the value of the includeKl parameter\&. 
+.PP
+Definition at line 140 of file reparametrization\&.hpp\&.
+.SS "size_t InputShape () const\fC [inline]\fP"
+
+.PP
+Definition at line 145 of file reparametrization\&.hpp\&.
+.SS "double Loss ()\fC [inline]\fP"
+
+.PP
+Get the KL divergence with standard normal\&. 
+.PP
+Definition at line 127 of file reparametrization\&.hpp\&.
+.SS "\fBReparametrization\fP& operator= (const \fBReparametrization\fP< InputDataType, OutputDataType > & layer)"
+
+.PP
+Copy assignment operator\&. 
+.SS "\fBReparametrization\fP& operator= (\fBReparametrization\fP< InputDataType, OutputDataType > && layer)"
+
+.PP
+Move assignment operator\&. 
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 114 of file reparametrization\&.hpp\&.
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 112 of file reparametrization\&.hpp\&.
+.SS "size_t& OutputSize ()\fC [inline]\fP"
+
+.PP
+Modify the output size\&. 
+.PP
+Definition at line 124 of file reparametrization\&.hpp\&.
+.SS "size_t const& OutputSize () const\fC [inline]\fP"
+
+.PP
+Get the output size\&. 
+.PP
+Definition at line 122 of file reparametrization\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.SS "bool Stochastic () const\fC [inline]\fP"
+
+.PP
+Get the value of the stochastic parameter\&. 
+.PP
+Definition at line 137 of file reparametrization\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,572 @@
+\doxysection{Max\+Pooling$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1MaxPooling}\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+
+
+Implementation of the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} layer.  
+
+
+
+
+Inheritance diagram for Max\+Pooling$<$ Input\+Data\+Type, Output\+Data\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=226pt]{classmlpack_1_1ann_1_1MaxPooling__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Max\+Pooling} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} object. \end{DoxyCompactList}\item 
+\textbf{ Max\+Pooling} (const size\+\_\+t kernel\+Width, const size\+\_\+t kernel\+Height, const size\+\_\+t stride\+Width=1, const size\+\_\+t stride\+Height=1, const bool floor=true)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} object using the specified number of units. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+const Output\+Data\+Type \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+bool \& \textbf{ Deterministic} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of the deterministic parameter. \end{DoxyCompactList}\item 
+bool \textbf{ Deterministic} () const
+\begin{DoxyCompactList}\small\item\em Get the value of the deterministic parameter. \end{DoxyCompactList}\item 
+bool \& \textbf{ Floor} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of the rounding operation. \end{DoxyCompactList}\item 
+bool \textbf{ Floor} () const
+\begin{DoxyCompactList}\small\item\em Get the value of the rounding operation. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Input\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the input height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the input height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the input size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Input\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the input width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the input width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Kernel\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the kernel height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Kernel\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the kernel height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Kernel\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the kernel width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Kernel\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the kernel width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Output\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the output height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the output height. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+const Output\+Data\+Type \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the output size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Output\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the output width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the output width. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Stride\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the stride height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Stride\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the stride height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Stride\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the stride width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Stride\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the stride width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Weight\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the size of the weights. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Max\+Pooling$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} layer. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 52 of file max\+\_\+pooling.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_ab7446375db1d97c81053b313e2e4de83}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!MaxPooling@{MaxPooling}}
+\index{MaxPooling@{MaxPooling}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{MaxPooling()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Max\+Pooling} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} object. 
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_ad2ae94f85babedc257143c11a0dfe5c9}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!MaxPooling@{MaxPooling}}
+\index{MaxPooling@{MaxPooling}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{MaxPooling()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Max\+Pooling} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{kernel\+Width,  }\item[{const size\+\_\+t}]{kernel\+Height,  }\item[{const size\+\_\+t}]{stride\+Width = {\ttfamily 1},  }\item[{const size\+\_\+t}]{stride\+Height = {\ttfamily 1},  }\item[{const bool}]{floor = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Max\+Pooling}{p.}{classmlpack_1_1ann_1_1MaxPooling} object using the specified number of units. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kernel\+Width} & Width of the pooling window. \\
+\hline
+{\em kernel\+Height} & Height of the pooling window. \\
+\hline
+{\em stride\+Width} & Width of the stride operation. \\
+\hline
+{\em stride\+Height} & Width of the stride operation. \\
+\hline
+{\em floor} & Rounding operator (floor or ceil). \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_ad6601342d560219ce951d554e69e5e87}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 105 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a1590f28691f13bf27566777c35e2296c}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 103 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a42d4ee3da432cff20d3a41b8b1ec801c}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Deterministic()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& Deterministic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of the deterministic parameter. 
+
+
+
+Definition at line 161 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a9f4103707f4d199ce5594d239b60443e}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Deterministic()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Deterministic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of the deterministic parameter. 
+
+
+
+Definition at line 159 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a8859ce7b4be2b8ffbf36bbc8ff16aecd}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!Floor@{Floor}}
+\index{Floor@{Floor}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Floor()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& Floor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of the rounding operation. 
+
+
+
+Definition at line 156 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_aee7cef4ac0fc707cacc7204f86bc9988}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!Floor@{Floor}}
+\index{Floor@{Floor}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Floor()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Floor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of the rounding operation. 
+
+
+
+Definition at line 154 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_aefbba724eec397a928d5460bb209a360}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!InputHeight@{InputHeight}}
+\index{InputHeight@{InputHeight}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Input\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input height. 
+
+
+
+Definition at line 115 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_ac34354aab4ed6f9145908b19eade6a24}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!InputHeight@{InputHeight}}
+\index{InputHeight@{InputHeight}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Input\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input height. 
+
+
+
+Definition at line 113 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a5a4c4984aa897a28d516e638e7ea5308}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!InputSize@{InputSize}}
+\index{InputSize@{InputSize}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputSize()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input size. 
+
+
+
+Definition at line 128 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a238e9d308df611a9300a4ca6756fef4d}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!InputWidth@{InputWidth}}
+\index{InputWidth@{InputWidth}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Input\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input width. 
+
+
+
+Definition at line 110 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a432efdff77411903044ae87ec3aec70f}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!InputWidth@{InputWidth}}
+\index{InputWidth@{InputWidth}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Input\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input width. 
+
+
+
+Definition at line 108 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a46b2c28d89959067f549f9f45d2626c5}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!KernelHeight@{KernelHeight}}
+\index{KernelHeight@{KernelHeight}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Kernel\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the kernel height. 
+
+
+
+Definition at line 141 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a6c15e2e3416651fac44621acbbdac9e9}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!KernelHeight@{KernelHeight}}
+\index{KernelHeight@{KernelHeight}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Kernel\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the kernel height. 
+
+
+
+Definition at line 139 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a5fbae452ceda395f5566833e06ba3615}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!KernelWidth@{KernelWidth}}
+\index{KernelWidth@{KernelWidth}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Kernel\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the kernel width. 
+
+
+
+Definition at line 136 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a656302bc9b300692aa71abe2a614c7b1}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!KernelWidth@{KernelWidth}}
+\index{KernelWidth@{KernelWidth}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Kernel\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the kernel width. 
+
+
+
+Definition at line 134 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_ac5112abf9f5e1face13ed965a8755b1d}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!OutputHeight@{OutputHeight}}
+\index{OutputHeight@{OutputHeight}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Output\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output height. 
+
+
+
+Definition at line 125 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a96a6294ed9ca8d24be9bb5eb53db7f25}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!OutputHeight@{OutputHeight}}
+\index{OutputHeight@{OutputHeight}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Output\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output height. 
+
+
+
+Definition at line 123 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 100 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a0d51eabd0467ab5261d828a6cb0cd94e}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 98 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a99c1d948c984b9e76fb5e37e2145427a}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!OutputSize@{OutputSize}}
+\index{OutputSize@{OutputSize}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputSize()}
+{\footnotesize\ttfamily size\+\_\+t Output\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output size. 
+
+
+
+Definition at line 131 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a54579ec9924e2a4a5bc0a4fb822ce80c}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!OutputWidth@{OutputWidth}}
+\index{OutputWidth@{OutputWidth}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Output\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output width. 
+
+
+
+Definition at line 120 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_aa2b647f9e029826314b4f572fe96878d}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!OutputWidth@{OutputWidth}}
+\index{OutputWidth@{OutputWidth}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Output\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output width. 
+
+
+
+Definition at line 118 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a65cba07328997659bec80b9879b15a51}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a0dd3de9c8a9060e927c575b57a021e8b}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!StrideHeight@{StrideHeight}}
+\index{StrideHeight@{StrideHeight}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Stride\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the stride height. 
+
+
+
+Definition at line 151 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a1894b819a7ff82a5576fc8deb8ba7457}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!StrideHeight@{StrideHeight}}
+\index{StrideHeight@{StrideHeight}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Stride\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the stride height. 
+
+
+
+Definition at line 149 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_af40557db9372b513440e06a5e42cc599}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!StrideWidth@{StrideWidth}}
+\index{StrideWidth@{StrideWidth}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Stride\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the stride width. 
+
+
+
+Definition at line 146 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_ad8fd9eb6de956c3e9d82242793fd2db1}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!StrideWidth@{StrideWidth}}
+\index{StrideWidth@{StrideWidth}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Stride\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the stride width. 
+
+
+
+Definition at line 144 of file max\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1MaxPooling_a7a2704698a50d9e00dfb083f3a863579}} 
+\index{MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}!WeightSize@{WeightSize}}
+\index{WeightSize@{WeightSize}!MaxPooling$<$ InputDataType, OutputDataType $>$@{MaxPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{WeightSize()}
+{\footnotesize\ttfamily size\+\_\+t Weight\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the size of the weights. 
+
+
+
+Definition at line 164 of file max\+\_\+pooling.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ max\+\_\+pooling.\+hpp}\end{DoxyCompactItemize}

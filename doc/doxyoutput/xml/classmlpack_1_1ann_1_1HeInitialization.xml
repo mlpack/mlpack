@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1HeInitialization" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::HeInitialization</compoundname>
+    <includes refid="he__init_8hpp" local="no">he_init.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HeInitialization_1a1e4da3c5a82b0c0aacc4f4505bcdccd0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>HeInitialization</definition>
+        <argsstring>()</argsstring>
+        <name>HeInitialization</name>
+        <briefdescription>
+<para>Initialize the <ref refid="classmlpack_1_1ann_1_1HeInitialization" kindref="compound">HeInitialization</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" line="51" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" bodystart="51" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HeInitialization_1ae2f3e6d570824a160b687ff9f734f83c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Cube&lt; eT &gt; &amp;W)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements of the specified weight 3rd order tensor with He initialization rule. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" line="131" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" bodystart="131" bodyend="138"/>
+        <references refid="classmlpack_1_1Log_1a5b72fcdfa48547883454fbc59be9caf1" compoundref="log_8hpp" startline="90">Log::Fatal</references>
+        <references refid="classmlpack_1_1ann_1_1HeInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" compoundref="he__init_8hpp" startline="65" endline="78">HeInitialization::Initialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HeInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Cube&lt; eT &gt; &amp;W, const size_t rows, const size_t cols, const size_t slices)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cols</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>slices</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements of the specified weight 3rd order tensor with He initialization rule. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rows</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of slices. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" line="112" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" bodystart="112" bodyend="122"/>
+        <references refid="classmlpack_1_1ann_1_1HeInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" compoundref="he__init_8hpp" startline="65" endline="78">HeInitialization::Initialize</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HeInitialization_1af2d770912321b8b9ca7b03ab98f735c0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements of the weight matrix with the He initialization rule. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" line="87" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" bodystart="87" bodyend="100"/>
+        <references refid="classmlpack_1_1Log_1a5b72fcdfa48547883454fbc59be9caf1" compoundref="log_8hpp" startline="90">Log::Fatal</references>
+        <references refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" compoundref="bindings_2go_2CMakeLists_8txt" startline="3" endline="16">if</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1HeInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(arma::Mat&lt; eT &gt; &amp;W, const size_t rows, const size_t cols)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>cols</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the elements of the weight matrix with the He initialization rule. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weight matrix to initialize. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rows</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" line="65" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" bodystart="65" bodyend="78"/>
+        <referencedby refid="classmlpack_1_1ann_1_1HeInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" compoundref="he__init_8hpp" startline="112" endline="122">HeInitialization::Initialize</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class is used to initialize weight matrix with the He initialization rule given by He et. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>al. for neural networks. The He initialization initializes weights of the neural network to better suit the rectified activation units.</para>
+<para>For more information, the following paper can be referred to:</para>
+<para><programlisting><codeline><highlight class="normal">@article{Delving2015,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/>=<sp/>{Delving<sp/>Deep<sp/>into<sp/>Rectifiers:<sp/>Surpassing<sp/>Human-Level<sp/>Performance</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>on<sp/>ImageNet<sp/>Classification},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/>=<sp/>{Kaiming<sp/>He<sp/>and<sp/>Xiangyu<sp/>Zhang<sp/>and<sp/>Shaoqing<sp/>Ren<sp/>and<sp/>Jian<sp/>Sun},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>journal<sp/>=<sp/>{2015<sp/>IEEE<sp/>International<sp/>Conference<sp/>on<sp/>Computer<sp/>Vision<sp/>(ICCV)},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/>=<sp/>{2015},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages<sp/><sp/><sp/>=<sp/>{1026-1034}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" line="45" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/he_init.hpp" bodystart="46" bodyend="139"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1HeInitialization_1a1e4da3c5a82b0c0aacc4f4505bcdccd0" prot="public" virt="non-virtual"><scope>mlpack::ann::HeInitialization</scope><name>HeInitialization</name></member>
+      <member refid="classmlpack_1_1ann_1_1HeInitialization_1a5cfe472251a41fffd45b170bb0d3c1bd" prot="public" virt="non-virtual"><scope>mlpack::ann::HeInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1HeInitialization_1af2d770912321b8b9ca7b03ab98f735c0" prot="public" virt="non-virtual"><scope>mlpack::ann::HeInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1HeInitialization_1a40a2b6466bdba0f6aab4eb92b6e65934" prot="public" virt="non-virtual"><scope>mlpack::ann::HeInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1HeInitialization_1ae2f3e6d570824a160b687ff9f734f83c" prot="public" virt="non-virtual"><scope>mlpack::ann::HeInitialization</scope><name>Initialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,360 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::svd::RandomizedBlockKrylovSVD</compoundname>
+    <includes refid="randomized__block__krylov__svd_8hpp" local="no">randomized_block_krylov_svd.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1aa219775c20ca1c090756a777840c0c58" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t blockSize</definition>
+        <argsstring></argsstring>
+        <name>blockSize</name>
+        <briefdescription>
+<para>The block size value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" line="122" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1adb3fa2e38847b23885acf3833f28538e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxIterations</definition>
+        <argsstring></argsstring>
+        <name>maxIterations</name>
+        <briefdescription>
+<para>Locally stored number of iterations for the power method. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" line="119" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1aa1fb3c7372e3ca685cf926865c214150" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RandomizedBlockKrylovSVD</definition>
+        <argsstring>(const arma::mat &amp;data, arma::mat &amp;u, arma::vec &amp;s, arma::mat &amp;v, const size_t maxIterations=2, const size_t rank=0, const size_t blockSize=0)</argsstring>
+        <name>RandomizedBlockKrylovSVD</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxIterations</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rank</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>blockSize</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Create object for the randomized block krylov SVD method. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>u</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First unitary matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second unitary matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Diagonal matrix of singular values. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxIterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of iterations for the power method (Default: 2). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rank</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rank of the approximation (Default: number of rows.) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blockSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The block size, must be &gt;= rank (Default: rank + 10). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" line="73" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1aa43fe96dd8cd42e02f259c2b500232ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RandomizedBlockKrylovSVD</definition>
+        <argsstring>(const size_t maxIterations=2, const size_t blockSize=0)</argsstring>
+        <name>RandomizedBlockKrylovSVD</name>
+        <param>
+          <type>const size_t</type>
+          <declname>maxIterations</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>blockSize</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Create object for the randomized block krylov SVD method. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>maxIterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of iterations for the power method (Default: 2). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>blockSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The block size, must be &gt;= rank (Default: rank + 10). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" line="88" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1a880f86693b7d486206c2f69ad8d9c59a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Apply</definition>
+        <argsstring>(const arma::mat &amp;data, arma::mat &amp;u, arma::vec &amp;s, arma::mat &amp;v, const size_t rank)</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rank</declname>
+        </param>
+        <briefdescription>
+<para>Apply Principal Component Analysis to the provided data set using the randomized block krylov SVD. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>u</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First unitary matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>v</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second unitary matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Diagonal matrix of singular values. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rank</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rank of the approximation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" line="101" column="8"/>
+        <referencedby refid="classmlpack_1_1pca_1_1RandomizedBlockKrylovSVDPolicy_1a596b042060783f8697e8f5a42b0fa20e" compoundref="randomized__block__krylov__method_8hpp" startline="56" endline="78">RandomizedBlockKrylovSVDPolicy::Apply</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1a3380590a2f71ed10c3e81242b7e0faeb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; BlockSize</definition>
+        <argsstring>()</argsstring>
+        <name>BlockSize</name>
+        <briefdescription>
+<para>Modify the block size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" line="115" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" bodystart="115" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1a3abd143be875c389ea92c4d54057c591" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t BlockSize</definition>
+        <argsstring>() const</argsstring>
+        <name>BlockSize</name>
+        <briefdescription>
+<para>Get the block size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" line="113" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" bodystart="113" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MaxIterations</definition>
+        <argsstring>()</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Modify the number of iterations for the power method. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" line="110" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MaxIterations</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Get the number of iterations for the power method. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" line="108" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" bodystart="108" bodyend="108"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Randomized block krylov SVD is a matrix factorization that is based on randomized matrix approximation techniques, developed in in &quot;Randomized Block Krylov Methods for Stronger and Faster Approximate
+Singular Value Decomposition&quot;. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>For more information, see the following.</para>
+<para><programlisting><codeline><highlight class="normal">@inproceedings{Musco2015,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/><sp/><sp/>=<sp/>{Cameron<sp/>Musco<sp/>and<sp/>Christopher<sp/>Musco},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/><sp/><sp/>=<sp/>{Randomized<sp/>Block<sp/>Krylov<sp/>Methods<sp/>for<sp/>Stronger<sp/>and<sp/>Faster</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Approximate<sp/>Singular<sp/>Value<sp/>Decomposition},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle<sp/>=<sp/>{Advances<sp/>in<sp/>Neural<sp/>Information<sp/>Processing<sp/>Systems<sp/>28:<sp/>Annual</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Conference<sp/>on<sp/>Neural<sp/>Information<sp/>Processing<sp/>Systems<sp/>2015,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>December<sp/>7-12,<sp/>2015,<sp/>Montreal,<sp/>Quebec,<sp/>Canada},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages<sp/><sp/><sp/><sp/><sp/>=<sp/>{1396--1404},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{2015},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>An example of how to use the interface is shown below:</para>
+<para><programlisting><codeline><highlight class="normal">arma::mat<sp/>data;<sp/>//<sp/>Rating<sp/>data<sp/>in<sp/>the<sp/>form<sp/>of<sp/>coordinate<sp/>list.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">const<sp/>size_t<sp/>rank<sp/>=<sp/>20;<sp/>//<sp/>Rank<sp/>used<sp/>for<sp/>the<sp/>decomposition.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Make<sp/>a<sp/>RandomizedBlockKrylovSVD<sp/>object.</highlight></codeline>
+<codeline><highlight class="normal">RandomizedBlockKrylovSVD<sp/>bSVD();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>u,<sp/>s,<sp/>v;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Use<sp/>the<sp/>Apply()<sp/>method<sp/>to<sp/>get<sp/>a<sp/>factorization.</highlight></codeline>
+<codeline><highlight class="normal">bSVD.Apply(data,<sp/>u,<sp/>s,<sp/>v,<sp/>rank);</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" line="58" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/block_krylov_svd/randomized_block_krylov_svd.hpp" bodystart="59" bodyend="123"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1a880f86693b7d486206c2f69ad8d9c59a" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedBlockKrylovSVD</scope><name>Apply</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1aa219775c20ca1c090756a777840c0c58" prot="private" virt="non-virtual"><scope>mlpack::svd::RandomizedBlockKrylovSVD</scope><name>blockSize</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1a3abd143be875c389ea92c4d54057c591" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedBlockKrylovSVD</scope><name>BlockSize</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1a3380590a2f71ed10c3e81242b7e0faeb" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedBlockKrylovSVD</scope><name>BlockSize</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1adb3fa2e38847b23885acf3833f28538e" prot="private" virt="non-virtual"><scope>mlpack::svd::RandomizedBlockKrylovSVD</scope><name>maxIterations</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedBlockKrylovSVD</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedBlockKrylovSVD</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1aa1fb3c7372e3ca685cf926865c214150" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedBlockKrylovSVD</scope><name>RandomizedBlockKrylovSVD</name></member>
+      <member refid="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_1aa43fe96dd8cd42e02f259c2b500232ae" prot="public" virt="non-virtual"><scope>mlpack::svd::RandomizedBlockKrylovSVD</scope><name>RandomizedBlockKrylovSVD</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

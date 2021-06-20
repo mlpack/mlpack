@@ -1,0 +1,99 @@
+.TH "NMS< UseCoordinates >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+NMS< UseCoordinates > \- Definition of Non Maximal Supression\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBNMS\fP ()"
+.br
+.RI "Default constructor required to satisfy the Metric policy\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the metric\&. "
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename BoundingBoxesType , typename ConfidenceScoreType , typename OutputType > static void \fBEvaluate\fP (const BoundingBoxesType &boundingBoxes, const ConfidenceScoreType &confidenceScores, OutputType &selectedIndices, const double threshold=0\&.5)"
+.br
+.RI "Performs non-maximal suppression\&. "
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBuseCoordinates\fP = UseCoordinates"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<bool UseCoordinates = false>
+.br
+class mlpack::metric::NMS< UseCoordinates >"
+Definition of Non Maximal Supression\&. 
+
+Performs non-maximal suppression (\fBNMS\fP) on the boxes according to their Intersection-over-Union (\fBIoU\fP)\&. \fBNMS\fP iteratively removes lower scoring boxes which have an \fBIoU\fP greater than threshold with another high scoring box\&.
+.PP
+For bounding box representation there are two common representation either as coordinates i\&.e\&. each value in vector represents a coordinate in the format x0, y0, x1, y1 where x0, y0 represent the lower left coordinate and x1, y1, represent upper right coordinate\&.
+.PP
+Second representation follows the following representation : x0, y0, h, w\&. Where x0 and y0 are bottom left bounding box coordinates and h, w are height and width of the bounding box\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIUseCoordinates\fP Toggles between the two representation of bounding box\&. If true, each value in vector represents a coordinate in the formate x0, y0, x1, y1\&. Else the bounding box is represented as x0, y0, h, w\&. 
+.RE
+.PP
+
+.PP
+Definition at line 40 of file non_maximal_supression\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBNMS\fP ()\fC [inline]\fP"
+
+.PP
+Default constructor required to satisfy the Metric policy\&. 
+.PP
+Definition at line 44 of file non_maximal_supression\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static void Evaluate (const BoundingBoxesType & boundingBoxes, const ConfidenceScoreType & confidenceScores, OutputType & selectedIndices, const double threshold = \fC0\&.5\fP)\fC [static]\fP"
+
+.PP
+Performs non-maximal suppression\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIboundingBoxes\fP Column major representation of bounding boxes i\&.e\&. Each column corresponds to a different bounding box\&. Each bounding box should contain 4 points only either {x1, y1, x2, y2} or {x1, y1, h, w} depending on UseCoordinates parameter\&. 
+.br
+\fIconfidenceScores\fP Vector containing confidence score corresponding to each bounding box\&. 
+.br
+\fIselectedIndices\fP Output of Non Maximal Suppression (\fBNMS\fP) is stored here\&. It contains a list of indices corresponding to bounding boxes in input parameter, sorted in descending order of the confidence scores\&. 
+.br
+\fIthreshold\fP Threshold used to discard all overlapping bounding boxes that have \fBIoU\fP greater than the threshold\&. 
+.RE
+.PP
+
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the metric\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool useCoordinates = UseCoordinates\fC [static]\fP"
+
+.PP
+Definition at line 73 of file non_maximal_supression\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,1496 @@
+\doxysection{mlpack\+::bindings\+::python Namespace Reference}
+\label{namespacemlpack_1_1bindings_1_1python}\index{mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Py\+Option}
+\begin{DoxyCompactList}\small\item\em The Python option class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Default\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Return the default value of an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Default\+Param\+Impl} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::string $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Default\+Param\+Impl} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of a model option (this returns the default filename, or \textquotesingle{}\textquotesingle{} if the default is no file). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Default\+Param\+Impl} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::string $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of a string option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Default\+Param\+Impl} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of a vector option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Default\+Param\+Impl} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if\+\_\+c$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or \textquotesingle{}\textquotesingle{} if the default is no file). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Arma\+Type} ()
+\begin{DoxyCompactList}\small\item\em This is used for arma\+::\+Mat$<$$>$ types; it will return \char`\"{}mat\char`\"{} for matrices, \char`\"{}row\char`\"{} for row vectors, and \char`\"{}col\char`\"{} for column vectors. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Get\+Binding\+Name} (const std\+::string \&binding\+Name)
+\begin{DoxyCompactList}\small\item\em Given the name of a binding, print its Python name. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Cython\+Type} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Cython\+Type} (\textbf{ util\+::\+Param\+Data} \&d, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Cython\+Type} (\textbf{ util\+::\+Param\+Data} \&d, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Cython\+Type} (\textbf{ util\+::\+Param\+Data} \&d, const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Cython\+Type$<$ bool $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ bool $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ bool $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ bool $>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Cython\+Type$<$ double $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ double $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ double $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ double $>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Cython\+Type$<$ int $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ int $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ int $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ int $>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Cython\+Type$<$ size\+\_\+t $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ size\+\_\+t $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ size\+\_\+t $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ size\+\_\+t $>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Cython\+Type$<$ std\+::string $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ std\+::string $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ std\+::string $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ std\+::string $>$$>$\+::type $\ast$)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Numpy\+Type} ()
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Numpy\+Type$<$ double $>$} ()
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Numpy\+Type$<$ size\+\_\+t $>$} ()
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Numpy\+Type\+Char} ()
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Numpy\+Type\+Char$<$ arma\+::\+Col$<$ size\+\_\+t $>$ $>$} ()
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Numpy\+Type\+Char$<$ arma\+::mat $>$} ()
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Numpy\+Type\+Char$<$ arma\+::\+Mat$<$ size\+\_\+t $>$ $>$} ()
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Numpy\+Type\+Char$<$ arma\+::\+Row$<$ size\+\_\+t $>$ $>$} ()
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Numpy\+Type\+Char$<$ arma\+::rowvec $>$} ()
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Numpy\+Type\+Char$<$ arma\+::vec $>$} ()
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Get\+Param} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em All Python binding types are exactly what is held in the Param\+Data, so no special handling is necessary. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print an option of a simple type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a serializable class option (this prints the class name). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a matrix option (this prints its size). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a combination Dataset\+Info/matrix parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a vector option, with spaces between it. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Print an option into a std\+::string. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&d, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&d, const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$, void $\ast$output)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Printable\+Type$<$ bool $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ bool $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ bool $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ bool $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ bool, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Printable\+Type$<$ double $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ double $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ double $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ double $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ double, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Printable\+Type$<$ int $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ int $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ int $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ int $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ int, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Printable\+Type$<$ size\+\_\+t $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ size\+\_\+t $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ size\+\_\+t $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ size\+\_\+t $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ size\+\_\+t, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Printable\+Type$<$ std\+::string $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ std\+::string $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ std\+::string $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ std\+::string $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ std\+::string, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$)
+\item 
+bool \textbf{ Ignore\+Check} (const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Print whether or not we should ignore a check on the given parameter. \end{DoxyCompactList}\item 
+bool \textbf{ Ignore\+Check} (const std\+::vector$<$ std\+::pair$<$ std\+::string, bool $>$$>$ \&constraints, const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Print whether or not we should ignore a check on the given set of constraints. \end{DoxyCompactList}\item 
+bool \textbf{ Ignore\+Check} (const std\+::vector$<$ std\+::string $>$ \&constraints)
+\begin{DoxyCompactList}\small\item\em Print whether or not we should ignore a check on the given set of constraints. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Import\+Decl} (\textbf{ util\+::\+Param\+Data} \&, const size\+\_\+t, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em For a non-\/serializable type, print nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Import\+Decl} (\textbf{ util\+::\+Param\+Data} \&, const size\+\_\+t, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em For a matrix type, print nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Import\+Decl} (\textbf{ util\+::\+Param\+Data} \&d, const size\+\_\+t indent, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em For a serializable type, print a cppclass definition. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Import\+Decl} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$indent, void $\ast$)
+\begin{DoxyCompactList}\small\item\em Print the cppclass definition for a serializable model; print nothing for a non-\/serializable type. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Param\+String} (const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Given the parameter name, determine what it would actually be when passed to the command line. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Class\+Defn} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Non-\/serializable models don\textquotesingle{}t require any special definitions, so this prints nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Class\+Defn} (\textbf{ util\+::\+Param\+Data} \&, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Matrices don\textquotesingle{}t require any special definitions, so this prints nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Class\+Defn} (\textbf{ util\+::\+Param\+Data} \&d, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Serializable models require a special class definition. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Class\+Defn} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$, void $\ast$)
+\begin{DoxyCompactList}\small\item\em Print the class definition to stdout. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Dataset} (const std\+::string \&dataset\+Name)
+\begin{DoxyCompactList}\small\item\em Given the name of a matrix, print it. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Default} (const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Given a parameter name, print its corresponding default value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Defn} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$, void $\ast$)
+\begin{DoxyCompactList}\small\item\em Print the definition for a Python binding parameter to stdout. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Doc} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$input, void $\ast$)
+\begin{DoxyCompactList}\small\item\em Print the docstring documentation for a given parameter. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Import} (const std\+::string \&binding\+Name)
+\begin{DoxyCompactList}\small\item\em Print any import information for the Python binding. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Input\+Option\+Info} ()
+\begin{DoxyCompactList}\small\item\em Print any special information about input options. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Input\+Options} ()
+\item 
+{\footnotesize template$<$typename T , typename... Args$>$ }\\std\+::string \textbf{ Print\+Input\+Options} (const std\+::string \&param\+Name, const T \&value, Args... args)
+\begin{DoxyCompactList}\small\item\em Print an input option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const size\+\_\+t indent, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print input processing for a vector type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const size\+\_\+t indent, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print input processing for a standard option type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const size\+\_\+t indent, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print input processing for a serializable type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const size\+\_\+t indent, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print input processing for a matrix type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const size\+\_\+t indent, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print input processing for a matrix/\+Dataset\+Info type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$input, void $\ast$)
+\begin{DoxyCompactList}\small\item\em Given parameter information and the current number of spaces for indentation, print the code to process the input to cout. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Model} (const std\+::string \&model\+Name)
+\begin{DoxyCompactList}\small\item\em Given the name of a model, print it. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Output\+Option\+Info} ()
+\begin{DoxyCompactList}\small\item\em Print any special information about output options. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Output\+Options} ()
+\item 
+{\footnotesize template$<$typename T , typename... Args$>$ }\\std\+::string \textbf{ Print\+Output\+Options} (const std\+::string \&param\+Name, const T \&value, Args... args)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Output\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const size\+\_\+t indent, const bool only\+Output, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print output processing for a regular parameter type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Output\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const size\+\_\+t indent, const bool only\+Output, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print output processing for a serializable model. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Output\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const size\+\_\+t indent, const bool only\+Output, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print output processing for a matrix type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Output\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const size\+\_\+t indent, const bool only\+Output, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print output processing for a dataset info / matrix combination. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Output\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$input, void $\ast$)
+\begin{DoxyCompactList}\small\item\em Given parameter information and the current number of spaces for indentation, print the code to process the output to cout. \end{DoxyCompactList}\item 
+void \textbf{ Print\+PYX} (const \textbf{ util\+::\+Binding\+Details} \&doc, const std\+::string \&main\+Filename, const std\+::string \&function\+Name)
+\begin{DoxyCompactList}\small\item\em Given a list of parameter definition and program documentation, print a generated .pyx file to stdout. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a model. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a matrix option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a matrix tuple option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const typename std\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Print the command-\/line type of an option into a string. \end{DoxyCompactList}\item 
+template$<$$>$ std\+::string \textbf{ Print\+Value} (const bool \&value, bool quotes)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Value} (const T \&value, bool quotes)
+\begin{DoxyCompactList}\small\item\em Given a parameter type, print the corresponding value. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Program\+Call} (const std\+::string \&\textbf{ program\+Name})
+\begin{DoxyCompactList}\small\item\em Given the name of a binding, print a program call assuming that all options are specified. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... Args$>$ }\\std\+::string \textbf{ Program\+Call} (const std\+::string \&\textbf{ program\+Name}, Args... args)
+\begin{DoxyCompactList}\small\item\em Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Serialize\+In} (T $\ast$t, const std\+::string \&str, const std\+::string \&name)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Serialize\+In\+JSON} (T $\ast$t, const std\+::string \&str, const std\+::string \&name)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Serialize\+Out} (T $\ast$t, const std\+::string \&name)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Serialize\+Out\+JSON} (T $\ast$t, const std\+::string \&name)
+\item 
+void \textbf{ Strip\+Type} (const std\+::string \&input\+Type, std\+::string \&stripped\+Type, std\+::string \&printed\+Type, std\+::string \&defaults\+Type)
+\begin{DoxyCompactList}\small\item\em Given an input type like, e.\+g., \char`\"{}\+Logistic\+Regression$<$$>$\char`\"{}, return three types that can be used in Python code. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \textbf{ program\+Name}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_addf1d7eb0392954f22f7938040bade44}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!DefaultParam@{DefaultParam}}
+\index{DefaultParam@{DefaultParam}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{DefaultParam()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Default\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{output }\end{DoxyParamCaption})}
+
+
+
+Return the default value of an option. 
+
+This is the function that will be placed into the \doxyref{IO}{p.}{classmlpack_1_1IO} function\+Map. 
+
+Definition at line 80 of file default\+\_\+param.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a80e7aedca62a238ad65b9a0d7968c80c}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!DefaultParamImpl@{DefaultParamImpl}}
+\index{DefaultParamImpl@{DefaultParamImpl}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{DefaultParamImpl()\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Default\+Param\+Impl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::string $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the default value of an option. 
+
+This is for regular types. \mbox{\label{namespacemlpack_1_1bindings_1_1python_a0901c6d34e06ad95478679e8252f790f}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!DefaultParamImpl@{DefaultParamImpl}}
+\index{DefaultParamImpl@{DefaultParamImpl}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{DefaultParamImpl()\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Default\+Param\+Impl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the default value of a model option (this returns the default filename, or \textquotesingle{}\textquotesingle{} if the default is no file). 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a7aa49c116918a65e880e73f639d2d896}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!DefaultParamImpl@{DefaultParamImpl}}
+\index{DefaultParamImpl@{DefaultParamImpl}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{DefaultParamImpl()\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Default\+Param\+Impl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::string $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the default value of a string option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_ae8535c4203054c48a933405a1845c007}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!DefaultParamImpl@{DefaultParamImpl}}
+\index{DefaultParamImpl@{DefaultParamImpl}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{DefaultParamImpl()\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Default\+Param\+Impl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the default value of a vector option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a08646952a5207734a13c2e6d3c8f62e3}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!DefaultParamImpl@{DefaultParamImpl}}
+\index{DefaultParamImpl@{DefaultParamImpl}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{DefaultParamImpl()\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Default\+Param\+Impl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if\+\_\+c$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or \textquotesingle{}\textquotesingle{} if the default is no file). 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a6e0e0614e11b883601227d5bf884fce6}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetArmaType@{GetArmaType}}
+\index{GetArmaType@{GetArmaType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetArmaType()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Arma\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This is used for arma\+::\+Mat$<$$>$ types; it will return \char`\"{}mat\char`\"{} for matrices, \char`\"{}row\char`\"{} for row vectors, and \char`\"{}col\char`\"{} for column vectors. 
+
+
+
+Definition at line 28 of file get\+\_\+arma\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a24efbbdd5edd02b416e5f53cff686a07}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetBindingName@{GetBindingName}}
+\index{GetBindingName@{GetBindingName}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetBindingName()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Binding\+Name (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{binding\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given the name of a binding, print its Python name. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_aae1b43223a82e87c26dda721ffe1b64c}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetCythonType@{GetCythonType}}
+\index{GetCythonType@{GetCythonType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetCythonType()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Cython\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 24 of file get\+\_\+cython\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a01a87ad978f242a7b6c889690ce55a1d}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetCythonType@{GetCythonType}}
+\index{GetCythonType@{GetCythonType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetCythonType()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Cython\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 106 of file get\+\_\+cython\+\_\+type.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a3a7c26c01db5e577f3d40870d5b9fd30}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetCythonType@{GetCythonType}}
+\index{GetCythonType@{GetCythonType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetCythonType()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Cython\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 92 of file get\+\_\+cython\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a5b7ef19eb1efae59337f8ca8a68c8bc7}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetCythonType@{GetCythonType}}
+\index{GetCythonType@{GetCythonType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetCythonType()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Cython\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 84 of file get\+\_\+cython\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a3eb6211ac8ddac3acc284d57c44e20de}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetCythonType$<$ bool $>$@{GetCythonType$<$ bool $>$}}
+\index{GetCythonType$<$ bool $>$@{GetCythonType$<$ bool $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetCythonType$<$ bool $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Cython\+Type}$<$ bool $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ bool $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ bool $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ bool $>$$>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 74 of file get\+\_\+cython\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a376a58b3162f01312a81b83504f568ce}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetCythonType$<$ double $>$@{GetCythonType$<$ double $>$}}
+\index{GetCythonType$<$ double $>$@{GetCythonType$<$ double $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetCythonType$<$ double $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Cython\+Type}$<$ double $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ double $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ double $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ double $>$$>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 44 of file get\+\_\+cython\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_aaf9f486764e2a7d4780b3b865a42976c}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetCythonType$<$ int $>$@{GetCythonType$<$ int $>$}}
+\index{GetCythonType$<$ int $>$@{GetCythonType$<$ int $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetCythonType$<$ int $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Cython\+Type}$<$ int $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ int $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ int $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ int $>$$>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 34 of file get\+\_\+cython\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a7081081aa4247623e8d1db6136102d94}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetCythonType$<$ size\_t $>$@{GetCythonType$<$ size\_t $>$}}
+\index{GetCythonType$<$ size\_t $>$@{GetCythonType$<$ size\_t $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetCythonType$<$ size\_t $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Cython\+Type}$<$ size\+\_\+t $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ size\+\_\+t $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ size\+\_\+t $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ size\+\_\+t $>$$>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 64 of file get\+\_\+cython\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a61ad87233086dfafe8ea8e4e34e231c2}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetCythonType$<$ std::string $>$@{GetCythonType$<$ std::string $>$}}
+\index{GetCythonType$<$ std::string $>$@{GetCythonType$<$ std::string $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetCythonType$<$ std::string $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Cython\+Type}$<$ std\+::string $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ std\+::string $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ std\+::string $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ std\+::string $>$$>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 54 of file get\+\_\+cython\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a62060e3eede9c45540c426105c552ef4}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetNumpyType@{GetNumpyType}}
+\index{GetNumpyType@{GetNumpyType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetNumpyType()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Numpy\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 22 of file get\+\_\+numpy\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a1c682bf6da1b0aec259c40f05e6d0ad5}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetNumpyType$<$ double $>$@{GetNumpyType$<$ double $>$}}
+\index{GetNumpyType$<$ double $>$@{GetNumpyType$<$ double $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetNumpyType$<$ double $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Numpy\+Type}$<$ double $>$ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 28 of file get\+\_\+numpy\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a9be0b495a6023db3314fd406a9c7d1cb}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetNumpyType$<$ size\_t $>$@{GetNumpyType$<$ size\_t $>$}}
+\index{GetNumpyType$<$ size\_t $>$@{GetNumpyType$<$ size\_t $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetNumpyType$<$ size\_t $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Numpy\+Type}$<$ size\+\_\+t $>$ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 34 of file get\+\_\+numpy\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_acf355ab2766c7b6ce900b02402e8b22f}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetNumpyTypeChar@{GetNumpyTypeChar}}
+\index{GetNumpyTypeChar@{GetNumpyTypeChar}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetNumpyTypeChar()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Numpy\+Type\+Char (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 23 of file get\+\_\+numpy\+\_\+type\+\_\+char.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_ab65db7770f63b8cd83a53ebb8764138c}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetNumpyTypeChar$<$ arma::Col$<$ size\_t $>$ $>$@{GetNumpyTypeChar$<$ arma::Col$<$ size\_t $>$ $>$}}
+\index{GetNumpyTypeChar$<$ arma::Col$<$ size\_t $>$ $>$@{GetNumpyTypeChar$<$ arma::Col$<$ size\_t $>$ $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetNumpyTypeChar$<$ arma::Col$<$ size\_t $>$ $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Numpy\+Type\+Char}$<$ arma\+::\+Col$<$ size\+\_\+t $>$ $>$ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 36 of file get\+\_\+numpy\+\_\+type\+\_\+char.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_ac3ff131af41b583e1e0312f0cadd85d1}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetNumpyTypeChar$<$ arma::mat $>$@{GetNumpyTypeChar$<$ arma::mat $>$}}
+\index{GetNumpyTypeChar$<$ arma::mat $>$@{GetNumpyTypeChar$<$ arma::mat $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetNumpyTypeChar$<$ arma::mat $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Numpy\+Type\+Char}$<$ arma\+::mat $>$ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 49 of file get\+\_\+numpy\+\_\+type\+\_\+char.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a7af32159e75699310ce38618deb652d2}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetNumpyTypeChar$<$ arma::Mat$<$ size\_t $>$ $>$@{GetNumpyTypeChar$<$ arma::Mat$<$ size\_t $>$ $>$}}
+\index{GetNumpyTypeChar$<$ arma::Mat$<$ size\_t $>$ $>$@{GetNumpyTypeChar$<$ arma::Mat$<$ size\_t $>$ $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetNumpyTypeChar$<$ arma::Mat$<$ size\_t $>$ $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Numpy\+Type\+Char}$<$ arma\+::\+Mat$<$ size\+\_\+t $>$ $>$ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 30 of file get\+\_\+numpy\+\_\+type\+\_\+char.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a30d1acd19b418db8d6ae54695cbc075f}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetNumpyTypeChar$<$ arma::Row$<$ size\_t $>$ $>$@{GetNumpyTypeChar$<$ arma::Row$<$ size\_t $>$ $>$}}
+\index{GetNumpyTypeChar$<$ arma::Row$<$ size\_t $>$ $>$@{GetNumpyTypeChar$<$ arma::Row$<$ size\_t $>$ $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetNumpyTypeChar$<$ arma::Row$<$ size\_t $>$ $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Numpy\+Type\+Char}$<$ arma\+::\+Row$<$ size\+\_\+t $>$ $>$ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 42 of file get\+\_\+numpy\+\_\+type\+\_\+char.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a9cd3725915ba360fa07cf321400a181e}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetNumpyTypeChar$<$ arma::rowvec $>$@{GetNumpyTypeChar$<$ arma::rowvec $>$}}
+\index{GetNumpyTypeChar$<$ arma::rowvec $>$@{GetNumpyTypeChar$<$ arma::rowvec $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetNumpyTypeChar$<$ arma::rowvec $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Numpy\+Type\+Char}$<$ arma\+::rowvec $>$ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 61 of file get\+\_\+numpy\+\_\+type\+\_\+char.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_ae37e41e8b171c5a1f95a567d5f2d05fa}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetNumpyTypeChar$<$ arma::vec $>$@{GetNumpyTypeChar$<$ arma::vec $>$}}
+\index{GetNumpyTypeChar$<$ arma::vec $>$@{GetNumpyTypeChar$<$ arma::vec $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetNumpyTypeChar$<$ arma::vec $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Numpy\+Type\+Char}$<$ arma\+::vec $>$ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 55 of file get\+\_\+numpy\+\_\+type\+\_\+char.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a2c83e23064b39a59ffd1b22c74a1d18e}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetParam@{GetParam}}
+\index{GetParam@{GetParam}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetParam()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Get\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{output }\end{DoxyParamCaption})}
+
+
+
+All Python binding types are exactly what is held in the Param\+Data, so no special handling is necessary. 
+
+
+
+Definition at line 26 of file get\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a8f1846b0ae2b9ec7efac73e7cb42e339}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [1/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print an option of a simple type. 
+
+
+
+Definition at line 26 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a7c7b266ebf4e500c54deb2286da384ed}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [2/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print a serializable class option (this prints the class name). 
+
+
+
+Definition at line 75 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type, and Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_acd1fa320ba37f33e4f99524de02f78b3}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [3/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print a matrix option (this prints its size). 
+
+
+
+Definition at line 59 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a080f5ea405f34421b9aa7890b224e2af}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [4/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print a combination Dataset\+Info/matrix parameter. 
+
+
+
+Definition at line 89 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a3eb8e5ce1a0e40f32dcf268eb1d4746e}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [5/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print a vector option, with spaces between it. 
+
+
+
+Definition at line 43 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_aa0c2d955696ab44c0ab58560503be031}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [6/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{output }\end{DoxyParamCaption})}
+
+
+
+Print an option into a std\+::string. 
+
+This should print a short, one-\/line representation of the object. The string will be stored in the output pointer.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Parameter data struct. \\
+\hline
+{\em $\ast$} & (input) Unused parameter. \\
+\hline
+{\em output} & Output storage for the string. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 114 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_ad6abd609f63e481daf6827935495438e}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [1/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_ae37a682d330659caa949ae76f17ebbd0}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [2/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a8ca31c929f423d9b0fefef8ca03dc1ff}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [3/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a6e9bffcf30c3b4b9dcd53b59b9c8cd88}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [4/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a5aa0d6f0438898ff9b81db7b8f9c1b7f}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [5/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_afbe3788455628c38332b452b946fa310}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [6/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{output }\end{DoxyParamCaption})}
+
+
+
+Definition at line 106 of file get\+\_\+printable\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a30b583a945d1f88d73bc87682603c7a4}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableType$<$ bool $>$@{GetPrintableType$<$ bool $>$}}
+\index{GetPrintableType$<$ bool $>$@{GetPrintableType$<$ bool $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableType$<$ bool $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Printable\+Type}$<$ bool $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ bool $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ bool $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ bool $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ bool, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_ac899c96d653773482ef953ef21b6a60e}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableType$<$ double $>$@{GetPrintableType$<$ double $>$}}
+\index{GetPrintableType$<$ double $>$@{GetPrintableType$<$ double $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableType$<$ double $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Printable\+Type}$<$ double $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ double $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ double $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ double $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ double, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a78699240722ab3e72b39ddcaf4309325}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableType$<$ int $>$@{GetPrintableType$<$ int $>$}}
+\index{GetPrintableType$<$ int $>$@{GetPrintableType$<$ int $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableType$<$ int $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Printable\+Type}$<$ int $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ int $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ int $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ int $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ int, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_af9e36a90b5bd87c12a707c7841602166}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableType$<$ size\_t $>$@{GetPrintableType$<$ size\_t $>$}}
+\index{GetPrintableType$<$ size\_t $>$@{GetPrintableType$<$ size\_t $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableType$<$ size\_t $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Printable\+Type}$<$ size\+\_\+t $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ size\+\_\+t $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ size\+\_\+t $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ size\+\_\+t $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ size\+\_\+t, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a0b74f4fe624bf08d50b13d921f1b476e}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!GetPrintableType$<$ std::string $>$@{GetPrintableType$<$ std::string $>$}}
+\index{GetPrintableType$<$ std::string $>$@{GetPrintableType$<$ std::string $>$}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{GetPrintableType$<$ std::string $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::python\+::\+Get\+Printable\+Type}$<$ std\+::string $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ std\+::string $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ std\+::string $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ std\+::string $>$$>$\+::type $\ast$}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ std\+::string, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_aeb3b9177f23eddfc0d2d8d0b53518c67}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!IgnoreCheck@{IgnoreCheck}}
+\index{IgnoreCheck@{IgnoreCheck}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{IgnoreCheck()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily bool mlpack\+::bindings\+::python\+::\+Ignore\+Check (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{param\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print whether or not we should ignore a check on the given parameter. 
+
+For Python bindings, we ignore any checks on output parameters, so if param\+Name is an output parameter, this returns true. \mbox{\label{namespacemlpack_1_1bindings_1_1python_a7025812e38208c8df59d1a3d56c7d3f3}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!IgnoreCheck@{IgnoreCheck}}
+\index{IgnoreCheck@{IgnoreCheck}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{IgnoreCheck()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily bool mlpack\+::bindings\+::python\+::\+Ignore\+Check (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::pair$<$ std\+::string, bool $>$$>$ \&}]{constraints,  }\item[{const std\+::string \&}]{param\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print whether or not we should ignore a check on the given set of constraints. 
+
+For Python bindings, we ignore any checks on output parameters, so if any constraint parameter or the main parameter are output parameters, this returns true. \mbox{\label{namespacemlpack_1_1bindings_1_1python_a29e51ddbf3f2cb4ddbc4d0f40c1474fa}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!IgnoreCheck@{IgnoreCheck}}
+\index{IgnoreCheck@{IgnoreCheck}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{IgnoreCheck()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily bool mlpack\+::bindings\+::python\+::\+Ignore\+Check (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::string $>$ \&}]{constraints }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print whether or not we should ignore a check on the given set of constraints. 
+
+For Python bindings, we ignore any checks on output parameters, so if any parameter is an output parameter, this returns true. \mbox{\label{namespacemlpack_1_1bindings_1_1python_a64c0a2dda975be94dac5b9f5c8eab9d7}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!ImportDecl@{ImportDecl}}
+\index{ImportDecl@{ImportDecl}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{ImportDecl()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Import\+Decl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const}]{size\+\_\+t,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+For a non-\/serializable type, print nothing. 
+
+
+
+Definition at line 53 of file import\+\_\+decl.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a47c9c478a80e8e7be2c17f87f634929d}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!ImportDecl@{ImportDecl}}
+\index{ImportDecl@{ImportDecl}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{ImportDecl()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Import\+Decl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const}]{size\+\_\+t,  }\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+For a matrix type, print nothing. 
+
+
+
+Definition at line 66 of file import\+\_\+decl.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_aaf8d2ec60ff388711c55e631f6e4566f}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!ImportDecl@{ImportDecl}}
+\index{ImportDecl@{ImportDecl}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{ImportDecl()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Import\+Decl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const size\+\_\+t}]{indent,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+For a serializable type, print a cppclass definition. 
+
+This will give output of the form\+:
+
+cdef cppclass Type\+: Type() nogil
+
+Definition at line 26 of file import\+\_\+decl.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type, and Strip\+Type().
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a0be0f6c09cc84674121d49178981fe19}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!ImportDecl@{ImportDecl}}
+\index{ImportDecl@{ImportDecl}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{ImportDecl()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Import\+Decl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{indent,  }\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+Print the cppclass definition for a serializable model; print nothing for a non-\/serializable type. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & Parameter info struct. \\
+\hline
+{\em indent} & Pointer to size\+\_\+t indicating indent. \\
+\hline
+{\em $\ast$} & (output) Unused parameter. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 83 of file import\+\_\+decl.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a439896a9de3ddc4c67f15b55b7dff2e3}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!ParamString@{ParamString}}
+\index{ParamString@{ParamString}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{ParamString()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Param\+String (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{param\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given the parameter name, determine what it would actually be when passed to the command line. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a3ea59db131b61502a938f86816a21c1c}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintClassDefn@{PrintClassDefn}}
+\index{PrintClassDefn@{PrintClassDefn}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintClassDefn()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Class\+Defn (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Non-\/serializable models don\textquotesingle{}t require any special definitions, so this prints nothing. 
+
+
+
+Definition at line 26 of file print\+\_\+class\+\_\+defn.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a3b4859fba72d1572232e578bd78b015a}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintClassDefn@{PrintClassDefn}}
+\index{PrintClassDefn@{PrintClassDefn}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintClassDefn()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Class\+Defn (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Matrices don\textquotesingle{}t require any special definitions, so this prints nothing. 
+
+
+
+Definition at line 38 of file print\+\_\+class\+\_\+defn.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_aa8cb764eab62bf27d4602075f277599d}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintClassDefn@{PrintClassDefn}}
+\index{PrintClassDefn@{PrintClassDefn}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintClassDefn()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Class\+Defn (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Serializable models require a special class definition. 
+
+This will produce code like\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cdef class <ModelType>Type:}
+\DoxyCodeLine{  cdef <ModelType>* modelptr}
+\DoxyCodeLine{  cdef \textcolor{keyword}{public} dict scrubbed\_params}
+\DoxyCodeLine{}
+\DoxyCodeLine{  def \_\_cinit\_\_(\textcolor{keyword}{self}):}
+\DoxyCodeLine{    self.modelptr = new <ModelType>()}
+\DoxyCodeLine{    self.scrubbed\_params = dict()}
+\DoxyCodeLine{}
+\DoxyCodeLine{  def \_\_dealloc\_\_(self):}
+\DoxyCodeLine{    del self.modelptr}
+\DoxyCodeLine{}
+\DoxyCodeLine{  def \_\_getstate\_\_(self):}
+\DoxyCodeLine{    return SerializeOut(self.modelptr, \textcolor{stringliteral}{"{}<ModelType>"{}})}
+\DoxyCodeLine{}
+\DoxyCodeLine{  def \_\_setstate\_\_(self, state):}
+\DoxyCodeLine{    SerializeIn(self.modelptr, state, \textcolor{stringliteral}{"{}<ModelType>"{}})}
+\DoxyCodeLine{}
+\DoxyCodeLine{  def \_\_reduce\_ex\_\_(self):}
+\DoxyCodeLine{    return (self.\_\_class\_\_, (), self.\_\_getstate\_\_())}
+\DoxyCodeLine{}
+\DoxyCodeLine{  def \_get\_cpp\_params(self):}
+\DoxyCodeLine{    return SerializeOutJSON(self.modelptr, \textcolor{stringliteral}{"{}<ModelType>"{}})}
+\DoxyCodeLine{}
+\DoxyCodeLine{  def \_set\_cpp\_params(self, state):}
+\DoxyCodeLine{    SerializeInJSON(self.modelptr, state, \textcolor{stringliteral}{"{}<ModelType>"{}})}
+\DoxyCodeLine{}
+\DoxyCodeLine{  def get\_cpp\_params(self, return\_str=False):}
+\DoxyCodeLine{    params = self.\_get\_cpp\_params()}
+\DoxyCodeLine{    return process\_params\_out(self, params, return\_str=return\_str)}
+\DoxyCodeLine{}
+\DoxyCodeLine{  def set\_cpp\_params(self, params\_dic):}
+\DoxyCodeLine{    params\_str = process\_params\_in(self, params\_dic)}
+\DoxyCodeLine{    self.\_set\_cpp\_params(params\_str)}
+
+\end{DoxyCode}
+
+
+Definition at line 49 of file print\+\_\+class\+\_\+defn.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type, and Strip\+Type().
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a7096496e9709c3bf9a3c4c2d35fccea3}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintClassDefn@{PrintClassDefn}}
+\index{PrintClassDefn@{PrintClassDefn}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintClassDefn()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Class\+Defn (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+Print the class definition to stdout. 
+
+Only serializable models require a different class definition, so anything else does nothing.
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & Parameter data. \\
+\hline
+{\em $\ast$} & (input) Unused parameter. \\
+\hline
+{\em $\ast$} & (output) Unused parameter. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 149 of file print\+\_\+class\+\_\+defn.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_abfff680c34a36b80498b39de5c002bae}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintDataset@{PrintDataset}}
+\index{PrintDataset@{PrintDataset}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintDataset()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Dataset (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{dataset\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given the name of a matrix, print it. 
+
+Here we do not need to modify anything. \mbox{\label{namespacemlpack_1_1bindings_1_1python_a3862770cfbd7c639832a167c21c0e636}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintDefault@{PrintDefault}}
+\index{PrintDefault@{PrintDefault}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintDefault()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Default (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{param\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given a parameter name, print its corresponding default value. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_aecc682142101d2111db7705da00a8775}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintDefn@{PrintDefn}}
+\index{PrintDefn@{PrintDefn}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintDefn()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Defn (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+Print the definition for a Python binding parameter to stdout. 
+
+This is the definition in the function declaration. 
+
+Definition at line 26 of file print\+\_\+defn.\+hpp.
+
+
+
+References if(), Param\+Data\+::name, and Param\+Data\+::required.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_ad24641bda961439e033d20c7fecbacbc}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintDoc@{PrintDoc}}
+\index{PrintDoc@{PrintDoc}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintDoc()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{input,  }\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+Print the docstring documentation for a given parameter. 
+
+You are responsible for setting up the line---this does not handle indentation or anything. This is meant to produce a line of documentation describing a single parameter.
+
+The indent parameter (void$\ast$ input, which should be a pointer to a size\+\_\+t) should be passed to know how much to indent for a new line.
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & Parameter data struct. \\
+\hline
+{\em input} & Pointer to size\+\_\+t containing indent. \\
+\hline
+{\em $\ast$} & (output) Unused parameter. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 36 of file print\+\_\+doc.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type, Param\+Data\+::desc, mlpack\+::util\+::\+Hyphenate\+String(), if(), Param\+Data\+::name, and Param\+Data\+::required.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a02caa6bbd7dc53b45d0beb3178fa8bfa}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintImport@{PrintImport}}
+\index{PrintImport@{PrintImport}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintImport()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Import (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{binding\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print any import information for the Python binding. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a8acf794a4cadb2cb27431245bed5bd16}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintInputOptionInfo@{PrintInputOptionInfo}}
+\index{PrintInputOptionInfo@{PrintInputOptionInfo}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintInputOptionInfo()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Input\+Option\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print any special information about input options. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_aee67e03f9f9ba1b8e7a30d1f160b464c}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintInputOptions@{PrintInputOptions}}
+\index{PrintInputOptions@{PrintInputOptions}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintInputOptions()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Input\+Options (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_aa54735f722600e44319257fd8d2becff}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintInputOptions@{PrintInputOptions}}
+\index{PrintInputOptions@{PrintInputOptions}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintInputOptions()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Input\+Options (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{param\+Name,  }\item[{const T \&}]{value,  }\item[{Args...}]{args }\end{DoxyParamCaption})}
+
+
+
+Print an input option. 
+
+This will throw an exception if the parameter does not exist in \doxyref{IO}{p.}{classmlpack_1_1IO}. For a parameter \textquotesingle{}x\textquotesingle{} with value \textquotesingle{}5\textquotesingle{}, this will print something like x=5. \mbox{\label{namespacemlpack_1_1bindings_1_1python_a9f757a36e42cdc6ccbfc296ca9439679}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintInputProcessing@{PrintInputProcessing}}
+\index{PrintInputProcessing@{PrintInputProcessing}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintInputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [1/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Input\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const size\+\_\+t}]{indent,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print input processing for a vector type. 
+
+This gives us code like\+: if param\+\_\+name is not None\+: if isinstance(param\+\_\+name, list)\+: if len(param\+\_\+name) $>$ 0\+: if isinstance(param\+\_\+name[0], str)\+: Set\+Param[vector[string]]($<$const string$>$ \textquotesingle{}param\+\_\+name\textquotesingle{}, param\+\_\+name) \doxyref{IO.\+Set\+Passed}{p.}{classmlpack_1_1IO_a12aa08b1280e9b33864a9845706e0e59}($<$const string$>$ \textquotesingle{}param\+\_\+name\textquotesingle{}) else\+: raise Type\+Error(\char`\"{}\textquotesingle{}param\+\_\+name\textquotesingle{} must have type \textquotesingle{}list of strs\textquotesingle{}!\char`\"{}) else\+: raise Type\+Error(\char`\"{}\textquotesingle{}param\+\_\+name\textquotesingle{} must have type \textquotesingle{}list\textquotesingle{}!\char`\"{})
+
+Definition at line 164 of file print\+\_\+input\+\_\+processing.\+hpp.
+
+
+
+References Param\+Data\+::name, and Param\+Data\+::required.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a3c827aec0d0ff3ae5ae7d565fcda5ced}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintInputProcessing@{PrintInputProcessing}}
+\index{PrintInputProcessing@{PrintInputProcessing}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintInputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [2/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Input\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const size\+\_\+t}]{indent,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print input processing for a standard option type. 
+
+This gives us code like\+:\doxysubsection{Detect if the parameter was passed; set if so.}\label{print_input_processing.hpp_autotoc_md0}
+if param\+\_\+name is not None\+: if isinstance(param\+\_\+name, int)\+: Set\+Param[int]($<$const string$>$ \textquotesingle{}param\+\_\+name\textquotesingle{}, param\+\_\+name) \doxyref{IO.\+Set\+Passed}{p.}{classmlpack_1_1IO_a12aa08b1280e9b33864a9845706e0e59}($<$const string$>$ \textquotesingle{}param\+\_\+name\textquotesingle{}) else\+: raise Type\+Error(\char`\"{}\textquotesingle{}param\+\_\+name\textquotesingle{} must have type \textquotesingle{}list\textquotesingle{}!\char`\"{})
+
+Definition at line 31 of file print\+\_\+input\+\_\+processing.\+hpp.
+
+
+
+References if(), Param\+Data\+::name, and Param\+Data\+::required.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a6b8bcdebe252c46b6ee4131ea45465b8}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintInputProcessing@{PrintInputProcessing}}
+\index{PrintInputProcessing@{PrintInputProcessing}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintInputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [3/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Input\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const size\+\_\+t}]{indent,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print input processing for a serializable type. 
+
+This gives us code like\+:\doxysubsection{Detect if the parameter was passed; set if so.}\label{print_input_processing.hpp_autotoc_md2}
+if param\+\_\+name is not None\+: try\+: Set\+Param\+Ptr[Model](\textquotesingle{}param\+\_\+name\textquotesingle{}, ($<$Model\+Type?$>$ param\+\_\+name).modelptr, \doxyref{IO.\+Has\+Param}{p.}{classmlpack_1_1IO_a39eda1093ba2453f2b66d37153ac542c}(\textquotesingle{}copy\+\_\+all\+\_\+inputs\textquotesingle{})) except Type\+Error as e\+: if type(param\+\_\+name).\+\_\+\+\_\+name\+\_\+\+\_\+ == \char`\"{}\+Model\+Type\char`\"{}\+: Set\+Param\+Ptr[Model](\textquotesingle{}param\+\_\+name\textquotesingle{}, ($<$Model\+Type$>$ param\+\_\+name).modelptr, \doxyref{IO.\+Has\+Param}{p.}{classmlpack_1_1IO_a39eda1093ba2453f2b66d37153ac542c}(\textquotesingle{}copy\+\_\+all\+\_\+inputs\textquotesingle{})) else\+: raise e \doxyref{IO.\+Set\+Passed}{p.}{classmlpack_1_1IO_a12aa08b1280e9b33864a9845706e0e59}($<$const string$>$ \textquotesingle{}param\+\_\+name\textquotesingle{})
+
+Definition at line 372 of file print\+\_\+input\+\_\+processing.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type, Param\+Data\+::name, Param\+Data\+::required, and Strip\+Type().
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a544f01f8f04b0e90b6d165a7427f6e7a}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintInputProcessing@{PrintInputProcessing}}
+\index{PrintInputProcessing@{PrintInputProcessing}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintInputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [4/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Input\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const size\+\_\+t}]{indent,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print input processing for a matrix type. 
+
+This gives us code like\+:\doxysubsection{Detect if the parameter was passed; set if so.}\label{print_input_processing.hpp_autotoc_md1}
+if param\+\_\+name is not None\+: param\+\_\+name\+\_\+tuple = to\+\_\+matrix(param\+\_\+name) if param\+\_\+name\+\_\+tuple[0].shape[0] == 1 or param\+\_\+name\+\_\+tuple[0].shape[1] == 1\+: param\+\_\+name\+\_\+tuple[0].shape = (param\+\_\+name\+\_\+tuple[0].size,) param\+\_\+name\+\_\+mat = arma\+\_\+numpy.\+numpy\+\_\+to\+\_\+mat\+\_\+s(param\+\_\+name\+\_\+tuple[0], param\+\_\+name\+\_\+tuple[1]) Set\+Param[mat]($<$const string$>$ \textquotesingle{}param\+\_\+name\textquotesingle{}, dereference(param\+\_\+name\+\_\+mat)) \doxyref{IO.\+Set\+Passed}{p.}{classmlpack_1_1IO_a12aa08b1280e9b33864a9845706e0e59}($<$const string$>$ \textquotesingle{}param\+\_\+name\textquotesingle{})
+
+Definition at line 251 of file print\+\_\+input\+\_\+processing.\+hpp.
+
+
+
+References Param\+Data\+::name, and Param\+Data\+::required.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a1f157c96afaed787e2a5b35298ca680d}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintInputProcessing@{PrintInputProcessing}}
+\index{PrintInputProcessing@{PrintInputProcessing}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintInputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [5/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Input\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const size\+\_\+t}]{indent,  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print input processing for a matrix/\+Dataset\+Info type. 
+
+We want to generate code like the following\+:
+
+if param\+\_\+name is not None\+: param\+\_\+name\+\_\+tuple = to\+\_\+matrix\+\_\+with\+\_\+info(param\+\_\+name) if len(param\+\_\+name\+\_\+tuple[0].shape) $<$ 2\+: param\+\_\+name\+\_\+tuple[0].shape = (param\+\_\+name\+\_\+tuple[0].size,) param\+\_\+name\+\_\+mat = arma\+\_\+numpy.\+numpy\+\_\+to\+\_\+matrix\+\_\+d(param\+\_\+name\+\_\+tuple[0]) Set\+Param\+With\+Info[mat]($<$const string$>$ \textquotesingle{}param\+\_\+name\textquotesingle{}, dereference(param\+\_\+name\+\_\+mat), \&param\+\_\+name\+\_\+tuple[1][0]) \doxyref{IO.\+Set\+Passed}{p.}{classmlpack_1_1IO_a12aa08b1280e9b33864a9845706e0e59}($<$const string$>$ \textquotesingle{}param\+\_\+name\textquotesingle{})
+
+Definition at line 445 of file print\+\_\+input\+\_\+processing.\+hpp.
+
+
+
+References Param\+Data\+::name, and Param\+Data\+::required.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a996892b33ffaf97639cecb66e7f77650}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintInputProcessing@{PrintInputProcessing}}
+\index{PrintInputProcessing@{PrintInputProcessing}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintInputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [6/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Input\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{input,  }\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+Given parameter information and the current number of spaces for indentation, print the code to process the input to cout. 
+
+This code assumes that data.\+input is true, and should not be called when data.\+input is false.
+
+The number of spaces to indent should be passed through the input pointer.
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & Parameter data struct. \\
+\hline
+{\em input} & Pointer to size\+\_\+t holding the indentation. \\
+\hline
+{\em $\ast$} & (output) Unused parameter. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 525 of file print\+\_\+input\+\_\+processing.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a2c09399575bb61ca91eb665e67f1a2f6}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintModel@{PrintModel}}
+\index{PrintModel@{PrintModel}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintModel()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Model (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{model\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given the name of a model, print it. 
+
+Here we do not need to modify anything. \mbox{\label{namespacemlpack_1_1bindings_1_1python_af1b1c91db5f4872ad6a8420740665e47}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintOutputOptionInfo@{PrintOutputOptionInfo}}
+\index{PrintOutputOptionInfo@{PrintOutputOptionInfo}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintOutputOptionInfo()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Output\+Option\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print any special information about output options. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a4d147955dd7f5d654e112998d3ca51ca}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintOutputOptions@{PrintOutputOptions}}
+\index{PrintOutputOptions@{PrintOutputOptions}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintOutputOptions()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Output\+Options (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a6ed858166ad7d26009f2e85f1fa101c4}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintOutputOptions@{PrintOutputOptions}}
+\index{PrintOutputOptions@{PrintOutputOptions}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintOutputOptions()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Output\+Options (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{param\+Name,  }\item[{const T \&}]{value,  }\item[{Args...}]{args }\end{DoxyParamCaption})}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a4ad9b3cc77bbb36c86c5346eb98620b6}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintOutputProcessing@{PrintOutputProcessing}}
+\index{PrintOutputProcessing@{PrintOutputProcessing}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintOutputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Output\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const size\+\_\+t}]{indent,  }\item[{const bool}]{only\+Output,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print output processing for a regular parameter type. 
+
+This gives us code like\+:
+
+result = \doxyref{IO.\+Get\+Param}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}[int](\textquotesingle{}param\+\_\+name\textquotesingle{})
+
+This gives us code like\+:
+
+result[\textquotesingle{}param\+\_\+name\textquotesingle{}] = \doxyref{IO.\+Get\+Param}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}[int](\textquotesingle{}param\+\_\+name\textquotesingle{})
+
+Definition at line 29 of file print\+\_\+output\+\_\+processing.\+hpp.
+
+
+
+References Param\+Data\+::name.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_adb00a6ddc1c45cf0858e91a5be674624}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintOutputProcessing@{PrintOutputProcessing}}
+\index{PrintOutputProcessing@{PrintOutputProcessing}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintOutputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Output\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const size\+\_\+t}]{indent,  }\item[{const bool}]{only\+Output,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print output processing for a serializable model. 
+
+This gives us code like\+:
+
+result = Model\+Type() ($<$Model\+Type?$>$ result).modelptr = Get\+Param\+Ptr[Model](\textquotesingle{}name\textquotesingle{})
+
+But we also have to check to ensure there aren\textquotesingle{}t any input model parameters of the same type that could have the same model pointer. So we need to loop through all input parameters that have the same type, and double-\/check.
+
+This gives us code like\+:
+
+result[\textquotesingle{}name\textquotesingle{}] = Model\+Type() ($<$Model\+Type?$>$ result[\textquotesingle{}name\textquotesingle{}]).modelptr = Get\+Param\+Ptr[Model](\textquotesingle{}name\textquotesingle{}))
+
+But we also have to check to ensure there aren\textquotesingle{}t any input model parameters of the same type that could have the same model pointer. So we need to loop through all input parameters that have the same type, and double-\/check.
+
+Definition at line 169 of file print\+\_\+output\+\_\+processing.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type, Param\+Data\+::input, Param\+Data\+::name, IO\+::\+Parameters(), Param\+Data\+::required, and Strip\+Type().
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_aecb4f9c6e5970d548e922f8ef18f23ea}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintOutputProcessing@{PrintOutputProcessing}}
+\index{PrintOutputProcessing@{PrintOutputProcessing}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintOutputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Output\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const size\+\_\+t}]{indent,  }\item[{const bool}]{only\+Output,  }\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print output processing for a matrix type. 
+
+This gives us code like\+:
+
+result = arma\+\_\+numpy.\+mat\+\_\+to\+\_\+numpy\+\_\+X(\doxyref{IO.\+Get\+Param}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}[mat](\char`\"{}name\char`\"{}))
+
+where X indicates the type to convert to.
+
+This gives us code like\+:
+
+result[\textquotesingle{}param\+\_\+name\textquotesingle{}] = arma\+\_\+numpy.\+mat\+\_\+to\+\_\+numpy\+\_\+X(\doxyref{IO.\+Get\+Param}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}[mat](\textquotesingle{}name\textquotesingle{})
+
+where X indicates the type to convert to.
+
+Definition at line 85 of file print\+\_\+output\+\_\+processing.\+hpp.
+
+
+
+References Param\+Data\+::name.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_ab3d00ba5ed90f8820f650849b11c5007}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintOutputProcessing@{PrintOutputProcessing}}
+\index{PrintOutputProcessing@{PrintOutputProcessing}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintOutputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Output\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const size\+\_\+t}]{indent,  }\item[{const bool}]{only\+Output,  }\item[{const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print output processing for a dataset info / matrix combination. 
+
+This gives us code like\+:
+
+result = arma\+\_\+numpy.\+mat\+\_\+to\+\_\+numpy\+\_\+X(Get\+Param\+With\+Info[mat](\textquotesingle{}name\textquotesingle{}))
+
+This gives us code like\+:
+
+result[\textquotesingle{}param\+\_\+name\textquotesingle{}] = arma\+\_\+numpy.\+mat\+\_\+to\+\_\+numpy\+\_\+X(Get\+Param\+With\+Info[mat](\textquotesingle{}name\textquotesingle{}))
+
+Definition at line 127 of file print\+\_\+output\+\_\+processing.\+hpp.
+
+
+
+References Param\+Data\+::name.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a9bc7b05f16ca6f11e1334707bd034a5a}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintOutputProcessing@{PrintOutputProcessing}}
+\index{PrintOutputProcessing@{PrintOutputProcessing}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintOutputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Output\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{input,  }\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+Given parameter information and the current number of spaces for indentation, print the code to process the output to cout. 
+
+This code assumes that data.\+input is false, and should not be called when data.\+input is true. If this is the only output, the results will be different.
+
+The input pointer should be a pointer to a std\+::tuple$<$size\+\_\+t, bool$>$ where the first element is the indentation and the second element is a boolean representing whether or not this is the only output parameter.
+
+
+\begin{DoxyParams}{Parameters}
+{\em d} & Parameter data struct. \\
+\hline
+{\em input} & Pointer to size\+\_\+t holding the indentation. \\
+\hline
+{\em $\ast$} & (output) Unused parameter. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 298 of file print\+\_\+output\+\_\+processing.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a6cd6a94b0d12a167d1f1e26ae35e4cb7}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintPYX@{PrintPYX}}
+\index{PrintPYX@{PrintPYX}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintPYX()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+PYX (\begin{DoxyParamCaption}\item[{const \textbf{ util\+::\+Binding\+Details} \&}]{doc,  }\item[{const std\+::string \&}]{main\+Filename,  }\item[{const std\+::string \&}]{function\+Name }\end{DoxyParamCaption})}
+
+
+
+Given a list of parameter definition and program documentation, print a generated .pyx file to stdout. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em doc} & Documentation for the program. \\
+\hline
+{\em main\+Filename} & Filename of the main program (i.\+e. \char`\"{}/path/to/pca\+\_\+main.\+cpp\char`\"{}). \\
+\hline
+{\em function\+Name} & Name of the function (i.\+e. \char`\"{}pca\char`\"{}). \\
+\hline
+\end{DoxyParams}
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a1253bb8f30c651dc3af0c56e817bb52f}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [1/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of an option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a62411bebea8829e936ae0fb938cf2a99}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [2/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a model. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a04e6313fa3bbcaeaf638f9697856c1db}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [3/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a matrix option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a2b4db0ac1426d513555f5172dd25b5bb}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [4/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a matrix tuple option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_ab43363afc035bf95f3f9f53e9b669c49}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [5/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename std\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a vector. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a1883607423bb52271836a8f41a96a9e3}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [6/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{output }\end{DoxyParamCaption})}
+
+
+
+Print the command-\/line type of an option into a string. 
+
+
+
+Definition at line 72 of file print\+\_\+type\+\_\+doc.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a92ef6a64a9ca64c2cf8dca28e9d77674}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintValue@{PrintValue}}
+\index{PrintValue@{PrintValue}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintValue()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Value (\begin{DoxyParamCaption}\item[{const bool \&}]{value,  }\item[{bool}]{quotes }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a0d643eb3c0bdd232a1c6e50fbcb943d4}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!PrintValue@{PrintValue}}
+\index{PrintValue@{PrintValue}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{PrintValue()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Print\+Value (\begin{DoxyParamCaption}\item[{const T \&}]{value,  }\item[{bool}]{quotes }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given a parameter type, print the corresponding value. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_af279250fe16b29931b6ec5f9c5196962}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!ProgramCall@{ProgramCall}}
+\index{ProgramCall@{ProgramCall}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{ProgramCall()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Program\+Call (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{program\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given the name of a binding, print a program call assuming that all options are specified. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a6735678589340d2ecc4d8f0c8746179b}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!ProgramCall@{ProgramCall}}
+\index{ProgramCall@{ProgramCall}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{ProgramCall()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Program\+Call (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{program\+Name,  }\item[{Args...}]{args }\end{DoxyParamCaption})}
+
+
+
+Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_adea6945f820d4d090266903135f35729}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!SerializeIn@{SerializeIn}}
+\index{SerializeIn@{SerializeIn}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{SerializeIn()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Serialize\+In (\begin{DoxyParamCaption}\item[{T $\ast$}]{t,  }\item[{const std\+::string \&}]{str,  }\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 34 of file serialization.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a6a2dff1d929365bb624ff6a5659d9205}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!SerializeInJSON@{SerializeInJSON}}
+\index{SerializeInJSON@{SerializeInJSON}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{SerializeInJSON()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Serialize\+In\+JSON (\begin{DoxyParamCaption}\item[{T $\ast$}]{t,  }\item[{const std\+::string \&}]{str,  }\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 54 of file serialization.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a6273a497a8744775c3c90fced897dd55}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!SerializeOut@{SerializeOut}}
+\index{SerializeOut@{SerializeOut}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{SerializeOut()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Serialize\+Out (\begin{DoxyParamCaption}\item[{T $\ast$}]{t,  }\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 22 of file serialization.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a2a8eea6be336f87e143a069df9404bf6}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!SerializeOutJSON@{SerializeOutJSON}}
+\index{SerializeOutJSON@{SerializeOutJSON}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{SerializeOutJSON()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::python\+::\+Serialize\+Out\+JSON (\begin{DoxyParamCaption}\item[{T $\ast$}]{t,  }\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 42 of file serialization.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_ad9aef93ac2450f69e902b2bae75296fa}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!StripType@{StripType}}
+\index{StripType@{StripType}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{StripType()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::python\+::\+Strip\+Type (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{input\+Type,  }\item[{std\+::string \&}]{stripped\+Type,  }\item[{std\+::string \&}]{printed\+Type,  }\item[{std\+::string \&}]{defaults\+Type }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given an input type like, e.\+g., \char`\"{}\+Logistic\+Regression$<$$>$\char`\"{}, return three types that can be used in Python code. 
+
+stripped\+Type will be a type with no template parameters (e.\+g. \char`\"{}\+Logistic\+Regression\char`\"{}), printed\+Type will be a printable type with the template parameters (e.\+g. \char`\"{}\+Logistic\+Regression[$\,$]\char`\"{}), and defaults\+Type will be a printable type with a default template parameter (e.\+g. \char`\"{}\+Logistic\+Regression[\+T=$\ast$]\char`\"{}) that can be used for class definitions. 
+
+Definition at line 28 of file strip\+\_\+type.\+hpp.
+
+
+
+Referenced by Import\+Decl(), Print\+Class\+Defn(), Print\+Input\+Processing(), and Print\+Output\+Processing().
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\label{namespacemlpack_1_1bindings_1_1python_a24d855d329269931b59bdf1b36706a88}} 
+\index{mlpack::bindings::python@{mlpack::bindings::python}!programName@{programName}}
+\index{programName@{programName}!mlpack::bindings::python@{mlpack::bindings::python}}
+\doxysubsubsection{programName}
+{\footnotesize\ttfamily std\+::string program\+Name\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Referenced by Py\+Option$<$ T $>$\+::\+Py\+Option().
+

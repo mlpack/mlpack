@@ -1,0 +1,985 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="rectangle__tree_2rectangle__tree_8hpp" kind="file" language="C++">
+    <compoundname>rectangle_tree.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="hrectbound_8hpp" local="yes">../hrectbound.hpp</includes>
+    <includes refid="statistic_8hpp" local="yes">../statistic.hpp</includes>
+    <includes refid="r__tree__split_8hpp" local="yes">r_tree_split.hpp</includes>
+    <includes refid="r__tree__descent__heuristic_8hpp" local="yes">r_tree_descent_heuristic.hpp</includes>
+    <includes refid="no__auxiliary__information_8hpp" local="yes">no_auxiliary_information.hpp</includes>
+    <includes local="yes">rectangle_tree_impl.hpp</includes>
+    <includedby refid="rectangle__tree_2dual__tree__traverser_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/dual_tree_traverser.hpp</includedby>
+    <includedby refid="rectangle__tree_2single__tree__traverser_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp</includedby>
+    <includedby refid="core_2tree_2rectangle__tree_2typedef_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/typedef.hpp</includedby>
+    <includedby refid="rectangle__tree_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree.hpp</includedby>
+    <incdepgraph>
+      <node id="59">
+        <label>list</label>
+      </node>
+      <node id="56">
+        <label>atomic</label>
+      </node>
+      <node id="39">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="15">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="58">
+        <label>iomanip</label>
+      </node>
+      <node id="74">
+        <label>r_tree_split_impl.hpp</label>
+      </node>
+      <node id="70">
+        <label>bound_traits.hpp</label>
+        <link refid="bound__traits_8hpp"/>
+      </node>
+      <node id="73">
+        <label>r_tree_split.hpp</label>
+        <link refid="r__tree__split_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="76">
+        <label>r_tree_descent_heuristic_impl.hpp</label>
+      </node>
+      <node id="24">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>cstdint</label>
+      </node>
+      <node id="16">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="23">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="49">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="46">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="47">
+        <label>mlpack/core/util/log.hpp</label>
+        <link refid="log_8hpp"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="72">
+        <label>../statistic.hpp</label>
+        <link refid="statistic_8hpp"/>
+      </node>
+      <node id="36">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="3">
+        <label>cmath</label>
+      </node>
+      <node id="22">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="11">
+        <label>stdexcept</label>
+      </node>
+      <node id="31">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>string</label>
+      </node>
+      <node id="43">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>map</label>
+      </node>
+      <node id="77">
+        <label>no_auxiliary_information.hpp</label>
+        <link refid="no__auxiliary__information_8hpp"/>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp</label>
+        <link refid="rectangle__tree_2rectangle__tree_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>cfloat</label>
+      </node>
+      <node id="35">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="51">
+        <label>prefixedoutstream_impl.hpp</label>
+      </node>
+      <node id="63">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="19">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="42">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="52">
+        <label>nulloutstream.hpp</label>
+        <link refid="nulloutstream_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="41">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>range_impl.hpp</label>
+      </node>
+      <node id="78">
+        <label>rectangle_tree_impl.hpp</label>
+      </node>
+      <node id="8">
+        <label>cstdio</label>
+      </node>
+      <node id="12">
+        <label>tuple</label>
+      </node>
+      <node id="17">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="34">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>prefixedoutstream.hpp</label>
+        <link refid="prefixedoutstream_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="65">
+        <label>../hrectbound.hpp</label>
+        <link refid="hrectbound_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>streambuf</label>
+      </node>
+      <node id="13">
+        <label>utility</label>
+      </node>
+      <node id="37">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="28">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="25">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="40">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="75">
+        <label>r_tree_descent_heuristic.hpp</label>
+        <link refid="r__tree__descent__heuristic_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>cstdlib</label>
+      </node>
+      <node id="4">
+        <label>cctype</label>
+      </node>
+      <node id="53">
+        <label>iostream</label>
+      </node>
+      <node id="27">
+        <label>unordered_map</label>
+      </node>
+      <node id="6">
+        <label>climits</label>
+      </node>
+      <node id="61">
+        <label>mutex</label>
+      </node>
+      <node id="57">
+        <label>chrono</label>
+      </node>
+      <node id="71">
+        <label>hrectbound_impl.hpp</label>
+      </node>
+      <node id="64">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="62">
+        <label>thread</label>
+      </node>
+      <node id="44">
+        <label>type_traits</label>
+      </node>
+      <node id="20">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="66">
+        <label>mlpack/core/math/range.hpp</label>
+        <link refid="range_8hpp"/>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="38">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>cstring</label>
+      </node>
+      <node id="29">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="18">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="68">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="19">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn_function.hpp</label>
+        <link refid="lmnn__function_8hpp"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp</label>
+        <link refid="methods_2neighbor__search_2typedef_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/typedef.hpp</label>
+        <link refid="core_2tree_2rectangle__tree_2typedef_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="26">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/single_tree_traverser.hpp</label>
+        <link refid="rectangle__tree_2single__tree__traverser_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
+        <link refid="regularized__svd__method_8hpp"/>
+      </node>
+      <node id="8">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
+        <link refid="bias__svd__method_8hpp"/>
+      </node>
+      <node id="6">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp</label>
+        <link refid="rectangle__tree_2rectangle__tree_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp</label>
+        <link refid="cosine__search_8hpp"/>
+      </node>
+      <node id="24">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/range_search_utils.hpp</label>
+        <link refid="range__search__utils_8hpp"/>
+      </node>
+      <node id="17">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp</label>
+        <link refid="dual__tree__kmeans_8hpp"/>
+      </node>
+      <node id="12">
+        <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
+        <link refid="svdplusplus_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/dual_tree_traverser.hpp</label>
+        <link refid="rectangle__tree_2dual__tree__traverser_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp</label>
+        <link refid="ns__model_8hpp"/>
+      </node>
+      <node id="18">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/constraints.hpp</label>
+        <link refid="constraints_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp</label>
+        <link refid="lmetric__search_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn.hpp</label>
+        <link refid="lmnn_8hpp"/>
+      </node>
+      <node id="7">
+        <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
+        <link refid="bias__svd_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>/home/aakash/mlpack/src/mlpack/methods/rann/ra_model.hpp</label>
+        <link refid="ra__model_8hpp"/>
+      </node>
+      <node id="4">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp</label>
+        <link refid="kde__model_8hpp"/>
+      </node>
+      <node id="13">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
+        <link refid="svdplusplus__method_8hpp"/>
+      </node>
+      <node id="10">
+        <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
+        <link refid="regularized__svd_8hpp"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp</label>
+        <link refid="neighbor__search_8hpp"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp</label>
+        <link refid="rs__model_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp</label>
+        <link refid="pearson__search_8hpp"/>
+      </node>
+      <node id="3">
+        <label>/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree.hpp</label>
+        <link refid="rectangle__tree_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1tree_1_1RectangleTree" prot="public">mlpack::tree::RectangleTree</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1tree">mlpack::tree</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Andrew Wells</para>
+</simplesect>
+Definition of generalized rectangle type trees (r_tree, r_star_tree, x_tree, and hilbert_r_tree).</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_TREE_RECTANGLE_TREE_RECTANGLE_TREE_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../hrectbound.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../statistic.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="r__tree__split_8hpp" kindref="compound">r_tree_split.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="r__tree__descent__heuristic_8hpp" kindref="compound">r_tree_descent_heuristic.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="no__auxiliary__information_8hpp" kindref="compound">no_auxiliary_information.hpp</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">tree<sp/><sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MetricType<sp/>=<sp/><ref refid="namespacemlpack_1_1metric_1a0306f114fdf32dcdfa8f015408cfc37d" kindref="member">metric::EuclideanDistance</ref>,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>StatisticType<sp/>=<sp/>EmptyStatistic,</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType<sp/>=<sp/>arma::mat,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>SplitType<sp/>=<sp/>RTreeSplit,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>DescentType<sp/>=<sp/>RTreeDescentHeuristic,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal">&gt;<sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">AuxiliaryInformationType<sp/>=</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NoAuxiliaryInformation&gt;</highlight></codeline>
+<codeline lineno="54" refid="classmlpack_1_1tree_1_1RectangleTree" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref></highlight></codeline>
+<codeline lineno="55"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>metric<sp/>*must*<sp/>be<sp/>the<sp/>euclidean<sp/>distance.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>static_assert(boost::is_same&lt;MetricType,<sp/>metric::EuclideanDistance&gt;::value,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;RectangleTree:<sp/>MetricType<sp/>must<sp/>be<sp/>metric::EuclideanDistance.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="62" refid="classmlpack_1_1tree_1_1RectangleTree_1a57758caa2e58c3fe05d1284eeabae523" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>MatType<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a57758caa2e58c3fe05d1284eeabae523" kindref="member">Mat</ref>;</highlight></codeline>
+<codeline lineno="64" refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType::elem_type<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref>;</highlight></codeline>
+<codeline lineno="66" refid="classmlpack_1_1tree_1_1RectangleTree_1a5037c9f86afcfda12a618bfe99994a23" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>AuxiliaryInformationType&lt;RectangleTree&gt;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a5037c9f86afcfda12a618bfe99994a23" kindref="member">AuxiliaryInformation</ref>;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxNumChildren;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minNumChildren;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numChildren;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/>std::vector&lt;RectangleTree*&gt;<sp/>children;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>*<sp/>parent;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>begin;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numDescendants;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minLeafSize;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound&lt;metric::EuclideanDistance, ElemType&gt;</ref><sp/>bound;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/>StatisticType<sp/>stat;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref><sp/>parentDistance;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType*<sp/>dataset;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ownsDataset;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/>std::vector&lt;size_t&gt;<sp/>points;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>AuxiliaryInformationType&lt;RectangleTree&gt;<sp/>auxiliaryInfo;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RuleType&gt;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1RectangleTree_1_1SingleTreeTraverser" kindref="compound">SingleTreeTraverser</ref>;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RuleType&gt;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1tree_1_1RectangleTree_1_1DualTreeTraverser" kindref="compound">DualTreeTraverser</ref>;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131" refid="classmlpack_1_1tree_1_1RectangleTree_1a1027fe8c984d5656006328acd6cc92c3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a1027fe8c984d5656006328acd6cc92c3" kindref="member">RectangleTree</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize<sp/>=<sp/>20,</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minLeafSize<sp/>=<sp/>8,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxNumChildren<sp/>=<sp/>5,</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minNumChildren<sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>firstDataIndex<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152" refid="classmlpack_1_1tree_1_1RectangleTree_1af147218dd8dc0045cd6a7cecd43a2ffe" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1af147218dd8dc0045cd6a7cecd43a2ffe" kindref="member">RectangleTree</ref>(MatType&amp;&amp;<sp/>data,</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxLeafSize<sp/>=<sp/>20,</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minLeafSize<sp/>=<sp/>8,</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>maxNumChildren<sp/>=<sp/>5,</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>minNumChildren<sp/>=<sp/>2,</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>firstDataIndex<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167" refid="classmlpack_1_1tree_1_1RectangleTree_1a3b593f811c454b7b95d033c80e051ed3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a3b593f811c454b7b95d033c80e051ed3" kindref="member">RectangleTree</ref>(<ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>*<sp/>parentNode,</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>numMaxChildren<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178" refid="classmlpack_1_1tree_1_1RectangleTree_1a7021cb2a458cca4ead6ae79780c14ad8" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a7021cb2a458cca4ead6ae79780c14ad8" kindref="member">RectangleTree</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;<sp/>other,</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>deepCopy<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>*<sp/>newParent<sp/>=<sp/>NULL);</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="classmlpack_1_1tree_1_1RectangleTree_1a32f828a13cdc2f5eeca43d37c87ff4db" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a32f828a13cdc2f5eeca43d37c87ff4db" kindref="member">RectangleTree</ref>(<ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194" refid="classmlpack_1_1tree_1_1RectangleTree_1a909551417a05af16d48eaa9713088eb3" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a909551417a05af16d48eaa9713088eb3" kindref="member">operator=</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201" refid="classmlpack_1_1tree_1_1RectangleTree_1ae8eb5a80d261df7b9331c4444e54bc21" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ae8eb5a80d261df7b9331c4444e54bc21" kindref="member">operator=</ref>(<ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;&amp;<sp/>other);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="207" refid="classmlpack_1_1tree_1_1RectangleTree_1a2c3185b5f76fda53e2cd37b11aa93d0f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a2c3185b5f76fda53e2cd37b11aa93d0f" kindref="member">RectangleTree</ref>(</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Archive&amp;<sp/>ar,</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;cereal::is_loading&lt;Archive&gt;()&gt;*<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216" refid="classmlpack_1_1tree_1_1RectangleTree_1a71251e80af594b01fde0d834d178f849" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a71251e80af594b01fde0d834d178f849" kindref="member">~RectangleTree</ref>();</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="223" refid="classmlpack_1_1tree_1_1RectangleTree_1ad35ef7f791a42b33ebf554e27def9391" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ad35ef7f791a42b33ebf554e27def9391" kindref="member">SoftDelete</ref>();</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229" refid="classmlpack_1_1tree_1_1RectangleTree_1a8dbe26c4727e347359f1da279659f0cd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a8dbe26c4727e347359f1da279659f0cd" kindref="member">NullifyData</ref>();</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236" refid="classmlpack_1_1tree_1_1RectangleTree_1a3095158e2444767314c01f08d6548505" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a3095158e2444767314c01f08d6548505" kindref="member">InsertPoint</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>point);</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246" refid="classmlpack_1_1tree_1_1RectangleTree_1aa2008c231e0bc68b24da85dd6a8231ca" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1aa2008c231e0bc68b24da85dd6a8231ca" kindref="member">InsertPoint</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>point,<sp/>std::vector&lt;bool&gt;&amp;<sp/>relevels);</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight></codeline>
+<codeline lineno="259" refid="classmlpack_1_1tree_1_1RectangleTree_1a35df6b8ff4b000deb441755b6bb2f2d4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a35df6b8ff4b000deb441755b6bb2f2d4" kindref="member">InsertNode</ref>(<ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>*<sp/>node,</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>level,</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;bool&gt;&amp;<sp/>relevels);</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"></highlight></codeline>
+<codeline lineno="270" refid="classmlpack_1_1tree_1_1RectangleTree_1a0509380350bfe78f838730719b5421ee" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a0509380350bfe78f838730719b5421ee" kindref="member">DeletePoint</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>point);</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight></codeline>
+<codeline lineno="280" refid="classmlpack_1_1tree_1_1RectangleTree_1a06c0d2543978fc03efc5d2114d6e1e54" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a06c0d2543978fc03efc5d2114d6e1e54" kindref="member">DeletePoint</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>point,<sp/>std::vector&lt;bool&gt;&amp;<sp/>relevels);</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"></highlight></codeline>
+<codeline lineno="286" refid="classmlpack_1_1tree_1_1RectangleTree_1a9429055f5e8da6c92f684f73355c4199" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a9429055f5e8da6c92f684f73355c4199" kindref="member">RemoveNode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>*<sp/>node,<sp/>std::vector&lt;bool&gt;&amp;<sp/>relevels);</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"></highlight></codeline>
+<codeline lineno="299" refid="classmlpack_1_1tree_1_1RectangleTree_1a27dcf57c01f3eaafaa08631c31900eb5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>*<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a27dcf57c01f3eaafaa08631c31900eb5" kindref="member">FindByBeginCount</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>begin,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="312" refid="classmlpack_1_1tree_1_1RectangleTree_1a97f6fd1983ad549297e75d849e1a2bca" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>*<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a97f6fd1983ad549297e75d849e1a2bca" kindref="member">FindByBeginCount</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>begin,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>count);</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"></highlight></codeline>
+<codeline lineno="315" refid="classmlpack_1_1tree_1_1RectangleTree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound&lt;MetricType&gt;</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" kindref="member">Bound</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound;<sp/>}</highlight></codeline>
+<codeline lineno="317" refid="classmlpack_1_1tree_1_1RectangleTree_1a8a0a35d824602c0e21a8d21638cfd6ad" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound&lt;MetricType&gt;</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a8a0a35d824602c0e21a8d21638cfd6ad" kindref="member">Bound</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound;<sp/>}</highlight></codeline>
+<codeline lineno="318"><highlight class="normal"></highlight></codeline>
+<codeline lineno="320" refid="classmlpack_1_1tree_1_1RectangleTree_1ad8b29c84ac793742cd15834f9f4c4f31" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>StatisticType&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ad8b29c84ac793742cd15834f9f4c4f31" kindref="member">Stat</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>stat;<sp/>}</highlight></codeline>
+<codeline lineno="322" refid="classmlpack_1_1tree_1_1RectangleTree_1aac2d3c104b89109f3df4a9a8cad244da" refkind="member"><highlight class="normal"><sp/><sp/>StatisticType&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1aac2d3c104b89109f3df4a9a8cad244da" kindref="member">Stat</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>stat;<sp/>}</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"></highlight></codeline>
+<codeline lineno="325" refid="classmlpack_1_1tree_1_1RectangleTree_1aef466731529118c6276cf3d214fee09d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>AuxiliaryInformationType&lt;RectangleTree&gt;<sp/>&amp;<ref refid="classmlpack_1_1tree_1_1RectangleTree_1aef466731529118c6276cf3d214fee09d" kindref="member">AuxiliaryInfo</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="326"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>auxiliaryInfo;<sp/>}</highlight></codeline>
+<codeline lineno="328" refid="classmlpack_1_1tree_1_1RectangleTree_1a3217304f02ab31874410c5326e3d74c3" refkind="member"><highlight class="normal"><sp/><sp/>AuxiliaryInformationType&lt;RectangleTree&gt;&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a3217304f02ab31874410c5326e3d74c3" kindref="member">AuxiliaryInfo</ref>()</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>auxiliaryInfo;<sp/>}</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"></highlight></codeline>
+<codeline lineno="332" refid="classmlpack_1_1tree_1_1RectangleTree_1aa0f4813924e6cdee43b45050bb947abe" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1aa0f4813924e6cdee43b45050bb947abe" kindref="member">IsLeaf</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"></highlight></codeline>
+<codeline lineno="335" refid="classmlpack_1_1tree_1_1RectangleTree_1a327048550159fb03f23f87f48dbaa324" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a327048550159fb03f23f87f48dbaa324" kindref="member">MaxLeafSize</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxLeafSize;<sp/>}</highlight></codeline>
+<codeline lineno="337" refid="classmlpack_1_1tree_1_1RectangleTree_1adae692ee05a48b48cc51c57106ec8e7b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1adae692ee05a48b48cc51c57106ec8e7b" kindref="member">MaxLeafSize</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxLeafSize;<sp/>}</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"></highlight></codeline>
+<codeline lineno="340" refid="classmlpack_1_1tree_1_1RectangleTree_1adca26805731ae240cfe1073a42ecee2e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1adca26805731ae240cfe1073a42ecee2e" kindref="member">MinLeafSize</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>minLeafSize;<sp/>}</highlight></codeline>
+<codeline lineno="342" refid="classmlpack_1_1tree_1_1RectangleTree_1ac6f8a0c45a30bbe3c43af0375d51236e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ac6f8a0c45a30bbe3c43af0375d51236e" kindref="member">MinLeafSize</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>minLeafSize;<sp/>}</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"></highlight></codeline>
+<codeline lineno="345" refid="classmlpack_1_1tree_1_1RectangleTree_1a24c251ad0b5266cca6e2e96b9bb95c42" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a24c251ad0b5266cca6e2e96b9bb95c42" kindref="member">MaxNumChildren</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxNumChildren;<sp/>}</highlight></codeline>
+<codeline lineno="347" refid="classmlpack_1_1tree_1_1RectangleTree_1a6af237a35eebff7911cce7fd553748ce" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a6af237a35eebff7911cce7fd553748ce" kindref="member">MaxNumChildren</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>maxNumChildren;<sp/>}</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"></highlight></codeline>
+<codeline lineno="350" refid="classmlpack_1_1tree_1_1RectangleTree_1a5d3958327333930dd14e490db6a3c4d6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a5d3958327333930dd14e490db6a3c4d6" kindref="member">MinNumChildren</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>minNumChildren;<sp/>}</highlight></codeline>
+<codeline lineno="352" refid="classmlpack_1_1tree_1_1RectangleTree_1a612aa5b60faaf2050038e6cf6e056839" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a612aa5b60faaf2050038e6cf6e056839" kindref="member">MinNumChildren</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>minNumChildren;<sp/>}</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight></codeline>
+<codeline lineno="355" refid="classmlpack_1_1tree_1_1RectangleTree_1a05bac703d5c74952f9a92fafa507837b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>*<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a05bac703d5c74952f9a92fafa507837b" kindref="member">Parent</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parent;<sp/>}</highlight></codeline>
+<codeline lineno="357" refid="classmlpack_1_1tree_1_1RectangleTree_1ac585a5030dd745d64fed3111bf3b83b9" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>*&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ac585a5030dd745d64fed3111bf3b83b9" kindref="member">Parent</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parent;<sp/>}</highlight></codeline>
+<codeline lineno="358"><highlight class="normal"></highlight></codeline>
+<codeline lineno="360" refid="classmlpack_1_1tree_1_1RectangleTree_1a4c3764c98d5804083a9ec2c867eb9366" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatType&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a4c3764c98d5804083a9ec2c867eb9366" kindref="member">Dataset</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*dataset;<sp/>}</highlight></codeline>
+<codeline lineno="362" refid="classmlpack_1_1tree_1_1RectangleTree_1abb34576c3ddb31987f1dda9c33e6476f" refkind="member"><highlight class="normal"><sp/><sp/>MatType&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1abb34576c3ddb31987f1dda9c33e6476f" kindref="member">Dataset</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const_cast&lt;</highlight><highlight class="normal">MatType&amp;</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(*dataset);<sp/>}</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"></highlight></codeline>
+<codeline lineno="365" refid="classmlpack_1_1tree_1_1RectangleTree_1ab7cdd810a507e4a0aa262ea0fa8a322c" refkind="member"><highlight class="normal"><sp/><sp/>MetricType<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ab7cdd810a507e4a0aa262ea0fa8a322c" kindref="member">Metric</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>MetricType();<sp/>}</highlight></codeline>
+<codeline lineno="366"><highlight class="normal"></highlight></codeline>
+<codeline lineno="368" refid="classmlpack_1_1tree_1_1RectangleTree_1a16e556777ca3125ab3cdc16aed9e7885" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a16e556777ca3125ab3cdc16aed9e7885" kindref="member">Center</ref>(arma::vec&amp;<sp/>center)<sp/>{<sp/>bound.<ref refid="classmlpack_1_1bound_1_1HRectBound_1ac519e0ecb1bbd517724a93b4b57cc399" kindref="member">Center</ref>(center);<sp/>}</highlight></codeline>
+<codeline lineno="369"><highlight class="normal"></highlight></codeline>
+<codeline lineno="371" refid="classmlpack_1_1tree_1_1RectangleTree_1a1f7ec083be66d58a3e02e12956bf005e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a1f7ec083be66d58a3e02e12956bf005e" kindref="member">NumChildren</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numChildren;<sp/>}</highlight></codeline>
+<codeline lineno="373" refid="classmlpack_1_1tree_1_1RectangleTree_1a605a6e856364afd0bad4bafa17dbe5c0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a605a6e856364afd0bad4bafa17dbe5c0" kindref="member">NumChildren</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>numChildren;<sp/>}</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"></highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="380" refid="classmlpack_1_1tree_1_1RectangleTree_1a19b9a5fd41d8e192b62effb1445bd410" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a19b9a5fd41d8e192b62effb1445bd410" kindref="member">GetNearestChild</ref>(</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"></highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="389" refid="classmlpack_1_1tree_1_1RectangleTree_1a0257281722537c7916db7763623f67f7" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a0257281722537c7916db7763623f67f7" kindref="member">GetFurthestChild</ref>(</highlight></codeline>
+<codeline lineno="390"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0);</highlight></codeline>
+<codeline lineno="392"><highlight class="normal"></highlight></codeline>
+<codeline lineno="397" refid="classmlpack_1_1tree_1_1RectangleTree_1adae284b6b280a26fd609ad03ede81884" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1adae284b6b280a26fd609ad03ede81884" kindref="member">GetNearestChild</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;<sp/>queryNode);</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"></highlight></codeline>
+<codeline lineno="403" refid="classmlpack_1_1tree_1_1RectangleTree_1aea96598fb89ed27fe7340349051aa6a2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1aea96598fb89ed27fe7340349051aa6a2" kindref="member">GetFurthestChild</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;<sp/>queryNode);</highlight></codeline>
+<codeline lineno="404"><highlight class="normal"></highlight></codeline>
+<codeline lineno="409" refid="classmlpack_1_1tree_1_1RectangleTree_1acbe82a6439f71405b5801ca7d941cbfb" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1acbe82a6439f71405b5801ca7d941cbfb" kindref="member">FurthestPointDistance</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="410"><highlight class="normal"></highlight></codeline>
+<codeline lineno="418" refid="classmlpack_1_1tree_1_1RectangleTree_1adc597088eadfcfa3060336d0484ab573" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1adc597088eadfcfa3060336d0484ab573" kindref="member">FurthestDescendantDistance</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="419"><highlight class="normal"></highlight></codeline>
+<codeline lineno="423" refid="classmlpack_1_1tree_1_1RectangleTree_1a20a4e92da6066eb335a576b7f9cd0415" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a20a4e92da6066eb335a576b7f9cd0415" kindref="member">MinimumBoundDistance</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound.<ref refid="classmlpack_1_1bound_1_1HRectBound_1ab8478ff52c4d4d5e7fa6311fa39abb76" kindref="member">MinWidth</ref>()<sp/>/<sp/>2.0;<sp/>}</highlight></codeline>
+<codeline lineno="424"><highlight class="normal"></highlight></codeline>
+<codeline lineno="427" refid="classmlpack_1_1tree_1_1RectangleTree_1af44ed4e7bfea088689caed082da67e17" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1af44ed4e7bfea088689caed082da67e17" kindref="member">ParentDistance</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parentDistance;<sp/>}</highlight></codeline>
+<codeline lineno="430" refid="classmlpack_1_1tree_1_1RectangleTree_1aa22ead21ac809efb970b90ec014dc318" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1aa22ead21ac809efb970b90ec014dc318" kindref="member">ParentDistance</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parentDistance;<sp/>}</highlight></codeline>
+<codeline lineno="431"><highlight class="normal"></highlight></codeline>
+<codeline lineno="437" refid="classmlpack_1_1tree_1_1RectangleTree_1a562c73abb0bf2e473ecb9ff0075aa9d5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a562c73abb0bf2e473ecb9ff0075aa9d5" kindref="member">Child</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>child)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="438"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="439"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*children[child];</highlight></codeline>
+<codeline lineno="440"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="441"><highlight class="normal"></highlight></codeline>
+<codeline lineno="447" refid="classmlpack_1_1tree_1_1RectangleTree_1ae1f4a985db958092c3015e735a8db69d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ae1f4a985db958092c3015e735a8db69d" kindref="member">Child</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>child)</highlight></codeline>
+<codeline lineno="448"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="449"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>*children[child];</highlight></codeline>
+<codeline lineno="450"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="451"><highlight class="normal"></highlight></codeline>
+<codeline lineno="454" refid="classmlpack_1_1tree_1_1RectangleTree_1a352077c26368da0ee570c0b7f062b1e3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a352077c26368da0ee570c0b7f062b1e3" kindref="member">NumPoints</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="455"><highlight class="normal"></highlight></codeline>
+<codeline lineno="461" refid="classmlpack_1_1tree_1_1RectangleTree_1a2a85eb34222f1fc073940e8c89274e81" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a2a85eb34222f1fc073940e8c89274e81" kindref="member">NumDescendants</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="462"><highlight class="normal"></highlight></codeline>
+<codeline lineno="470" refid="classmlpack_1_1tree_1_1RectangleTree_1aa732ea3eeb38529c549fd4d15d8655be" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1aa732ea3eeb38529c549fd4d15d8655be" kindref="member">Descendant</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>index)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="471"><highlight class="normal"></highlight></codeline>
+<codeline lineno="480" refid="classmlpack_1_1tree_1_1RectangleTree_1a559eede5ea60f68634f8e7e72c3c68d2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a559eede5ea60f68634f8e7e72c3c68d2" kindref="member">Point</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>index)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>points[index];<sp/>}</highlight></codeline>
+<codeline lineno="481"><highlight class="normal"></highlight></codeline>
+<codeline lineno="484" refid="classmlpack_1_1tree_1_1RectangleTree_1a24009b888a79e08dcbf3c1587f33a8c2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a24009b888a79e08dcbf3c1587f33a8c2" kindref="member">Point</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>index)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>points[index];<sp/>}</highlight></codeline>
+<codeline lineno="485"><highlight class="normal"></highlight></codeline>
+<codeline lineno="487" refid="classmlpack_1_1tree_1_1RectangleTree_1a0f14293f72c1558489a01063d109cd33" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a0f14293f72c1558489a01063d109cd33" kindref="member">MinDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;<sp/>other)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="488"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="489"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound.<ref refid="classmlpack_1_1bound_1_1HRectBound_1a73bf99a433e88a31d98b46bf4c0da147" kindref="member">MinDistance</ref>(other.<ref refid="classmlpack_1_1tree_1_1RectangleTree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" kindref="member">Bound</ref>());</highlight></codeline>
+<codeline lineno="490"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="491"><highlight class="normal"></highlight></codeline>
+<codeline lineno="493" refid="classmlpack_1_1tree_1_1RectangleTree_1a9bb75acadb3f676baa2ae6b6fae506d7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a9bb75acadb3f676baa2ae6b6fae506d7" kindref="member">MaxDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;<sp/>other)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="494"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="495"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound.<ref refid="classmlpack_1_1bound_1_1HRectBound_1ae764d88483236cc470f5abe0273df4c5" kindref="member">MaxDistance</ref>(other.<ref refid="classmlpack_1_1tree_1_1RectangleTree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" kindref="member">Bound</ref>());</highlight></codeline>
+<codeline lineno="496"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="497"><highlight class="normal"></highlight></codeline>
+<codeline lineno="499" refid="classmlpack_1_1tree_1_1RectangleTree_1a3a9f26442a5841dcdf5022d14df68a13" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">math::RangeType&lt;ElemType&gt;</ref><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a3a9f26442a5841dcdf5022d14df68a13" kindref="member">RangeDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>&amp;<sp/>other)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="500"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="501"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound.<ref refid="classmlpack_1_1bound_1_1HRectBound_1a2c5555e91d38db00fc5f76fe0032044c" kindref="member">RangeDistance</ref>(other.<ref refid="classmlpack_1_1tree_1_1RectangleTree_1ad4a13f7a6c0b11ebbfc0c1bf551141d1" kindref="member">Bound</ref>());</highlight></codeline>
+<codeline lineno="502"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="503"><highlight class="normal"></highlight></codeline>
+<codeline lineno="505"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="506" refid="classmlpack_1_1tree_1_1RectangleTree_1a73bf99a433e88a31d98b46bf4c0da147" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a73bf99a433e88a31d98b46bf4c0da147" kindref="member">MinDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="507"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0)</highlight><highlight class="keyword"></highlight></codeline>
+<codeline lineno="508"><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/>const</highlight></codeline>
+<codeline lineno="509"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="510"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound.<ref refid="classmlpack_1_1bound_1_1HRectBound_1a73bf99a433e88a31d98b46bf4c0da147" kindref="member">MinDistance</ref>(point);</highlight></codeline>
+<codeline lineno="511"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="512"><highlight class="normal"></highlight></codeline>
+<codeline lineno="514"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="515" refid="classmlpack_1_1tree_1_1RectangleTree_1ae764d88483236cc470f5abe0273df4c5" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ae764d88483236cc470f5abe0273df4c5" kindref="member">MaxDistance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="516"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0)</highlight><highlight class="keyword"></highlight></codeline>
+<codeline lineno="517"><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/>const</highlight></codeline>
+<codeline lineno="518"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="519"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound.<ref refid="classmlpack_1_1bound_1_1HRectBound_1ae764d88483236cc470f5abe0273df4c5" kindref="member">MaxDistance</ref>(point);</highlight></codeline>
+<codeline lineno="520"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="521"><highlight class="normal"></highlight></codeline>
+<codeline lineno="523"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>VecType&gt;</highlight></codeline>
+<codeline lineno="524" refid="classmlpack_1_1tree_1_1RectangleTree_1a60a550bf46aa1d7b858134ce41fd5a3a" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">math::RangeType&lt;ElemType&gt;</ref><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a60a550bf46aa1d7b858134ce41fd5a3a" kindref="member">RangeDistance</ref>(</highlight></codeline>
+<codeline lineno="525"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>VecType&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="526"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;<ref refid="structIsVector" kindref="compound">IsVector&lt;VecType&gt;::value</ref>&gt;*<sp/>=<sp/>0)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="527"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="528"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>bound.<ref refid="classmlpack_1_1bound_1_1HRectBound_1a2c5555e91d38db00fc5f76fe0032044c" kindref="member">RangeDistance</ref>(point);</highlight></codeline>
+<codeline lineno="529"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="530"><highlight class="normal"></highlight></codeline>
+<codeline lineno="534" refid="classmlpack_1_1tree_1_1RectangleTree_1ab8408997f02b82d3ded6adf51b289427" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ab8408997f02b82d3ded6adf51b289427" kindref="member">TreeSize</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="535"><highlight class="normal"></highlight></codeline>
+<codeline lineno="540" refid="classmlpack_1_1tree_1_1RectangleTree_1a5ec5eed000f9d4996ab56d5869817e7f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a5ec5eed000f9d4996ab56d5869817e7f" kindref="member">TreeDepth</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="541"><highlight class="normal"></highlight></codeline>
+<codeline lineno="543" refid="classmlpack_1_1tree_1_1RectangleTree_1ac50a3a009687e641fd8249e011f628d4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ac50a3a009687e641fd8249e011f628d4" kindref="member">Begin</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>begin;<sp/>}</highlight></codeline>
+<codeline lineno="545" refid="classmlpack_1_1tree_1_1RectangleTree_1a49cdbf8b1b2899522cd80f4cbff40b69" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a49cdbf8b1b2899522cd80f4cbff40b69" kindref="member">Begin</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>begin;<sp/>}</highlight></codeline>
+<codeline lineno="546"><highlight class="normal"></highlight></codeline>
+<codeline lineno="548" refid="classmlpack_1_1tree_1_1RectangleTree_1ab30fd361b8bee994ff8ed9fbb6fae845" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ab30fd361b8bee994ff8ed9fbb6fae845" kindref="member">Count</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>count;<sp/>}</highlight></codeline>
+<codeline lineno="550" refid="classmlpack_1_1tree_1_1RectangleTree_1a5a132e068ab206a014b986ff71c3442d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a5a132e068ab206a014b986ff71c3442d" kindref="member">Count</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>count;<sp/>}</highlight></codeline>
+<codeline lineno="551"><highlight class="normal"></highlight></codeline>
+<codeline lineno="552"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="558"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>SplitNode(std::vector&lt;bool&gt;&amp;<sp/>relevels);</highlight></codeline>
+<codeline lineno="559"><highlight class="normal"></highlight></codeline>
+<codeline lineno="565"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BuildStatistics(<ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>*<sp/>node);</highlight></codeline>
+<codeline lineno="566"><highlight class="normal"></highlight></codeline>
+<codeline lineno="567"><highlight class="normal"><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="574" refid="classmlpack_1_1tree_1_1RectangleTree_1a916bffeba8c599629948d1711a97cbd7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a916bffeba8c599629948d1711a97cbd7" kindref="member">RectangleTree</ref>();</highlight></codeline>
+<codeline lineno="575"><highlight class="normal"></highlight></codeline>
+<codeline lineno="577" refid="classmlpack_1_1tree_1_1RectangleTree_1ab2f44cbb59a08132f4c843e5225bba0e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">cereal::access;</highlight></codeline>
+<codeline lineno="578"><highlight class="normal"></highlight></codeline>
+<codeline lineno="580" refid="classmlpack_1_1tree_1_1RectangleTree_1ad326ceae04a3d7cb8de5f57c385475fe" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ad326ceae04a3d7cb8de5f57c385475fe" kindref="member">DescentType</ref>;</highlight></codeline>
+<codeline lineno="581"><highlight class="normal"></highlight></codeline>
+<codeline lineno="583" refid="classmlpack_1_1tree_1_1RectangleTree_1af8cd44a1d4485c9c0022f124b0b312bf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1af8cd44a1d4485c9c0022f124b0b312bf" kindref="member">SplitType</ref>;</highlight></codeline>
+<codeline lineno="584"><highlight class="normal"></highlight></codeline>
+<codeline lineno="586" refid="classmlpack_1_1tree_1_1RectangleTree_1ac178ecb38a40a86e40c005ff70d2702a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ac178ecb38a40a86e40c005ff70d2702a" kindref="member">AuxiliaryInformation</ref>;</highlight></codeline>
+<codeline lineno="587"><highlight class="normal"></highlight></codeline>
+<codeline lineno="588"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="602" refid="classmlpack_1_1tree_1_1RectangleTree_1ae6ffa3cb0972ea772a972b50df36fc59" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1ae6ffa3cb0972ea772a972b50df36fc59" kindref="member">CondenseTree</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>point,</highlight></codeline>
+<codeline lineno="603"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;bool&gt;&amp;<sp/>relevels,</highlight></codeline>
+<codeline lineno="604"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>usePoint);</highlight></codeline>
+<codeline lineno="605"><highlight class="normal"></highlight></codeline>
+<codeline lineno="613" refid="classmlpack_1_1tree_1_1RectangleTree_1a14b62a27c4f71e7d38a92b5982b4bff9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a14b62a27c4f71e7d38a92b5982b4bff9" kindref="member">ShrinkBoundForPoint</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>point);</highlight></codeline>
+<codeline lineno="614"><highlight class="normal"></highlight></codeline>
+<codeline lineno="622" refid="classmlpack_1_1tree_1_1RectangleTree_1abb9c409311948fe4a16aa79f434c0a91" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1abb9c409311948fe4a16aa79f434c0a91" kindref="member">ShrinkBoundForBound</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1bound_1_1HRectBound" kindref="compound">bound::HRectBound&lt;MetricType&gt;</ref>&amp;<sp/>changedBound);</highlight></codeline>
+<codeline lineno="623"><highlight class="normal"></highlight></codeline>
+<codeline lineno="627" refid="classmlpack_1_1tree_1_1RectangleTree_1a07db5ef67990c55a04f42765ed589bef" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree" kindref="compound">RectangleTree</ref>*<sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a07db5ef67990c55a04f42765ed589bef" kindref="member">ExactClone</ref>();</highlight></codeline>
+<codeline lineno="628"><highlight class="normal"></highlight></codeline>
+<codeline lineno="632"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="633" refid="classmlpack_1_1tree_1_1RectangleTree_1a65cba07328997659bec80b9879b15a51" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1RectangleTree_1a65cba07328997659bec80b9879b15a51" kindref="member">serialize</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/></highlight><highlight class="comment">/*<sp/>version<sp/>*/</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="634"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="635"><highlight class="normal"></highlight></codeline>
+<codeline lineno="636"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>tree</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="637"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="638"><highlight class="normal"></highlight></codeline>
+<codeline lineno="639"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="640"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;rectangle_tree_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="641"><highlight class="normal"></highlight></codeline>
+<codeline lineno="642"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/rectangle_tree.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_b810cce4cae1d8b45f5dab38895e0781" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/range_search</compoundname>
+    <innerfile refid="range__search_8hpp">range_search.hpp</innerfile>
+    <innerfile refid="range__search__rules_8hpp">range_search_rules.hpp</innerfile>
+    <innerfile refid="range__search__stat_8hpp">range_search_stat.hpp</innerfile>
+    <innerfile refid="rs__model_8hpp">rs_model.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/"/>
+  </compounddef>
+</doxygen>

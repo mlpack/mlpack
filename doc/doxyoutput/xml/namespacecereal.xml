@@ -1,0 +1,380 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacecereal" kind="namespace" language="C++">
+    <compoundname>cereal</compoundname>
+    <innerclass refid="classcereal_1_1ArrayWrapper" prot="public">cereal::ArrayWrapper</innerclass>
+    <innerclass refid="structcereal_1_1is__cereal__archive" prot="public">cereal::is_cereal_archive</innerclass>
+    <innerclass refid="structcereal_1_1is__cereal__archive__saving" prot="public">cereal::is_cereal_archive_saving</innerclass>
+    <innerclass refid="structcereal_1_1load__visitor" prot="public">cereal::load_visitor</innerclass>
+    <innerclass refid="classcereal_1_1PointerVariantWrapper" prot="public">cereal::PointerVariantWrapper</innerclass>
+    <innerclass refid="classcereal_1_1PointerVectorVariantWrapper" prot="public">cereal::PointerVectorVariantWrapper</innerclass>
+    <innerclass refid="classcereal_1_1PointerVectorWrapper" prot="public">cereal::PointerVectorWrapper</innerclass>
+    <innerclass refid="classcereal_1_1PointerWrapper" prot="public">cereal::PointerWrapper</innerclass>
+    <innerclass refid="structcereal_1_1save__visitor" prot="public">cereal::save_visitor</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacecereal_1a679144f687ff95c7111ff96bccc573b3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Archive</type>
+          </param>
+          <param>
+            <type>template&lt; typename... &gt; class</type>
+            <declname>Map</declname>
+            <defname>Map</defname>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename Map&lt;Args...&gt;::mapped_type</defval>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void cereal::CEREAL_LOAD_FUNCTION_NAME</definition>
+        <argsstring>(Archive &amp;ar, Map&lt; Args... &gt; &amp;map)</argsstring>
+        <name>CEREAL_LOAD_FUNCTION_NAME</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>Map&lt; Args... &gt; &amp;</type>
+          <declname>map</declname>
+        </param>
+        <briefdescription>
+<para>Loading for std-like pair associative containers. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/pair_associative_container.hpp" line="59" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/pair_associative_container.hpp" bodystart="59" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecereal_1a0c5992e59041b20f902dd4fa0b2c62f1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Archive</type>
+          </param>
+          <param>
+            <type>template&lt; typename... &gt; class</type>
+            <declname>Map</declname>
+            <defname>Map</defname>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename Map&lt;Args...&gt;::mapped_type</defval>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void cereal::CEREAL_SAVE_FUNCTION_NAME</definition>
+        <argsstring>(Archive &amp;ar, Map&lt; Args... &gt; const &amp;map)</argsstring>
+        <name>CEREAL_SAVE_FUNCTION_NAME</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>Map&lt; Args... &gt; const &amp;</type>
+          <declname>map</declname>
+        </param>
+        <briefdescription>
+<para>Saving for std-like pair associative containers. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/pair_associative_container.hpp" line="49" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/pair_associative_container.hpp" bodystart="49" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecereal_1a91c764df4d08dfd1fa59c945143b6cd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cereal::is_loading</definition>
+        <argsstring>(const typename std::enable_if&lt; !is_cereal_archive&lt; Archive &gt;::value, Archive &gt;::type *=0)</argsstring>
+        <name>is_loading</name>
+        <param>
+          <type>const typename std::enable_if&lt; !<ref refid="structcereal_1_1is__cereal__archive" kindref="compound">is_cereal_archive</ref>&lt; Archive &gt;::value, Archive &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/is_loading.hpp" line="48" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/is_loading.hpp" bodystart="48" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecereal_1ad79f9b690399d7e8aad9e7fc9ef3b797" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cereal::is_loading</definition>
+        <argsstring>(const typename std::enable_if&lt; is_cereal_archive&lt; Archive &gt;::value, Archive &gt;::type *=0)</argsstring>
+        <name>is_loading</name>
+        <param>
+          <type>const typename std::enable_if&lt; <ref refid="structcereal_1_1is__cereal__archive" kindref="compound">is_cereal_archive</ref>&lt; Archive &gt;::value, Archive &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/is_loading.hpp" line="40" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/is_loading.hpp" bodystart="40" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecereal_1ae36f718d7a857ad4bbfbc7c8f4c52ade" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cereal::is_saving</definition>
+        <argsstring>(const typename std::enable_if&lt; !is_cereal_archive_saving&lt; Archive &gt;::value, Archive &gt;::type *=0)</argsstring>
+        <name>is_saving</name>
+        <param>
+          <type>const typename std::enable_if&lt; !<ref refid="structcereal_1_1is__cereal__archive__saving" kindref="compound">is_cereal_archive_saving</ref>&lt; Archive &gt;::value, Archive &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/is_saving.hpp" line="49" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/is_saving.hpp" bodystart="49" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecereal_1a02f9ef803550085b28fc61c79abc0147" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cereal::is_saving</definition>
+        <argsstring>(const typename std::enable_if&lt; is_cereal_archive_saving&lt; Archive &gt;::value, Archive &gt;::type *=0)</argsstring>
+        <name>is_saving</name>
+        <param>
+          <type>const typename std::enable_if&lt; <ref refid="structcereal_1_1is__cereal__archive__saving" kindref="compound">is_cereal_archive_saving</ref>&lt; Archive &gt;::value, Archive &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/is_saving.hpp" line="41" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/is_saving.hpp" bodystart="41" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecereal_1ae5171232885f9fd98ef0bae0fa6793f6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class S</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcereal_1_1ArrayWrapper" kindref="compound">ArrayWrapper</ref>&lt; T &gt;</type>
+        <definition>ArrayWrapper&lt;T&gt; cereal::make_array</definition>
+        <argsstring>(T *&amp;t, S &amp;s)</argsstring>
+        <name>make_array</name>
+        <param>
+          <type>T *&amp;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>S &amp;</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+<para>This function is used to serialized old c-style array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>C Style array. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the size of the array. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/array_wrapper.hpp" line="74" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/array_wrapper.hpp" bodystart="74" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecereal_1a302ac5752d711754c1832ce103328095" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcereal_1_1PointerWrapper" kindref="compound">PointerWrapper</ref>&lt; T &gt;</type>
+        <definition>PointerWrapper&lt;T&gt; cereal::make_pointer</definition>
+        <argsstring>(T *&amp;t)</argsstring>
+        <name>make_pointer</name>
+        <param>
+          <type>T *&amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Serialize raw pointer object by encapsulating the pointer into a smart pointer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A reference to raw pointer to be serialized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_wrapper.hpp" line="83" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_wrapper.hpp" bodystart="83" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecereal_1a45bbfc5cc5f47d0c1fcf9aaa1e613610" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>VariantTypes</declname>
+            <defname>VariantTypes</defname>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcereal_1_1PointerVariantWrapper" kindref="compound">PointerVariantWrapper</ref>&lt; VariantTypes... &gt;</type>
+        <definition>PointerVariantWrapper&lt;VariantTypes...&gt; cereal::make_pointer_variant</definition>
+        <argsstring>(boost::variant&lt; VariantTypes... &gt; &amp;t)</argsstring>
+        <name>make_pointer_variant</name>
+        <param>
+          <type>boost::variant&lt; VariantTypes... &gt; &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Serialize a boost variant in which the variant it self is a raw pointer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This wrapper will wrap each variant independently by encapsulating each variant into the PoninterWrapper we have created already.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A reference to boost variant that holds raw pointer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_variant_wrapper.hpp" line="42" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_variant_wrapper.hpp" bodystart="42" bodyend="45"/>
+        <referencedby refid="structcereal_1_1load__visitor_1a55a8cf45de73b30212662c1710614572" compoundref="pointer__variant__wrapper_8hpp" startline="80" endline="86">load_visitor&lt; T &gt;::load_impl</referencedby>
+        <referencedby refid="structcereal_1_1save__visitor_1ac6ad85740cee791e6f711c836fea607d" compoundref="pointer__variant__wrapper_8hpp" startline="59" endline="62">save_visitor&lt; Archive &gt;::operator()</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="namespacecereal_1a8ca376569f01b8f411f75ec9e15d3494" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcereal_1_1PointerVectorWrapper" kindref="compound">PointerVectorWrapper</ref>&lt; T &gt;</type>
+        <definition>PointerVectorWrapper&lt;T&gt; cereal::make_pointer_vector</definition>
+        <argsstring>(std::vector&lt; T * &gt; &amp;t)</argsstring>
+        <name>make_pointer_vector</name>
+        <param>
+          <type>std::vector&lt; T * &gt; &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Serialize an std::vector that holds raw pointer object by encapsulating them into a smart pointer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A reference to std::vector that holds raw pointer to be serialized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_vector_wrapper.hpp" line="80" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_vector_wrapper.hpp" bodystart="80" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecereal_1a6bc2e1dc17dca4ab6d2cedeee89b88c1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>VariantTypes</declname>
+            <defname>VariantTypes</defname>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcereal_1_1PointerVectorVariantWrapper" kindref="compound">PointerVectorVariantWrapper</ref>&lt; VariantTypes... &gt;</type>
+        <definition>PointerVectorVariantWrapper&lt;VariantTypes...&gt; cereal::make_vector_pointer_variant</definition>
+        <argsstring>(std::vector&lt; boost::variant&lt; VariantTypes... &gt;&gt; &amp;t)</argsstring>
+        <name>make_vector_pointer_variant</name>
+        <param>
+          <type>std::vector&lt; boost::variant&lt; VariantTypes... &gt;&gt; &amp;</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Serialize a std::vector of boost variants in which the variant in each boost variant is a raw pointer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This wrapper will wrap each boost variant independently by encapsulating each boost variant into the PoninterVariantWrapper we have created already.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A reference to a vector of boost variants that holds raw pointer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_vector_variant_wrapper.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_vector_variant_wrapper.hpp" bodystart="36" bodyend="39"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cereal/array_wrapper.hpp" line="22" column="1"/>
+  </compounddef>
+</doxygen>

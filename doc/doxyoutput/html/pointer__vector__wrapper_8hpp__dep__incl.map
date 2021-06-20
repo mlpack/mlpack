@@ -1,0 +1,52 @@
+<map id="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_vector_wrapper.hpp" name="/home/aakash/mlpack/src/mlpack/core/cereal/pointer_vector_wrapper.hpp">
+<area shape="rect" id="node1" title=" " alt="" coords="3145,5,3353,61"/>
+<area shape="rect" id="node2" href="$pointer__vector__variant__wrapper_8hpp.html" title=" " alt="" coords="3225,109,3399,180"/>
+<area shape="rect" id="node3" href="$prereqs_8hpp.html" title="The core includes that mlpack expects; standard C++ includes and Armadillo." alt="" coords="3160,228,3339,269"/>
+<area shape="rect" id="node4" href="$cli_2default__param_8hpp.html" title=" " alt="" coords="5,325,173,381"/>
+<area shape="rect" id="node5" href="$cli_2get__param_8hpp.html" title=" " alt="" coords="94,436,261,492"/>
+<area shape="rect" id="node6" href="$cli_2get__printable__param_8hpp.html" title=" " alt="" coords="552,325,760,381"/>
+<area shape="rect" id="node7" href="$cli_2get__printable__param__name_8hpp.html" title=" " alt="" coords="785,317,965,388"/>
+<area shape="rect" id="node8" href="$cli_2get__printable__param__value_8hpp.html" title=" " alt="" coords="989,317,1169,388"/>
+<area shape="rect" id="node9" href="$get__raw__param_8hpp.html" title=" " alt="" coords="285,436,459,492"/>
+<area shape="rect" id="node10" href="$in__place__copy_8hpp.html" title=" " alt="" coords="1193,325,1359,381"/>
+<area shape="rect" id="node11" href="$output__param_8hpp.html" title=" " alt="" coords="1383,325,1550,381"/>
+<area shape="rect" id="node12" href="$parameter__type_8hpp.html" title=" " alt="" coords="249,325,426,381"/>
+<area shape="rect" id="node13" href="$set__param_8hpp.html" title=" " alt="" coords="483,436,650,492"/>
+<area shape="rect" id="node14" href="$string__type__param_8hpp.html" title=" " alt="" coords="1575,325,1769,381"/>
+<area shape="rect" id="node15" href="$go_2default__param_8hpp.html" title=" " alt="" coords="1794,325,1963,381"/>
+<area shape="rect" id="node16" href="$get__go__type_8hpp.html" title=" " alt="" coords="2141,325,2307,381"/>
+<area shape="rect" id="node17" href="$print__defn__input_8hpp.html" title=" " alt="" coords="1510,436,1690,492"/>
+<area shape="rect" id="node18" href="$print__defn__output_8hpp.html" title=" " alt="" coords="1715,436,1904,492"/>
+<area shape="rect" id="node19" href="$go_2print__doc_8hpp.html" title=" " alt="" coords="1929,436,2095,492"/>
+<area shape="rect" id="node20" href="$go_2print__input__processing_8hpp.html" title=" " alt="" coords="2565,436,2787,492"/>
+<area shape="rect" id="node21" href="$print__method__config_8hpp.html" title=" " alt="" coords="2120,436,2328,492"/>
+<area shape="rect" id="node22" href="$print__method__init_8hpp.html" title=" " alt="" coords="2352,436,2541,492"/>
+<area shape="rect" id="node23" href="$go_2get__param_8hpp.html" title=" " alt="" coords="2727,325,2894,381"/>
+<area shape="rect" id="node24" href="$go_2get__printable__param_8hpp.html" title=" " alt="" coords="2918,325,3127,381"/>
+<area shape="rect" id="node25" href="$go_2get__printable__type_8hpp.html" title=" " alt="" coords="3151,325,3347,381"/>
+<area shape="rect" id="node26" href="$go_2get__type_8hpp.html" title=" " alt="" coords="2485,325,2651,381"/>
+<area shape="rect" id="node27" href="$go_2print__output__processing_8hpp.html" title=" " alt="" coords="2811,436,3042,492"/>
+<area shape="rect" id="node28" href="$julia_2default__param_8hpp.html" title=" " alt="" coords="3372,325,3553,381"/>
+<area shape="rect" id="node29" href="$get__julia__type_8hpp.html" title=" " alt="" coords="3577,325,3756,381"/>
+<area shape="rect" id="node30" href="$julia_2get__param_8hpp.html" title=" " alt="" coords="3781,325,3947,381"/>
+<area shape="rect" id="node31" href="$julia_2get__printable__param_8hpp.html" title=" " alt="" coords="3971,317,4138,388"/>
+<area shape="rect" id="node32" href="$julia_2print__output__processing_8hpp.html" title=" " alt="" coords="4163,325,4405,381"/>
+<area shape="rect" id="node33" href="$binding__info_8hpp.html" title=" " alt="" coords="4430,325,4637,381"/>
+<area shape="rect" id="node34" href="$get__binding__name_8hpp.html" title=" " alt="" coords="4661,317,4835,388"/>
+<area shape="rect" id="node35" href="$markdown_2get__param_8hpp.html" title=" " alt="" coords="4860,325,5057,381"/>
+<area shape="rect" id="node36" href="$markdown_2get__printable__param_8hpp.html" title=" " alt="" coords="5082,317,5267,388"/>
+<area shape="rect" id="node37" href="$markdown_2get__printable__param__name_8hpp.html" title=" " alt="" coords="5291,317,5477,388"/>
+<area shape="rect" id="node38" href="$markdown_2get__printable__param__value_8hpp.html" title=" " alt="" coords="5501,317,5686,388"/>
+<area shape="rect" id="node39" href="$is__serializable_8hpp.html" title=" " alt="" coords="5710,325,5930,381"/>
+<area shape="rect" id="node40" href="$markdown_2print__doc__functions_8hpp.html" title=" " alt="" coords="5954,325,6209,381"/>
+<area shape="rect" id="node41" href="$print__docs_8hpp.html" title=" " alt="" coords="6233,325,6428,381"/>
+<area shape="rect" id="node42" href="$python_2default__param_8hpp.html" title=" " alt="" coords="6453,325,6651,381"/>
+<area shape="rect" id="node43" href="$get__arma__type_8hpp.html" title=" " alt="" coords="6675,325,6877,381"/>
+<area shape="rect" id="node44" href="$get__cython__type_8hpp.html" title=" " alt="" coords="6901,325,7112,381"/>
+<area shape="rect" id="node45" href="$get__numpy__type_8hpp.html" title=" " alt="" coords="7135,325,7347,381"/>
+<area shape="rect" id="node46" href="$get__numpy__type__char_8hpp.html" title=" " alt="" coords="7372,317,7556,388"/>
+<area shape="rect" id="node47" href="$python_2get__param_8hpp.html" title=" " alt="" coords="7580,325,7753,381"/>
+<area shape="rect" id="node48" href="$python_2get__printable__param_8hpp.html" title=" " alt="" coords="7778,317,7945,388"/>
+<area shape="rect" id="node49" href="$python_2get__printable__type_8hpp.html" title=" " alt="" coords="7969,317,8135,388"/>
+<area shape="rect" id="node50" href="$import__decl_8hpp.html" title=" " alt="" coords="8159,325,8339,381"/>
+</map>

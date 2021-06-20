@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1nn" kind="namespace" language="C++">
+    <compoundname>mlpack::nn</compoundname>
+    <innerclass refid="classmlpack_1_1nn_1_1SparseAutoencoder" prot="public">mlpack::nn::SparseAutoencoder</innerclass>
+    <innerclass refid="classmlpack_1_1nn_1_1SparseAutoencoderFunction" prot="public">mlpack::nn::SparseAutoencoderFunction</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1nn_1a5fcd73722265acc12d00ba8d32db6f17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::nn::MaximalInputs</definition>
+        <argsstring>(const arma::mat &amp;parameters, arma::mat &amp;output)</argsstring>
+        <name>MaximalInputs</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Given a parameters matrix from an autoencoder, maximize the hidden units of the parameters, storing the maximal inputs in the given output matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Details can be found on the &apos;Visualizing a Trained Autoencoder&apos; page of the Stanford UFLDL tutorial:</para>
+<para><ulink url="http://deeplearning.stanford.edu/wiki/index.php/Main_Page">http://deeplearning.stanford.edu/wiki/index.php/Main_Page</ulink></para>
+<para>This function is based on the implementation (display_network.m) from the &quot;Exercise: Sparse Autoencoder&quot; page of the UFLDL tutorial:</para>
+<para><ulink url="http://deeplearning.stanford.edu/wiki/index.php/Exercise:Sparse_Autoencoder">http://deeplearning.stanford.edu/wiki/index.php/Exercise:Sparse_Autoencoder</ulink></para>
+<para>Example usage of this function can be seen below. Note that this function can work with the ColumnsToBlocks class in order to reshape the maximal inputs for visualization, as in the UFLDL tutorial. The code below demonstrates this.</para>
+<para><programlisting><codeline><highlight class="normal">arma::mat<sp/>data;<sp/>//<sp/>Data<sp/>matrix.</highlight></codeline>
+<codeline><highlight class="normal">const<sp/>size_t<sp/>vSize<sp/>=<sp/>64;<sp/>//<sp/>Size<sp/>of<sp/>visible<sp/>layer,<sp/>depends<sp/>on<sp/>the<sp/>data.</highlight></codeline>
+<codeline><highlight class="normal">const<sp/>size_t<sp/>hSize<sp/>=<sp/>25;<sp/>//<sp/>Size<sp/>of<sp/>hidden<sp/>layer,<sp/>depends<sp/>on<sp/>requirements.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">const<sp/>size_t<sp/>numBasis<sp/>=<sp/>5;<sp/>//<sp/>Parameter<sp/>required<sp/>for<sp/>L-BFGS<sp/>algorithm.</highlight></codeline>
+<codeline><highlight class="normal">const<sp/>size_t<sp/>numIterations<sp/>=<sp/>100;<sp/>//<sp/>Maximum<sp/>number<sp/>of<sp/>iterations.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Use<sp/>an<sp/>instantiated<sp/>optimizer<sp/>for<sp/>the<sp/>training.</highlight></codeline>
+<codeline><highlight class="normal">SparseAutoencoder&lt;L_BFGS&gt;<sp/>encoder(data,<sp/>vSize,<sp/>hSize);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>maximalInput;<sp/>//<sp/>Store<sp/>the<sp/>features<sp/>learned<sp/>by<sp/>sparse<sp/>autoencoder</highlight></codeline>
+<codeline><highlight class="normal">mlpack::nn::MaximalInputs(encoder.Parameters(),<sp/>maximalInput);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>outputs;</highlight></codeline>
+<codeline><highlight class="normal">const<sp/>bool<sp/>scale<sp/>=<sp/>true;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">ColumnsToBlocks<sp/>ctb(5,5);</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>output;</highlight></codeline>
+<codeline><highlight class="normal">ctb.Transform(maximalInput,<sp/>output);</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Save<sp/>the<sp/>output<sp/>as<sp/>PGM,<sp/>for<sp/>visualization.</highlight></codeline>
+<codeline><highlight class="normal">output.save(fileName,<sp/>arma::pgm_binary);</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="pre"><para>Layout of parameters</para>
+</simplesect>
+The layout of the parameters matrix should be same as following <programlisting><codeline><highlight class="normal">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vSize<sp/><sp/><sp/>1</highlight></codeline>
+<codeline><highlight class="normal">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">//<sp/><sp/>hSize|<sp/><sp/><sp/>w1<sp/><sp/><sp/>|b1|</highlight></codeline>
+<codeline><highlight class="normal">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/>|________|__|</highlight></codeline>
+<codeline><highlight class="normal">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|<sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">//<sp/><sp/>hSize|<sp/><sp/><sp/>w2&apos;<sp/><sp/>|<sp/><sp/>|</highlight></codeline>
+<codeline><highlight class="normal">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/>|________|__|</highlight></codeline>
+<codeline><highlight class="normal">//<sp/><sp/><sp/><sp/><sp/><sp/>1|<sp/><sp/><sp/>b2&apos;<sp/><sp/>|<sp/><sp/>|</highlight></codeline>
+</programlisting></para>
+<para>Also, the square root of vSize must be an integer (i.e. vSize must be a perfect square).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parameters of the autoencoder. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to store the maximal inputs in. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/maximal_inputs.hpp" line="82" column="6" declfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/maximal_inputs.hpp" declline="82" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1nn_1a9887e1e5ada8c7d5fb1ad59dc4d16b4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::nn::NormalizeColByMax</definition>
+        <argsstring>(const arma::mat &amp;input, arma::mat &amp;output)</argsstring>
+        <name>NormalizeColByMax</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Normalize each column of the input matrix by its maximum value, if that maximum value is not zero. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input data to normalize. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A matrix to store the input data in after normalization. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/maximal_inputs.hpp" line="91" column="6" declfile="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/maximal_inputs.hpp" declline="91" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/sparse_autoencoder/maximal_inputs.hpp" line="18" column="1"/>
+  </compounddef>
+</doxygen>

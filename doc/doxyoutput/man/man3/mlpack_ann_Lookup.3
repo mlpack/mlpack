@@ -1,0 +1,223 @@
+.TH "Lookup< InputDataType, OutputDataType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Lookup< InputDataType, OutputDataType > \- The \fBLookup\fP class stores word embeddings and retrieves them using tokens\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLookup\fP (const size_t vocabSize=0, const size_t embeddingSize=0)"
+.br
+.RI "Create the \fBLookup\fP object using the specified vocabulary and embedding size\&. "
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &, const arma::Mat< eT > &gy, arma::Mat< eT > &g)"
+.br
+.RI "Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "size_t \fBEmbeddingSize\fP () const"
+.br
+.RI "Get the length of each embedding vector\&. "
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output)"
+.br
+.RI "Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. "
+.ti -1c
+.RI "OutputDataType & \fBGradient\fP ()"
+.br
+.RI "Modify the gradient\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBGradient\fP () const"
+.br
+.RI "Get the gradient\&. "
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &error, arma::Mat< eT > &gradient)"
+.br
+.RI "Calculate the gradient using the output delta and the input activation\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBParameters\fP ()"
+.br
+.RI "Modify the parameters\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBParameters\fP () const"
+.br
+.RI "Get the parameters\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.ti -1c
+.RI "size_t \fBVocabSize\fP () const"
+.br
+.RI "Get the size of the vocabulary\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::Lookup< InputDataType, OutputDataType >"
+The \fBLookup\fP class stores word embeddings and retrieves them using tokens\&. 
+
+The \fBLookup\fP layer is always the first layer of the network\&. The input to the \fBLookup\fP class is a matrix of shape (sequenceLength, batchSize)\&. The matrix consists of tokens which are used to lookup the table (i\&.e\&. weights) to find the embeddings of those tokens\&.
+.PP
+The input shape : (sequenceLength, batchSize)\&. The output shape : (embeddingSize, sequenceLength, batchSize)\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 41 of file lookup\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBLookup\fP (const size_t vocabSize = \fC0\fP, const size_t embeddingSize = \fC0\fP)"
+
+.PP
+Create the \fBLookup\fP object using the specified vocabulary and embedding size\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIvocabSize\fP The size of the vocabulary\&. 
+.br
+\fIembeddingSize\fP The length of each embedding vector\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
+
+.PP
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f\&. Using the results from the feed forward pass\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (input) The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 101 of file lookup\&.hpp\&.
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 99 of file lookup\&.hpp\&.
+.SS "size_t EmbeddingSize () const\fC [inline]\fP"
+
+.PP
+Get the length of each embedding vector\&. 
+.PP
+Definition at line 112 of file lookup\&.hpp\&.
+.SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
+
+.PP
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "OutputDataType& Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 106 of file lookup\&.hpp\&.
+.SS "OutputDataType const& Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 104 of file lookup\&.hpp\&.
+.SS "void Gradient (const arma::Mat< eT > & input, const arma::Mat< eT > & error, arma::Mat< eT > & gradient)"
+
+.PP
+Calculate the gradient using the output delta and the input activation\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP The input parameter used for calculating the gradient\&. 
+.br
+\fIerror\fP The calculated error\&. 
+.br
+\fIgradient\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 96 of file lookup\&.hpp\&.
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 94 of file lookup\&.hpp\&.
+.SS "OutputDataType& Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters\&. 
+.PP
+Definition at line 91 of file lookup\&.hpp\&.
+.SS "OutputDataType const& Parameters () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. 
+.PP
+Definition at line 89 of file lookup\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.SS "size_t VocabSize () const\fC [inline]\fP"
+
+.PP
+Get the size of the vocabulary\&. 
+.PP
+Definition at line 109 of file lookup\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

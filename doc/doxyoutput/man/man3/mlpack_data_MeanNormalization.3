@@ -1,0 +1,151 @@
+.TH "MeanNormalization" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MeanNormalization \- A simple Mean Normalization class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType > void \fBFit\fP (const MatType &input)"
+.br
+.RI "Function to fit features, to find out the min max and scale\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBInverseTransform\fP (const MatType &input, MatType &output)"
+.br
+.RI "Function to retrieve original dataset\&. "
+.ti -1c
+.RI "const arma::vec & \fBItemMax\fP () const"
+.br
+.RI "Get the Max row vector\&. "
+.ti -1c
+.RI "const arma::vec & \fBItemMean\fP () const"
+.br
+.RI "Get the Mean row vector\&. "
+.ti -1c
+.RI "const arma::vec & \fBItemMin\fP () const"
+.br
+.RI "Get the Min row vector\&. "
+.ti -1c
+.RI "const arma::vec & \fBScale\fP () const"
+.br
+.RI "Get the Scale row vector\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.ti -1c
+.RI "template<typename MatType > void \fBTransform\fP (const MatType &input, MatType &output)"
+.br
+.RI "Function to scale features\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A simple Mean Normalization class\&. 
+
+Given an input dataset this class helps you to normalize each feature\&.
+.PP
+[z = x - average(x) / (max(x) - min(x))]
+.PP
+where x is an original value,z is the normalized value\&.
+.PP
+.PP
+.nf
+arma::mat input;
+Load("train\&.csv", input);
+arma::mat output;
+
+// Fit the features\&.
+MeanNormalization scale;
+scale\&.Fit(input)
+
+// Scale the features\&.
+scale\&.Transform(input, output);
+
+// Retransform the input\&.
+scale\&.InverseTransform(output, input);
+.fi
+.PP
+ 
+.PP
+Definition at line 46 of file mean_normalization\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Fit (const MatType & input)\fC [inline]\fP"
+
+.PP
+Function to fit features, to find out the min max and scale\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Dataset to fit\&. 
+.RE
+.PP
+
+.PP
+Definition at line 55 of file mean_normalization\&.hpp\&.
+.SS "void InverseTransform (const MatType & input, MatType & output)\fC [inline]\fP"
+
+.PP
+Function to retrieve original dataset\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Scaled dataset\&. 
+.br
+\fIoutput\fP Output matrix with original Dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 91 of file mean_normalization\&.hpp\&.
+.SS "const arma::vec& ItemMax () const\fC [inline]\fP"
+
+.PP
+Get the Max row vector\&. 
+.PP
+Definition at line 102 of file mean_normalization\&.hpp\&.
+.SS "const arma::vec& ItemMean () const\fC [inline]\fP"
+
+.PP
+Get the Mean row vector\&. 
+.PP
+Definition at line 98 of file mean_normalization\&.hpp\&.
+.SS "const arma::vec& ItemMin () const\fC [inline]\fP"
+
+.PP
+Get the Min row vector\&. 
+.PP
+Definition at line 100 of file mean_normalization\&.hpp\&.
+.SS "const arma::vec& Scale () const\fC [inline]\fP"
+
+.PP
+Get the Scale row vector\&. 
+.PP
+Definition at line 104 of file mean_normalization\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Definition at line 107 of file mean_normalization\&.hpp\&.
+.SS "void Transform (const MatType & input, MatType & output)\fC [inline]\fP"
+
+.PP
+Function to scale features\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Dataset to scale features\&. 
+.br
+\fIoutput\fP Output matrix with scaled features\&. 
+.RE
+.PP
+
+.PP
+Definition at line 73 of file mean_normalization\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

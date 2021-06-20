@@ -1,0 +1,304 @@
+\doxysection{mlpack Namespace Reference}
+\label{namespacemlpack}\index{mlpack@{mlpack}}
+
+
+Linear algebra utility functions, generally performed on matrices or vectors.  
+
+
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ adaboost}
+\item 
+ \textbf{ amf}
+\begin{DoxyCompactList}\small\item\em Alternating Matrix Factorization. \end{DoxyCompactList}\item 
+ \textbf{ ann}
+\begin{DoxyCompactList}\small\item\em Artificial Neural Network. \end{DoxyCompactList}\item 
+ \textbf{ bindings}
+\item 
+ \textbf{ bound}
+\item 
+ \textbf{ cf}
+\begin{DoxyCompactList}\small\item\em Collaborative filtering. \end{DoxyCompactList}\item 
+ \textbf{ cv}
+\item 
+ \textbf{ data}
+\begin{DoxyCompactList}\small\item\em Functions to load and save matrices and models. \end{DoxyCompactList}\item 
+ \textbf{ dbscan}
+\item 
+ \textbf{ det}
+\begin{DoxyCompactList}\small\item\em Density Estimation Trees. \end{DoxyCompactList}\item 
+ \textbf{ distribution}
+\begin{DoxyCompactList}\small\item\em Probability distributions. \end{DoxyCompactList}\item 
+ \textbf{ emst}
+\begin{DoxyCompactList}\small\item\em Euclidean Minimum Spanning Trees. \end{DoxyCompactList}\item 
+ \textbf{ fastmks}
+\begin{DoxyCompactList}\small\item\em Fast max-\/kernel search. \end{DoxyCompactList}\item 
+ \textbf{ gmm}
+\begin{DoxyCompactList}\small\item\em Gaussian Mixture Models. \end{DoxyCompactList}\item 
+ \textbf{ hmm}
+\begin{DoxyCompactList}\small\item\em Hidden Markov Models. \end{DoxyCompactList}\item 
+ \textbf{ hpt}
+\item 
+ \textbf{ kde}
+\begin{DoxyCompactList}\small\item\em Kernel Density Estimation. \end{DoxyCompactList}\item 
+ \textbf{ kernel}
+\begin{DoxyCompactList}\small\item\em Kernel functions. \end{DoxyCompactList}\item 
+ \textbf{ kmeans}
+\begin{DoxyCompactList}\small\item\em K-\/\+Means clustering. \end{DoxyCompactList}\item 
+ \textbf{ kpca}
+\item 
+ \textbf{ lcc}
+\item 
+ \textbf{ lmnn}
+\begin{DoxyCompactList}\small\item\em Large Margin Nearest Neighbor. \end{DoxyCompactList}\item 
+ \textbf{ math}
+\begin{DoxyCompactList}\small\item\em Miscellaneous math routines. \end{DoxyCompactList}\item 
+ \textbf{ matrix\+\_\+completion}
+\item 
+ \textbf{ meanshift}
+\begin{DoxyCompactList}\small\item\em Mean shift clustering. \end{DoxyCompactList}\item 
+ \textbf{ metric}
+\item 
+ \textbf{ mvu}
+\item 
+ \textbf{ naive\+\_\+bayes}
+\begin{DoxyCompactList}\small\item\em The Naive Bayes Classifier. \end{DoxyCompactList}\item 
+ \textbf{ nca}
+\begin{DoxyCompactList}\small\item\em Neighborhood Components Analysis. \end{DoxyCompactList}\item 
+ \textbf{ neighbor}
+\item 
+ \textbf{ nn}
+\item 
+ \textbf{ pca}
+\item 
+ \textbf{ perceptron}
+\item 
+ \textbf{ radical}
+\item 
+ \textbf{ range}
+\begin{DoxyCompactList}\small\item\em Range-\/search routines. \end{DoxyCompactList}\item 
+ \textbf{ regression}
+\begin{DoxyCompactList}\small\item\em Regression methods. \end{DoxyCompactList}\item 
+ \textbf{ rl}
+\item 
+ \textbf{ sfinae}
+\item 
+ \textbf{ sparse\+\_\+coding}
+\item 
+ \textbf{ svd}
+\item 
+ \textbf{ svm}
+\item 
+ \textbf{ tree}
+\begin{DoxyCompactList}\small\item\em Trees and tree-\/building procedures. \end{DoxyCompactList}\item 
+ \textbf{ util}
+\end{DoxyCompactItemize}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Backtrace}
+\begin{DoxyCompactList}\small\item\em Provides a backtrace. \end{DoxyCompactList}\item 
+class \textbf{ IO}
+\begin{DoxyCompactList}\small\item\em Parses the command line for parameters and holds user-\/specified parameters. \end{DoxyCompactList}\item 
+class \textbf{ Log}
+\begin{DoxyCompactList}\small\item\em Provides a convenient way to give formatted output. \end{DoxyCompactList}\item 
+class \textbf{ Timer}
+\begin{DoxyCompactList}\small\item\em The timer class provides a way for mlpack methods to be timed. \end{DoxyCompactList}\item 
+class \textbf{ Timers}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ Check\+Matrices} (const arma\+::cube \&x, const arma\+::cube \&xmlX, const arma\+::cube \&jsonX, const arma\+::cube \&binaryX)
+\item 
+void \textbf{ Check\+Matrices} (const arma\+::mat \&x, const arma\+::mat \&xmlX, const arma\+::mat \&jsonX, const arma\+::mat \&binaryX)
+\item 
+void \textbf{ Check\+Matrices} (const arma\+::\+Mat$<$ size\+\_\+t $>$ \&x, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&xmlX, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&jsonX, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&binaryX)
+\item 
+{\footnotesize template$<$typename T $>$ }\\T\+::elem\+\_\+type $\ast$ \textbf{ Get\+Memory} (T \&m)
+\begin{DoxyCompactList}\small\item\em Return the matrix\textquotesingle{}s allocated memory pointer, unless the matrix is using its internal preallocated memory, in which case we copy that and return a pointer to the memory we just made. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T , typename IArchive\+Type , typename OArchive\+Type $>$ }\\void \textbf{ Serialize\+Object} (T \&t, T \&newT)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Serialize\+Object\+All} (T \&t, T \&xmlT, T \&jsonT, T \&binaryT)
+\item 
+{\footnotesize template$<$typename T , typename IArchive\+Type , typename OArchive\+Type $>$ }\\void \textbf{ Serialize\+Pointer\+Object} (T $\ast$t, T $\ast$\&newT)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Serialize\+Pointer\+Object\+All} (T $\ast$t, T $\ast$\&xmlT, T $\ast$\&jsonT, T $\ast$\&binaryT)
+\item 
+{\footnotesize template$<$typename Cube\+Type $>$ }\\void \textbf{ Test\+All\+Armadillo\+Serialization} (arma\+::\+Cube$<$ Cube\+Type $>$ \&x)
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Test\+All\+Armadillo\+Serialization} (Mat\+Type \&x)
+\item 
+{\footnotesize template$<$typename Cube\+Type , typename IArchive\+Type , typename OArchive\+Type $>$ }\\void \textbf{ Test\+Armadillo\+Serialization} (arma\+::\+Cube$<$ Cube\+Type $>$ \&x)
+\item 
+{\footnotesize template$<$typename Mat\+Type , typename IArchive\+Type , typename OArchive\+Type $>$ }\\void \textbf{ Test\+Armadillo\+Serialization} (Mat\+Type \&x)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Linear algebra utility functions, generally performed on matrices or vectors. 
+
+This class is used to update the weight\+Vectors matrix according to the simple update rule as discussed by Rosenblatt\+:
+
+if a vector x has been incorrectly classified by a weight w, then w = w -\/ x and w\textquotesingle{}= w\textquotesingle{}+ x
+
+where w\textquotesingle{} is the weight vector which correctly classifies x. 
+
+\doxysubsection{Function Documentation}
+\mbox{\label{namespacemlpack_ab4fe0775386b425fea62ba70709cbc47}} 
+\index{mlpack@{mlpack}!CheckMatrices@{CheckMatrices}}
+\index{CheckMatrices@{CheckMatrices}!mlpack@{mlpack}}
+\doxysubsubsection{CheckMatrices()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily void mlpack\+::\+Check\+Matrices (\begin{DoxyParamCaption}\item[{const arma\+::cube \&}]{x,  }\item[{const arma\+::cube \&}]{xmlX,  }\item[{const arma\+::cube \&}]{jsonX,  }\item[{const arma\+::cube \&}]{binaryX }\end{DoxyParamCaption})}
+
+\mbox{\label{namespacemlpack_aa79e1de3de2187b74e5ea138b09ab461}} 
+\index{mlpack@{mlpack}!CheckMatrices@{CheckMatrices}}
+\index{CheckMatrices@{CheckMatrices}!mlpack@{mlpack}}
+\doxysubsubsection{CheckMatrices()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily void mlpack\+::\+Check\+Matrices (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{x,  }\item[{const arma\+::mat \&}]{xmlX,  }\item[{const arma\+::mat \&}]{jsonX,  }\item[{const arma\+::mat \&}]{binaryX }\end{DoxyParamCaption})}
+
+\mbox{\label{namespacemlpack_a58b18b5a75135c9cf5f7e90dd626f7ae}} 
+\index{mlpack@{mlpack}!CheckMatrices@{CheckMatrices}}
+\index{CheckMatrices@{CheckMatrices}!mlpack@{mlpack}}
+\doxysubsubsection{CheckMatrices()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void mlpack\+::\+Check\+Matrices (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{x,  }\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{xmlX,  }\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{jsonX,  }\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{binaryX }\end{DoxyParamCaption})}
+
+\mbox{\label{namespacemlpack_ab0cc7f43ea0ea03a7654d61e7dea54e6}} 
+\index{mlpack@{mlpack}!GetMemory@{GetMemory}}
+\index{GetMemory@{GetMemory}!mlpack@{mlpack}}
+\doxysubsubsection{GetMemory()}
+{\footnotesize\ttfamily T\+::elem\+\_\+type$\ast$ mlpack\+::\+Get\+Memory (\begin{DoxyParamCaption}\item[{T \&}]{m }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the matrix\textquotesingle{}s allocated memory pointer, unless the matrix is using its internal preallocated memory, in which case we copy that and return a pointer to the memory we just made. 
+
+
+
+Definition at line 27 of file arma\+\_\+util.\+hpp.
+
+\mbox{\label{namespacemlpack_a60e0769fd629305e7b5ea41569bc64ae}} 
+\index{mlpack@{mlpack}!SerializeObject@{SerializeObject}}
+\index{SerializeObject@{SerializeObject}!mlpack@{mlpack}}
+\doxysubsubsection{SerializeObject()}
+{\footnotesize\ttfamily void mlpack\+::\+Serialize\+Object (\begin{DoxyParamCaption}\item[{T \&}]{t,  }\item[{T \&}]{newT }\end{DoxyParamCaption})}
+
+
+
+Definition at line 145 of file serialization.\+hpp.
+
+
+
+References mlpack\+::data\+::binary, and Filter\+File\+Name().
+
+
+
+Referenced by Serialize\+Object\+All().
+
+\mbox{\label{namespacemlpack_a8c171c8ee3d09fb7f38f9a76b9a962b8}} 
+\index{mlpack@{mlpack}!SerializeObjectAll@{SerializeObjectAll}}
+\index{SerializeObjectAll@{SerializeObjectAll}!mlpack@{mlpack}}
+\doxysubsubsection{SerializeObjectAll()}
+{\footnotesize\ttfamily void mlpack\+::\+Serialize\+Object\+All (\begin{DoxyParamCaption}\item[{T \&}]{t,  }\item[{T \&}]{xmlT,  }\item[{T \&}]{jsonT,  }\item[{T \&}]{binaryT }\end{DoxyParamCaption})}
+
+
+
+Definition at line 172 of file serialization.\+hpp.
+
+
+
+References Serialize\+Object().
+
+\mbox{\label{namespacemlpack_a4aa2fa900138dc71a37b9b3922d6faff}} 
+\index{mlpack@{mlpack}!SerializePointerObject@{SerializePointerObject}}
+\index{SerializePointerObject@{SerializePointerObject}!mlpack@{mlpack}}
+\doxysubsubsection{SerializePointerObject()}
+{\footnotesize\ttfamily void mlpack\+::\+Serialize\+Pointer\+Object (\begin{DoxyParamCaption}\item[{T $\ast$}]{t,  }\item[{T $\ast$\&}]{newT }\end{DoxyParamCaption})}
+
+
+
+Definition at line 184 of file serialization.\+hpp.
+
+
+
+References mlpack\+::data\+::binary, CEREAL\+\_\+\+POINTER, and Filter\+File\+Name().
+
+
+
+Referenced by Serialize\+Pointer\+Object\+All().
+
+\mbox{\label{namespacemlpack_a005e4f612a7747ec26149ceb00fbb960}} 
+\index{mlpack@{mlpack}!SerializePointerObjectAll@{SerializePointerObjectAll}}
+\index{SerializePointerObjectAll@{SerializePointerObjectAll}!mlpack@{mlpack}}
+\doxysubsubsection{SerializePointerObjectAll()}
+{\footnotesize\ttfamily void mlpack\+::\+Serialize\+Pointer\+Object\+All (\begin{DoxyParamCaption}\item[{T $\ast$}]{t,  }\item[{T $\ast$\&}]{xmlT,  }\item[{T $\ast$\&}]{jsonT,  }\item[{T $\ast$\&}]{binaryT }\end{DoxyParamCaption})}
+
+
+
+Definition at line 206 of file serialization.\+hpp.
+
+
+
+References Serialize\+Pointer\+Object().
+
+\mbox{\label{namespacemlpack_a4f980f11d878f685a51f25a1e00aeef1}} 
+\index{mlpack@{mlpack}!TestAllArmadilloSerialization@{TestAllArmadilloSerialization}}
+\index{TestAllArmadilloSerialization@{TestAllArmadilloSerialization}!mlpack@{mlpack}}
+\doxysubsubsection{TestAllArmadilloSerialization()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void mlpack\+::\+Test\+All\+Armadillo\+Serialization (\begin{DoxyParamCaption}\item[{arma\+::\+Cube$<$ Cube\+Type $>$ \&}]{x }\end{DoxyParamCaption})}
+
+
+
+Definition at line 78 of file serialization.\+hpp.
+
+
+
+References Test\+Armadillo\+Serialization().
+
+\mbox{\label{namespacemlpack_a48f8ce6e4565473110b4f55040b74b2f}} 
+\index{mlpack@{mlpack}!TestAllArmadilloSerialization@{TestAllArmadilloSerialization}}
+\index{TestAllArmadilloSerialization@{TestAllArmadilloSerialization}!mlpack@{mlpack}}
+\doxysubsubsection{TestAllArmadilloSerialization()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void mlpack\+::\+Test\+All\+Armadillo\+Serialization (\begin{DoxyParamCaption}\item[{Mat\+Type \&}]{x }\end{DoxyParamCaption})}
+
+
+
+Definition at line 132 of file serialization.\+hpp.
+
+
+
+References Test\+Armadillo\+Serialization().
+
+\mbox{\label{namespacemlpack_a615dd99e3b326f33e92e48f84d3f86cf}} 
+\index{mlpack@{mlpack}!TestArmadilloSerialization@{TestArmadilloSerialization}}
+\index{TestArmadilloSerialization@{TestArmadilloSerialization}!mlpack@{mlpack}}
+\doxysubsubsection{TestArmadilloSerialization()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void mlpack\+::\+Test\+Armadillo\+Serialization (\begin{DoxyParamCaption}\item[{arma\+::\+Cube$<$ Cube\+Type $>$ \&}]{x }\end{DoxyParamCaption})}
+
+
+
+Definition at line 26 of file serialization.\+hpp.
+
+
+
+References mlpack\+::data\+::binary, and Filter\+File\+Name().
+
+
+
+Referenced by Test\+All\+Armadillo\+Serialization().
+
+\mbox{\label{namespacemlpack_a7c2aa41ce56ddd03a2a2d8580b2433c2}} 
+\index{mlpack@{mlpack}!TestArmadilloSerialization@{TestArmadilloSerialization}}
+\index{TestArmadilloSerialization@{TestArmadilloSerialization}!mlpack@{mlpack}}
+\doxysubsubsection{TestArmadilloSerialization()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void mlpack\+::\+Test\+Armadillo\+Serialization (\begin{DoxyParamCaption}\item[{Mat\+Type \&}]{x }\end{DoxyParamCaption})}
+
+
+
+Definition at line 92 of file serialization.\+hpp.
+
+
+
+References mlpack\+::data\+::binary, and Filter\+File\+Name().
+

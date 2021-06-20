@@ -1,0 +1,77 @@
+.TH "CoverTree< MetricType, StatisticType, MatType, RootPointPolicy >::SingleTreeTraverser< RuleType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CoverTree< MetricType, StatisticType, MatType, RootPointPolicy >::SingleTreeTraverser< RuleType > \- A single-tree cover tree traverser; see single_tree_traverser\&.hpp for implementation\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSingleTreeTraverser\fP (RuleType &rule)"
+.br
+.RI "Initialize the single tree traverser with the given rule\&. "
+.ti -1c
+.RI "size_t & \fBNumPrunes\fP ()"
+.br
+.RI "Set the number of prunes (good for a reset to 0)\&. "
+.ti -1c
+.RI "size_t \fBNumPrunes\fP () const"
+.br
+.RI "Get the number of prunes so far\&. "
+.ti -1c
+.RI "void \fBTraverse\fP (const size_t queryIndex, \fBCoverTree\fP &referenceNode)"
+.br
+.RI "Traverse the tree with the given point\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType = metric::LMetric<2, true>, typename StatisticType = EmptyStatistic, typename MatType = arma::mat, typename RootPointPolicy = FirstPointIsRoot>
+.br
+template<typename RuleType>
+.br
+class mlpack::tree::CoverTree< MetricType, StatisticType, MatType, RootPointPolicy >::SingleTreeTraverser< RuleType >"
+A single-tree cover tree traverser; see single_tree_traverser\&.hpp for implementation\&. 
+.PP
+Definition at line 31 of file single_tree_traverser\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSingleTreeTraverser\fP (RuleType & rule)"
+
+.PP
+Initialize the single tree traverser with the given rule\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t& NumPrunes ()\fC [inline]\fP"
+
+.PP
+Set the number of prunes (good for a reset to 0)\&. 
+.PP
+Definition at line 52 of file single_tree_traverser\&.hpp\&.
+.SS "size_t NumPrunes () const\fC [inline]\fP"
+
+.PP
+Get the number of prunes so far\&. 
+.PP
+Definition at line 50 of file single_tree_traverser\&.hpp\&.
+.SS "void Traverse (const size_t queryIndex, \fBCoverTree\fP & referenceNode)"
+
+.PP
+Traverse the tree with the given point\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIqueryIndex\fP The index of the point in the query set which is used as the query point\&. 
+.br
+\fIreferenceNode\fP The tree node to be traversed\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_d653de0e5247f0f2599149f8b16e0b6e" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/approx_kfn</compoundname>
+    <innerfile refid="drusilla__select_8hpp">drusilla_select.hpp</innerfile>
+    <innerfile refid="qdafn_8hpp">qdafn.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/"/>
+  </compounddef>
+</doxygen>

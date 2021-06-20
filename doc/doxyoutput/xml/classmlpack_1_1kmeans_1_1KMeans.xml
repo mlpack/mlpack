@@ -1,0 +1,623 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1kmeans_1_1KMeans" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::kmeans::KMeans</compoundname>
+    <includes refid="kmeans_8hpp" local="no">kmeans.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MetricType</type>
+        <defval><ref refid="namespacemlpack_1_1metric_1a0306f114fdf32dcdfa8f015408cfc37d" kindref="member">metric::EuclideanDistance</ref></defval>
+      </param>
+      <param>
+        <type>typename InitialPartitionPolicy</type>
+        <defval><ref refid="classmlpack_1_1kmeans_1_1SampleInitialization" kindref="compound">SampleInitialization</ref></defval>
+      </param>
+      <param>
+        <type>typename EmptyClusterPolicy</type>
+        <defval><ref refid="classmlpack_1_1kmeans_1_1MaxVarianceNewCluster" kindref="compound">MaxVarianceNewCluster</ref></defval>
+      </param>
+      <param>
+        <type>template&lt; class, class &gt; class</type>
+        <declname>LloydStepType</declname>
+        <defname>LloydStepType</defname>
+        <defval><ref refid="classmlpack_1_1kmeans_1_1NaiveKMeans" kindref="compound">NaiveKMeans</ref></defval>
+      </param>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1KMeans_1a8a4c94c2e0330620850268d257307014" prot="private" static="no" mutable="no">
+        <type>EmptyClusterPolicy</type>
+        <definition>EmptyClusterPolicy emptyClusterAction</definition>
+        <argsstring></argsstring>
+        <name>emptyClusterAction</name>
+        <briefdescription>
+<para>Instantiated empty cluster policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="191" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="191" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1KMeans_1adb3fa2e38847b23885acf3833f28538e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxIterations</definition>
+        <argsstring></argsstring>
+        <name>maxIterations</name>
+        <briefdescription>
+<para>Maximum number of iterations before giving up. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="185" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1KMeans_1ad069c71a7bc99c59bce1c3f859e5d22b" prot="private" static="no" mutable="no">
+        <type>MetricType</type>
+        <definition>MetricType metric</definition>
+        <argsstring></argsstring>
+        <name>metric</name>
+        <briefdescription>
+<para>Instantiated distance metric. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="187" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1kmeans_1_1KMeans_1a48373af3c96efa7fe37f63748a5ef74b" prot="private" static="no" mutable="no">
+        <type>InitialPartitionPolicy</type>
+        <definition>InitialPartitionPolicy partitioner</definition>
+        <argsstring></argsstring>
+        <name>partitioner</name>
+        <briefdescription>
+<para>Instantiated initial partitioning policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="189" column="26" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1a2c02f26404b56010005348a1a9c78811" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>KMeans</definition>
+        <argsstring>(const size_t maxIterations=1000, const MetricType metric=MetricType(), const InitialPartitionPolicy partitioner=InitialPartitionPolicy(), const EmptyClusterPolicy emptyClusterAction=EmptyClusterPolicy())</argsstring>
+        <name>KMeans</name>
+        <param>
+          <type>const size_t</type>
+          <declname>maxIterations</declname>
+          <defval>1000</defval>
+        </param>
+        <param>
+          <type>const MetricType</type>
+          <declname>metric</declname>
+          <defval>MetricType()</defval>
+        </param>
+        <param>
+          <type>const InitialPartitionPolicy</type>
+          <declname>partitioner</declname>
+          <defval>InitialPartitionPolicy()</defval>
+        </param>
+        <param>
+          <type>const EmptyClusterPolicy</type>
+          <declname>emptyClusterAction</declname>
+          <defval>EmptyClusterPolicy()</defval>
+        </param>
+        <briefdescription>
+<para>Create a K-Means object and (optionally) set the parameters which K-Means will be run with. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>maxIterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of iterations allowed before giving up (0 is valid, but the algorithm may never terminate). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional MetricType object; for when the metric has state it needs to store. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>partitioner</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional InitialPartitionPolicy object; for when a specially initialized partitioning policy is required. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>emptyClusterAction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional EmptyClusterPolicy object; for when a specially initialized empty cluster policy is required. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="89" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1a7f936cca3a7f4af330fb90da9e2f4d0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster</definition>
+        <argsstring>(const MatType &amp;data, const size_t clusters, arma::Row&lt; size_t &gt; &amp;assignments, arma::mat &amp;centroids, const bool initialAssignmentGuess=false, const bool initialCentroidGuess=false)</argsstring>
+        <name>Cluster</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>clusters</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>assignments</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>centroids</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>initialAssignmentGuess</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>initialCentroidGuess</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Perform k-means clustering on the data, returning a list of cluster assignments and also the centroids of each cluster. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Optionally, the vector of assignments can be set to an initial guess of the cluster assignments; to do this, set initialAssignmentGuess to true. Another way to set initial cluster guesses is to fill the centroids matrix with the centroid guesses, and then set initialCentroidGuess to true. initialAssignmentGuess supersedes initialCentroidGuess, so if both are set to true, the assignments vector is used.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of matrix (arma::mat or arma::sp_mat). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to cluster. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>clusters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of clusters to compute. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>assignments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store cluster assignments in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>centroids</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix in which centroids are stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>initialAssignmentGuess</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, then it is assumed that assignments has a list of initial cluster assignments. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>initialCentroidGuess</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, then it is assumed that centroids contains the initial centroids of each cluster. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="151" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1a6826456ef16a5d9129bdcb14d4e7b601" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster</definition>
+        <argsstring>(const MatType &amp;data, const size_t clusters, arma::Row&lt; size_t &gt; &amp;assignments, const bool initialGuess=false)</argsstring>
+        <name>Cluster</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>clusters</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>assignments</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>initialGuess</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Perform k-means clustering on the data, returning a list of cluster assignments. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Optionally, the vector of assignments can be set to an initial guess of the cluster assignments; to do this, set initialGuess to true.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of matrix (arma::mat or arma::sp_mat). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to cluster. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>clusters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of clusters to compute. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>assignments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store cluster assignments in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>initialGuess</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, then it is assumed that assignments has a list of initial cluster assignments. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="108" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1a628f7259d908bb79c6076e6c8542bb37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster</definition>
+        <argsstring>(const MatType &amp;data, size_t clusters, arma::mat &amp;centroids, const bool initialGuess=false)</argsstring>
+        <name>Cluster</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>clusters</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>centroids</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>initialGuess</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Perform k-means clustering on the data, returning the centroids of each cluster in the centroids matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Optionally, the initial centroids can be specified by filling the centroids matrix with the initial centroids and specifying initialGuess = true.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of matrix (arma::mat or arma::sp_mat). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to cluster. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>clusters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of clusters to compute. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>centroids</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix in which centroids are stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>initialGuess</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, then it is assumed that centroids contains the initial cluster centroids. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="126" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1a6fad56c8618d74d504739243a5acd350" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>EmptyClusterPolicy &amp;</type>
+        <definition>EmptyClusterPolicy&amp; EmptyClusterAction</definition>
+        <argsstring>()</argsstring>
+        <name>EmptyClusterAction</name>
+        <briefdescription>
+<para>Modify the empty cluster policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="177" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="177" bodyend="177"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1aa48f5728e3adee070ea825c121ebe25e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const EmptyClusterPolicy &amp;</type>
+        <definition>const EmptyClusterPolicy&amp; EmptyClusterAction</definition>
+        <argsstring>() const</argsstring>
+        <name>EmptyClusterAction</name>
+        <briefdescription>
+<para>Get the empty cluster policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="174" column="28" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="174" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MaxIterations</definition>
+        <argsstring>()</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Set the maximum number of iterations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="161" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="161" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MaxIterations</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Get the maximum number of iterations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="159" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="159" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1acc71d930ed90e73b2bc0c360835c5371" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>MetricType &amp;</type>
+        <definition>MetricType&amp; Metric</definition>
+        <argsstring>()</argsstring>
+        <name>Metric</name>
+        <briefdescription>
+<para>Modify the distance metric. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="166" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="166" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1aac4d643c62af7d9cc2a072aea10d2b32" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const MetricType &amp;</type>
+        <definition>const MetricType&amp; Metric</definition>
+        <argsstring>() const</argsstring>
+        <name>Metric</name>
+        <briefdescription>
+<para>Get the distance metric. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="164" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="164" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1a4312395900bd208fb8f63c8d0a6f7c6c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>InitialPartitionPolicy &amp;</type>
+        <definition>InitialPartitionPolicy&amp; Partitioner</definition>
+        <argsstring>()</argsstring>
+        <name>Partitioner</name>
+        <briefdescription>
+<para>Modify the initial partitioning policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="171" column="26" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="171" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1a7e66bff389c56384db8677109a05eb8b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const InitialPartitionPolicy &amp;</type>
+        <definition>const InitialPartitionPolicy&amp; Partitioner</definition>
+        <argsstring>() const</argsstring>
+        <name>Partitioner</name>
+        <briefdescription>
+<para>Get the initial partitioning policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="169" column="32" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="169" bodyend="169"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1KMeans_1a72d63b74c8166dff8e1a9006905ad9ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t version)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>version</declname>
+        </param>
+        <briefdescription>
+<para>Serialize the k-means object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="181" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class implements K-Means clustering, using a variety of possible implementations of Lloyd&apos;s algorithm. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Four template parameters can (optionally) be supplied: the distance metric to use, the policy for how to find the initial partition of the data, the actions to be taken when an empty cluster is encountered, and the implementation of a single Lloyd step to use.</para>
+<para>A simple example of how to run K-Means clustering is shown below.</para>
+<para><programlisting><codeline><highlight class="normal">extern<sp/>arma::mat<sp/>data;<sp/>//<sp/>Dataset<sp/>we<sp/>want<sp/>to<sp/>run<sp/>K-Means<sp/>on.</highlight></codeline>
+<codeline><highlight class="normal">arma::Row&lt;size_t&gt;<sp/>assignments;<sp/>//<sp/>Cluster<sp/>assignments.</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>centroids;<sp/>//<sp/>Cluster<sp/>centroids.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">KMeans&lt;&gt;<sp/>k;<sp/>//<sp/>Default<sp/>options.</highlight></codeline>
+<codeline><highlight class="normal">k.Cluster(data,<sp/>3,<sp/>assignments,<sp/>centroids);<sp/>//<sp/>3<sp/>clusters.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Cluster<sp/>using<sp/>the<sp/>Manhattan<sp/>distance,<sp/>100<sp/>iterations<sp/>maximum,<sp/>saving<sp/>only</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>the<sp/>centroids.</highlight></codeline>
+<codeline><highlight class="normal">KMeans&lt;metric::ManhattanDistance&gt;<sp/>k(100);</highlight></codeline>
+<codeline><highlight class="normal">k.Cluster(data,<sp/>6,<sp/>centroids);<sp/>//<sp/>6<sp/>clusters.</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MetricType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The distance metric to use for this <ref refid="classmlpack_1_1kmeans_1_1KMeans" kindref="compound">KMeans</ref>; see <ref refid="classmlpack_1_1metric_1_1LMetric" kindref="compound">metric::LMetric</ref> for an example. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>InitialPartitionPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initial partitioning policy; must implement a default constructor and either &apos;void Cluster(const arma::mat&amp;, const size_t, arma::Row&lt;size_t&gt;&amp;)&apos; or &apos;void Cluster(const arma::mat&amp;, const size_t, arma::mat&amp;)&apos;. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>EmptyClusterPolicy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Policy for what to do on an empty cluster; must implement a default constructor and &apos;void EmptyCluster(const arma::mat&amp; data, const size_t emptyCluster, const arma::mat&amp; oldCentroids, arma::mat&amp; newCentroids, arma::Col&lt;size_t&gt;&amp; counts, MetricType&amp; metric, const size_t iteration)&apos;. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>LloydStepType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Implementation of single Lloyd step to use.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="classmlpack_1_1kmeans_1_1RandomPartition" kindref="compound">RandomPartition</ref>, <ref refid="classmlpack_1_1kmeans_1_1SampleInitialization" kindref="compound">SampleInitialization</ref>, <ref refid="classmlpack_1_1kmeans_1_1RefinedStart" kindref="compound">RefinedStart</ref>, <ref refid="classmlpack_1_1kmeans_1_1AllowEmptyClusters" kindref="compound">AllowEmptyClusters</ref>, <ref refid="classmlpack_1_1kmeans_1_1MaxVarianceNewCluster" kindref="compound">MaxVarianceNewCluster</ref>, <ref refid="classmlpack_1_1kmeans_1_1NaiveKMeans" kindref="compound">NaiveKMeans</ref>, <ref refid="classmlpack_1_1kmeans_1_1ElkanKMeans" kindref="compound">ElkanKMeans</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" line="73" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/kmeans.hpp" bodystart="74" bodyend="192"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1a6826456ef16a5d9129bdcb14d4e7b601" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>Cluster</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1a628f7259d908bb79c6076e6c8542bb37" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>Cluster</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1a7f936cca3a7f4af330fb90da9e2f4d0b" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>Cluster</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1a8a4c94c2e0330620850268d257307014" prot="private" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>emptyClusterAction</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1aa48f5728e3adee070ea825c121ebe25e" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>EmptyClusterAction</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1a6fad56c8618d74d504739243a5acd350" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>EmptyClusterAction</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1a2c02f26404b56010005348a1a9c78811" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>KMeans</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1adb3fa2e38847b23885acf3833f28538e" prot="private" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>maxIterations</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1ad069c71a7bc99c59bce1c3f859e5d22b" prot="private" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>metric</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1aac4d643c62af7d9cc2a072aea10d2b32" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>Metric</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1acc71d930ed90e73b2bc0c360835c5371" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>Metric</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1a48373af3c96efa7fe37f63748a5ef74b" prot="private" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>partitioner</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1a7e66bff389c56384db8677109a05eb8b" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>Partitioner</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1a4312395900bd208fb8f63c8d0a6f7c6c" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>Partitioner</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1KMeans_1a72d63b74c8166dff8e1a9006905ad9ca" prot="public" virt="non-virtual"><scope>mlpack::kmeans::KMeans</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

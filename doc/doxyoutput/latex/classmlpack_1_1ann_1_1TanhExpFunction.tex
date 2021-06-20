@@ -1,0 +1,121 @@
+\doxysection{Tanh\+Exp\+Function Class Reference}
+\label{classmlpack_1_1ann_1_1TanhExpFunction}\index{TanhExpFunction@{TanhExpFunction}}
+
+
+The Tanh\+Exp function, defined by.  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double \textbf{ Deriv} (const double y)
+\begin{DoxyCompactList}\small\item\em Computes the first derivative of the Tanh\+Exp function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void \textbf{ Deriv} (const Input\+Vec\+Type \&y, Output\+Vec\+Type \&x)
+\begin{DoxyCompactList}\small\item\em Computes the first derivatives of the tanh function. \end{DoxyCompactList}\item 
+static double \textbf{ Fn} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the Tanh\+Exp function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void \textbf{ Fn} (const Input\+Vec\+Type \&x, Output\+Vec\+Type \&y)
+\begin{DoxyCompactList}\small\item\em Computes the Tanh\+Exp function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The Tanh\+Exp function, defined by. 
+
+\begin{eqnarray*} f(x) = x * tanh(e^x)\\ f\textnormal{\textquotesingle}(x) = tanh(e^x) - x*e^x*(tanh(e^x)^2 - 1)\\ \end{eqnarray*} 
+
+Definition at line 42 of file tanh\+\_\+exponential\+\_\+function.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1TanhExpFunction_a163d34fd09f8edf457164f5033c635cf}} 
+\index{TanhExpFunction@{TanhExpFunction}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!TanhExpFunction@{TanhExpFunction}}
+\doxysubsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Deriv (\begin{DoxyParamCaption}\item[{const double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivative of the Tanh\+Exp function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input activation. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f\textquotesingle{}(x) 
+\end{DoxyReturn}
+
+
+Definition at line 74 of file tanh\+\_\+exponential\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TanhExpFunction_ad442502c34b67303b74c735641dab790}} 
+\index{TanhExpFunction@{TanhExpFunction}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!TanhExpFunction@{TanhExpFunction}}
+\doxysubsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Deriv (\begin{DoxyParamCaption}\item[{const Input\+Vec\+Type \&}]{y,  }\item[{Output\+Vec\+Type \&}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivatives of the tanh function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input activations. \\
+\hline
+{\em x} & The resulting derivatives. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 87 of file tanh\+\_\+exponential\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TanhExpFunction_a11bd9a1195e6b107f9fee73643bc328b}} 
+\index{TanhExpFunction@{TanhExpFunction}!Fn@{Fn}}
+\index{Fn@{Fn}!TanhExpFunction@{TanhExpFunction}}
+\doxysubsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Fn (\begin{DoxyParamCaption}\item[{const double}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the Tanh\+Exp function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f(x). 
+\end{DoxyReturn}
+
+
+Definition at line 51 of file tanh\+\_\+exponential\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TanhExpFunction_af6cf5da90eb6312e3e25c9b8bd9c3527}} 
+\index{TanhExpFunction@{TanhExpFunction}!Fn@{Fn}}
+\index{Fn@{Fn}!TanhExpFunction@{TanhExpFunction}}
+\doxysubsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Fn (\begin{DoxyParamCaption}\item[{const Input\+Vec\+Type \&}]{x,  }\item[{Output\+Vec\+Type \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the Tanh\+Exp function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+{\em y} & The resulting output activation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 63 of file tanh\+\_\+exponential\+\_\+function.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/activation\+\_\+functions/\textbf{ tanh\+\_\+exponential\+\_\+function.\+hpp}\end{DoxyCompactItemize}

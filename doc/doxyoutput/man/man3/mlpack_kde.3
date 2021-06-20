@@ -1,0 +1,78 @@
+.TH "mlpack::kde" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::kde \- Kernel Density Estimation\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBKDE\fP"
+.br
+.RI "The \fBKDE\fP class is a template class for performing Kernel Density Estimations\&. "
+.ti -1c
+.RI "class \fBKDECleanRules\fP"
+.br
+.RI "A dual-tree traversal Rules class for cleaning used trees before performing kernel density estimation\&. "
+.ti -1c
+.RI "struct \fBKDEDefaultParams\fP"
+.br
+.RI "\fBKDEDefaultParams\fP contains the default input parameter values for \fBKDE\fP\&. "
+.ti -1c
+.RI "class \fBKDEModel\fP"
+.br
+.RI "The \fBKDEModel\fP provides an abstraction for the \fBKDE\fP class, abstracting away the KernelType and TreeType parameters and allowing those to be specified at runtime\&. "
+.ti -1c
+.RI "class \fBKDERules\fP"
+.br
+.RI "A dual-tree traversal Rules class for kernel density estimation\&. "
+.ti -1c
+.RI "class \fBKDEStat\fP"
+.br
+.RI "Extra data for each node in the tree for the task of kernel density estimation\&. "
+.ti -1c
+.RI "class \fBKDEWrapper\fP"
+.br
+.RI "\fBKDEWrapper\fP is a wrapper class for all \fBKDE\fP types supported by \fBKDEModel\fP\&. "
+.ti -1c
+.RI "class \fBKDEWrapperBase\fP"
+.br
+.RI "\fBKDEWrapperBase\fP is a base wrapper class for holding all \fBKDE\fP types supported by \fBKDEModel\fP\&. "
+.ti -1c
+.RI "class \fBKernelNormalizer\fP"
+.br
+.RI "\fBKernelNormalizer\fP holds a set of methods to normalize estimations applying in each case the appropiate kernel normalizer function\&. "
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBKDEMode\fP { \fBDUAL_TREE_MODE\fP, \fBSINGLE_TREE_MODE\fP }"
+.br
+.RI "KDEMode represents the ways in which KDE algorithm can be executed\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Kernel Density Estimation\&. 
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBKDEMode\fP"
+
+.PP
+KDEMode represents the ways in which \fBKDE\fP algorithm can be executed\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIDUAL_TREE_MODE \fP\fP
+.TP
+\fB\fISINGLE_TREE_MODE \fP\fP
+.PP
+Definition at line 25 of file kde\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

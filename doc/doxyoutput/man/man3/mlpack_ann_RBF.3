@@ -1,0 +1,218 @@
+.TH "RBF< InputDataType, OutputDataType, Activation >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RBF< InputDataType, OutputDataType, Activation > \- Implementation of the Radial Basis Function layer\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRBF\fP ()"
+.br
+.RI "Create the \fBRBF\fP object\&. "
+.ti -1c
+.RI "\fBRBF\fP (const size_t inSize, const size_t outSize, arma::mat &centres, double betas=0)"
+.br
+.RI "Create the Radial Basis Function layer object using the specified parameters\&. "
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &, const arma::Mat< eT > &, arma::Mat< eT > &)"
+.br
+.RI "Ordinary feed backward pass of the radial basis function\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the detla\&. "
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output)"
+.br
+.RI "Ordinary feed forward pass of the radial basis function\&. "
+.ti -1c
+.RI "InputDataType & \fBInputParameter\fP ()"
+.br
+.RI "Modify the input parameter\&. "
+.ti -1c
+.RI "InputDataType const  & \fBInputParameter\fP () const"
+.br
+.RI "Get the parameters\&. "
+.ti -1c
+.RI "size_t \fBInputShape\fP () const"
+.br
+.RI "Get the shape of the input\&. "
+.ti -1c
+.RI "size_t \fBInputSize\fP () const"
+.br
+.RI "Get the input size\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "size_t \fBOutputSize\fP () const"
+.br
+.RI "Get the output size\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.ti -1c
+.RI "size_t \fBWeightSize\fP () const"
+.br
+.RI "Get the size of the weights\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat, typename Activation = GaussianFunction>
+.br
+class mlpack::ann::RBF< InputDataType, OutputDataType, Activation >"
+Implementation of the Radial Basis Function layer\&. 
+
+The \fBRBF\fP class when use with a non-linear activation function acts as a Radial Basis Function which can be used with Feed-Forward neural network\&.
+.PP
+For more information, refer to the following paper,
+.PP
+.PP
+.nf
+@article{Volume 51: Artificial Intelligence and Statistics,
+  author  = {Qichao Que, Mikhail Belkin},
+  title   = {Back to the Future: Radial Basis Function Networks Revisited},
+  year    = {2016},
+  url     = {http://proceedings\&.mlr\&.press/v51/que16\&.pdf},
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIActivation\fP Type of the activation function (mlpack::ann::Gaussian)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 53 of file radial_basis_function\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRBF\fP ()"
+
+.PP
+Create the \fBRBF\fP object\&. 
+.SS "\fBRBF\fP (const size_t inSize, const size_t outSize, arma::mat & centres, double betas = \fC0\fP)"
+
+.PP
+Create the Radial Basis Function layer object using the specified parameters\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinSize\fP The number of input units\&. 
+.br
+\fIoutSize\fP The number of output units\&. 
+.br
+\fIcentres\fP The centres calculated using k-means of data\&. 
+.br
+\fIbetas\fP The beta value to be used with centres\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > &, arma::Mat< eT > &)"
+
+.PP
+Ordinary feed backward pass of the radial basis function\&. 
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 111 of file radial_basis_function\&.hpp\&.
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the detla\&. 
+.PP
+Definition at line 109 of file radial_basis_function\&.hpp\&.
+.SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
+
+.PP
+Ordinary feed forward pass of the radial basis function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "InputDataType& InputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the input parameter\&. 
+.PP
+Definition at line 100 of file radial_basis_function\&.hpp\&.
+.SS "InputDataType const& InputParameter () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. Get the input parameter\&. 
+.PP
+Definition at line 98 of file radial_basis_function\&.hpp\&.
+.SS "size_t InputShape () const\fC [inline]\fP"
+
+.PP
+Get the shape of the input\&. 
+.PP
+Definition at line 120 of file radial_basis_function\&.hpp\&.
+.SS "size_t InputSize () const\fC [inline]\fP"
+
+.PP
+Get the input size\&. 
+.PP
+Definition at line 103 of file radial_basis_function\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 94 of file radial_basis_function\&.hpp\&.
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 92 of file radial_basis_function\&.hpp\&.
+.SS "size_t OutputSize () const\fC [inline]\fP"
+
+.PP
+Get the output size\&. 
+.PP
+Definition at line 106 of file radial_basis_function\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.SS "size_t WeightSize () const\fC [inline]\fP"
+
+.PP
+Get the size of the weights\&. 
+.PP
+Definition at line 114 of file radial_basis_function\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

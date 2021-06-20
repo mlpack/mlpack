@@ -1,0 +1,52 @@
+<map id="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp" name="/home/aakash/mlpack/src/mlpack/core/util/binding_details.hpp">
+<area shape="rect" id="node1" title=" " alt="" coords="843,5,1009,61"/>
+<area shape="rect" id="node2" href="$binding__info_8hpp.html" title=" " alt="" coords="441,109,648,165"/>
+<area shape="rect" id="node8" href="$io_8hpp.html" title=" " alt="" coords="1224,109,1391,165"/>
+<area shape="rect" id="node3" href="$markdown_2default__param_8hpp.html" title=" " alt="" coords="5,221,228,277"/>
+<area shape="rect" id="node5" href="$markdown_2get__printable__type_8hpp.html" title=" " alt="" coords="252,213,437,284"/>
+<area shape="rect" id="node6" href="$markdown_2print__type__doc_8hpp.html" title=" " alt="" coords="461,213,628,284"/>
+<area shape="rect" id="node7" href="$program__doc__wrapper_8hpp.html" title=" " alt="" coords="653,213,837,284"/>
+<area shape="rect" id="node4" href="$md__option_8hpp.html" title=" " alt="" coords="247,339,443,395"/>
+<area shape="rect" id="node9" href="$cli__option_8hpp.html" title=" " alt="" coords="912,221,1079,277"/>
+<area shape="rect" id="node10" href="$end__program_8hpp.html" title=" " alt="" coords="1103,221,1269,277"/>
+<area shape="rect" id="node11" href="$go_2mlpack_2capi_2arma__util_8hpp.html" title=" " alt="" coords="845,332,1012,403"/>
+<area shape="rect" id="node12" href="$go_2mlpack_2capi_2io__util_8hpp.html" title=" " alt="" coords="1345,221,1542,277"/>
+<area shape="rect" id="node13" href="$python_2mlpack_2io__util_8hpp.html" title=" " alt="" coords="1566,221,1761,277"/>
+<area shape="rect" id="node14" href="$test__option_8hpp.html" title=" " alt="" coords="1785,221,1952,277"/>
+<area shape="rect" id="node15" href="$core_8hpp.html" title="Include all of the base components required to write mlpack methods, and the main mlpack Doxygen docu..." alt="" coords="4219,228,4385,269"/>
+<area shape="rect" id="node16" href="$parse__command__line_8hpp.html" title=" " alt="" coords="1004,451,1216,507"/>
+<area shape="rect" id="node17" href="$print__help_8hpp.html" title=" " alt="" coords="1088,339,1255,395"/>
+<area shape="rect" id="node18" href="$print__go_8hpp.html" title=" " alt="" coords="1279,339,1445,395"/>
+<area shape="rect" id="node19" href="$print__jl_8hpp.html" title=" " alt="" coords="1469,339,1636,395"/>
+<area shape="rect" id="node20" href="$python_2mlpack_2arma__util_8hpp.html" title=" " alt="" coords="1660,339,1877,395"/>
+<area shape="rect" id="node21" href="$bindings_2python_2mlpack_2serialization_8hpp.html" title=" " alt="" coords="1902,339,2137,395"/>
+<area shape="rect" id="node22" href="$print__pyx_8hpp.html" title=" " alt="" coords="2160,339,2327,395"/>
+<area shape="rect" id="node23" href="$print__R_8hpp.html" title=" " alt="" coords="2351,339,2517,395"/>
+<area shape="rect" id="node24" href="$meta__info__extractor_8hpp.html" title=" " alt="" coords="2542,339,2729,395"/>
+<area shape="rect" id="node25" href="$accuracy_8hpp.html" title=" " alt="" coords="2753,339,2920,395"/>
+<area shape="rect" id="node26" href="$f1_8hpp.html" title=" " alt="" coords="2944,339,3111,395"/>
+<area shape="rect" id="node27" href="$facilities_8hpp.html" title=" " alt="" coords="3135,339,3301,395"/>
+<area shape="rect" id="node28" href="$mse_8hpp.html" title=" " alt="" coords="3325,339,3492,395"/>
+<area shape="rect" id="node29" href="$precision_8hpp.html" title=" " alt="" coords="3516,339,3683,395"/>
+<area shape="rect" id="node30" href="$r2__score_8hpp.html" title=" " alt="" coords="3707,339,3873,395"/>
+<area shape="rect" id="node31" href="$recall_8hpp.html" title=" " alt="" coords="3897,339,4064,395"/>
+<area shape="rect" id="node32" href="$silhouette__score_8hpp.html" title=" " alt="" coords="4088,339,4303,395"/>
+<area shape="rect" id="node33" href="$load__csv_8hpp.html" title=" " alt="" coords="4327,339,4493,395"/>
+<area shape="rect" id="node34" href="$one__hot__encoding_8hpp.html" title=" " alt="" coords="4517,339,4689,395"/>
+<area shape="rect" id="node35" href="$cv__function_8hpp.html" title=" " alt="" coords="4713,339,4880,395"/>
+<area shape="rect" id="node36" href="$fixed_8hpp.html" title=" " alt="" coords="4904,339,5071,395"/>
+<area shape="rect" id="node37" href="$adaboost__model_8hpp.html" title=" " alt="" coords="5095,339,5322,395"/>
+<area shape="rect" id="node38" href="$gan_8hpp.html" title=" " alt="" coords="5347,339,5513,395"/>
+<area shape="rect" id="node39" href="$recurrent_8hpp.html" title=" " alt="" coords="5538,339,5717,395"/>
+<area shape="rect" id="node40" href="$layer__names_8hpp.html" title=" " alt="" coords="5741,339,5908,395"/>
+<area shape="rect" id="node41" href="$rbm_8hpp.html" title=" " alt="" coords="5932,339,6099,395"/>
+<area shape="rect" id="node42" href="$cf__model_8hpp.html" title=" " alt="" coords="6123,339,6289,395"/>
+<area shape="rect" id="node43" href="$dbscan_8hpp.html" title=" " alt="" coords="6313,339,6480,395"/>
+<area shape="rect" id="node44" href="$gini__gain_8hpp.html" title=" " alt="" coords="6504,339,6708,395"/>
+<area shape="rect" id="node45" href="$kde__model_8hpp.html" title=" " alt="" coords="6732,339,6899,395"/>
+<area shape="rect" id="node46" href="$scaling__model_8hpp.html" title=" " alt="" coords="6923,339,7145,395"/>
+<area shape="rect" id="node47" href="$acrobot_8hpp.html" title=" " alt="" coords="7169,332,7360,403"/>
+<area shape="rect" id="node48" href="$ann__test__tools_8hpp.html" title=" " alt="" coords="7384,339,7551,395"/>
+<area shape="rect" id="node49" href="$range__search__utils_8hpp.html" title=" " alt="" coords="7575,339,7789,395"/>
+<area shape="rect" id="node50" href="$tests_2serialization_8hpp.html" title=" " alt="" coords="7814,347,8059,388"/>
+</map>

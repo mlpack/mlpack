@@ -1,0 +1,132 @@
+\doxysection{LRegularizer$<$ TPower $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1LRegularizer}\index{LRegularizer$<$ TPower $>$@{LRegularizer$<$ TPower $>$}}
+
+
+The L\+\_\+p regularizer for arbitrary integer p.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ LRegularizer} (double \textbf{ factor}=1.\+0)
+\begin{DoxyCompactList}\small\item\em Create the regularizer object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Evaluate} (const Mat\+Type \&weight, Mat\+Type \&gradient)
+\begin{DoxyCompactList}\small\item\em Calculate the gradient for regularization. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the regularizer (nothing to do). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double \textbf{ factor}
+\begin{DoxyCompactList}\small\item\em The constant for the regularization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const int \textbf{ Power} = TPower
+\begin{DoxyCompactList}\small\item\em The power of the regularizer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$int TPower$>$\newline
+class mlpack\+::ann\+::\+LRegularizer$<$ TPower $>$}
+
+The L\+\_\+p regularizer for arbitrary integer p. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Power} & Power of regularizer; i.\+e. Power = 1 gives the L1-\/regularization. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 27 of file lregularizer.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1LRegularizer_af4560ea21b7a7f93ad15a5ea65cf5c36}} 
+\index{LRegularizer$<$ TPower $>$@{LRegularizer$<$ TPower $>$}!LRegularizer@{LRegularizer}}
+\index{LRegularizer@{LRegularizer}!LRegularizer$<$ TPower $>$@{LRegularizer$<$ TPower $>$}}
+\doxysubsubsection{LRegularizer()}
+{\footnotesize\ttfamily \textbf{ LRegularizer} (\begin{DoxyParamCaption}\item[{double}]{factor = {\ttfamily 1.0} }\end{DoxyParamCaption})}
+
+
+
+Create the regularizer object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em factor} & The factor for regularization. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1LRegularizer_a77155b253292485b11241c0a4f04612a}} 
+\index{LRegularizer$<$ TPower $>$@{LRegularizer$<$ TPower $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!LRegularizer$<$ TPower $>$@{LRegularizer$<$ TPower $>$}}
+\doxysubsubsection{Evaluate()}
+{\footnotesize\ttfamily void Evaluate (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{weight,  }\item[{Mat\+Type \&}]{gradient }\end{DoxyParamCaption})}
+
+
+
+Calculate the gradient for regularization. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of weight matrix. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em weight} & The weight matrix to be regularized. \\
+\hline
+{\em gradient} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1LRegularizer_a65cba07328997659bec80b9879b15a51}} 
+\index{LRegularizer$<$ TPower $>$@{LRegularizer$<$ TPower $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!LRegularizer$<$ TPower $>$@{LRegularizer$<$ TPower $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the regularizer (nothing to do). 
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1LRegularizer_a2d7e5dd7a479c4c7aef6e6133a1441c5}} 
+\index{LRegularizer$<$ TPower $>$@{LRegularizer$<$ TPower $>$}!factor@{factor}}
+\index{factor@{factor}!LRegularizer$<$ TPower $>$@{LRegularizer$<$ TPower $>$}}
+\doxysubsubsection{factor}
+{\footnotesize\ttfamily double factor}
+
+
+
+The constant for the regularization. 
+
+
+
+Definition at line 55 of file lregularizer.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LRegularizer_add828b673634e896b13f47cc7fb331f5}} 
+\index{LRegularizer$<$ TPower $>$@{LRegularizer$<$ TPower $>$}!Power@{Power}}
+\index{Power@{Power}!LRegularizer$<$ TPower $>$@{LRegularizer$<$ TPower $>$}}
+\doxysubsubsection{Power}
+{\footnotesize\ttfamily const int Power = TPower\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The power of the regularizer. 
+
+
+
+Definition at line 52 of file lregularizer.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/\textbf{ lregularizer.\+hpp}\end{DoxyCompactItemize}

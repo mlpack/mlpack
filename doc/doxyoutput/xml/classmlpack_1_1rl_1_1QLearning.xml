@@ -1,0 +1,658 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1rl_1_1QLearning" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::rl::QLearning</compoundname>
+    <includes refid="q__learning_8hpp" local="no">q_learning.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename EnvironmentType</type>
+      </param>
+      <param>
+        <type>typename NetworkType</type>
+      </param>
+      <param>
+        <type>typename UpdaterType</type>
+      </param>
+      <param>
+        <type>typename PolicyType</type>
+      </param>
+      <param>
+        <type>typename ReplayType</type>
+        <defval><ref refid="classmlpack_1_1rl_1_1RandomReplay" kindref="compound">RandomReplay</ref>&lt;EnvironmentType&gt;</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1rl_1_1QLearning_1aaf7b2dc5d49d01961601c7c16be76777" prot="public" static="no">
+        <type>typename EnvironmentType::Action</type>
+        <definition>using ActionType =  typename EnvironmentType::Action</definition>
+        <argsstring></argsstring>
+        <name>ActionType</name>
+        <briefdescription>
+<para>Convenient typedef for action. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="65" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1rl_1_1QLearning_1ada68ef405b7c331a2bee337614f00088" prot="public" static="no">
+        <type>typename EnvironmentType::State</type>
+        <definition>using StateType =  typename EnvironmentType::State</definition>
+        <argsstring></argsstring>
+        <name>StateType</name>
+        <briefdescription>
+<para>Convenient typedef for state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="62" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a99189868c044162e6d669fd832ecdc81" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1rl_1_1QLearning_1aaf7b2dc5d49d01961601c7c16be76777" kindref="member">ActionType</ref></type>
+        <definition>ActionType action</definition>
+        <argsstring></argsstring>
+        <name>action</name>
+        <briefdescription>
+<para>Locally-stored action of the agent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="180" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a9256888813dc52f6cc0ac1a7955a8f83" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1rl_1_1TrainingConfig" kindref="compound">TrainingConfig</ref> &amp;</type>
+        <definition>TrainingConfig&amp; config</definition>
+        <argsstring></argsstring>
+        <name>config</name>
+        <briefdescription>
+<para>Locally-stored hyper-parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="150" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool deterministic</definition>
+        <argsstring></argsstring>
+        <name>deterministic</name>
+        <briefdescription>
+<para>Locally-stored flag indicating training mode or test mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="183" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a08976b7e3e12e32740a2e28fadd21c00" prot="private" static="no" mutable="no">
+        <type>EnvironmentType</type>
+        <definition>EnvironmentType environment</definition>
+        <argsstring></argsstring>
+        <name>environment</name>
+        <briefdescription>
+<para>Locally-stored reinforcement learning task. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="171" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="171" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a23327c0e1eab687a29ca58e51e21f7ed" prot="private" static="no" mutable="no">
+        <type>NetworkType &amp;</type>
+        <definition>NetworkType&amp; learningNetwork</definition>
+        <argsstring></argsstring>
+        <name>learningNetwork</name>
+        <briefdescription>
+<para>Locally-stored learning network. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="153" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a08deaeeefbfe947ad6ed511c2464f397" prot="private" static="no" mutable="no">
+        <type>PolicyType &amp;</type>
+        <definition>PolicyType&amp; policy</definition>
+        <argsstring></argsstring>
+        <name>policy</name>
+        <briefdescription>
+<para>Locally-stored behavior policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="159" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a6bb6f1ff61cda292d713c849f4448935" prot="private" static="no" mutable="no">
+        <type>ReplayType &amp;</type>
+        <definition>ReplayType&amp; replayMethod</definition>
+        <argsstring></argsstring>
+        <name>replayMethod</name>
+        <briefdescription>
+<para>Locally-stored experience method. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="162" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a4d1aa26dcfa648e02cbb0964cddbdbfe" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1rl_1_1QLearning_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref></type>
+        <definition>StateType state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+<para>Locally-stored current state of the agent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="177" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a7bd45a47d1baa632d8517dddb6078675" prot="private" static="no" mutable="no">
+        <type>NetworkType</type>
+        <definition>NetworkType targetNetwork</definition>
+        <argsstring></argsstring>
+        <name>targetNetwork</name>
+        <briefdescription>
+<para>Locally-stored target network. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="156" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1af40d4ff06d1593b3cdb96afe98cfe209" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t totalSteps</definition>
+        <argsstring></argsstring>
+        <name>totalSteps</name>
+        <briefdescription>
+<para>Total steps from the beginning of the task. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="174" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1QLearning_1a7d791314cd28fe9e6451ad02ee8617da" prot="private" static="no" mutable="no">
+        <type>UpdaterType</type>
+        <definition>UpdaterType updater</definition>
+        <argsstring></argsstring>
+        <name>updater</name>
+        <briefdescription>
+<para>Locally-stored updater. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="165" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a227f51fcb4729eb7f88d28f07ee6c556" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>QLearning</definition>
+        <argsstring>(TrainingConfig &amp;config, NetworkType &amp;network, PolicyType &amp;policy, ReplayType &amp;replayMethod, UpdaterType updater=UpdaterType(), EnvironmentType environment=EnvironmentType())</argsstring>
+        <name>QLearning</name>
+        <param>
+          <type><ref refid="classmlpack_1_1rl_1_1TrainingConfig" kindref="compound">TrainingConfig</ref> &amp;</type>
+          <declname>config</declname>
+        </param>
+        <param>
+          <type>NetworkType &amp;</type>
+          <declname>network</declname>
+        </param>
+        <param>
+          <type>PolicyType &amp;</type>
+          <declname>policy</declname>
+        </param>
+        <param>
+          <type>ReplayType &amp;</type>
+          <declname>replayMethod</declname>
+        </param>
+        <param>
+          <type>UpdaterType</type>
+          <declname>updater</declname>
+          <defval>UpdaterType()</defval>
+        </param>
+        <param>
+          <type>EnvironmentType</type>
+          <declname>environment</declname>
+          <defval>EnvironmentType()</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1rl_1_1QLearning" kindref="compound">QLearning</ref> object with given settings. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If you want to pass in a parameter and discard the original parameter object, be sure to use std::move to avoid unnecessary copy.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>config</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hyper-parameters for training. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The network to compute action value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>policy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Behavior policy of the agent. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>replayMethod</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Experience replay method. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>updater</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>How to apply gradients when training. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>environment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reinforcement learning task. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="80" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a3af4fd238d225e0d3c31b9be79b61727" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~QLearning</definition>
+        <argsstring>()</argsstring>
+        <name>~QLearning</name>
+        <briefdescription>
+<para>Clean memory. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="90" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a0d32caed9517e5d2014238a22f78352d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1rl_1_1QLearning_1aaf7b2dc5d49d01961601c7c16be76777" kindref="member">ActionType</ref> &amp;</type>
+        <definition>const ActionType&amp; Action</definition>
+        <argsstring>() const</argsstring>
+        <name>Action</name>
+        <briefdescription>
+<para>Get the action of the agent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="124" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="124" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Deterministic</definition>
+        <argsstring>()</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Modify the training mode / test mode indicator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="132" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="132" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a5d262f7871c5cc8b532971fb644f0abf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const bool &amp;</type>
+        <definition>const bool&amp; Deterministic</definition>
+        <argsstring>() const</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Get the indicator of training mode / test mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="134" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="134" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a59cc43eb892c46ea7c50e18fb78b9172" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>EnvironmentType &amp;</type>
+        <definition>EnvironmentType&amp; Environment</definition>
+        <argsstring>()</argsstring>
+        <name>Environment</name>
+        <briefdescription>
+<para>Modify the environment in which the agent is. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="127" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="127" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1adc517fd7b152925b4297e09a3bb4afe0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const EnvironmentType &amp;</type>
+        <definition>const EnvironmentType&amp; Environment</definition>
+        <argsstring>() const</argsstring>
+        <name>Environment</name>
+        <briefdescription>
+<para>Get the environment in which the agent is. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="129" column="25" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="129" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a1fb26736f2d90010f882f9628cd26612" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Episode</definition>
+        <argsstring>()</argsstring>
+        <name>Episode</name>
+        <briefdescription>
+<para>Execute an episode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Return of the episode. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="111" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a3802bdee893a3f86fb9fa08cbbc8239c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>NetworkType &amp;</type>
+        <definition>NetworkType&amp; Network</definition>
+        <argsstring>()</argsstring>
+        <name>Network</name>
+        <briefdescription>
+<para>Modify the learning network. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="139" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="139" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a0ce8c122193c6a20fd4b397bc8525f7d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const NetworkType &amp;</type>
+        <definition>const NetworkType&amp; Network</definition>
+        <argsstring>() const</argsstring>
+        <name>Network</name>
+        <briefdescription>
+<para>Return the learning network. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="137" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="137" bodyend="137"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1abd126acd7f564c8326dc765232624ae4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SelectAction</definition>
+        <argsstring>()</argsstring>
+        <name>SelectAction</name>
+        <briefdescription>
+<para>Select an action, given an agent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="105" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1ad7a595de4a1a67da528603c20f80315f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1rl_1_1QLearning_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref> &amp;</type>
+        <definition>StateType&amp; State</definition>
+        <argsstring>()</argsstring>
+        <name>State</name>
+        <briefdescription>
+<para>Modify the state of the agent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="119" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="119" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1afa3e388ae5e024c8ec49fd4d1ef725ad" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1rl_1_1QLearning_1ada68ef405b7c331a2bee337614f00088" kindref="member">StateType</ref> &amp;</type>
+        <definition>const StateType&amp; State</definition>
+        <argsstring>() const</argsstring>
+        <name>State</name>
+        <briefdescription>
+<para>Get the state of the agent. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="121" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="121" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1abaf0bb243c2e643c57654b8e65058fa0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; TotalSteps</definition>
+        <argsstring>()</argsstring>
+        <name>TotalSteps</name>
+        <briefdescription>
+<para>Modify total steps from beginning. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="114" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="114" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a689af4e6e564ab01f40e6ec49638bdaf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const size_t &amp;</type>
+        <definition>const size_t&amp; TotalSteps</definition>
+        <argsstring>() const</argsstring>
+        <name>TotalSteps</name>
+        <briefdescription>
+<para>Get total steps from beginning. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="116" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="116" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1af04dfd4648a33410066287689a50ec61" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TrainAgent</definition>
+        <argsstring>()</argsstring>
+        <name>TrainAgent</name>
+        <briefdescription>
+<para>Trains the DQN agent(non-categorical). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="95" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1a3f06484571e0a6d51976b6a93cd34705" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void TrainCategoricalAgent</definition>
+        <argsstring>()</argsstring>
+        <name>TrainCategoricalAgent</name>
+        <briefdescription>
+<para>Trains the DQN agent of categorical type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="100" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1QLearning_1ad4f1925084de8a6b3ee48a71c04f7b1d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>arma::Col&lt; size_t &gt;</type>
+        <definition>arma::Col&lt;size_t&gt; BestAction</definition>
+        <argsstring>(const arma::mat &amp;actionValues)</argsstring>
+        <name>BestAction</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>actionValues</declname>
+        </param>
+        <briefdescription>
+<para>Select the best action based on given action value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>actionValues</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Action values. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Selected actions. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="147" column="13"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of various Q-Learning algorithms, such as DQN, double DQN. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>For more details, see the following: <programlisting><codeline><highlight class="normal">@article{Mnih2013,</highlight></codeline>
+<codeline><highlight class="normal"><sp/>author<sp/><sp/><sp/><sp/>=<sp/>{Volodymyr<sp/>Mnih<sp/>and</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Koray<sp/>Kavukcuoglu<sp/>and</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>David<sp/>Silver<sp/>and</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Alex<sp/>Graves<sp/>and</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Ioannis<sp/>Antonoglou<sp/>and</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Daan<sp/>Wierstra<sp/>and</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Martin<sp/>A.<sp/>Riedmiller},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>title<sp/><sp/><sp/><sp/><sp/>=<sp/>{Playing<sp/>Atari<sp/>with<sp/>Deep<sp/>Reinforcement<sp/>Learning},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>journal<sp/><sp/><sp/>=<sp/>{CoRR},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>year<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{2013},</highlight></codeline>
+<codeline><highlight class="normal"><sp/>url<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{http://arxiv.org/abs/1312.5602}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>EnvironmentType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The environment of the reinforcement learning task. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>NetworkType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The network to compute action value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>UpdaterType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>How to apply gradients when training. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>PolicyType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Behavior policy of the agent. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ReplayType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Experience replay method. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" line="58" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_learning.hpp" bodystart="59" bodyend="184"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a0d32caed9517e5d2014238a22f78352d" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>Action</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a99189868c044162e6d669fd832ecdc81" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>action</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1aaf7b2dc5d49d01961601c7c16be76777" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>ActionType</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1ad4f1925084de8a6b3ee48a71c04f7b1d" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>BestAction</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a9256888813dc52f6cc0ac1a7955a8f83" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>config</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a5d262f7871c5cc8b532971fb644f0abf" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>deterministic</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a08976b7e3e12e32740a2e28fadd21c00" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>environment</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a59cc43eb892c46ea7c50e18fb78b9172" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>Environment</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1adc517fd7b152925b4297e09a3bb4afe0" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>Environment</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a1fb26736f2d90010f882f9628cd26612" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>Episode</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a23327c0e1eab687a29ca58e51e21f7ed" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>learningNetwork</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a0ce8c122193c6a20fd4b397bc8525f7d" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>Network</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a3802bdee893a3f86fb9fa08cbbc8239c" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>Network</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a08deaeeefbfe947ad6ed511c2464f397" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>policy</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a227f51fcb4729eb7f88d28f07ee6c556" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>QLearning</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a6bb6f1ff61cda292d713c849f4448935" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>replayMethod</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1abd126acd7f564c8326dc765232624ae4" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>SelectAction</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a4d1aa26dcfa648e02cbb0964cddbdbfe" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>state</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1ad7a595de4a1a67da528603c20f80315f" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>State</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1afa3e388ae5e024c8ec49fd4d1ef725ad" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>State</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1ada68ef405b7c331a2bee337614f00088" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>StateType</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a7bd45a47d1baa632d8517dddb6078675" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>targetNetwork</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1abaf0bb243c2e643c57654b8e65058fa0" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>TotalSteps</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a689af4e6e564ab01f40e6ec49638bdaf" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>TotalSteps</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1af40d4ff06d1593b3cdb96afe98cfe209" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>totalSteps</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1af04dfd4648a33410066287689a50ec61" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>TrainAgent</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a3f06484571e0a6d51976b6a93cd34705" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>TrainCategoricalAgent</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a7d791314cd28fe9e6451ad02ee8617da" prot="private" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>updater</name></member>
+      <member refid="classmlpack_1_1rl_1_1QLearning_1a3af4fd238d225e0d3c31b9be79b61727" prot="public" virt="non-virtual"><scope>mlpack::rl::QLearning</scope><name>~QLearning</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

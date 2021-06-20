@@ -1,0 +1,98 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/bindings/\+R/\+CMake\+Lists.txt File Reference}
+\label{bindings_2R_2CMakeLists_8txt}\index{/home/aakash/mlpack/src/mlpack/bindings/R/CMakeLists.txt@{/home/aakash/mlpack/src/mlpack/bindings/R/CMakeLists.txt}}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+n R \textbf{ endif} () find\+\_\+r\+\_\+module(roxygen2) \textbf{ if}(NOT R\+\_\+\+ROXYGEN2) \textbf{ set}(R\+\_\+\+NOT\+\_\+\+FOUND\+\_\+\+MSG \char`\"{}\$
+\item 
+\textbf{ if} (NOT R\+\_\+\+RCPPARMADILLO) \textbf{ set}(R\+\_\+\+NOT\+\_\+\+FOUND\+\_\+\+MSG \char`\"{}\$
+\item 
+\textbf{ include} (\$\{CMAKE\+\_\+\+SOURCE\+\_\+\+DIR\}/CMake/Find\+RModule.\+cmake) find\+\_\+package(R 4.\+0) \textbf{ if}(NOT R\+\_\+\+FOUND) \textbf{ set}(R\+\_\+\+NOT\+\_\+\+FOUND\+\_\+\+MSG \char`\"{}\$
+\item 
+\textbf{ macro} (\textbf{ add\+\_\+r\+\_\+binding} name) endmacro() macro(post\+\_\+r\+\_\+setup) endmacro() return() endmacro() \textbf{ if}(NOT BUILD\+\_\+\+R\+\_\+\+BINDINGS) not\+\_\+found\+\_\+return(\char`\"{}Not building R bindings.\char`\"{}) endif() \textbf{ if}(BUILD\+\_\+\+R\+\_\+\+BINDINGS) \textbf{ set}(Rcpp\+Armadillo\+\_\+\+Version \char`\"{}0.\$
+\item 
+\textbf{ macro} (not\+\_\+found\+\_\+return message) message(STATUS \char`\"{}\$
+\item 
+\textbf{ set} (Rcpp\+Ensmallen\+\_\+\+Version \char`\"{}0.\$\{ENSMALLEN\+\_\+\+VERSION\}\char`\"{}) set(BH\+\_\+\+Version \char`\"{}\$
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+n testthat Following modules are not \textbf{ available}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\label{bindings_2R_2CMakeLists_8txt_a104ab2e2e6af34a88caab74130fb2ff1}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!endif@{endif}}
+\index{endif@{endif}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{endif()}
+{\footnotesize\ttfamily n R endif (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 32 of file CMake\+Lists.\+txt.
+
+\mbox{\label{bindings_2R_2CMakeLists_8txt_aa6ed153391ca0a00c96cc9cbec3cef59}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!if@{if}}
+\index{if@{if}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{if()}
+{\footnotesize\ttfamily if (\begin{DoxyParamCaption}\item[{NOT}]{R\+\_\+\+RCPPARMADILLO }\end{DoxyParamCaption})}
+
+
+
+Definition at line 42 of file CMake\+Lists.\+txt.
+
+\mbox{\label{bindings_2R_2CMakeLists_8txt_a45548f086df473757b6a7c11f719387c}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!include@{include}}
+\index{include@{include}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{include()}
+{\footnotesize\ttfamily include (\begin{DoxyParamCaption}\item[{}]{\$\{\+CMAKE\+\_\+\+SOURCE\+\_\+\+DIR\}/\+CMake/\+Find\+RModule. }\end{DoxyParamCaption})}
+
+
+
+Definition at line 28 of file CMake\+Lists.\+txt.
+
+\mbox{\label{bindings_2R_2CMakeLists_8txt_a2954ea5547f841f1a452e9820577130f}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!macro@{macro}}
+\index{macro@{macro}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{macro()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily macro (\begin{DoxyParamCaption}\item[{\textbf{ add\+\_\+r\+\_\+binding}}]{name }\end{DoxyParamCaption})}
+
+
+
+Definition at line 3 of file CMake\+Lists.\+txt.
+
+\mbox{\label{bindings_2R_2CMakeLists_8txt_a9119971a8d6df98dd1edabc89b0107f5}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!macro@{macro}}
+\index{macro@{macro}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{macro()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily macro (\begin{DoxyParamCaption}\item[{not\+\_\+found\+\_\+return}]{message }\end{DoxyParamCaption})}
+
+
+
+Definition at line 1 of file CMake\+Lists.\+txt.
+
+\mbox{\label{bindings_2R_2CMakeLists_8txt_a1488599d039a7c3e5a934ded8f7ec101}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!set@{set}}
+\index{set@{set}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{set()}
+{\footnotesize\ttfamily set (\begin{DoxyParamCaption}\item[{Rcpp\+Ensmallen\+\_\+\+Version \char`\"{}0.\$\{ENSMALLEN\+\_\+\+VERSION\}\char`\"{}}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 24 of file CMake\+Lists.\+txt.
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\label{bindings_2R_2CMakeLists_8txt_ad866171b6bf1f2f02d150f72971bc67a}} 
+\index{CMakeLists.txt@{CMakeLists.txt}!available@{available}}
+\index{available@{available}!CMakeLists.txt@{CMakeLists.txt}}
+\doxysubsubsection{available}
+{\footnotesize\ttfamily n testthat Following modules are not Following modules are not available}
+
+
+
+Definition at line 64 of file CMake\+Lists.\+txt.
+

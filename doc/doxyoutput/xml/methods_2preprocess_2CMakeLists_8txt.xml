@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="methods_2preprocess_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="methods_2preprocess_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}) endforeach() set(MLPACK_SRCS $</argsstring>
+        <name>set</name>
+        <param>
+          <type>DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/preprocess/CMakeLists.txt" line="11" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/preprocess/CMakeLists.txt" bodystart="11" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="methods_2preprocess_2CMakeLists_8txt_1a6d6f43a3325744d422745c5eda175a9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(SOURCES scaling_model.hpp scaling_model_impl.hpp) set(DIR_SRCS) foreach(file $</argsstring>
+        <name>set</name>
+        <param>
+          <type>SOURCES scaling_model.hpp scaling_model_impl.</type>
+          <declname>hpp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/preprocess/CMakeLists.txt" line="3" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/preprocess/CMakeLists.txt" bodystart="3" bodyend="10"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#<sp/>Define<sp/>the<sp/>files<sp/>we<sp/>need<sp/>to<sp/>compile.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Anything<sp/>not<sp/>in<sp/>this<sp/>list<sp/>will<sp/>not<sp/>be<sp/>compiled<sp/>into<sp/>mlpack.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3" refid="methods_2preprocess_2CMakeLists_8txt_1a6d6f43a3325744d422745c5eda175a9b" refkind="member"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(SOURCES</highlight></codeline>
+<codeline lineno="4"><highlight class="normal">scaling_model.hpp</highlight></codeline>
+<codeline lineno="5"><highlight class="normal">scaling_model_impl.hpp</highlight></codeline>
+<codeline lineno="6"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Add<sp/>directory<sp/>name<sp/>to<sp/>sources.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS)</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal">(file<sp/>${SOURCES})</highlight></codeline>
+<codeline lineno="11" refid="methods_2preprocess_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS<sp/>${DIR_SRCS}<sp/>${CMAKE_CURRENT_SOURCE_DIR}/${file})</highlight></codeline>
+<codeline lineno="12"><highlight class="normal">endforeach()</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Append<sp/>sources<sp/>(with<sp/>directory<sp/>name)<sp/>to<sp/>list<sp/>of<sp/>all<sp/>mlpack<sp/>sources<sp/>(used<sp/>at</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>the<sp/>parent<sp/>scope).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(MLPACK_SRCS<sp/>${MLPACK_SRCS}<sp/>${DIR_SRCS}<sp/>PARENT_SCOPE)</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">#<ref refid="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" kindref="member">add_cli_executable</ref>(preprocess_stats)</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><ref refid="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" kindref="member">add_cli_executable</ref>(preprocess_split)</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">add_python_binding(preprocess_split)</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><ref refid="bindings_2julia_2tests_2CMakeLists_8txt_1ae685258df021a14510fa0ed9764a5cbc" kindref="member">add_julia_binding</ref>(preprocess_split)</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><ref refid="bindings_2go_2tests_2CMakeLists_8txt_1a8019c6301c4208b236494c76444c8a02" kindref="member">add_go_binding</ref>(preprocess_split)</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><ref refid="bindings_2R_2tests_2CMakeLists_8txt_1a4244f5fccac7507c1551008244a99799" kindref="member">add_r_binding</ref>(preprocess_split)</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">add_markdown_docs(preprocess_split<sp/></highlight><highlight class="stringliteral">&quot;cli;python;julia;go;r&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;preprocessing&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><ref refid="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" kindref="member">add_cli_executable</ref>(preprocess_binarize)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">add_python_binding(preprocess_binarize)</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><ref refid="bindings_2julia_2tests_2CMakeLists_8txt_1ae685258df021a14510fa0ed9764a5cbc" kindref="member">add_julia_binding</ref>(preprocess_binarize)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><ref refid="bindings_2go_2tests_2CMakeLists_8txt_1a8019c6301c4208b236494c76444c8a02" kindref="member">add_go_binding</ref>(preprocess_binarize)</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><ref refid="bindings_2R_2tests_2CMakeLists_8txt_1a4244f5fccac7507c1551008244a99799" kindref="member">add_r_binding</ref>(preprocess_binarize)</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">add_markdown_docs(preprocess_binarize<sp/></highlight><highlight class="stringliteral">&quot;cli;python;julia;go;r&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;preprocessing&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><ref refid="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" kindref="member">add_cli_executable</ref>(preprocess_describe)</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">add_python_binding(preprocess_describe)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><ref refid="bindings_2julia_2tests_2CMakeLists_8txt_1ae685258df021a14510fa0ed9764a5cbc" kindref="member">add_julia_binding</ref>(preprocess_describe)</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><ref refid="bindings_2go_2tests_2CMakeLists_8txt_1a8019c6301c4208b236494c76444c8a02" kindref="member">add_go_binding</ref>(preprocess_describe)</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><ref refid="bindings_2R_2tests_2CMakeLists_8txt_1a4244f5fccac7507c1551008244a99799" kindref="member">add_r_binding</ref>(preprocess_describe)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">add_markdown_docs(preprocess_describe<sp/></highlight><highlight class="stringliteral">&quot;cli;python;julia;go;r&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;preprocessing&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#add_cli_executable(preprocess_scan)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><ref refid="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" kindref="member">add_cli_executable</ref>(preprocess_imputer)</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#add_go_binding(preprocess_imputer)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#add_python_binding(preprocess_imputer)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#add_julia_binding(preprocess_imputer)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#add_r_binding(preprocess_imputer)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">add_markdown_docs(preprocess_imputer<sp/></highlight><highlight class="stringliteral">&quot;cli&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;preprocessing&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><ref refid="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" kindref="member">add_cli_executable</ref>(preprocess_scale)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">add_python_binding(preprocess_scale)</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><ref refid="bindings_2go_2tests_2CMakeLists_8txt_1a8019c6301c4208b236494c76444c8a02" kindref="member">add_go_binding</ref>(preprocess_scale)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><ref refid="bindings_2julia_2tests_2CMakeLists_8txt_1ae685258df021a14510fa0ed9764a5cbc" kindref="member">add_julia_binding</ref>(preprocess_scale)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><ref refid="bindings_2R_2tests_2CMakeLists_8txt_1a4244f5fccac7507c1551008244a99799" kindref="member">add_r_binding</ref>(preprocess_scale)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">add_markdown_docs(preprocess_scale<sp/></highlight><highlight class="stringliteral">&quot;cli;python;julia;go;r&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;preprocessing&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><ref refid="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" kindref="member">add_cli_executable</ref>(preprocess_one_hot_encoding)</highlight></codeline>
+<codeline lineno="57"><highlight class="normal">add_python_binding(preprocess_one_hot_encoding)</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><ref refid="bindings_2go_2tests_2CMakeLists_8txt_1a8019c6301c4208b236494c76444c8a02" kindref="member">add_go_binding</ref>(preprocess_one_hot_encoding)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><ref refid="bindings_2julia_2tests_2CMakeLists_8txt_1ae685258df021a14510fa0ed9764a5cbc" kindref="member">add_julia_binding</ref>(preprocess_one_hot_encoding)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><ref refid="bindings_2R_2tests_2CMakeLists_8txt_1a4244f5fccac7507c1551008244a99799" kindref="member">add_r_binding</ref>(preprocess_one_hot_encoding)</highlight></codeline>
+<codeline lineno="61"><highlight class="normal">add_markdown_docs(preprocess_one_hot_encoding<sp/></highlight><highlight class="stringliteral">&quot;cli;python;julia;go;r&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;preprocessing&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(STB_AVAILABLE)</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><ref refid="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" kindref="member">add_cli_executable</ref>(image_converter)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/>add_python_binding(image_converter)</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><ref refid="bindings_2julia_2tests_2CMakeLists_8txt_1ae685258df021a14510fa0ed9764a5cbc" kindref="member">add_julia_binding</ref>(image_converter)</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><ref refid="bindings_2go_2tests_2CMakeLists_8txt_1a8019c6301c4208b236494c76444c8a02" kindref="member">add_go_binding</ref>(image_converter)</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><ref refid="bindings_2R_2tests_2CMakeLists_8txt_1a4244f5fccac7507c1551008244a99799" kindref="member">add_r_binding</ref>(image_converter)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/>add_markdown_docs(image_converter<sp/></highlight><highlight class="stringliteral">&quot;cli;python;julia;go;r&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;preprocessing&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/preprocess/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

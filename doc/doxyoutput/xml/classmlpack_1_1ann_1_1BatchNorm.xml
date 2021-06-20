@@ -1,0 +1,935 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1BatchNorm" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::BatchNorm</compoundname>
+    <includes refid="batch__norm_8hpp" local="no">batch_norm.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a55ce3ee1d017c595b94c8d35312d5076" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool average</definition>
+        <argsstring></argsstring>
+        <name>average</name>
+        <briefdescription>
+<para>If true use average else use momentum for computing running mean and variance. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="181" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a9753599605a950480ed5157568bc997f" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double averageFactor</definition>
+        <argsstring></argsstring>
+        <name>averageFactor</name>
+        <briefdescription>
+<para>Locally-stored value for average factor which used to update running mean and variance. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="215" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a153dbc71d626975f31fd9e384a31d356" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType beta</definition>
+        <argsstring></argsstring>
+        <name>beta</name>
+        <briefdescription>
+<para>Locally-stored shift parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="193" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a76d971a3c552bc58ba9f0d5fceae9806" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t count</definition>
+        <argsstring></argsstring>
+        <name>count</name>
+        <briefdescription>
+<para>Locally-stored running mean/variance counter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="211" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="227" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="227" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool deterministic</definition>
+        <argsstring></argsstring>
+        <name>deterministic</name>
+        <briefdescription>
+<para>If true then mean and variance over the training set will be considered instead of being calculated over the batch. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="208" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a974b448c3d0a13d483d36ef15de369b5" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double eps</definition>
+        <argsstring></argsstring>
+        <name>eps</name>
+        <briefdescription>
+<para>Locally-stored epsilon value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="177" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="177" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a0f3714e0eb5cf8c2f6509bcad549608d" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType gamma</definition>
+        <argsstring></argsstring>
+        <name>gamma</name>
+        <briefdescription>
+<para>Locally-stored scale parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="190" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1ad080a9d4310c85b25056686dccd617df" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType gradient</definition>
+        <argsstring></argsstring>
+        <name>gradient</name>
+        <briefdescription>
+<para>Locally-stored gradient object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="224" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a462838c6963a6f45e7234c1322c3d00d" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube inputMean</definition>
+        <argsstring></argsstring>
+        <name>inputMean</name>
+        <briefdescription>
+<para>Locally-stored zero mean input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="236" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a933cb359b48604312fe54611b2fa7873" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool loading</definition>
+        <argsstring></argsstring>
+        <name>loading</name>
+        <briefdescription>
+<para>Variable to keep track of whether we are in loading or saving mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="187" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a05d0dbf8b1fbdcbd5c42a2803100a87f" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType mean</definition>
+        <argsstring></argsstring>
+        <name>mean</name>
+        <briefdescription>
+<para>Locally-stored mean object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="196" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a3b49369fa0b52a3387511806f1129879" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double momentum</definition>
+        <argsstring></argsstring>
+        <name>momentum</name>
+        <briefdescription>
+<para>Locally-stored value for momentum. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="184" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a8e51e85572a3fe674c7187575fba53e6" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube normalized</definition>
+        <argsstring></argsstring>
+        <name>normalized</name>
+        <briefdescription>
+<para>Locally-stored normalized input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="233" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="233" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="230" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="230" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a707586494dd09684c746b9d25b761fb0" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType runningMean</definition>
+        <argsstring></argsstring>
+        <name>runningMean</name>
+        <briefdescription>
+<para>Locally-stored mean object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="218" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a824cb3a38146579c0ea607c857adb09c" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType runningVariance</definition>
+        <argsstring></argsstring>
+        <name>runningVariance</name>
+        <briefdescription>
+<para>Locally-stored variance object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="221" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a854352f53b148adc24983a58a1866d66" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+<para>Locally-stored number of input units. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="174" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="174" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a7e2d1a1a97611dbddd850bbd6bc2f996" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType variance</definition>
+        <argsstring></argsstring>
+        <name>variance</name>
+        <briefdescription>
+<para>Locally-stored variance object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="199" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1BatchNorm_1a01827f0de7715c4480dd12b4aa12e886" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType weights</definition>
+        <argsstring></argsstring>
+        <name>weights</name>
+        <briefdescription>
+<para>Locally-stored parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="202" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a854f142e5c3785c754d8f063269add79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BatchNorm</definition>
+        <argsstring>()</argsstring>
+        <name>BatchNorm</name>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1BatchNorm" kindref="compound">BatchNorm</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="60" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a47e2f9600ab95dbdc278161064a6fd63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BatchNorm</definition>
+        <argsstring>(const size_t size, const double eps=1e-8, const bool average=true, const double momentum=0.1)</argsstring>
+        <name>BatchNorm</name>
+        <param>
+          <type>const size_t</type>
+          <declname>size</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>eps</declname>
+          <defval>1e-8</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>average</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>momentum</declname>
+          <defval>0.1</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1BatchNorm" kindref="compound">BatchNorm</ref> layer object for a specified number of input units. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of input units / channels. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eps</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The epsilon added to variance to ensure numerical stability. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>average</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Boolean to determine whether cumulative average is used for updating the parameters or momentum is used. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>momentum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter used to to update the running mean and variance. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="71" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1aab4ef6131dc58825790fb04cc209faab" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Average</definition>
+        <argsstring>() const</argsstring>
+        <name>Average</name>
+        <briefdescription>
+<para>Get the average parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="161" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="161" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a78dbad83871f43db1975e45a9a69c376" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Backward pass through the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input activations </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="100" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="129" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="129" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="127" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="127" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Deterministic</definition>
+        <argsstring>()</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Modify the value of deterministic parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="139" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="139" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a9f4103707f4d199ce5594d239b60443e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Deterministic</definition>
+        <argsstring>() const</argsstring>
+        <name>Deterministic</name>
+        <briefdescription>
+<para>Get the value of deterministic parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="137" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="137" bodyend="137"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1af6d960193bb5db37e51416e12bf720de" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Epsilon</definition>
+        <argsstring>() const</argsstring>
+        <name>Epsilon</name>
+        <briefdescription>
+<para>Get the epsilon value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="155" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="155" bodyend="155"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Forward pass of the Batch Normalization layer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Transforms the input data into zero mean and unit variance, scales the data by a factor gamma and shifts it by beta.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data for the layer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="90" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a19abce4739c3b0b658b612537e21956a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Gradient</definition>
+        <argsstring>()</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Modify the gradient. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="134" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="134" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Gradient</definition>
+        <argsstring>() const</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Get the gradient. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="132" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="132" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1aaf577db350e2130754490d8486fba215" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;error, arma::Mat&lt; eT &gt; &amp;gradient)</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Calculate the gradient using the output delta and the input activations. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input activations </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated error </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="112" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a5a4c4984aa897a28d516e638e7ea5308" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputSize</definition>
+        <argsstring>() const</argsstring>
+        <name>InputSize</name>
+        <briefdescription>
+<para>Get the number of input units / channels. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="152" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="152" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a47bdc16d2d5d5514d9711eae8938fd35" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Momentum</definition>
+        <argsstring>() const</argsstring>
+        <name>Momentum</name>
+        <briefdescription>
+<para>Get the momentum value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="158" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="158" bodyend="158"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="124" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="124" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="122" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="122" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a9c5c5900772a689d5a6b59778ec67120" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Parameters</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Modify the parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="119" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="119" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1aa530552c7ef915c952fbacc77b965c90" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Parameters</definition>
+        <argsstring>() const</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Get the parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="117" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="117" bodyend="117"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Reset</definition>
+        <argsstring>()</argsstring>
+        <name>Reset</name>
+        <briefdescription>
+<para>Reset the layer parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="79" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="170" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1af537b166f2862d70c750c30cd6be5c9f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; TrainingMean</definition>
+        <argsstring>()</argsstring>
+        <name>TrainingMean</name>
+        <briefdescription>
+<para>Modify the mean over the training data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="144" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="144" bodyend="144"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1ac2df8242145c0ce6b0715750985e2d10" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; TrainingMean</definition>
+        <argsstring>() const</argsstring>
+        <name>TrainingMean</name>
+        <briefdescription>
+<para>Get the mean over the training data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="142" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="142" bodyend="142"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a3a3209098696730697bbe8b9cf0dc30c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; TrainingVariance</definition>
+        <argsstring>()</argsstring>
+        <name>TrainingVariance</name>
+        <briefdescription>
+<para>Modify the variance over the training data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="149" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="149" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a3faae0b64ac1f68fd95872a3c1cafd11" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; TrainingVariance</definition>
+        <argsstring>() const</argsstring>
+        <name>TrainingVariance</name>
+        <briefdescription>
+<para>Get the variance over the training data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="147" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="147" bodyend="147"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1BatchNorm_1a7a2704698a50d9e00dfb083f3a863579" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t WeightSize</definition>
+        <argsstring>() const</argsstring>
+        <name>WeightSize</name>
+        <briefdescription>
+<para>Get size of weights. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="164" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="164" bodyend="164"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Declaration of the Batch Normalization layer class. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The layer transforms the input data into zero mean and unit variance and then scales and shifts the data by parameters, gamma and beta respectively. These parameters are learnt by the network.</para>
+<para>If deterministic is false (training), the mean and variance over the batch is calculated and the data is normalized. If it is set to true (testing) then the mean and variance accrued over the training set is used.</para>
+<para>For more information, refer to the following paper,</para>
+<para><programlisting><codeline><highlight class="normal">@article{Ioffe15,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/><sp/><sp/>=<sp/>{Sergey<sp/>Ioffe<sp/>and</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Christian<sp/>Szegedy},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/><sp/><sp/>=<sp/>{Batch<sp/>Normalization:<sp/>Accelerating<sp/>Deep<sp/>Network<sp/>Training<sp/>by</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Reducing<sp/>Internal<sp/>Covariate<sp/>Shift},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>journal<sp/><sp/><sp/>=<sp/>{CoRR},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>volume<sp/><sp/><sp/><sp/>=<sp/>{abs/1502.03167},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{2015},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>url<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{http://arxiv.org/abs/1502.03167},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>eprint<sp/><sp/><sp/><sp/>=<sp/>{1502.03167},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" line="56" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/batch_norm.hpp" bodystart="57" bodyend="237"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a55ce3ee1d017c595b94c8d35312d5076" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>average</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1aab4ef6131dc58825790fb04cc209faab" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Average</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a9753599605a950480ed5157568bc997f" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>averageFactor</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a78dbad83871f43db1975e45a9a69c376" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a854f142e5c3785c754d8f063269add79" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>BatchNorm</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a47e2f9600ab95dbdc278161064a6fd63" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>BatchNorm</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a153dbc71d626975f31fd9e384a31d356" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>beta</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a76d971a3c552bc58ba9f0d5fceae9806" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>count</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a02bda2c80b22d0c2507c7a74febb93bf" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a9f4103707f4d199ce5594d239b60443e" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a42d4ee3da432cff20d3a41b8b1ec801c" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Deterministic</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a974b448c3d0a13d483d36ef15de369b5" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>eps</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1af6d960193bb5db37e51416e12bf720de" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Epsilon</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a0f3714e0eb5cf8c2f6509bcad549608d" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>gamma</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1aaf577db350e2130754490d8486fba215" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a19abce4739c3b0b658b612537e21956a" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1ad080a9d4310c85b25056686dccd617df" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a462838c6963a6f45e7234c1322c3d00d" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>inputMean</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a5a4c4984aa897a28d516e638e7ea5308" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>InputSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a933cb359b48604312fe54611b2fa7873" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>loading</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a05d0dbf8b1fbdcbd5c42a2803100a87f" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>mean</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a47bdc16d2d5d5514d9711eae8938fd35" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Momentum</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a3b49369fa0b52a3387511806f1129879" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>momentum</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a8e51e85572a3fe674c7187575fba53e6" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>normalized</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1aa530552c7ef915c952fbacc77b965c90" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a9c5c5900772a689d5a6b59778ec67120" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>Reset</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a707586494dd09684c746b9d25b761fb0" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>runningMean</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a824cb3a38146579c0ea607c857adb09c" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>runningVariance</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a854352f53b148adc24983a58a1866d66" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>size</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1ac2df8242145c0ce6b0715750985e2d10" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>TrainingMean</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1af537b166f2862d70c750c30cd6be5c9f" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>TrainingMean</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a3faae0b64ac1f68fd95872a3c1cafd11" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>TrainingVariance</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a3a3209098696730697bbe8b9cf0dc30c" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>TrainingVariance</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a7e2d1a1a97611dbddd850bbd6bc2f996" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>variance</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a01827f0de7715c4480dd12b4aa12e886" prot="private" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>weights</name></member>
+      <member refid="classmlpack_1_1ann_1_1BatchNorm_1a7a2704698a50d9e00dfb083f3a863579" prot="public" virt="non-virtual"><scope>mlpack::ann::BatchNorm</scope><name>WeightSize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

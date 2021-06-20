@@ -1,0 +1,275 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1data_1_1MaxAbsScaler" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::MaxAbsScaler</compoundname>
+    <includes refid="max__abs__scaler_8hpp" local="no">max_abs_scaler.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1MaxAbsScaler_1a2c793ce1b34c546c07464a462d920f8f" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec itemMax</definition>
+        <argsstring></argsstring>
+        <name>itemMax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" line="114" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1MaxAbsScaler_1a234ef55ba29a25bb260a699a4e3826f8" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec itemMin</definition>
+        <argsstring></argsstring>
+        <name>itemMin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" line="112" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1MaxAbsScaler_1a5927d7b5794dc9921074c489983745eb" prot="private" static="no" mutable="no">
+        <type>arma::vec</type>
+        <definition>arma::vec scale</definition>
+        <argsstring></argsstring>
+        <name>scale</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" line="116" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MaxAbsScaler_1a0b68c1a39a21e56e10f5b9250b056244" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Fit</definition>
+        <argsstring>(const MatType &amp;input)</argsstring>
+        <name>Fit</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Function to fit features, to find out the min max and scale. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to fit. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" line="55" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" bodystart="55" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MaxAbsScaler_1afb0e67c6fbf5a527f63469bbbf07066c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void InverseTransform</definition>
+        <argsstring>(const MatType &amp;input, MatType &amp;output)</argsstring>
+        <name>InverseTransform</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Function to retrieve original dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scaled dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix with original Dataset. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" line="90" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" bodystart="90" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MaxAbsScaler_1a5ed43c216f23cf96c432216d6fc2a1c3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; ItemMax</definition>
+        <argsstring>() const</argsstring>
+        <name>ItemMax</name>
+        <briefdescription>
+<para>Get the Max row vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" line="99" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" bodystart="99" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MaxAbsScaler_1ae9ae591f227874f238c38d4cf070c6c8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; ItemMin</definition>
+        <argsstring>() const</argsstring>
+        <name>ItemMin</name>
+        <briefdescription>
+<para>Get the Min row vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" line="97" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" bodystart="97" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MaxAbsScaler_1a5adcafebd2c229793e57b7268c90a0fe" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; Scale</definition>
+        <argsstring>() const</argsstring>
+        <name>Scale</name>
+        <briefdescription>
+<para>Get the Scale row vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" line="101" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" bodystart="101" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MaxAbsScaler_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" line="104" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" bodystart="104" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1MaxAbsScaler_1a7bc470a1e097f5b0aaf2396691432b3f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Transform</definition>
+        <argsstring>(const MatType &amp;input, MatType &amp;output)</argsstring>
+        <name>Transform</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Function to scale features. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to scale features. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix with scaled features. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" line="72" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" bodystart="72" bodyend="81"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A simple MaxAbs Scaler class. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Given an input dataset this class helps you to scale each feature by its maximum absolute value.</para>
+<para>[z = x / max(abs(x))]</para>
+<para>where max(abs(x)) is maximum absolute value of feature.</para>
+<para><programlisting><codeline><highlight class="normal">arma::mat<sp/>input;</highlight></codeline>
+<codeline><highlight class="normal">Load(&quot;train.csv&quot;,<sp/>input);</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>output;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Fit<sp/>the<sp/>features.</highlight></codeline>
+<codeline><highlight class="normal">MaxAbsScaler<sp/>scale;</highlight></codeline>
+<codeline><highlight class="normal">scale.Fit(input)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Scale<sp/>the<sp/>features.</highlight></codeline>
+<codeline><highlight class="normal">scale.Transform(input,<sp/>output);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Retransform<sp/>the<sp/>input.</highlight></codeline>
+<codeline><highlight class="normal">scale.InverseTransform(output,<sp/>input);</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" line="46" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/max_abs_scaler.hpp" bodystart="47" bodyend="117"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1MaxAbsScaler_1a0b68c1a39a21e56e10f5b9250b056244" prot="public" virt="non-virtual"><scope>mlpack::data::MaxAbsScaler</scope><name>Fit</name></member>
+      <member refid="classmlpack_1_1data_1_1MaxAbsScaler_1afb0e67c6fbf5a527f63469bbbf07066c" prot="public" virt="non-virtual"><scope>mlpack::data::MaxAbsScaler</scope><name>InverseTransform</name></member>
+      <member refid="classmlpack_1_1data_1_1MaxAbsScaler_1a2c793ce1b34c546c07464a462d920f8f" prot="private" virt="non-virtual"><scope>mlpack::data::MaxAbsScaler</scope><name>itemMax</name></member>
+      <member refid="classmlpack_1_1data_1_1MaxAbsScaler_1a5ed43c216f23cf96c432216d6fc2a1c3" prot="public" virt="non-virtual"><scope>mlpack::data::MaxAbsScaler</scope><name>ItemMax</name></member>
+      <member refid="classmlpack_1_1data_1_1MaxAbsScaler_1a234ef55ba29a25bb260a699a4e3826f8" prot="private" virt="non-virtual"><scope>mlpack::data::MaxAbsScaler</scope><name>itemMin</name></member>
+      <member refid="classmlpack_1_1data_1_1MaxAbsScaler_1ae9ae591f227874f238c38d4cf070c6c8" prot="public" virt="non-virtual"><scope>mlpack::data::MaxAbsScaler</scope><name>ItemMin</name></member>
+      <member refid="classmlpack_1_1data_1_1MaxAbsScaler_1a5927d7b5794dc9921074c489983745eb" prot="private" virt="non-virtual"><scope>mlpack::data::MaxAbsScaler</scope><name>scale</name></member>
+      <member refid="classmlpack_1_1data_1_1MaxAbsScaler_1a5adcafebd2c229793e57b7268c90a0fe" prot="public" virt="non-virtual"><scope>mlpack::data::MaxAbsScaler</scope><name>Scale</name></member>
+      <member refid="classmlpack_1_1data_1_1MaxAbsScaler_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::data::MaxAbsScaler</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1data_1_1MaxAbsScaler_1a7bc470a1e097f5b0aaf2396691432b3f" prot="public" virt="non-virtual"><scope>mlpack::data::MaxAbsScaler</scope><name>Transform</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

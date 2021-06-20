@@ -1,0 +1,182 @@
+\doxysection{IPMetric$<$ Kernel\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1metric_1_1IPMetric}\index{IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}}
+
+
+The inner product metric, \doxyref{IPMetric}{p.}{classmlpack_1_1metric_1_1IPMetric}, takes a given Mercer kernel (Kernel\+Type), and when \doxyref{Evaluate()}{p.}{classmlpack_1_1metric_1_1IPMetric_a55e03560fb8c7923de4a43df9a265437} is called, returns the distance between the two points in kernel space\+:  
+
+
+
+
+Inheritance diagram for IPMetric$<$ Kernel\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmlpack_1_1metric_1_1IPMetric__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ IPMetric} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{IPMetric}{p.}{classmlpack_1_1metric_1_1IPMetric} without an instantiated kernel. \end{DoxyCompactList}\item 
+\textbf{ IPMetric} (const \textbf{ IPMetric} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the parameters of the given metric. \end{DoxyCompactList}\item 
+\textbf{ IPMetric} (Kernel\+Type \&kernel)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{IPMetric}{p.}{classmlpack_1_1metric_1_1IPMetric} with an instantiated kernel. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+IPMetric} ()
+\begin{DoxyCompactList}\small\item\em Destroy the \doxyref{IPMetric}{p.}{classmlpack_1_1metric_1_1IPMetric} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\Vec\+Type\+A\+::elem\+\_\+type \textbf{ Evaluate} (const Vec\+TypeA \&a, const Vec\+TypeB \&b)
+\begin{DoxyCompactList}\small\item\em Evaluate the metric. \end{DoxyCompactList}\item 
+Kernel\+Type \& \textbf{ Kernel} ()
+\begin{DoxyCompactList}\small\item\em Modify the kernel. \end{DoxyCompactList}\item 
+const Kernel\+Type \& \textbf{ Kernel} () const
+\begin{DoxyCompactList}\small\item\em Get the kernel. \end{DoxyCompactList}\item 
+\textbf{ IPMetric} \& \textbf{ operator=} (const \textbf{ IPMetric} \&other)
+\begin{DoxyCompactList}\small\item\em Assign this metric to be a copy of the given metric. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t version)
+\begin{DoxyCompactList}\small\item\em Serialize the metric. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Kernel\+Type$>$\newline
+class mlpack\+::metric\+::\+IPMetric$<$ Kernel\+Type $>$}
+
+The inner product metric, \doxyref{IPMetric}{p.}{classmlpack_1_1metric_1_1IPMetric}, takes a given Mercer kernel (Kernel\+Type), and when \doxyref{Evaluate()}{p.}{classmlpack_1_1metric_1_1IPMetric_a55e03560fb8c7923de4a43df9a265437} is called, returns the distance between the two points in kernel space\+: 
+
+\[ d(x, y) = \sqrt{ K(x, x) + K(y, y) - 2K(x, y) }. \]
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Kernel\+Type} & Type of Kernel to use. This must be a Mercer kernel (positive definite), otherwise the metric may not be valid. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 32 of file ip\+\_\+metric.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1metric_1_1IPMetric_a0774938d01373c8d5aaeebfc930c4e3d}} 
+\index{IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}!IPMetric@{IPMetric}}
+\index{IPMetric@{IPMetric}!IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}}
+\doxysubsubsection{IPMetric()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ IPMetric} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{IPMetric}{p.}{classmlpack_1_1metric_1_1IPMetric} without an instantiated kernel. 
+
+\mbox{\label{classmlpack_1_1metric_1_1IPMetric_a83bc1993b4d2626112ba0169e8fdd5b9}} 
+\index{IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}!IPMetric@{IPMetric}}
+\index{IPMetric@{IPMetric}!IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}}
+\doxysubsubsection{IPMetric()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ IPMetric} (\begin{DoxyParamCaption}\item[{Kernel\+Type \&}]{kernel }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{IPMetric}{p.}{classmlpack_1_1metric_1_1IPMetric} with an instantiated kernel. 
+
+\mbox{\label{classmlpack_1_1metric_1_1IPMetric_acb6ac7e7c6b1cdeffaccfa96b5573c99}} 
+\index{IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}!````~IPMetric@{$\sim$IPMetric}}
+\index{````~IPMetric@{$\sim$IPMetric}!IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}}
+\doxysubsubsection{$\sim$IPMetric()}
+{\footnotesize\ttfamily $\sim$\textbf{ IPMetric} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Destroy the \doxyref{IPMetric}{p.}{classmlpack_1_1metric_1_1IPMetric} object. 
+
+\mbox{\label{classmlpack_1_1metric_1_1IPMetric_a068775d03b4fe6ccf17bd833c152bf86}} 
+\index{IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}!IPMetric@{IPMetric}}
+\index{IPMetric@{IPMetric}!IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}}
+\doxysubsubsection{IPMetric()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ IPMetric} (\begin{DoxyParamCaption}\item[{const \textbf{ IPMetric}$<$ Kernel\+Type $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy the parameters of the given metric. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1metric_1_1IPMetric_a55e03560fb8c7923de4a43df9a265437}} 
+\index{IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}}
+\doxysubsubsection{Evaluate()}
+{\footnotesize\ttfamily Vec\+Type\+A\+::elem\+\_\+type Evaluate (\begin{DoxyParamCaption}\item[{const Vec\+TypeA \&}]{a,  }\item[{const Vec\+TypeB \&}]{b }\end{DoxyParamCaption})}
+
+
+
+Evaluate the metric. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+TypeA} & Type of first vector. \\
+\hline
+{\em Vec\+TypeB} & Type of second vector. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Distance between the two points in kernel space. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1metric_1_1IPMetric_ab8d1bedeac8344d80e50d819790a117a}} 
+\index{IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}!Kernel@{Kernel}}
+\index{Kernel@{Kernel}!IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}}
+\doxysubsubsection{Kernel()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Kernel\+Type\& Kernel (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the kernel. 
+
+
+
+Definition at line 65 of file ip\+\_\+metric.\+hpp.
+
+\mbox{\label{classmlpack_1_1metric_1_1IPMetric_a917492b75cc17298bc58c3d28e2944fb}} 
+\index{IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}!Kernel@{Kernel}}
+\index{Kernel@{Kernel}!IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}}
+\doxysubsubsection{Kernel()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Kernel\+Type\& Kernel (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the kernel. 
+
+
+
+Definition at line 63 of file ip\+\_\+metric.\+hpp.
+
+\mbox{\label{classmlpack_1_1metric_1_1IPMetric_af19fbcb2dbe02750f2815fb015ab52ef}} 
+\index{IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}}
+\doxysubsubsection{operator=()}
+{\footnotesize\ttfamily \textbf{ IPMetric}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ IPMetric}$<$ Kernel\+Type $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Assign this metric to be a copy of the given metric. 
+
+\mbox{\label{classmlpack_1_1metric_1_1IPMetric_a72d63b74c8166dff8e1a9006905ad9ca}} 
+\index{IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!IPMetric$<$ KernelType $>$@{IPMetric$<$ KernelType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{version }\end{DoxyParamCaption})}
+
+
+
+Serialize the metric. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/metrics/\textbf{ ip\+\_\+metric.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,433 @@
+%!PS-Adobe-3.0
+%%Creator: graphviz version 2.43.0 (0)
+%%Title: SpillNSWrapper&lt; SortPolicy &gt;
+%%Pages: (atend)
+%%BoundingBox: (atend)
+%%EndComments
+save
+%%BeginProlog
+/DotDict 200 dict def
+DotDict begin
+
+/setupLatin1 {
+mark
+/EncodingVector 256 array def
+ EncodingVector 0
+
+ISOLatin1Encoding 0 255 getinterval putinterval
+EncodingVector 45 /hyphen put
+
+% Set up ISO Latin 1 character encoding
+/starnetISO {
+        dup dup findfont dup length dict begin
+        { 1 index /FID ne { def }{ pop pop } ifelse
+        } forall
+        /Encoding EncodingVector def
+        currentdict end definefont
+} def
+/Times-Roman starnetISO def
+/Times-Italic starnetISO def
+/Times-Bold starnetISO def
+/Times-BoldItalic starnetISO def
+/Helvetica starnetISO def
+/Helvetica-Oblique starnetISO def
+/Helvetica-Bold starnetISO def
+/Helvetica-BoldOblique starnetISO def
+/Courier starnetISO def
+/Courier-Oblique starnetISO def
+/Courier-Bold starnetISO def
+/Courier-BoldOblique starnetISO def
+cleartomark
+} bind def
+
+%%BeginResource: procset graphviz 0 0
+/coord-font-family /Times-Roman def
+/default-font-family /Times-Roman def
+/coordfont coord-font-family findfont 8 scalefont def
+
+/InvScaleFactor 1.0 def
+/set_scale {
+       dup 1 exch div /InvScaleFactor exch def
+       scale
+} bind def
+
+% styles
+/solid { [] 0 setdash } bind def
+/dashed { [9 InvScaleFactor mul dup ] 0 setdash } bind def
+/dotted { [1 InvScaleFactor mul 6 InvScaleFactor mul] 0 setdash } bind def
+/invis {/fill {newpath} def /stroke {newpath} def /show {pop newpath} def} bind def
+/bold { 2 setlinewidth } bind def
+/filled { } bind def
+/unfilled { } bind def
+/rounded { } bind def
+/diagonals { } bind def
+/tapered { } bind def
+
+% hooks for setting color 
+/nodecolor { sethsbcolor } bind def
+/edgecolor { sethsbcolor } bind def
+/graphcolor { sethsbcolor } bind def
+/nopcolor {pop pop pop} bind def
+
+/beginpage {	% i j npages
+	/npages exch def
+	/j exch def
+	/i exch def
+	/str 10 string def
+	npages 1 gt {
+		gsave
+			coordfont setfont
+			0 0 moveto
+			(\() show i str cvs show (,) show j str cvs show (\)) show
+		grestore
+	} if
+} bind def
+
+/set_font {
+	findfont exch
+	scalefont setfont
+} def
+
+% draw text fitted to its expected width
+/alignedtext {			% width text
+	/text exch def
+	/width exch def
+	gsave
+		width 0 gt {
+			[] 0 setdash
+			text stringwidth pop width exch sub text length div 0 text ashow
+		} if
+	grestore
+} def
+
+/boxprim {				% xcorner ycorner xsize ysize
+		4 2 roll
+		moveto
+		2 copy
+		exch 0 rlineto
+		0 exch rlineto
+		pop neg 0 rlineto
+		closepath
+} bind def
+
+/ellipse_path {
+	/ry exch def
+	/rx exch def
+	/y exch def
+	/x exch def
+	matrix currentmatrix
+	newpath
+	x y translate
+	rx ry scale
+	0 0 1 0 360 arc
+	setmatrix
+} bind def
+
+/endpage { showpage } bind def
+/showpage { } def
+
+/layercolorseq
+	[	% layer color sequence - darkest to lightest
+		[0 0 0]
+		[.2 .8 .8]
+		[.4 .8 .8]
+		[.6 .8 .8]
+		[.8 .8 .8]
+	]
+def
+
+/layerlen layercolorseq length def
+
+/setlayer {/maxlayer exch def /curlayer exch def
+	layercolorseq curlayer 1 sub layerlen mod get
+	aload pop sethsbcolor
+	/nodecolor {nopcolor} def
+	/edgecolor {nopcolor} def
+	/graphcolor {nopcolor} def
+} bind def
+
+/onlayer { curlayer ne {invis} if } def
+
+/onlayers {
+	/myupper exch def
+	/mylower exch def
+	curlayer mylower lt
+	curlayer myupper gt
+	or
+	{invis} if
+} def
+
+/curlayer 0 def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+14 default-font-family set_font
+% /arrowlength 10 def
+% /arrowwidth 5 def
+
+% make sure pdfmark is harmless for PS-interpreters other than Distiller
+/pdfmark where {pop} {userdict /pdfmark /cleartomark load put} ifelse
+% make '<<' and '>>' safe on PS Level 1 devices
+/languagelevel where {pop languagelevel}{1} ifelse
+2 lt {
+    userdict (<<) cvn ([) cvn load put
+    userdict (>>) cvn ([) cvn load put
+} if
+
+%%EndSetup
+setupLatin1
+%%Page: 1 1
+%%PageBoundingBox: 36 36 1123 171
+%%PageOrientation: Portrait
+0 0 1 beginpage
+gsave
+36 36 1087 135 boxprim clip newpath
+1 1 set_scale 0 rotate 40 40 translate
+% Node1
+gsave
+0 0 0.74902 nodecolor
+newpath 915 61.2395 moveto
+915 80.2395 lineto
+1079 80.2395 lineto
+1079 61.2395 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 915 61.2395 moveto
+915 80.2395 lineto
+1079 80.2395 lineto
+1079 61.2395 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+923 68.2395 moveto 148 (SpillNSWrapper< SortPolicy >) alignedtext
+grestore
+% Node2
+gsave
+[ /Rect [ 610 22.2395 878 119.2395 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classmlpack_1_1neighbor_1_1NSWrapper.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 610 22.7395 moveto
+610 118.7395 lineto
+878 118.7395 lineto
+878 22.7395 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 610 22.7395 moveto
+610 118.7395 lineto
+878 118.7395 lineto
+878 22.7395 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+618 106.7395 moveto 118 (NSWrapper< SortPolicy,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+618 95.7395 moveto 93 ( tree::SPTree, tree::) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+618 84.7395 moveto 175 (SPTree< metric::EuclideanDistance,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+618 73.7395 moveto 160 ( NeighborSearchStat< SortPolicy) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+618 62.7395 moveto 221 ( >, arma::mat >::template DefeatistDualTree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+618 51.7395 moveto 252 (Traverser, tree::SPTree< metric::EuclideanDistance,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+618 40.7395 moveto 229 ( NeighborSearchStat< SortPolicy >, arma::mat) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+635.5 29.7395 moveto 217 ( >::template DefeatistSingleTreeTraverser >) alignedtext
+grestore
+% Node2->Node1
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 888.3866 70.7395 moveto
+897.3562 70.7395 906.2013 70.7395 914.7337 70.7395 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 888.2169 67.2396 moveto
+878.2169 70.7395 lineto
+888.2168 74.2396 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 888.2169 67.2396 moveto
+878.2169 70.7395 lineto
+888.2168 74.2396 lineto
+closepath stroke
+grestore
+% Node3
+gsave
+[ /Rect [ 0 92.7395 95 112.7395 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classmlpack_1_1neighbor_1_1NSWrapperBase.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 0 93.2395 moveto
+0 112.2395 lineto
+95 112.2395 lineto
+95 93.2395 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 0 93.2395 moveto
+0 112.2395 lineto
+95 112.2395 lineto
+95 93.2395 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+8 100.2395 moveto 79 (NSWrapperBase) alignedtext
+grestore
+% Node3->Node2
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 105.4438 109.7897 moveto
+204.7821 120.7779 415.9624 138.316 592 113.7395 curveto
+597.8041 112.9292 603.6983 111.9517 609.6266 110.8409 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 105.6529 106.2912 moveto
+95.324 108.6499 lineto
+104.8694 113.2473 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 105.6529 106.2912 moveto
+95.324 108.6499 lineto
+104.8694 113.2473 lineto
+closepath stroke
+grestore
+% Node4
+gsave
+[ /Rect [ 132 25.7395 306 67.7395 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classmlpack_1_1neighbor_1_1NSWrapper.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 132 26.2395 moveto
+132 67.2395 lineto
+306 67.2395 lineto
+306 26.2395 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 132 26.2395 moveto
+132 67.2395 lineto
+306 67.2395 lineto
+306 26.2395 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+140 55.2395 moveto 118 (NSWrapper< SortPolicy,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+140 44.2395 moveto 140 ( TreeType, DualTreeTraversal) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+140 33.2395 moveto 158 (Type, SingleTreeTraversalType >) alignedtext
+grestore
+% Node3->Node4
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 87.1764 89.9615 moveto
+107.5044 83.2454 132.9133 74.8508 155.9173 67.2506 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 86.0353 86.6523 moveto
+77.6381 93.1128 lineto
+88.2313 93.299 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 86.0353 86.6523 moveto
+77.6381 93.1128 lineto
+88.2313 93.299 lineto
+closepath stroke
+grestore
+% Node4->Node2
+gsave
+1 setlinewidth
+dashed
+0.10588 1 1 edgecolor
+newpath 285.8522 23.2565 moveto
+298.3679 19.7169 311.4706 16.6235 324 14.7395 curveto
+441.7869 -2.9718 474.7618 -6.2999 592 14.7395 curveto
+603.0081 16.715 614.2628 19.4404 625.4181 22.633 curveto
+stroke
+0.10588 1 1 edgecolor
+newpath 284.5625 19.9878 moveto
+275.9629 26.1763 lineto
+286.5447 26.7013 lineto
+closepath fill
+1 setlinewidth
+solid
+0.10588 1 1 edgecolor
+newpath 284.5625 19.9878 moveto
+275.9629 26.1763 lineto
+286.5447 26.7013 lineto
+closepath stroke
+0 0 0 edgecolor
+10 /Helvetica set_font
+324 105.7395 moveto 89 ( < SortPolicy, tree) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+324 94.7395 moveto 103 (::SPTree, tree::SPTree) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+324 83.7395 moveto 142 (< metric::EuclideanDistance,) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+324 72.7395 moveto 160 ( NeighborSearchStat< SortPolicy) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+324 61.7395 moveto 201 ( >, arma::mat >::template DefeatistDual) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+324 50.7395 moveto 173 (TreeTraverser, tree::SPTree< metric) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+324 39.7395 moveto 199 (::EuclideanDistance, NeighborSearchStat) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+324 28.7395 moveto 268 (< SortPolicy >, arma::mat >::template DefeatistSingle) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+419 17.7395 moveto 78 (TreeTraverser >) alignedtext
+grestore
+endpage
+showpage
+grestore
+%%PageTrailer
+%%EndPage: 1
+%%Trailer
+%%Pages: 1
+%%BoundingBox: 36 36 1123 171
+end
+restore
+%%EOF

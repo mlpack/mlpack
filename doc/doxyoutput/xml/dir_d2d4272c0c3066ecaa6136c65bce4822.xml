@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_d2d4272c0c3066ecaa6136c65bce4822" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/amf/update_rules</compoundname>
+    <innerfile refid="nmf__als_8hpp">nmf_als.hpp</innerfile>
+    <innerfile refid="nmf__mult__dist_8hpp">nmf_mult_dist.hpp</innerfile>
+    <innerfile refid="nmf__mult__div_8hpp">nmf_mult_div.hpp</innerfile>
+    <innerfile refid="svd__batch__learning_8hpp">svd_batch_learning.hpp</innerfile>
+    <innerfile refid="svd__complete__incremental__learning_8hpp">svd_complete_incremental_learning.hpp</innerfile>
+    <innerfile refid="svd__incomplete__incremental__learning_8hpp">svd_incomplete_incremental_learning.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/"/>
+  </compounddef>
+</doxygen>

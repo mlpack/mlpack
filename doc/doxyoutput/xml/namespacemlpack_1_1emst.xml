@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1emst" kind="namespace" language="C++">
+    <compoundname>mlpack::emst</compoundname>
+    <innerclass refid="classmlpack_1_1emst_1_1DTBRules" prot="public">mlpack::emst::DTBRules</innerclass>
+    <innerclass refid="classmlpack_1_1emst_1_1DTBStat" prot="public">mlpack::emst::DTBStat</innerclass>
+    <innerclass refid="classmlpack_1_1emst_1_1DualTreeBoruvka" prot="public">mlpack::emst::DualTreeBoruvka</innerclass>
+    <innerclass refid="classmlpack_1_1emst_1_1EdgePair" prot="public">mlpack::emst::EdgePair</innerclass>
+    <innerclass refid="classmlpack_1_1emst_1_1UnionFind" prot="public">mlpack::emst::UnionFind</innerclass>
+    <briefdescription>
+<para>Euclidean Minimum Spanning Trees. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/emst/dtb.hpp" line="37" column="1"/>
+  </compounddef>
+</doxygen>

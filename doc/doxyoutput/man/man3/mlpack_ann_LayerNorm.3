@@ -1,0 +1,298 @@
+.TH "LayerNorm< InputDataType, OutputDataType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+LayerNorm< InputDataType, OutputDataType > \- Declaration of the Layer Normalization class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBLayerNorm\fP ()"
+.br
+.RI "Create the \fBLayerNorm\fP object\&. "
+.ti -1c
+.RI "\fBLayerNorm\fP (const size_t size, const double eps=1e\-8)"
+.br
+.RI "Create the \fBLayerNorm\fP object for a specified number of input units\&. "
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &gy, arma::Mat< eT > &g)"
+.br
+.RI "Backward pass through the layer\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBDelta\fP () const"
+.br
+.RI "Get the delta\&. "
+.ti -1c
+.RI "double \fBEpsilon\fP () const"
+.br
+.RI "Get the value of epsilon\&. "
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output)"
+.br
+.RI "Forward pass of Layer Normalization\&. "
+.ti -1c
+.RI "OutputDataType & \fBGradient\fP ()"
+.br
+.RI "Modify the gradient\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBGradient\fP () const"
+.br
+.RI "Get the gradient\&. "
+.ti -1c
+.RI "template<typename eT > void \fBGradient\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &error, arma::Mat< eT > &gradient)"
+.br
+.RI "Calculate the gradient using the output delta and the input activations\&. "
+.ti -1c
+.RI "size_t \fBInputShape\fP () const"
+.br
+.RI "Get the shape of the input\&. "
+.ti -1c
+.RI "size_t \fBInSize\fP () const"
+.br
+.RI "Get the number of input units\&. "
+.ti -1c
+.RI "OutputDataType \fBMean\fP ()"
+.br
+.RI "Get the mean across single training data\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBParameters\fP ()"
+.br
+.RI "Modify the parameters\&. "
+.ti -1c
+.RI "OutputDataType const  & \fBParameters\fP () const"
+.br
+.RI "Get the parameters\&. "
+.ti -1c
+.RI "void \fBReset\fP ()"
+.br
+.RI "Reset the layer parameters\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.ti -1c
+.RI "OutputDataType \fBVariance\fP ()"
+.br
+.RI "Get the variance across single training data\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::LayerNorm< InputDataType, OutputDataType >"
+Declaration of the Layer Normalization class\&. 
+
+The layer transforms the input data into zero mean and unit variance and then scales and shifts the data by parameters, gamma and beta respectively over a single training data\&. These parameters are learnt by the network\&. Layer Normalization is different from Batch Normalization in the way that normalization is done for individual training cases, and the mean and standard deviations are computed across the layer dimensions, as opposed to across the batch\&.
+.PP
+For more information, refer to the following papers,
+.PP
+.PP
+.nf
+@article{Ba16,
+  author    = {Jimmy Lei Ba, Jamie Ryan Kiros and Geoffrey E\&. Hinton},
+  title     = {Layer Normalization},
+  volume    = {abs/1607\&.06450},
+  year      = {2016},
+  url       = {http://arxiv\&.org/abs/1607\&.06450},
+  eprint    = {1607\&.06450},
+}
+.fi
+.PP
+.PP
+.PP
+.nf
+@article{Ioffe15,
+  author    = {Sergey Ioffe and
+               Christian Szegedy},
+  title     = {Batch Normalization: Accelerating Deep Network Training by
+               Reducing Internal Covariate Shift},
+  journal   = {CoRR},
+  volume    = {abs/1502\&.03167},
+  year      = {2015},
+  url       = {http://arxiv\&.org/abs/1502\&.03167},
+  eprint    = {1502\&.03167},
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 65 of file layer_norm\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBLayerNorm\fP ()"
+
+.PP
+Create the \fBLayerNorm\fP object\&. 
+.SS "\fBLayerNorm\fP (const size_t size, const double eps = \fC1e\-8\fP)"
+
+.PP
+Create the \fBLayerNorm\fP object for a specified number of input units\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIsize\fP The number of input units\&. 
+.br
+\fIeps\fP The epsilon added to variance to ensure numerical stability\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const arma::Mat< eT > & input, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
+
+.PP
+Backward pass through the layer\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP The input activations\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 132 of file layer_norm\&.hpp\&.
+.SS "OutputDataType const& Delta () const\fC [inline]\fP"
+
+.PP
+Get the delta\&. 
+.PP
+Definition at line 130 of file layer_norm\&.hpp\&.
+.SS "double Epsilon () const\fC [inline]\fP"
+
+.PP
+Get the value of epsilon\&. 
+.PP
+Definition at line 149 of file layer_norm\&.hpp\&.
+.SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
+
+.PP
+Forward pass of Layer Normalization\&. Transforms the input data into zero mean and unit variance, scales the data by a factor gamma and shifts it by beta\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Input data for the layer\&. 
+.br
+\fIoutput\fP Resulting output activations\&. 
+.RE
+.PP
+
+.SS "OutputDataType& Gradient ()\fC [inline]\fP"
+
+.PP
+Modify the gradient\&. 
+.PP
+Definition at line 137 of file layer_norm\&.hpp\&.
+.SS "OutputDataType const& Gradient () const\fC [inline]\fP"
+
+.PP
+Get the gradient\&. 
+.PP
+Definition at line 135 of file layer_norm\&.hpp\&.
+.SS "void Gradient (const arma::Mat< eT > & input, const arma::Mat< eT > & error, arma::Mat< eT > & gradient)"
+
+.PP
+Calculate the gradient using the output delta and the input activations\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP The input activations\&. 
+.br
+\fIerror\fP The calculated error\&. 
+.br
+\fIgradient\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "size_t InputShape () const\fC [inline]\fP"
+
+.PP
+Get the shape of the input\&. 
+.PP
+Definition at line 152 of file layer_norm\&.hpp\&.
+.SS "size_t InSize () const\fC [inline]\fP"
+
+.PP
+Get the number of input units\&. 
+.PP
+Definition at line 146 of file layer_norm\&.hpp\&.
+.SS "OutputDataType Mean ()\fC [inline]\fP"
+
+.PP
+Get the mean across single training data\&. 
+.PP
+Definition at line 140 of file layer_norm\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 127 of file layer_norm\&.hpp\&.
+.SS "OutputDataType const& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 125 of file layer_norm\&.hpp\&.
+.SS "OutputDataType& Parameters ()\fC [inline]\fP"
+
+.PP
+Modify the parameters\&. 
+.PP
+Definition at line 122 of file layer_norm\&.hpp\&.
+.SS "OutputDataType const& Parameters () const\fC [inline]\fP"
+
+.PP
+Get the parameters\&. 
+.PP
+Definition at line 120 of file layer_norm\&.hpp\&.
+.SS "void Reset ()"
+
+.PP
+Reset the layer parameters\&. 
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+.SS "OutputDataType Variance ()\fC [inline]\fP"
+
+.PP
+Get the variance across single training data\&. 
+.PP
+Definition at line 143 of file layer_norm\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

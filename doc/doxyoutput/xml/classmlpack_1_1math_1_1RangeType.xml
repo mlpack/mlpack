@@ -1,0 +1,676 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1math_1_1RangeType" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::math::RangeType</compoundname>
+    <includes refid="range_8hpp" local="no">range.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+        <defval>double</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1math_1_1RangeType_1a840df75d9942ab98872e2bbacb3c987b" prot="private" static="no" mutable="no">
+        <type>T</type>
+        <definition>T hi</definition>
+        <argsstring></argsstring>
+        <name>hi</name>
+        <briefdescription>
+<para>The lower bound. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="38" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1math_1_1RangeType_1a7a05b01309c4383167d90d5eb71b60e2" prot="private" static="no" mutable="no">
+        <type>T</type>
+        <definition>T lo</definition>
+        <argsstring></argsstring>
+        <name>lo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="37" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1adce055338aa3d499b254a3443cc57595" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RangeType</definition>
+        <argsstring>()</argsstring>
+        <name>RangeType</name>
+        <briefdescription>
+<para>The upper bound. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize to an empty set (where lo &gt; hi). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="42" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a7f2369350f31189a91eae6b25cc52c73" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RangeType</definition>
+        <argsstring>(const T lo, const T hi)</argsstring>
+        <name>RangeType</name>
+        <param>
+          <type>const T</type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type>const T</type>
+          <declname>hi</declname>
+        </param>
+        <briefdescription>
+<para>Initializes to specified range. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>lo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Lower bound of the range. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>hi</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Upper bound of the range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="58" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a9aadc9da1507696720351d37641acff7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RangeType</definition>
+        <argsstring>(const T point)</argsstring>
+        <name>RangeType</name>
+        <param>
+          <type>const T</type>
+          <declname>point</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="50" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a18180e84f6057d19f57cd57a0cf5288f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Contains</definition>
+        <argsstring>(const RangeType &amp;r) const</argsstring>
+        <name>Contains</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Determines if another range overlaps with this one. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other range.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if ranges overlap at all. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="177" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a6159d8a34b3829ba5683e2c985424edf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Contains</definition>
+        <argsstring>(const T d) const</argsstring>
+        <name>Contains</name>
+        <param>
+          <type>const T</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+<para>Determines if a point is contained within the range. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Point to check. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="168" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a4ee049658b5457a4af100e234e96c2ae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T &amp;</type>
+        <definition>T&amp; Hi</definition>
+        <argsstring>()</argsstring>
+        <name>Hi</name>
+        <briefdescription>
+<para>Modify the upper bound. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="68" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" bodystart="68" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1adef3f68b7ea68cc6355f90b056eaa86b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T Hi</definition>
+        <argsstring>() const</argsstring>
+        <name>Hi</name>
+        <briefdescription>
+<para>Get the upper bound. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="66" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" bodystart="66" bodyend="66"/>
+        <referencedby refid="classmlpack_1_1bound_1_1HollowBallBound_1a60e7246d34103909f688395e35869b39" compoundref="hollow__ball__bound_8hpp" startline="229" endline="229">HollowBallBound&lt; TMetricType, ElemType &gt;::Diameter</referencedby>
+        <referencedby refid="classmlpack_1_1bound_1_1HollowBallBound_1ab8478ff52c4d4d5e7fa6311fa39abb76" compoundref="hollow__ball__bound_8hpp" startline="122" endline="122">HollowBallBound&lt; TMetricType, ElemType &gt;::MinWidth</referencedby>
+        <referencedby refid="classmlpack_1_1bound_1_1HollowBallBound_1aa86ddd3c92343387dd5b013d69b57f56" compoundref="hollow__ball__bound_8hpp" startline="96" endline="96">HollowBallBound&lt; TMetricType, ElemType &gt;::OuterRadius</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a8f2d3adba5072808618638e16b43d5d9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T &amp;</type>
+        <definition>T&amp; Lo</definition>
+        <argsstring>()</argsstring>
+        <name>Lo</name>
+        <briefdescription>
+<para>Modify the lower bound. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="63" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" bodystart="63" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a2c4c15ef7c46506d2fead1a48cf96d48" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T Lo</definition>
+        <argsstring>() const</argsstring>
+        <name>Lo</name>
+        <briefdescription>
+<para>Get the lower bound. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="61" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" bodystart="61" bodyend="61"/>
+        <referencedby refid="classmlpack_1_1bound_1_1HollowBallBound_1ade9da5b6c7349f71b7aeba5149344fa5" compoundref="hollow__ball__bound_8hpp" startline="101" endline="101">HollowBallBound&lt; TMetricType, ElemType &gt;::InnerRadius</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a64d5383c3d3d55e034e03b47a2687177" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T Mid</definition>
+        <argsstring>() const</argsstring>
+        <name>Mid</name>
+        <briefdescription>
+<para>Gets the midpoint of this range. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="78" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a3182ed36c46a96ce216e6ea0d6416a98" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool operator!=</definition>
+        <argsstring>(const RangeType &amp;rhs) const</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+<para>Compare with another range for strict equality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rhs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="145" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a3e785415d63fd74fe2e50860bf1c0746" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref></type>
+        <definition>RangeType operator&amp;</definition>
+        <argsstring>(const RangeType &amp;rhs) const</argsstring>
+        <name>operator&amp;</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+<para>Shrinks this range to be the overlap with another range; this makes an empty set if there is no overlap. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rhs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="108" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a3b45ffd728993698f9e2791526907770" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+        <definition>RangeType&amp; operator&amp;=</definition>
+        <argsstring>(const RangeType &amp;rhs)</argsstring>
+        <name>operator&amp;=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+<para>Shrinks this range to be the overlap with another range; this makes an empty set if there is no overlap. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rhs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="100" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a1f36f1c161e97ee66487e0f224f78783" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref></type>
+        <definition>RangeType operator*</definition>
+        <argsstring>(const T d) const</argsstring>
+        <name>operator*</name>
+        <param>
+          <type>const T</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+<para>Scale the bounds by the given double. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scaling factor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="122" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1aedf6eccfb4de5f5fa40b9ac4504e2d55" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+        <definition>RangeType&amp; operator*=</definition>
+        <argsstring>(const T d)</argsstring>
+        <name>operator*=</name>
+        <param>
+          <type>const T</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+<para>Scale the bounds by the given double. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scaling factor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="115" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1addc4cac2fafa4fa3a857adc1f116dd5c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool operator&lt;</definition>
+        <argsstring>(const RangeType &amp;rhs) const</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+<para>Compare with another range. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For Range objects x and y, x &lt; y means that x is strictly less than y and does not overlap at all.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rhs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="153" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a55a6870615ef934dc02d6c174e77f3e7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool operator==</definition>
+        <argsstring>(const RangeType &amp;rhs) const</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+<para>Compare with another range for strict equality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rhs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="138" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1ae65f5cb4a1032808440b98254f1d6ab9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool operator&gt;</definition>
+        <argsstring>(const RangeType &amp;rhs) const</argsstring>
+        <name>operator&gt;</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+<para>Compare with another range. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For Range objects x and y, x &lt; y means that x is strictly less than y and does not overlap at all.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rhs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Other range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="161" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1aa5b6f898a2172ec1231422212612ef15" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref></type>
+        <definition>RangeType operator|</definition>
+        <argsstring>(const RangeType &amp;rhs) const</argsstring>
+        <name>operator|</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+<para>Expands this range to include another range. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rhs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range to include. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="92" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1aef4847f9b9764de3dcb497c7bf5b76ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+        <definition>RangeType&amp; operator|=</definition>
+        <argsstring>(const RangeType &amp;rhs)</argsstring>
+        <name>operator|=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref> &amp;</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+<para>Expands this range to include another range. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rhs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range to include. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="85" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1a72d63b74c8166dff8e1a9006905ad9ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t version)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+          <declname>version</declname>
+        </param>
+        <briefdescription>
+<para>Serialize the range object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="183" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1math_1_1RangeType_1ad3febe0238392fe748447e762f2922bb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T Width</definition>
+        <argsstring>() const</argsstring>
+        <name>Width</name>
+        <briefdescription>
+<para>Gets the span of the range (hi - lo). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="73" column="12"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classmlpack_1_1math_1_1RangeType_1acbe6947af2537dd97b592d55e0b51f85" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TT</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref>&lt; TT &gt;</type>
+        <definition>RangeType&lt;TT&gt; operator*</definition>
+        <argsstring>(const TT d, const RangeType&lt; TT &gt; &amp;r)</argsstring>
+        <name>operator*</name>
+        <param>
+          <type>const TT</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmlpack_1_1math_1_1RangeType" kindref="compound">RangeType</ref>&lt; TT &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+<para>Scale the bounds by the given double. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scaling factor. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Bounds range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="131" column="27"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Simple real-valued range. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It contains an upper and lower bound.</para>
+<para>Note that until mlpack 3.0.0, this class is named RangeType&lt;&gt; and for the specification where T is double, you can use <ref refid="namespacemlpack_1_1math_1ad17d9cabd4fd82cbed4ccd5e53b47d70" kindref="member">math::Range</ref>. As of mlpack 3.0.0, this class will be renamed <ref refid="namespacemlpack_1_1math_1ad17d9cabd4fd82cbed4ccd5e53b47d70" kindref="member">math::Range&lt;&gt;</ref>.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>type of element held by this range. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>RangeType&lt; double &gt;</label>
+        <link refid="classmlpack_1_1math_1_1RangeType"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; double &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>RangeType&lt; T &gt;</label>
+        <link refid="classmlpack_1_1math_1_1RangeType"/>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" line="34" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/math/range.hpp" bodystart="35" bodyend="184"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a6159d8a34b3829ba5683e2c985424edf" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>Contains</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a18180e84f6057d19f57cd57a0cf5288f" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>Contains</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a840df75d9942ab98872e2bbacb3c987b" prot="private" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>hi</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1adef3f68b7ea68cc6355f90b056eaa86b" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>Hi</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a4ee049658b5457a4af100e234e96c2ae" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>Hi</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a2c4c15ef7c46506d2fead1a48cf96d48" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>Lo</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a8f2d3adba5072808618638e16b43d5d9" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>Lo</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a7a05b01309c4383167d90d5eb71b60e2" prot="private" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>lo</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a64d5383c3d3d55e034e03b47a2687177" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>Mid</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a3182ed36c46a96ce216e6ea0d6416a98" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>operator!=</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a3e785415d63fd74fe2e50860bf1c0746" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>operator&amp;</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a3b45ffd728993698f9e2791526907770" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>operator&amp;=</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a1f36f1c161e97ee66487e0f224f78783" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>operator*</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1acbe6947af2537dd97b592d55e0b51f85" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>operator*</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1aedf6eccfb4de5f5fa40b9ac4504e2d55" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>operator*=</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1addc4cac2fafa4fa3a857adc1f116dd5c" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>operator&lt;</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a55a6870615ef934dc02d6c174e77f3e7" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>operator==</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1ae65f5cb4a1032808440b98254f1d6ab9" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>operator&gt;</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1aa5b6f898a2172ec1231422212612ef15" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>operator|</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1aef4847f9b9764de3dcb497c7bf5b76ce" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>operator|=</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1adce055338aa3d499b254a3443cc57595" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>RangeType</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a9aadc9da1507696720351d37641acff7" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>RangeType</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a7f2369350f31189a91eae6b25cc52c73" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>RangeType</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1a72d63b74c8166dff8e1a9006905ad9ca" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1math_1_1RangeType_1ad3febe0238392fe748447e762f2922bb" prot="public" virt="non-virtual"><scope>mlpack::math::RangeType</scope><name>Width</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

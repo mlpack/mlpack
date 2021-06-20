@@ -1,0 +1,127 @@
+.TH "SplitByAnyOf" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SplitByAnyOf \- The \fBSplitByAnyOf\fP class tokenizes a string using a set of delimiters\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBMaskType\fP = std::array< bool, 1<< CHAR_BIT >"
+.br
+.RI "A convenient alias for the mask type\&. "
+.ti -1c
+.RI "using \fBTokenType\fP = boost::string_view"
+.br
+.RI "The type of the token which the tokenizer extracts\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSplitByAnyOf\fP (const boost::string_view delimiters)"
+.br
+.RI "Construct the object from the given delimiters\&. "
+.ti -1c
+.RI "\fBMaskType\fP & \fBMask\fP ()"
+.br
+.RI "Modify the mask\&. "
+.ti -1c
+.RI "const \fBMaskType\fP & \fBMask\fP () const"
+.br
+.RI "Return the mask\&. "
+.ti -1c
+.RI "boost::string_view \fBoperator()\fP (boost::string_view &str) const"
+.br
+.RI "The function extracts the first token from the given string view and then removes the prefix containing the token from the view\&. "
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static bool \fBIsTokenEmpty\fP (const boost::string_view token)"
+.br
+.RI "The function returns true if the given token is empty\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The \fBSplitByAnyOf\fP class tokenizes a string using a set of delimiters\&. 
+.PP
+Definition at line 26 of file split_by_any_of\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBMaskType\fP =  std::array<bool, 1 << CHAR_BIT>"
+
+.PP
+A convenient alias for the mask type\&. 
+.PP
+Definition at line 33 of file split_by_any_of\&.hpp\&.
+.SS "using \fBTokenType\fP =  boost::string_view"
+
+.PP
+The type of the token which the tokenizer extracts\&. 
+.PP
+Definition at line 30 of file split_by_any_of\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSplitByAnyOf\fP (const boost::string_view delimiters)\fC [inline]\fP"
+
+.PP
+Construct the object from the given delimiters\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdelimiters\fP The given delimiters\&. 
+.RE
+.PP
+
+.PP
+Definition at line 40 of file split_by_any_of\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static bool IsTokenEmpty (const boost::string_view token)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+The function returns true if the given token is empty\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fItoken\fP The given token\&. 
+.RE
+.PP
+
+.PP
+Definition at line 78 of file split_by_any_of\&.hpp\&.
+.SS "\fBMaskType\fP& Mask ()\fC [inline]\fP"
+
+.PP
+Modify the mask\&. 
+.PP
+Definition at line 86 of file split_by_any_of\&.hpp\&.
+.SS "const \fBMaskType\fP& Mask () const\fC [inline]\fP"
+
+.PP
+Return the mask\&. 
+.PP
+Definition at line 84 of file split_by_any_of\&.hpp\&.
+.SS "boost::string_view operator() (boost::string_view & str) const\fC [inline]\fP"
+
+.PP
+The function extracts the first token from the given string view and then removes the prefix containing the token from the view\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIstr\fP String view to retrieve the token from\&. 
+.RE
+.PP
+
+.PP
+Definition at line 54 of file split_by_any_of\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

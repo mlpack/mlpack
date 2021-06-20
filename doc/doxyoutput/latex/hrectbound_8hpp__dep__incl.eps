@@ -1,0 +1,3643 @@
+%!PS-Adobe-3.0
+%%Creator: graphviz version 2.43.0 (0)
+%%Title: /home/aakash/mlpack/src/mlpack/core/tree/hrectbound.hpp
+%%Pages: (atend)
+%%BoundingBox: (atend)
+%%EndComments
+save
+%%BeginProlog
+/DotDict 200 dict def
+DotDict begin
+
+/setupLatin1 {
+mark
+/EncodingVector 256 array def
+ EncodingVector 0
+
+ISOLatin1Encoding 0 255 getinterval putinterval
+EncodingVector 45 /hyphen put
+
+% Set up ISO Latin 1 character encoding
+/starnetISO {
+        dup dup findfont dup length dict begin
+        { 1 index /FID ne { def }{ pop pop } ifelse
+        } forall
+        /Encoding EncodingVector def
+        currentdict end definefont
+} def
+/Times-Roman starnetISO def
+/Times-Italic starnetISO def
+/Times-Bold starnetISO def
+/Times-BoldItalic starnetISO def
+/Helvetica starnetISO def
+/Helvetica-Oblique starnetISO def
+/Helvetica-Bold starnetISO def
+/Helvetica-BoldOblique starnetISO def
+/Courier starnetISO def
+/Courier-Oblique starnetISO def
+/Courier-Bold starnetISO def
+/Courier-BoldOblique starnetISO def
+cleartomark
+} bind def
+
+%%BeginResource: procset graphviz 0 0
+/coord-font-family /Times-Roman def
+/default-font-family /Times-Roman def
+/coordfont coord-font-family findfont 8 scalefont def
+
+/InvScaleFactor 1.0 def
+/set_scale {
+       dup 1 exch div /InvScaleFactor exch def
+       scale
+} bind def
+
+% styles
+/solid { [] 0 setdash } bind def
+/dashed { [9 InvScaleFactor mul dup ] 0 setdash } bind def
+/dotted { [1 InvScaleFactor mul 6 InvScaleFactor mul] 0 setdash } bind def
+/invis {/fill {newpath} def /stroke {newpath} def /show {pop newpath} def} bind def
+/bold { 2 setlinewidth } bind def
+/filled { } bind def
+/unfilled { } bind def
+/rounded { } bind def
+/diagonals { } bind def
+/tapered { } bind def
+
+% hooks for setting color 
+/nodecolor { sethsbcolor } bind def
+/edgecolor { sethsbcolor } bind def
+/graphcolor { sethsbcolor } bind def
+/nopcolor {pop pop pop} bind def
+
+/beginpage {	% i j npages
+	/npages exch def
+	/j exch def
+	/i exch def
+	/str 10 string def
+	npages 1 gt {
+		gsave
+			coordfont setfont
+			0 0 moveto
+			(\() show i str cvs show (,) show j str cvs show (\)) show
+		grestore
+	} if
+} bind def
+
+/set_font {
+	findfont exch
+	scalefont setfont
+} def
+
+% draw text fitted to its expected width
+/alignedtext {			% width text
+	/text exch def
+	/width exch def
+	gsave
+		width 0 gt {
+			[] 0 setdash
+			text stringwidth pop width exch sub text length div 0 text ashow
+		} if
+	grestore
+} def
+
+/boxprim {				% xcorner ycorner xsize ysize
+		4 2 roll
+		moveto
+		2 copy
+		exch 0 rlineto
+		0 exch rlineto
+		pop neg 0 rlineto
+		closepath
+} bind def
+
+/ellipse_path {
+	/ry exch def
+	/rx exch def
+	/y exch def
+	/x exch def
+	matrix currentmatrix
+	newpath
+	x y translate
+	rx ry scale
+	0 0 1 0 360 arc
+	setmatrix
+} bind def
+
+/endpage { showpage } bind def
+/showpage { } def
+
+/layercolorseq
+	[	% layer color sequence - darkest to lightest
+		[0 0 0]
+		[.2 .8 .8]
+		[.4 .8 .8]
+		[.6 .8 .8]
+		[.8 .8 .8]
+	]
+def
+
+/layerlen layercolorseq length def
+
+/setlayer {/maxlayer exch def /curlayer exch def
+	layercolorseq curlayer 1 sub layerlen mod get
+	aload pop sethsbcolor
+	/nodecolor {nopcolor} def
+	/edgecolor {nopcolor} def
+	/graphcolor {nopcolor} def
+} bind def
+
+/onlayer { curlayer ne {invis} if } def
+
+/onlayers {
+	/myupper exch def
+	/mylower exch def
+	curlayer mylower lt
+	curlayer myupper gt
+	or
+	{invis} if
+} def
+
+/curlayer 0 def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+14 default-font-family set_font
+% /arrowlength 10 def
+% /arrowwidth 5 def
+
+% make sure pdfmark is harmless for PS-interpreters other than Distiller
+/pdfmark where {pop} {userdict /pdfmark /cleartomark load put} ifelse
+% make '<<' and '>>' safe on PS Level 1 devices
+/languagelevel where {pop languagelevel}{1} ifelse
+2 lt {
+    userdict (<<) cvn ([) cvn load put
+    userdict (>>) cvn ([) cvn load put
+} if
+
+%%EndSetup
+setupLatin1
+%%Page: 1 1
+%%PageBoundingBox: 36 36 3002 765
+%%PageOrientation: Portrait
+0 0 1 beginpage
+gsave
+36 36 2966 729 boxprim clip newpath
+1 1 set_scale 0 rotate 40 40 translate
+% Node1
+gsave
+0 0 0.74902 nodecolor
+newpath 2307.5 679.5 moveto
+2307.5 720.5 lineto
+2432.5 720.5 lineto
+2432.5 679.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2307.5 679.5 moveto
+2307.5 720.5 lineto
+2432.5 720.5 lineto
+2432.5 679.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2315.5 708.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2315.5 697.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2330.5 686.5 moveto 79 (/hrectbound.hpp) alignedtext
+grestore
+% Node2
+gsave
+[ /Rect [ 1555.5 595.5 1680.5 637.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($bounds_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1555.5 596 moveto
+1555.5 637 lineto
+1680.5 637 lineto
+1680.5 596 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1555.5 596 moveto
+1555.5 637 lineto
+1680.5 637 lineto
+1680.5 596 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1563.5 625 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1563.5 614 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1588 603 moveto 60 (/bounds.hpp) alignedtext
+grestore
+% Node1->Node2
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2297.2224 691.1125 moveto
+2149.9982 675.1567 1819.0986 639.2946 1680.7113 624.2965 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2297.181 694.6285 moveto
+2307.5 692.2264 lineto
+2297.9353 687.6692 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2297.181 694.6285 moveto
+2307.5 692.2264 lineto
+2297.9353 687.6692 lineto
+closepath stroke
+grestore
+% Node60
+gsave
+[ /Rect [ 2634.5 595.5 2759.5 637.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($octree_2octree_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2634.5 596 moveto
+2634.5 637 lineto
+2759.5 637 lineto
+2759.5 596 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2634.5 596 moveto
+2634.5 637 lineto
+2759.5 637 lineto
+2759.5 596 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2642.5 625 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2642.5 614 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2652.5 603 moveto 89 (/octree/octree.hpp) alignedtext
+grestore
+% Node1->Node60
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2442.726 683.4462 moveto
+2490.9344 672.823 2555.4787 658.0014 2612 643 curveto
+2619.2967 641.0634 2626.9142 638.9339 2634.4623 636.7563 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2441.7127 680.0852 moveto
+2432.6956 685.6479 lineto
+2443.2135 686.9224 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2441.7127 680.0852 moveto
+2432.6956 685.6479 lineto
+2443.2135 686.9224 lineto
+closepath stroke
+grestore
+% Node63
+gsave
+[ /Rect [ 2405 590 2603 643 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($r__plus__plus__tree__auxiliary__information_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2405 590.5 moveto
+2405 642.5 lineto
+2603 642.5 lineto
+2603 590.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2405 590.5 moveto
+2405 642.5 lineto
+2603 642.5 lineto
+2603 590.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2413 630.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2413 619.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2413 608.5 moveto 106 (/rectangle_tree/r_plus) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2413 597.5 moveto 182 (_plus_tree_auxiliary_information.hpp) alignedtext
+grestore
+% Node1->Node63
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2410.9043 674.1217 moveto
+2427.2701 664.1678 2446.0979 652.7165 2462.5207 642.7281 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2408.8214 671.2919 moveto
+2402.0963 679.4787 lineto
+2412.459 677.2726 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2408.8214 671.2919 moveto
+2402.0963 679.4787 lineto
+2412.459 677.2726 lineto
+closepath stroke
+grestore
+% Node64
+gsave
+[ /Rect [ 2194.5 590 2333.5 643 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($rectangle__tree_2rectangle__tree_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2194.5 590.5 moveto
+2194.5 642.5 lineto
+2333.5 642.5 lineto
+2333.5 590.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2194.5 590.5 moveto
+2194.5 642.5 lineto
+2333.5 642.5 lineto
+2333.5 590.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2202.5 630.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2202.5 619.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2202.5 608.5 moveto 123 (/rectangle_tree/rectangle) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2241 597.5 moveto 46 (_tree.hpp) alignedtext
+grestore
+% Node1->Node64
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2336.5596 673.2888 moveto
+2323.8709 663.5328 2309.4423 652.4391 2296.812 642.7281 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2334.5493 676.1581 moveto
+2344.6104 679.4787 lineto
+2338.8161 670.6087 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2334.5493 676.1581 moveto
+2344.6104 679.4787 lineto
+2338.8161 670.6087 lineto
+closepath stroke
+grestore
+% Node3
+gsave
+[ /Rect [ 1414 506.5 1544 548.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($binary__space__tree_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1414 507 moveto
+1414 548 lineto
+1544 548 lineto
+1544 507 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1414 507 moveto
+1414 548 lineto
+1544 548 lineto
+1544 507 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1422 536 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1422 525 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1422 514 moveto 114 (/binary_space_tree.hpp) alignedtext
+grestore
+% Node2->Node3
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1578.2258 590.6054 moveto
+1556.7578 577.1686 1530.6272 560.8134 1510.5711 548.2603 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1576.4722 593.6368 moveto
+1586.8057 595.9755 lineto
+1580.186 587.7032 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1576.4722 593.6368 moveto
+1586.8057 595.9755 lineto
+1580.186 587.7032 lineto
+closepath stroke
+grestore
+% Node47
+gsave
+[ /Rect [ 2594.5 417.5 2719.5 459.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($octree_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2594.5 418 moveto
+2594.5 459 lineto
+2719.5 459 lineto
+2719.5 418 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2594.5 418 moveto
+2594.5 459 lineto
+2719.5 459 lineto
+2719.5 418 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2602.5 447 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2602.5 436 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2629.5 425 moveto 55 (/octree.hpp) alignedtext
+grestore
+% Node2->Node47
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1690.6501 612.7325 moveto
+1863.1176 605.6821 2287.0111 585.356 2343 554 curveto
+2368.5166 539.7097 2357.1525 516.4243 2382 501 curveto
+2460.222 452.4431 2497.0206 488.6456 2586 465 curveto
+2592.4556 463.2845 2599.1568 461.2404 2605.7497 459.0669 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1690.4975 609.2357 moveto
+1680.6475 613.138 lineto
+1690.7811 616.2299 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1690.4975 609.2357 moveto
+1680.6475 613.138 lineto
+1690.7811 616.2299 lineto
+closepath stroke
+grestore
+% Node48
+gsave
+[ /Rect [ 2451.5 417.5 2576.5 459.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($rectangle__tree_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2451.5 418 moveto
+2451.5 459 lineto
+2576.5 459 lineto
+2576.5 418 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2451.5 418 moveto
+2451.5 459 lineto
+2576.5 459 lineto
+2576.5 418 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2459.5 447 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2459.5 436 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2466.5 425 moveto 95 (/rectangle_tree.hpp) alignedtext
+grestore
+% Node2->Node48
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1676.4247 592.3228 moveto
+1746.7588 565.504 1869.0362 522.3069 1978 501 curveto
+2178.8231 461.7308 2236.4133 505.4597 2437 465 curveto
+2444.7303 463.4408 2452.7631 461.3435 2460.5962 459.0181 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1674.9352 589.1454 moveto
+1666.8518 595.9944 lineto
+1677.442 595.6812 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1674.9352 589.1454 moveto
+1666.8518 595.9944 lineto
+1677.442 595.6812 lineto
+closepath stroke
+grestore
+% Node49
+gsave
+[ /Rect [ 737 501 863 554 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($projection__vector_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 737 501.5 moveto
+737 553.5 lineto
+863 553.5 lineto
+863 501.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 737 501.5 moveto
+737 553.5 lineto
+863 553.5 lineto
+863 501.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+745 541.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+745 530.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+745 519.5 moveto 110 (/space_split/projection) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+771 508.5 moveto 58 (_vector.hpp) alignedtext
+grestore
+% Node2->Node49
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1545.0364 607.7398 moveto
+1386.3711 590.8646 1012.2502 551.0743 863.0429 535.2051 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1544.8571 611.2404 moveto
+1555.1712 608.8177 lineto
+1545.5974 604.2797 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1544.8571 611.2404 moveto
+1555.1712 608.8177 lineto
+1545.5974 604.2797 lineto
+closepath stroke
+grestore
+% Node53
+gsave
+[ /Rect [ 185.5 78 310.5 120 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($spill__tree_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 185.5 78.5 moveto
+185.5 119.5 lineto
+310.5 119.5 lineto
+310.5 78.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 185.5 78.5 moveto
+185.5 119.5 lineto
+310.5 119.5 lineto
+310.5 78.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+193.5 107.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+193.5 96.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+213 85.5 moveto 70 (/spill_tree.hpp) alignedtext
+grestore
+% Node2->Node53
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1544.6611 615.3351 moveto
+1228.749 613.6756 0 597.0914 0 439.5 curveto
+0 439.5 0 439.5 0 259.5 curveto
+0 207.6155 13.8349 188.8446 54 156 curveto
+91.1783 125.5978 144.1243 111.6975 185.3141 105.3438 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1545.052 618.837 moveto
+1555.0691 615.3861 lineto
+1545.0864 611.8371 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1545.052 618.837 moveto
+1555.0691 615.3861 lineto
+1545.0864 611.8371 lineto
+closepath stroke
+grestore
+% Node4
+gsave
+[ /Rect [ 1062.5 412 1205.5 465 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($binary__space__tree_2binary__space__tree_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1062.5 412.5 moveto
+1062.5 464.5 lineto
+1205.5 464.5 lineto
+1205.5 412.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1062.5 412.5 moveto
+1062.5 464.5 lineto
+1205.5 464.5 lineto
+1205.5 412.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1070.5 452.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1070.5 441.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1070.5 430.5 moveto 127 (/binary_space_tree/binary) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1094 419.5 moveto 80 (_space_tree.hpp) alignedtext
+grestore
+% Node3->Node4
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1404.0116 511.5182 moveto
+1349.9744 499.6465 1275.6327 482.2417 1211 465 curveto
+1209.1944 464.5183 1207.3691 464.0258 1205.5308 463.5244 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.3417 514.9544 moveto
+1413.8583 513.6693 lineto
+1404.8357 508.1156 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.3417 514.9544 moveto
+1413.8583 513.6693 lineto
+1404.8357 508.1156 lineto
+closepath stroke
+grestore
+% Node7
+gsave
+[ /Rect [ 1161 323 1307 376 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($neighbor__search_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1161 323.5 moveto
+1161 375.5 lineto
+1307 375.5 lineto
+1307 323.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1161 323.5 moveto
+1161 375.5 lineto
+1307 375.5 lineto
+1307 323.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1169 363.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1169 352.5 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1169 341.5 moveto 130 (/neighbor_search/neighbor) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1204.5 330.5 moveto 59 (_search.hpp) alignedtext
+grestore
+% Node3->Node7
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.8321 524.7418 moveto
+1355.5713 519.5241 1295.1851 504.6761 1258 465 curveto
+1235.5 440.9927 1231.8657 401.5179 1232.2304 375.7654 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.6442 528.2398 moveto
+1413.9336 525.7145 lineto
+1404.3152 521.2721 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.6442 528.2398 moveto
+1413.9336 525.7145 lineto
+1404.3152 521.2721 lineto
+closepath stroke
+grestore
+% Node19
+gsave
+[ /Rect [ 398.5 239.5 571.5 281.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($dual__tree__kmeans_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 398.5 240 moveto
+398.5 281 lineto
+571.5 281 lineto
+571.5 240 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 398.5 240 moveto
+398.5 281 lineto
+571.5 281 lineto
+571.5 240 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+406.5 269 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+406.5 258 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+406.5 247 moveto 157 (/kmeans/dual_tree_kmeans.hpp) alignedtext
+grestore
+% Node3->Node19
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.5544 524.86 moveto
+1232.1343 520.4567 817.9253 505.8098 685 465 curveto
+608.6921 441.5724 581.0079 436.5552 529 376 curveto
+505.1351 348.213 493.4763 306.0776 488.3947 281.418 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.6664 528.3639 moveto
+1413.7515 525.1172 lineto
+1403.8429 521.3661 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.6664 528.3639 moveto
+1413.7515 525.1172 lineto
+1403.8429 521.3661 lineto
+closepath stroke
+grestore
+% Node23
+gsave
+[ /Rect [ 1433.5 0 1604.5 42 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($ns__model_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1433.5 .5 moveto
+1433.5 41.5 lineto
+1604.5 41.5 lineto
+1604.5 .5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1433.5 .5 moveto
+1433.5 41.5 lineto
+1604.5 41.5 lineto
+1604.5 .5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1441.5 29.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1441.5 18.5 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1441.5 7.5 moveto 155 (/neighbor_search/ns_model.hpp) alignedtext
+grestore
+% Node3->Node23
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.6078 522.3208 moveto
+1363.2285 515.7738 1316.6439 500.37 1291 465 curveto
+1277.1734 445.9293 1283.531 434.3401 1291 412 curveto
+1292.9624 406.1305 1352.8467 326.4273 1358 323 curveto
+1412.2129 286.9448 1458.204 336.921 1500 287 curveto
+1560.2565 215.0299 1536.7207 90.0273 1524.5331 41.7836 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.3221 525.8162 moveto
+1413.7236 523.8012 lineto
+1404.3358 518.89 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.3221 525.8162 moveto
+1413.7236 523.8012 lineto
+1404.3358 518.89 lineto
+closepath stroke
+grestore
+% Node25
+gsave
+[ /Rect [ 1899.5 412 2062.5 465 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($breadth__first__dual__tree__traverser_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1899.5 412.5 moveto
+1899.5 464.5 lineto
+2062.5 464.5 lineto
+2062.5 412.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1899.5 412.5 moveto
+1899.5 464.5 lineto
+2062.5 464.5 lineto
+2062.5 412.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1907.5 452.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1907.5 441.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1907.5 430.5 moveto 133 (/binary_space_tree/breadth) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1907.5 419.5 moveto 147 (_first_dual_tree_traverser.hpp) alignedtext
+grestore
+% Node3->Node25
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1554.2403 517.3924 moveto
+1635.5765 507.3833 1768.6056 489.4226 1882 465 curveto
+1887.5566 463.8032 1893.2761 462.4571 1899.0331 461.0247 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.5947 513.9452 moveto
+1544.0933 518.633 lineto
+1554.4442 520.8935 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.5947 513.9452 moveto
+1544.0933 518.633 lineto
+1554.4442 520.8935 lineto
+closepath stroke
+grestore
+% Node26
+gsave
+[ /Rect [ 2081 417.5 2251 459.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($core_2tree_2binary__space__tree_2typedef_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2081 418 moveto
+2081 459 lineto
+2251 459 lineto
+2251 418 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2081 418 moveto
+2081 459 lineto
+2251 459 lineto
+2251 418 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2089 447 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2089 436 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2089 425 moveto 154 (/binary_space_tree/typedef.hpp) alignedtext
+grestore
+% Node3->Node26
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1554.3845 518.5092 moveto
+1706.6325 502.9327 2038.1795 469.6223 2063 465 curveto
+2071.8936 463.3438 2081.1753 461.2661 2090.3767 459.0154 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.7712 515.0536 moveto
+1544.1798 519.5542 lineto
+1554.4843 522.0172 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.7712 515.0536 moveto
+1544.1798 519.5542 lineto
+1554.4843 522.0172 lineto
+closepath stroke
+grestore
+% Node27
+gsave
+[ /Rect [ 2269.5 417.5 2394.5 459.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($dtb_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2269.5 418 moveto
+2269.5 459 lineto
+2394.5 459 lineto
+2394.5 418 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2269.5 418 moveto
+2269.5 459 lineto
+2394.5 459 lineto
+2394.5 418 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2277.5 447 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2277.5 436 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2298 425 moveto 68 (/emst/dtb.hpp) alignedtext
+grestore
+% Node3->Node27
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1554.3219 518.647 moveto
+1606.8817 513.3019 1678.6764 506.2693 1742 501 curveto
+1971.9827 481.8626 2034.0493 511.9526 2260 465 curveto
+2267.2707 463.4891 2274.8058 461.4191 2282.1417 459.1067 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.6676 515.1955 moveto
+1544.0746 519.6925 lineto
+1554.3782 522.1593 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.6676 515.1955 moveto
+1544.0746 519.6925 lineto
+1554.3782 522.1593 lineto
+closepath stroke
+grestore
+% Node28
+gsave
+[ /Rect [ 1756.5 417.5 1881.5 459.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($kde_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1756.5 418 moveto
+1756.5 459 lineto
+1881.5 459 lineto
+1881.5 418 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1756.5 418 moveto
+1756.5 459 lineto
+1881.5 459 lineto
+1881.5 418 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1764.5 447 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1764.5 436 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1787 425 moveto 64 (/kde/kde.hpp) alignedtext
+grestore
+% Node3->Node28
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1554.2346 510.7951 moveto
+1607.08 499.3047 1679.248 482.6889 1742 465 curveto
+1748.5058 463.1661 1755.279 461.1234 1761.9906 459.0147 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.2994 507.4164 moveto
+1544.2656 512.9518 lineto
+1554.7796 514.2581 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.2994 507.4164 moveto
+1544.2656 512.9518 lineto
+1554.7796 514.2581 lineto
+closepath stroke
+grestore
+% Node29
+gsave
+[ /Rect [ 2322.5 328.5 2447.5 370.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($kde__model_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2322.5 329 moveto
+2322.5 370 lineto
+2447.5 370 lineto
+2447.5 329 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2322.5 329 moveto
+2322.5 370 lineto
+2447.5 370 lineto
+2447.5 329 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2330.5 358 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2330.5 347 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2335 336 moveto 100 (/kde/kde_model.hpp) alignedtext
+grestore
+% Node3->Node29
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1554.1014 519.7137 moveto
+1616.0218 514.2454 1706.1677 506.5762 1785 501 curveto
+1853.7223 496.139 2356.7199 515.1097 2404 465 curveto
+2428.0618 439.4982 2410.637 395.7668 2397.0056 370.3678 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.6815 516.2371 moveto
+1544.0293 520.6057 lineto
+1554.2991 523.2098 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.6815 516.2371 moveto
+1544.0293 520.6057 lineto
+1554.2991 523.2098 lineto
+closepath stroke
+grestore
+% Node30
+gsave
+[ /Rect [ 694.5 417.5 819.5 459.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($kmeans_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 694.5 418 moveto
+694.5 459 lineto
+819.5 459 lineto
+819.5 418 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 694.5 418 moveto
+694.5 459 lineto
+819.5 459 lineto
+819.5 418 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+702.5 447 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+702.5 436 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+704 425 moveto 106 (/kmeans/kmeans.hpp) alignedtext
+grestore
+% Node3->Node30
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.7169 524.5782 moveto
+1282.8363 520.316 1038.4834 506.8452 836 465 curveto
+828.2374 463.3958 820.1638 461.3038 812.2712 459.0078 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.854 528.0848 moveto
+1413.9676 524.9279 lineto
+1404.0927 521.0889 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.854 528.0848 moveto
+1413.9676 524.9279 lineto
+1404.0927 521.0889 lineto
+closepath stroke
+grestore
+% Node38
+gsave
+[ /Rect [ 878 412 1006 465 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($pelleg__moore__kmeans_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 878 412.5 moveto
+878 464.5 lineto
+1006 464.5 lineto
+1006 412.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 878 412.5 moveto
+878 464.5 lineto
+1006 464.5 lineto
+1006 412.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+886 452.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+886 441.5 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+886 430.5 moveto 112 (/kmeans/pelleg_moore) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+909 419.5 moveto 66 (_kmeans.hpp) alignedtext
+grestore
+% Node3->Node38
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.7135 520.6643 moveto
+1312.1635 512.5957 1153.343 495.4603 1020 465 curveto
+1015.4166 463.953 1010.7187 462.7522 1006.012 461.4546 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.4554 524.155 moveto
+1413.7209 521.5337 lineto
+1404.0614 517.1813 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1403.4554 524.155 moveto
+1413.7209 521.5337 lineto
+1404.0614 517.1813 lineto
+closepath stroke
+grestore
+% Node39
+gsave
+[ /Rect [ 1526 417.5 1700 459.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($range__search_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1526 418 moveto
+1526 459 lineto
+1700 459 lineto
+1700 418 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1526 418 moveto
+1526 459 lineto
+1700 459 lineto
+1700 418 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1534 447 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1534 436 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1534 425 moveto 158 (/range_search/range_search.hpp) alignedtext
+grestore
+% Node3->Node39
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1517.6196 501.4261 moveto
+1538.263 488.0233 1563.3159 471.7576 1582.5645 459.2603 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1515.5536 498.5944 moveto
+1509.0722 506.9755 lineto
+1519.3655 504.4655 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1515.5536 498.5944 moveto
+1509.0722 506.9755 lineto
+1519.3655 504.4655 lineto
+closepath stroke
+grestore
+% Node41
+gsave
+[ /Rect [ 1994 328.5 2148 370.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($rs__model_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1994 329 moveto
+1994 370 lineto
+2148 370 lineto
+2148 329 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1994 329 moveto
+1994 370 lineto
+2148 370 lineto
+2148 329 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2002 358 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2002 347 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2002 336 moveto 138 (/range_search/rs_model.hpp) alignedtext
+grestore
+% Node3->Node41
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1554.0354 519.2956 moveto
+1601.7689 511.7613 1663.0222 496.3773 1709 465 curveto
+1733.1565 448.5145 1723.257 427.5914 1748 412 curveto
+1788.0247 386.7791 1911.624 368.4362 1993.7967 358.6375 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.4372 515.8461 moveto
+1544.0651 520.7872 lineto
+1554.4729 522.7691 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1553.4372 515.8461 moveto
+1544.0651 520.7872 lineto
+1554.4729 522.7691 lineto
+closepath stroke
+grestore
+% Node43
+gsave
+[ /Rect [ 1769.5 239.5 1894.5 281.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($ra__model_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1769.5 240 moveto
+1769.5 281 lineto
+1894.5 281 lineto
+1894.5 240 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1769.5 240 moveto
+1769.5 281 lineto
+1894.5 281 lineto
+1894.5 240 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1777.5 269 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1777.5 258 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1784.5 247 moveto 95 (/rann/ra_model.hpp) alignedtext
+grestore
+% Node3->Node43
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1479.2864 496.6888 moveto
+1481.4155 452.0829 1492.2841 368.3743 1542 323 curveto
+1550.4345 315.3021 1686.5894 288.7131 1769.2976 273.1303 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1475.7816 496.7626 moveto
+1478.9212 506.8815 lineto
+1482.7772 497.0133 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1475.7816 496.7626 moveto
+1478.9212 506.8815 lineto
+1482.7772 497.0133 lineto
+closepath stroke
+grestore
+% Node44
+gsave
+[ /Rect [ 1300 417.5 1432 459.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($ra__query__stat_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1300 418 moveto
+1300 459 lineto
+1432 459 lineto
+1432 418 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1300 418 moveto
+1300 459 lineto
+1432 459 lineto
+1432 418 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1308 447 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1308 436 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1308 425 moveto 116 (/rann/ra_query_stat.hpp) alignedtext
+grestore
+% Node3->Node44
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1445.4966 500.7053 moveto
+1428.2715 487.4435 1407.608 471.5344 1391.6657 459.2603 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1443.5818 503.6482 moveto
+1453.6406 506.9755 lineto
+1447.8521 498.1017 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1443.5818 503.6482 moveto
+1453.6406 506.9755 lineto
+1447.8521 498.1017 lineto
+closepath stroke
+grestore
+% Node45
+gsave
+[ /Rect [ 1366.5 328.5 1491.5 370.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($ra__search_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1366.5 329 moveto
+1366.5 370 lineto
+1491.5 370 lineto
+1491.5 329 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1366.5 329 moveto
+1366.5 370 lineto
+1491.5 370 lineto
+1491.5 329 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1374.5 358 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1374.5 347 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1380.5 336 moveto 97 (/rann/ra_search.hpp) alignedtext
+grestore
+% Node3->Node45
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1470.639 497.0693 moveto
+1460.3967 461.0165 1443.33 400.9415 1434.5667 370.0949 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1467.3585 498.3296 moveto
+1473.4581 506.9925 lineto
+1474.092 496.4166 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1467.3585 498.3296 moveto
+1473.4581 506.9925 lineto
+1474.092 496.4166 lineto
+closepath stroke
+grestore
+% Node4->Node3
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1215.6771 461.3589 moveto
+1220.1868 462.6163 1224.6505 463.8397 1229 465 curveto
+1291.6272 481.7067 1363.3702 498.5665 1413.9639 510.3973 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1216.3323 457.9072 moveto
+1205.7577 458.563 lineto
+1214.4332 464.6447 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1216.3323 457.9072 moveto
+1205.7577 458.563 lineto
+1214.4332 464.6447 lineto
+closepath stroke
+grestore
+% Node5
+gsave
+[ /Rect [ 850.5 323 983.5 376 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($binary__space__tree_2dual__tree__traverser_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 850.5 323.5 moveto
+850.5 375.5 lineto
+983.5 375.5 lineto
+983.5 323.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 850.5 323.5 moveto
+850.5 375.5 lineto
+983.5 375.5 lineto
+983.5 323.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+858.5 363.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+858.5 352.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+858.5 341.5 moveto 117 (/binary_space_tree/dual) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+869 330.5 moveto 96 (_tree_traverser.hpp) alignedtext
+grestore
+% Node4->Node5
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1062.2082 408.7171 moveto
+1035.4318 397.9819 1005.2741 385.891 979.4089 375.5211 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1060.9414 411.98 moveto
+1071.5257 412.4527 lineto
+1063.5464 405.4827 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1060.9414 411.98 moveto
+1071.5257 412.4527 lineto
+1063.5464 405.4827 lineto
+closepath stroke
+grestore
+% Node6
+gsave
+[ /Rect [ 1001.5 323 1142.5 376 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($binary__space__tree_2single__tree__traverser_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1001.5 323.5 moveto
+1001.5 375.5 lineto
+1142.5 375.5 lineto
+1142.5 323.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1001.5 323.5 moveto
+1001.5 375.5 lineto
+1142.5 375.5 lineto
+1142.5 323.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1009.5 363.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1009.5 352.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1009.5 341.5 moveto 125 (/binary_space_tree/single) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1024 330.5 moveto 96 (_tree_traverser.hpp) alignedtext
+grestore
+% Node4->Node6
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1110.0745 403.9272 moveto
+1103.3642 394.511 1096.1866 384.4393 1089.8927 375.6075 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1107.4132 406.2236 moveto
+1116.067 412.336 lineto
+1113.1138 402.1611 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1107.4132 406.2236 moveto
+1116.067 412.336 lineto
+1113.1138 402.1611 lineto
+closepath stroke
+grestore
+% Node4->Node7
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1170.6105 405.6489 moveto
+1181.9897 395.749 1194.3678 384.9801 1205.1409 375.6075 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1168.1713 403.1317 moveto
+1162.9241 412.336 lineto
+1172.7659 408.4129 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1168.1713 403.1317 moveto
+1162.9241 412.336 lineto
+1172.7659 408.4129 lineto
+closepath stroke
+grestore
+% Node5->Node3
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 885.6754 383.6585 moveto
+866.0649 408.4534 848.1281 441.918 869 465 curveto
+905.0517 504.8692 1264.0073 520.1109 1413.8376 524.7671 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 888.3836 385.8756 moveto
+892.0542 375.9369 lineto
+882.9869 381.4174 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 888.3836 385.8756 moveto
+892.0542 375.9369 lineto
+882.9869 381.4174 lineto
+closepath stroke
+grestore
+% Node6->Node3
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1053.71 384.6758 moveto
+1043.0611 409.7658 1035.0806 443.1458 1054 465 curveto
+1099.7466 517.8429 1306.4694 526.2704 1413.8229 526.9969 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1056.9256 386.0596 moveto
+1057.8715 375.5071 lineto
+1050.5514 383.1665 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1056.9256 386.0596 moveto
+1057.8715 375.5071 lineto
+1050.5514 383.1665 lineto
+closepath stroke
+grestore
+% Node8
+gsave
+[ /Rect [ 960.5 156 1085.5 198 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($cf_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 960.5 156.5 moveto
+960.5 197.5 lineto
+1085.5 197.5 lineto
+1085.5 156.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 1 1 nodecolor
+newpath 960.5 156.5 moveto
+960.5 197.5 lineto
+1085.5 197.5 lineto
+1085.5 156.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+968.5 185.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+968.5 174.5 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1000.5 163.5 moveto 45 (/cf/cf.hpp) alignedtext
+grestore
+% Node7->Node8
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.8108 323.2238 moveto
+1066.0144 310.7385 877.7787 338.2176 832 287 curveto
+816.3023 269.4373 817.8799 252.8544 832 234 curveto
+847.5872 213.1866 910.8598 197.4907 960.363 188.0887 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.4064 326.7066 moveto
+1160.8634 325.0032 lineto
+1151.6266 319.8137 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.4064 326.7066 moveto
+1160.8634 325.0032 lineto
+1151.6266 319.8137 lineto
+closepath stroke
+grestore
+% Node16
+gsave
+[ /Rect [ 628.5 234 783.5 287 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($cosine__search_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 628.5 234.5 moveto
+628.5 286.5 lineto
+783.5 286.5 lineto
+783.5 234.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 628.5 234.5 moveto
+628.5 286.5 lineto
+783.5 286.5 lineto
+783.5 234.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+636.5 274.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+636.5 263.5 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+636.5 252.5 moveto 139 (/cf/neighbor_search_policies) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+659 241.5 moveto 94 (/cosine_search.hpp) alignedtext
+grestore
+% Node7->Node16
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.9426 322.969 moveto
+995.2158 292.3583 950.2337 315.6255 798 287 curveto
+793.2762 286.1118 788.442 285.0975 783.5831 283.9972 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.3782 326.4254 moveto
+1160.8716 324.9635 lineto
+1151.7568 319.5625 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.3782 326.4254 moveto
+1160.8716 324.9635 lineto
+1151.7568 319.5625 lineto
+closepath stroke
+grestore
+% Node17
+gsave
+[ /Rect [ 1156.5 234 1311.5 287 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($lmetric__search_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1156.5 234.5 moveto
+1156.5 286.5 lineto
+1311.5 286.5 lineto
+1311.5 234.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1156.5 234.5 moveto
+1156.5 286.5 lineto
+1311.5 286.5 lineto
+1311.5 234.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1164.5 274.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1164.5 263.5 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1164.5 252.5 moveto 139 (/cf/neighbor_search_policies) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1185.5 241.5 moveto 97 (/lmetric_search.hpp) alignedtext
+grestore
+% Node7->Node17
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1234 313.1908 moveto
+1234 304.2824 1234 294.8986 1234 286.6075 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1230.5001 313.336 moveto
+1234 323.336 lineto
+1237.5001 313.336 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1230.5001 313.336 moveto
+1234 323.336 lineto
+1237.5001 313.336 lineto
+closepath stroke
+grestore
+% Node18
+gsave
+[ /Rect [ 840.5 234 995.5 287 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($pearson__search_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 840.5 234.5 moveto
+840.5 286.5 lineto
+995.5 286.5 lineto
+995.5 234.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 840.5 234.5 moveto
+840.5 286.5 lineto
+995.5 286.5 lineto
+995.5 234.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+848.5 274.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+848.5 263.5 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+848.5 252.5 moveto 139 (/cf/neighbor_search_policies) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+867.5 241.5 moveto 101 (/pearson_search.hpp) alignedtext
+grestore
+% Node7->Node18
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.7644 322.7251 moveto
+1085.4677 304.9167 1066.9124 303.6455 1005 287 curveto
+1001.96 286.1827 998.8641 285.3374 995.7394 284.4736 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.1777 326.1939 moveto
+1160.7482 325.4764 lineto
+1152.0374 319.4454 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.1777 326.1939 moveto
+1160.7482 325.4764 lineto
+1152.0374 319.4454 lineto
+closepath stroke
+grestore
+% Node7->Node19
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.8404 322.9907 moveto
+902.2693 278.5221 831.7429 325.5021 586 287 curveto
+575.9945 285.4324 565.5334 283.3304 555.2948 281.0028 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.4338 326.4741 moveto
+1160.8991 324.8223 lineto
+1151.6879 319.5874 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.4338 326.4741 moveto
+1160.8991 324.8223 lineto
+1151.6879 319.5874 lineto
+closepath stroke
+grestore
+% Node20
+gsave
+[ /Rect [ 1013.5 239.5 1138.5 281.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($constraints_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1013.5 240 moveto
+1013.5 281 lineto
+1138.5 281 lineto
+1138.5 240 lineto
+closepath fill
+1 setlinewidth
+filled
+0 1 1 nodecolor
+newpath 1013.5 240 moveto
+1013.5 281 lineto
+1138.5 281 lineto
+1138.5 240 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1021.5 269 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1021.5 258 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1023 247 moveto 106 (/lmnn/constraints.hpp) alignedtext
+grestore
+% Node7->Node20
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1179.5182 318.5005 moveto
+1157.0267 306.1159 1131.592 292.1108 1111.5629 281.0821 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1177.8518 321.5784 moveto
+1188.2999 323.336 lineto
+1181.2282 315.4466 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1177.8518 321.5784 moveto
+1188.2999 323.336 lineto
+1181.2282 315.4466 lineto
+closepath stroke
+grestore
+% Node7->Node23
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.8228 323.4212 moveto
+1058.7009 313.506 657.8705 328.5844 619 287 curveto
+602.9147 269.7916 604.3773 252.4673 619 234 curveto
+720.3321 106.0252 1228.6732 47.5869 1433.3869 28.9689 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.5065 326.9111 moveto
+1160.8964 324.837 lineto
+1151.4808 319.9792 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1150.5065 326.9111 moveto
+1160.8964 324.837 lineto
+1151.4808 319.9792 lineto
+closepath stroke
+grestore
+% Node24
+gsave
+[ /Rect [ 1329.5 239.5 1490.5 281.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($methods_2neighbor__search_2typedef_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1329.5 240 moveto
+1329.5 281 lineto
+1490.5 281 lineto
+1490.5 240 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1329.5 240 moveto
+1329.5 281 lineto
+1490.5 281 lineto
+1490.5 240 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1337.5 269 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1337.5 258 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1337.5 247 moveto 145 (/neighbor_search/typedef.hpp) alignedtext
+grestore
+% Node7->Node24
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1287.9114 318.6648 moveto
+1312.4743 306.2399 1341.1917 292.1596 1364.6397 281.0821 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1286.0494 315.685 moveto
+1278.7205 323.336 lineto
+1289.221 321.9253 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1286.0494 315.685 moveto
+1278.7205 323.336 lineto
+1289.221 321.9253 lineto
+closepath stroke
+grestore
+% Node17->Node8
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1159.7284 230.8121 moveto
+1131.2064 219.7954 1099.3377 207.4859 1073.5471 197.5241 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1158.6697 234.1552 moveto
+1169.2591 234.4934 lineto
+1161.1919 227.6253 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1158.6697 234.1552 moveto
+1169.2591 234.4934 lineto
+1161.1919 227.6253 lineto
+closepath stroke
+grestore
+% Node24->Node7
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1367.015 285.7766 moveto
+1344.1437 297.4833 1315.7772 311.5152 1291.0925 323.336 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1368.8434 288.7719 moveto
+1376.1316 281.0821 lineto
+1365.6387 282.5486 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1368.8434 288.7719 moveto
+1376.1316 281.0821 lineto
+1365.6387 282.5486 lineto
+closepath stroke
+grestore
+% Node25->Node3
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1891.8737 466.7196 moveto
+1767.8061 492.7957 1625.2997 511.0625 1544.1779 520.0875 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1892.8586 470.0885 moveto
+1901.9112 464.5839 lineto
+1891.4018 463.2417 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1892.8586 470.0885 moveto
+1901.9112 464.5839 lineto
+1891.4018 463.2417 lineto
+closepath stroke
+grestore
+% Node26->Node3
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2098.4038 461.3634 moveto
+2092.5542 462.705 2086.6974 463.939 2081 465 curveto
+2055.0845 469.8262 1694.7828 505.9275 1544.2486 520.4631 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2099.3019 464.7473 moveto
+2108.2124 459.0154 lineto
+2097.6723 457.9397 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2099.3019 464.7473 moveto
+2108.2124 459.0154 lineto
+2097.6723 457.9397 lineto
+closepath stroke
+grestore
+% Node28->Node29
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1879.9438 414.8987 moveto
+1883.6611 413.8374 1887.3664 412.8589 1891 412 curveto
+1932.1078 402.2829 2198.5281 371.5407 2322.1574 357.5529 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1878.6725 411.6267 moveto
+1870.1172 417.8763 lineto
+1880.7025 418.3259 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1878.6725 411.6267 moveto
+1870.1172 417.8763 lineto
+1880.7025 418.3259 lineto
+closepath stroke
+grestore
+% Node31
+gsave
+[ /Rect [ 538.5 328.5 663.5 370.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($em__fit_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 538.5 329 moveto
+538.5 370 lineto
+663.5 370 lineto
+663.5 329 lineto
+closepath fill
+1 setlinewidth
+filled
+0 1 1 nodecolor
+newpath 538.5 329 moveto
+538.5 370 lineto
+663.5 370 lineto
+663.5 329 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+546.5 358 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+546.5 347 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+558.5 336 moveto 85 (/gmm/em_fit.hpp) alignedtext
+grestore
+% Node30->Node31
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 712.97 412.9448 moveto
+688.6668 399.3911 658.8956 382.7879 636.1621 370.1097 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 711.5521 416.1615 moveto
+721.9906 417.9755 lineto
+714.9617 410.048 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 711.5521 416.1615 moveto
+721.9906 417.9755 lineto
+714.9617 410.048 lineto
+closepath stroke
+grestore
+% Node35
+gsave
+[ /Rect [ 681.5 323 832.5 376 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($kmeans__selection_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 681.5 323.5 moveto
+681.5 375.5 lineto
+832.5 375.5 lineto
+832.5 323.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 1 1 nodecolor
+newpath 681.5 323.5 moveto
+681.5 375.5 lineto
+832.5 375.5 lineto
+832.5 323.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+689.5 363.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+689.5 352.5 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+689.5 341.5 moveto 135 (/nystroem_method/kmeans) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+721.5 330.5 moveto 71 (_selection.hpp) alignedtext
+grestore
+% Node30->Node35
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 757 407.5092 moveto
+757 397.1743 757 385.71 757 375.7882 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 753.5001 407.7583 moveto
+757 417.7584 lineto
+760.5001 407.7584 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 753.5001 407.7583 moveto
+757 417.7584 lineto
+760.5001 407.7584 lineto
+closepath stroke
+grestore
+% Node40
+gsave
+[ /Rect [ 1550.5 328.5 1675.5 370.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($dbscan_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1550.5 329 moveto
+1550.5 370 lineto
+1675.5 370 lineto
+1675.5 329 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1550.5 329 moveto
+1550.5 370 lineto
+1675.5 370 lineto
+1675.5 329 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1558.5 358 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1558.5 347 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1564.5 336 moveto 97 (/dbscan/dbscan.hpp) alignedtext
+grestore
+% Node39->Node40
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1613 407.4407 moveto
+1613 395.1014 1613 381.1619 1613 370.1635 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1609.5001 407.7583 moveto
+1613 417.7584 lineto
+1616.5001 407.7584 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1609.5001 407.7583 moveto
+1613 417.7584 lineto
+1616.5001 407.7584 lineto
+closepath stroke
+grestore
+% Node39->Node41
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1697.5833 415.6393 moveto
+1703.1284 414.3625 1708.6372 413.1372 1714 412 curveto
+1809.8239 391.681 1921.1926 373.3219 1993.7222 362.059 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1696.5225 412.2931 moveto
+1687.5865 417.985 lineto
+1698.1217 419.108 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1696.5225 412.2931 moveto
+1687.5865 417.985 lineto
+1698.1217 419.108 lineto
+closepath stroke
+grestore
+% Node42
+gsave
+[ /Rect [ 1990.5 239.5 2151.5 281.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($range__search__utils_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1990.5 240 moveto
+1990.5 281 lineto
+2151.5 281 lineto
+2151.5 240 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1990.5 240 moveto
+1990.5 281 lineto
+2151.5 281 lineto
+2151.5 240 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1998.5 269 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1998.5 258 moveto 112 (/src/mlpack/tests/main) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1998.5 247 moveto 145 (_tests/range_search_utils.hpp) alignedtext
+grestore
+% Node41->Node42
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2071 318.4407 moveto
+2071 306.1014 2071 292.1619 2071 281.1635 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2067.5001 318.7583 moveto
+2071 328.7584 lineto
+2074.5001 318.7584 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2067.5001 318.7583 moveto
+2071 328.7584 lineto
+2074.5001 318.7584 lineto
+closepath stroke
+grestore
+% Node44->Node45
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1386.4225 409.2975 moveto
+1395.6774 396.5169 1406.3943 381.7174 1414.7609 370.1635 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1383.326 407.6061 moveto
+1380.2957 417.7584 lineto
+1388.9956 411.7117 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1383.326 407.6061 moveto
+1380.2957 417.7584 lineto
+1388.9956 411.7117 lineto
+closepath stroke
+grestore
+% Node45->Node43
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1494.9586 326.024 moveto
+1498.6798 324.9537 1502.3787 323.9368 1506 323 curveto
+1554.7901 310.379 1689.2149 286.2743 1769.3961 272.2841 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1493.6777 322.7535 moveto
+1485.0937 328.9636 lineto
+1495.6768 329.462 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1493.6777 322.7535 moveto
+1485.0937 328.9636 lineto
+1495.6768 329.462 lineto
+closepath stroke
+grestore
+% Node46
+gsave
+[ /Rect [ 1547.5 239.5 1672.5 281.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($ra__typedef_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1547.5 240 moveto
+1547.5 281 lineto
+1672.5 281 lineto
+1672.5 240 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1547.5 240 moveto
+1547.5 281 lineto
+1672.5 281 lineto
+1672.5 240 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1555.5 269 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1555.5 258 moveto 103 (/src/mlpack/methods) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1559.5 247 moveto 101 (/rann/ra_typedef.hpp) alignedtext
+grestore
+% Node45->Node46
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1472.8632 324.4805 moveto
+1500.299 310.8307 1535.527 293.9555 1563.4544 281.1097 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1471.2563 321.3708 moveto
+1463.8794 328.9755 lineto
+1474.3886 327.6309 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1471.2563 321.3708 moveto
+1463.8794 328.9755 lineto
+1474.3886 327.6309 lineto
+closepath stroke
+grestore
+% Node46->Node45
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1565.9547 285.6101 moveto
+1538.4845 299.2742 1503.2554 316.1475 1475.3605 328.9755 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 1567.5738 288.7137 moveto
+1574.9514 281.1097 lineto
+1564.4421 282.4533 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 1567.5738 288.7137 moveto
+1574.9514 281.1097 lineto
+1564.4421 282.4533 lineto
+closepath stroke
+grestore
+% Node47->Node23
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2647.729 408.0087 moveto
+2637.6617 373.3185 2623 313.8165 2623 261.5 curveto
+2623 261.5 2623 261.5 2623 176 curveto
+2623 50.8433 2481.3808 104.2134 2359 78 curveto
+2216.8885 47.5604 1788.6335 30.6189 1604.5842 24.5738 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2644.4781 409.3559 moveto
+2650.6845 417.9426 lineto
+2651.1875 407.3597 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2644.4781 409.3559 moveto
+2650.6845 417.9426 lineto
+2651.1875 407.3597 lineto
+closepath stroke
+grestore
+% Node47->Node29
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2593.7196 414.5999 moveto
+2591.1154 413.7122 2588.5343 412.8423 2586 412 curveto
+2539.9418 396.6925 2487.4885 380.6908 2447.7167 368.8479 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2592.614 417.9209 moveto
+2603.2088 417.8751 lineto
+2594.8979 411.3039 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2592.614 417.9209 moveto
+2603.2088 417.8751 lineto
+2594.8979 411.3039 lineto
+closepath stroke
+grestore
+% Node47->Node41
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2597.1243 414.9308 moveto
+2593.3856 413.8533 2589.6568 412.8633 2586 412 curveto
+2544.4003 402.1793 2281.1989 373.0944 2148.0041 358.7243 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2596.4149 418.3741 moveto
+2607.0017 417.9604 lineto
+2598.4677 411.6818 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2596.4149 418.3741 moveto
+2607.0017 417.9604 lineto
+2598.4677 411.6818 lineto
+closepath stroke
+grestore
+% Node47->Node43
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2628.5421 410.8249 moveto
+2597.2678 383.3433 2544.2301 341.9323 2490 323 curveto
+2383.152 285.6983 2094.364 300.4996 1982 287 curveto
+1953.1506 283.534 1921.399 278.3385 1894.5657 273.5397 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2626.5999 413.7829 moveto
+2636.3902 417.8326 lineto
+2631.2622 408.5615 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2626.5999 413.7829 moveto
+2636.3902 417.8326 lineto
+2631.2622 408.5615 lineto
+closepath stroke
+grestore
+% Node48->Node7
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2441.4248 418.5918 moveto
+2429.0138 415.9584 2416.1919 413.6076 2404 412 curveto
+1942.8275 351.192 1819.8959 431.0441 1358 376 curveto
+1341.4139 374.0234 1323.747 370.973 1307.103 367.6606 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2440.7519 422.0274 moveto
+2451.2701 420.7555 lineto
+2442.2545 415.1906 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2440.7519 422.0274 moveto
+2451.2701 420.7555 lineto
+2442.2545 415.1906 lineto
+closepath stroke
+grestore
+% Node48->Node23
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2524.4528 407.811 moveto
+2535.7017 373.1588 2552 313.9087 2552 261.5 curveto
+2552 261.5 2552 261.5 2552 176 curveto
+2552 80.5225 1852.7375 37.9077 1604.8544 25.8006 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2520.9851 407.147 moveto
+2521.1475 417.7406 lineto
+2527.6268 409.3579 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2520.9851 407.147 moveto
+2521.1475 417.7406 lineto
+2527.6268 409.3579 lineto
+closepath stroke
+grestore
+% Node48->Node29
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2476.555 412.2464 moveto
+2456.7331 398.8781 2432.7475 382.7018 2414.2998 370.2603 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2474.8021 415.2858 moveto
+2485.0499 417.9755 lineto
+2478.7162 409.4823 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2474.8021 415.2858 moveto
+2485.0499 417.9755 lineto
+2478.7162 409.4823 lineto
+closepath stroke
+grestore
+% Node48->Node41
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2441.3976 420.1809 moveto
+2428.9438 417.3502 2416.1152 414.5217 2404 412 curveto
+2316.6578 393.8205 2215.8542 375.5838 2148.2387 363.7456 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2440.7549 423.6243 moveto
+2451.284 422.4458 lineto
+2442.3181 416.8011 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2440.7549 423.6243 moveto
+2451.284 422.4458 lineto
+2442.3181 416.8011 lineto
+closepath stroke
+grestore
+% Node48->Node43
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2507.8945 407.7213 moveto
+2500.6688 380.7525 2485.7878 342.3699 2457 323 curveto
+2369.172 263.905 2087.0712 299.8845 1982 287 curveto
+1953.1592 283.4634 1921.4088 278.2579 1894.5741 273.4708 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2504.585 408.9183 moveto
+2510.382 417.7865 lineto
+2511.3805 407.2389 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2504.585 408.9183 moveto
+2510.382 417.7865 lineto
+2511.3805 407.2389 lineto
+closepath stroke
+grestore
+% Node50
+gsave
+[ /Rect [ 249.5 417.5 402.5 459.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($hyperplane_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 249.5 418 moveto
+249.5 459 lineto
+402.5 459 lineto
+402.5 418 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 249.5 418 moveto
+249.5 459 lineto
+402.5 459 lineto
+402.5 418 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+257.5 447 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+257.5 436 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+257.5 425 moveto 137 (/space_split/hyperplane.hpp) alignedtext
+grestore
+% Node49->Node50
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 726.6724 513.0411 moveto
+638.7806 496.9091 492.1901 470.0032 402.7898 453.5943 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 726.0985 516.4942 moveto
+736.5661 514.8571 lineto
+727.3623 509.6092 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 726.0985 516.4942 moveto
+736.5661 514.8571 lineto
+727.3623 509.6092 lineto
+closepath stroke
+grestore
+% Node51
+gsave
+[ /Rect [ 28.5 323 167.5 376 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($mean__space__split_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 28.5 323.5 moveto
+28.5 375.5 lineto
+167.5 375.5 lineto
+167.5 323.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 1 1 nodecolor
+newpath 28.5 323.5 moveto
+28.5 375.5 lineto
+167.5 375.5 lineto
+167.5 323.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+36.5 363.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+36.5 352.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+36.5 341.5 moveto 123 (/space_split/mean_space) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+74 330.5 moveto 48 (_split.hpp) alignedtext
+grestore
+% Node50->Node51
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 265.3489 414.3568 moveto
+234.0265 402.4049 195.7665 387.8056 163.7391 375.5847 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 264.2416 417.6804 moveto
+274.8323 417.9755 lineto
+266.7372 411.1403 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 264.2416 417.6804 moveto
+274.8323 417.9755 lineto
+266.7372 411.1403 lineto
+closepath stroke
+grestore
+% Node58
+gsave
+[ /Rect [ 185.5 323 310.5 376 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($midpoint__space__split_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 185.5 323.5 moveto
+185.5 375.5 lineto
+310.5 375.5 lineto
+310.5 323.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 1 1 nodecolor
+newpath 185.5 323.5 moveto
+185.5 375.5 lineto
+310.5 375.5 lineto
+310.5 323.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+193.5 363.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+193.5 352.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+193.5 341.5 moveto 105 (/space_split/midpoint) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+207 330.5 moveto 82 (_space_split.hpp) alignedtext
+grestore
+% Node50->Node58
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 301.4295 410.0945 moveto
+291.5868 399.1161 280.3166 386.5455 270.6722 375.7882 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 299.0191 412.6491 moveto
+308.3006 417.7584 lineto
+304.2311 407.9762 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 299.0191 412.6491 moveto
+308.3006 417.7584 lineto
+304.2311 407.9762 lineto
+closepath stroke
+grestore
+% Node59
+gsave
+[ /Rect [ 328.5 328.5 481.5 370.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($space__split_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 328.5 329 moveto
+328.5 370 lineto
+481.5 370 lineto
+481.5 329 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 328.5 329 moveto
+328.5 370 lineto
+481.5 370 lineto
+481.5 329 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+336.5 358 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+336.5 347 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+336.5 336 moveto 137 (/space_split/space_split.hpp) alignedtext
+grestore
+% Node50->Node59
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 350.9417 410.0326 moveto
+362.6966 397.0873 376.4514 381.9396 387.1446 370.1635 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 348.0577 408.0022 moveto
+343.9263 417.7584 lineto
+353.24 412.708 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 348.0577 408.0022 moveto
+343.9263 417.7584 lineto
+353.24 412.708 lineto
+closepath stroke
+grestore
+% Node54
+gsave
+[ /Rect [ 181 239.5 315 281.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($spill__tree_2spill__tree_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 181 240 moveto
+181 281 lineto
+315 281 lineto
+315 240 lineto
+closepath fill
+1 setlinewidth
+filled
+0 1 1 nodecolor
+newpath 181 240 moveto
+181 281 lineto
+315 281 lineto
+315 240 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+189 269 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+189 258 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+189 247 moveto 118 (/spill_tree/spill_tree.hpp) alignedtext
+grestore
+% Node58->Node54
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 248 313.1554 moveto
+248 302.2096 248 290.5492 248 281.0821 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 244.5001 313.336 moveto
+248 323.336 lineto
+251.5001 313.336 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 244.5001 313.336 moveto
+248 323.336 lineto
+251.5001 313.336 lineto
+closepath stroke
+grestore
+% Node55
+gsave
+[ /Rect [ 63.5 156 210.5 198 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($is__spill__tree_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 63.5 156.5 moveto
+63.5 197.5 lineto
+210.5 197.5 lineto
+210.5 156.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 63.5 156.5 moveto
+63.5 197.5 lineto
+210.5 197.5 lineto
+210.5 156.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+71.5 185.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+71.5 174.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+71.5 163.5 moveto 131 (/spill_tree/is_spill_tree.hpp) alignedtext
+grestore
+% Node54->Node55
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 213.329 234.0434 moveto
+197.3342 222.2994 178.6396 208.5732 163.755 197.6445 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 211.2807 236.8815 moveto
+221.4127 239.9787 lineto
+215.4236 231.2391 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 211.2807 236.8815 moveto
+221.4127 239.9787 lineto
+215.4236 231.2391 lineto
+closepath stroke
+grestore
+% Node54->Node53
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 242.6074 229.7987 moveto
+240.5713 197.6563 240.8258 147.3093 243.3709 119.7178 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 239.1308 230.2393 moveto
+243.3857 239.9422 lineto
+246.1103 229.7037 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 239.1308 230.2393 moveto
+243.3857 239.9422 lineto
+246.1103 229.7037 lineto
+closepath stroke
+grestore
+% Node55->Node53
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 174.0459 150.6352 moveto
+188.868 140.4868 205.6716 128.9816 219.5116 119.5056 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 171.8592 147.8906 moveto
+165.5853 156.4281 lineto
+175.8139 153.6665 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 171.8592 147.8906 moveto
+165.5853 156.4281 lineto
+175.8139 153.6665 lineto
+closepath stroke
+grestore
+% Node53->Node23
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 320.7286 93.6512 moveto
+540.5288 80.5081 1197.2611 41.2385 1433.3119 27.1238 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 320.3688 90.1663 moveto
+310.5956 94.2571 lineto
+320.7867 97.1538 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 320.3688 90.1663 moveto
+310.5956 94.2571 lineto
+320.7867 97.1538 lineto
+closepath stroke
+grestore
+% Node53->Node54
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 253.4044 129.8881 moveto
+255.4316 162.1009 255.1683 212.4389 252.6143 239.9422 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 256.8792 129.4228 moveto
+252.6291 119.7178 lineto
+249.8994 129.9549 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 256.8792 129.4228 moveto
+252.6291 119.7178 lineto
+249.8994 129.9549 lineto
+closepath stroke
+grestore
+% Node60->Node47
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2769.7121 607.5225 moveto
+2835.4837 598.6305 2925.2644 581.7305 2947 554 curveto
+2961.5313 535.4607 2961.8283 519.3026 2947 501 curveto
+2918.9348 466.3589 2796.036 450.438 2719.5162 443.7649 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2769.243 604.054 moveto
+2759.7852 608.829 lineto
+2770.1565 610.9941 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2769.243 604.054 moveto
+2759.7852 608.829 lineto
+2770.1565 610.9941 lineto
+closepath stroke
+grestore
+% Node61
+gsave
+[ /Rect [ 2572 506.5 2742 548.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($octree_2dual__tree__traverser_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2572 507 moveto
+2572 548 lineto
+2742 548 lineto
+2742 507 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2572 507 moveto
+2572 548 lineto
+2742 548 lineto
+2742 507 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2580 536 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2580 525 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2580 514 moveto 154 (/octree/dual_tree_traverser.hpp) alignedtext
+grestore
+% Node60->Node61
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2683.6933 586.5579 moveto
+2677.896 573.9489 2671.2507 559.4952 2666.0407 548.1635 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2680.566 588.1347 moveto
+2687.9234 595.7584 lineto
+2686.926 585.2106 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2680.566 588.1347 moveto
+2687.9234 595.7584 lineto
+2686.926 585.2106 lineto
+closepath stroke
+grestore
+% Node62
+gsave
+[ /Rect [ 2760 506.5 2938 548.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($octree_2single__tree__traverser_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2760 507 moveto
+2760 548 lineto
+2938 548 lineto
+2938 507 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2760 507 moveto
+2760 548 lineto
+2938 548 lineto
+2938 507 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2768 536 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2768 525 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2768 514 moveto 162 (/octree/single_tree_traverser.hpp) alignedtext
+grestore
+% Node60->Node62
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2739.9011 590.9448 moveto
+2763.581 577.3911 2792.5889 560.7879 2814.7395 548.1097 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2738.052 587.9703 moveto
+2731.1118 595.9755 lineto
+2741.5294 594.0455 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2738.052 587.9703 moveto
+2731.1118 595.9755 lineto
+2741.5294 594.0455 lineto
+closepath stroke
+grestore
+% Node61->Node47
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2657 496.4407 moveto
+2657 484.1014 2657 470.1619 2657 459.1635 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2653.5001 496.7583 moveto
+2657 506.7584 lineto
+2660.5001 496.7584 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2653.5001 496.7583 moveto
+2657 506.7584 lineto
+2660.5001 496.7584 lineto
+closepath stroke
+grestore
+% Node62->Node47
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2796.7757 502.8359 moveto
+2766.516 489.1244 2728.8724 472.0672 2700.2765 459.1097 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2795.3583 506.0361 moveto
+2805.9115 506.9755 lineto
+2798.2475 499.6602 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2795.3583 506.0361 moveto
+2805.9115 506.9755 lineto
+2798.2475 499.6602 lineto
+closepath stroke
+grestore
+% Node63->Node48
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2518.1345 580.5855 moveto
+2520.9775 572.0299 2523.539 562.7997 2525 554 curveto
+2530.4949 520.9035 2524.0404 481.9351 2518.9537 459.0552 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2514.7501 579.658 moveto
+2514.7168 590.2528 lineto
+2521.3499 581.9912 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2514.7501 579.658 moveto
+2514.7168 590.2528 lineto
+2521.3499 581.9912 lineto
+closepath stroke
+grestore
+% Node64->Node48
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2210.2963 583.9139 moveto
+2200.4765 575.511 2191.5815 565.5086 2186 554 curveto
+2175.721 532.8055 2170.5713 518.7994 2186 501 curveto
+2222.9078 458.421 2382.1498 477.9081 2437 465 curveto
+2444.1279 463.3226 2451.5372 461.2744 2458.8193 459.0755 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2208.3217 586.8156 moveto
+2218.3243 590.3081 lineto
+2212.6828 581.3401 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2208.3217 586.8156 moveto
+2218.3243 590.3081 lineto
+2212.6828 581.3401 lineto
+closepath stroke
+grestore
+% Node65
+gsave
+[ /Rect [ 2194.5 501 2333.5 554 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($rectangle__tree_2dual__tree__traverser_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2194.5 501.5 moveto
+2194.5 553.5 lineto
+2333.5 553.5 lineto
+2333.5 501.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2194.5 501.5 moveto
+2194.5 553.5 lineto
+2333.5 553.5 lineto
+2333.5 501.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2202.5 541.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2202.5 530.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2202.5 519.5 moveto 123 (/rectangle_tree/dual_tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2228.5 508.5 moveto 71 (_traverser.hpp) alignedtext
+grestore
+% Node64->Node65
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2264 580.1908 moveto
+2264 571.2824 2264 561.8986 2264 553.6075 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2260.5001 580.336 moveto
+2264 590.336 lineto
+2267.5001 580.336 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2260.5001 580.336 moveto
+2264 590.336 lineto
+2267.5001 580.336 lineto
+closepath stroke
+grestore
+% Node66
+gsave
+[ /Rect [ 2390.5 501 2515.5 554 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($rectangle__tree_2single__tree__traverser_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 2390.5 501.5 moveto
+2390.5 553.5 lineto
+2515.5 553.5 lineto
+2515.5 501.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 2390.5 501.5 moveto
+2390.5 553.5 lineto
+2515.5 553.5 lineto
+2515.5 501.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+2398.5 541.5 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2398.5 530.5 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2398.5 519.5 moveto 106 (/rectangle_tree/single) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+2405 508.5 moveto 96 (_tree_traverser.hpp) alignedtext
+grestore
+% Node64->Node66
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2327.7531 586.1533 moveto
+2350.7662 575.56 2376.5096 563.7099 2398.6438 553.5211 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2326.0334 583.0919 moveto
+2318.4131 590.4527 lineto
+2328.9604 589.4506 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2326.0334 583.0919 moveto
+2318.4131 590.4527 lineto
+2328.9604 589.4506 lineto
+closepath stroke
+grestore
+% Node67
+gsave
+[ /Rect [ 1986.5 506.5 2137.5 548.5 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($core_2tree_2rectangle__tree_2typedef_8hpp.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 1986.5 507 moveto
+1986.5 548 lineto
+2137.5 548 lineto
+2137.5 507 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 1986.5 507 moveto
+1986.5 548 lineto
+2137.5 548 lineto
+2137.5 507 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+1994.5 536 moveto 109 (/home/aakash/mlpack) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1994.5 525 moveto 103 (/src/mlpack/core/tree) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+1994.5 514 moveto 135 (/rectangle_tree/typedef.hpp) alignedtext
+grestore
+% Node64->Node67
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2196.5156 586.4349 moveto
+2167.2813 573.8439 2133.8217 559.4331 2107.5866 548.1338 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2195.2754 589.7115 moveto
+2205.8442 590.4527 lineto
+2198.0443 583.2825 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2195.2754 589.7115 moveto
+2205.8442 590.4527 lineto
+2198.0443 583.2825 lineto
+closepath stroke
+grestore
+% Node65->Node48
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2343.4464 498.8527 moveto
+2380.6287 485.9132 2424.0408 470.8058 2457.7612 459.0711 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2341.933 495.6734 moveto
+2333.6389 502.2656 lineto
+2344.2338 502.2845 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2341.933 495.6734 moveto
+2333.6389 502.2656 lineto
+2344.2338 502.2845 lineto
+closepath stroke
+grestore
+% Node66->Node48
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2476.5993 492.8419 moveto
+2484.6096 481.4175 2493.29 469.0372 2500.27 459.0821 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2473.5189 491.1387 moveto
+2470.6437 501.336 lineto
+2479.2505 495.1574 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2473.5189 491.1387 moveto
+2470.6437 501.336 lineto
+2479.2505 495.1574 lineto
+closepath stroke
+grestore
+% Node67->Node48
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2136.5901 504.4403 moveto
+2141.7842 503.1901 2146.9574 502.0268 2152 501 curveto
+2277.106 475.5259 2312.4805 493.2016 2437 465 curveto
+2444.2791 463.3514 2451.8446 461.2924 2459.2659 459.0637 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 2135.4556 501.1162 moveto
+2126.6042 506.9388 lineto
+2137.1548 507.9068 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 2135.4556 501.1162 moveto
+2126.6042 506.9388 lineto
+2137.1548 507.9068 lineto
+closepath stroke
+grestore
+endpage
+showpage
+grestore
+%%PageTrailer
+%%EndPage: 1
+%%Trailer
+%%Pages: 1
+%%BoundingBox: 36 36 3002 765
+end
+restore
+%%EOF

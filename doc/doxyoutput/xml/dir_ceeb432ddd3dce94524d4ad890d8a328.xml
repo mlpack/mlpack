@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_ceeb432ddd3dce94524d4ad890d8a328" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/bindings/util</compoundname>
+    <innerfile refid="camel__case_8hpp">camel_case.hpp</innerfile>
+    <innerfile refid="util_2strip__type_8hpp">strip_type.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/util/"/>
+  </compounddef>
+</doxygen>

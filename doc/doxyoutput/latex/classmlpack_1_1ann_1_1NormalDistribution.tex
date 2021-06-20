@@ -1,0 +1,303 @@
+\doxysection{Normal\+Distribution$<$ Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1NormalDistribution}\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+
+
+Implementation of the Normal Distribution function.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Normal\+Distribution} ()
+\begin{DoxyCompactList}\small\item\em Default constructor, which creates a Normal distribution with zero dimension. \end{DoxyCompactList}\item 
+\textbf{ Normal\+Distribution} (const Data\+Type \&mean, const Data\+Type \&sigma)
+\begin{DoxyCompactList}\small\item\em Create a Normal distribution with the given mean and sigma. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Dimensionality} () const
+\begin{DoxyCompactList}\small\item\em Return the dimensionality of this distribution. \end{DoxyCompactList}\item 
+Data\+Type \textbf{ Log\+Probability} (const Data\+Type \&observation) const
+\begin{DoxyCompactList}\small\item\em Return the log probabilities of the given matrix of observations. \end{DoxyCompactList}\item 
+void \textbf{ Log\+Probability} (const Data\+Type \&x, Data\+Type \&probabilities) const
+\begin{DoxyCompactList}\small\item\em Calculates the log of normal probability density function for each data point (column) in the given matrix. \end{DoxyCompactList}\item 
+Data\+Type \& \textbf{ Mean} ()
+\begin{DoxyCompactList}\small\item\em Modify the mean. \end{DoxyCompactList}\item 
+const Data\+Type \& \textbf{ Mean} () const
+\begin{DoxyCompactList}\small\item\em Get the mean. \end{DoxyCompactList}\item 
+Data\+Type \textbf{ Probability} (const Data\+Type \&observation) const
+\begin{DoxyCompactList}\small\item\em Return the probabilities of the given matrix of observations. \end{DoxyCompactList}\item 
+void \textbf{ Probability} (const Data\+Type \&x, Data\+Type \&probabilities) const
+\begin{DoxyCompactList}\small\item\em Calculates the normal probability density function for each data point (column) in the given matrix. \end{DoxyCompactList}\item 
+void \textbf{ Prob\+Backward} (const Data\+Type \&observation, Data\+Type \&dmu, Data\+Type \&dsigma) const
+\begin{DoxyCompactList}\small\item\em Stores the gradient of the probabilities of the observations with respect to mean and standard deviation. \end{DoxyCompactList}\item 
+Data\+Type \textbf{ Sample} () const
+\begin{DoxyCompactList}\small\item\em Return a randomly generated observation according to the probability distribution defined by this object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the distribution. \end{DoxyCompactList}\item 
+Data\+Type \& \textbf{ Standard\+Deviation} ()
+\begin{DoxyCompactList}\small\item\em Modify the standard deviation. \end{DoxyCompactList}\item 
+const Data\+Type \& \textbf{ Standard\+Deviation} () const
+\begin{DoxyCompactList}\small\item\em Get the standard deviation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Normal\+Distribution$<$ Data\+Type $>$}
+
+Implementation of the Normal Distribution function. 
+
+Normal distribution is a function which accepts a mean and a standard deviation term and creates a probability distribution out of it.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Data\+Type} & Type of the input data. (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 32 of file normal\+\_\+distribution.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_ab76c4ca0ad20a2d0e3c22c6a1b707571}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!NormalDistribution@{NormalDistribution}}
+\index{NormalDistribution@{NormalDistribution}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{NormalDistribution()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Normal\+Distribution} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Default constructor, which creates a Normal distribution with zero dimension. 
+
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_a7dc8bd49c941fb88043958643d00d6d1}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!NormalDistribution@{NormalDistribution}}
+\index{NormalDistribution@{NormalDistribution}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{NormalDistribution()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Normal\+Distribution} (\begin{DoxyParamCaption}\item[{const Data\+Type \&}]{mean,  }\item[{const Data\+Type \&}]{sigma }\end{DoxyParamCaption})}
+
+
+
+Create a Normal distribution with the given mean and sigma. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mean} & The mean of the normal distribution. \\
+\hline
+{\em sigma} & The standard deviation of the normal distribution. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_a78eda6bfb9e9462afa0fc85e32abe1af}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!Dimensionality@{Dimensionality}}
+\index{Dimensionality@{Dimensionality}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{Dimensionality()}
+{\footnotesize\ttfamily size\+\_\+t Dimensionality (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the dimensionality of this distribution. 
+
+
+
+Definition at line 123 of file normal\+\_\+distribution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_aa02bcee8ddd2603eac9ba925d709fe6e}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!LogProbability@{LogProbability}}
+\index{LogProbability@{LogProbability}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{LogProbability()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Data\+Type Log\+Probability (\begin{DoxyParamCaption}\item[{const Data\+Type \&}]{observation }\end{DoxyParamCaption}) const}
+
+
+
+Return the log probabilities of the given matrix of observations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em observation} & The observation matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Normal\+Distribution$<$ Data\+Type $>$\+::\+Log\+Probability(), and Normal\+Distribution$<$ Data\+Type $>$\+::\+Probability().
+
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_a206f15b7f10ba5118df1bd6ac31ddf91}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!LogProbability@{LogProbability}}
+\index{LogProbability@{LogProbability}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{LogProbability()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Log\+Probability (\begin{DoxyParamCaption}\item[{const Data\+Type \&}]{x,  }\item[{Data\+Type \&}]{probabilities }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculates the log of normal probability density function for each data point (column) in the given matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The observation matrix. \\
+\hline
+{\em probabilities} & Output log probabilities for each input observation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 97 of file normal\+\_\+distribution.\+hpp.
+
+
+
+References Normal\+Distribution$<$ Data\+Type $>$\+::\+Log\+Probability().
+
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_ad45f7423a3ba9c77a3a092887709ce59}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!Mean@{Mean}}
+\index{Mean@{Mean}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{Mean()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Data\+Type\& Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the mean. 
+
+
+
+Definition at line 114 of file normal\+\_\+distribution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_ad742dbbc903032d3de5036c96942d19c}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!Mean@{Mean}}
+\index{Mean@{Mean}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{Mean()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Data\+Type\& Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the mean. 
+
+
+
+Definition at line 111 of file normal\+\_\+distribution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_a3e6dc6d5dcfdbaa446afaa6cb87b9e26}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!Probability@{Probability}}
+\index{Probability@{Probability}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{Probability()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Data\+Type Probability (\begin{DoxyParamCaption}\item[{const Data\+Type \&}]{observation }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the probabilities of the given matrix of observations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em observation} & The observation matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 54 of file normal\+\_\+distribution.\+hpp.
+
+
+
+References Normal\+Distribution$<$ Data\+Type $>$\+::\+Log\+Probability().
+
+
+
+Referenced by Normal\+Distribution$<$ Data\+Type $>$\+::\+Probability().
+
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_a6512ca09816d0ae2f7edbeffc8f86b8e}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!Probability@{Probability}}
+\index{Probability@{Probability}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{Probability()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Probability (\begin{DoxyParamCaption}\item[{const Data\+Type \&}]{x,  }\item[{Data\+Type \&}]{probabilities }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculates the normal probability density function for each data point (column) in the given matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & The observation matrix. \\
+\hline
+{\em probabilities} & Output probabilities for each input observation. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 85 of file normal\+\_\+distribution.\+hpp.
+
+
+
+References Normal\+Distribution$<$ Data\+Type $>$\+::\+Probability().
+
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_a29775df0ebdfa5da91d4ca3f0fe2543c}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!ProbBackward@{ProbBackward}}
+\index{ProbBackward@{ProbBackward}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{ProbBackward()}
+{\footnotesize\ttfamily void Prob\+Backward (\begin{DoxyParamCaption}\item[{const Data\+Type \&}]{observation,  }\item[{Data\+Type \&}]{dmu,  }\item[{Data\+Type \&}]{dsigma }\end{DoxyParamCaption}) const}
+
+
+
+Stores the gradient of the probabilities of the observations with respect to mean and standard deviation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em observation} & The observation matrix. \\
+\hline
+{\em dmu} & The gradient with respect to mean. \\
+\hline
+{\em dsigma} & The gradient with respect to the standard deviation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_a59b1e2962ad6370100f34906d6fddd76}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!Sample@{Sample}}
+\index{Sample@{Sample}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{Sample()}
+{\footnotesize\ttfamily Data\+Type Sample (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return a randomly generated observation according to the probability distribution defined by this object. 
+
+\begin{DoxyReturn}{Returns}
+Random observation from this Normal distribution. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_a65cba07328997659bec80b9879b15a51}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the distribution. 
+
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_afdbf13414be377e6b3520205f87f5090}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!StandardDeviation@{StandardDeviation}}
+\index{StandardDeviation@{StandardDeviation}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{StandardDeviation()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Data\+Type\& Standard\+Deviation (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the standard deviation. 
+
+
+
+Definition at line 120 of file normal\+\_\+distribution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1NormalDistribution_aa16e7499e9ec471a276dfcad209c4262}} 
+\index{NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}!StandardDeviation@{StandardDeviation}}
+\index{StandardDeviation@{StandardDeviation}!NormalDistribution$<$ DataType $>$@{NormalDistribution$<$ DataType $>$}}
+\doxysubsubsection{StandardDeviation()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Data\+Type\& Standard\+Deviation (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the standard deviation. 
+
+
+
+Definition at line 117 of file normal\+\_\+distribution.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/dists/\textbf{ normal\+\_\+distribution.\+hpp}\end{DoxyCompactItemize}

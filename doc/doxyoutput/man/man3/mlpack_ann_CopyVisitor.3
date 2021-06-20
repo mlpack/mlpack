@@ -1,0 +1,42 @@
+.TH "CopyVisitor< CustomLayers >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CopyVisitor< CustomLayers > \- This visitor is to support copy constructor for neural network module\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< LayerTypes< CustomLayers\&.\&.\&. > >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename LayerType > \fBLayerTypes\fP< CustomLayers\&.\&.\&. > \fBoperator()\fP (LayerType *) const"
+.br
+.ti -1c
+.RI "\fBLayerTypes\fP< CustomLayers\&.\&.\&. > \fBoperator()\fP (\fBMoreTypes\fP) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename\&.\&.\&. CustomLayers>
+.br
+class mlpack::ann::CopyVisitor< CustomLayers >"
+This visitor is to support copy constructor for neural network module\&. 
+
+We want a layer-wise copy rather than simple duplicate the pointer\&. 
+.PP
+Definition at line 26 of file copy_visitor\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBLayerTypes\fP<CustomLayers\&.\&.\&.> operator() (LayerType *) const"
+
+.SS "\fBLayerTypes\fP<CustomLayers\&.\&.\&.> operator() (\fBMoreTypes\fP) const"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

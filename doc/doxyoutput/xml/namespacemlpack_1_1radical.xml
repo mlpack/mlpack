@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1radical" kind="namespace" language="C++">
+    <compoundname>mlpack::radical</compoundname>
+    <innerclass refid="classmlpack_1_1radical_1_1Radical" prot="public">mlpack::radical::Radical</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1radical_1ad2cb37f7f394d92d8fa93e154713b841" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::radical::WhitenFeatureMajorMatrix</definition>
+        <argsstring>(const arma::mat &amp;matX, arma::mat &amp;matXWhitened, arma::mat &amp;matWhitening)</argsstring>
+        <name>WhitenFeatureMajorMatrix</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>matX</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>matXWhitened</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>matWhitening</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="138" column="6" declfile="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" declline="138" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/radical/radical.hpp" line="20" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="print__serialize__util_8hpp" kind="file" language="C++">
+    <compoundname>print_serialize_util.hpp</compoundname>
+    <includes refid="util_2strip__type_8hpp" local="no">mlpack/bindings/util/strip_type.hpp</includes>
+    <includedby refid="R__option_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/bindings/R/R_option.hpp</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>mlpack/bindings/util/strip_type.hpp</label>
+        <link refid="util_2strip__type_8hpp"/>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/R/print_serialize_util.hpp</label>
+        <link refid="print__serialize__util_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/R/R_option.hpp</label>
+        <link refid="R__option_8hpp"/>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/R/print_serialize_util.hpp</label>
+        <link refid="print__serialize__util_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1bindings">mlpack::bindings</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1bindings_1_1r">mlpack::bindings::r</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Yashwant Singh Parihar</para>
+</simplesect>
+Print the serialize utility in a R binding .R file for a given parameter.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_BINDINGS_R_PRINT_SERIALIZE_UTIL_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_BINDINGS_R_PRINT_SERIALIZE_UTIL_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="util_2strip__type_8hpp" kindref="compound">mlpack/bindings/util/strip_type.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">bindings<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">r<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="26" refid="namespacemlpack_1_1bindings_1_1r_1a3d7b0931393483d5c7d6c6c4970965e7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1bindings_1_1r_1a3d7b0931393483d5c7d6c6c4970965e7" kindref="member">PrintSerializeUtil</ref>(</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>d<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::enable_if&lt;!arma::is_arma_type&lt;T&gt;::value&gt;::type*<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::enable_if&lt;!<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize&lt;T&gt;::value</ref>&gt;::type*<sp/>=<sp/>0)</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Do<sp/>Nothing.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="38" refid="namespacemlpack_1_1bindings_1_1r_1af936aeb99c473be5b56367bd4722addc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1bindings_1_1r_1a3d7b0931393483d5c7d6c6c4970965e7" kindref="member">PrintSerializeUtil</ref>(</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref>&amp;<sp/></highlight><highlight class="comment">/*<sp/>d<sp/>*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::enable_if&lt;arma::is_arma_type&lt;T&gt;::value&gt;::type*<sp/>=<sp/>0)</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Do<sp/>Nothing.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="49" refid="namespacemlpack_1_1bindings_1_1r_1ac9dfc0f41352071820158a5a4eb77748" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1bindings_1_1r_1a3d7b0931393483d5c7d6c6c4970965e7" kindref="member">PrintSerializeUtil</ref>(</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref>&amp;<sp/>d,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::enable_if&lt;!arma::is_arma_type&lt;T&gt;::value&gt;::type*<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::enable_if&lt;<ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize&lt;T&gt;::value</ref>&gt;::type*<sp/>=<sp/>0)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><ref refid="prereqs_8hpp_1a5971beeefae501e4761dd6e1cad457b1" kindref="member">MLPACK_COUT_STREAM</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>d.<ref refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" kindref="member">name</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&lt;-<sp/>IO_GetParam&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="namespacemlpack_1_1util_1a7eb84b8e75a14594bd8b89733112378d" kindref="member">util::StripType</ref>(d.<ref refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" kindref="member">cppType</ref>)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Ptr(\&quot;&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>d.<ref refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" kindref="member">name</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\&quot;)&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><ref refid="prereqs_8hpp_1a5971beeefae501e4761dd6e1cad457b1" kindref="member">MLPACK_COUT_STREAM</ref><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><ref refid="prereqs_8hpp_1a5971beeefae501e4761dd6e1cad457b1" kindref="member">MLPACK_COUT_STREAM</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>attr(&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>d.<ref refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" kindref="member">name</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;,<sp/>\&quot;type\&quot;)<sp/>&lt;-<sp/>\&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="namespacemlpack_1_1util_1a7eb84b8e75a14594bd8b89733112378d" kindref="member">util::StripType</ref>(d.<ref refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" kindref="member">cppType</ref>)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\&quot;&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><ref refid="prereqs_8hpp_1a5971beeefae501e4761dd6e1cad457b1" kindref="member">MLPACK_COUT_STREAM</ref><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="75" refid="namespacemlpack_1_1bindings_1_1r_1a7c0738a96bd71243efc6b92152ccfd23" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1bindings_1_1r_1a3d7b0931393483d5c7d6c6c4970965e7" kindref="member">PrintSerializeUtil</ref>(<ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref>&amp;<sp/>d,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/></highlight><highlight class="comment">/*input*/</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/></highlight><highlight class="comment">/*<sp/>output<sp/>*/</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="78"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>PrintSerializeUtil&lt;typename<sp/>std::remove_pointer&lt;T&gt;::type&gt;(d);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>r</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>bindings</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/R/print_serialize_util.hpp"/>
+  </compounddef>
+</doxygen>

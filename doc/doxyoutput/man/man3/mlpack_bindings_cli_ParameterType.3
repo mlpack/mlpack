@@ -1,0 +1,37 @@
+.TH "ParameterType< T >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ParameterType< T > \- Utility struct to return the type that CLI11 should accept for a given input type\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBParameterTypeDeducer\fP< \fBdata::HasSerialize\fP< T >::value, T >::\fBtype\fP \fBtype\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T>
+.br
+struct mlpack::bindings::cli::ParameterType< T >"
+Utility struct to return the type that CLI11 should accept for a given input type\&. 
+
+In general, there is no change from the input type, but in some cases this may be another type\&. 
+.PP
+Definition at line 42 of file parameter_type\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBParameterTypeDeducer\fP<\fBdata::HasSerialize\fP<T>::value, T>::\fBtype\fP \fBtype\fP"
+
+.PP
+Definition at line 45 of file parameter_type\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

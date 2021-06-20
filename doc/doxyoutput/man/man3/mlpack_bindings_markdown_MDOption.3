@@ -1,0 +1,40 @@
+.TH "MDOption< T >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MDOption< T > \- The Markdown option class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMDOption\fP (const T defaultValue, const std::string &identifier, const std::string &description, const std::string &alias, const std::string &cppName, const bool required=false, const bool input=true, const bool noTranspose=false, const std::string &bindingName='')"
+.br
+.RI "Construct an \fBMDOption\fP object\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T>
+.br
+class mlpack::bindings::markdown::MDOption< T >"
+The Markdown option class\&. 
+.PP
+Definition at line 33 of file md_option\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBMDOption\fP (const T defaultValue, const std::string & identifier, const std::string & description, const std::string & alias, const std::string & cppName, const bool required = \fCfalse\fP, const bool input = \fCtrue\fP, const bool noTranspose = \fCfalse\fP, const std::string & bindingName = \fC''\fP)\fC [inline]\fP"
+
+.PP
+Construct an \fBMDOption\fP object\&. When constructed, it will register itself with CLI\&. The testName parameter is not used and added for compatibility reasons\&. 
+.PP
+Definition at line 41 of file md_option\&.hpp\&.
+.PP
+References IO::Add(), ParamData::alias, IO::ClearSettings(), ParamData::cppType, ParamData::desc, IO::functionMap, IO::GetSingleton(), ParamData::input, ParamData::loaded, ParamData::name, ParamData::noTranspose, ParamData::persistent, ParamData::required, IO::RestoreSettings(), IO::StoreSettings(), ParamData::tname, TYPENAME, ParamData::value, and ParamData::wasPassed\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,182 @@
+.TH "ZCAWhitening" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ZCAWhitening \- A simple \fBZCAWhitening\fP class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBZCAWhitening\fP (double eps=0\&.00005)"
+.br
+.RI "A constructor to set the regularization parameter\&. "
+.ti -1c
+.RI "const arma::vec & \fBEigenValues\fP () const"
+.br
+.RI "Get the eigenvalues vector\&. "
+.ti -1c
+.RI "const arma::mat & \fBEigenVectors\fP () const"
+.br
+.RI "Get the eigenvector\&. "
+.ti -1c
+.RI "double \fBEpsilon\fP () const"
+.br
+.RI "Get the regularization parameter\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBFit\fP (const MatType &input)"
+.br
+.RI "Function to fit features, to find out the min max and scale\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBInverseTransform\fP (const MatType &input, MatType &output)"
+.br
+.RI "Function to retrieve original dataset\&. "
+.ti -1c
+.RI "const arma::vec & \fBItemMean\fP () const"
+.br
+.RI "Get the mean row vector\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.ti -1c
+.RI "template<typename MatType > void \fBTransform\fP (const MatType &input, MatType &output)"
+.br
+.RI "Function for ZCA whitening\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A simple \fBZCAWhitening\fP class\&. 
+
+Whitens a matrix using the eigendecomposition of the covariance matrix\&. Whitening means the covariance matrix of the result is the identity matrix\&.
+.PP
+For whitening related formula and more info, check the link below\&. http://ufldl.stanford.edu/tutorial/unsupervised/PCAWhitening/
+.PP
+.PP
+.nf
+arma::mat input;
+Load("train\&.csv", input);
+arma::mat output;
+
+// Fit the features\&.
+ZCAWhitening scale;
+scale\&.Fit(input)
+
+// Scale the features\&.
+scale\&.Transform(input, output);
+
+// Retransform the input\&.
+scale\&.InverseTransform(output, input);
+.fi
+.PP
+ 
+.PP
+Definition at line 47 of file zca_whitening\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBZCAWhitening\fP (double eps = \fC0\&.00005\fP)\fC [inline]\fP"
+
+.PP
+A constructor to set the regularization parameter\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIeps\fP Regularization parameter\&. 
+.RE
+.PP
+
+.PP
+Definition at line 55 of file zca_whitening\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "const arma::vec& EigenValues () const\fC [inline]\fP"
+
+.PP
+Get the eigenvalues vector\&. 
+.PP
+Definition at line 98 of file zca_whitening\&.hpp\&.
+.PP
+References PCAWhitening::EigenValues()\&.
+.SS "const arma::mat& EigenVectors () const\fC [inline]\fP"
+
+.PP
+Get the eigenvector\&. 
+.PP
+Definition at line 100 of file zca_whitening\&.hpp\&.
+.PP
+References PCAWhitening::EigenVectors()\&.
+.SS "double Epsilon () const\fC [inline]\fP"
+
+.PP
+Get the regularization parameter\&. 
+.PP
+Definition at line 102 of file zca_whitening\&.hpp\&.
+.PP
+References PCAWhitening::Epsilon()\&.
+.SS "void Fit (const MatType & input)\fC [inline]\fP"
+
+.PP
+Function to fit features, to find out the min max and scale\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Dataset to fit\&. 
+.RE
+.PP
+
+.PP
+Definition at line 63 of file zca_whitening\&.hpp\&.
+.PP
+References PCAWhitening::Fit()\&.
+.SS "void InverseTransform (const MatType & input, MatType & output)\fC [inline]\fP"
+
+.PP
+Function to retrieve original dataset\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Scaled dataset\&. 
+.br
+\fIoutput\fP Output matrix with original Dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 88 of file zca_whitening\&.hpp\&.
+.PP
+References PCAWhitening::EigenValues(), PCAWhitening::EigenVectors(), and PCAWhitening::ItemMean()\&.
+.SS "const arma::vec& ItemMean () const\fC [inline]\fP"
+
+.PP
+Get the mean row vector\&. 
+.PP
+Definition at line 96 of file zca_whitening\&.hpp\&.
+.PP
+References PCAWhitening::ItemMean()\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Definition at line 105 of file zca_whitening\&.hpp\&.
+.SS "void Transform (const MatType & input, MatType & output)\fC [inline]\fP"
+
+.PP
+Function for ZCA whitening\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Dataset to scale features\&. 
+.br
+\fIoutput\fP Output matrix with whitened features\&. 
+.RE
+.PP
+
+.PP
+Definition at line 75 of file zca_whitening\&.hpp\&.
+.PP
+References PCAWhitening::EigenVectors(), and PCAWhitening::Transform()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

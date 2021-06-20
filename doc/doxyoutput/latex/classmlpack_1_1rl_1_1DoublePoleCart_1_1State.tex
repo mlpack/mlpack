@@ -1,0 +1,285 @@
+\doxysection{Double\+Pole\+Cart\+::State Class Reference}
+\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State}\index{DoublePoleCart::State@{DoublePoleCart::State}}
+
+
+Implementation of the state of Double Pole Cart.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ State} ()
+\begin{DoxyCompactList}\small\item\em Construct a state instance. \end{DoxyCompactList}\item 
+\textbf{ State} (const arma\+::colvec \&data)
+\begin{DoxyCompactList}\small\item\em Construct a state instance from given data. \end{DoxyCompactList}\item 
+double \& \textbf{ Angle} (const size\+\_\+t i)
+\begin{DoxyCompactList}\small\item\em Modify the angle of the \$i$^\wedge$\{th\}\$ pole. \end{DoxyCompactList}\item 
+double \textbf{ Angle} (const size\+\_\+t i) const
+\begin{DoxyCompactList}\small\item\em Get the angle of the \$i$^\wedge$\{th\}\$ pole. \end{DoxyCompactList}\item 
+double \& \textbf{ Angular\+Velocity} (const size\+\_\+t i)
+\begin{DoxyCompactList}\small\item\em Modify the angular velocity of the \$i$^\wedge$\{th\}\$ pole. \end{DoxyCompactList}\item 
+double \textbf{ Angular\+Velocity} (const size\+\_\+t i) const
+\begin{DoxyCompactList}\small\item\em Get the angular velocity of the \$i$^\wedge$\{th\}\$ pole. \end{DoxyCompactList}\item 
+arma\+::colvec \& \textbf{ Data} ()
+\begin{DoxyCompactList}\small\item\em Modify the internal representation of the state. \end{DoxyCompactList}\item 
+arma\+::colvec \textbf{ Data} () const
+\begin{DoxyCompactList}\small\item\em Get the internal representation of the state. \end{DoxyCompactList}\item 
+const arma\+::colvec \& \textbf{ Encode} () const
+\begin{DoxyCompactList}\small\item\em Encode the state to a vector.. \end{DoxyCompactList}\item 
+double \& \textbf{ Position} ()
+\begin{DoxyCompactList}\small\item\em Modify the position of the cart. \end{DoxyCompactList}\item 
+double \textbf{ Position} () const
+\begin{DoxyCompactList}\small\item\em Get the position of the cart. \end{DoxyCompactList}\item 
+double \& \textbf{ Velocity} ()
+\begin{DoxyCompactList}\small\item\em Modify the velocity of the cart. \end{DoxyCompactList}\item 
+double \textbf{ Velocity} () const
+\begin{DoxyCompactList}\small\item\em Get the velocity of the cart. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr size\+\_\+t \textbf{ dimension} = 6
+\begin{DoxyCompactList}\small\item\em Dimension of the encoded state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementation of the state of Double Pole Cart. 
+
+The state is expressed as a vector (position, velocity, angle, angular velocity, angle, angular velocity) 
+
+Definition at line 35 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_a790355057d12e9c1ce7643551c16fecd}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!State@{State}}
+\index{State@{State}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ State} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a state instance. 
+
+
+
+Definition at line 41 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_a8bc7967f6d91a3c94f9b3f502297a926}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!State@{State}}
+\index{State@{State}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ State} (\begin{DoxyParamCaption}\item[{const arma\+::colvec \&}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a state instance from given data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data for the position, velocity, angle and angular velocity. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 49 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_a142c4655f9f8e43ec2f0be2d0dc0b635}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!Angle@{Angle}}
+\index{Angle@{Angle}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{Angle()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Angle (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the angle of the \$i$^\wedge$\{th\}\$ pole. 
+
+
+
+Definition at line 70 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_a6faedb6fad4a1761e5bc5f2c9f061131}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!Angle@{Angle}}
+\index{Angle@{Angle}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{Angle()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Angle (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the angle of the \$i$^\wedge$\{th\}\$ pole. 
+
+
+
+Definition at line 68 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+Referenced by Double\+Pole\+Cart\+::\+Dsdt(), and Double\+Pole\+Cart\+::\+Is\+Terminal().
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_a340295a3f85f51b12475ae54dfae1021}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!AngularVelocity@{AngularVelocity}}
+\index{AngularVelocity@{AngularVelocity}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{AngularVelocity()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Angular\+Velocity (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the angular velocity of the \$i$^\wedge$\{th\}\$ pole. 
+
+
+
+Definition at line 75 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_adee020824f1381e77738134cb3e74c70}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!AngularVelocity@{AngularVelocity}}
+\index{AngularVelocity@{AngularVelocity}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{AngularVelocity()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Angular\+Velocity (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the angular velocity of the \$i$^\wedge$\{th\}\$ pole. 
+
+
+
+Definition at line 73 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+Referenced by Double\+Pole\+Cart\+::\+Dsdt(), and Double\+Pole\+Cart\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_ad6a50c7b5fced2e931d9a4b4ff989ed6}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!Data@{Data}}
+\index{Data@{Data}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{Data()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::colvec\& Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the internal representation of the state. 
+
+
+
+Definition at line 55 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_a3824537c629944975541602c7119a3d9}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!Data@{Data}}
+\index{Data@{Data}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{Data()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::colvec Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the internal representation of the state. 
+
+
+
+Definition at line 53 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+Referenced by Double\+Pole\+Cart\+::\+RK4().
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_a8c1a320788b55fad936455caf0acb62a}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!Encode@{Encode}}
+\index{Encode@{Encode}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{Encode()}
+{\footnotesize\ttfamily const arma\+::colvec\& Encode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Encode the state to a vector.. 
+
+
+
+Definition at line 78 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_a005c39713bc5c65715a94572bfb5fc29}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!Position@{Position}}
+\index{Position@{Position}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{Position()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Position (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the position of the cart. 
+
+
+
+Definition at line 60 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_adc41cb3d3f5bdd1bd67dc963ce78c20c}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!Position@{Position}}
+\index{Position@{Position}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{Position()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Position (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the position of the cart. 
+
+
+
+Definition at line 58 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+Referenced by Double\+Pole\+Cart\+::\+Is\+Terminal().
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_a2bdce16cfc8c84b65f13ee9fffab1266}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!Velocity@{Velocity}}
+\index{Velocity@{Velocity}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{Velocity()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Velocity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the velocity of the cart. 
+
+
+
+Definition at line 65 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_a5281cef88d4e272d6cb8581bff91195a}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!Velocity@{Velocity}}
+\index{Velocity@{Velocity}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{Velocity()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Velocity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the velocity of the cart. 
+
+
+
+Definition at line 63 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+Referenced by Double\+Pole\+Cart\+::\+Sample().
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_1_1State_ae813298f34ef9d793885fc04b54dff99}} 
+\index{DoublePoleCart::State@{DoublePoleCart::State}!dimension@{dimension}}
+\index{dimension@{dimension}!DoublePoleCart::State@{DoublePoleCart::State}}
+\doxysubsubsection{dimension}
+{\footnotesize\ttfamily constexpr size\+\_\+t dimension = 6\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+Dimension of the encoded state. 
+
+
+
+Definition at line 81 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/environment/\textbf{ double\+\_\+pole\+\_\+cart.\+hpp}\end{DoxyCompactItemize}

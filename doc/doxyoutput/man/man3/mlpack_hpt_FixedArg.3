@@ -1,0 +1,65 @@
+.TH "FixedArg< T, I >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+FixedArg< T, I > \- A struct for storing information about a fixed argument\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "const T & \fBvalue\fP"
+.br
+.RI "The value of the fixed argument\&. "
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const size_t \fBindex\fP = I"
+.br
+.RI "The index of the fixed argument\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T, size_t I>
+.br
+struct mlpack::hpt::FixedArg< T, I >"
+A struct for storing information about a fixed argument\&. 
+
+Objects of this type are supposed to be passed into the \fBCVFunction\fP constructor\&.
+.PP
+This struct is not meant to be used directly by users\&. Rather use the \fBmlpack::hpt::Fixed\fP function\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIT\fP The type of the fixed argument\&. 
+.br
+\fII\fP The index of the fixed argument\&. 
+.RE
+.PP
+
+.PP
+Definition at line 52 of file fixed\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const size_t index = I\fC [static]\fP"
+
+.PP
+The index of the fixed argument\&. 
+.PP
+Definition at line 55 of file fixed\&.hpp\&.
+.SS "const T& value"
+
+.PP
+The value of the fixed argument\&. 
+.PP
+Definition at line 58 of file fixed\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,386 @@
+.TH "SoftmaxRegression" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SoftmaxRegression \- Softmax Regression is a classifier which can be used for classification when the data available can take two or more class values\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename OptimizerType , typename\&.\&.\&. CallbackTypes> \fBSoftmaxRegression\fP (const arma::mat &data, const arma::Row< size_t > &labels, const size_t numClasses, const double lambda, const bool fitIntercept, OptimizerType optimizer, CallbackTypes &&\&.\&.\&. callbacks)"
+.br
+.RI "Construct the \fBSoftmaxRegression\fP class with the provided data and labels\&. "
+.ti -1c
+.RI "template<typename OptimizerType  = ens::L_BFGS> \fBSoftmaxRegression\fP (const arma::mat &data, const arma::Row< size_t > &labels, const size_t numClasses, const double lambda=0\&.0001, const bool fitIntercept=false, OptimizerType optimizer=OptimizerType())"
+.br
+.RI "Construct the \fBSoftmaxRegression\fP class with the provided data and labels\&. "
+.ti -1c
+.RI "\fBSoftmaxRegression\fP (const size_t inputSize=0, const size_t numClasses=0, const bool fitIntercept=false)"
+.br
+.RI "Initialize the \fBSoftmaxRegression\fP without performing training\&. "
+.ti -1c
+.RI "void \fBClassify\fP (const arma::mat &dataset, arma::mat &probabilities) const"
+.br
+.RI "Classify the given points, returning class probabilities for each point\&. "
+.ti -1c
+.RI "void \fBClassify\fP (const arma::mat &dataset, arma::Row< size_t > &labels) const"
+.br
+.RI "Classify the given points, returning the predicted labels for each point\&. "
+.ti -1c
+.RI "void \fBClassify\fP (const arma::mat &dataset, arma::Row< size_t > &labels, arma::mat &probabilities) const"
+.br
+.RI "Classify the given points, returning class probabilities and predicted class label for each point\&. "
+.ti -1c
+.RI "template<typename VecType > size_t \fBClassify\fP (const VecType &point) const"
+.br
+.RI "Classify the given point\&. "
+.ti -1c
+.RI "double \fBComputeAccuracy\fP (const arma::mat &testData, const arma::Row< size_t > &labels) const"
+.br
+.RI "Computes accuracy of the learned model given the feature data and the labels associated with each data point\&. "
+.ti -1c
+.RI "size_t \fBFeatureSize\fP () const"
+.br
+.RI "Gets the features size of the training data\&. "
+.ti -1c
+.RI "bool \fBFitIntercept\fP () const"
+.br
+.RI "Gets the intercept term flag\&. We can't change this after training\&. "
+.ti -1c
+.RI "double & \fBLambda\fP ()"
+.br
+.RI "Sets the regularization parameter\&. "
+.ti -1c
+.RI "double \fBLambda\fP () const"
+.br
+.RI "Gets the regularization parameter\&. "
+.ti -1c
+.RI "size_t & \fBNumClasses\fP ()"
+.br
+.RI "Sets the number of classes\&. "
+.ti -1c
+.RI "size_t \fBNumClasses\fP () const"
+.br
+.RI "Gets the number of classes\&. "
+.ti -1c
+.RI "arma::mat & \fBParameters\fP ()"
+.br
+.RI "Get the model parameters\&. "
+.ti -1c
+.RI "const arma::mat & \fBParameters\fP () const"
+.br
+.RI "Get the model parameters\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the \fBSoftmaxRegression\fP model\&. "
+.ti -1c
+.RI "template<typename OptimizerType  = ens::L_BFGS, typename\&.\&.\&. CallbackTypes> double \fBTrain\fP (const arma::mat &data, const arma::Row< size_t > &labels, const size_t numClasses, OptimizerType optimizer, CallbackTypes &&\&.\&.\&. callbacks)"
+.br
+.RI "Train the softmax regression with the given training data\&. "
+.ti -1c
+.RI "template<typename OptimizerType  = ens::L_BFGS> double \fBTrain\fP (const arma::mat &data, const arma::Row< size_t > &labels, const size_t numClasses, OptimizerType optimizer=OptimizerType())"
+.br
+.RI "Train the softmax regression with the given training data\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Softmax Regression is a classifier which can be used for classification when the data available can take two or more class values\&. 
+
+It is a generalization of Logistic Regression (which is used only for binary classification)\&. The model has a different set of parameters for each class, but can be easily converted into a vectorized implementation as has been done in this module\&. The model can be used for direct classification of feature data or in conjunction with unsupervised learning methods\&. More technical details about the model can be found on the following webpage:
+.PP
+http://ufldl.stanford.edu/wiki/index.php/Softmax_Regression
+.PP
+An example on how to use the interface is shown below:
+.PP
+.PP
+.nf
+arma::mat trainData; // Training data matrix\&.
+arma::Row<size_t> labels; // Labels associated with the data\&.
+const size_t inputSize = 1000; // Size of input feature vector\&.
+const size_t numClasses = 10; // Number of classes\&.
+const double lambda = 0\&.0001; // L2-Regularization parameter\&.
+
+const size_t numBasis = 5; // Parameter required for L-BFGS algorithm\&.
+const size_t numIterations = 100; // Maximum number of iterations\&.
+
+// Train the model using an instantiated optimizer for the training\&.
+SoftmaxRegression regressor(trainData\&.n_rows, numClasses);
+ens::L_BFGS optimizer(numBasis, numIterations);
+regressor\&.Train(trainData, labels, numClasses, std::move(optimizer));
+
+arma::mat testData; // Test data matrix\&.
+arma::Row<size_t> predictions; // Vectors to store predictions in\&.
+
+// Obtain predictions from both the learned models\&.
+regressor\&.Classify(testData, predictions);
+.fi
+.PP
+ 
+.PP
+Definition at line 59 of file softmax_regression\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSoftmaxRegression\fP (const size_t inputSize = \fC0\fP, const size_t numClasses = \fC0\fP, const bool fitIntercept = \fCfalse\fP)"
+
+.PP
+Initialize the \fBSoftmaxRegression\fP without performing training\&. Default value of lambda is 0\&.0001\&. Be sure to use \fBTrain()\fP before calling \fBClassify()\fP or \fBComputeAccuracy()\fP, otherwise the results may be meaningless\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIinputSize\fP Size of the input feature vector\&. 
+.br
+\fInumClasses\fP Number of classes for classification\&. 
+.br
+\fIfitIntercept\fP add intercept term or not\&. 
+.RE
+.PP
+
+.SS "\fBSoftmaxRegression\fP (const arma::mat & data, const arma::Row< size_t > & labels, const size_t numClasses, const double lambda = \fC0\&.0001\fP, const bool fitIntercept = \fCfalse\fP, OptimizerType optimizer = \fCOptimizerType()\fP)"
+
+.PP
+Construct the \fBSoftmaxRegression\fP class with the provided data and labels\&. This will train the model\&. Optionally, the parameter 'lambda' can be passed, which controls the amount of L2-regularization in the objective function\&. By default, the model takes a small value\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIOptimizerType\fP Desired optimizer type\&. 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Input training features\&. Each column associate with one sample 
+.br
+\fIlabels\fP Labels associated with the feature data\&. 
+.br
+\fInumClasses\fP Number of classes for classification\&. 
+.br
+\fIoptimizer\fP Desired optimizer\&. 
+.br
+\fIlambda\fP L2-regularization constant\&. 
+.br
+\fIfitIntercept\fP add intercept term or not\&. 
+.RE
+.PP
+
+.SS "\fBSoftmaxRegression\fP (const arma::mat & data, const arma::Row< size_t > & labels, const size_t numClasses, const double lambda, const bool fitIntercept, OptimizerType optimizer, CallbackTypes &&\&.\&.\&. callbacks)"
+
+.PP
+Construct the \fBSoftmaxRegression\fP class with the provided data and labels\&. This will train the model\&. Optionally, the parameter 'lambda' can be passed, which controls the amount of L2-regularization in the objective function\&. By default, the model takes a small value\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIOptimizerType\fP Desired optimizer type\&. 
+.br
+\fICallbackTypes\fP Types of Callback Functions\&. 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Input training features\&. Each column associate with one sample 
+.br
+\fIlabels\fP Labels associated with the feature data\&. 
+.br
+\fInumClasses\fP Number of classes for classification\&. 
+.br
+\fIlambda\fP L2-regularization constant\&. 
+.br
+\fIfitIntercept\fP add intercept term or not\&. 
+.br
+\fIoptimizer\fP Desired optimizer\&. 
+.br
+\fIcallbacks\fP Callback function for ensmallen optimizer \fCOptimizerType\fP\&. See https://www.ensmallen.org/docs.html#callback-documentation\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Classify (const arma::mat & dataset, arma::mat & probabilities) const"
+
+.PP
+Classify the given points, returning class probabilities for each point\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdataset\fP Matrix of data points to be classified\&. 
+.br
+\fIprobabilities\fP Class probabilities for each point\&. 
+.RE
+.PP
+
+.SS "void Classify (const arma::mat & dataset, arma::Row< size_t > & labels) const"
+
+.PP
+Classify the given points, returning the predicted labels for each point\&. The function calculates the probabilities for every class, given a data point\&. It then chooses the class which has the highest probability among all\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdataset\fP Set of points to classify\&. 
+.br
+\fIlabels\fP Predicted labels for each point\&. 
+.RE
+.PP
+
+.SS "void Classify (const arma::mat & dataset, arma::Row< size_t > & labels, arma::mat & probabilities) const"
+
+.PP
+Classify the given points, returning class probabilities and predicted class label for each point\&. The function calculates the probabilities for every class, given a data point\&. It then chooses the class which has the highest probability among all\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdataset\fP Matrix of data points to be classified\&. 
+.br
+\fIlabels\fP Predicted labels for each point\&. 
+.br
+\fIprobabilities\fP Class probabilities for each point\&. 
+.RE
+.PP
+
+.SS "size_t Classify (const VecType & point) const"
+
+.PP
+Classify the given point\&. The predicted class label is returned\&. The function calculates the probabilites for every class, given the point\&. It then chooses the class which has the highest probability among all\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpoint\fP Point to be classified\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Predicted class label of the point\&. 
+.RE
+.PP
+
+.SS "double ComputeAccuracy (const arma::mat & testData, const arma::Row< size_t > & labels) const"
+
+.PP
+Computes accuracy of the learned model given the feature data and the labels associated with each data point\&. Predictions are made using the provided data and are compared with the actual labels\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fItestData\fP Matrix of data points using which predictions are made\&. 
+.br
+\fIlabels\fP Vector of labels associated with the data\&. 
+.RE
+.PP
+
+.SS "size_t FeatureSize () const\fC [inline]\fP"
+
+.PP
+Gets the features size of the training data\&. 
+.PP
+Definition at line 227 of file softmax_regression\&.hpp\&.
+.SS "bool FitIntercept () const\fC [inline]\fP"
+
+.PP
+Gets the intercept term flag\&. We can't change this after training\&. 
+.PP
+Definition at line 219 of file softmax_regression\&.hpp\&.
+.SS "double& Lambda ()\fC [inline]\fP"
+
+.PP
+Sets the regularization parameter\&. 
+.PP
+Definition at line 214 of file softmax_regression\&.hpp\&.
+.SS "double Lambda () const\fC [inline]\fP"
+
+.PP
+Gets the regularization parameter\&. 
+.PP
+Definition at line 216 of file softmax_regression\&.hpp\&.
+.SS "size_t& NumClasses ()\fC [inline]\fP"
+
+.PP
+Sets the number of classes\&. 
+.PP
+Definition at line 209 of file softmax_regression\&.hpp\&.
+.SS "size_t NumClasses () const\fC [inline]\fP"
+
+.PP
+Gets the number of classes\&. 
+.PP
+Definition at line 211 of file softmax_regression\&.hpp\&.
+.SS "arma::mat& Parameters ()\fC [inline]\fP"
+
+.PP
+Get the model parameters\&. 
+.PP
+Definition at line 222 of file softmax_regression\&.hpp\&.
+.SS "const arma::mat& Parameters () const\fC [inline]\fP"
+
+.PP
+Get the model parameters\&. 
+.PP
+Definition at line 224 of file softmax_regression\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the \fBSoftmaxRegression\fP model\&. 
+.PP
+Definition at line 235 of file softmax_regression\&.hpp\&.
+.SS "double Train (const arma::mat & data, const arma::Row< size_t > & labels, const size_t numClasses, OptimizerType optimizer, CallbackTypes &&\&.\&.\&. callbacks)"
+
+.PP
+Train the softmax regression with the given training data\&. 
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIOptimizerType\fP Desired optimizer type\&. 
+.br
+\fICallbackTypes\fP Types of Callback Functions\&. 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Input data with each column as one example\&. 
+.br
+\fIlabels\fP Labels associated with the feature data\&. 
+.br
+\fInumClasses\fP Number of classes for classification\&. 
+.br
+\fIoptimizer\fP Desired optimizer\&. 
+.br
+\fIcallbacks\fP Callback function for ensmallen optimizer \fCOptimizerType\fP\&. See https://www.ensmallen.org/docs.html#callback-documentation\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Objective value of the final point\&. 
+.RE
+.PP
+
+.SS "double Train (const arma::mat & data, const arma::Row< size_t > & labels, const size_t numClasses, OptimizerType optimizer = \fCOptimizerType()\fP)"
+
+.PP
+Train the softmax regression with the given training data\&. 
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIOptimizerType\fP Desired optimizer type\&. 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Input data with each column as one example\&. 
+.br
+\fIlabels\fP Labels associated with the feature data\&. 
+.br
+\fInumClasses\fP Number of classes for classification\&. 
+.br
+\fIoptimizer\fP Desired optimizer\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Objective value of the final point\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

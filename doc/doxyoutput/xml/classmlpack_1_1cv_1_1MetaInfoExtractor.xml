@@ -1,0 +1,481 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1cv_1_1MetaInfoExtractor" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cv::MetaInfoExtractor</compoundname>
+    <includes refid="meta__info__extractor_8hpp" local="no">meta_info_extractor.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MLAlgorithm</type>
+      </param>
+      <param>
+        <type>typename MT</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename PT</type>
+        <defval>arma::Row&lt;size_t&gt;</defval>
+      </param>
+      <param>
+        <type>typename WT</type>
+        <defval>arma::rowvec</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1adbdc2fd4afcebdf65253e4c892336847" prot="private" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MethodForms</declname>
+            <defname>MethodForms</defname>
+          </param>
+        </templateparamlist>
+        <type>typename <ref refid="structmlpack_1_1cv_1_1SelectMethodForm" kindref="compound">SelectMethodForm</ref>&lt; MLAlgorithm, HasTrain, HasTTrain, HasMTrain, HasMPTrain, HasMPWTrain &gt;::template From&lt; MethodForms... &gt;</type>
+        <definition>using Select =  typename SelectMethodForm&lt;MLAlgorithm, HasTrain, HasTTrain, HasMTrain, HasMPTrain, HasMPWTrain&gt;::template From&lt;MethodForms...&gt;</definition>
+        <argsstring></argsstring>
+        <name>Select</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="304" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="305" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a91e7b4713e95d246d62e121f6f17f26e" prot="private" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MFs</declname>
+            <defname>MFs</defname>
+          </param>
+        </templateparamlist>
+        <type>typename std::conditional&lt; std::is_same&lt; typename Select&lt; MFs... &gt;::Type, <ref refid="structmlpack_1_1cv_1_1NotFoundMethodForm" kindref="compound">NotFoundMethodForm</ref> &gt;::value, std::false_type, std::true_type &gt;::type</type>
+        <definition>using Selects =  typename std::conditional&lt; std::is_same&lt;typename Select&lt;MFs...&gt;::Type, NotFoundMethodForm&gt;::value, std::false_type, std::true_type&gt;::type</definition>
+        <argsstring></argsstring>
+        <name>Selects</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="309" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="311" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1ac95662aac72e2c16e9c152496a38f1df" prot="private" static="no">
+        <type><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt; MT, arma::rowvec, void, false, false &gt;</type>
+        <definition>using TF1 =  TrainForm&lt;MT, arma::rowvec, void, false, false&gt;</definition>
+        <argsstring></argsstring>
+        <name>TF1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="285" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="285" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a5a1c5582c913dfeed02afcc774df8931" prot="private" static="no">
+        <type><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt; MT, arma::mat, void, false, false &gt;</type>
+        <definition>using TF2 =  TrainForm&lt;MT, arma::mat, void, false, false&gt;</definition>
+        <argsstring></argsstring>
+        <name>TF2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="286" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="286" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a225d207f77aaa107a0a5ad2c3de0b064" prot="private" static="no">
+        <type><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt; MT, PT, void, false, false &gt;</type>
+        <definition>using TF3 =  TrainForm&lt;MT, PT, void, false, false&gt;</definition>
+        <argsstring></argsstring>
+        <name>TF3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="287" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="287" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a52dfc5b886fe2f7f09efbb1380d02325" prot="private" static="no">
+        <type><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt; MT, PT, void, false, true &gt;</type>
+        <definition>using TF4 =  TrainForm&lt;MT, PT, void, false, true&gt;</definition>
+        <argsstring></argsstring>
+        <name>TF4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="290" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="290" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1af05872cdbef50ef11c1832e32f32f87d" prot="private" static="no">
+        <type><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt; MT, PT, void, true, true &gt;</type>
+        <definition>using TF5 =  TrainForm&lt;MT, PT, void, true, true&gt;</definition>
+        <argsstring></argsstring>
+        <name>TF5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="291" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="291" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a1a0baa2bf3912cf0c1bdc9ad79cb2924" prot="private" static="no">
+        <type><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt; MT, arma::rowvec, WT, false, false &gt;</type>
+        <definition>using WTF1 =  TrainForm&lt;MT, arma::rowvec, WT, false, false&gt;</definition>
+        <argsstring></argsstring>
+        <name>WTF1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="294" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="294" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1acff883985495598ade82e77cd1cfeeda" prot="private" static="no">
+        <type><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt; MT, arma::mat, WT, false, false &gt;</type>
+        <definition>using WTF2 =  TrainForm&lt;MT, arma::mat, WT, false, false&gt;</definition>
+        <argsstring></argsstring>
+        <name>WTF2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="295" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="295" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a9f2fdf2ccfc71b87b200a1013270d3d6" prot="private" static="no">
+        <type><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt; MT, PT, WT, false, false &gt;</type>
+        <definition>using WTF3 =  TrainForm&lt;MT, PT, WT, false, false&gt;</definition>
+        <argsstring></argsstring>
+        <name>WTF3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="296" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="296" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a2586987bc91b915894138e944e6bca3e" prot="private" static="no">
+        <type><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt; MT, PT, WT, false, true &gt;</type>
+        <definition>using WTF4 =  TrainForm&lt;MT, PT, WT, false, true&gt;</definition>
+        <argsstring></argsstring>
+        <name>WTF4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="299" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="299" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a38400ea747d766d312a16fb92e1871cf" prot="private" static="no">
+        <type><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt; MT, PT, WT, true, true &gt;</type>
+        <definition>using WTF5 =  TrainForm&lt;MT, PT, WT, true, true&gt;</definition>
+        <argsstring></argsstring>
+        <name>WTF5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="300" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="300" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a77d035e0244a4c0b92866be6d3741596" prot="public" static="no">
+        <type>typename Select&lt; <ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TF1</ref>, <ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TF2</ref>, <ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01false_00_01false_01_4" kindref="compound">TF3</ref>, <ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01false_00_01true_01_4" kindref="compound">TF4</ref>, <ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4" kindref="compound">TF5</ref> &gt;::Type::PredictionsType</type>
+        <definition>using PredictionsType =  typename Select&lt;TF1, TF2, TF3, TF4, TF5&gt;::Type::PredictionsType</definition>
+        <argsstring></argsstring>
+        <name>PredictionsType</name>
+        <briefdescription>
+<para>The type of predictions used in MLAlgorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It is equal to void* if the extraction fails. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="318" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="319" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1aaeb8180f55243194b4ba4ad792cdc586" prot="public" static="no">
+        <type>typename Select&lt; <ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">WTF1</ref>, <ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">WTF2</ref>, <ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01false_01_4" kindref="compound">WTF3</ref>, <ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01true_01_4" kindref="compound">WTF4</ref>, <ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01true_01_4" kindref="compound">WTF5</ref> &gt;::Type::WeightsType</type>
+        <definition>using WeightsType =  typename Select&lt;WTF1, WTF2, WTF3, WTF4, WTF5&gt;::Type::WeightsType</definition>
+        <argsstring></argsstring>
+        <name>WeightsType</name>
+        <briefdescription>
+<para>The type of weights used in MLAlgorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It is equal to void* if the extraction fails. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="325" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="326" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a03f5301f82961c51fb0b6e4e3b89aae0" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool IsSupported</definition>
+        <argsstring></argsstring>
+        <name>IsSupported</name>
+        <initializer>= !std::is_same&lt;<ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a77d035e0244a4c0b92866be6d3741596" kindref="member">PredictionsType</ref>, void*&gt;::value</initializer>
+        <briefdescription>
+<para>An indication whether PredictionsType has been identified (i.e. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>MLAlgorithm is supported by <ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor" kindref="compound">MetaInfoExtractor</ref>). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="332" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="332" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1af9be7f6c420e961867c5945da0a3a339" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool SupportsWeights</definition>
+        <argsstring></argsstring>
+        <name>SupportsWeights</name>
+        <initializer>= !std::is_same&lt;<ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1aaeb8180f55243194b4ba4ad792cdc586" kindref="member">WeightsType</ref>, void*&gt;::value</initializer>
+        <briefdescription>
+<para>An indication whether MLAlgorithm supports weighted learning. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="337" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="337" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1ae50c72f23be6bf92e820b643ae123189" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool TakesDatasetInfo</definition>
+        <argsstring></argsstring>
+        <name>TakesDatasetInfo</name>
+        <initializer>= Selects&lt;<ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4" kindref="compound">TF5</ref>&gt;::value</initializer>
+        <briefdescription>
+<para>An indication whether MLAlgorithm takes a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="342" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="342" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a0e921a4d1000043d71e5a6fbad480315" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool TakesNumClasses</definition>
+        <argsstring></argsstring>
+        <name>TakesNumClasses</name>
+        <initializer>= Selects&lt;<ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01false_00_01true_01_4" kindref="compound">TF4</ref>, <ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4" kindref="compound">TF5</ref>&gt;::value</initializer>
+        <briefdescription>
+<para>An indication whether MLAlgorithm takes the numClasses (size_t) parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="347" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="347" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a5404ac0f7e29a8db4e23e8e03d4bffcd" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HAS_METHOD_FORM</definition>
+        <argsstring>(SINGLE_ARG(template Train&lt; const MT &amp;, const PT &amp; &gt;), HasMPTrain)</argsstring>
+        <name>HAS_METHOD_FORM</name>
+        <param>
+          <type><ref refid="sfinae__utility_8hpp_1afa8624400132dca5f52f93deec70706b" kindref="member">SINGLE_ARG</ref>(template Train&lt; const MT &amp;, const PT &amp; &gt;)</type>
+        </param>
+        <param>
+          <type>HasMPTrain</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="280" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a4bab50afe67b548bf7d1fb935f751090" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HAS_METHOD_FORM</definition>
+        <argsstring>(SINGLE_ARG(template Train&lt; const MT &amp;, const PT &amp;, const WT &amp; &gt;), HasMPWTrain)</argsstring>
+        <name>HAS_METHOD_FORM</name>
+        <param>
+          <type><ref refid="sfinae__utility_8hpp_1afa8624400132dca5f52f93deec70706b" kindref="member">SINGLE_ARG</ref>(template Train&lt; const MT &amp;, const PT &amp;, const WT &amp; &gt;)</type>
+        </param>
+        <param>
+          <type>HasMPWTrain</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="281" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a30f2e12c461d477ae5815460296639e7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HAS_METHOD_FORM</definition>
+        <argsstring>(template Train&lt; const MT &amp; &gt;, HasMTrain)</argsstring>
+        <name>HAS_METHOD_FORM</name>
+        <param>
+          <type>template Train&lt; const MT &amp; &gt;</type>
+        </param>
+        <param>
+          <type>HasMTrain</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="279" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1a2eb46f0ad998ffcbeb26719cdbe43089" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HAS_METHOD_FORM</definition>
+        <argsstring>(template Train&lt;&gt;, HasTTrain)</argsstring>
+        <name>HAS_METHOD_FORM</name>
+        <param>
+          <type>template Train&lt;&gt;</type>
+        </param>
+        <param>
+          <type>HasTTrain</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="278" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1MetaInfoExtractor_1af91274d6bd2c173a2192c2a8c992e01b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>HAS_METHOD_FORM</definition>
+        <argsstring>(Train, HasTrain)</argsstring>
+        <name>HAS_METHOD_FORM</name>
+        <param>
+          <type>Train</type>
+        </param>
+        <param>
+          <type>HasTrain</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="277" column="3"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor" kindref="compound">MetaInfoExtractor</ref> is a tool for extracting meta information about a given machine learning algorithm. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It can be used to automatically extract the type of predictions and weights (if weighted learning is supported), whether the machine learning algorithm takes a DatasetInfo parameter or a numClasses parameter.</para>
+<para>The following assumptions are made about the machine learning algorithm.<orderedlist>
+<listitem><para>All needed information can be extracted from signatures of Train methods.</para>
+</listitem><listitem><para>The machine learning algorithm contains either only non-templated Train methods or only templated ones.</para>
+</listitem><listitem><para>Train methods that can be used for extraction of needed information should be distinguishable by a number of arguments (for more information read discussion in <ulink url="https://github.com/mlpack/mlpack/issues/929">https://github.com/mlpack/mlpack/issues/929</ulink>).</para>
+</listitem><listitem><para>If weighted learning is supported, passing weights is an option rather than a requirement.</para>
+</listitem></orderedlist>
+</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MLAlgorithm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A machine learning algorithm to investigate. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>PT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of predictions (should be passed when the predictions type is a template parameter in Train methods of MLAlgorithm). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>WT</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of weights (should be passed when weighted learning is supported, and the weights type is a template parameter in Train methods of MLAlgorithm). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>MetaInfoExtractor&lt; MLAlgorithm, MT, PT, WT &gt;</label>
+        <link refid="classmlpack_1_1cv_1_1MetaInfoExtractor"/>
+      </node>
+      <node id="3">
+        <label>MetaInfoExtractor&lt; MLAlgorithm, arma::mat, typename MetaInfoExtractor&lt; MLAlgorithm, arma::mat &gt;::PredictionsType &gt;</label>
+        <link refid="classmlpack_1_1cv_1_1MetaInfoExtractor"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; MLAlgorithm, arma::mat, typename MetaInfoExtractor&lt; MLAlgorithm, arma::mat &gt;::PredictionsType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>MetaInfoExtractor&lt; MLAlgorithm, arma::mat &gt;</label>
+        <link refid="classmlpack_1_1cv_1_1MetaInfoExtractor"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; MLAlgorithm, arma::mat &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" line="272" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp" bodystart="273" bodyend="348"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1af91274d6bd2c173a2192c2a8c992e01b" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>HAS_METHOD_FORM</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a2eb46f0ad998ffcbeb26719cdbe43089" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>HAS_METHOD_FORM</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a30f2e12c461d477ae5815460296639e7" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>HAS_METHOD_FORM</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a5404ac0f7e29a8db4e23e8e03d4bffcd" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>HAS_METHOD_FORM</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a4bab50afe67b548bf7d1fb935f751090" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>HAS_METHOD_FORM</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a03f5301f82961c51fb0b6e4e3b89aae0" prot="public" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>IsSupported</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a77d035e0244a4c0b92866be6d3741596" prot="public" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>PredictionsType</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1adbdc2fd4afcebdf65253e4c892336847" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>Select</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a91e7b4713e95d246d62e121f6f17f26e" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>Selects</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1af9be7f6c420e961867c5945da0a3a339" prot="public" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>SupportsWeights</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1ae50c72f23be6bf92e820b643ae123189" prot="public" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>TakesDatasetInfo</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a0e921a4d1000043d71e5a6fbad480315" prot="public" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>TakesNumClasses</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1ac95662aac72e2c16e9c152496a38f1df" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>TF1</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a5a1c5582c913dfeed02afcc774df8931" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>TF2</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a225d207f77aaa107a0a5ad2c3de0b064" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>TF3</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a52dfc5b886fe2f7f09efbb1380d02325" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>TF4</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1af05872cdbef50ef11c1832e32f32f87d" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>TF5</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1aaeb8180f55243194b4ba4ad792cdc586" prot="public" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>WeightsType</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a1a0baa2bf3912cf0c1bdc9ad79cb2924" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>WTF1</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1acff883985495598ade82e77cd1cfeeda" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>WTF2</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a9f2fdf2ccfc71b87b200a1013270d3d6" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>WTF3</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a2586987bc91b915894138e944e6bca3e" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>WTF4</name></member>
+      <member refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a38400ea747d766d312a16fb92e1871cf" prot="private" virt="non-virtual"><scope>mlpack::cv::MetaInfoExtractor</scope><name>WTF5</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

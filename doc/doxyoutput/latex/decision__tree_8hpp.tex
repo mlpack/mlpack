@@ -1,0 +1,44 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/methods/decision\+\_\+tree/decision\+\_\+tree.hpp File Reference}
+\label{decision__tree_8hpp}\index{/home/aakash/mlpack/src/mlpack/methods/decision\_tree/decision\_tree.hpp@{/home/aakash/mlpack/src/mlpack/methods/decision\_tree/decision\_tree.hpp}}
+Include dependency graph for decision\+\_\+tree.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{decision__tree_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=328pt]{decision__tree_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Decision\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Dimension\+Selection\+Type, No\+Recursion $>$}
+\begin{DoxyCompactList}\small\item\em This class implements a generic decision tree learner. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::tree}
+\begin{DoxyCompactList}\small\item\em Trees and tree-\/building procedures. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Fitness\+Function  = Gini\+Gain, template$<$ typename $>$ class Numeric\+Split\+Type = Best\+Binary\+Numeric\+Split, template$<$ typename $>$ class Categorical\+Split\+Type = All\+Categorical\+Split, typename Dimension\+Select\+Type  = All\+Dimension\+Select$>$ }\\using \textbf{ Decision\+Stump} = Decision\+Tree$<$ Fitness\+Function, Numeric\+Split\+Type, Categorical\+Split\+Type, Dimension\+Select\+Type, false $>$
+\begin{DoxyCompactList}\small\item\em Convenience typedef for decision stumps (single level decision trees). \end{DoxyCompactList}\item 
+typedef Decision\+Tree$<$ Information\+Gain, Best\+Binary\+Numeric\+Split, All\+Categorical\+Split, All\+Dimension\+Select, true $>$ \textbf{ ID3\+Decision\+Stump}
+\begin{DoxyCompactList}\small\item\em Convenience typedef for ID3 decision stumps (single level decision trees made with the ID3 algorithm). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+A generic decision tree learner. Its behavior can be controlled via template arguments.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

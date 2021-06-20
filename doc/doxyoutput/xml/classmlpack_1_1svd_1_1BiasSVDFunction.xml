@@ -1,0 +1,506 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1svd_1_1BiasSVDFunction" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::svd::BiasSVDFunction</compoundname>
+    <includes refid="bias__svd__function_8hpp" local="no">bias_svd_function.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1BiasSVDFunction_1a3b54e646e9eae49971663bd59e983157" prot="private" static="no" mutable="no">
+        <type>MatType</type>
+        <definition>MatType data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Rating data. This will be an alias until <ref refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a2697cc8b37d7bca7c055228382a9b208" kindref="member">Shuffle()</ref> is called. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="126" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1BiasSVDFunction_1a146cdce9a82b3555d1d83744c74ee3f2" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat initialPoint</definition>
+        <argsstring></argsstring>
+        <name>initialPoint</name>
+        <briefdescription>
+<para>Initial parameter point. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="128" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1BiasSVDFunction_1a3db359547eed8cfd48ca821d95f577af" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double lambda</definition>
+        <argsstring></argsstring>
+        <name>lambda</name>
+        <briefdescription>
+<para>Regularization parameter for the optimization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="132" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1BiasSVDFunction_1a0d8ae3bebdd17ba24a3387f3bfbc1a91" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numItems</definition>
+        <argsstring></argsstring>
+        <name>numItems</name>
+        <briefdescription>
+<para>Number of items in the given dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="136" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1BiasSVDFunction_1a05e3a8a59978be915c208594201933ef" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numUsers</definition>
+        <argsstring></argsstring>
+        <name>numUsers</name>
+        <briefdescription>
+<para>Number of users in the given dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="134" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svd_1_1BiasSVDFunction_1ab70df9cf68a7bebf253173dcec354ee5" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <briefdescription>
+<para>Rank used for matrix factorization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="130" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1ad351ac6985fcbd43a424f84407a669e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>BiasSVDFunction</definition>
+        <argsstring>(const MatType &amp;data, const size_t rank, const double lambda)</argsstring>
+        <name>BiasSVDFunction</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rank</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>lambda</declname>
+        </param>
+        <briefdescription>
+<para>Constructor for <ref refid="classmlpack_1_1svd_1_1BiasSVDFunction" kindref="compound">BiasSVDFunction</ref> class. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The constructor calculates the number of users and items in the passed data. It also randomly initializes the parameter values.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset for which SVD is calculated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rank</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rank used for matrix factorization. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lambda</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Regularization parameter used for optimization. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="43" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1aff320b9a86b77a150e630c01d5888273" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; Dataset</definition>
+        <argsstring>() const</argsstring>
+        <name>Dataset</name>
+        <briefdescription>
+<para>Return the dataset passed into the constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="107" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="107" bodyend="107"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1a6c7f979b684b70aab5bec8b09b5eb1a4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const arma::mat &amp;parameters) const</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+<para>Evaluates the cost function over all examples in the data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters(user/item matrices/bias) of the decomposition. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="58" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1a12589583139057b24a415995079f6ffe" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const arma::mat &amp;parameters, const size_t start, const size_t batchSize=1) const</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>batchSize</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Evaluates the cost function for one training example. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Useful for the SGD optimizer abstraction which uses one training example at a time.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters(user/item matrices/bias) of the decomposition. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First index of the training examples to be used. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of batch to evaluate. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="69" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1ac3e9aa612cb56d0d93f3259f4a8122bb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; GetInitialPoint</definition>
+        <argsstring>() const</argsstring>
+        <name>GetInitialPoint</name>
+        <briefdescription>
+<para>Return the initial point for the optimization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="104" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="104" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1ab9a604f48072ce6c08443519ff787a73" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::mat &amp;parameters, arma::mat &amp;gradient) const</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Evaluates the full gradient of the cost function over all the training examples. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters(user/item matrices/bias) of the decomposition. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Calculated gradient for the parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="81" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1a5b06b7506faa0b510622078a31e88009" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename GradType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::mat &amp;parameters, const size_t start, GradType &amp;gradient, const size_t batchSize=1) const</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>GradType &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>batchSize</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Evaluates the gradient of the cost function over one training example. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function is useful for optimizers like SGD. The type of the gradient parameter is a template argument to allow the computation of a sparse gradient.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>GradType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the gradient out-param. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameters(user/item matrices/bias) of the decomposition. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The first index of the training examples to use. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Calculated gradient for the parameters. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of batch to calculate gradient for. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="98" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1a53535041275cedd0ec3de67ca032aa94" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Lambda</definition>
+        <argsstring>() const</argsstring>
+        <name>Lambda</name>
+        <briefdescription>
+<para>Return the regularization parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="119" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="119" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumFunctions</definition>
+        <argsstring>() const</argsstring>
+        <name>NumFunctions</name>
+        <briefdescription>
+<para>Return the number of training examples. Useful for SGD optimizer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="110" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1ad4e27ce22a8ed61cf6a83e3c1b48de3a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumItems</definition>
+        <argsstring>() const</argsstring>
+        <name>NumItems</name>
+        <briefdescription>
+<para>Return the number of items in the data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="116" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="116" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1af41355bc8f20533711975528a054c4dc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumUsers</definition>
+        <argsstring>() const</argsstring>
+        <name>NumUsers</name>
+        <briefdescription>
+<para>Return the number of users in the data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="113" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="113" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1afe1447c5e7fa184cbf19ced57a50b7b6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Rank</definition>
+        <argsstring>() const</argsstring>
+        <name>Rank</name>
+        <briefdescription>
+<para>Return the rank used for the factorization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="122" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="122" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svd_1_1BiasSVDFunction_1a2697cc8b37d7bca7c055228382a9b208" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Shuffle</definition>
+        <argsstring>()</argsstring>
+        <name>Shuffle</name>
+        <briefdescription>
+<para>Shuffle the points in the dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This may be used by optimizers. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="50" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class contains methods which are used to calculate the cost of <ref refid="classmlpack_1_1svd_1_1BiasSVD" kindref="compound">BiasSVD</ref>&apos;s objective function, to calculate gradient of parameters with respect to the objective function, etc. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The matrix type of the dataset. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" line="31" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd_function.hpp" bodystart="32" bodyend="137"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1ad351ac6985fcbd43a424f84407a669e6" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>BiasSVDFunction</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a3b54e646e9eae49971663bd59e983157" prot="private" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>data</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1aff320b9a86b77a150e630c01d5888273" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>Dataset</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a6c7f979b684b70aab5bec8b09b5eb1a4" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a12589583139057b24a415995079f6ffe" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1ac3e9aa612cb56d0d93f3259f4a8122bb" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>GetInitialPoint</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1ab9a604f48072ce6c08443519ff787a73" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a5b06b7506faa0b510622078a31e88009" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a146cdce9a82b3555d1d83744c74ee3f2" prot="private" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>initialPoint</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a3db359547eed8cfd48ca821d95f577af" prot="private" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>lambda</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a53535041275cedd0ec3de67ca032aa94" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>Lambda</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>NumFunctions</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a0d8ae3bebdd17ba24a3387f3bfbc1a91" prot="private" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>numItems</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1ad4e27ce22a8ed61cf6a83e3c1b48de3a" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>NumItems</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a05e3a8a59978be915c208594201933ef" prot="private" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>numUsers</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1af41355bc8f20533711975528a054c4dc" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>NumUsers</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1ab70df9cf68a7bebf253173dcec354ee5" prot="private" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>rank</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1afe1447c5e7fa184cbf19ced57a50b7b6" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>Rank</name></member>
+      <member refid="classmlpack_1_1svd_1_1BiasSVDFunction_1a2697cc8b37d7bca7c055228382a9b208" prot="public" virt="non-virtual"><scope>mlpack::svd::BiasSVDFunction</scope><name>Shuffle</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

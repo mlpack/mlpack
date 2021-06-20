@@ -1,0 +1,65 @@
+.TH "PositiveDefiniteConstraint" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PositiveDefiniteConstraint \- Given a covariance matrix, force the matrix to be positive definite\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBApplyConstraint\fP (arma::mat &covariance)"
+.br
+.RI "Apply the positive definiteness constraint to the given covariance matrix, and ensure each value on the diagonal is at least 1e-50\&. "
+.ti -1c
+.RI "static void \fBApplyConstraint\fP (arma::vec &diagCovariance)"
+.br
+.RI "Apply the positive definiteness constraint to the given diagonal covariance matrix (which is represented as a vector), and ensure each value on the diagonal is at least 1e-50\&. "
+.ti -1c
+.RI "template<typename Archive > static void \fBserialize\fP (Archive &, const uint32_t)"
+.br
+.RI "Serialize the constraint (which stores nothing, so, nothing to do)\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Given a covariance matrix, force the matrix to be positive definite\&. 
+
+Also force a minimum value on the diagonal, so that even if the matrix is invertible, it doesn't cause problems with Cholesky decompositions\&. The forcing here is also done in order to bring the condition number of the matrix under 1e5 (10k), which should help with numerical stability\&. 
+.PP
+Definition at line 27 of file positive_definite_constraint\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static void ApplyConstraint (arma::mat & covariance)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Apply the positive definiteness constraint to the given covariance matrix, and ensure each value on the diagonal is at least 1e-50\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcovariance\fP Covariance matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 36 of file positive_definite_constraint\&.hpp\&.
+.PP
+References Log::Fatal\&.
+.SS "static void ApplyConstraint (arma::vec & diagCovariance)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Apply the positive definiteness constraint to the given diagonal covariance matrix (which is represented as a vector), and ensure each value on the diagonal is at least 1e-50\&. 
+.PP
+Definition at line 75 of file positive_definite_constraint\&.hpp\&.
+.SS "static void serialize (Archive &, const uint32_t)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Serialize the constraint (which stores nothing, so, nothing to do)\&. 
+.PP
+Definition at line 100 of file positive_definite_constraint\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

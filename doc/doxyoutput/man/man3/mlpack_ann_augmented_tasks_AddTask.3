@@ -1,0 +1,96 @@
+.TH "AddTask" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AddTask \- Generator of instances of the binary addition task\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAddTask\fP (const size_t bitLen)"
+.br
+.RI "Creates an instance of the binary addition task\&. "
+.ti -1c
+.RI "void \fBGenerate\fP (arma::field< arma::mat > &input, arma::field< arma::mat > &labels, const size_t batchSize, const bool fixedLength=false) const"
+.br
+.RI "Generate dataset of a given size\&. "
+.ti -1c
+.RI "void \fBGenerate\fP (arma::mat &input, arma::mat &labels, const size_t batchSize) const"
+.br
+.RI "Generate dataset of a given size and store it in arma::mat object\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Generator of instances of the binary addition task\&. 
+
+The parameters are:
+.IP "\(bu" 2
+macimum binary length;
+.PP
+.PP
+Every element of sequence is encoded as 1-dimensional vector (possible vector elements are {0, 1, 0\&.5} - the latter corresponds to '+' sign')\&. Generated datasets are compliant with mlpack format - every dataset element is shaped as a vector of length 3 * (sequence length),
+.PP
+Example of generated dataset (binary length = 2):
+.IP "\(bu" 2
+Input sequence: [0,1,0,0,0,1,0,1,0,1,0,0]
+.IP "\(bu" 2
+Output sequences: [0,1,0,0,1,0] 
+.PP
+
+.PP
+Definition at line 42 of file add\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBAddTask\fP (const size_t bitLen)"
+
+.PP
+Creates an instance of the binary addition task\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIbitLen\fP Maximum binary length of added numbers\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Generate (arma::field< arma::mat > & input, arma::field< arma::mat > & labels, const size_t batchSize, const bool fixedLength = \fCfalse\fP) const"
+
+.PP
+Generate dataset of a given size\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP The variable to store input sequences\&. 
+.br
+\fIlabels\fP The variable to store output sequences\&. 
+.br
+\fIbatchSize\fP The dataset size\&. 
+.br
+\fIfixedLength\fP Flag that indicates whether the method should return sequences of even length\&. 
+.RE
+.PP
+
+.SS "void Generate (arma::mat & input, arma::mat & labels, const size_t batchSize) const"
+
+.PP
+Generate dataset of a given size and store it in arma::mat object\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP The variable to store input sequences\&. 
+.br
+\fIlabels\fP The variable to store output sequences\&. 
+.br
+\fIbatchSize\fP The dataset size\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

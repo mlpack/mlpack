@@ -1,0 +1,90 @@
+.TH "CFWrapperBase" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CFWrapperBase \- The \fBCFWrapperBase\fP class provides a unified interface that can be used by the \fBCFModel\fP class to interact with all different CF types at runtime\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherited by \fBCFWrapper< DecompositionPolicy, NormalizationPolicy >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBCFWrapperBase\fP ()"
+.br
+.RI "Create the object\&. The base class has nothing to hold\&. "
+.ti -1c
+.RI "virtual \fB~CFWrapperBase\fP ()"
+.br
+.RI "Delete the object\&. "
+.ti -1c
+.RI "virtual \fBCFWrapperBase\fP * \fBClone\fP () const =0"
+.br
+.RI "Make a copy of the object\&. "
+.ti -1c
+.RI "virtual void \fBGetRecommendations\fP (const \fBNeighborSearchTypes\fP nsType, const \fBInterpolationTypes\fP interpolationType, const size_t numRecs, arma::Mat< size_t > &recommendations)=0"
+.br
+.RI "Compute recommendations for all users\&. "
+.ti -1c
+.RI "virtual void \fBGetRecommendations\fP (const \fBNeighborSearchTypes\fP nsType, const \fBInterpolationTypes\fP interpolationType, const size_t numRecs, arma::Mat< size_t > &recommendations, const arma::Col< size_t > &users)=0"
+.br
+.RI "Compute recommendations\&. "
+.ti -1c
+.RI "virtual void \fBPredict\fP (const \fBNeighborSearchTypes\fP nsType, const \fBInterpolationTypes\fP interpolationType, const arma::Mat< size_t > &combinations, arma::vec &predictions)=0"
+.br
+.RI "Compute predictions for users\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The \fBCFWrapperBase\fP class provides a unified interface that can be used by the \fBCFModel\fP class to interact with all different CF types at runtime\&. 
+
+All CF wrapper types inherit from this base class\&. 
+.PP
+Definition at line 49 of file cf_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBCFWrapperBase\fP ()\fC [inline]\fP"
+
+.PP
+Create the object\&. The base class has nothing to hold\&. 
+.PP
+Definition at line 53 of file cf_model\&.hpp\&.
+.SS "virtual ~\fBCFWrapperBase\fP ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Delete the object\&. 
+.PP
+Definition at line 59 of file cf_model\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "virtual \fBCFWrapperBase\fP* Clone () const\fC [pure virtual]\fP"
+
+.PP
+Make a copy of the object\&. 
+.PP
+Implemented in \fBCFWrapper< DecompositionPolicy, NormalizationPolicy >\fP\&.
+.SS "virtual void GetRecommendations (const \fBNeighborSearchTypes\fP nsType, const \fBInterpolationTypes\fP interpolationType, const size_t numRecs, arma::Mat< size_t > & recommendations)\fC [pure virtual]\fP"
+
+.PP
+Compute recommendations for all users\&. 
+.PP
+Implemented in \fBCFWrapper< DecompositionPolicy, NormalizationPolicy >\fP\&.
+.SS "virtual void GetRecommendations (const \fBNeighborSearchTypes\fP nsType, const \fBInterpolationTypes\fP interpolationType, const size_t numRecs, arma::Mat< size_t > & recommendations, const arma::Col< size_t > & users)\fC [pure virtual]\fP"
+
+.PP
+Compute recommendations\&. 
+.PP
+Implemented in \fBCFWrapper< DecompositionPolicy, NormalizationPolicy >\fP\&.
+.SS "virtual void Predict (const \fBNeighborSearchTypes\fP nsType, const \fBInterpolationTypes\fP interpolationType, const arma::Mat< size_t > & combinations, arma::vec & predictions)\fC [pure virtual]\fP"
+
+.PP
+Compute predictions for users\&. 
+.PP
+Implemented in \fBCFWrapper< DecompositionPolicy, NormalizationPolicy >\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

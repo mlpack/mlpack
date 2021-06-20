@@ -1,0 +1,344 @@
+\doxysection{NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1NSWrapper}\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+
+
+\doxyref{NSWrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper} is a wrapper class for most \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} types.  
+
+
+
+
+Inheritance diagram for NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classmlpack_1_1neighbor_1_1NSWrapper__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ NSWrapper} (const \textbf{ Neighbor\+Search\+Mode} search\+Mode, const double epsilon)
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{NSWrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper} object, initializing the internally-\/held \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. \end{DoxyCompactList}\item 
+virtual \textbf{ $\sim$\+NSWrapper} ()
+\begin{DoxyCompactList}\small\item\em Delete the \doxyref{NSWrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper} object. \end{DoxyCompactList}\item 
+virtual \textbf{ NSWrapper} $\ast$ \textbf{ Clone} () const
+\begin{DoxyCompactList}\small\item\em Create a copy of this \doxyref{NSWrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper} object. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Dataset} () const
+\begin{DoxyCompactList}\small\item\em Get a reference to the reference set. \end{DoxyCompactList}\item 
+double \& \textbf{ Epsilon} ()
+\begin{DoxyCompactList}\small\item\em Modify epsilon, the approximation parameter. \end{DoxyCompactList}\item 
+double \textbf{ Epsilon} () const
+\begin{DoxyCompactList}\small\item\em Get epsilon, the approximation parameter. \end{DoxyCompactList}\item 
+virtual void \textbf{ Search} (arma\+::mat \&\&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances, const size\+\_\+t, const double)
+\begin{DoxyCompactList}\small\item\em Perform bichromatic neighbor search (i.\+e. \end{DoxyCompactList}\item 
+virtual void \textbf{ Search} (const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Perform monochromatic neighbor search (i.\+e. \end{DoxyCompactList}\item 
+\textbf{ Neighbor\+Search\+Mode} \& \textbf{ Search\+Mode} ()
+\begin{DoxyCompactList}\small\item\em Modify the search mode. \end{DoxyCompactList}\item 
+\textbf{ Neighbor\+Search\+Mode} \textbf{ Search\+Mode} () const
+\begin{DoxyCompactList}\small\item\em Get the search mode. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} model. \end{DoxyCompactList}\item 
+virtual void \textbf{ Train} (arma\+::mat \&\&reference\+Set, const size\+\_\+t, const double, const double)
+\begin{DoxyCompactList}\small\item\em Train the model with the given options. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef \textbf{ Neighbor\+Search}$<$ Sort\+Policy, \textbf{ metric\+::\+Euclidean\+Distance}, arma\+::mat, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$ \textbf{ NSType}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ NSType} \textbf{ ns}
+\begin{DoxyCompactList}\small\item\em The instantiated \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object that we are wrapping. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Sort\+Policy, template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type, template$<$ typename Rule\+Type $>$ class Dual\+Tree\+Traversal\+Type = Tree\+Type$<$metric\+::\+Euclidean\+Distance,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      arma\+::mat$>$\+::template Dual\+Tree\+Traverser, template$<$ typename Rule\+Type $>$ class Single\+Tree\+Traversal\+Type = Tree\+Type$<$metric\+::\+Euclidean\+Distance,                      Neighbor\+Search\+Stat$<$\+Sort\+Policy$>$,                      arma\+::mat$>$\+::template Single\+Tree\+Traverser$>$\newline
+class mlpack\+::neighbor\+::\+NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$}
+
+\doxyref{NSWrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper} is a wrapper class for most \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} types. 
+
+Definition at line 99 of file ns\+\_\+model.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_ad2fc06b46e6469a058f3a27bcc1ba9ef}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!NSType@{NSType}}
+\index{NSType@{NSType}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{NSType}
+{\footnotesize\ttfamily typedef \textbf{ Neighbor\+Search}$<$Sort\+Policy, \textbf{ metric\+::\+Euclidean\+Distance}, arma\+::mat, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type$>$ \textbf{ NSType}\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line 167 of file ns\+\_\+model.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_aa5e9531452fb70b839ae680037add615}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!NSWrapper@{NSWrapper}}
+\index{NSWrapper@{NSWrapper}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{NSWrapper()}
+{\footnotesize\ttfamily \textbf{ NSWrapper} (\begin{DoxyParamCaption}\item[{const \textbf{ Neighbor\+Search\+Mode}}]{search\+Mode,  }\item[{const double}]{epsilon }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct the \doxyref{NSWrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper} object, initializing the internally-\/held \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object. 
+
+
+
+Definition at line 104 of file ns\+\_\+model.\+hpp.
+
+
+
+Referenced by NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Clone().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_a33da04d4db6bb80d7354d3a3839bb408}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!````~NSWrapper@{$\sim$NSWrapper}}
+\index{````~NSWrapper@{$\sim$NSWrapper}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{$\sim$NSWrapper()}
+{\footnotesize\ttfamily virtual $\sim$\textbf{ NSWrapper} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Delete the \doxyref{NSWrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper} object. 
+
+
+
+Definition at line 112 of file ns\+\_\+model.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_a99ca7e011f7ab92c5ba440bc1304536d}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!Clone@{Clone}}
+\index{Clone@{Clone}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{Clone()}
+{\footnotesize\ttfamily virtual \textbf{ NSWrapper}$\ast$ Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Create a copy of this \doxyref{NSWrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper} object. 
+
+This correctly handles polymorphism. 
+
+Implements \textbf{ NSWrapper\+Base} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase_a56b413b249512d2cd48e40ec69eda9cf}.
+
+
+
+Reimplemented in \textbf{ Spill\+NSWrapper$<$ Sort\+Policy $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1SpillNSWrapper_a09080a653d528fcd34bb630ea566badb}, and \textbf{ Leaf\+Size\+NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_a1ada05f817cfde693b0ce9cb758f8e4d}.
+
+
+
+Definition at line 116 of file ns\+\_\+model.\+hpp.
+
+
+
+References NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+NSWrapper().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_aff320b9a86b77a150e630c01d5888273}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{Dataset()}
+{\footnotesize\ttfamily const arma\+::mat\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Get a reference to the reference set. 
+
+
+
+Implements \textbf{ NSWrapper\+Base} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase_a2effd31755e4ae5f85e14ed94e7fab8e}.
+
+
+
+Definition at line 119 of file ns\+\_\+model.\+hpp.
+
+
+
+References NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::ns, and Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Reference\+Set().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_ab6a080993b32456443eced5df2f8b9b9}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!Epsilon@{Epsilon}}
+\index{Epsilon@{Epsilon}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{Epsilon()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Epsilon (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Modify epsilon, the approximation parameter. 
+
+
+
+Implements \textbf{ NSWrapper\+Base} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase_a68739e281bac3db475e5423fbbca8081}.
+
+
+
+Definition at line 129 of file ns\+\_\+model.\+hpp.
+
+
+
+References Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Epsilon(), and NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::ns.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_af6d960193bb5db37e51416e12bf720de}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!Epsilon@{Epsilon}}
+\index{Epsilon@{Epsilon}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{Epsilon()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Epsilon (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Get epsilon, the approximation parameter. 
+
+
+
+Implements \textbf{ NSWrapper\+Base} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase_a9bd0afbec99b28bbc273e297ec9fe352}.
+
+
+
+Definition at line 127 of file ns\+\_\+model.\+hpp.
+
+
+
+References Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Epsilon(), and NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::ns.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_a1f033e50f5a14937123de77cb439fcb5}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!Search@{Search}}
+\index{Search@{Search}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual void Search (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{query\+Set,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances,  }\item[{const}]{size\+\_\+t,  }\item[{const double}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Perform bichromatic neighbor search (i.\+e. 
+
+search with a separate query set). For \doxyref{NSWrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper}, we ignore the extra parameters. 
+
+Implements \textbf{ NSWrapper\+Base} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase_a9e7389351073f295e1aee942dbd7942a}.
+
+
+
+Reimplemented in \textbf{ Leaf\+Size\+NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_a4aef4b9e215d07dbc33e97f5ff574ab2}, and \textbf{ Spill\+NSWrapper$<$ Sort\+Policy $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1SpillNSWrapper_a7f3908cf84625e816aac3b8ae78d302f}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_aeb3fa1fab8680898b6326556ea81a55b}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!Search@{Search}}
+\index{Search@{Search}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual void Search (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Perform monochromatic neighbor search (i.\+e. 
+
+use the reference set as the query set). 
+
+Implements \textbf{ NSWrapper\+Base} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase_a98ca743413f49d02f39ecb99184443d4}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_a6071cc412821cb4ce4364fbc2a0a8533}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!SearchMode@{SearchMode}}
+\index{SearchMode@{SearchMode}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{SearchMode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Neighbor\+Search\+Mode}\& Search\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Modify the search mode. 
+
+
+
+Implements \textbf{ NSWrapper\+Base} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase_ad405b5a3c8c8a828941afefd3826b49d}.
+
+
+
+Definition at line 124 of file ns\+\_\+model.\+hpp.
+
+
+
+References NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::ns, and Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Search\+Mode().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_a23cdc4b734a3dc41722aaded92244fd4}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!SearchMode@{SearchMode}}
+\index{SearchMode@{SearchMode}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{SearchMode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Neighbor\+Search\+Mode} Search\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Get the search mode. 
+
+
+
+Implements \textbf{ NSWrapper\+Base} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase_ac565d27ec3cd6370688baf14efed6556}.
+
+
+
+Definition at line 122 of file ns\+\_\+model.\+hpp.
+
+
+
+References NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::ns, and Neighbor\+Search$<$ Sort\+Policy, Metric\+Type, Mat\+Type, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Search\+Mode().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_a65cba07328997659bec80b9879b15a51}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} model. 
+
+
+
+Definition at line 155 of file ns\+\_\+model.\+hpp.
+
+
+
+References NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::ns.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_ae4fcf39ad7ed7dca39fe8bd00fd76082}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!Train@{Train}}
+\index{Train@{Train}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{Train()}
+{\footnotesize\ttfamily virtual void Train (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{reference\+Set,  }\item[{const}]{size\+\_\+t,  }\item[{const double}]{,  }\item[{const double}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Train the model with the given options. 
+
+For \doxyref{NSWrapper}{p.}{classmlpack_1_1neighbor_1_1NSWrapper}, we ignore the extra parameters. 
+
+Implements \textbf{ NSWrapper\+Base} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1NSWrapperBase_a870763190dedf5ec0d9a2118f742a517}.
+
+
+
+Reimplemented in \textbf{ Leaf\+Size\+NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1LeafSizeNSWrapper_af1b6a13a041581bdb250c303a2736c7c}, and \textbf{ Spill\+NSWrapper$<$ Sort\+Policy $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1SpillNSWrapper_a0bfff11e794dd6c4c7323cd204c67378}.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSWrapper_a36863b56066068618466a828a1e75578}} 
+\index{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}!ns@{ns}}
+\index{ns@{ns}!NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$@{NSWrapper$<$ SortPolicy, TreeType, DualTreeTraversalType, SingleTreeTraversalType $>$}}
+\doxysubsubsection{ns}
+{\footnotesize\ttfamily \textbf{ NSType} ns\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The instantiated \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} object that we are wrapping. 
+
+
+
+Definition at line 170 of file ns\+\_\+model.\+hpp.
+
+
+
+Referenced by NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Dataset(), NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Epsilon(), NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::\+Search\+Mode(), and NSWrapper$<$ Sort\+Policy, Tree\+Type, Dual\+Tree\+Traversal\+Type, Single\+Tree\+Traversal\+Type $>$\+::serialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/neighbor\+\_\+search/\textbf{ ns\+\_\+model.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1cf_1_1CFWrapperBase" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>mlpack::cf::CFWrapperBase</compoundname>
+    <derivedcompoundref refid="classmlpack_1_1cf_1_1CFWrapper" prot="public" virt="non-virtual">CFWrapper&lt; DecompositionPolicy, NormalizationPolicy &gt;</derivedcompoundref>
+    <includes refid="cf__model_8hpp" local="no">cf_model.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1CFWrapperBase_1a5536395b99c030b97a2860df3e2ae5c4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>CFWrapperBase</definition>
+        <argsstring>()</argsstring>
+        <name>CFWrapperBase</name>
+        <briefdescription>
+<para>Create the object. The base class has nothing to hold. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" line="53" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" bodystart="53" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1CFWrapperBase_1ac017d61192618af5a5f70a671c2a886b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual ~CFWrapperBase</definition>
+        <argsstring>()</argsstring>
+        <name>~CFWrapperBase</name>
+        <briefdescription>
+<para>Delete the object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" line="59" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" bodystart="59" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1CFWrapperBase_1a390b40d2a1416852dd64201e55dac770" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type><ref refid="classmlpack_1_1cf_1_1CFWrapperBase" kindref="compound">CFWrapperBase</ref> *</type>
+        <definition>virtual CFWrapperBase* Clone</definition>
+        <argsstring>() const =0</argsstring>
+        <name>Clone</name>
+        <reimplementedby refid="classmlpack_1_1cf_1_1CFWrapper_1af9bba55939ac1cb5bc1c4828094f502c">Clone</reimplementedby>
+        <briefdescription>
+<para>Make a copy of the object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" line="56" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1CFWrapperBase_1aefd1ffc070784adf594bd91a2469a6c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void GetRecommendations</definition>
+        <argsstring>(const NeighborSearchTypes nsType, const InterpolationTypes interpolationType, const size_t numRecs, arma::Mat&lt; size_t &gt; &amp;recommendations)=0</argsstring>
+        <name>GetRecommendations</name>
+        <reimplementedby refid="classmlpack_1_1cf_1_1CFWrapper_1aaa12de12e686286f465afa8a399677d2">GetRecommendations</reimplementedby>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1cf_1abde1eb199c5812cbca1a647cf1730732" kindref="member">NeighborSearchTypes</ref></type>
+          <declname>nsType</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1cf_1a06410b91b9d0ee6d70901dd29775ecd5" kindref="member">InterpolationTypes</ref></type>
+          <declname>interpolationType</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numRecs</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>recommendations</declname>
+        </param>
+        <briefdescription>
+<para>Compute recommendations for all users. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" line="68" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1CFWrapperBase_1af9ad22de59a4e9396157809f41f6c5dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void GetRecommendations</definition>
+        <argsstring>(const NeighborSearchTypes nsType, const InterpolationTypes interpolationType, const size_t numRecs, arma::Mat&lt; size_t &gt; &amp;recommendations, const arma::Col&lt; size_t &gt; &amp;users)=0</argsstring>
+        <name>GetRecommendations</name>
+        <reimplementedby refid="classmlpack_1_1cf_1_1CFWrapper_1ab3b85ddacc36d16322f28f5b5a113d0d">GetRecommendations</reimplementedby>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1cf_1abde1eb199c5812cbca1a647cf1730732" kindref="member">NeighborSearchTypes</ref></type>
+          <declname>nsType</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1cf_1a06410b91b9d0ee6d70901dd29775ecd5" kindref="member">InterpolationTypes</ref></type>
+          <declname>interpolationType</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numRecs</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>recommendations</declname>
+        </param>
+        <param>
+          <type>const arma::Col&lt; size_t &gt; &amp;</type>
+          <declname>users</declname>
+        </param>
+        <briefdescription>
+<para>Compute recommendations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" line="75" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1CFWrapperBase_1a3de57e8cd8b989a1e7e719c80f39d07b" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void Predict</definition>
+        <argsstring>(const NeighborSearchTypes nsType, const InterpolationTypes interpolationType, const arma::Mat&lt; size_t &gt; &amp;combinations, arma::vec &amp;predictions)=0</argsstring>
+        <name>Predict</name>
+        <reimplementedby refid="classmlpack_1_1cf_1_1CFWrapper_1adeae1e56456f3c8c71d0da5542ee4415">Predict</reimplementedby>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1cf_1abde1eb199c5812cbca1a647cf1730732" kindref="member">NeighborSearchTypes</ref></type>
+          <declname>nsType</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1cf_1a06410b91b9d0ee6d70901dd29775ecd5" kindref="member">InterpolationTypes</ref></type>
+          <declname>interpolationType</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>combinations</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <briefdescription>
+<para>Compute predictions for users. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" line="62" column="16"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1cf_1_1CFWrapperBase" kindref="compound">CFWrapperBase</ref> class provides a unified interface that can be used by the <ref refid="classmlpack_1_1cf_1_1CFModel" kindref="compound">CFModel</ref> class to interact with all different CF types at runtime. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>All CF wrapper types inherit from this base class. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>CFWrapper&lt; DecompositionPolicy, NormalizationPolicy &gt;</label>
+        <link refid="classmlpack_1_1cf_1_1CFWrapper"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>CFWrapperBase</label>
+        <link refid="classmlpack_1_1cf_1_1CFWrapperBase"/>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" line="49" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp" bodystart="50" bodyend="81"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cf_1_1CFWrapperBase_1a5536395b99c030b97a2860df3e2ae5c4" prot="public" virt="non-virtual"><scope>mlpack::cf::CFWrapperBase</scope><name>CFWrapperBase</name></member>
+      <member refid="classmlpack_1_1cf_1_1CFWrapperBase_1a390b40d2a1416852dd64201e55dac770" prot="public" virt="pure-virtual"><scope>mlpack::cf::CFWrapperBase</scope><name>Clone</name></member>
+      <member refid="classmlpack_1_1cf_1_1CFWrapperBase_1aefd1ffc070784adf594bd91a2469a6c7" prot="public" virt="pure-virtual"><scope>mlpack::cf::CFWrapperBase</scope><name>GetRecommendations</name></member>
+      <member refid="classmlpack_1_1cf_1_1CFWrapperBase_1af9ad22de59a4e9396157809f41f6c5dc" prot="public" virt="pure-virtual"><scope>mlpack::cf::CFWrapperBase</scope><name>GetRecommendations</name></member>
+      <member refid="classmlpack_1_1cf_1_1CFWrapperBase_1a3de57e8cd8b989a1e7e719c80f39d07b" prot="public" virt="pure-virtual"><scope>mlpack::cf::CFWrapperBase</scope><name>Predict</name></member>
+      <member refid="classmlpack_1_1cf_1_1CFWrapperBase_1ac017d61192618af5a5f70a671c2a886b" prot="public" virt="virtual"><scope>mlpack::cf::CFWrapperBase</scope><name>~CFWrapperBase</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

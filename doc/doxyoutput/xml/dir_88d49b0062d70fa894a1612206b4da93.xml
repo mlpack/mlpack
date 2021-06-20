@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_88d49b0062d70fa894a1612206b4da93" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/emst</compoundname>
+    <innerfile refid="dtb_8hpp">dtb.hpp</innerfile>
+    <innerfile refid="dtb__rules_8hpp">dtb_rules.hpp</innerfile>
+    <innerfile refid="dtb__stat_8hpp">dtb_stat.hpp</innerfile>
+    <innerfile refid="edge__pair_8hpp">edge_pair.hpp</innerfile>
+    <innerfile refid="union__find_8hpp">union_find.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/emst/"/>
+  </compounddef>
+</doxygen>

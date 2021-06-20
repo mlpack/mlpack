@@ -1,0 +1,75 @@
+.TH "/home/aakash/mlpack/src/mlpack/core/cereal/array_wrapper.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/core/cereal/array_wrapper.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBArrayWrapper< T >\fP"
+.br
+.RI "This class is used as a shim for cereal to be able to serialize a raw pointer array\&. "
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBcereal\fP"
+.br
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBCEREAL_POINTER_ARRAY\fP(T,  S)   \fBcereal::make_array\fP(T, S)"
+.br
+.RI "Cereal does not support the serialization of raw pointer\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<class T , class S > ArrayWrapper< T > \fBmake_array\fP (T *&t, S &s)"
+.br
+.RI "This function is used to serialized old c-style array\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Omar Shrit
+.RE
+.PP
+Implementation of an array wrapper\&.
+.PP
+This implementation allows to seriliaze an array easily using cereal\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBarray_wrapper\&.hpp\fP\&.
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define CEREAL_POINTER_ARRAY(T, S)   \fBcereal::make_array\fP(T, S)"
+
+.PP
+Cereal does not support the serialization of raw pointer\&. This macro enable developers to serialize old c-style array by using the above ArrayWrapper class which serialize each member independently\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIT\fP C Style array\&. 
+.br
+\fIS\fP Size of the array\&. 
+.RE
+.PP
+
+.PP
+Definition at line 87 of file array_wrapper\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

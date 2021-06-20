@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1pca_1_1ExactSVDPolicy" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::pca::ExactSVDPolicy</compoundname>
+    <includes refid="exact__svd__method_8hpp" local="no">exact_svd_method.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1pca_1_1ExactSVDPolicy_1a0ff241481a91b6d5cbf4279ba0e47fd6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Apply</definition>
+        <argsstring>(const arma::mat &amp;data, const arma::mat &amp;centeredData, arma::mat &amp;transformedData, arma::vec &amp;eigVal, arma::mat &amp;eigvec, const size_t)</argsstring>
+        <name>Apply</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>centeredData</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>transformedData</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>eigVal</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>eigvec</declname>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <briefdescription>
+<para>Apply Principal Component Analysis to the provided data set using the exact SVD method. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>centeredData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Centered data matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>transformedData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to put results of <ref refid="classmlpack_1_1pca_1_1PCA" kindref="compound">PCA</ref> into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eigVal</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to put eigenvalues into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eigvec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to put eigenvectors (loadings) into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(rank) Rank of the decomposition. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp" line="41" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp" bodystart="41" bodyend="71"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the exact SVD policy. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp" line="27" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/pca/decomposition_policies/exact_svd_method.hpp" bodystart="28" bodyend="72"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1pca_1_1ExactSVDPolicy_1a0ff241481a91b6d5cbf4279ba0e47fd6" prot="public" virt="non-virtual"><scope>mlpack::pca::ExactSVDPolicy</scope><name>Apply</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

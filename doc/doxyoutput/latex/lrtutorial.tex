@@ -1,0 +1,424 @@
+\doxysection{Introduction}\label{lrtutorial_intro_lrtut}
+Linear regression and ridge regression are simple machine learning techniques that aim to estimate the parameters of a linear model. Assuming we have $n$ {\bfseries{predictor}} points $\mathbf{x_i}, 0 \le i < n$ of dimensionality $d$ and $n$ responses $y_i, 0 \le i < n$, we are trying to estimate the best fit for $\beta_i, 0 \le i \le d$ in the linear model
+
+\[ y_i = \beta_0 + \displaystyle\sum_{j = 1}^{d} \beta_j x_{ij} \]
+
+for each predictor $\mathbf{x_i}$ and response $y_i$. If we take each predictor $\mathbf{x_i}$ as a row in the matrix $\mathbf{X}$ and each response $y_i$ as an entry of the vector $\mathbf{y}$, we can represent the model in vector form\+:
+
+\[ \mathbf{y} = \mathbf{X} \mathbf{\beta} + \beta_0 \]
+
+The result of this method is the vector $\mathbf{\beta}$, including the offset term (or intercept term) $\beta_0$.
+
+{\bfseries{mlpack}} provides\+:
+
+
+\begin{DoxyItemize}
+\item a \doxyref{simple command-\/line executable}{p.}{lrtutorial_cli_lrtut} to perform linear regression or ridge regression
+\item a \doxyref{simple C++ interface}{p.}{lrtutorial_linreg_lrtut} to perform linear regression or ridge regression
+\end{DoxyItemize}\doxysection{Table of Contents}\label{lrtutorial_toc_lrtut}
+A list of all the sections this tutorial contains.
+
+
+\begin{DoxyItemize}
+\item \doxyref{Introduction}{p.}{lrtutorial_intro_lrtut}
+\item \doxyref{Table of Contents}{p.}{lrtutorial_toc_lrtut}
+\item \doxyref{Command-\/\+Line \textquotesingle{}mlpack\+\_\+linear\+\_\+regression\textquotesingle{}}{p.}{lrtutorial_cli_lrtut}
+\begin{DoxyItemize}
+\item \doxyref{One file, generating the function coefficients}{p.}{lrtutorial_cli_ex1_lrtut}
+\item \doxyref{Train a multivariate linear regression model}{p.}{lrtutorial_cli_ex2_lrtut}
+\item \doxyref{Compute model and predict at the same time}{p.}{lrtutorial_cli_ex3_lrtut}
+\item \doxyref{Prediction using a precomputed model}{p.}{lrtutorial_cli_ex4_lrtut}
+\item \doxyref{Using ridge regression}{p.}{lrtutorial_cli_ex5_lrtut}
+\end{DoxyItemize}
+\item \doxyref{The \textquotesingle{}Linear\+Regression\textquotesingle{} class}{p.}{lrtutorial_linreg_lrtut}
+\begin{DoxyItemize}
+\item \doxyref{Generating a model}{p.}{lrtutorial_linreg_ex1_lrtut}
+\item \doxyref{Setting a model}{p.}{lrtutorial_linreg_ex2_lrtut}
+\item \doxyref{Load a model from a file}{p.}{lrtutorial_linreg_ex3_lrtut}
+\item \doxyref{Prediction}{p.}{lrtutorial_linreg_ex4_lrtut}
+\item \doxyref{Setting lambda for ridge regression}{p.}{lrtutorial_linreg_ex5_lrtut}
+\end{DoxyItemize}
+\item \doxyref{Further documentation}{p.}{lrtutorial_further_doc_lrtut}
+\end{DoxyItemize}\doxysection{Command-\/\+Line \textquotesingle{}mlpack\+\_\+linear\+\_\+regression\textquotesingle{}}\label{lrtutorial_cli_lrtut}
+The simplest way to perform linear regression or ridge regression in {\bfseries{mlpack}} is to use the {\ttfamily mlpack\+\_\+linear\+\_\+regression} executable. This program will perform linear regression and place the resultant coefficients into one file.
+
+The output file holds a vector of coefficients in increasing order of dimension; that is, the offset term ( $\beta_0$), the coefficient for dimension 1 ( $\beta_1$, then dimension 2 ( $\beta_2$) and so forth, as well as the intercept. This executable can also predict the $y$ values of a second dataset based on the computed coefficients.
+
+Below are several examples of simple usage (and the resultant output). The {\ttfamily option} is used so that verbose output is given. Further documentation on each individual option can be found by typing
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ mlpack\_linear\_regression -\/-\/help}
+
+\end{DoxyCode}
+\doxysubsection{One file, generating the function coefficients}\label{lrtutorial_cli_ex1_lrtut}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ mlpack\_linear\_regression -\/-\/training\_file dataset.csv -\/v -\/M lr.xml}
+\DoxyCodeLine{[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 2 x 5.}
+\DoxyCodeLine{[INFO ]}
+\DoxyCodeLine{[INFO ] Execution parameters:}
+\DoxyCodeLine{[INFO ]   help: \textcolor{keyword}{false}}
+\DoxyCodeLine{[INFO ]   info: \textcolor{stringliteral}{"{}"{}}}
+\DoxyCodeLine{[INFO ]   input\_model\_file: \textcolor{stringliteral}{"{}"{}}}
+\DoxyCodeLine{[INFO ]   lambda: 0}
+\DoxyCodeLine{[INFO ]   output\_model\_file: lr.xml}
+\DoxyCodeLine{[INFO ]   output\_predictions: predictions.csv}
+\DoxyCodeLine{[INFO ]   test\_file: \textcolor{stringliteral}{"{}"{}}}
+\DoxyCodeLine{[INFO ]   training\_file: dataset.csv}
+\DoxyCodeLine{[INFO ]   training\_responses: \textcolor{stringliteral}{"{}"{}}}
+\DoxyCodeLine{[INFO ]   verbose: \textcolor{keyword}{true}}
+\DoxyCodeLine{[INFO ]   version: \textcolor{keyword}{false}}
+\DoxyCodeLine{[INFO ]}
+\DoxyCodeLine{[INFO ] Program timers:}
+\DoxyCodeLine{[INFO ]   load\_regressors: 0.000263s}
+\DoxyCodeLine{[INFO ]   loading\_data: 0.000220s}
+\DoxyCodeLine{[INFO ]   regression: 0.000392s}
+\DoxyCodeLine{[INFO ]   total\_time: 0.001920s}
+
+\end{DoxyCode}
+
+
+Convenient program timers are given for different parts of the calculation at the bottom of the output, as well as the parameters the simulation was run with. Now, if we look at the output model file, which is {\ttfamily lr.\+xml},
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ cat dataset.csv}
+\DoxyCodeLine{0,0}
+\DoxyCodeLine{1,1}
+\DoxyCodeLine{2,2}
+\DoxyCodeLine{3,3}
+\DoxyCodeLine{4,4}
+\DoxyCodeLine{}
+\DoxyCodeLine{\$ cat lr.xml}
+\DoxyCodeLine{<?xml version=\textcolor{stringliteral}{"{}1.0"{}} encoding=\textcolor{stringliteral}{"{}utf-\/8"{}}?>}
+\DoxyCodeLine{<cereal>}
+\DoxyCodeLine{  <model>}
+\DoxyCodeLine{    <cereal\_class\_version>0</cereal\_class\_version>}
+\DoxyCodeLine{    <parameters>}
+\DoxyCodeLine{      <n\_rows>2</n\_rows>}
+\DoxyCodeLine{      <n\_cols>1</n\_cols>}
+\DoxyCodeLine{      <vec\_state>1</vec\_state>}
+\DoxyCodeLine{      <elem>0</elem>}
+\DoxyCodeLine{      <elem>1</elem>}
+\DoxyCodeLine{    </parameters>}
+\DoxyCodeLine{    <lambda>0</lambda>}
+\DoxyCodeLine{    <intercept>\textcolor{keyword}{true}</intercept>}
+\DoxyCodeLine{  </model>}
+\DoxyCodeLine{</cereal>}
+
+\end{DoxyCode}
+
+
+As you can see, the function for this input is $f(y)=0+1x_1$. We can see that the model we have trained catches this; in the {\ttfamily $<$parameters$>$} section of {\ttfamily lr.\+xml}, we can see that there are two elements, which are (approximately) 0 and 1. The first element corresponds to the intercept 0, and the second column corresponds to the coefficient 1 for the variable $x_1$. Note that in this example, the regressors for the dataset are the second column. That is, the dataset is one dimensional, and the last column has the $y$ values, or responses, for each row. You can specify these responses in a separate file if you want, using the {\ttfamily --input\+\_\+responses}, or {\ttfamily -\/r}, option.\doxysubsection{Train a multivariate linear regression model}\label{lrtutorial_cli_ex2_lrtut}
+Multivariate linear regression means that the response variable is predicted by more than just one input variable. In this example we will try to fit a multivariate linear regression model to data that contains four variables, stored in {\ttfamily dataset\+\_\+2.\+csv}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ cat dataset\_2.csv}
+\DoxyCodeLine{0,0,0,0,14}
+\DoxyCodeLine{1,1,1,1,24}
+\DoxyCodeLine{2,1,0,2,27}
+\DoxyCodeLine{1,2,2,2,32}
+\DoxyCodeLine{-\/1,-\/3,0,2,17}
+
+\end{DoxyCode}
+
+
+Now let\textquotesingle{}s run {\ttfamily mlpack\+\_\+linear\+\_\+regression} as usual\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ mlpack\_linear\_regression -\/-\/training\_file dataset\_2.csv -\/v -\/M lr.xml}
+\DoxyCodeLine{[INFO ] Loading \textcolor{stringliteral}{'dataset\_2.csv'} as CSV data.  Size is 5 x 5.}
+\DoxyCodeLine{[INFO ] }
+\DoxyCodeLine{[INFO ] Execution parameters:}
+\DoxyCodeLine{[INFO ]   help: 0}
+\DoxyCodeLine{[INFO ]   info: }
+\DoxyCodeLine{[INFO ]   input\_model\_file: }
+\DoxyCodeLine{[INFO ]   lambda: 0}
+\DoxyCodeLine{[INFO ]   output\_model\_file: lr.xml}
+\DoxyCodeLine{[INFO ]   output\_predictions\_file: }
+\DoxyCodeLine{[INFO ]   test\_file: }
+\DoxyCodeLine{[INFO ]   training\_file: dataset\_2.csv}
+\DoxyCodeLine{[INFO ]   training\_responses\_file: }
+\DoxyCodeLine{[INFO ]   verbose: 1}
+\DoxyCodeLine{[INFO ]   version: 0}
+\DoxyCodeLine{[INFO ] Program timers:}
+\DoxyCodeLine{[INFO ]   load\_regressors: 0.000060s}
+\DoxyCodeLine{[INFO ]   loading\_data: 0.000050s}
+\DoxyCodeLine{[INFO ]   regression: 0.000049s}
+\DoxyCodeLine{[INFO ]   total\_time: 0.000118s}
+\DoxyCodeLine{}
+\DoxyCodeLine{\$ cat lr.xml }
+\DoxyCodeLine{<?xml version=\textcolor{stringliteral}{"{}1.0"{}} encoding=\textcolor{stringliteral}{"{}utf-\/8"{}}?>}
+\DoxyCodeLine{<cereal>}
+\DoxyCodeLine{  <model>}
+\DoxyCodeLine{    <cereal\_class\_version>0</cereal\_class\_version>}
+\DoxyCodeLine{    <parameters>}
+\DoxyCodeLine{      <n\_rows>5</n\_rows>}
+\DoxyCodeLine{      <n\_cols>1</n\_cols>}
+\DoxyCodeLine{      <vec\_state>1</vec\_state>}
+\DoxyCodeLine{      <elem>14.00000000000002</elem>}
+\DoxyCodeLine{      <elem>1.9999999999999447</elem>}
+\DoxyCodeLine{      <elem>1.0000000000000431</elem>}
+\DoxyCodeLine{      <elem>2.9999999999999516</elem>}
+\DoxyCodeLine{      <elem>4.0000000000000249</elem>}
+\DoxyCodeLine{    </parameters>}
+\DoxyCodeLine{    <lambda>0</lambda>}
+\DoxyCodeLine{    <intercept>\textcolor{keyword}{true}</intercept>}
+\DoxyCodeLine{  </model>}
+\DoxyCodeLine{</cereal>}
+
+\end{DoxyCode}
+
+
+If we take a look at the {\ttfamily lr.\+xml} output we can see the {\ttfamily $<$parameters$>$} part has five elements which the first corresponds to $\beta_0$ , the second corresponds to $\beta_1$ , and so on. This is equivalent to $f(y) = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_3 + \beta_4x_4$ or $f(y)=14+2x_1+1x_2+3x_3+4x_4$.\doxysubsection{Compute model and predict at the same time}\label{lrtutorial_cli_ex3_lrtut}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ mlpack\_linear\_regression -\/-\/training\_file dataset.csv -\/-\/test\_file predict.csv -\/-\/output\_predictions\_file predictions.csv \(\backslash\)}
+\DoxyCodeLine{> -\/v}
+\DoxyCodeLine{[WARN ] \textcolor{stringliteral}{'-\/-\/output\_predictions\_file (-\/o)'} ignored because \textcolor{stringliteral}{'-\/-\/test\_file (-\/T)'} is specified!}
+\DoxyCodeLine{[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 2 x 5.}
+\DoxyCodeLine{[INFO ] Loading \textcolor{stringliteral}{'predict.csv'} as raw ASCII formatted data.  Size is 1 x 3.}
+\DoxyCodeLine{[INFO ] Saving CSV data to \textcolor{stringliteral}{'predictions.csv'}.}
+\DoxyCodeLine{[INFO ] }
+\DoxyCodeLine{[INFO ] Execution parameters:}
+\DoxyCodeLine{[INFO ]   help: 0}
+\DoxyCodeLine{[INFO ]   info: }
+\DoxyCodeLine{[INFO ]   input\_model\_file: }
+\DoxyCodeLine{[INFO ]   lambda: 0}
+\DoxyCodeLine{[INFO ]   output\_model\_file: }
+\DoxyCodeLine{[INFO ]   output\_predictions\_file: \textcolor{stringliteral}{'predictions.csv'} (1x3 matrix)}
+\DoxyCodeLine{[INFO ]   test\_file: \textcolor{stringliteral}{'predict.csv'} (0x0 matrix)}
+\DoxyCodeLine{[INFO ]   training\_file: \textcolor{stringliteral}{'dataset.csv'} (0x0 matrix)}
+\DoxyCodeLine{[INFO ]   training\_responses\_file: \textcolor{stringliteral}{''}}
+\DoxyCodeLine{[INFO ]   verbose: 1}
+\DoxyCodeLine{[INFO ]   version: 0}
+\DoxyCodeLine{[INFO ] Program timers:}
+\DoxyCodeLine{[INFO ]   load\_regressors: 0.000069s}
+\DoxyCodeLine{[INFO ]   load\_test\_points: 0.000031s}
+\DoxyCodeLine{[INFO ]   loading\_data: 0.000079s}
+\DoxyCodeLine{[INFO ]   prediction: 0.000001s}
+\DoxyCodeLine{[INFO ]   regression: 0.000054s}
+\DoxyCodeLine{[INFO ]   saving\_data: 0.000055s}
+\DoxyCodeLine{[INFO ]   total\_time: 0.000203s}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\$ cat dataset.csv}
+\DoxyCodeLine{0,0}
+\DoxyCodeLine{1,1}
+\DoxyCodeLine{2,2}
+\DoxyCodeLine{3,3}
+\DoxyCodeLine{4,4}
+\DoxyCodeLine{}
+\DoxyCodeLine{\$ cat predict.csv}
+\DoxyCodeLine{2}
+\DoxyCodeLine{3}
+\DoxyCodeLine{4}
+\DoxyCodeLine{}
+\DoxyCodeLine{\$ cat predictions.csv}
+\DoxyCodeLine{2.0000000000e+00}
+\DoxyCodeLine{3.0000000000e+00}
+\DoxyCodeLine{4.0000000000e+00}
+
+\end{DoxyCode}
+
+
+We used the same dataset, so we got the same parameters. The key thing to note about the {\ttfamily predict.\+csv} dataset is that it has the same dimensionality as the dataset used to create the model, one. If the model generating dataset has $d$ dimensions, so must the dataset we want to predict for.\doxysubsection{Prediction using a precomputed model}\label{lrtutorial_cli_ex4_lrtut}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ mlpack\_linear\_regression -\/-\/input\_model\_file lr.xml -\/-\/test\_file predict.csv -\/-\/output\_predictions\_file predictions.csv -\/v}
+\DoxyCodeLine{[WARN ] \textcolor{stringliteral}{'-\/-\/output\_predictions\_file (-\/o)'} ignored because \textcolor{stringliteral}{'-\/-\/test\_file (-\/T)'} is specified!}
+\DoxyCodeLine{[INFO ] Loading \textcolor{stringliteral}{'predict.csv'} as raw ASCII formatted data.  Size is 1 x 3.}
+\DoxyCodeLine{[INFO ] Saving CSV data to \textcolor{stringliteral}{'predictions.csv'}.}
+\DoxyCodeLine{[INFO ] }
+\DoxyCodeLine{[INFO ] Execution parameters:}
+\DoxyCodeLine{[INFO ]   help: 0}
+\DoxyCodeLine{[INFO ]   info: }
+\DoxyCodeLine{[INFO ]   input\_model\_file: lr.xml}
+\DoxyCodeLine{[INFO ]   lambda: 0}
+\DoxyCodeLine{[INFO ]   output\_model\_file: }
+\DoxyCodeLine{[INFO ]   output\_predictions\_file: \textcolor{stringliteral}{'predictions.csv'} (1x3 matrix)}
+\DoxyCodeLine{[INFO ]   test\_file: \textcolor{stringliteral}{'predict.csv'} (0x0 matrix)}
+\DoxyCodeLine{[INFO ]   training\_file: \textcolor{stringliteral}{''}}
+\DoxyCodeLine{[INFO ]   training\_responses\_file: \textcolor{stringliteral}{''}}
+\DoxyCodeLine{[INFO ]   verbose: 1}
+\DoxyCodeLine{[INFO ]   version: 0}
+\DoxyCodeLine{[INFO ] Program timers:}
+\DoxyCodeLine{[INFO ]   load\_model: 0.000051s}
+\DoxyCodeLine{[INFO ]   load\_test\_points: 0.000052s}
+\DoxyCodeLine{[INFO ]   loading\_data: 0.000044s}
+\DoxyCodeLine{[INFO ]   prediction: 0.000010s}
+\DoxyCodeLine{[INFO ]   saving\_data: 0.000079s}
+\DoxyCodeLine{[INFO ]   total\_time: 0.000160s}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\$ cat lr.xml}
+\DoxyCodeLine{<?xml version=\textcolor{stringliteral}{"{}1.0"{}} encoding=\textcolor{stringliteral}{"{}utf-\/8"{}}?>}
+\DoxyCodeLine{<cereal>}
+\DoxyCodeLine{  <model>}
+\DoxyCodeLine{    <cereal\_class\_version>0</cereal\_class\_version>}
+\DoxyCodeLine{    <parameters>}
+\DoxyCodeLine{      <n\_rows>2</n\_rows>}
+\DoxyCodeLine{      <n\_cols>1</n\_cols>}
+\DoxyCodeLine{      <vec\_state>1</vec\_state>}
+\DoxyCodeLine{      <elem>0</elem>}
+\DoxyCodeLine{      <elem>1</elem>}
+\DoxyCodeLine{    </parameters>}
+\DoxyCodeLine{    <lambda>0</lambda>}
+\DoxyCodeLine{    <intercept>\textcolor{keyword}{true}</intercept>}
+\DoxyCodeLine{  </model>}
+\DoxyCodeLine{</cereal>}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\$ cat predict.csv}
+\DoxyCodeLine{2}
+\DoxyCodeLine{3}
+\DoxyCodeLine{4}
+\DoxyCodeLine{}
+\DoxyCodeLine{\$ cat predictions.csv}
+\DoxyCodeLine{2.0000000000e+00}
+\DoxyCodeLine{3.0000000000e+00}
+\DoxyCodeLine{4.0000000000e+00}
+
+\end{DoxyCode}
+\doxysubsection{Using ridge regression}\label{lrtutorial_cli_ex5_lrtut}
+Sometimes, the input matrix of predictors has a covariance matrix that is not invertible, or the system is overdetermined. In this case, ridge regression is useful\+: it adds a normalization term to the covariance matrix to make it invertible. Ridge regression is a standard technique and documentation for the mathematics behind it can be found anywhere on the Internet. In short, the covariance matrix
+
+\[ \mathbf{X}\textnormal{\textquotesingle} \mathbf{X} \]
+
+is replaced with
+
+\[ \mathbf{X}\textnormal{\textquotesingle} \mathbf{X} + \lambda \mathbf{I} \]
+
+where $\mathbf{I}$ is the identity matrix. So, a $\lambda$ parameter greater than zero should be specified to perform ridge regression, using the {\ttfamily --lambda} (or {\ttfamily -\/l}) option. An example is given below.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ mlpack\_linear\_regression -\/-\/training\_file dataset.csv -\/v -\/-\/lambda 0.5 -\/M lr.xml}
+\DoxyCodeLine{[INFO ] Loading \textcolor{stringliteral}{'dataset.csv'} as CSV data.  Size is 2 x 5.}
+\DoxyCodeLine{[INFO ]}
+\DoxyCodeLine{[INFO ] Execution parameters:}
+\DoxyCodeLine{[INFO ]   help: \textcolor{keyword}{false}}
+\DoxyCodeLine{[INFO ]   info: \textcolor{stringliteral}{"{}"{}}}
+\DoxyCodeLine{[INFO ]   input\_model\_file: \textcolor{stringliteral}{"{}"{}}}
+\DoxyCodeLine{[INFO ]   lambda: 0.5}
+\DoxyCodeLine{[INFO ]   output\_model\_file: lr.xml}
+\DoxyCodeLine{[INFO ]   output\_predictions: predictions.csv}
+\DoxyCodeLine{[INFO ]   test\_file: \textcolor{stringliteral}{"{}"{}}}
+\DoxyCodeLine{[INFO ]   training\_file: dataset.csv}
+\DoxyCodeLine{[INFO ]   training\_responses: \textcolor{stringliteral}{"{}"{}}}
+\DoxyCodeLine{[INFO ]   verbose: \textcolor{keyword}{true}}
+\DoxyCodeLine{[INFO ]   version: \textcolor{keyword}{false}}
+\DoxyCodeLine{[INFO ]}
+\DoxyCodeLine{[INFO ] Program timers:}
+\DoxyCodeLine{[INFO ]   load\_regressors: 0.000210s}
+\DoxyCodeLine{[INFO ]   loading\_data: 0.000170s}
+\DoxyCodeLine{[INFO ]   regression: 0.000332s}
+\DoxyCodeLine{[INFO ]   total\_time: 0.001835s}
+
+\end{DoxyCode}
+
+
+Further documentation on options should be found by using the {\ttfamily --help} option.\doxysection{The \textquotesingle{}\+Linear\+Regression\textquotesingle{} class}\label{lrtutorial_linreg_lrtut}
+The \textquotesingle{}Linear\+Regression\textquotesingle{} class is a simple implementation of linear regression.
+
+Using the Linear\+Regression class is very simple. It has two available constructors; one for generating a model from a matrix of predictors and a vector of responses, and one for loading an already computed model from a given file.
+
+The class provides one method that performs computation\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} Predict(\textcolor{keyword}{const} arma::mat\& points, arma::vec\& predictions);}
+
+\end{DoxyCode}
+
+
+Once you have generated or loaded a model, you can call this method and pass it a matrix of data points to predict values for using the model. The second parameter, predictions, will be modified to contain the predicted values corresponding to each row of the points matrix.\doxysubsection{Generating a model}\label{lrtutorial_linreg_ex1_lrtut}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <mlpack/methods/linear\_regression/linear\_regression.hpp>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack::regression;}
+\DoxyCodeLine{}
+\DoxyCodeLine{arma::mat data; \textcolor{comment}{// The dataset itself.}}
+\DoxyCodeLine{arma::vec responses; \textcolor{comment}{// The responses, one row for each row in data.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Regress.}}
+\DoxyCodeLine{LinearRegression lr(data, responses);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Get the parameters, or coefficients.}}
+\DoxyCodeLine{arma::vec parameters = lr.Parameters();}
+
+\end{DoxyCode}
+\doxysubsection{Setting a model}\label{lrtutorial_linreg_ex2_lrtut}
+Assuming you already have a model and do not need to create one, this is how you would set the parameters for a Linear\+Regression instance.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{arma::vec parameters; \textcolor{comment}{// Your model.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{LinearRegression lr; \textcolor{comment}{// Create a new LinearRegression instance or reuse one.}}
+\DoxyCodeLine{lr.Parameters() = parameters; \textcolor{comment}{// Set the model.}}
+
+\end{DoxyCode}
+\doxysubsection{Load a model from a file}\label{lrtutorial_linreg_ex3_lrtut}
+If you have a generated model in a file somewhere you would like to load and use, you can use {\ttfamily \doxyref{data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831}} to load it.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{std::string filename; \textcolor{comment}{// The path and name of your file.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{LinearRegression lr;}
+\DoxyCodeLine{data::Load(filename, \textcolor{stringliteral}{"{}lr\_model"{}}, lr);}
+
+\end{DoxyCode}
+\doxysubsection{Prediction}\label{lrtutorial_linreg_ex4_lrtut}
+Once you have generated or loaded a model using one of the aforementioned methods, you can predict values for a dataset.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{LinearRegression lr();}
+\DoxyCodeLine{\textcolor{comment}{// Load or generate your model.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// The dataset we want to predict on; each row is a data point.}}
+\DoxyCodeLine{arma::mat points;}
+\DoxyCodeLine{\textcolor{comment}{// This will store the predictions; one row for each point.}}
+\DoxyCodeLine{arma::vec predictions;}
+\DoxyCodeLine{}
+\DoxyCodeLine{lr.Predict(points, predictions); \textcolor{comment}{// Predict.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now, the vector 'predictions' will contain the predicted values.}}
+
+\end{DoxyCode}
+\doxysubsection{Setting lambda for ridge regression}\label{lrtutorial_linreg_ex5_lrtut}
+As discussed in \doxyref{Prediction using a precomputed model}{p.}{lrtutorial_cli_ex4_lrtut}, ridge regression is useful when the covariance of the predictors is not invertible. The standard constructor can be used to set a value of lambda\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <mlpack/methods/linear\_regression/linear\_regression.hpp>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack::regression;}
+\DoxyCodeLine{}
+\DoxyCodeLine{arma::mat data; \textcolor{comment}{// The dataset itself.}}
+\DoxyCodeLine{arma::vec responses; \textcolor{comment}{// The responses, one row for each row in data.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Regress, with a lambda of 0.5.}}
+\DoxyCodeLine{LinearRegression lr(data, responses, 0.5);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Get the parameters, or coefficients.}}
+\DoxyCodeLine{arma::vec parameters = lr.Parameters();}
+
+\end{DoxyCode}
+
+
+In addition, the {\ttfamily Lambda()} function can be used to get or modify the lambda value\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{LinearRegression lr;}
+\DoxyCodeLine{lr.Lambda() = 0.5;}
+\DoxyCodeLine{Log::Info << \textcolor{stringliteral}{"{}Lambda is "{}} << lr.Lambda() << \textcolor{stringliteral}{"{}."{}} << std::endl;}
+
+\end{DoxyCode}
+\doxysection{Further documentation}\label{lrtutorial_further_doc_lrtut}
+For further documentation on the Linear\+Regression class, consult the \doxyref{complete API documentation}{p.}{classmlpack_1_1regression_1_1LinearRegression}. 

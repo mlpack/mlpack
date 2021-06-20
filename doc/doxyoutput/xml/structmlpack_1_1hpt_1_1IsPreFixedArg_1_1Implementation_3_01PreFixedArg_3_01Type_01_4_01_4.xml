@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1hpt_1_1IsPreFixedArg_1_1Implementation_3_01PreFixedArg_3_01Type_01_4_01_4" kind="struct" language="C++" prot="private">
+    <compoundname>mlpack::hpt::IsPreFixedArg::Implementation&lt; PreFixedArg&lt; Type &gt; &gt;</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">true_type</basecompoundref>
+    <templateparamlist>
+      <param>
+        <type>typename Type</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>true_type</label>
+      </node>
+      <node id="1">
+        <label>IsPreFixedArg&lt; T &gt;::Implementation&lt; PreFixedArg&lt; Type &gt; &gt;</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>true_type</label>
+      </node>
+      <node id="1">
+        <label>IsPreFixedArg&lt; T &gt;::Implementation&lt; PreFixedArg&lt; Type &gt; &gt;</label>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp" line="102" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/hpt/fixed.hpp" bodystart="102" bodyend="102"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

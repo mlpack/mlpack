@@ -1,0 +1,74 @@
+\doxysection{No\+Regularizer Class Reference}
+\label{classmlpack_1_1ann_1_1NoRegularizer}\index{NoRegularizer@{NoRegularizer}}
+
+
+Implementation of the \doxyref{No\+Regularizer}{p.}{classmlpack_1_1ann_1_1NoRegularizer}.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ No\+Regularizer} ()
+\begin{DoxyCompactList}\small\item\em Create the regularizer object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Evaluate} (const Mat\+Type \&, Mat\+Type \&)
+\begin{DoxyCompactList}\small\item\em Calculate the gradient for regularization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementation of the \doxyref{No\+Regularizer}{p.}{classmlpack_1_1ann_1_1NoRegularizer}. 
+
+This does not add any regularization to the weights. 
+
+Definition at line 24 of file no\+\_\+regularizer.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1NoRegularizer_af051bc2ec900cb278d6117c91afd2191}} 
+\index{NoRegularizer@{NoRegularizer}!NoRegularizer@{NoRegularizer}}
+\index{NoRegularizer@{NoRegularizer}!NoRegularizer@{NoRegularizer}}
+\doxysubsubsection{NoRegularizer()}
+{\footnotesize\ttfamily \textbf{ No\+Regularizer} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create the regularizer object. 
+
+
+
+Definition at line 30 of file no\+\_\+regularizer.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1NoRegularizer_ab577092faded6300cb7704691d23fd87}} 
+\index{NoRegularizer@{NoRegularizer}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!NoRegularizer@{NoRegularizer}}
+\doxysubsubsection{Evaluate()}
+{\footnotesize\ttfamily void Evaluate (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{,  }\item[{Mat\+Type \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculate the gradient for regularization. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of weight matrix. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (weight) The weight matrix to be regularized. \\
+\hline
+{\em $\ast$} & (gradient) The calculated gradient. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 43 of file no\+\_\+regularizer.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/regularizer/\textbf{ no\+\_\+regularizer.\+hpp}\end{DoxyCompactItemize}

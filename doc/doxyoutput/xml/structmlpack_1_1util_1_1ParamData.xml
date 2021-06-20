@@ -1,0 +1,391 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1util_1_1ParamData" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::util::ParamData</compoundname>
+    <includes refid="param__data_8hpp" local="no">param_data.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a367d2c852ad5beb11758c57d8ece7316" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char alias</definition>
+        <argsstring></argsstring>
+        <name>alias</name>
+        <briefdescription>
+<para>Alias for this parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="63" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="63" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a16c8a80e23cfb701cf516d998f87bc96" compoundref="add__to__cli11_8hpp" startline="188" endline="206">mlpack::bindings::cli::AddToCLI11</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string cppType</definition>
+        <argsstring></argsstring>
+        <name>cppType</name>
+        <briefdescription>
+<para>The true name of the type, as it would be written in C++. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="84" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="84" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1a01a87ad978f242a7b6c889690ce55a1d" compoundref="get__cython__type_8hpp" startline="106" endline="112">mlpack::bindings::python::GetCythonType</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a26c52c35a2e9e88e9297bd088245aaf1" compoundref="get__go__type_8hpp" startline="125" endline="133">mlpack::bindings::go::GetGoType</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1aa9fe68e1da9daec9372965162d8bad94" compoundref="get__julia__type_8hpp" startline="137" endline="149">mlpack::bindings::julia::GetJuliaType</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1ab9cdf1f19bd418a517c98c1749b15ff1" compoundref="go_2get__printable__param_8hpp" startline="75" endline="83">mlpack::bindings::go::GetPrintableParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1a4283ed67763f61abbd25816621d8a9c4" compoundref="julia_2get__printable__param_8hpp" startline="75" endline="83">mlpack::bindings::julia::GetPrintableParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1markdown_1a5c452633fa1c61b983de959cc6711084" compoundref="markdown_2get__printable__param_8hpp" startline="75" endline="83">mlpack::bindings::markdown::GetPrintableParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1a7c7b266ebf4e500c54deb2286da384ed" compoundref="python_2get__printable__param_8hpp" startline="75" endline="83">mlpack::bindings::python::GetPrintableParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a323f3f95fd169fd91f70851005ad599f" compoundref="R_2get__printable__param_8hpp" startline="75" endline="83">mlpack::bindings::r::GetPrintableParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1aec8bb71884c43046e6187c272200d0be" compoundref="get__r__type_8hpp" startline="130" endline="136">mlpack::bindings::r::GetRType</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a9f8ab0bef325d00d61d1903b62f0ed5a" compoundref="go_2get__type_8hpp" startline="121" endline="127">mlpack::bindings::go::GetType</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a4d76df033b4bf6ada31210404131e647" compoundref="R_2get__type_8hpp" startline="146" endline="152">mlpack::bindings::r::GetType</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1aaf8d2ec60ff388711c55e631f6e4566f" compoundref="import__decl_8hpp" startline="26" endline="47">mlpack::bindings::python::ImportDecl</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1aa8cb764eab62bf27d4602075f277599d" compoundref="print__class__defn_8hpp" startline="49" endline="138">mlpack::bindings::python::PrintClassDefn</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a3afeab55fb05ed79fd8b6aeeff28a54b" compoundref="print__defn__input_8hpp" startline="80" endline="95">mlpack::bindings::go::PrintDefnInput</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1aec80a21508c1ef569000d7d43606dd08" compoundref="print__defn__output_8hpp" startline="67" endline="76">mlpack::bindings::go::PrintDefnOutput</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1afed98c7370d51aa61481387ba7e48329" compoundref="julia_2print__doc_8hpp" startline="20" endline="59">mlpack::bindings::julia::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a9cbe53faf744ce5439cd284796375c20" compoundref="R_2print__doc_8hpp" startline="36" endline="82">mlpack::bindings::r::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1ad24641bda961439e033d20c7fecbacbc" compoundref="python_2print__doc_8hpp" startline="36" endline="65">mlpack::bindings::python::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1adbaa72724d7f6265c12c4d205c1d78a9" compoundref="go_2print__doc_8hpp" startline="39" endline="70">mlpack::bindings::go::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a3866346aeed26609b1a97d962fa6fe32" compoundref="go_2print__input__processing_8hpp" startline="29" endline="123">mlpack::bindings::go::PrintInputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1a6b8bcdebe252c46b6ee4131ea45465b8" compoundref="python_2print__input__processing_8hpp" startline="372" endline="439">mlpack::bindings::python::PrintInputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a9956ff799780136c3bf4b23cfb966b2c" compoundref="R_2print__input__processing_8hpp" startline="27" endline="67">mlpack::bindings::r::PrintInputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1ae18e5140e357a39e7fd9c171a6cdf5e6" compoundref="print__method__init_8hpp" startline="29" endline="80">mlpack::bindings::go::PrintMethodInit</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1a542a7f3046a7acf108d591facc8b2e02" compoundref="print__model__type__import_8hpp" startline="49" endline="59">mlpack::bindings::julia::PrintModelTypeImport</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1adb00a6ddc1c45cf0858e91a5be674624" compoundref="python_2print__output__processing_8hpp" startline="169" endline="281">mlpack::bindings::python::PrintOutputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a401bf030afff5dd49b05e053e019fc30" compoundref="go_2print__output__processing_8hpp" startline="109" endline="133">mlpack::bindings::go::PrintOutputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1a15f2fbf7bd8137c68337e2dc4d353f56" compoundref="print__param__defn_8hpp" startline="51" endline="157">mlpack::bindings::julia::PrintParamDefn</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1ac9dfc0f41352071820158a5a4eb77748" compoundref="print__serialize__util_8hpp" startline="49" endline="67">mlpack::bindings::r::PrintSerializeUtil</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a378e4473b8cd1fccf534804887f2bc85" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string desc</definition>
+        <argsstring></argsstring>
+        <name>desc</name>
+        <briefdescription>
+<para>Description of this parameter, if any. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="58" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="58" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a1db4f0e56e92c25cc4268f4819bc6094" compoundref="add__to__cli11_8hpp" startline="33" endline="55">mlpack::bindings::cli::AddToCLI11</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1afed98c7370d51aa61481387ba7e48329" compoundref="julia_2print__doc_8hpp" startline="20" endline="59">mlpack::bindings::julia::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a9cbe53faf744ce5439cd284796375c20" compoundref="R_2print__doc_8hpp" startline="36" endline="82">mlpack::bindings::r::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1ad24641bda961439e033d20c7fecbacbc" compoundref="python_2print__doc_8hpp" startline="36" endline="65">mlpack::bindings::python::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1adbaa72724d7f6265c12c4d205c1d78a9" compoundref="go_2print__doc_8hpp" startline="39" endline="70">mlpack::bindings::go::PrintDoc</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a8ababadb8dc64acf8792317844e562ba" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool input</definition>
+        <argsstring></argsstring>
+        <name>input</name>
+        <briefdescription>
+<para>True if this option is an input option (otherwise, it is output). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="73" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="73" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a0f5881c4001a8176d0ad6387b30c8b8a" compoundref="end__program_8hpp" startline="26" endline="96">mlpack::bindings::cli::EndProgram</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a3f236736bf2dcc5d3ee0356129499078" compoundref="cli_2get__param_8hpp" startline="46" endline="73">mlpack::bindings::cli::GetParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1adb00a6ddc1c45cf0858e91a5be674624" compoundref="python_2print__output__processing_8hpp" startline="169" endline="281">mlpack::bindings::python::PrintOutputProcessing</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a992c70a16169035bc9e2e8f9953d91ed" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool loaded</definition>
+        <argsstring></argsstring>
+        <name>loaded</name>
+        <briefdescription>
+<para>If this is an input parameter that needs extra loading, this indicates whether or not it has been loaded. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="76" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="76" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a3f236736bf2dcc5d3ee0356129499078" compoundref="cli_2get__param_8hpp" startline="46" endline="73">mlpack::bindings::cli::GetParam</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>Name of this parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is the name used for HasParam() and <ref refid="namespacemlpack_1_1bindings_1_1cli_1a9eee50cbae50b3464c59b88ab7b88e44" kindref="member">GetParam()</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="56" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="56" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a16c8a80e23cfb701cf516d998f87bc96" compoundref="add__to__cli11_8hpp" startline="188" endline="206">mlpack::bindings::cli::AddToCLI11</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1ae4b6a0a5223e027696a24dc61350c653" compoundref="map__parameter__name_8hpp" startline="63" endline="71">mlpack::bindings::cli::MapParameterName</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1aecc682142101d2111db7705da00a8775" compoundref="print__defn_8hpp" startline="26" endline="38">mlpack::bindings::python::PrintDefn</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a7c05388978bbd1562bd5f855b3be264d" compoundref="print__defn__input_8hpp" startline="29" endline="41">mlpack::bindings::go::PrintDefnInput</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1afed98c7370d51aa61481387ba7e48329" compoundref="julia_2print__doc_8hpp" startline="20" endline="59">mlpack::bindings::julia::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a9cbe53faf744ce5439cd284796375c20" compoundref="R_2print__doc_8hpp" startline="36" endline="82">mlpack::bindings::r::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1ad24641bda961439e033d20c7fecbacbc" compoundref="python_2print__doc_8hpp" startline="36" endline="65">mlpack::bindings::python::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1adbaa72724d7f6265c12c4d205c1d78a9" compoundref="go_2print__doc_8hpp" startline="39" endline="70">mlpack::bindings::go::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1a64bffabfa040cc70a348df4b479707a5" compoundref="julia_2print__input__param_8hpp" startline="27" endline="55">mlpack::bindings::julia::PrintInputParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1abd04a6088ee20daa81772554f9db0075" compoundref="R_2print__input__param_8hpp" startline="27" endline="36">mlpack::bindings::r::PrintInputParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a3866346aeed26609b1a97d962fa6fe32" compoundref="go_2print__input__processing_8hpp" startline="29" endline="123">mlpack::bindings::go::PrintInputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1a3c827aec0d0ff3ae5ae7d565fcda5ced" compoundref="python_2print__input__processing_8hpp" startline="31" endline="158">mlpack::bindings::python::PrintInputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a9956ff799780136c3bf4b23cfb966b2c" compoundref="R_2print__input__processing_8hpp" startline="27" endline="67">mlpack::bindings::r::PrintInputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1af86c61eac4dcbbdd4d677dc8d078da9f" compoundref="print__method__config_8hpp" startline="29" endline="58">mlpack::bindings::go::PrintMethodConfig</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1ae18e5140e357a39e7fd9c171a6cdf5e6" compoundref="print__method__init_8hpp" startline="29" endline="80">mlpack::bindings::go::PrintMethodInit</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1a4ad9b3cc77bbb36c86c5346eb98620b6" compoundref="python_2print__output__processing_8hpp" startline="29" endline="79">mlpack::bindings::python::PrintOutputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a76b2a04be53e39d1b6e87074bcf7a12f" compoundref="go_2print__output__processing_8hpp" startline="29" endline="50">mlpack::bindings::go::PrintOutputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a321bdda915f34ddfd7ce21134cc9be5b" compoundref="R_2print__output__processing_8hpp" startline="27" endline="43">mlpack::bindings::r::PrintOutputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1ac9dfc0f41352071820158a5a4eb77748" compoundref="print__serialize__util_8hpp" startline="49" endline="67">mlpack::bindings::r::PrintSerializeUtil</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a203e71e5671737f2e7d33147dd19f391" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool noTranspose</definition>
+        <argsstring></argsstring>
+        <name>noTranspose</name>
+        <briefdescription>
+<para>True if this is a matrix that should not be transposed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Ignored if the parameter is not a matrix. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="69" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="69" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a3f236736bf2dcc5d3ee0356129499078" compoundref="cli_2get__param_8hpp" startline="46" endline="73">mlpack::bindings::cli::GetParam</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1aea39f2c5cb5ec83de4d1f81b1a74f0cc" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool persistent</definition>
+        <argsstring></argsstring>
+        <name>persistent</name>
+        <briefdescription>
+<para>If this should be preserved across different settings (i.e. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>if it should exist for every binding), this should be set to true. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="79" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="79" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool required</definition>
+        <argsstring></argsstring>
+        <name>required</name>
+        <briefdescription>
+<para>True if this option is required. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="71" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="71" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" compoundref="parse__command__line_8hpp" startline="36" endline="152">mlpack::bindings::cli::ParseCommandLine</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1aecc682142101d2111db7705da00a8775" compoundref="print__defn_8hpp" startline="26" endline="38">mlpack::bindings::python::PrintDefn</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a7c05388978bbd1562bd5f855b3be264d" compoundref="print__defn__input_8hpp" startline="29" endline="41">mlpack::bindings::go::PrintDefnInput</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1afed98c7370d51aa61481387ba7e48329" compoundref="julia_2print__doc_8hpp" startline="20" endline="59">mlpack::bindings::julia::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a9cbe53faf744ce5439cd284796375c20" compoundref="R_2print__doc_8hpp" startline="36" endline="82">mlpack::bindings::r::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1ad24641bda961439e033d20c7fecbacbc" compoundref="python_2print__doc_8hpp" startline="36" endline="65">mlpack::bindings::python::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1adbaa72724d7f6265c12c4d205c1d78a9" compoundref="go_2print__doc_8hpp" startline="39" endline="70">mlpack::bindings::go::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1a64bffabfa040cc70a348df4b479707a5" compoundref="julia_2print__input__param_8hpp" startline="27" endline="55">mlpack::bindings::julia::PrintInputParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1abd04a6088ee20daa81772554f9db0075" compoundref="R_2print__input__param_8hpp" startline="27" endline="36">mlpack::bindings::r::PrintInputParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a3866346aeed26609b1a97d962fa6fe32" compoundref="go_2print__input__processing_8hpp" startline="29" endline="123">mlpack::bindings::go::PrintInputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1a3c827aec0d0ff3ae5ae7d565fcda5ced" compoundref="python_2print__input__processing_8hpp" startline="31" endline="158">mlpack::bindings::python::PrintInputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a9956ff799780136c3bf4b23cfb966b2c" compoundref="R_2print__input__processing_8hpp" startline="27" endline="67">mlpack::bindings::r::PrintInputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1af86c61eac4dcbbdd4d677dc8d078da9f" compoundref="print__method__config_8hpp" startline="29" endline="58">mlpack::bindings::go::PrintMethodConfig</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1ae18e5140e357a39e7fd9c171a6cdf5e6" compoundref="print__method__init_8hpp" startline="29" endline="80">mlpack::bindings::go::PrintMethodInit</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1adb00a6ddc1c45cf0858e91a5be674624" compoundref="python_2print__output__processing_8hpp" startline="169" endline="281">mlpack::bindings::python::PrintOutputProcessing</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a87a03c93b016f6878e3a0609835b426e" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string tname</definition>
+        <argsstring></argsstring>
+        <name>tname</name>
+        <briefdescription>
+<para>Type information of this parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Note that this is <ref refid="param__data_8hpp_1ac909d914008cce49fa42ddd10b9b36c5" kindref="member">TYPENAME()</ref> of the user-visible parameter type, not whatever is given by ParameterType&lt;&gt;. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="61" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="61" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a0f5881c4001a8176d0ad6387b30c8b8a" compoundref="end__program_8hpp" startline="26" endline="96">mlpack::bindings::cli::EndProgram</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" compoundref="parse__command__line_8hpp" startline="36" endline="152">mlpack::bindings::cli::ParseCommandLine</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" prot="public" static="no" mutable="no">
+        <type>boost::any</type>
+        <definition>boost::any value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+<para>The actual value that is held. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the user has passed a different type, this may be a tuple containing multiple values. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="82" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="82" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a1db4f0e56e92c25cc4268f4819bc6094" compoundref="add__to__cli11_8hpp" startline="33" endline="55">mlpack::bindings::cli::AddToCLI11</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a5f081ca01123f56a6a958ec611f025bd" compoundref="cli_2delete__allocated__memory_8hpp" startline="39" endline="47">mlpack::bindings::cli::DeleteAllocatedMemoryImpl</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1tests_1a0b401de47cbeec297be2b5c376c78b98" compoundref="tests_2delete__allocated__memory_8hpp" startline="39" endline="46">mlpack::bindings::tests::DeleteAllocatedMemoryImpl</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a8ef363346975e31371737c2cd0babf19" compoundref="cli_2get__allocated__memory_8hpp" startline="40" endline="49">mlpack::bindings::cli::GetAllocatedMemory</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1tests_1a7370e7616c36c4319709f1cc53fcfbaa" compoundref="tests_2get__allocated__memory_8hpp" startline="40" endline="47">mlpack::bindings::tests::GetAllocatedMemory</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1tests_1a7f40cad7f942543f30dad9c09f116ffe" compoundref="tests_2get__param_8hpp" startline="26" endline="30">mlpack::bindings::tests::GetParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9eee50cbae50b3464c59b88ab7b88e44" compoundref="cli_2get__param_8hpp" startline="29" endline="38">mlpack::bindings::cli::GetParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1ab149b92e15ca0bacc6e2da5369f7d694" compoundref="go_2get__param_8hpp" startline="26" endline="31">mlpack::bindings::go::GetParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1ae4252a82393e350fb7688f6038062e6d" compoundref="julia_2get__param_8hpp" startline="26" endline="31">mlpack::bindings::julia::GetParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1markdown_1a1660635b7e29eda0900c3590cbda9ec4" compoundref="markdown_2get__param_8hpp" startline="26" endline="32">mlpack::bindings::markdown::GetParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1a2c83e23064b39a59ffd1b22c74a1d18e" compoundref="python_2get__param_8hpp" startline="26" endline="31">mlpack::bindings::python::GetParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a82f1f31d6d8f5831904f0de8b18fa9e1" compoundref="R_2get__param_8hpp" startline="26" endline="31">mlpack::bindings::r::GetParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a2f4fe517829c401305711fe1209b0f1f" compoundref="go_2get__printable__param_8hpp" startline="26" endline="37">mlpack::bindings::go::GetPrintableParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1a5db46b750740fb5822484de47e48c8b0" compoundref="julia_2get__printable__param_8hpp" startline="26" endline="37">mlpack::bindings::julia::GetPrintableParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1markdown_1a98f98c1598d170fa0dd5dacaf52765db" compoundref="markdown_2get__printable__param_8hpp" startline="26" endline="37">mlpack::bindings::markdown::GetPrintableParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1a8f1846b0ae2b9ec7efac73e7cb42e339" compoundref="python_2get__printable__param_8hpp" startline="26" endline="37">mlpack::bindings::python::GetPrintableParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a5631e53497794fca1a1b42b73bd629d4" compoundref="R_2get__printable__param_8hpp" startline="26" endline="37">mlpack::bindings::r::GetPrintableParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a811a3fbf31896b87d3cb8f0e49b282fd" compoundref="get__raw__param_8hpp" startline="28" endline="37">mlpack::bindings::cli::GetRawParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1ab5cc02558b44764c63ab9f3933b5799c" compoundref="in__place__copy_8hpp" startline="50" endline="66">mlpack::bindings::cli::InPlaceCopyInternal</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1julia_1afed98c7370d51aa61481387ba7e48329" compoundref="julia_2print__doc_8hpp" startline="20" endline="59">mlpack::bindings::julia::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1r_1a9cbe53faf744ce5439cd284796375c20" compoundref="R_2print__doc_8hpp" startline="36" endline="82">mlpack::bindings::r::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1adbaa72724d7f6265c12c4d205c1d78a9" compoundref="go_2print__doc_8hpp" startline="39" endline="70">mlpack::bindings::go::PrintDoc</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1a3866346aeed26609b1a97d962fa6fe32" compoundref="go_2print__input__processing_8hpp" startline="29" endline="123">mlpack::bindings::go::PrintInputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1go_1ae18e5140e357a39e7fd9c171a6cdf5e6" compoundref="print__method__init_8hpp" startline="29" endline="80">mlpack::bindings::go::PrintMethodInit</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1ab44101fb4a966a12bb921f53aaaa41c1" compoundref="set__param_8hpp" startline="27" endline="38">mlpack::bindings::cli::SetParam</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1util_1_1ParamData_1a5afa034ef66e23047379bcba2eb70b8d" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool wasPassed</definition>
+        <argsstring></argsstring>
+        <name>wasPassed</name>
+        <briefdescription>
+<para>True if the option was passed to the program. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Note that wasPassed may be set by either <ref refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" kindref="member">ParseCommandLine()</ref> or SetPassed(). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="66" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="66" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a1db4f0e56e92c25cc4268f4819bc6094" compoundref="add__to__cli11_8hpp" startline="33" endline="55">mlpack::bindings::cli::AddToCLI11</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1aa2fee85279b04b20713530f5fd28dbc9" compoundref="set__param_8hpp" startline="44" endline="51">mlpack::bindings::cli::SetParam</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This structure holds all of the information about a single parameter, including its value (which is set when <ref refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" kindref="member">ParseCommandLine()</ref> is called). </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It does not hold any information about whether or not it was passed<mdash/>that is handled elsewhere. A <ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">ParamData</ref> struct is only useful in order to get &quot;static&quot; information about a parameter. Note that some parameter types have internal types but also different types that are used by CLI11 (specifically, matrix and model types map to strings).</para>
+<para>This structure is somewhat unwieldy and is likely to be refactored at some point in the future, but for now it does the job fine. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" line="52" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/param_data.hpp" bodystart="53" bodyend="85"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1util_1_1ParamData_1a367d2c852ad5beb11758c57d8ece7316" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>alias</name></member>
+      <member refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>cppType</name></member>
+      <member refid="structmlpack_1_1util_1_1ParamData_1a378e4473b8cd1fccf534804887f2bc85" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>desc</name></member>
+      <member refid="structmlpack_1_1util_1_1ParamData_1a8ababadb8dc64acf8792317844e562ba" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>input</name></member>
+      <member refid="structmlpack_1_1util_1_1ParamData_1a992c70a16169035bc9e2e8f9953d91ed" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>loaded</name></member>
+      <member refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>name</name></member>
+      <member refid="structmlpack_1_1util_1_1ParamData_1a203e71e5671737f2e7d33147dd19f391" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>noTranspose</name></member>
+      <member refid="structmlpack_1_1util_1_1ParamData_1aea39f2c5cb5ec83de4d1f81b1a74f0cc" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>persistent</name></member>
+      <member refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>required</name></member>
+      <member refid="structmlpack_1_1util_1_1ParamData_1a87a03c93b016f6878e3a0609835b426e" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>tname</name></member>
+      <member refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>value</name></member>
+      <member refid="structmlpack_1_1util_1_1ParamData_1a5afa034ef66e23047379bcba2eb70b8d" prot="public" virt="non-virtual"><scope>mlpack::util::ParamData</scope><name>wasPassed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

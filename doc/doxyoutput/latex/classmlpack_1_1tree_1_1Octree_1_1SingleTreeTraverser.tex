@@ -1,0 +1,98 @@
+\doxysection{Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::Single\+Tree\+Traverser$<$ Rule\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser}\index{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$}}
+
+
+A single-\/tree traverser; see single\+\_\+tree\+\_\+traverser.\+hpp.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Single\+Tree\+Traverser} (Rule\+Type \&rule)
+\begin{DoxyCompactList}\small\item\em Instantiate the traverser with the given rule set. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Prunes} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of pruned nodes. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Prunes} () const
+\begin{DoxyCompactList}\small\item\em Get the number of pruned nodes. \end{DoxyCompactList}\item 
+void \textbf{ Traverse} (const size\+\_\+t query\+Index, \textbf{ Octree} \&reference\+Node)
+\begin{DoxyCompactList}\small\item\em Traverse the reference tree with the given query point. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+Euclidean\+Distance, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat$>$\newline
+template$<$typename Rule\+Type$>$\newline
+class mlpack\+::tree\+::\+Octree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$\+::\+Single\+Tree\+Traverser$<$ Rule\+Type $>$}
+
+A single-\/tree traverser; see single\+\_\+tree\+\_\+traverser.\+hpp. 
+
+Definition at line 23 of file single\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser_aef3b0527dc7ff514b7b658b1108abae9}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$}!SingleTreeTraverser@{SingleTreeTraverser}}
+\index{SingleTreeTraverser@{SingleTreeTraverser}!Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$}}
+\doxysubsubsection{SingleTreeTraverser()}
+{\footnotesize\ttfamily \textbf{ Single\+Tree\+Traverser} (\begin{DoxyParamCaption}\item[{Rule\+Type \&}]{rule }\end{DoxyParamCaption})}
+
+
+
+Instantiate the traverser with the given rule set. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser_adf887190e9d9024ff244503e4aaf0732}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$}!NumPrunes@{NumPrunes}}
+\index{NumPrunes@{NumPrunes}!Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$}}
+\doxysubsubsection{NumPrunes()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Prunes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of pruned nodes. 
+
+
+
+Definition at line 43 of file single\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser_ac2f6072011ee31a0a32f62e2a105a347}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$}!NumPrunes@{NumPrunes}}
+\index{NumPrunes@{NumPrunes}!Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$}}
+\doxysubsubsection{NumPrunes()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Prunes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of pruned nodes. 
+
+
+
+Definition at line 41 of file single\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1Octree_1_1SingleTreeTraverser_aa2a8f85a3f9dcd3e80db32f1ffb44766}} 
+\index{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$}!Traverse@{Traverse}}
+\index{Traverse@{Traverse}!Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$@{Octree$<$ MetricType, StatisticType, MatType $>$::SingleTreeTraverser$<$ RuleType $>$}}
+\doxysubsubsection{Traverse()}
+{\footnotesize\ttfamily void Traverse (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{query\+Index,  }\item[{\textbf{ Octree} \&}]{reference\+Node }\end{DoxyParamCaption})}
+
+
+
+Traverse the reference tree with the given query point. 
+
+This does not reset the number of pruned nodes.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Index} & Index of query point. \\
+\hline
+{\em reference\+Node} & Node in reference tree. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/octree/\textbf{ octree.\+hpp}\item 
+/home/aakash/mlpack/src/mlpack/core/tree/octree/\textbf{ single\+\_\+tree\+\_\+traverser.\+hpp}\end{DoxyCompactItemize}

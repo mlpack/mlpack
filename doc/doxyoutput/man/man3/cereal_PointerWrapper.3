@@ -1,0 +1,60 @@
+.TH "PointerWrapper< T >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PointerWrapper< T > \- The objective of this class is to create a wrapper for raw pointer by encapsulating them in a smart pointer of type unique_ptr\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBPointerWrapper\fP (T *&pointer)"
+.br
+.ti -1c
+.RI "template<class Archive > void \fBload\fP (Archive &ar, const uint32_t)"
+.br
+.ti -1c
+.RI "T *& \fBrelease\fP ()"
+.br
+.ti -1c
+.RI "template<class Archive > void \fBsave\fP (Archive &ar, const uint32_t) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<class T>
+.br
+class cereal::PointerWrapper< T >"
+The objective of this class is to create a wrapper for raw pointer by encapsulating them in a smart pointer of type unique_ptr\&. 
+
+Cereal does not support the serialization of raw pointer out of the box\&. Therefore, we have created this wrapper to serialize raw pointer in cereal as a smart pointer since because it will be difficult to change all pointer type in mlpack\&. 
+.PP
+Definition at line 44 of file pointer_wrapper\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBPointerWrapper\fP (T *& pointer)\fC [inline]\fP"
+
+.PP
+Definition at line 47 of file pointer_wrapper\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void load (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Definition at line 62 of file pointer_wrapper\&.hpp\&.
+.SS "T*& release ()\fC [inline]\fP"
+
+.PP
+Definition at line 69 of file pointer_wrapper\&.hpp\&.
+.SS "void save (Archive & ar, const uint32_t) const\fC [inline]\fP"
+
+.PP
+Definition at line 52 of file pointer_wrapper\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,44 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/methods/ann/init\+\_\+rules/glorot\+\_\+init.hpp File Reference}
+\label{glorot__init_8hpp}\index{/home/aakash/mlpack/src/mlpack/methods/ann/init\_rules/glorot\_init.hpp@{/home/aakash/mlpack/src/mlpack/methods/ann/init\_rules/glorot\_init.hpp}}
+Include dependency graph for glorot\+\_\+init.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{glorot__init_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{glorot__init_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Glorot\+Initialization\+Type$<$ Uniform $>$}
+\begin{DoxyCompactList}\small\item\em This class is used to initialize the weight matrix with the Glorot Initialization method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::ann}
+\begin{DoxyCompactList}\small\item\em Artificial Neural Network. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \textbf{ Glorot\+Initialization} = Glorot\+Initialization\+Type$<$ false $>$
+\begin{DoxyCompactList}\small\item\em Glorot\+Initialization uses uniform distribution. \end{DoxyCompactList}\item 
+using \textbf{ Xavier\+Initialization} = Glorot\+Initialization\+Type$<$ true $>$
+\begin{DoxyCompactList}\small\item\em Xavier\+Initilization is the popular name for this method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Prabhat Sharma
+\end{DoxyAuthor}
+Definition and implementation of the Glorot initialization method. This initialization rule initialize the weights to maintain activation variances and back-\/propagated gradients variance as one moves up or down the network.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

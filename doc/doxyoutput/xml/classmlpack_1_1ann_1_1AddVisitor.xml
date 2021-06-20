@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1AddVisitor" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::AddVisitor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">boost::static_visitor&lt; void &gt;</basecompoundref>
+    <includes refid="add__visitor_8hpp" local="no">add_visitor.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename...</type>
+        <declname>CustomLayers</declname>
+        <defname>CustomLayers</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1AddVisitor_1aebf04fd187e76b79eb884ee6e6168aa9" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;</type>
+        <definition>LayerTypes&lt;CustomLayers...&gt; newLayer</definition>
+        <argsstring></argsstring>
+        <name>newLayer</name>
+        <briefdescription>
+<para>The layer that should be added. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/add_visitor.hpp" line="43" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/add_visitor.hpp" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1AddVisitor_1aa21362514457024852c33802d57a1b37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>AddVisitor</definition>
+        <argsstring>(T newLayer)</argsstring>
+        <name>AddVisitor</name>
+        <param>
+          <type>T</type>
+          <declname>newLayer</declname>
+        </param>
+        <briefdescription>
+<para>Exposes the Add() method of the given module. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/add_visitor.hpp" line="33" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1AddVisitor_1a26bb3385c630118c35f4799f1509abbc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename LayerType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void operator()</definition>
+        <argsstring>(LayerType *layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>LayerType *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Exposes the Add() method. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/add_visitor.hpp" line="37" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1AddVisitor_1ae35578e7ff874a320fe762bc0edfff04" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void operator()</definition>
+        <argsstring>(MoreTypes layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref></type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/add_visitor.hpp" line="39" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1AddVisitor_1aeaffff3c29c59c408386258d1ec6579b" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; HasAddCheck&lt; T, void(T::*)(<ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;)&gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; HasAddCheck&lt;T, void(T::*)(LayerTypes&lt;CustomLayers...&gt;)&gt;::value, void&gt;::type LayerAdd</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>LayerAdd</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Only add the layer if the module implements the Add() function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/add_visitor.hpp" line="49" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1AddVisitor_1a202ca1208e4cd6617ce068947b1e5e80" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; !HasAddCheck&lt; T, void(T::*)(<ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt;)&gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; !HasAddCheck&lt;T, void(T::*)(LayerTypes&lt;CustomLayers...&gt;)&gt;::value, void&gt;::type LayerAdd</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>LayerAdd</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Do not add the layer if the module doesn&apos;t implement the Add() function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/add_visitor.hpp" line="55" column="3"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classmlpack_1_1ann_1_1AddVisitor" kindref="compound">AddVisitor</ref> exposes the Add() method of the given module. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>AddVisitor&lt; CustomLayers &gt;</label>
+        <link refid="classmlpack_1_1ann_1_1AddVisitor"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>static_visitor&lt; void &gt;</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>AddVisitor&lt; CustomLayers &gt;</label>
+        <link refid="classmlpack_1_1ann_1_1AddVisitor"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>static_visitor&lt; void &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/add_visitor.hpp" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/add_visitor.hpp" bodystart="29" bodyend="56"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1AddVisitor_1aa21362514457024852c33802d57a1b37" prot="public" virt="non-virtual"><scope>mlpack::ann::AddVisitor</scope><name>AddVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1AddVisitor_1aeaffff3c29c59c408386258d1ec6579b" prot="private" virt="non-virtual"><scope>mlpack::ann::AddVisitor</scope><name>LayerAdd</name></member>
+      <member refid="classmlpack_1_1ann_1_1AddVisitor_1a202ca1208e4cd6617ce068947b1e5e80" prot="private" virt="non-virtual"><scope>mlpack::ann::AddVisitor</scope><name>LayerAdd</name></member>
+      <member refid="classmlpack_1_1ann_1_1AddVisitor_1aebf04fd187e76b79eb884ee6e6168aa9" prot="private" virt="non-virtual"><scope>mlpack::ann::AddVisitor</scope><name>newLayer</name></member>
+      <member refid="classmlpack_1_1ann_1_1AddVisitor_1a26bb3385c630118c35f4799f1509abbc" prot="public" virt="non-virtual"><scope>mlpack::ann::AddVisitor</scope><name>operator()</name></member>
+      <member refid="classmlpack_1_1ann_1_1AddVisitor_1ae35578e7ff874a320fe762bc0edfff04" prot="public" virt="non-virtual"><scope>mlpack::ann::AddVisitor</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

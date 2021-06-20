@@ -1,0 +1,390 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1neighbor_1_1QDAFN" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::neighbor::QDAFN</compoundname>
+    <includes refid="qdafn_8hpp" local="no">qdafn.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1QDAFN_1a61978cc8e3b1498d6a2b48bf75b09e24" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; MatType &gt;</type>
+        <definition>std::vector&lt;MatType&gt; candidateSet</definition>
+        <argsstring></argsstring>
+        <name>candidateSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="110" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1QDAFN_1ae957d5343229c8480f286a956b768508" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t l</definition>
+        <argsstring></argsstring>
+        <name>l</name>
+        <briefdescription>
+<para>The number of projections. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="96" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1QDAFN_1ad9a3c11f5a1f6894ff30ac9ac4ceed59" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat lines</definition>
+        <argsstring></argsstring>
+        <name>lines</name>
+        <briefdescription>
+<para>The random lines we are projecting onto. Has l columns. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="100" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1QDAFN_1a007b64e06504c20a853be59118f2182a" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t m</definition>
+        <argsstring></argsstring>
+        <name>m</name>
+        <briefdescription>
+<para>The number of elements to store for each projection. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="98" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1QDAFN_1a056e5d5cf19859951852f8f4c3d14319" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat projections</definition>
+        <argsstring></argsstring>
+        <name>projections</name>
+        <briefdescription>
+<para>Projections of each point onto each random line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="102" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1QDAFN_1a4b2b90a9c3ada3b5fd84bf432db0c63b" prot="private" static="no" mutable="no">
+        <type>arma::Mat&lt; size_t &gt;</type>
+        <definition>arma::Mat&lt;size_t&gt; sIndices</definition>
+        <argsstring></argsstring>
+        <name>sIndices</name>
+        <briefdescription>
+<para>Indices of the points for each S. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="105" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1neighbor_1_1QDAFN_1a58c34c94ee0069ce141f6930f5fc4b3f" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat sValues</definition>
+        <argsstring></argsstring>
+        <name>sValues</name>
+        <briefdescription>
+<para>Values of a_i * x for each point in S. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="107" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1QDAFN_1a019fd45b08dfa9494b54a45ee41a2fb1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>QDAFN</definition>
+        <argsstring>(const MatType &amp;referenceSet, const size_t l, const size_t m)</argsstring>
+        <name>QDAFN</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+<para>Construct the <ref refid="classmlpack_1_1neighbor_1_1QDAFN" kindref="compound">QDAFN</ref> object with the given reference set (this is the set that will be searched). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>l</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of projections. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>m</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of elements to store for each projection. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="54" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1QDAFN_1a4776f610347419ede2b9f2c3197cf662" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>QDAFN</definition>
+        <argsstring>(const size_t l, const size_t m)</argsstring>
+        <name>QDAFN</name>
+        <param>
+          <type>const size_t</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+<para>Construct the <ref refid="classmlpack_1_1neighbor_1_1QDAFN" kindref="compound">QDAFN</ref> object but do not train it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Be sure to call <ref refid="classmlpack_1_1neighbor_1_1QDAFN_1a025c46810d0d83a17834f3f8364b479e" kindref="member">Train()</ref> before calling <ref refid="classmlpack_1_1neighbor_1_1QDAFN_1a0de302ca0602fe721ac01f073d5e630f" kindref="member">Search()</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>l</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of projections. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>m</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of elements to store for each projection. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="44" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1QDAFN_1a958b1a642bdb58840b4fd77de9e29609" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>MatType &amp;</type>
+        <definition>MatType&amp; CandidateSet</definition>
+        <argsstring>(const size_t t)</argsstring>
+        <name>CandidateSet</name>
+        <param>
+          <type>const size_t</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Modify the candidate set for the given projection table. Careful! </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="92" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" bodystart="92" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1QDAFN_1a9d1760e2d90f9adcd1349c313e397b5e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const MatType &amp;</type>
+        <definition>const MatType&amp; CandidateSet</definition>
+        <argsstring>(const size_t t) const</argsstring>
+        <name>CandidateSet</name>
+        <param>
+          <type>const size_t</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+<para>Get the candidate set for the given projection table. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="90" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" bodystart="90" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1QDAFN_1a1781bad06c46fac9a519e8cbc66c7758" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumProjections</definition>
+        <argsstring>() const</argsstring>
+        <name>NumProjections</name>
+        <briefdescription>
+<para>Get the number of projections. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="87" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" bodystart="87" bodyend="87"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1QDAFN_1a0de302ca0602fe721ac01f073d5e630f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const MatType &amp;querySet, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;distances)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <briefdescription>
+<para>Search for the k furthest neighbors of the given query set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>(The query set can contain just one point, that is okay.) The results will be stored in the given neighbors and distances matrices, in the same format as the mlpack <ref refid="classmlpack_1_1neighbor_1_1NeighborSearch" kindref="compound">NeighborSearch</ref> and <ref refid="classmlpack_1_1neighbor_1_1LSHSearch" kindref="compound">LSHSearch</ref> classes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="77" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1QDAFN_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="84" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1neighbor_1_1QDAFN_1a025c46810d0d83a17834f3f8364b479e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Train</definition>
+        <argsstring>(const MatType &amp;referenceSet, const size_t l=0, const size_t m=0)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>l</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>m</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Train the <ref refid="classmlpack_1_1neighbor_1_1QDAFN" kindref="compound">QDAFN</ref> model on the given reference set, optionally setting new parameters for the number of projections/tables (l) and the number of elements stored for each projection/table (m). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference set to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>l</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of projections. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>m</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of elements to store for each projection. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="67" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" line="34" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/approx_kfn/qdafn.hpp" bodystart="35" bodyend="111"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a61978cc8e3b1498d6a2b48bf75b09e24" prot="private" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>candidateSet</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a9d1760e2d90f9adcd1349c313e397b5e" prot="public" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>CandidateSet</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a958b1a642bdb58840b4fd77de9e29609" prot="public" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>CandidateSet</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1ae957d5343229c8480f286a956b768508" prot="private" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>l</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1ad9a3c11f5a1f6894ff30ac9ac4ceed59" prot="private" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>lines</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a007b64e06504c20a853be59118f2182a" prot="private" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>m</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a1781bad06c46fac9a519e8cbc66c7758" prot="public" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>NumProjections</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a056e5d5cf19859951852f8f4c3d14319" prot="private" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>projections</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a4776f610347419ede2b9f2c3197cf662" prot="public" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>QDAFN</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a019fd45b08dfa9494b54a45ee41a2fb1" prot="public" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>QDAFN</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a0de302ca0602fe721ac01f073d5e630f" prot="public" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a4b2b90a9c3ada3b5fd84bf432db0c63b" prot="private" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>sIndices</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a58c34c94ee0069ce141f6930f5fc4b3f" prot="private" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>sValues</name></member>
+      <member refid="classmlpack_1_1neighbor_1_1QDAFN_1a025c46810d0d83a17834f3f8364b479e" prot="public" virt="non-virtual"><scope>mlpack::neighbor::QDAFN</scope><name>Train</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

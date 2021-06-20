@@ -1,0 +1,309 @@
+\doxysection{Reward\+Clipping$<$ Environment\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1rl_1_1RewardClipping}\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+
+
+Interface for clipping the reward to some value between the specified maximum and minimum value (Clipping here is implemented as $ g_{\text{clipped}} = \max(g_{\text{min}}, \min(g_{\text{min}}, g))) $.)  
+
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \textbf{ Action} = typename Environment\+Type\+::\+Action
+\begin{DoxyCompactList}\small\item\em Convenient typedef for action. \end{DoxyCompactList}\item 
+using \textbf{ State} = typename Environment\+Type\+::\+State
+\begin{DoxyCompactList}\small\item\em Convenient typedef for state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Reward\+Clipping} (Environment\+Type \&environment, const double min\+Reward=-\/1.\+0, const double max\+Reward=1.\+0)
+\begin{DoxyCompactList}\small\item\em Constructor for creating a \doxyref{Reward\+Clipping}{p.}{classmlpack_1_1rl_1_1RewardClipping} instance. \end{DoxyCompactList}\item 
+Environment\+Type \& \textbf{ Environment} ()
+\begin{DoxyCompactList}\small\item\em Modify the environment. \end{DoxyCompactList}\item 
+Environment\+Type \& \textbf{ Environment} () const
+\begin{DoxyCompactList}\small\item\em Get the environment. \end{DoxyCompactList}\item 
+\textbf{ State} \textbf{ Initial\+Sample} ()
+\begin{DoxyCompactList}\small\item\em The Initial\+Sample method is called by the environment to initialize the starting state. \end{DoxyCompactList}\item 
+bool \textbf{ Is\+Terminal} (const \textbf{ State} \&state) const
+\begin{DoxyCompactList}\small\item\em Checks whether given state is a terminal state. \end{DoxyCompactList}\item 
+double \& \textbf{ Max\+Reward} ()
+\begin{DoxyCompactList}\small\item\em Modify the maximum reward value. \end{DoxyCompactList}\item 
+double \textbf{ Max\+Reward} () const
+\begin{DoxyCompactList}\small\item\em Get the maximum reward value. \end{DoxyCompactList}\item 
+double \& \textbf{ Min\+Reward} ()
+\begin{DoxyCompactList}\small\item\em Modify the minimum reward value. \end{DoxyCompactList}\item 
+double \textbf{ Min\+Reward} () const
+\begin{DoxyCompactList}\small\item\em Get the minimum reward value. \end{DoxyCompactList}\item 
+double \textbf{ Sample} (const \textbf{ State} \&state, const \textbf{ Action} \&action)
+\begin{DoxyCompactList}\small\item\em Dynamics of Environment. \end{DoxyCompactList}\item 
+double \textbf{ Sample} (const \textbf{ State} \&state, const \textbf{ Action} \&action, \textbf{ State} \&next\+State)
+\begin{DoxyCompactList}\small\item\em Dynamics of Environment. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Environment\+Type$>$\newline
+class mlpack\+::rl\+::\+Reward\+Clipping$<$ Environment\+Type $>$}
+
+Interface for clipping the reward to some value between the specified maximum and minimum value (Clipping here is implemented as $ g_{\text{clipped}} = \max(g_{\text{min}}, \min(g_{\text{min}}, g))) $.) 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Environment\+Type} & A type of Environment that is being wrapped. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 30 of file reward\+\_\+clipping.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_a1f2d996cd451bb1fed4d3d89b4ba19ba}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!Action@{Action}}
+\index{Action@{Action}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{Action}
+{\footnotesize\ttfamily using \textbf{ Action} =  typename Environment\+Type\+::\+Action}
+
+
+
+Convenient typedef for action. 
+
+
+
+Definition at line 37 of file reward\+\_\+clipping.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_a1f6c591e4da193973060b0a606af688d}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!State@{State}}
+\index{State@{State}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{State}
+{\footnotesize\ttfamily using \textbf{ State} =  typename Environment\+Type\+::\+State}
+
+
+
+Convenient typedef for state. 
+
+
+
+Definition at line 34 of file reward\+\_\+clipping.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_a97f34a1179082c279260959eff023e1f}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!RewardClipping@{RewardClipping}}
+\index{RewardClipping@{RewardClipping}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{RewardClipping()}
+{\footnotesize\ttfamily \textbf{ Reward\+Clipping} (\begin{DoxyParamCaption}\item[{Environment\+Type \&}]{environment,  }\item[{const double}]{min\+Reward = {\ttfamily -\/1.0},  }\item[{const double}]{max\+Reward = {\ttfamily 1.0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor for creating a \doxyref{Reward\+Clipping}{p.}{classmlpack_1_1rl_1_1RewardClipping} instance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em min\+Reward} & Minimum possible value of clipped reward. \\
+\hline
+{\em max\+Reward} & Maximum possible value of clipped reward. \\
+\hline
+{\em environment} & An instance of the environment used for actual simulations. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 47 of file reward\+\_\+clipping.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_a59cc43eb892c46ea7c50e18fb78b9172}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!Environment@{Environment}}
+\index{Environment@{Environment}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{Environment()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Environment\+Type\& Environment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the environment. 
+
+
+
+Definition at line 115 of file reward\+\_\+clipping.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_a18f14a98092c29dd41d3e1cbc2c52159}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!Environment@{Environment}}
+\index{Environment@{Environment}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{Environment()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Environment\+Type\& Environment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the environment. 
+
+
+
+Definition at line 113 of file reward\+\_\+clipping.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_aa9f537249fa0c1e62b38197996ab4c6a}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!InitialSample@{InitialSample}}
+\index{InitialSample@{InitialSample}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{InitialSample()}
+{\footnotesize\ttfamily \textbf{ State} Initial\+Sample (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The Initial\+Sample method is called by the environment to initialize the starting state. 
+
+Returns whatever Initial Sample is returned by the environment. 
+
+Definition at line 62 of file reward\+\_\+clipping.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_a7fd056133dfd315e4bf45c408f99326f}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!IsTerminal@{IsTerminal}}
+\index{IsTerminal@{IsTerminal}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{IsTerminal()}
+{\footnotesize\ttfamily bool Is\+Terminal (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{state }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Checks whether given state is a terminal state. 
+
+Returns the value by calling the environment method.
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & desired state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if state is a terminal state, otherwise false. 
+\end{DoxyReturn}
+
+
+Definition at line 74 of file reward\+\_\+clipping.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_a3c1ad6d51dd13323ac752a4ca1c0cfb3}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!MaxReward@{MaxReward}}
+\index{MaxReward@{MaxReward}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{MaxReward()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Max\+Reward (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the maximum reward value. 
+
+
+
+Definition at line 125 of file reward\+\_\+clipping.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_a00e2e3602d4233fc27e8674511641e68}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!MaxReward@{MaxReward}}
+\index{MaxReward@{MaxReward}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{MaxReward()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Max\+Reward (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the maximum reward value. 
+
+
+
+Definition at line 123 of file reward\+\_\+clipping.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_a842cc3c3e49e15e90bf0e029f150cccc}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!MinReward@{MinReward}}
+\index{MinReward@{MinReward}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{MinReward()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Min\+Reward (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the minimum reward value. 
+
+
+
+Definition at line 120 of file reward\+\_\+clipping.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_ac054a2c9e0295beac8c7a4fabe68e563}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!MinReward@{MinReward}}
+\index{MinReward@{MinReward}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{MinReward()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Min\+Reward (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the minimum reward value. 
+
+
+
+Definition at line 118 of file reward\+\_\+clipping.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_af2bb860eaefeaa62a40f5cf940793704}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!Sample@{Sample}}
+\index{Sample@{Sample}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{Sample()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Sample (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{state,  }\item[{const \textbf{ Action} \&}]{action }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Dynamics of Environment. 
+
+The rewards returned from the base environment are clipped according the maximum and minimum values specified.
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & The current state. \\
+\hline
+{\em action} & The current action. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+clipped\+Reward, Reward clipped between [min\+Reward, max\+Reward]. 
+\end{DoxyReturn}
+
+
+Definition at line 106 of file reward\+\_\+clipping.\+hpp.
+
+
+
+References Reward\+Clipping$<$ Environment\+Type $>$\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1RewardClipping_a311ac19edc537dee94f37b7cce93d908}} 
+\index{RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}!Sample@{Sample}}
+\index{Sample@{Sample}!RewardClipping$<$ EnvironmentType $>$@{RewardClipping$<$ EnvironmentType $>$}}
+\doxysubsubsection{Sample()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Sample (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{state,  }\item[{const \textbf{ Action} \&}]{action,  }\item[{\textbf{ State} \&}]{next\+State }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Dynamics of Environment. 
+
+The rewards returned from the base environment are clipped according the maximum and minimum values specified.
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & The current state. \\
+\hline
+{\em action} & The current action. \\
+\hline
+{\em next\+State} & The next state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+clipped\+Reward, Reward clipped between [min\+Reward, max\+Reward]. 
+\end{DoxyReturn}
+
+
+Definition at line 88 of file reward\+\_\+clipping.\+hpp.
+
+
+
+References mlpack\+::math\+::\+Clamp\+Range().
+
+
+
+Referenced by Reward\+Clipping$<$ Environment\+Type $>$\+::\+Sample().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/environment/\textbf{ reward\+\_\+clipping.\+hpp}\end{DoxyCompactItemize}

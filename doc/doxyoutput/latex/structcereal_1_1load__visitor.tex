@@ -1,0 +1,84 @@
+\doxysection{load\+\_\+visitor$<$ T $>$ Struct Template Reference}
+\label{structcereal_1_1load__visitor}\index{load\_visitor$<$ T $>$@{load\_visitor$<$ T $>$}}
+
+
+Inheritance diagram for load\+\_\+visitor$<$ T $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=167pt]{structcereal_1_1load__visitor__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Archive , typename Variant\+Type $>$ }\\static void \textbf{ load} (Archive \&ar, Variant\+Type \&variant)
+\item 
+{\footnotesize template$<$typename Archive , typename Variant\+Type $>$ }\\static void \textbf{ load\+\_\+impl} (Archive \&ar, Variant\+Type \&value, std\+::false\+\_\+type)
+\item 
+{\footnotesize template$<$typename Archive , typename Variant\+Type $>$ }\\static void \textbf{ load\+\_\+impl} (Archive \&ar, Variant\+Type \&variant, std\+::true\+\_\+type)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+struct cereal\+::load\+\_\+visitor$<$ T $>$}
+
+
+
+Definition at line 68 of file pointer\+\_\+variant\+\_\+wrapper.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{structcereal_1_1load__visitor_ae67bead4545632528f854b076f0b00b4}} 
+\index{load\_visitor$<$ T $>$@{load\_visitor$<$ T $>$}!load@{load}}
+\index{load@{load}!load\_visitor$<$ T $>$@{load\_visitor$<$ T $>$}}
+\doxysubsubsection{load()}
+{\footnotesize\ttfamily static void load (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{Variant\+Type \&}]{variant }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 89 of file pointer\+\_\+variant\+\_\+wrapper.\+hpp.
+
+
+
+References load\+\_\+visitor$<$ T $>$\+::load\+\_\+impl().
+
+\mbox{\label{structcereal_1_1load__visitor_a55a8cf45de73b30212662c1710614572}} 
+\index{load\_visitor$<$ T $>$@{load\_visitor$<$ T $>$}!load\_impl@{load\_impl}}
+\index{load\_impl@{load\_impl}!load\_visitor$<$ T $>$@{load\_visitor$<$ T $>$}}
+\doxysubsubsection{load\_impl()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static void load\+\_\+impl (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{Variant\+Type \&}]{value,  }\item[{std\+::false\+\_\+type}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 80 of file pointer\+\_\+variant\+\_\+wrapper.\+hpp.
+
+
+
+References cereal\+::make\+\_\+pointer\+\_\+variant().
+
+\mbox{\label{structcereal_1_1load__visitor_aea1281669a5d8765e002bfd8ef845be7}} 
+\index{load\_visitor$<$ T $>$@{load\_visitor$<$ T $>$}!load\_impl@{load\_impl}}
+\index{load\_impl@{load\_impl}!load\_visitor$<$ T $>$@{load\_visitor$<$ T $>$}}
+\doxysubsubsection{load\_impl()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void load\+\_\+impl (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{Variant\+Type \&}]{variant,  }\item[{std\+::true\+\_\+type}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 71 of file pointer\+\_\+variant\+\_\+wrapper.\+hpp.
+
+
+
+References CEREAL\+\_\+\+POINTER.
+
+
+
+Referenced by load\+\_\+visitor$<$ T $>$\+::load().
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/cereal/\textbf{ pointer\+\_\+variant\+\_\+wrapper.\+hpp}\end{DoxyCompactItemize}

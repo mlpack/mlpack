@@ -1,0 +1,118 @@
+.TH "/home/aakash/mlpack/src/mlpack/bindings/R/print_doc_functions.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/bindings/R/print_doc_functions.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::bindings\fP"
+.br
+.ti -1c
+.RI " \fBmlpack::bindings::r\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "std::string \fBGetBindingName\fP (const std::string &bindingName)"
+.br
+.RI "Given the name of a binding, print its R name\&. "
+.ti -1c
+.RI "bool \fBIgnoreCheck\fP (const std::string &paramName)"
+.br
+.RI "Print whether or not we should ignore a check on the given parameter\&. "
+.ti -1c
+.RI "bool \fBIgnoreCheck\fP (const std::vector< std::pair< std::string, bool >> &constraints, const std::string &paramName)"
+.br
+.RI "Print whether or not we should ignore a check on the given set of constraints\&. "
+.ti -1c
+.RI "bool \fBIgnoreCheck\fP (const std::vector< std::string > &constraints)"
+.br
+.RI "Print whether or not we should ignore a check on the given set of constraints\&. "
+.ti -1c
+.RI "std::string \fBParamString\fP (const std::string &paramName)"
+.br
+.RI "Given the parameter name, determine what it would actually be when passed to the command line\&. "
+.ti -1c
+.RI "std::string \fBPrintDataset\fP (const std::string &datasetName)"
+.br
+.RI "Given the name of a matrix, print it\&. "
+.ti -1c
+.RI "std::string \fBPrintDefault\fP (const std::string &paramName)"
+.br
+.RI "Given a parameter name, print its corresponding default value\&. "
+.ti -1c
+.RI "std::string \fBPrintImport\fP ()"
+.br
+.RI "Print any import information for the R binding\&. "
+.ti -1c
+.RI "std::string \fBPrintInputOptionInfo\fP ()"
+.br
+.RI "Print any special information about input options\&. "
+.ti -1c
+.RI "std::string \fBPrintInputOptions\fP ()"
+.br
+.RI "Recursion base case\&. "
+.ti -1c
+.RI "template<typename T , typename\&.\&.\&. Args> std::string \fBPrintInputOptions\fP (const std::string &paramName, const T &value, Args\&.\&.\&. args)"
+.br
+.RI "Print an input option\&. "
+.ti -1c
+.RI "std::string \fBPrintModel\fP (const std::string &modelName)"
+.br
+.RI "Given the name of a model, print it\&. "
+.ti -1c
+.RI "std::string \fBPrintOutputOptionInfo\fP ()"
+.br
+.RI "Print any special information about output options\&. "
+.ti -1c
+.RI "template<typename T , typename\&.\&.\&. Args> std::string \fBPrintOutputOptions\fP (const bool markdown, const std::string &paramName, const T &value, Args\&.\&.\&. args)"
+.br
+.ti -1c
+.RI "std::string \fBPrintOutputOptions\fP (const bool)"
+.br
+.RI "Recursion base case\&. "
+.ti -1c
+.RI "template<> std::string \fBPrintValue\fP (const bool &value, bool quotes)"
+.br
+.RI "Special overload for booleans\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintValue\fP (const T &value, bool quotes)"
+.br
+.RI "Given a parameter type, print the corresponding value\&. "
+.ti -1c
+.RI "template<typename\&.\&.\&. Args> std::string \fBProgramCall\fP (const bool markdown, const std::string &programName, Args\&.\&.\&. args)"
+.br
+.RI "Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call\&. "
+.ti -1c
+.RI "std::string \fBProgramCall\fP (const std::string &programName)"
+.br
+.RI "Given the name of a binding, print a program call assuming that all options are specified\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Yashwant Singh Parihar
+.RE
+.PP
+This file contains functions useful for printing documentation strings related to R bindings\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBprint_doc_functions\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

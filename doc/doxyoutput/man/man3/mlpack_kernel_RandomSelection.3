@@ -1,0 +1,47 @@
+.TH "RandomSelection" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RandomSelection
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static const arma::Col< size_t > \fBSelect\fP (const arma::mat &data, const size_t m)"
+.br
+.RI "Randomly select the specified number of points in the dataset\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 22 of file random_selection\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static const arma::Col<size_t> Select (const arma::mat & data, const size_t m)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Randomly select the specified number of points in the dataset\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Dataset to sample from\&. 
+.br
+\fIm\fP Number of points to select\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Indices of selected points from the dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 32 of file random_selection\&.hpp\&.
+.PP
+References mlpack::math::RandInt()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,292 @@
+\doxysection{SVDPlus\+Plus\+Function$<$ Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction}\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+
+
+This class contains methods which are used to calculate the cost of SVD++\textquotesingle{}s objective function, to calculate gradient of parameters with respect to the objective function, etc.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ SVDPlus\+Plus\+Function} (const Mat\+Type \&data, const arma\+::sp\+\_\+mat \&implicit\+Data, const size\+\_\+t rank, const double lambda)
+\begin{DoxyCompactList}\small\item\em Constructor for \doxyref{SVDPlus\+Plus\+Function}{p.}{classmlpack_1_1svd_1_1SVDPlusPlusFunction} class. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Dataset} () const
+\begin{DoxyCompactList}\small\item\em Return the dataset passed into the constructor. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const arma\+::mat \&parameters) const
+\begin{DoxyCompactList}\small\item\em Evaluates the cost function over all examples in the data. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const arma\+::mat \&parameters, const size\+\_\+t start, const size\+\_\+t batch\+Size=1) const
+\begin{DoxyCompactList}\small\item\em Evaluates the cost function for one training example. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Get\+Initial\+Point} () const
+\begin{DoxyCompactList}\small\item\em Return the initial point for the optimization. \end{DoxyCompactList}\item 
+void \textbf{ Gradient} (const arma\+::mat \&parameters, arma\+::mat \&gradient) const
+\begin{DoxyCompactList}\small\item\em Evaluates the full gradient of the cost function over all the training examples. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Grad\+Type $>$ }\\void \textbf{ Gradient} (const arma\+::mat \&parameters, const size\+\_\+t start, Grad\+Type \&gradient, const size\+\_\+t batch\+Size=1) const
+\begin{DoxyCompactList}\small\item\em Evaluates the gradient of the cost function over one training example. \end{DoxyCompactList}\item 
+const arma\+::sp\+\_\+mat \& \textbf{ Implicit\+Dataset} () const
+\begin{DoxyCompactList}\small\item\em Return the implicit data passed into the constructor. \end{DoxyCompactList}\item 
+double \textbf{ Lambda} () const
+\begin{DoxyCompactList}\small\item\em Return the regularization parameters. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Functions} () const
+\begin{DoxyCompactList}\small\item\em Return the number of training examples. Useful for SGD optimizer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Items} () const
+\begin{DoxyCompactList}\small\item\em Return the number of items in the data. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Users} () const
+\begin{DoxyCompactList}\small\item\em Return the number of users in the data. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Rank} () const
+\begin{DoxyCompactList}\small\item\em Return the rank used for the factorization. \end{DoxyCompactList}\item 
+void \textbf{ Shuffle} ()
+\begin{DoxyCompactList}\small\item\em Shuffle the points in the dataset. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Mat\+Type = arma\+::mat$>$\newline
+class mlpack\+::svd\+::\+SVDPlus\+Plus\+Function$<$ Mat\+Type $>$}
+
+This class contains methods which are used to calculate the cost of SVD++\textquotesingle{}s objective function, to calculate gradient of parameters with respect to the objective function, etc. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & The matrix type of the dataset. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 31 of file svdplusplus\+\_\+function.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_a8256a6a4551a21dc578473771750e565}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!SVDPlusPlusFunction@{SVDPlusPlusFunction}}
+\index{SVDPlusPlusFunction@{SVDPlusPlusFunction}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{SVDPlusPlusFunction()}
+{\footnotesize\ttfamily \textbf{ SVDPlus\+Plus\+Function} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{data,  }\item[{const arma\+::sp\+\_\+mat \&}]{implicit\+Data,  }\item[{const size\+\_\+t}]{rank,  }\item[{const double}]{lambda }\end{DoxyParamCaption})}
+
+
+
+Constructor for \doxyref{SVDPlus\+Plus\+Function}{p.}{classmlpack_1_1svd_1_1SVDPlusPlusFunction} class. 
+
+The constructor calculates the number of users and items in the passed data. It also randomly initializes the parameter values.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Dataset for which SVD is calculated. \\
+\hline
+{\em implicit\+Data} & Implicit feedback matrix where a non-\/zero entry means interaction between a user and an item is observed. \\
+\hline
+{\em rank} & Rank used for matrix factorization. \\
+\hline
+{\em lambda} & Regularization parameter used for optimization. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_aff320b9a86b77a150e630c01d5888273}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{Dataset()}
+{\footnotesize\ttfamily const arma\+::mat\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the dataset passed into the constructor. 
+
+
+
+Definition at line 110 of file svdplusplus\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_a6c7f979b684b70aab5bec8b09b5eb1a4}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the cost function over all examples in the data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Parameters(user/item matrices, user/item bias, item implicit matrix) of the decomposition. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_a12589583139057b24a415995079f6ffe}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{start,  }\item[{const size\+\_\+t}]{batch\+Size = {\ttfamily 1} }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the cost function for one training example. 
+
+Useful for the SGD optimizer abstraction which uses one training example at a time.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Parameters(user/item matrices, user/item bias, item implicit matrix) of the decomposition. \\
+\hline
+{\em start} & First index of the training examples to be used. \\
+\hline
+{\em batch\+Size} & Size of batch to evaluate. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_ac3e9aa612cb56d0d93f3259f4a8122bb}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!GetInitialPoint@{GetInitialPoint}}
+\index{GetInitialPoint@{GetInitialPoint}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{GetInitialPoint()}
+{\footnotesize\ttfamily const arma\+::mat\& Get\+Initial\+Point (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the initial point for the optimization. 
+
+
+
+Definition at line 107 of file svdplusplus\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_ab9a604f48072ce6c08443519ff787a73}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{arma\+::mat \&}]{gradient }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the full gradient of the cost function over all the training examples. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Parameters(user/item matrices, user/item bias, item implicit matrix) of the decomposition. \\
+\hline
+{\em gradient} & Calculated gradient for the parameters. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_a5b06b7506faa0b510622078a31e88009}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{parameters,  }\item[{const size\+\_\+t}]{start,  }\item[{Grad\+Type \&}]{gradient,  }\item[{const size\+\_\+t}]{batch\+Size = {\ttfamily 1} }\end{DoxyParamCaption}) const}
+
+
+
+Evaluates the gradient of the cost function over one training example. 
+
+This function is useful for optimizers like SGD. The type of the gradient parameter is a template argument to allow the computation of a sparse gradient.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Grad\+Type} & The type of the gradient out-\/param. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em parameters} & Parameters(user/item matrices, user/item bias, item implicit matrix) of the decomposition. \\
+\hline
+{\em start} & The first index of the training examples to use. \\
+\hline
+{\em gradient} & Calculated gradient for the parameters. \\
+\hline
+{\em batch\+Size} & Size of batch to calculate gradient for. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_ab39094318eed005a878f24fc2dc1c265}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!ImplicitDataset@{ImplicitDataset}}
+\index{ImplicitDataset@{ImplicitDataset}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{ImplicitDataset()}
+{\footnotesize\ttfamily const arma\+::sp\+\_\+mat\& Implicit\+Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the implicit data passed into the constructor. 
+
+
+
+Definition at line 113 of file svdplusplus\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_a53535041275cedd0ec3de67ca032aa94}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!Lambda@{Lambda}}
+\index{Lambda@{Lambda}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{Lambda()}
+{\footnotesize\ttfamily double Lambda (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the regularization parameters. 
+
+
+
+Definition at line 125 of file svdplusplus\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_a1fa76af34a6e3ea927b307f0c318ee4b}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!NumFunctions@{NumFunctions}}
+\index{NumFunctions@{NumFunctions}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{NumFunctions()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Functions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of training examples. Useful for SGD optimizer. 
+
+
+
+Definition at line 116 of file svdplusplus\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_ad4e27ce22a8ed61cf6a83e3c1b48de3a}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!NumItems@{NumItems}}
+\index{NumItems@{NumItems}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{NumItems()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Items (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of items in the data. 
+
+
+
+Definition at line 122 of file svdplusplus\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_af41355bc8f20533711975528a054c4dc}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!NumUsers@{NumUsers}}
+\index{NumUsers@{NumUsers}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{NumUsers()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Users (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of users in the data. 
+
+
+
+Definition at line 119 of file svdplusplus\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_afe1447c5e7fa184cbf19ced57a50b7b6}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!Rank@{Rank}}
+\index{Rank@{Rank}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{Rank()}
+{\footnotesize\ttfamily size\+\_\+t Rank (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the rank used for the factorization. 
+
+
+
+Definition at line 128 of file svdplusplus\+\_\+function.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1SVDPlusPlusFunction_a2697cc8b37d7bca7c055228382a9b208}} 
+\index{SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}!Shuffle@{Shuffle}}
+\index{Shuffle@{Shuffle}!SVDPlusPlusFunction$<$ MatType $>$@{SVDPlusPlusFunction$<$ MatType $>$}}
+\doxysubsubsection{Shuffle()}
+{\footnotesize\ttfamily void Shuffle (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Shuffle the points in the dataset. 
+
+This may be used by optimizers. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/svdplusplus/\textbf{ svdplusplus\+\_\+function.\+hpp}\end{DoxyCompactItemize}

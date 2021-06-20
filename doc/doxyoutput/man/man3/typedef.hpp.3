@@ -1,0 +1,56 @@
+.TH "/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::neighbor\fP"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType = tree::SPTree> using \fBDefeatistKNN\fP = NeighborSearch< NearestNeighborSort, metric::EuclideanDistance, arma::mat, TreeType, TreeType< metric::EuclideanDistance, NeighborSearchStat< NearestNeighborSort >, arma::mat >::template DefeatistDualTreeTraverser, TreeType< metric::EuclideanDistance, NeighborSearchStat< NearestNeighborSort >, arma::mat >::template DefeatistSingleTreeTraverser >"
+.br
+.RI "The DefeatistKNN class is the k-nearest-neighbors method considering defeatist search\&. "
+.ti -1c
+.RI "typedef NeighborSearch< FurthestNeighborSort, metric::EuclideanDistance > \fBKFN\fP"
+.br
+.RI "The KFN class is the k-furthest-neighbors method\&. "
+.ti -1c
+.RI "typedef NeighborSearch< NearestNeighborSort, metric::EuclideanDistance > \fBKNN\fP"
+.br
+.RI "The KNN class is the k-nearest-neighbors method\&. "
+.ti -1c
+.RI "typedef DefeatistKNN< tree::SPTree > \fBSpillKNN\fP"
+.br
+.RI "The SpillKNN class is the k-nearest-neighbors method considering defeatist search on SPTree\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Simple typedefs describing template instantiations of the NeighborSearch class which are commonly used\&. This is meant to be included by neighbor_search\&.h but is a separate file for simplicity\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBtypedef\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

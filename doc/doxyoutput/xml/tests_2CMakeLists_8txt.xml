@@ -1,0 +1,250 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="tests_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="tests_2CMakeLists_8txt_1a0cfbfbdc4d90ddecb8b692b71eaa494f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>include</definition>
+        <argsstring>(CTest) add_executable(mlpack_test EXCLUDE_FROM_ALL activation_functions_test.cpp adaboost_test.cpp akfn_test.cpp aknn_test.cpp ann_dist_test.cpp ann_layer_test.cpp ann_regularizer_test.cpp ann_test_tools.hpp ann_visitor_test.cpp armadillo_svd_test.cpp arma_extend_test.cpp async_learning_test.cpp augmented_rnns_tasks_test.cpp bayesian_linear_regression_test.cpp bias_svd_test.cpp binarize_test.cpp block_krylov_svd_test.cpp callback_test.cpp cf_test.cpp cli_binding_test.cpp convolutional_network_test.cpp convolution_test.cpp cosine_tree_test.cpp cv_test.cpp dbscan_test.cpp dcgan_test.cpp decision_tree_test.cpp det_test.cpp distribution_test.cpp drusilla_select_test.cpp emst_test.cpp facilities_test.cpp fastmks_test.cpp feedforward_network_test.cpp feedforward_network_2_test.cpp gan_test.cpp gmm_test.cpp hmm_test.cpp hpt_test.cpp hoeffding_tree_test.cpp hyperplane_test.cpp image_load_test.cpp imputation_test.cpp init_rules_test.cpp io_test.cpp kde_test.cpp kernel_pca_test.cpp kernel_test.cpp kernel_traits_test.cpp kfn_test.cpp kmeans_test.cpp knn_test.cpp krann_search_test.cpp ksinit_test.cpp lars_test.cpp layer_names_test.cpp lin_alg_test.cpp linear_regression_test.cpp lmnn_test.cpp linear_svm_test.cpp load_save_test.cpp local_coordinate_coding_test.cpp logistic_regression_test.cpp log_test.cpp loss_functions_test.cpp lsh_test.cpp main.cpp math_test.cpp matrix_completion_test.cpp maximal_inputs_test.cpp metric_test.cpp mean_shift_test.cpp mock_categorical_data.hpp nbc_test.cpp nca_test.cpp nmf_test.cpp nystroem_method_test.cpp octree_test.cpp one_hot_encoding_test.cpp pca_test.cpp perceptron_test.cpp prefixedoutstream_test.cpp python_binding_test.cpp qdafn_test.cpp quic_svd_test.cpp q_learning_test.cpp radical_test.cpp random_forest_test.cpp random_test.cpp randomized_svd_test.cpp range_search_test.cpp rbm_network_test.cpp rectangle_tree_test.cpp recurrent_network_test.cpp rnn_reber_test.cpp regularized_svd_test.cpp reward_clipping_test.cpp rl_components_test.cpp scaling_test.cpp size_checks_test.cpp serialization.cpp serialization.hpp serialization_test.cpp sfinae_test.cpp softmax_regression_test.cpp sort_policy_test.cpp sparse_autoencoder_test.cpp sparse_coding_test.cpp spill_tree_test.cpp split_data_test.cpp string_encoding_test.cpp sumtree_test.cpp svd_batch_test.cpp svd_incremental_test.cpp svdplusplus_test.cpp termination_policy_test.cpp test_catch_tools.hpp test_function_tools.hpp timer_test.cpp tree_test.cpp tree_traits_test.cpp ub_tree_test.cpp union_find_test.cpp vantage_point_tree_test.cpp wgan_test.cpp main_tests/adaboost_test.cpp main_tests/approx_kfn_test.cpp main_tests/bayesian_linear_regression_test.cpp main_tests/cf_test.cpp main_tests/dbscan_test.cpp main_tests/decision_tree_test.cpp main_tests/det_test.cpp main_tests/emst_test.cpp main_tests/fastmks_test.cpp main_tests/gmm_generate_test.cpp main_tests/gmm_probability_test.cpp main_tests/gmm_train_test.cpp main_tests/hmm_generate_test.cpp main_tests/hmm_loglik_test.cpp main_tests/hmm_test_utils.hpp main_tests/hmm_train_test.cpp main_tests/hmm_viterbi_test.cpp main_tests/hoeffding_tree_test.cpp main_tests/image_converter_test.cpp main_tests/kde_test.cpp main_tests/kernel_pca_test.cpp main_tests/kfn_test.cpp main_tests/kmeans_test.cpp main_tests/knn_test.cpp main_tests/krann_test.cpp main_tests/linear_regression_test.cpp main_tests/lmnn_test.cpp main_tests/linear_svm_test.cpp main_tests/local_coordinate_coding_test.cpp main_tests/logistic_regression_test.cpp main_tests/lsh_test.cpp main_tests/mean_shift_test.cpp main_tests/nbc_test.cpp main_tests/nca_test.cpp main_tests/nmf_test.cpp main_tests/pca_test.cpp main_tests/perceptron_test.cpp main_tests/preprocess_binarize_test.cpp main_tests/preprocess_imputer_test.cpp main_tests/preprocess_one_hot_encode_test.cpp main_tests/preprocess_scale_test.cpp main_tests/preprocess_split_test.cpp main_tests/radical_test.cpp main_tests/random_forest_test.cpp main_tests/softmax_regression_test.cpp main_tests/sparse_coding_test.cpp main_tests/range_search_test.cpp main_tests/test_helper.hpp) if(NOT BUILD_SHARED_LIBS) target_link_libraries(mlpack_test -static mlpack $</argsstring>
+        <name>include</name>
+        <param>
+          <type>CTest</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/tests/CMakeLists.txt" line="1" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/tests/CMakeLists.txt" bodystart="1" bodyend="185"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="tests_2CMakeLists_8txt_1a0cfbfbdc4d90ddecb8b692b71eaa494f" refkind="member"><highlight class="normal"><ref refid="bindings_2R_2CMakeLists_8txt_1a45548f086df473757b6a7c11f719387c" kindref="member">include</ref>(CTest)</highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>mlpack<sp/>test<sp/>executable.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal">add_executable(mlpack_test</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/>EXCLUDE_FROM_ALL</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/>activation_functions_test.cpp</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/>adaboost_test.cpp</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/>akfn_test.cpp</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/>aknn_test.cpp</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/>ann_dist_test.cpp</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/>ann_layer_test.cpp</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/>ann_regularizer_test.cpp</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/>ann_test_tools.hpp</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/>ann_visitor_test.cpp</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/>armadillo_svd_test.cpp</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/>arma_extend_test.cpp</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/>async_learning_test.cpp</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/>augmented_rnns_tasks_test.cpp</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/>bayesian_linear_regression_test.cpp</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/>bias_svd_test.cpp</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/>binarize_test.cpp</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/>block_krylov_svd_test.cpp</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/>callback_test.cpp</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/>cf_test.cpp</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/>cli_binding_test.cpp</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/>convolutional_network_test.cpp</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/>convolution_test.cpp</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/>cosine_tree_test.cpp</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/>cv_test.cpp</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/>dbscan_test.cpp</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/>dcgan_test.cpp</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>decision_tree_test.cpp</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>det_test.cpp</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/>distribution_test.cpp</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>drusilla_select_test.cpp</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>emst_test.cpp</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/>facilities_test.cpp</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/>fastmks_test.cpp</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/>feedforward_network_test.cpp</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/>feedforward_network_2_test.cpp</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>gan_test.cpp</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>gmm_test.cpp</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/>hmm_test.cpp</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>hpt_test.cpp</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>hoeffding_tree_test.cpp</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>hyperplane_test.cpp</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>image_load_test.cpp</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>imputation_test.cpp</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>init_rules_test.cpp</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>io_test.cpp</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/>kde_test.cpp</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>kernel_pca_test.cpp</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>kernel_test.cpp</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>kernel_traits_test.cpp</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/>kfn_test.cpp</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>kmeans_test.cpp</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>knn_test.cpp</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>krann_search_test.cpp</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>ksinit_test.cpp</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/>lars_test.cpp</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>layer_names_test.cpp</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/>lin_alg_test.cpp</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>linear_regression_test.cpp</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/>lmnn_test.cpp</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/>linear_svm_test.cpp</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/>load_save_test.cpp</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>local_coordinate_coding_test.cpp</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/>logistic_regression_test.cpp</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/>log_test.cpp</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/>loss_functions_test.cpp</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>lsh_test.cpp</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>main.cpp</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>math_test.cpp</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/>matrix_completion_test.cpp</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/>maximal_inputs_test.cpp</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>metric_test.cpp</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/>mean_shift_test.cpp</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>mock_categorical_data.hpp</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>nbc_test.cpp</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/>nca_test.cpp</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/>nmf_test.cpp</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/>nystroem_method_test.cpp</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>octree_test.cpp</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/>one_hot_encoding_test.cpp</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>pca_test.cpp</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/>perceptron_test.cpp</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/>prefixedoutstream_test.cpp</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>python_binding_test.cpp</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/>qdafn_test.cpp</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/>quic_svd_test.cpp</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>q_learning_test.cpp</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/>radical_test.cpp</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/>random_forest_test.cpp</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>random_test.cpp</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/>randomized_svd_test.cpp</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>range_search_test.cpp</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/>rbm_network_test.cpp</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>rectangle_tree_test.cpp</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/>recurrent_network_test.cpp</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/>rnn_reber_test.cpp</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>regularized_svd_test.cpp</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/>reward_clipping_test.cpp</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/>rl_components_test.cpp</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/>scaling_test.cpp</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/>size_checks_test.cpp</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>serialization.cpp</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>serialization.hpp</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>serialization_test.cpp</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/>sfinae_test.cpp</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>softmax_regression_test.cpp</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/>sort_policy_test.cpp</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/>sparse_autoencoder_test.cpp</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/>sparse_coding_test.cpp</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/>spill_tree_test.cpp</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/>split_data_test.cpp</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>string_encoding_test.cpp</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/>sumtree_test.cpp</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/>svd_batch_test.cpp</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/>svd_incremental_test.cpp</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/>svdplusplus_test.cpp</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>termination_policy_test.cpp</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/>test_catch_tools.hpp</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/>test_function_tools.hpp</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/>timer_test.cpp</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/>tree_test.cpp</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>tree_traits_test.cpp</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/>ub_tree_test.cpp</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>union_find_test.cpp</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/>vantage_point_tree_test.cpp</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/>wgan_test.cpp</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/>main_tests/adaboost_test.cpp</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/>main_tests/approx_kfn_test.cpp</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>main_tests/bayesian_linear_regression_test.cpp</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/>main_tests/cf_test.cpp</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/>main_tests/dbscan_test.cpp</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/>main_tests/decision_tree_test.cpp</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/>main_tests/det_test.cpp</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/>main_tests/emst_test.cpp</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/>main_tests/fastmks_test.cpp</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/>main_tests/gmm_generate_test.cpp</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/>main_tests/gmm_probability_test.cpp</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/>main_tests/gmm_train_test.cpp</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/>main_tests/hmm_generate_test.cpp</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/>main_tests/hmm_loglik_test.cpp</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/>main_tests/hmm_test_utils.hpp</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/>main_tests/hmm_train_test.cpp</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/>main_tests/hmm_viterbi_test.cpp</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/>main_tests/hoeffding_tree_test.cpp</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/>main_tests/image_converter_test.cpp</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/>main_tests/kde_test.cpp</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/>main_tests/kernel_pca_test.cpp</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/>main_tests/kfn_test.cpp</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/>main_tests/kmeans_test.cpp</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/>main_tests/knn_test.cpp</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/>main_tests/krann_test.cpp</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/>main_tests/linear_regression_test.cpp</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/>main_tests/lmnn_test.cpp</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/>main_tests/linear_svm_test.cpp</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/>main_tests/local_coordinate_coding_test.cpp</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/>main_tests/logistic_regression_test.cpp</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/>main_tests/lsh_test.cpp</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/>main_tests/mean_shift_test.cpp</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/>main_tests/nbc_test.cpp</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>main_tests/nca_test.cpp</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/>main_tests/nmf_test.cpp</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/>main_tests/pca_test.cpp</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/>main_tests/perceptron_test.cpp</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/>main_tests/preprocess_binarize_test.cpp</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/>main_tests/preprocess_imputer_test.cpp</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/>main_tests/preprocess_one_hot_encode_test.cpp</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/>main_tests/preprocess_scale_test.cpp</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/>main_tests/preprocess_split_test.cpp</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/>main_tests/radical_test.cpp</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/>main_tests/random_forest_test.cpp</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/>main_tests/softmax_regression_test.cpp</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/>main_tests/sparse_coding_test.cpp</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/>main_tests/range_search_test.cpp</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/>main_tests/test_helper.hpp</highlight></codeline>
+<codeline lineno="179"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><ref refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" kindref="member">if</ref>(NOT<sp/>BUILD_SHARED_LIBS)</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Build<sp/>mlpack<sp/>test<sp/>executable<sp/>statically.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/>target_link_libraries(mlpack_test<sp/>-</highlight><highlight class="keyword">static</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>${ARMADILLO_LIBRARIES}</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>${COMPILER_SUPPORT_LIBRARIES}</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/>)</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">()</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>Build<sp/>mlpack<sp/>test<sp/>executable<sp/>dynamically.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/>target_link_libraries(mlpack_test</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>${ARMADILLO_LIBRARIES}</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/>${COMPILER_SUPPORT_LIBRARIES}</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/>)</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref>()</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal">set_target_properties(mlpack_test<sp/>PROPERTIES<sp/>COTIRE_CXX_PREFIX_HEADER_INIT<sp/>&quot;../core.hpp&quot;)</highlight></codeline>
+<codeline lineno="198"><highlight class="normal">cotire(mlpack_test)</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Copy<sp/>test<sp/>data<sp/>into<sp/>right<sp/>place.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal">add_custom_command(TARGET<sp/>mlpack_test</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/>POST_BUILD</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>copy_directory<sp/>${CMAKE_CURRENT_SOURCE_DIR}/data/</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${PROJECT_BINARY_DIR}</highlight></codeline>
+<codeline lineno="205"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal">add_custom_command(TARGET<sp/>mlpack_test</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/>POST_BUILD</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>tar<sp/>xjf<sp/>mnist_first250_training_4s_and_9s.tar.bz2</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>tar<sp/>xjf<sp/>digits_train.tar.bz2</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>tar<sp/>xjf<sp/>digits_test.tar.bz2</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>tar<sp/>xjf<sp/>digits_train_label.tar.bz2</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>tar<sp/>xjf<sp/>digits_test_label.tar.bz2</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/>WORKING_DIRECTORY<sp/>${PROJECT_BINARY_DIR}</highlight></codeline>
+<codeline lineno="215"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal">add_test(NAME<sp/></highlight><highlight class="stringliteral">&quot;catch_test&quot;</highlight><highlight class="normal"><sp/>COMMAND<sp/>mlpack_test<sp/>WORKING_DIRECTORY<sp/>${CMAKE_BINARY_DIR})</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal">set_tests_properties(</highlight><highlight class="stringliteral">&quot;catch_test&quot;</highlight><highlight class="normal"><sp/>PROPERTIES<sp/>TIMEOUT<sp/>0)</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/tests/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

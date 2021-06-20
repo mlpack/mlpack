@@ -1,0 +1,213 @@
+\doxysection{Fast\+MKSStat Class Reference}
+\label{classmlpack_1_1fastmks_1_1FastMKSStat}\index{FastMKSStat@{FastMKSStat}}
+
+
+The statistic used in trees with \doxyref{Fast\+MKS}{p.}{classmlpack_1_1fastmks_1_1FastMKS}.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Fast\+MKSStat} ()
+\begin{DoxyCompactList}\small\item\em Default initialization. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\\textbf{ Fast\+MKSStat} (const Tree\+Type \&node)
+\begin{DoxyCompactList}\small\item\em Initialize this statistic for the given tree node. \end{DoxyCompactList}\item 
+double \& \textbf{ Bound} ()
+\begin{DoxyCompactList}\small\item\em Modify the bound. \end{DoxyCompactList}\item 
+double \textbf{ Bound} () const
+\begin{DoxyCompactList}\small\item\em Get the bound. \end{DoxyCompactList}\item 
+double \& \textbf{ Last\+Kernel} ()
+\begin{DoxyCompactList}\small\item\em Modify the last kernel evaluation. \end{DoxyCompactList}\item 
+double \textbf{ Last\+Kernel} () const
+\begin{DoxyCompactList}\small\item\em Get the last kernel evaluation. \end{DoxyCompactList}\item 
+void $\ast$\& \textbf{ Last\+Kernel\+Node} ()
+\begin{DoxyCompactList}\small\item\em Modify the address of the node corresponding to the last distance evaluation. \end{DoxyCompactList}\item 
+void $\ast$ \textbf{ Last\+Kernel\+Node} () const
+\begin{DoxyCompactList}\small\item\em Get the address of the node corresponding to the last distance evaluation. \end{DoxyCompactList}\item 
+double \& \textbf{ Self\+Kernel} ()
+\begin{DoxyCompactList}\small\item\em Modify the self-\/kernel. \end{DoxyCompactList}\item 
+double \textbf{ Self\+Kernel} () const
+\begin{DoxyCompactList}\small\item\em Get the self-\/kernel. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the statistic. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The statistic used in trees with \doxyref{Fast\+MKS}{p.}{classmlpack_1_1fastmks_1_1FastMKS}. 
+
+This stores both the bound and the self-\/kernels for each node in the tree. 
+
+Definition at line 25 of file fastmks\+\_\+stat.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSStat_a4b735ae05f53c60fdebe6c290948f7a1}} 
+\index{FastMKSStat@{FastMKSStat}!FastMKSStat@{FastMKSStat}}
+\index{FastMKSStat@{FastMKSStat}!FastMKSStat@{FastMKSStat}}
+\doxysubsubsection{FastMKSStat()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Fast\+MKSStat} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default initialization. 
+
+
+
+Definition at line 31 of file fastmks\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSStat_a6ef665db9fa464e43659b7428b6ca7b7}} 
+\index{FastMKSStat@{FastMKSStat}!FastMKSStat@{FastMKSStat}}
+\index{FastMKSStat@{FastMKSStat}!FastMKSStat@{FastMKSStat}}
+\doxysubsubsection{FastMKSStat()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Fast\+MKSStat} (\begin{DoxyParamCaption}\item[{const Tree\+Type \&}]{node }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize this statistic for the given tree node. 
+
+The Tree\+Type\textquotesingle{}s metric better be IPMetric with some kernel type (that is, Metric().Kernel() must exist).
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Node that this statistic is built for. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 46 of file fastmks\+\_\+stat.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSStat_a421b6e4a396e0c1057e297e39a7d1b8b}} 
+\index{FastMKSStat@{FastMKSStat}!Bound@{Bound}}
+\index{Bound@{Bound}!FastMKSStat@{FastMKSStat}}
+\doxysubsubsection{Bound()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the bound. 
+
+
+
+Definition at line 88 of file fastmks\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSStat_abe1eb75f967ca19571a77a1e90faa0ad}} 
+\index{FastMKSStat@{FastMKSStat}!Bound@{Bound}}
+\index{Bound@{Bound}!FastMKSStat@{FastMKSStat}}
+\doxysubsubsection{Bound()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the bound. 
+
+
+
+Definition at line 86 of file fastmks\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSStat_ab4475c8138fb5064f96d8bb5f495c394}} 
+\index{FastMKSStat@{FastMKSStat}!LastKernel@{LastKernel}}
+\index{LastKernel@{LastKernel}!FastMKSStat@{FastMKSStat}}
+\doxysubsubsection{LastKernel()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Last\+Kernel (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the last kernel evaluation. 
+
+
+
+Definition at line 93 of file fastmks\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSStat_a1c098b3cbf382af0167e214f1b1793df}} 
+\index{FastMKSStat@{FastMKSStat}!LastKernel@{LastKernel}}
+\index{LastKernel@{LastKernel}!FastMKSStat@{FastMKSStat}}
+\doxysubsubsection{LastKernel()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Last\+Kernel (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the last kernel evaluation. 
+
+
+
+Definition at line 91 of file fastmks\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSStat_acafc003034f6b7b4308743647714ca11}} 
+\index{FastMKSStat@{FastMKSStat}!LastKernelNode@{LastKernelNode}}
+\index{LastKernelNode@{LastKernelNode}!FastMKSStat@{FastMKSStat}}
+\doxysubsubsection{LastKernelNode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void$\ast$\& Last\+Kernel\+Node (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the address of the node corresponding to the last distance evaluation. 
+
+
+
+Definition at line 99 of file fastmks\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSStat_a9762f381f4cfed4daeab756766174441}} 
+\index{FastMKSStat@{FastMKSStat}!LastKernelNode@{LastKernelNode}}
+\index{LastKernelNode@{LastKernelNode}!FastMKSStat@{FastMKSStat}}
+\doxysubsubsection{LastKernelNode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void$\ast$ Last\+Kernel\+Node (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the address of the node corresponding to the last distance evaluation. 
+
+
+
+Definition at line 96 of file fastmks\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSStat_a795f26be6663bd4d5a27a6f303035c04}} 
+\index{FastMKSStat@{FastMKSStat}!SelfKernel@{SelfKernel}}
+\index{SelfKernel@{SelfKernel}!FastMKSStat@{FastMKSStat}}
+\doxysubsubsection{SelfKernel()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Self\+Kernel (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the self-\/kernel. 
+
+
+
+Definition at line 83 of file fastmks\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSStat_a4391eb3baa79e9ea32b148a478360926}} 
+\index{FastMKSStat@{FastMKSStat}!SelfKernel@{SelfKernel}}
+\index{SelfKernel@{SelfKernel}!FastMKSStat@{FastMKSStat}}
+\doxysubsubsection{SelfKernel()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Self\+Kernel (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the self-\/kernel. 
+
+
+
+Definition at line 81 of file fastmks\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1fastmks_1_1FastMKSStat_a65cba07328997659bec80b9879b15a51}} 
+\index{FastMKSStat@{FastMKSStat}!serialize@{serialize}}
+\index{serialize@{serialize}!FastMKSStat@{FastMKSStat}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the statistic. 
+
+
+
+Definition at line 103 of file fastmks\+\_\+stat.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/fastmks/\textbf{ fastmks\+\_\+stat.\+hpp}\end{DoxyCompactItemize}

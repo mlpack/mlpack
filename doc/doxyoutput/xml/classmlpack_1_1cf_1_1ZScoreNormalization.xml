@@ -1,0 +1,285 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1cf_1_1ZScoreNormalization" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cf::ZScoreNormalization</compoundname>
+    <includes refid="z__score__normalization_8hpp" local="no">z_score_normalization.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1cf_1_1ZScoreNormalization_1abb40a2ee28b839fb572e161c68141faf" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double mean</definition>
+        <argsstring></argsstring>
+        <name>mean</name>
+        <briefdescription>
+<para>Mean of all existing ratings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" line="162" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cf_1_1ZScoreNormalization_1a6ed2ab2d0246c66167c4d33f468ca608" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double stddev</definition>
+        <argsstring></argsstring>
+        <name>stddev</name>
+        <briefdescription>
+<para>Standard deviation of all existing ratings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" line="164" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1ZScoreNormalization_1a31775395b9a4dcc068991e2cad3ad99b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ZScoreNormalization</definition>
+        <argsstring>()</argsstring>
+        <name>ZScoreNormalization</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" line="42" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" bodystart="42" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1ZScoreNormalization_1a8db4f270d31a4c519959d1a0bd01c7fc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Denormalize</definition>
+        <argsstring>(const arma::Mat&lt; size_t &gt; &amp;, arma::vec &amp;predictions) const</argsstring>
+        <name>Denormalize</name>
+        <param>
+          <type>const arma::Mat&lt; size_t &gt; &amp;</type>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>predictions</declname>
+        </param>
+        <briefdescription>
+<para>Denormalize computed rating by adding mean and multiplying stddev. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(combinations) User/Item combinations. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predicted ratings for each user/item combination. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" line="128" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" bodystart="128" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1ZScoreNormalization_1a1bf7d88b868311ad7ea9967146036e2e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Denormalize</definition>
+        <argsstring>(const size_t, const size_t, const double rating) const</argsstring>
+        <name>Denormalize</name>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>rating</declname>
+        </param>
+        <briefdescription>
+<para>Denormalize computed rating by adding mean and multiplying stddev. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(user) User ID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(item) Item ID. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rating</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Computed rating before denormalization. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" line="115" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" bodystart="115" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1ZScoreNormalization_1ab201fbc06e6c2aaaa75cf1be856b4e02" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Mean</definition>
+        <argsstring>() const</argsstring>
+        <name>Mean</name>
+        <briefdescription>
+<para>Return mean. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" line="137" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" bodystart="137" bodyend="140"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1ZScoreNormalization_1a87410cc06d847eef46d0dfdb137c6be7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Normalize</definition>
+        <argsstring>(arma::mat &amp;data)</argsstring>
+        <name>Normalize</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Normalize the data to zero mean and one standard deviation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input dataset in the form of coordinate list. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" line="49" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" bodystart="49" bodyend="69"/>
+        <references refid="classmlpack_1_1Log_1a5b72fcdfa48547883454fbc59be9caf1" compoundref="log_8hpp" startline="90">Log::Fatal</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1ZScoreNormalization_1a9656a2fd4841da15cf4b13ab57aa8000" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Normalize</definition>
+        <argsstring>(arma::sp_mat &amp;cleanedData)</argsstring>
+        <name>Normalize</name>
+        <param>
+          <type>arma::sp_mat &amp;</type>
+          <declname>cleanedData</declname>
+        </param>
+        <briefdescription>
+<para>Normalize the data to zero mean and one standard deviation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cleanedData</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data as a sparse matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" line="76" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" bodystart="76" bodyend="106"/>
+        <references refid="classmlpack_1_1Log_1a5b72fcdfa48547883454fbc59be9caf1" compoundref="log_8hpp" startline="90">Log::Fatal</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1ZScoreNormalization_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" line="154" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" bodystart="154" bodyend="158"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1ZScoreNormalization_1a704af7faf3851e3a04ce59dbb59e144d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Stddev</definition>
+        <argsstring>() const</argsstring>
+        <name>Stddev</name>
+        <briefdescription>
+<para>Return stddev. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" line="145" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" bodystart="145" bodyend="148"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This normalization class performs z-score normalization on raw ratings. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>An example of how to use <ref refid="classmlpack_1_1cf_1_1ZScoreNormalization" kindref="compound">ZScoreNormalization</ref> in CF is shown below:</para>
+<para><programlisting><codeline><highlight class="normal">extern<sp/>arma::mat<sp/>data;<sp/>//<sp/>data<sp/>is<sp/>a<sp/>(user,<sp/>item,<sp/>rating)<sp/>table.</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Users<sp/>for<sp/>whom<sp/>recommendations<sp/>are<sp/>generated.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::Col&lt;size_t&gt;<sp/>users;</highlight></codeline>
+<codeline><highlight class="normal">arma::Mat&lt;size_t&gt;<sp/>recommendations;<sp/>//<sp/>Resulting<sp/>recommendations.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Use<sp/>ZScoreNormalization<sp/>as<sp/>normalization<sp/>method.</highlight></codeline>
+<codeline><highlight class="normal">CFType&lt;NMFPolicy,<sp/>ZScoreNormalization&gt;<sp/>cf(data);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Generate<sp/>10<sp/>recommendations<sp/>for<sp/>all<sp/>users.</highlight></codeline>
+<codeline><highlight class="normal">cf.GetRecommendations(10,<sp/>recommendations);</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" line="38" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/normalization/z_score_normalization.hpp" bodystart="39" bodyend="165"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cf_1_1ZScoreNormalization_1a1bf7d88b868311ad7ea9967146036e2e" prot="public" virt="non-virtual"><scope>mlpack::cf::ZScoreNormalization</scope><name>Denormalize</name></member>
+      <member refid="classmlpack_1_1cf_1_1ZScoreNormalization_1a8db4f270d31a4c519959d1a0bd01c7fc" prot="public" virt="non-virtual"><scope>mlpack::cf::ZScoreNormalization</scope><name>Denormalize</name></member>
+      <member refid="classmlpack_1_1cf_1_1ZScoreNormalization_1abb40a2ee28b839fb572e161c68141faf" prot="private" virt="non-virtual"><scope>mlpack::cf::ZScoreNormalization</scope><name>mean</name></member>
+      <member refid="classmlpack_1_1cf_1_1ZScoreNormalization_1ab201fbc06e6c2aaaa75cf1be856b4e02" prot="public" virt="non-virtual"><scope>mlpack::cf::ZScoreNormalization</scope><name>Mean</name></member>
+      <member refid="classmlpack_1_1cf_1_1ZScoreNormalization_1a87410cc06d847eef46d0dfdb137c6be7" prot="public" virt="non-virtual"><scope>mlpack::cf::ZScoreNormalization</scope><name>Normalize</name></member>
+      <member refid="classmlpack_1_1cf_1_1ZScoreNormalization_1a9656a2fd4841da15cf4b13ab57aa8000" prot="public" virt="non-virtual"><scope>mlpack::cf::ZScoreNormalization</scope><name>Normalize</name></member>
+      <member refid="classmlpack_1_1cf_1_1ZScoreNormalization_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::cf::ZScoreNormalization</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1cf_1_1ZScoreNormalization_1a6ed2ab2d0246c66167c4d33f468ca608" prot="private" virt="non-virtual"><scope>mlpack::cf::ZScoreNormalization</scope><name>stddev</name></member>
+      <member refid="classmlpack_1_1cf_1_1ZScoreNormalization_1a704af7faf3851e3a04ce59dbb59e144d" prot="public" virt="non-virtual"><scope>mlpack::cf::ZScoreNormalization</scope><name>Stddev</name></member>
+      <member refid="classmlpack_1_1cf_1_1ZScoreNormalization_1a31775395b9a4dcc068991e2cad3ad99b" prot="public" virt="non-virtual"><scope>mlpack::cf::ZScoreNormalization</scope><name>ZScoreNormalization</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

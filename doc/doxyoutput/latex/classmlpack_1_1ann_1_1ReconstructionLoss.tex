@@ -1,0 +1,138 @@
+\doxysection{Reconstruction\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type, Dist\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1ReconstructionLoss}\index{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}}
+
+
+The reconstruction loss performance function measures the network\textquotesingle{}s performance equal to the negative log probability of the target with the input distribution.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Reconstruction\+Loss} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Reconstruction\+Loss}{p.}{classmlpack_1_1ann_1_1ReconstructionLoss} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Prediction\+Type , typename Target\+Type , typename Loss\+Type $>$ }\\void \textbf{ Backward} (const Prediction\+Type \&prediction, const Target\+Type \&target, Loss\+Type \&loss)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Prediction\+Type , typename Target\+Type $>$ }\\Prediction\+Type\+::elem\+\_\+type \textbf{ Forward} (const Prediction\+Type \&prediction, const Target\+Type \&target)
+\begin{DoxyCompactList}\small\item\em Computes the reconstruction loss. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat, typename Dist\+Type = Bernoulli\+Distribution$<$\+Input\+Data\+Type$>$$>$\newline
+class mlpack\+::ann\+::\+Reconstruction\+Loss$<$ Input\+Data\+Type, Output\+Data\+Type, Dist\+Type $>$}
+
+The reconstruction loss performance function measures the network\textquotesingle{}s performance equal to the negative log probability of the target with the input distribution. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Dist\+Type} & The type of distribution parametrized by the input. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 37 of file reconstruction\+\_\+loss.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1ReconstructionLoss_a27c6f6a9eb02247c70aa00310e70cef7}} 
+\index{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}!ReconstructionLoss@{ReconstructionLoss}}
+\index{ReconstructionLoss@{ReconstructionLoss}!ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}}
+\doxysubsubsection{ReconstructionLoss()}
+{\footnotesize\ttfamily \textbf{ Reconstruction\+Loss} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Reconstruction\+Loss}{p.}{classmlpack_1_1ann_1_1ReconstructionLoss} object. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1ReconstructionLoss_add41dbaf358dc099750dc6064cb7e0d7}} 
+\index{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const Prediction\+Type \&}]{prediction,  }\item[{const Target\+Type \&}]{target,  }\item[{Loss\+Type \&}]{loss }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em prediction} & Predictions used for evaluating the specified loss function. \\
+\hline
+{\em target} & The target matrix. \\
+\hline
+{\em loss} & The calculated error. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1ReconstructionLoss_ab3640059898ea76c13709b8099316fe8}} 
+\index{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily Prediction\+Type\+::elem\+\_\+type Forward (\begin{DoxyParamCaption}\item[{const Prediction\+Type \&}]{prediction,  }\item[{const Target\+Type \&}]{target }\end{DoxyParamCaption})}
+
+
+
+Computes the reconstruction loss. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em prediction} & Predictions used for evaluating the specified loss function. \\
+\hline
+{\em target} & The target matrix. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1ReconstructionLoss_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 72 of file reconstruction\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ReconstructionLoss_a8bae962cc603d1cab8d80ec78f8d505d}} 
+\index{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 70 of file reconstruction\+\_\+loss.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1ReconstructionLoss_a65cba07328997659bec80b9879b15a51}} 
+\index{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$@{ReconstructionLoss$<$ InputDataType, OutputDataType, DistType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/loss\+\_\+functions/\textbf{ reconstruction\+\_\+loss.\+hpp}\end{DoxyCompactItemize}

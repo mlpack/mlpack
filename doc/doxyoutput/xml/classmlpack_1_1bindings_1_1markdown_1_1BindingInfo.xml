@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::bindings::markdown::BindingInfo</compoundname>
+    <includes refid="binding__info_8hpp" local="no">binding_info.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a11738b577fb016e05929ab8b548d436e" prot="public" static="no" mutable="no">
+        <type>std::unordered_map&lt; std::string, <ref refid="structmlpack_1_1util_1_1BindingDetails" kindref="compound">util::BindingDetails</ref> &gt;</type>
+        <definition>std::unordered_map&lt;std::string, util::BindingDetails&gt; map</definition>
+        <argsstring></argsstring>
+        <name>map</name>
+        <briefdescription>
+<para>Internally-held map for mapping a binding name to a BindingDetails. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/binding_info.hpp" line="44" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/binding_info.hpp" bodystart="44" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1ExampleWrapper_1a9be4971a5d0811c9d6da8e72a4351c70" compoundref="program__doc__wrapper_8hpp" startline="71" endline="76">ExampleWrapper::ExampleWrapper</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1LongDescriptionWrapper_1abce1044aab2414f895b9dd880f8dd74d" compoundref="program__doc__wrapper_8hpp" startline="57" endline="62">LongDescriptionWrapper::LongDescriptionWrapper</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1ProgramNameWrapper_1a0f651f952111e6db381e63443a067b02" compoundref="program__doc__wrapper_8hpp" startline="29" endline="34">ProgramNameWrapper::ProgramNameWrapper</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1SeeAlsoWrapper_1a77c85c741e2d738e480e3a8dcb53c000" compoundref="program__doc__wrapper_8hpp" startline="85" endline="90">SeeAlsoWrapper::SeeAlsoWrapper</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1ShortDescriptionWrapper_1acba5e23406bf215d60d0f03486b7211c" compoundref="program__doc__wrapper_8hpp" startline="43" endline="48">ShortDescriptionWrapper::ShortDescriptionWrapper</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1ad881c8b90f51e1a954d319ba81f4a924" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string language</definition>
+        <argsstring></argsstring>
+        <name>language</name>
+        <briefdescription>
+<para>Holds the name of the language that we are currently printing. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is modified before printing the documentation, and then used by print_doc_functions.hpp during printing to print the correct language. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/binding_info.hpp" line="53" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/binding_info.hpp" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a46877eca896d2c4458fbeab3277675d1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structmlpack_1_1util_1_1BindingDetails" kindref="compound">util::BindingDetails</ref> &amp;</type>
+        <definition>static util::BindingDetails&amp; GetBindingDetails</definition>
+        <argsstring>(const std::string &amp;bindingName)</argsstring>
+        <name>GetBindingDetails</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
+        <briefdescription>
+<para>Return a BindingDetails object for a given bindingName. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/binding_info.hpp" line="34" column="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a10e347723a80667c48bd5a3c60d9b870" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo" kindref="compound">BindingInfo</ref> &amp;</type>
+        <definition>static BindingInfo&amp; GetSingleton</definition>
+        <argsstring>()</argsstring>
+        <name>GetSingleton</name>
+        <briefdescription>
+<para>Get the singleton. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/binding_info.hpp" line="41" column="22"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1ExampleWrapper_1a9be4971a5d0811c9d6da8e72a4351c70" compoundref="program__doc__wrapper_8hpp" startline="71" endline="76">ExampleWrapper::ExampleWrapper</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1LongDescriptionWrapper_1abce1044aab2414f895b9dd880f8dd74d" compoundref="program__doc__wrapper_8hpp" startline="57" endline="62">LongDescriptionWrapper::LongDescriptionWrapper</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1ProgramNameWrapper_1a0f651f952111e6db381e63443a067b02" compoundref="program__doc__wrapper_8hpp" startline="29" endline="34">ProgramNameWrapper::ProgramNameWrapper</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1SeeAlsoWrapper_1a77c85c741e2d738e480e3a8dcb53c000" compoundref="program__doc__wrapper_8hpp" startline="85" endline="90">SeeAlsoWrapper::SeeAlsoWrapper</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1ShortDescriptionWrapper_1acba5e23406bf215d60d0f03486b7211c" compoundref="program__doc__wrapper_8hpp" startline="43" endline="48">ShortDescriptionWrapper::ShortDescriptionWrapper</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a6ddf4e79a94a2a67a7539583f77d1081" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string &amp;</type>
+        <definition>static std::string&amp; Language</definition>
+        <argsstring>()</argsstring>
+        <name>Language</name>
+        <briefdescription>
+<para>Get or modify the current language (don&apos;t set it to something invalid!). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/binding_info.hpp" line="38" column="22"/>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1markdown_1a9261e5c9ff71d4d97f4de7f6f79a8af4" compoundref="markdown_2default__param_8hpp" startline="34" endline="68">mlpack::bindings::markdown::DefaultParam</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1markdown_1acf176580dc16ae23bc20d66c31f3d2e2" compoundref="markdown_2get__printable__type_8hpp" startline="33" endline="67">mlpack::bindings::markdown::GetPrintableType</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1markdown_1a2edc60ced95ca968f37e3149bc15541c" compoundref="markdown_2print__type__doc_8hpp" startline="33" endline="60">mlpack::bindings::markdown::PrintTypeDoc</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a98d790d0d4ebee9dbf4c2dcc751d84bd" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>BindingInfo</definition>
+        <argsstring>()</argsstring>
+        <name>BindingInfo</name>
+        <briefdescription>
+<para>Private constructor, so that only one instance can be created. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/binding_info.hpp" line="48" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/binding_info.hpp" bodystart="48" bodyend="48"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo" kindref="compound">BindingInfo</ref> class is used by the Markdown documentation generator to store multiple documentation objects, indexed by both the binding name (i.e. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>&quot;knn&quot;) and the language (i.e. &quot;cli&quot;). </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/binding_info.hpp" line="30" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/binding_info.hpp" bodystart="31" bodyend="54"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a98d790d0d4ebee9dbf4c2dcc751d84bd" prot="private" virt="non-virtual"><scope>mlpack::bindings::markdown::BindingInfo</scope><name>BindingInfo</name></member>
+      <member refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a46877eca896d2c4458fbeab3277675d1" prot="public" virt="non-virtual"><scope>mlpack::bindings::markdown::BindingInfo</scope><name>GetBindingDetails</name></member>
+      <member refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a10e347723a80667c48bd5a3c60d9b870" prot="public" virt="non-virtual"><scope>mlpack::bindings::markdown::BindingInfo</scope><name>GetSingleton</name></member>
+      <member refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1ad881c8b90f51e1a954d319ba81f4a924" prot="private" virt="non-virtual"><scope>mlpack::bindings::markdown::BindingInfo</scope><name>language</name></member>
+      <member refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a6ddf4e79a94a2a67a7539583f77d1081" prot="public" virt="non-virtual"><scope>mlpack::bindings::markdown::BindingInfo</scope><name>Language</name></member>
+      <member refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a11738b577fb016e05929ab8b548d436e" prot="public" virt="non-virtual"><scope>mlpack::bindings::markdown::BindingInfo</scope><name>map</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

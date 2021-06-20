@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_9706a54a818a8a8f60d990f75cc3c60c" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/dbscan</compoundname>
+    <innerfile refid="dbscan_8hpp">dbscan.hpp</innerfile>
+    <innerfile refid="ordered__point__selection_8hpp">ordered_point_selection.hpp</innerfile>
+    <innerfile refid="random__point__selection_8hpp">random_point_selection.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/dbscan/"/>
+  </compounddef>
+</doxygen>

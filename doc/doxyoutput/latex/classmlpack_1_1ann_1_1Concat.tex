@@ -1,0 +1,451 @@
+\doxysection{Concat$<$ Input\+Data\+Type, Output\+Data\+Type, Custom\+Layers $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1Concat}\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+
+
+Implementation of the \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} class.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Concat} (arma\+::\+Row$<$ size\+\_\+t $>$ \&input\+Size, const size\+\_\+t axis, const bool model=false, const bool run=true)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} object using the specified parameters. \end{DoxyCompactList}\item 
+\textbf{ Concat} (const bool model=false, const bool run=true)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} object using the specified parameters. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+Concat} ()
+\begin{DoxyCompactList}\small\item\em Destroy the layers held by the model. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class Layer\+Type , class... Args$>$ }\\void \textbf{ Add} (Args... args)
+\item 
+void \textbf{ Add} (\textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ layer)
+\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g, const size\+\_\+t index)
+\begin{DoxyCompactList}\small\item\em This is the overload of \doxyref{Backward()}{p.}{classmlpack_1_1ann_1_1Concat_ad9ad1a3bdb0f3fff5c839ed155e4bbf8} that runs only a specific layer with the given input. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ Concat\+Axis} () const
+\begin{DoxyCompactList}\small\item\em Get the axis of concatenation. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+arma\+::mat const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta.\+e. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+arma\+::mat const  \& \textbf{ Gradient} () const
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&)
+\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&gradient, const size\+\_\+t index)
+\item 
+arma\+::mat \& \textbf{ Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+arma\+::mat const  \& \textbf{ Input\+Parameter} () const
+\item 
+std\+::vector$<$ \textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ $>$ \& \textbf{ Model} ()
+\begin{DoxyCompactList}\small\item\em Return the model modules. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+arma\+::mat const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the initial point for the optimization. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Return the initial point for the optimization. \end{DoxyCompactList}\item 
+bool \& \textbf{ Run} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of run parameter. \end{DoxyCompactList}\item 
+bool \textbf{ Run} () const
+\begin{DoxyCompactList}\small\item\em Get the value of run parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Weight\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the size of the weight matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat, typename... Custom\+Layers$>$\newline
+class mlpack\+::ann\+::\+Concat$<$ Input\+Data\+Type, Output\+Data\+Type, Custom\+Layers $>$}
+
+Implementation of the \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} class. 
+
+The \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} class works as a feed-\/forward fully connected network container which plugs various layers together.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Custom\+Layers} & Additional custom layers if required. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 45 of file concat.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a616dc5867dfc8a6131fd65f8f4cdcef5}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Concat@{Concat}}
+\index{Concat@{Concat}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Concat()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Concat} (\begin{DoxyParamCaption}\item[{const bool}]{model = {\ttfamily false},  }\item[{const bool}]{run = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} object using the specified parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em model} & Expose all network modules. \\
+\hline
+{\em run} & Call the Forward/\+Backward method before the output is merged. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Concat_afe835fb817b9c528232a3db162223ffe}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Concat@{Concat}}
+\index{Concat@{Concat}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Concat()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Concat} (\begin{DoxyParamCaption}\item[{arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{input\+Size,  }\item[{const size\+\_\+t}]{axis,  }\item[{const bool}]{model = {\ttfamily false},  }\item[{const bool}]{run = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} object using the specified parameters. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input\+Size} & A vector denoting input size of each layer added. \\
+\hline
+{\em axis} & \doxyref{Concat}{p.}{classmlpack_1_1ann_1_1Concat} axis. \\
+\hline
+{\em model} & Expose all network modules. \\
+\hline
+{\em run} & Call the Forward/\+Backward method before the output is merged. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Concat_ac003d74927960d4583029753f4f20d09}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!````~Concat@{$\sim$Concat}}
+\index{````~Concat@{$\sim$Concat}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{$\sim$Concat()}
+{\footnotesize\ttfamily $\sim$\textbf{ Concat} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Destroy the layers held by the model. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a8b5234495846c00f6b2c8296ca6bc718}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Add@{Add}}
+\index{Add@{Add}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Add()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void \textbf{ Add} (\begin{DoxyParamCaption}\item[{Args...}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 147 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a503a807740e6c729be9efc89520db728}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Add@{Add}}
+\index{Add@{Add}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Add()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void \textbf{ Add} (\begin{DoxyParamCaption}\item[{\textbf{ Layer\+Types}$<$ Custom\+Layers... $>$}]{layer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 154 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Backward()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a32bcd789dbfae1bd33009208d783af03}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Backward()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g,  }\item[{const size\+\_\+t}]{index }\end{DoxyParamCaption})}
+
+
+
+This is the overload of \doxyref{Backward()}{p.}{classmlpack_1_1ann_1_1Concat_ad9ad1a3bdb0f3fff5c839ed155e4bbf8} that runs only a specific layer with the given input. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+{\em index} & The index of the layer to run. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a3b06ff71cc727d83f4317a3d65a4b4f5}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!ConcatAxis@{ConcatAxis}}
+\index{ConcatAxis@{ConcatAxis}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{ConcatAxis()}
+{\footnotesize\ttfamily size\+\_\+t const\& Concat\+Axis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the axis of concatenation. 
+
+
+
+Definition at line 197 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a49c3606024580071e0c65e2e4d080e1e}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 189 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a6126fc05a10e2e988ea7e75aada214fd}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::mat const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta.\+e. 
+
+
+
+Definition at line 187 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a59e16b7142696049a5543ff35547ebd9}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily arma\+::mat\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the gradient. 
+
+
+
+Definition at line 194 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a13444d1f198ceeef85e7a288a7d1d9c2}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily arma\+::mat const\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradient. 
+
+
+
+Definition at line 192 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a19cae289ba3ff40e4e1f3feb72b93219}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a3a788180c1f383a92cc99dd6d7d86bfc}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{gradient,  }\item[{const size\+\_\+t}]{index }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a818d585c592c80d8e8c101f67bc389ad}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!InputParameter@{InputParameter}}
+\index{InputParameter@{InputParameter}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{InputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 179 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a9b1735296084fc571524101988744884}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!InputParameter@{InputParameter}}
+\index{InputParameter@{InputParameter}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{InputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::mat const\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 177 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a4cb1e93bff99ccf1f8f974065a3b13c3}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Model@{Model}}
+\index{Model@{Model}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Model()}
+{\footnotesize\ttfamily std\+::vector$<$\textbf{ Layer\+Types}$<$Custom\+Layers...$>$ $>$\& Model (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the model modules. 
+
+
+
+Definition at line 157 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a28ce681558d0bf02302f868d1c811f2a}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 184 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a712dc230c489d0caf3175cbdfc59639f}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::mat const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 182 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a043f0ccd62e6711a18e0d81047be9a0a}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the initial point for the optimization. 
+
+
+
+Definition at line 170 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_aa68d74dc1e86e4352e00a3cab83a0e4a}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const arma\+::mat\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the initial point for the optimization. 
+
+
+
+Definition at line 168 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a6d2eb043777b8a5e63ff8746b3cf980c}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Run@{Run}}
+\index{Run@{Run}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Run()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& Run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of run parameter. 
+
+
+
+Definition at line 175 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_afdada2aebea2e6674e47bde6f697b0b8}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!Run@{Run}}
+\index{Run@{Run}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Run()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of run parameter. 
+
+
+
+Definition at line 173 of file concat.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a65cba07328997659bec80b9879b15a51}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+\mbox{\label{classmlpack_1_1ann_1_1Concat_a7a2704698a50d9e00dfb083f3a863579}} 
+\index{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}!WeightSize@{WeightSize}}
+\index{WeightSize@{WeightSize}!Concat$<$ InputDataType, OutputDataType, CustomLayers $>$@{Concat$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{WeightSize()}
+{\footnotesize\ttfamily size\+\_\+t Weight\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the size of the weight matrix. 
+
+
+
+Definition at line 200 of file concat.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ concat.\+hpp}\end{DoxyCompactItemize}

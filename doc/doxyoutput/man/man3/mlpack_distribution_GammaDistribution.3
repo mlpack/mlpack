@@ -1,0 +1,293 @@
+.TH "GammaDistribution" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GammaDistribution \- This class represents the Gamma distribution\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGammaDistribution\fP (const arma::mat &data, const double tol=1e\-8)"
+.br
+.RI "Construct the Gamma distribution, training on the given parameters\&. "
+.ti -1c
+.RI "\fBGammaDistribution\fP (const arma::vec &alpha, const arma::vec &beta)"
+.br
+.RI "Construct the Gamma distribution given two vectors alpha and beta\&. "
+.ti -1c
+.RI "\fBGammaDistribution\fP (const size_t dimensionality=0)"
+.br
+.RI "Construct the Gamma distribution with the given number of dimensions (default 0); each parameter will be initialized to 0\&. "
+.ti -1c
+.RI "\fB~GammaDistribution\fP ()"
+.br
+.RI "Destructor\&. "
+.ti -1c
+.RI "double & \fBAlpha\fP (const size_t dim)"
+.br
+.RI "Modify the alpha parameter of the given dimension\&. "
+.ti -1c
+.RI "double \fBAlpha\fP (const size_t dim) const"
+.br
+.RI "Get the alpha parameter of the given dimension\&. "
+.ti -1c
+.RI "double & \fBBeta\fP (const size_t dim)"
+.br
+.RI "Modify the beta parameter of the given dimension\&. "
+.ti -1c
+.RI "double \fBBeta\fP (const size_t dim) const"
+.br
+.RI "Get the beta parameter of the given dimension\&. "
+.ti -1c
+.RI "size_t \fBDimensionality\fP () const"
+.br
+.RI "Get the dimensionality of the distribution\&. "
+.ti -1c
+.RI "void \fBLogProbability\fP (const arma::mat &observations, arma::vec &logProbabilities) const"
+.br
+.RI "This function returns the logarithm of the probability of a group of observations\&. "
+.ti -1c
+.RI "double \fBLogProbability\fP (double x, const size_t dim) const"
+.br
+.RI "This function returns the logarithm of the probability of a single observation\&. "
+.ti -1c
+.RI "void \fBProbability\fP (const arma::mat &observations, arma::vec &probabilities) const"
+.br
+.RI "This function returns the probability of a group of observations\&. "
+.ti -1c
+.RI "double \fBProbability\fP (double x, const size_t dim) const"
+.br
+.RI "This is a shortcut to the Probability(arma::mat&, arma::vec&) function for when we want to evaluate only the probability of one dimension of the gamma\&. "
+.ti -1c
+.RI "arma::vec \fBRandom\fP () const"
+.br
+.RI "This function returns an observation of this distribution\&. "
+.ti -1c
+.RI "void \fBTrain\fP (const arma::mat &observations, const arma::vec &probabilities, const double tol=1e\-8)"
+.br
+.RI "Fits an alpha and beta parameter according to observation probabilities\&. "
+.ti -1c
+.RI "void \fBTrain\fP (const arma::mat &rdata, const double tol=1e\-8)"
+.br
+.RI "This function trains (fits distribution parameters) to new data or the dataset the object owns\&. "
+.ti -1c
+.RI "void \fBTrain\fP (const arma::vec &logMeanxVec, const arma::vec &meanLogxVec, const arma::vec &meanxVec, const double tol=1e\-8)"
+.br
+.RI "This function trains (fits distribution parameters) to a dataset with pre-computed statistics logMeanx, meanLogx, meanx for each dimension\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class represents the Gamma distribution\&. 
+
+It supports training a Gamma distribution on a given dataset and accessing the fitted alpha and beta parameters\&.
+.PP
+This class supports multidimensional Gamma distributions; however, it is assumed that each dimension is independent; therefore, a multidimensional Gamma distribution here may be seen as a set of independent single-dimensional Gamma distributions---and the parameters are estimated under this assumption\&.
+.PP
+The estimation algorithm used can be found in the following paper:
+.PP
+.PP
+.nf
+@techreport{minka2002estimating,
+  title={Estimating a {G}amma distribution},
+  author={Minka, Thomas P\&.},
+  institution={Microsoft Research},
+  address={Cambridge, U\&.K\&.},
+  year={2002}
+}
+.fi
+.PP
+ 
+.PP
+Definition at line 51 of file gamma_distribution\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBGammaDistribution\fP (const size_t dimensionality = \fC0\fP)"
+
+.PP
+Construct the Gamma distribution with the given number of dimensions (default 0); each parameter will be initialized to 0\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdimensionality\fP Number of dimensions\&. 
+.RE
+.PP
+
+.SS "\fBGammaDistribution\fP (const arma::mat & data, const double tol = \fC1e\-8\fP)"
+
+.PP
+Construct the Gamma distribution, training on the given parameters\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Data to train the distribution on\&. 
+.br
+\fItol\fP Convergence tolerance\&. This is \fInot\fP an absolute measure: It will stop the approximation once the \fIchange\fP in the value is smaller than tol\&. 
+.RE
+.PP
+
+.SS "\fBGammaDistribution\fP (const arma::vec & alpha, const arma::vec & beta)"
+
+.PP
+Construct the Gamma distribution given two vectors alpha and beta\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIalpha\fP The vector of alphas, one per dimension\&. 
+.br
+\fIbeta\fP The vector of betas, one per dimension\&. 
+.RE
+.PP
+
+.SS "~\fBGammaDistribution\fP ()\fC [inline]\fP"
+
+.PP
+Destructor\&. 
+.PP
+Definition at line 83 of file gamma_distribution\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double& Alpha (const size_t dim)\fC [inline]\fP"
+
+.PP
+Modify the alpha parameter of the given dimension\&. 
+.PP
+Definition at line 198 of file gamma_distribution\&.hpp\&.
+.SS "double Alpha (const size_t dim) const\fC [inline]\fP"
+
+.PP
+Get the alpha parameter of the given dimension\&. 
+.PP
+Definition at line 196 of file gamma_distribution\&.hpp\&.
+.SS "double& Beta (const size_t dim)\fC [inline]\fP"
+
+.PP
+Modify the beta parameter of the given dimension\&. 
+.PP
+Definition at line 203 of file gamma_distribution\&.hpp\&.
+.SS "double Beta (const size_t dim) const\fC [inline]\fP"
+
+.PP
+Get the beta parameter of the given dimension\&. 
+.PP
+Definition at line 201 of file gamma_distribution\&.hpp\&.
+.SS "size_t Dimensionality () const\fC [inline]\fP"
+
+.PP
+Get the dimensionality of the distribution\&. 
+.PP
+Definition at line 206 of file gamma_distribution\&.hpp\&.
+.SS "void LogProbability (const arma::mat & observations, arma::vec & logProbabilities) const"
+
+.PP
+This function returns the logarithm of the probability of a group of observations\&. The logarithm of the probability of a value x is
+.PP
+\[ \log(\frac{x^{(\alpha - 1)}}{\Gamma(\alpha) \beta^\alpha} e^ {-\frac{x}{\beta}}) \].PP
+for one dimension\&. This implementation assumes each dimension is independent, so the product rule is used\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIobservations\fP Matrix of observations, one per column\&. 
+.br
+\fIlogProbabilities\fP Column vector of log probabilities, one per observation\&. 
+.RE
+.PP
+
+.SS "double LogProbability (double x, const size_t dim) const"
+
+.PP
+This function returns the logarithm of the probability of a single observation\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP The 1-dimensional observation\&. 
+.br
+\fIdim\fP The dimension for which to calculate the probability\&. 
+.RE
+.PP
+
+.SS "void Probability (const arma::mat & observations, arma::vec & probabilities) const"
+
+.PP
+This function returns the probability of a group of observations\&. The probability of the value x is
+.PP
+\[ \frac{x^{(\alpha - 1)}}{\Gamma(\alpha) \beta^\alpha} e^{-\frac{x}{\beta}} \].PP
+for one dimension\&. This implementation assumes each dimension is independent, so the product rule is used\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIobservations\fP Matrix of observations, one per column\&. 
+.br
+\fIprobabilities\fP Column vector of probabilities, one per observation\&. 
+.RE
+.PP
+
+.SS "double Probability (double x, const size_t dim) const"
+
+.PP
+This is a shortcut to the Probability(arma::mat&, arma::vec&) function for when we want to evaluate only the probability of one dimension of the gamma\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP The 1-dimensional observation\&. 
+.br
+\fIdim\fP The dimension for which to calculate the probability\&. 
+.RE
+.PP
+
+.SS "arma::vec Random () const"
+
+.PP
+This function returns an observation of this distribution\&. 
+.SS "void Train (const arma::mat & observations, const arma::vec & probabilities, const double tol = \fC1e\-8\fP)"
+
+.PP
+Fits an alpha and beta parameter according to observation probabilities\&. This method is not yet implemented\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIobservations\fP The reference data, one observation per column\&. 
+.br
+\fIprobabilities\fP The probability of each observation\&. One value per column of the observations matrix\&. 
+.br
+\fItol\fP Convergence tolerance\&. This is \fInot\fP an absolute measure: It will stop the approximation once the \fIchange\fP in the value is smaller than tol\&. 
+.RE
+.PP
+
+.SS "void Train (const arma::mat & rdata, const double tol = \fC1e\-8\fP)"
+
+.PP
+This function trains (fits distribution parameters) to new data or the dataset the object owns\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIrdata\fP Reference data to fit parameters to\&. 
+.br
+\fItol\fP Convergence tolerance\&. This is \fInot\fP an absolute measure: It will stop the approximation once the \fIchange\fP in the value is smaller than tol\&. 
+.RE
+.PP
+
+.SS "void Train (const arma::vec & logMeanxVec, const arma::vec & meanLogxVec, const arma::vec & meanxVec, const double tol = \fC1e\-8\fP)"
+
+.PP
+This function trains (fits distribution parameters) to a dataset with pre-computed statistics logMeanx, meanLogx, meanx for each dimension\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIlogMeanxVec\fP Is each dimension's logarithm of the mean (log(mean(x)))\&. 
+.br
+\fImeanLogxVec\fP Is each dimension's mean of logarithms (mean(log(x)))\&. 
+.br
+\fImeanxVec\fP Is each dimension's mean (mean(x))\&. 
+.br
+\fItol\fP Convergence tolerance\&. This is \fInot\fP an absolute measure: It will stop the approximation once the \fIchange\fP in the value is smaller than tol\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

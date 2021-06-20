@@ -1,0 +1,77 @@
+\doxysection{Network\+Initialization$<$ Initialization\+Rule\+Type, Custom\+Layers $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1NetworkInitialization}\index{NetworkInitialization$<$ InitializationRuleType, CustomLayers $>$@{NetworkInitialization$<$ InitializationRuleType, CustomLayers $>$}}
+
+
+This class is used to initialize the network with the given initialization rule.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Network\+Initialization} (const Initialization\+Rule\+Type \&initialize\+Rule=Initialization\+Rule\+Type())
+\begin{DoxyCompactList}\small\item\em Use the given initialization rule to initialize the specified network. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (const std\+::vector$<$ \textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ $>$ \&network, arma\+::\+Mat$<$ eT $>$ \&parameter, size\+\_\+t parameter\+Offset=0)
+\begin{DoxyCompactList}\small\item\em Initialize the specified network and store the results in the given parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Initialization\+Rule\+Type, typename... Custom\+Layers$>$\newline
+class mlpack\+::ann\+::\+Network\+Initialization$<$ Initialization\+Rule\+Type, Custom\+Layers $>$}
+
+This class is used to initialize the network with the given initialization rule. 
+
+Definition at line 33 of file network\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1NetworkInitialization_aca7ed39585c544fbfa06ebb1a15a988b}} 
+\index{NetworkInitialization$<$ InitializationRuleType, CustomLayers $>$@{NetworkInitialization$<$ InitializationRuleType, CustomLayers $>$}!NetworkInitialization@{NetworkInitialization}}
+\index{NetworkInitialization@{NetworkInitialization}!NetworkInitialization$<$ InitializationRuleType, CustomLayers $>$@{NetworkInitialization$<$ InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{NetworkInitialization()}
+{\footnotesize\ttfamily \textbf{ Network\+Initialization} (\begin{DoxyParamCaption}\item[{const Initialization\+Rule\+Type \&}]{initialize\+Rule = {\ttfamily InitializationRuleType()} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Use the given initialization rule to initialize the specified network. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em initialize\+Rule} & Rule to initialize the given network. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 41 of file network\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1NetworkInitialization_aecdd259437c6d51c512aa2948cdcdff2}} 
+\index{NetworkInitialization$<$ InitializationRuleType, CustomLayers $>$@{NetworkInitialization$<$ InitializationRuleType, CustomLayers $>$}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!NetworkInitialization$<$ InitializationRuleType, CustomLayers $>$@{NetworkInitialization$<$ InitializationRuleType, CustomLayers $>$}}
+\doxysubsubsection{Initialize()}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ \textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ $>$ \&}]{network,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{parameter,  }\item[{size\+\_\+t}]{parameter\+Offset = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the specified network and store the results in the given parameter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em network} & Network that should be initialized. \\
+\hline
+{\em parameter} & The network parameter. \\
+\hline
+{\em parameter\+Offset} & Offset for network paramater, default 0. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 57 of file network\+\_\+init.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/init\+\_\+rules/\textbf{ network\+\_\+init.\+hpp}\end{DoxyCompactItemize}

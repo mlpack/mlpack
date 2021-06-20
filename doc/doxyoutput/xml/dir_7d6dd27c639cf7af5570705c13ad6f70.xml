@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_7d6dd27c639cf7af5570705c13ad6f70" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/ann/dists</compoundname>
+    <innerfile refid="bernoulli__distribution_8hpp">bernoulli_distribution.hpp</innerfile>
+    <innerfile refid="normal__distribution_8hpp">normal_distribution.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/dists/"/>
+  </compounddef>
+</doxygen>

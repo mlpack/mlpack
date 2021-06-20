@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1RewardSetVisitor" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::RewardSetVisitor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">boost::static_visitor&lt; void &gt;</basecompoundref>
+    <includes refid="reward__set__visitor_8hpp" local="no">reward_set_visitor.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1RewardSetVisitor_1a6ebe34c7b9a8e9ad38d734f765699471" prot="private" static="no" mutable="no">
+        <type>const double</type>
+        <definition>const double reward</definition>
+        <argsstring></argsstring>
+        <name>reward</name>
+        <briefdescription>
+<para>The reward value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp" line="40" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RewardSetVisitor_1aebce7d20815b69df4acfa115cb5076a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RewardSetVisitor</definition>
+        <argsstring>(const double reward)</argsstring>
+        <name>RewardSetVisitor</name>
+        <param>
+          <type>const double</type>
+          <declname>reward</declname>
+        </param>
+        <briefdescription>
+<para>Set the reward parameter given the reward value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp" line="30" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RewardSetVisitor_1a26bb3385c630118c35f4799f1509abbc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename LayerType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void operator()</definition>
+        <argsstring>(LayerType *layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>LayerType *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Set the reward parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp" line="34" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RewardSetVisitor_1ae35578e7ff874a320fe762bc0edfff04" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void operator()</definition>
+        <argsstring>(MoreTypes layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref></type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp" line="36" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RewardSetVisitor_1aa7c24bbec39db0c7418fc84d42db944b" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; HasRewardCheck&lt; T, double &amp;(T::*)()&gt;::value &amp;&amp;HasModelCheck&lt; T &gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; HasRewardCheck&lt;T, double&amp;(T::*)()&gt;::value &amp;&amp; HasModelCheck&lt;T&gt;::value, void&gt;::type LayerReward</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>LayerReward</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Set the deterministic parameter if the module implements the Deterministic() and Model() function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp" line="48" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RewardSetVisitor_1a3878fb1d0b5d2e1ff45cf780febd69a3" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; !HasRewardCheck&lt; T, double &amp;(T::*)()&gt;::value &amp;&amp;HasModelCheck&lt; T &gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; !HasRewardCheck&lt;T, double&amp;(T::*)()&gt;::value &amp;&amp; HasModelCheck&lt;T&gt;::value, void&gt;::type LayerReward</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>LayerReward</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Set the deterministic parameter if the module implements the Model() function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp" line="56" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RewardSetVisitor_1ae1cc85d32cd64bbcf5c46cfdac3724bf" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; HasRewardCheck&lt; T, double &amp;(T::*)()&gt;::value &amp;&amp;!HasModelCheck&lt; T &gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; HasRewardCheck&lt;T, double&amp;(T::*)()&gt;::value &amp;&amp; !HasModelCheck&lt;T&gt;::value, void&gt;::type LayerReward</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>LayerReward</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Set the deterministic parameter if the module implements the Deterministic() function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp" line="64" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1RewardSetVisitor_1a3d87d0637e6af80e5788bd6f2e19e967" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; !HasRewardCheck&lt; T, double &amp;(T::*)()&gt;::value &amp;&amp;!HasModelCheck&lt; T &gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; !HasRewardCheck&lt;T, double&amp;(T::*)()&gt;::value &amp;&amp; !HasModelCheck&lt;T&gt;::value, void&gt;::type LayerReward</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>LayerReward</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Do not set the deterministic parameter if the module doesn&apos;t implement the Deterministic() or Model() function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp" line="72" column="3"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classmlpack_1_1ann_1_1RewardSetVisitor" kindref="compound">RewardSetVisitor</ref> set the reward parameter given the reward value. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>RewardSetVisitor</label>
+        <link refid="classmlpack_1_1ann_1_1RewardSetVisitor"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>static_visitor&lt; void &gt;</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>RewardSetVisitor</label>
+        <link refid="classmlpack_1_1ann_1_1RewardSetVisitor"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>static_visitor&lt; void &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp" bodystart="27" bodyend="73"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1RewardSetVisitor_1aa7c24bbec39db0c7418fc84d42db944b" prot="private" virt="non-virtual"><scope>mlpack::ann::RewardSetVisitor</scope><name>LayerReward</name></member>
+      <member refid="classmlpack_1_1ann_1_1RewardSetVisitor_1a3878fb1d0b5d2e1ff45cf780febd69a3" prot="private" virt="non-virtual"><scope>mlpack::ann::RewardSetVisitor</scope><name>LayerReward</name></member>
+      <member refid="classmlpack_1_1ann_1_1RewardSetVisitor_1ae1cc85d32cd64bbcf5c46cfdac3724bf" prot="private" virt="non-virtual"><scope>mlpack::ann::RewardSetVisitor</scope><name>LayerReward</name></member>
+      <member refid="classmlpack_1_1ann_1_1RewardSetVisitor_1a3d87d0637e6af80e5788bd6f2e19e967" prot="private" virt="non-virtual"><scope>mlpack::ann::RewardSetVisitor</scope><name>LayerReward</name></member>
+      <member refid="classmlpack_1_1ann_1_1RewardSetVisitor_1a26bb3385c630118c35f4799f1509abbc" prot="public" virt="non-virtual"><scope>mlpack::ann::RewardSetVisitor</scope><name>operator()</name></member>
+      <member refid="classmlpack_1_1ann_1_1RewardSetVisitor_1ae35578e7ff874a320fe762bc0edfff04" prot="public" virt="non-virtual"><scope>mlpack::ann::RewardSetVisitor</scope><name>operator()</name></member>
+      <member refid="classmlpack_1_1ann_1_1RewardSetVisitor_1a6ebe34c7b9a8e9ad38d734f765699471" prot="private" virt="non-virtual"><scope>mlpack::ann::RewardSetVisitor</scope><name>reward</name></member>
+      <member refid="classmlpack_1_1ann_1_1RewardSetVisitor_1aebce7d20815b69df4acfa115cb5076a1" prot="public" virt="non-virtual"><scope>mlpack::ann::RewardSetVisitor</scope><name>RewardSetVisitor</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,407 @@
+\doxysection{RAWrapper\+Base Class Reference}
+\label{classmlpack_1_1neighbor_1_1RAWrapperBase}\index{RAWrapperBase@{RAWrapperBase}}
+
+
+\doxyref{RAWrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1RAWrapperBase} is a base wrapper class for holding all \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch} types supported by \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel}.  
+
+
+
+
+Inheritance diagram for RAWrapper\+Base\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=180pt]{classmlpack_1_1neighbor_1_1RAWrapperBase__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ RAWrapper\+Base} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{RAWrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1RAWrapperBase} object. \end{DoxyCompactList}\item 
+virtual \textbf{ $\sim$\+RAWrapper\+Base} ()
+\begin{DoxyCompactList}\small\item\em Destruct the \doxyref{RAWrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1RAWrapperBase} (nothing to do). \end{DoxyCompactList}\item 
+virtual double \textbf{ Alpha} () const =0
+\begin{DoxyCompactList}\small\item\em Get the value of alpha. \end{DoxyCompactList}\item 
+virtual double \& \textbf{ Alpha} ()=0
+\begin{DoxyCompactList}\small\item\em Modify the value of alpha. \end{DoxyCompactList}\item 
+virtual \textbf{ RAWrapper\+Base} $\ast$ \textbf{ Clone} () const =0
+\begin{DoxyCompactList}\small\item\em Create a new \doxyref{RAWrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1RAWrapperBase} that is the same as this one. \end{DoxyCompactList}\item 
+virtual const arma\+::mat \& \textbf{ Dataset} () const =0
+\begin{DoxyCompactList}\small\item\em Return a reference to the dataset. \end{DoxyCompactList}\item 
+virtual bool \textbf{ First\+Leaf\+Exact} () const =0
+\begin{DoxyCompactList}\small\item\em Get whether to do exact search at the first leaf. \end{DoxyCompactList}\item 
+virtual bool \& \textbf{ First\+Leaf\+Exact} ()=0
+\begin{DoxyCompactList}\small\item\em Modify whether to do exact search at the first leaf. \end{DoxyCompactList}\item 
+virtual bool \textbf{ Naive} () const =0
+\begin{DoxyCompactList}\small\item\em Get whether naive search is being used. \end{DoxyCompactList}\item 
+virtual bool \& \textbf{ Naive} ()=0
+\begin{DoxyCompactList}\small\item\em Modify whether naive search is being used. \end{DoxyCompactList}\item 
+virtual bool \textbf{ Sample\+At\+Leaves} () const =0
+\begin{DoxyCompactList}\small\item\em Get whether to do sampling at leaves. \end{DoxyCompactList}\item 
+virtual bool \& \textbf{ Sample\+At\+Leaves} ()=0
+\begin{DoxyCompactList}\small\item\em Modify whether to do sampling at leaves. \end{DoxyCompactList}\item 
+virtual void \textbf{ Search} (arma\+::mat \&\&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances, const size\+\_\+t leaf\+Size)=0
+\begin{DoxyCompactList}\small\item\em Perform bichromatic rank-\/approximate nearest neighbor search (i.\+e. \end{DoxyCompactList}\item 
+virtual void \textbf{ Search} (const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)=0
+\begin{DoxyCompactList}\small\item\em Perform monochromatic rank-\/approximate nearest neighbor search (i.\+e. \end{DoxyCompactList}\item 
+virtual bool \textbf{ Single\+Mode} () const =0
+\begin{DoxyCompactList}\small\item\em Get whether single-\/tree search is being used. \end{DoxyCompactList}\item 
+virtual bool \& \textbf{ Single\+Mode} ()=0
+\begin{DoxyCompactList}\small\item\em Modify whether single-\/tree search is being used. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \textbf{ Single\+Sample\+Limit} () const =0
+\begin{DoxyCompactList}\small\item\em Get the single sample limit. \end{DoxyCompactList}\item 
+virtual size\+\_\+t \& \textbf{ Single\+Sample\+Limit} ()=0
+\begin{DoxyCompactList}\small\item\em Modify the single sample limit. \end{DoxyCompactList}\item 
+virtual double \textbf{ Tau} () const =0
+\begin{DoxyCompactList}\small\item\em Get the value of tau. \end{DoxyCompactList}\item 
+virtual double \& \textbf{ Tau} ()=0
+\begin{DoxyCompactList}\small\item\em Modify the value of tau. \end{DoxyCompactList}\item 
+virtual void \textbf{ Train} (arma\+::mat \&\&reference\+Set, const size\+\_\+t leaf\+Size)=0
+\begin{DoxyCompactList}\small\item\em Train the \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch} model with the given parameters. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxyref{RAWrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1RAWrapperBase} is a base wrapper class for holding all \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch} types supported by \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel}. 
+
+All \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch} type wrappers inherit from this class, allowing a simple interface via inheritance for all the different types we want to support. 
+
+Definition at line 32 of file ra\+\_\+model.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a33445e59b0dcf448bca4d6d73cd5a903}} 
+\index{RAWrapperBase@{RAWrapperBase}!RAWrapperBase@{RAWrapperBase}}
+\index{RAWrapperBase@{RAWrapperBase}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{RAWrapperBase()}
+{\footnotesize\ttfamily \textbf{ RAWrapper\+Base} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create the \doxyref{RAWrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1RAWrapperBase} object. 
+
+The base class does not hold anything, so this constructor does nothing. 
+
+Definition at line 37 of file ra\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a0fc504cc59c425b26f3cadcdf45fe17d}} 
+\index{RAWrapperBase@{RAWrapperBase}!````~RAWrapperBase@{$\sim$RAWrapperBase}}
+\index{````~RAWrapperBase@{$\sim$RAWrapperBase}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{$\sim$RAWrapperBase()}
+{\footnotesize\ttfamily virtual $\sim$\textbf{ RAWrapper\+Base} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Destruct the \doxyref{RAWrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1RAWrapperBase} (nothing to do). 
+
+
+
+Definition at line 44 of file ra\+\_\+model.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a82b4d70edcf506e24a36702731bb1d8c}} 
+\index{RAWrapperBase@{RAWrapperBase}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{Alpha()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual double Alpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get the value of alpha. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_a500ecd077d5cc5fdbf6ceb095d8de9e1}.
+
+
+
+Referenced by RAModel\+::\+Alpha().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_abfdfae3b38039d282f10a63860afc650}} 
+\index{RAWrapperBase@{RAWrapperBase}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{Alpha()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual double\& Alpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the value of alpha. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_acbb0e4747a3a307bee88bad71e5eeaf1}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a745c8a58d8efd5f4047e9195883cd943}} 
+\index{RAWrapperBase@{RAWrapperBase}!Clone@{Clone}}
+\index{Clone@{Clone}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{Clone()}
+{\footnotesize\ttfamily virtual \textbf{ RAWrapper\+Base}$\ast$ Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Create a new \doxyref{RAWrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1RAWrapperBase} that is the same as this one. 
+
+This function will properly handle polymorphism. 
+
+Implemented in \textbf{ Leaf\+Size\+RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_a6fb5273198ccf37addbdd3783ca4579e}, and \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_a792e0cada1f67fd770b5bb101dc6c9ed}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a2effd31755e4ae5f85e14ed94e7fab8e}} 
+\index{RAWrapperBase@{RAWrapperBase}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{Dataset()}
+{\footnotesize\ttfamily virtual const arma\+::mat\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Return a reference to the dataset. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_aff320b9a86b77a150e630c01d5888273}.
+
+
+
+Referenced by RAModel\+::\+Dataset().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_afeeb9495ce89199f8c68a11b1ed03c62}} 
+\index{RAWrapperBase@{RAWrapperBase}!FirstLeafExact@{FirstLeafExact}}
+\index{FirstLeafExact@{FirstLeafExact}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{FirstLeafExact()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual bool First\+Leaf\+Exact (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get whether to do exact search at the first leaf. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_a17ec6e467897eb8aee3b519e0758e77d}.
+
+
+
+Referenced by RAModel\+::\+First\+Leaf\+Exact().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a26aaa27045003a709864f1df22779e27}} 
+\index{RAWrapperBase@{RAWrapperBase}!FirstLeafExact@{FirstLeafExact}}
+\index{FirstLeafExact@{FirstLeafExact}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{FirstLeafExact()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual bool\& First\+Leaf\+Exact (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify whether to do exact search at the first leaf. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_aca2eb648feb965d3bcb0b0b73f8b2b0f}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a76bdb2e751927f38210e7111c15cba08}} 
+\index{RAWrapperBase@{RAWrapperBase}!Naive@{Naive}}
+\index{Naive@{Naive}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{Naive()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual bool Naive (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get whether naive search is being used. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_a343230e7d7344e3f7d5f5f2eb89cf2c5}.
+
+
+
+Referenced by RAModel\+::\+Naive().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_af7b975b8b5777ab38621d5d7ccd90aae}} 
+\index{RAWrapperBase@{RAWrapperBase}!Naive@{Naive}}
+\index{Naive@{Naive}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{Naive()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual bool\& Naive (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify whether naive search is being used. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_af7d397adca3f411b4e2d2f977b280ce6}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a66a953e46f9ad0cfd8d6641816370614}} 
+\index{RAWrapperBase@{RAWrapperBase}!SampleAtLeaves@{SampleAtLeaves}}
+\index{SampleAtLeaves@{SampleAtLeaves}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{SampleAtLeaves()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual bool Sample\+At\+Leaves (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get whether to do sampling at leaves. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_aa9dd91d6b96e1d0b343c3cec27372036}.
+
+
+
+Referenced by RAModel\+::\+Sample\+At\+Leaves().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_ac33a833eb52f373a94f383370c4deb29}} 
+\index{RAWrapperBase@{RAWrapperBase}!SampleAtLeaves@{SampleAtLeaves}}
+\index{SampleAtLeaves@{SampleAtLeaves}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{SampleAtLeaves()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual bool\& Sample\+At\+Leaves (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify whether to do sampling at leaves. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_a9f6d54dd0424f827becc2e2e9969b1bb}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_ac54eb02407917fdaa1725b77fd65c766}} 
+\index{RAWrapperBase@{RAWrapperBase}!Search@{Search}}
+\index{Search@{Search}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual void Search (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{query\+Set,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances,  }\item[{const size\+\_\+t}]{leaf\+Size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Perform bichromatic rank-\/approximate nearest neighbor search (i.\+e. 
+
+search with a separate query set). 
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_ad43293b5ec532712b022897bedc15f44}, and \textbf{ Leaf\+Size\+RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_a2c53ba7b98b21fbdfc1aa186a3927089}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a98ca743413f49d02f39ecb99184443d4}} 
+\index{RAWrapperBase@{RAWrapperBase}!Search@{Search}}
+\index{Search@{Search}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual void Search (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Perform monochromatic rank-\/approximate nearest neighbor search (i.\+e. 
+
+a search with the reference set as the query set). 
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_aeb3fa1fab8680898b6326556ea81a55b}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a66d221dd25418821f76bb66bd9c98bce}} 
+\index{RAWrapperBase@{RAWrapperBase}!SingleMode@{SingleMode}}
+\index{SingleMode@{SingleMode}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{SingleMode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual bool Single\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get whether single-\/tree search is being used. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_a7477b3e8499a6158bbe177e7f30d4947}.
+
+
+
+Referenced by RAModel\+::\+Single\+Mode().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a5e231427eaa7eeb695cfd1b324858dfb}} 
+\index{RAWrapperBase@{RAWrapperBase}!SingleMode@{SingleMode}}
+\index{SingleMode@{SingleMode}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{SingleMode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual bool\& Single\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify whether single-\/tree search is being used. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_adadacd63ddeadf138d834b1fdc632773}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a9732af23ee467fcf80889261e2a29047}} 
+\index{RAWrapperBase@{RAWrapperBase}!SingleSampleLimit@{SingleSampleLimit}}
+\index{SingleSampleLimit@{SingleSampleLimit}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{SingleSampleLimit()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual size\+\_\+t Single\+Sample\+Limit (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get the single sample limit. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_a3a2580f686a9de3078e499b1280e2a9f}.
+
+
+
+Referenced by RAModel\+::\+Single\+Sample\+Limit().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a5f780bd465b98c024ff3659adbeffaf1}} 
+\index{RAWrapperBase@{RAWrapperBase}!SingleSampleLimit@{SingleSampleLimit}}
+\index{SingleSampleLimit@{SingleSampleLimit}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{SingleSampleLimit()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual size\+\_\+t\& Single\+Sample\+Limit (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the single sample limit. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_ae78a7b8e9c96a2dbf646a27efee047b1}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_ae0bfd2fa9956cc64af4ded5d0a497c89}} 
+\index{RAWrapperBase@{RAWrapperBase}!Tau@{Tau}}
+\index{Tau@{Tau}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{Tau()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual double Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Get the value of tau. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_a4a4b0fafde4cc4c856a53025dc8c4c21}.
+
+
+
+Referenced by RAModel\+::\+Tau().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_a7e51ae335f71878cff370a9525380bac}} 
+\index{RAWrapperBase@{RAWrapperBase}!Tau@{Tau}}
+\index{Tau@{Tau}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{Tau()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual double\& Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Modify the value of tau. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_ad522d61ed716a322376adea25ebdbc90}.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAWrapperBase_aed03cfde627d1e971acb1d36d9abd29c}} 
+\index{RAWrapperBase@{RAWrapperBase}!Train@{Train}}
+\index{Train@{Train}!RAWrapperBase@{RAWrapperBase}}
+\doxysubsubsection{Train()}
+{\footnotesize\ttfamily virtual void Train (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{reference\+Set,  }\item[{const size\+\_\+t}]{leaf\+Size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Train the \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch} model with the given parameters. 
+
+
+
+Implemented in \textbf{ RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1RAWrapper_aab4ee663331b914daad05f6f7c22ee9b}, and \textbf{ Leaf\+Size\+RAWrapper$<$ Tree\+Type $>$} \doxyref{}{p.}{classmlpack_1_1neighbor_1_1LeafSizeRAWrapper_a6804dc4af719ba3162ad5f15dbe5553d}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/rann/\textbf{ ra\+\_\+model.\+hpp}\end{DoxyCompactItemize}

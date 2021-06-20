@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1RandomBinaryNumericSplit_1_1AuxiliarySplitInfo" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::RandomBinaryNumericSplit::AuxiliarySplitInfo</compoundname>
+    <includes refid="random__binary__numeric__split_8hpp" local="no">random_binary_numeric_split.hpp</includes>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/random_binary_numeric_split.hpp" line="32" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/random_binary_numeric_split.hpp" bodystart="32" bodyend="32"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

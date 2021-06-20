@@ -1,0 +1,108 @@
+.TH "IncrementPolicy" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+IncrementPolicy \- \fBIncrementPolicy\fP is used as a helper class for \fBDatasetMapper\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBMappedType\fP = size_t"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBIncrementPolicy\fP (const bool forceAllMappings=false)"
+.br
+.ti -1c
+.RI "template<typename T , typename InputType > void \fBMapFirstPass\fP (const InputType &input, const size_t dim, std::vector< \fBDatatype\fP > &types)"
+.br
+.RI "Determine if the dimension is numeric or categorical\&. "
+.ti -1c
+.RI "template<typename MapType , typename T , typename InputType > T \fBMapString\fP (const InputType &input, const size_t dimension, MapType &maps, std::vector< \fBDatatype\fP > &types)"
+.br
+.RI "Given the input and the dimension to which the it belongs, and the maps and types given by the \fBDatasetMapper\fP class, returns its numeric mapping\&. "
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBNeedsFirstPass\fP = true"
+.br
+.RI "We do need a first pass over the data to set the dimension types right\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBIncrementPolicy\fP is used as a helper class for \fBDatasetMapper\fP\&. 
+
+It tells how the strings should be mapped\&. Purpose of this policy is to map all dimension if one of the variables in a dimension turns out to be a categorical variable\&. \fBIncrementPolicy\fP maps strings to incrementing unsigned integers (size_t)\&. The first input to be mapped will be mapped to 0, the next to 1 and so on\&.
+.PP
+If the 'forceAllMappings' parameter is set to true, this will always map\&. Otherwise, inputs will only be mapped if they cannot be cast to the output type via a stringstream extraction\&. 
+.PP
+Definition at line 33 of file increment_policy\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBMappedType\fP =  size_t"
+
+.PP
+Definition at line 40 of file increment_policy\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBIncrementPolicy\fP (const bool forceAllMappings = \fCfalse\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 36 of file increment_policy\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void MapFirstPass (const InputType & input, const size_t dim, std::vector< \fBDatatype\fP > & types)\fC [inline]\fP"
+
+.PP
+Determine if the dimension is numeric or categorical\&. 
+.PP
+Definition at line 49 of file increment_policy\&.hpp\&.
+.PP
+References mlpack::data::categorical\&.
+.SS "T MapString (const InputType & input, const size_t dimension, MapType & maps, std::vector< \fBDatatype\fP > & types)\fC [inline]\fP"
+
+.PP
+Given the input and the dimension to which the it belongs, and the maps and types given by the \fBDatasetMapper\fP class, returns its numeric mapping\&. If no mapping yet exists, the input is added to the list of mappings for the given dimension\&. This function is used as a helper function for \fBDatasetMapper\fP class\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIMapType\fP Type of unordered_map that contains mapped value pairs 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Input to find/create mapping for\&. 
+.br
+\fIdimension\fP Index of the dimension of the input\&. 
+.br
+\fImaps\fP Unordered map given by the \fBDatasetMapper\fP\&. 
+.br
+\fItypes\fP Vector containing the type information about each dimensions\&. 
+.RE
+.PP
+
+.PP
+Definition at line 90 of file increment_policy\&.hpp\&.
+.PP
+References mlpack::data::categorical, and mlpack::data::numeric\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool NeedsFirstPass = true\fC [static]\fP"
+
+.PP
+We do need a first pass over the data to set the dimension types right\&. 
+.PP
+Definition at line 43 of file increment_policy\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

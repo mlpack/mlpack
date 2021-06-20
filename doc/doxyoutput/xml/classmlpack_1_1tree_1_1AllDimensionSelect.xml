@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1AllDimensionSelect" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::AllDimensionSelect</compoundname>
+    <includes refid="all__dimension__select_8hpp" local="no">all_dimension_select.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1AllDimensionSelect_1a503c829cc0dc5c82c3ceafc938d3ffb6" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t dimensions</definition>
+        <argsstring></argsstring>
+        <name>dimensions</name>
+        <briefdescription>
+<para>The number of dimensions to select from. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" line="58" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1AllDimensionSelect_1ae46bd26d7133dfe98f8cec7c5ac5c7a1" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t i</definition>
+        <argsstring></argsstring>
+        <name>i</name>
+        <briefdescription>
+<para>The current dimension we are looking at. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" line="56" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1AllDimensionSelect_1ae8d7a318b1a7d85353bb93c0182925d6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>AllDimensionSelect</definition>
+        <argsstring>()</argsstring>
+        <name>AllDimensionSelect</name>
+        <briefdescription>
+<para>Construct the <ref refid="classmlpack_1_1tree_1_1AllDimensionSelect" kindref="compound">AllDimensionSelect</ref> object for the given number of dimensions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" line="28" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" bodystart="28" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1AllDimensionSelect_1aeb8e77df2c5b714e547bb7e9635b29f9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Begin</definition>
+        <argsstring>()</argsstring>
+        <name>Begin</name>
+        <briefdescription>
+<para>Get the first dimension to select from. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" line="33" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" bodystart="33" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1AllDimensionSelect_1a04965eda723772715cd9668f4f18fd7b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Dimensions</definition>
+        <argsstring>()</argsstring>
+        <name>Dimensions</name>
+        <briefdescription>
+<para>Modify the number of dimensions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" line="52" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" bodystart="52" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1AllDimensionSelect_1ae1720906306f12d748df9bd6c4d75a7b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Dimensions</definition>
+        <argsstring>() const</argsstring>
+        <name>Dimensions</name>
+        <briefdescription>
+<para>Get the number of dimensions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" line="50" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" bodystart="50" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1AllDimensionSelect_1a8d5a763647411c8a0f06e031c4611a0f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t End</definition>
+        <argsstring>() const</argsstring>
+        <name>End</name>
+        <briefdescription>
+<para>Get the last dimension to select from. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" line="42" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" bodystart="42" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1AllDimensionSelect_1a9832ebe5464b57064d66192c4c43b9dd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Next</definition>
+        <argsstring>()</argsstring>
+        <name>Next</name>
+        <briefdescription>
+<para>Get the next dimension. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" line="47" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" bodystart="47" bodyend="47"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This dimension selection policy allows any dimension to be selected for splitting. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" line="22" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/all_dimension_select.hpp" bodystart="23" bodyend="59"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1AllDimensionSelect_1ae8d7a318b1a7d85353bb93c0182925d6" prot="public" virt="non-virtual"><scope>mlpack::tree::AllDimensionSelect</scope><name>AllDimensionSelect</name></member>
+      <member refid="classmlpack_1_1tree_1_1AllDimensionSelect_1aeb8e77df2c5b714e547bb7e9635b29f9" prot="public" virt="non-virtual"><scope>mlpack::tree::AllDimensionSelect</scope><name>Begin</name></member>
+      <member refid="classmlpack_1_1tree_1_1AllDimensionSelect_1a503c829cc0dc5c82c3ceafc938d3ffb6" prot="private" virt="non-virtual"><scope>mlpack::tree::AllDimensionSelect</scope><name>dimensions</name></member>
+      <member refid="classmlpack_1_1tree_1_1AllDimensionSelect_1ae1720906306f12d748df9bd6c4d75a7b" prot="public" virt="non-virtual"><scope>mlpack::tree::AllDimensionSelect</scope><name>Dimensions</name></member>
+      <member refid="classmlpack_1_1tree_1_1AllDimensionSelect_1a04965eda723772715cd9668f4f18fd7b" prot="public" virt="non-virtual"><scope>mlpack::tree::AllDimensionSelect</scope><name>Dimensions</name></member>
+      <member refid="classmlpack_1_1tree_1_1AllDimensionSelect_1a8d5a763647411c8a0f06e031c4611a0f" prot="public" virt="non-virtual"><scope>mlpack::tree::AllDimensionSelect</scope><name>End</name></member>
+      <member refid="classmlpack_1_1tree_1_1AllDimensionSelect_1ae46bd26d7133dfe98f8cec7c5ac5c7a1" prot="private" virt="non-virtual"><scope>mlpack::tree::AllDimensionSelect</scope><name>i</name></member>
+      <member refid="classmlpack_1_1tree_1_1AllDimensionSelect_1a9832ebe5464b57064d66192c4c43b9dd" prot="public" virt="non-virtual"><scope>mlpack::tree::AllDimensionSelect</scope><name>Next</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

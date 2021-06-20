@@ -1,0 +1,84 @@
+.TH "NaiveConvolution< BorderMode >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+NaiveConvolution< BorderMode > \- Computes the two-dimensional convolution\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename eT > static void \fBConvolution\fP (const arma::Cube< eT > &input, const arma::Cube< eT > &filter, arma::Cube< eT > &output, const size_t dW=1, const size_t dH=1, const size_t dilationW=1, const size_t dilationH=1)"
+.br
+.ti -1c
+.RI "template<typename eT > static void \fBConvolution\fP (const arma::Cube< eT > &input, const arma::Mat< eT > &filter, arma::Cube< eT > &output, const size_t dW=1, const size_t dH=1, const size_t dilationW=1, const size_t dilationH=1)"
+.br
+.ti -1c
+.RI "template<typename eT > static void \fBConvolution\fP (const arma::Mat< eT > &input, const arma::Cube< eT > &filter, arma::Cube< eT > &output, const size_t dW=1, const size_t dH=1, const size_t dilationW=1, const size_t dilationH=1)"
+.br
+.ti -1c
+.RI "template<typename eT , typename Border  = BorderMode> static std::enable_if< std::is_same< Border, \fBValidConvolution\fP >::value, void >::type \fBConvolution\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &filter, arma::Mat< eT > &output, const size_t dW=1, const size_t dH=1, const size_t dilationW=1, const size_t dilationH=1)"
+.br
+.ti -1c
+.RI "template<typename eT , typename Border  = BorderMode> static std::enable_if< std::is_same< Border, \fBFullConvolution\fP >::value, void >::type \fBConvolution\fP (const arma::Mat< eT > &input, const arma::Mat< eT > &filter, arma::Mat< eT > &output, const size_t dW=1, const size_t dH=1, const size_t dilationW=1, const size_t dilationH=1)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename BorderMode = FullConvolution>
+.br
+class mlpack::ann::NaiveConvolution< BorderMode >"
+Computes the two-dimensional convolution\&. 
+
+This class allows specification of the type of the border type\&. The convolution can be compute with the valid border type of the full border type (default)\&.
+.PP
+\fBFullConvolution\fP: returns the full two-dimensional convolution\&. \fBValidConvolution\fP: returns only those parts of the convolution that are computed without the zero-padded edges\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIBorderMode\fP Type of the border mode (\fBFullConvolution\fP or \fBValidConvolution\fP)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 35 of file naive_convolution\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static void \fBConvolution\fP (const arma::Cube< eT > & input, const arma::Cube< eT > & filter, arma::Cube< eT > & output, const size_t dW = \fC1\fP, const size_t dH = \fC1\fP, const size_t dilationW = \fC1\fP, const size_t dilationH = \fC1\fP)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 151 of file naive_convolution\&.hpp\&.
+.PP
+References NaiveConvolution< BorderMode >::Convolution()\&.
+.SS "static void \fBConvolution\fP (const arma::Cube< eT > & input, const arma::Mat< eT > & filter, arma::Cube< eT > & output, const size_t dW = \fC1\fP, const size_t dH = \fC1\fP, const size_t dilationW = \fC1\fP, const size_t dilationH = \fC1\fP)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 223 of file naive_convolution\&.hpp\&.
+.PP
+References NaiveConvolution< BorderMode >::Convolution()\&.
+.SS "static void \fBConvolution\fP (const arma::Mat< eT > & input, const arma::Cube< eT > & filter, arma::Cube< eT > & output, const size_t dW = \fC1\fP, const size_t dH = \fC1\fP, const size_t dilationW = \fC1\fP, const size_t dilationH = \fC1\fP)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 187 of file naive_convolution\&.hpp\&.
+.PP
+References NaiveConvolution< BorderMode >::Convolution()\&.
+.SS "static std::enable_if< std::is_same<Border, \fBValidConvolution\fP>::value, void>::type \fBConvolution\fP (const arma::Mat< eT > & input, const arma::Mat< eT > & filter, arma::Mat< eT > & output, const size_t dW = \fC1\fP, const size_t dH = \fC1\fP, const size_t dilationW = \fC1\fP, const size_t dilationH = \fC1\fP)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 52 of file naive_convolution\&.hpp\&.
+.PP
+Referenced by SVDConvolution< BorderMode >::Convolution(), and NaiveConvolution< BorderMode >::Convolution()\&.
+.SS "static std::enable_if< std::is_same<Border, \fBFullConvolution\fP>::value, void>::type \fBConvolution\fP (const arma::Mat< eT > & input, const arma::Mat< eT > & filter, arma::Mat< eT > & output, const size_t dW = \fC1\fP, const size_t dH = \fC1\fP, const size_t dilationW = \fC1\fP, const size_t dilationH = \fC1\fP)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Definition at line 98 of file naive_convolution\&.hpp\&.
+.PP
+References NaiveConvolution< BorderMode >::Convolution()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

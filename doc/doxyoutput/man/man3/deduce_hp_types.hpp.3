@@ -1,0 +1,79 @@
+.TH "/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/core/hpt/deduce_hp_types.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "struct \fBDeduceHyperParameterTypes< Args >\fP"
+.br
+.RI "A type function for deducing types of hyper-parameters from types of arguments in the Optimize method in \fBHyperParameterTuner\fP\&. "
+.ti -1c
+.RI "struct \fBDeduceHyperParameterTypes< Args >::ResultHolder< HPTypes >\fP"
+.br
+.ti -1c
+.RI "struct \fBDeduceHyperParameterTypes< PreFixedArg< T >, Args\&.\&.\&. >\fP"
+.br
+.RI "Defining \fBDeduceHyperParameterTypes\fP for the case when not all argument types have been processed, and the next one is the type of an argument that should be fixed\&. "
+.ti -1c
+.RI "struct \fBDeduceHyperParameterTypes< PreFixedArg< T >, Args\&.\&.\&. >::ResultHolder< HPTypes >\fP"
+.br
+.ti -1c
+.RI "struct \fBDeduceHyperParameterTypes< T, Args\&.\&.\&. >\fP"
+.br
+.RI "Defining \fBDeduceHyperParameterTypes\fP for the case when not all argument types have been processed, and the next one (T) is a collection type or an arithmetic type\&. "
+.ti -1c
+.RI "struct \fBDeduceHyperParameterTypes< T, Args\&.\&.\&. >::IsCollectionType< Type >\fP"
+.br
+.RI "A type function to check whether Type is a collection type (for that it should define value_type)\&. "
+.ti -1c
+.RI "struct \fBDeduceHyperParameterTypes< T, Args\&.\&.\&. >::ResultHolder< HPTypes >\fP"
+.br
+.ti -1c
+.RI "struct \fBDeduceHyperParameterTypes< T, Args\&.\&.\&. >::ResultHPType< ArithmeticType, true >\fP"
+.br
+.ti -1c
+.RI "struct \fBDeduceHyperParameterTypes< T, Args\&.\&.\&. >::ResultHPType< CollectionType, false >\fP"
+.br
+.in -1c
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::hpt\fP"
+.br
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "template<typename\&.\&.\&. Args> using \fBTupleOfHyperParameters\fP = typename DeduceHyperParameterTypes< Args\&.\&.\&. >::TupleType"
+.br
+.RI "A short alias for deducing types of hyper-parameters from types of arguments in the Optimize method in \fBHyperParameterTuner\fP\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Kirill Mishchenko
+.RE
+.PP
+Tools to deduce types of hyper-parameters from types of arguments in the Optimize method in HyperParameterTuner\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBdeduce_hp_types\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

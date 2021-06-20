@@ -1,0 +1,91 @@
+.TH "SVDCompleteIncrementalLearning< arma::sp_mat >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SVDCompleteIncrementalLearning< arma::sp_mat > \- TODO : Merge this template specialized function for sparse matrix using common row_col_iterator\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSVDCompleteIncrementalLearning\fP (double u=0\&.01, double kw=0, double kh=0)"
+.br
+.ti -1c
+.RI "\fB~SVDCompleteIncrementalLearning\fP ()"
+.br
+.ti -1c
+.RI "void \fBHUpdate\fP (const arma::sp_mat &, const arma::mat &W, arma::mat &H)"
+.br
+.RI "The update rule for the encoding matrix H\&. "
+.ti -1c
+.RI "void \fBInitialize\fP (const arma::sp_mat &dataset, const size_t rank)"
+.br
+.ti -1c
+.RI "void \fBWUpdate\fP (const arma::sp_mat &V, arma::mat &W, const arma::mat &H)"
+.br
+.RI "The update rule for the basis matrix W\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+TODO : Merge this template specialized function for sparse matrix using common row_col_iterator\&. 
+
+template specialiazed functions for sparse matrices 
+.PP
+Definition at line 169 of file svd_complete_incremental_learning\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSVDCompleteIncrementalLearning\fP (double u = \fC0\&.01\fP, double kw = \fC0\fP, double kh = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 172 of file svd_complete_incremental_learning\&.hpp\&.
+.SS "~\fBSVDCompleteIncrementalLearning\fP ()\fC [inline]\fP"
+
+.PP
+Definition at line 178 of file svd_complete_incremental_learning\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void HUpdate (const arma::sp_mat &, const arma::mat & W, arma::mat & H)\fC [inline]\fP"
+
+.PP
+The update rule for the encoding matrix H\&. The function takes in all the matrices and only changes the value of the H matrix\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (V) Input matrix to be factorized\&. 
+.br
+\fIW\fP Basis matrix\&. 
+.br
+\fIH\fP Encoding matrix to be updated\&. 
+.RE
+.PP
+
+.PP
+Definition at line 238 of file svd_complete_incremental_learning\&.hpp\&.
+.SS "void Initialize (const arma::sp_mat & dataset, const size_t rank)\fC [inline]\fP"
+
+.PP
+Definition at line 183 of file svd_complete_incremental_learning\&.hpp\&.
+.SS "void WUpdate (const arma::sp_mat & V, arma::mat & W, const arma::mat & H)\fC [inline]\fP"
+
+.PP
+The update rule for the basis matrix W\&. The function takes in all the matrices and only changes the value of the W matrix\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIV\fP Input matrix to be factorized\&. 
+.br
+\fIW\fP Basis matrix to be updated\&. 
+.br
+\fIH\fP Encoding matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 202 of file svd_complete_incremental_learning\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

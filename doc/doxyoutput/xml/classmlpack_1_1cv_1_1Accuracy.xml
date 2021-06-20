@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1cv_1_1Accuracy" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cv::Accuracy</compoundname>
+    <includes refid="accuracy_8hpp" local="no">accuracy.hpp</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1Accuracy_1a59117419810548f86c24651ffa3500d5" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool NeedsMinimization</definition>
+        <argsstring></argsstring>
+        <name>NeedsMinimization</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+<para>Information for hyper-parameter tuning code. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It indicates that we want to maximize the metric. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/accuracy.hpp" line="45" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/metrics/accuracy.hpp" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1Accuracy_1a77b6a9eb952b01bfc5c0d854da700465" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MLAlgorithm</type>
+          </param>
+          <param>
+            <type>typename DataType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>static double Evaluate</definition>
+        <argsstring>(MLAlgorithm &amp;model, const DataType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>MLAlgorithm &amp;</type>
+          <declname>model</declname>
+        </param>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <briefdescription>
+<para>Run classification and calculate accuracy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>model</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A classification model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column-major data containing test items. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ground truth (correct) labels for the test items. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/accuracy.hpp" line="37" column="17"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1cv_1_1Accuracy" kindref="compound">Accuracy</ref> is a metric of performance for classification algorithms that is equal to a proportion of correctly labeled test items among all ones for given test items. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/accuracy.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/metrics/accuracy.hpp" bodystart="27" bodyend="46"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cv_1_1Accuracy_1a77b6a9eb952b01bfc5c0d854da700465" prot="public" virt="non-virtual"><scope>mlpack::cv::Accuracy</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1cv_1_1Accuracy_1a59117419810548f86c24651ffa3500d5" prot="public" virt="non-virtual"><scope>mlpack::cv::Accuracy</scope><name>NeedsMinimization</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

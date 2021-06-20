@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1bindings_1_1markdown_1_1SeeAlsoWrapper" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::bindings::markdown::SeeAlsoWrapper</compoundname>
+    <includes refid="program__doc__wrapper_8hpp" local="no">program_doc_wrapper.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1bindings_1_1markdown_1_1SeeAlsoWrapper_1a77c85c741e2d738e480e3a8dcb53c000" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SeeAlsoWrapper</definition>
+        <argsstring>(const std::string &amp;bindingName, const std::string &amp;description, const std::string &amp;link)</argsstring>
+        <name>SeeAlsoWrapper</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>description</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>link</declname>
+        </param>
+        <briefdescription>
+<para>Register seeAlso. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" line="85" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" bodystart="85" bodyend="90"/>
+        <references refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a10e347723a80667c48bd5a3c60d9b870">BindingInfo::GetSingleton</references>
+        <references refid="classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_1a11738b577fb016e05929ab8b548d436e" compoundref="binding__info_8hpp" startline="44">BindingInfo::map</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" line="79" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/program_doc_wrapper.hpp" bodystart="80" bodyend="91"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1bindings_1_1markdown_1_1SeeAlsoWrapper_1a77c85c741e2d738e480e3a8dcb53c000" prot="public" virt="non-virtual"><scope>mlpack::bindings::markdown::SeeAlsoWrapper</scope><name>SeeAlsoWrapper</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

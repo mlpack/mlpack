@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1range_1_1RangeSearchStat" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::range::RangeSearchStat</compoundname>
+    <includes refid="range__search__stat_8hpp" local="no">range_search_stat.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchStat_1a43311ef4d36f89141f31a241205a27a2" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double lastDistance</definition>
+        <argsstring></argsstring>
+        <name>lastDistance</name>
+        <briefdescription>
+<para>The last distance evaluation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" line="56" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchStat_1a5fd77cfc394fcde96cd27a0f573f99d0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>RangeSearchStat</definition>
+        <argsstring>()</argsstring>
+        <name>RangeSearchStat</name>
+        <briefdescription>
+<para>Initialize the statistic. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" line="32" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" bodystart="32" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchStat_1a151dbebd1ff29fd2ef100e7507c13630" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>RangeSearchStat</definition>
+        <argsstring>(TreeType &amp;)</argsstring>
+        <name>RangeSearchStat</name>
+        <param>
+          <type>TreeType &amp;</type>
+        </param>
+        <briefdescription>
+<para>Initialize the statistic given a tree node that this statistic belongs to. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>In this case, we ignore the node. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" line="39" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" bodystart="39" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchStat_1a73c8a7f485e9b81d86b7b7b1b75a97af" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; LastDistance</definition>
+        <argsstring>()</argsstring>
+        <name>LastDistance</name>
+        <briefdescription>
+<para>Modify the last distance evaluation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" line="45" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" bodystart="45" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchStat_1acf3025848cf3628a9213763886101369" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double LastDistance</definition>
+        <argsstring>() const</argsstring>
+        <name>LastDistance</name>
+        <briefdescription>
+<para>Get the last distance evaluation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" line="43" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" bodystart="43" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchStat_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the statistic. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" line="49" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" bodystart="49" bodyend="52"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Statistic class for <ref refid="classmlpack_1_1range_1_1RangeSearch" kindref="compound">RangeSearch</ref>, to be set to the StatisticType of the tree type that range search is being performed with. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This class just holds the last visited node and the corresponding base case result. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_stat.hpp" bodystart="27" bodyend="57"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1range_1_1RangeSearchStat_1a43311ef4d36f89141f31a241205a27a2" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchStat</scope><name>lastDistance</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchStat_1acf3025848cf3628a9213763886101369" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchStat</scope><name>LastDistance</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchStat_1a73c8a7f485e9b81d86b7b7b1b75a97af" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchStat</scope><name>LastDistance</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchStat_1a5fd77cfc394fcde96cd27a0f573f99d0" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchStat</scope><name>RangeSearchStat</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchStat_1a151dbebd1ff29fd2ef100e7507c13630" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchStat</scope><name>RangeSearchStat</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchStat_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchStat</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,135 @@
+.TH "Log" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Log \- Provides a convenient way to give formatted output\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBAssert\fP (bool condition, const std::string &message='Assert Failed\&.')"
+.br
+.RI "Checks if the specified condition is true\&. "
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static std::ostream & \fBcout\fP"
+.br
+.RI "Reference to cout, if necessary\&. "
+.ti -1c
+.RI "static MLPACK_EXPORT \fButil::NullOutStream\fP \fBDebug\fP"
+.br
+.RI "MLPACK_EXPORT is required for global variables, so that they are properly exported by the Windows compiler\&. "
+.ti -1c
+.RI "static MLPACK_EXPORT \fButil::PrefixedOutStream\fP \fBFatal\fP"
+.br
+.RI "Prints fatal messages prefixed with [FATAL], then terminates the program\&. "
+.ti -1c
+.RI "static MLPACK_EXPORT \fButil::PrefixedOutStream\fP \fBInfo\fP"
+.br
+.RI "Prints informational messages if --verbose is specified, prefixed with [INFO ]\&. "
+.ti -1c
+.RI "static MLPACK_EXPORT \fButil::PrefixedOutStream\fP \fBWarn\fP"
+.br
+.RI "Prints warning messages prefixed with [WARN ]\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Provides a convenient way to give formatted output\&. 
+
+The \fBLog\fP class has four members which can be used in the same way ostreams can be used:
+.PP
+.IP "\(bu" 2
+\fBLog::Debug\fP
+.IP "\(bu" 2
+\fBLog::Info\fP
+.IP "\(bu" 2
+\fBLog::Warn\fP
+.IP "\(bu" 2
+\fBLog::Fatal\fP
+.PP
+.PP
+Each of these will prefix a tag to the output (for easy filtering), and the fatal output will terminate the program when a newline is encountered\&. An example is given below\&.
+.PP
+.PP
+.nf
+Log::Info << "Checking a condition\&." << std::endl;
+if (!someCondition())
+  Log::Warn << "someCondition() is not satisfied!" << std::endl;
+Log::Info << "Checking an important condition\&." << std::endl;
+if (!someImportantCondition())
+{
+  Log::Fatal << "someImportantCondition() is not satisfied! Terminating\&.";
+  Log::Fatal << std::endl;
+}
+.fi
+.PP
+.PP
+Any messages sent to \fBLog::Debug\fP will not be shown when compiling in non-debug mode\&. Messages to \fBLog::Info\fP will only be shown when the --verbose flag is given to the program (or rather, the \fBIO\fP class)\&.
+.PP
+\fBSee also\fP
+.RS 4
+PrefixedOutStream, NullOutStream, \fBIO\fP 
+.RE
+.PP
+
+.PP
+Definition at line 56 of file log\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static void Assert (bool condition, const std::string & message = \fC'Assert Failed\&.'\fP)\fC [static]\fP"
+
+.PP
+Checks if the specified condition is true\&. If not, halts program execution and prints a custom error message\&. Does nothing in non-debug mode\&. 
+.PP
+Referenced by EdgePair::EdgePair(), and mlpack::tree::split::PerformSplit()\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "std::ostream& cout\fC [static]\fP"
+
+.PP
+Reference to cout, if necessary\&. 
+.PP
+Definition at line 93 of file log\&.hpp\&.
+.SS "MLPACK_EXPORT \fButil::NullOutStream\fP Debug\fC [static]\fP"
+
+.PP
+MLPACK_EXPORT is required for global variables, so that they are properly exported by the Windows compiler\&. Dumps debug output into the bit nether regions\&. 
+.PP
+Definition at line 79 of file log\&.hpp\&.
+.PP
+Referenced by DiagonalGMM::DiagonalGMM(), GMM::GMM(), and mlpack::bindings::cli::ParseCommandLine()\&.
+.SS "MLPACK_EXPORT \fButil::PrefixedOutStream\fP Fatal\fC [static]\fP"
+
+.PP
+Prints fatal messages prefixed with [FATAL], then terminates the program\&. 
+.PP
+Definition at line 90 of file log\&.hpp\&.
+.PP
+Referenced by EigenvalueRatioConstraint::EigenvalueRatioConstraint(), PositiveDefiniteConstraint::ApplyConstraint(), EigenvalueRatioConstraint::ApplyConstraint(), NystroemKernelRule< KernelType, PointSelectionPolicy >::ApplyKernelMatrix(), NaiveKernelRule< KernelType >::ApplyKernelMatrix(), SphericalKernel::ConvolutionIntegral(), mlpack::util::DisableBacktrace(), AverageInterpolation::GetWeights(), SimilarityInterpolation::GetWeights(), RegressionInterpolation::GetWeights(), MeanImputation< T >::Impute(), KathirvalavakumarSubavathiInitialization::Initialize(), NguyenWidrowInitialization::Initialize(), OivsInitialization< ActivationFunction >::Initialize(), OrthogonalInitialization::Initialize(), ConstInitialization::Initialize(), GaussianInitialization::Initialize(), GlorotInitializationType< Uniform >::Initialize(), HeInitialization::Initialize(), LecunNormalInitialization::Initialize(), RandomInitialization::Initialize(), GivenInitialization::Initialize(), GivenInitialization::InitializeOne(), ZScoreNormalization::Normalize(), mlpack::bindings::cli::ParseCommandLine(), and DiscreteDistribution::Probability()\&.
+.SS "MLPACK_EXPORT \fButil::PrefixedOutStream\fP Info\fC [static]\fP"
+
+.PP
+Prints informational messages if --verbose is specified, prefixed with [INFO ]\&. 
+.PP
+Definition at line 84 of file log\&.hpp\&.
+.PP
+Referenced by mlpack::util::DisableVerbose(), mlpack::util::EnableVerbose(), mlpack::bindings::cli::EndProgram(), SimpleResidueTermination::IsConverged(), SimpleToleranceTermination< MatType >::IsConverged(), Pendulum::IsTerminal(), Acrobot::IsTerminal(), CartPole::IsTerminal(), ContinuousDoublePoleCart::IsTerminal(), ContinuousMountainCar::IsTerminal(), DoublePoleCart::IsTerminal(), MountainCar::IsTerminal(), and mlpack::bindings::cli::ParseCommandLine()\&.
+.SS "MLPACK_EXPORT \fButil::PrefixedOutStream\fP Warn\fC [static]\fP"
+
+.PP
+Prints warning messages prefixed with [WARN ]\&. 
+.PP
+Definition at line 87 of file log\&.hpp\&.
+.PP
+Referenced by EigenvalueRatioConstraint::EigenvalueRatioConstraint(), MaxIterationTermination::MaxIterationTermination(), RandomAcolInitialization< columnsToAverage >::Initialize(), and CFType< DecompositionPolicy, NormalizationType >::NumUsersForSimilarity()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,96 @@
+.TH "/home/aakash/mlpack/src/mlpack/core/util/mlpack_main.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/core/util/mlpack_main.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBBINDING_TYPE\fP   \fBBINDING_TYPE_UNKNOWN\fP"
+.br
+.ti -1c
+.RI "#define \fBBINDING_TYPE_CLI\fP   0"
+.br
+.ti -1c
+.RI "#define \fBBINDING_TYPE_GO\fP   4"
+.br
+.ti -1c
+.RI "#define \fBBINDING_TYPE_JL\fP   3"
+.br
+.ti -1c
+.RI "#define \fBBINDING_TYPE_MARKDOWN\fP   128"
+.br
+.ti -1c
+.RI "#define \fBBINDING_TYPE_PYX\fP   2"
+.br
+.ti -1c
+.RI "#define \fBBINDING_TYPE_R\fP   5"
+.br
+.ti -1c
+.RI "#define \fBBINDING_TYPE_TEST\fP   1"
+.br
+.ti -1c
+.RI "#define \fBBINDING_TYPE_UNKNOWN\fP   \-1"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define BINDING_TYPE   \fBBINDING_TYPE_UNKNOWN\fP"
+
+.PP
+Definition at line 31 of file mlpack_main\&.hpp\&.
+.SS "#define BINDING_TYPE_CLI   0"
+
+.PP
+\fBParameters\fP
+.RS 4
+\fI\fBmlpack_main\&.hpp\fP\fP 
+.RE
+.PP
+\fBAuthor\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+This file, based on the value of the macro BINDING_TYPE, will define the macros necessary to compile an mlpack binding for the target language\&.
+.PP
+This file should \fIonly\fP be included by a program that is meant to be a command-line program or a binding to another language\&. This file also includes \fBparam_checks\&.hpp\fP, which contains functions that are used to check parameter values at runtime\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition at line 21 of file mlpack_main\&.hpp\&.
+.SS "#define BINDING_TYPE_GO   4"
+
+.PP
+Definition at line 25 of file mlpack_main\&.hpp\&.
+.SS "#define BINDING_TYPE_JL   3"
+
+.PP
+Definition at line 24 of file mlpack_main\&.hpp\&.
+.SS "#define BINDING_TYPE_MARKDOWN   128"
+
+.PP
+Definition at line 27 of file mlpack_main\&.hpp\&.
+.SS "#define BINDING_TYPE_PYX   2"
+
+.PP
+Definition at line 23 of file mlpack_main\&.hpp\&.
+.SS "#define BINDING_TYPE_R   5"
+
+.PP
+Definition at line 26 of file mlpack_main\&.hpp\&.
+.SS "#define BINDING_TYPE_TEST   1"
+
+.PP
+Definition at line 22 of file mlpack_main\&.hpp\&.
+.SS "#define BINDING_TYPE_UNKNOWN   \-1"
+
+.PP
+Definition at line 28 of file mlpack_main\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

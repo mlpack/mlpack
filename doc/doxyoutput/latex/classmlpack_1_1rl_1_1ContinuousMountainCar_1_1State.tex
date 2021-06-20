@@ -1,0 +1,193 @@
+\doxysection{Continuous\+Mountain\+Car\+::State Class Reference}
+\label{classmlpack_1_1rl_1_1ContinuousMountainCar_1_1State}\index{ContinuousMountainCar::State@{ContinuousMountainCar::State}}
+
+
+Implementation of state of Continuous Mountain Car.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ State} ()
+\begin{DoxyCompactList}\small\item\em Construct a state instance. \end{DoxyCompactList}\item 
+\textbf{ State} (const arma\+::colvec \&data)
+\begin{DoxyCompactList}\small\item\em Construct a state based on the given data. \end{DoxyCompactList}\item 
+arma\+::colvec \& \textbf{ Data} ()
+\begin{DoxyCompactList}\small\item\em Modify the internal representation of the state. \end{DoxyCompactList}\item 
+const arma\+::colvec \& \textbf{ Encode} () const
+\begin{DoxyCompactList}\small\item\em Encode the state to a column vector. \end{DoxyCompactList}\item 
+double \& \textbf{ Position} ()
+\begin{DoxyCompactList}\small\item\em Modify the position. \end{DoxyCompactList}\item 
+double \textbf{ Position} () const
+\begin{DoxyCompactList}\small\item\em Get the position. \end{DoxyCompactList}\item 
+double \& \textbf{ Velocity} ()
+\begin{DoxyCompactList}\small\item\em Modify the velocity. \end{DoxyCompactList}\item 
+double \textbf{ Velocity} () const
+\begin{DoxyCompactList}\small\item\em Get the velocity. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr size\+\_\+t \textbf{ dimension} = 2
+\begin{DoxyCompactList}\small\item\em Dimension of the encoded state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementation of state of Continuous Mountain Car. 
+
+Each state is a (velocity, position) vector. 
+
+Definition at line 36 of file continuous\+\_\+mountain\+\_\+car.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousMountainCar_1_1State_a790355057d12e9c1ce7643551c16fecd}} 
+\index{ContinuousMountainCar::State@{ContinuousMountainCar::State}!State@{State}}
+\index{State@{State}!ContinuousMountainCar::State@{ContinuousMountainCar::State}}
+\doxysubsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ State} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a state instance. 
+
+
+
+Definition at line 42 of file continuous\+\_\+mountain\+\_\+car.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousMountainCar_1_1State_a8bc7967f6d91a3c94f9b3f502297a926}} 
+\index{ContinuousMountainCar::State@{ContinuousMountainCar::State}!State@{State}}
+\index{State@{State}!ContinuousMountainCar::State@{ContinuousMountainCar::State}}
+\doxysubsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ State} (\begin{DoxyParamCaption}\item[{const arma\+::colvec \&}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a state based on the given data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data for the velocity and position. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 50 of file continuous\+\_\+mountain\+\_\+car.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousMountainCar_1_1State_ad6a50c7b5fced2e931d9a4b4ff989ed6}} 
+\index{ContinuousMountainCar::State@{ContinuousMountainCar::State}!Data@{Data}}
+\index{Data@{Data}!ContinuousMountainCar::State@{ContinuousMountainCar::State}}
+\doxysubsubsection{Data()}
+{\footnotesize\ttfamily arma\+::colvec\& Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the internal representation of the state. 
+
+
+
+Definition at line 54 of file continuous\+\_\+mountain\+\_\+car.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousMountainCar_1_1State_a8c1a320788b55fad936455caf0acb62a}} 
+\index{ContinuousMountainCar::State@{ContinuousMountainCar::State}!Encode@{Encode}}
+\index{Encode@{Encode}!ContinuousMountainCar::State@{ContinuousMountainCar::State}}
+\doxysubsubsection{Encode()}
+{\footnotesize\ttfamily const arma\+::colvec\& Encode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Encode the state to a column vector. 
+
+
+
+Definition at line 67 of file continuous\+\_\+mountain\+\_\+car.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousMountainCar_1_1State_a005c39713bc5c65715a94572bfb5fc29}} 
+\index{ContinuousMountainCar::State@{ContinuousMountainCar::State}!Position@{Position}}
+\index{Position@{Position}!ContinuousMountainCar::State@{ContinuousMountainCar::State}}
+\doxysubsubsection{Position()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Position (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the position. 
+
+
+
+Definition at line 64 of file continuous\+\_\+mountain\+\_\+car.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousMountainCar_1_1State_adc41cb3d3f5bdd1bd67dc963ce78c20c}} 
+\index{ContinuousMountainCar::State@{ContinuousMountainCar::State}!Position@{Position}}
+\index{Position@{Position}!ContinuousMountainCar::State@{ContinuousMountainCar::State}}
+\doxysubsubsection{Position()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Position (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the position. 
+
+
+
+Definition at line 62 of file continuous\+\_\+mountain\+\_\+car.\+hpp.
+
+
+
+Referenced by Continuous\+Mountain\+Car\+::\+Initial\+Sample(), Continuous\+Mountain\+Car\+::\+Is\+Terminal(), and Continuous\+Mountain\+Car\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousMountainCar_1_1State_a2bdce16cfc8c84b65f13ee9fffab1266}} 
+\index{ContinuousMountainCar::State@{ContinuousMountainCar::State}!Velocity@{Velocity}}
+\index{Velocity@{Velocity}!ContinuousMountainCar::State@{ContinuousMountainCar::State}}
+\doxysubsubsection{Velocity()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Velocity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the velocity. 
+
+
+
+Definition at line 59 of file continuous\+\_\+mountain\+\_\+car.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousMountainCar_1_1State_a5281cef88d4e272d6cb8581bff91195a}} 
+\index{ContinuousMountainCar::State@{ContinuousMountainCar::State}!Velocity@{Velocity}}
+\index{Velocity@{Velocity}!ContinuousMountainCar::State@{ContinuousMountainCar::State}}
+\doxysubsubsection{Velocity()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Velocity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the velocity. 
+
+
+
+Definition at line 57 of file continuous\+\_\+mountain\+\_\+car.\+hpp.
+
+
+
+Referenced by Continuous\+Mountain\+Car\+::\+Initial\+Sample(), and Continuous\+Mountain\+Car\+::\+Sample().
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousMountainCar_1_1State_ae813298f34ef9d793885fc04b54dff99}} 
+\index{ContinuousMountainCar::State@{ContinuousMountainCar::State}!dimension@{dimension}}
+\index{dimension@{dimension}!ContinuousMountainCar::State@{ContinuousMountainCar::State}}
+\doxysubsubsection{dimension}
+{\footnotesize\ttfamily constexpr size\+\_\+t dimension = 2\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+Dimension of the encoded state. 
+
+
+
+Definition at line 70 of file continuous\+\_\+mountain\+\_\+car.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/environment/\textbf{ continuous\+\_\+mountain\+\_\+car.\+hpp}\end{DoxyCompactItemize}

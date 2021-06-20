@@ -1,0 +1,203 @@
+\doxysection{NMFPolicy Class Reference}
+\label{classmlpack_1_1cf_1_1NMFPolicy}\index{NMFPolicy@{NMFPolicy}}
+
+
+Implementation of the NMF policy to act as a wrapper when accessing NMF from within \doxyref{CFType}{p.}{classmlpack_1_1cf_1_1CFType}.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Apply} (const Mat\+Type \&, const arma\+::sp\+\_\+mat \&cleaned\+Data, const size\+\_\+t rank, const size\+\_\+t max\+Iterations, const double min\+Residue, const bool mit)
+\begin{DoxyCompactList}\small\item\em Apply Collaborative Filtering to the provided dataset using NMF method. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Neighbor\+Search\+Policy $>$ }\\void \textbf{ Get\+Neighborhood} (const arma\+::\+Col$<$ size\+\_\+t $>$ \&users, const size\+\_\+t num\+Users\+For\+Similarity, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighborhood, arma\+::mat \&similarities) const
+\begin{DoxyCompactList}\small\item\em Get the neighborhood and corresponding similarities for a set of users. \end{DoxyCompactList}\item 
+double \textbf{ Get\+Rating} (const size\+\_\+t user, const size\+\_\+t item) const
+\begin{DoxyCompactList}\small\item\em Return predicted rating given user ID and item ID. \end{DoxyCompactList}\item 
+void \textbf{ Get\+Rating\+Of\+User} (const size\+\_\+t user, arma\+::vec \&rating) const
+\begin{DoxyCompactList}\small\item\em Get predicted ratings for a user. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ H} () const
+\begin{DoxyCompactList}\small\item\em Get the User Matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialization. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ W} () const
+\begin{DoxyCompactList}\small\item\em Get the Item Matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementation of the NMF policy to act as a wrapper when accessing NMF from within \doxyref{CFType}{p.}{classmlpack_1_1cf_1_1CFType}. 
+
+An example of how to use \doxyref{NMFPolicy}{p.}{classmlpack_1_1cf_1_1NMFPolicy} in CF is shown below\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{extern} arma::mat data; \textcolor{comment}{// data is a (user, item, rating) table.}}
+\DoxyCodeLine{\textcolor{comment}{// Users for whom recommendations are generated.}}
+\DoxyCodeLine{\textcolor{keyword}{extern} arma::Col<size\_t> users;}
+\DoxyCodeLine{arma::Mat<size\_t> recommendations; \textcolor{comment}{// Resulting recommendations.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{CFType<NMFPolicy> cf(data);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Generate 10 recommendations for all users.}}
+\DoxyCodeLine{cf.GetRecommendations(10, recommendations);}
+
+\end{DoxyCode}
+ 
+
+Definition at line 43 of file nmf\+\_\+method.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1cf_1_1NMFPolicy_a55d1dc4a735516d3138feb7687552721}} 
+\index{NMFPolicy@{NMFPolicy}!Apply@{Apply}}
+\index{Apply@{Apply}!NMFPolicy@{NMFPolicy}}
+\doxysubsubsection{Apply()}
+{\footnotesize\ttfamily void Apply (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{,  }\item[{const arma\+::sp\+\_\+mat \&}]{cleaned\+Data,  }\item[{const size\+\_\+t}]{rank,  }\item[{const size\+\_\+t}]{max\+Iterations,  }\item[{const double}]{min\+Residue,  }\item[{const bool}]{mit }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Apply Collaborative Filtering to the provided dataset using NMF method. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (data) Data matrix\+: dense matrix (coordinate lists) or sparse matrix (cleaned). \\
+\hline
+{\em cleaned\+Data} & item user table in form of sparse matrix. \\
+\hline
+{\em rank} & Rank parameter for matrix factorization. \\
+\hline
+{\em max\+Iterations} & Maximum number of iterations. \\
+\hline
+{\em min\+Residue} & Residue required to terminate. \\
+\hline
+{\em mit} & Whether to terminate only when max\+Iterations is reached. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 58 of file nmf\+\_\+method.\+hpp.
+
+
+
+References AMF$<$ Termination\+Policy\+Type, Initialization\+Rule\+Type, Update\+Rule\+Type $>$\+::\+Apply().
+
+\mbox{\label{classmlpack_1_1cf_1_1NMFPolicy_a35bca7a6e09f4fb35b9945a9368711e4}} 
+\index{NMFPolicy@{NMFPolicy}!GetNeighborhood@{GetNeighborhood}}
+\index{GetNeighborhood@{GetNeighborhood}!NMFPolicy@{NMFPolicy}}
+\doxysubsubsection{GetNeighborhood()}
+{\footnotesize\ttfamily void Get\+Neighborhood (\begin{DoxyParamCaption}\item[{const arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{users,  }\item[{const size\+\_\+t}]{num\+Users\+For\+Similarity,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighborhood,  }\item[{arma\+::mat \&}]{similarities }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the neighborhood and corresponding similarities for a set of users. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Neighbor\+Search\+Policy} & The policy to perform neighbor search.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em users} & Users whose neighborhood is to be computed. \\
+\hline
+{\em num\+Users\+For\+Similarity} & The number of neighbors returned for each user. \\
+\hline
+{\em neighborhood} & Neighbors represented by user IDs. \\
+\hline
+{\em similarities} & Similarity between each user and each of its neighbors. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 120 of file nmf\+\_\+method.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1NMFPolicy_a0c3e16d73c8b25b8934cbc36ac161619}} 
+\index{NMFPolicy@{NMFPolicy}!GetRating@{GetRating}}
+\index{GetRating@{GetRating}!NMFPolicy@{NMFPolicy}}
+\doxysubsubsection{GetRating()}
+{\footnotesize\ttfamily double Get\+Rating (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{user,  }\item[{const size\+\_\+t}]{item }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return predicted rating given user ID and item ID. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em user} & User ID. \\
+\hline
+{\em item} & Item ID. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 90 of file nmf\+\_\+method.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1NMFPolicy_ae5dc3895f0294bf054cb2ea58084a426}} 
+\index{NMFPolicy@{NMFPolicy}!GetRatingOfUser@{GetRatingOfUser}}
+\index{GetRatingOfUser@{GetRatingOfUser}!NMFPolicy@{NMFPolicy}}
+\doxysubsubsection{GetRatingOfUser()}
+{\footnotesize\ttfamily void Get\+Rating\+Of\+User (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{user,  }\item[{arma\+::vec \&}]{rating }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get predicted ratings for a user. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em user} & User ID. \\
+\hline
+{\em rating} & Resulting rating vector. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 102 of file nmf\+\_\+method.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1NMFPolicy_a71e6a6119b9efde17f4112c6d82d9233}} 
+\index{NMFPolicy@{NMFPolicy}!H@{H}}
+\index{H@{H}!NMFPolicy@{NMFPolicy}}
+\doxysubsubsection{H()}
+{\footnotesize\ttfamily const arma\+::mat\& H (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the User Matrix. 
+
+
+
+Definition at line 149 of file nmf\+\_\+method.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1NMFPolicy_a65cba07328997659bec80b9879b15a51}} 
+\index{NMFPolicy@{NMFPolicy}!serialize@{serialize}}
+\index{serialize@{serialize}!NMFPolicy@{NMFPolicy}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialization. 
+
+
+
+Definition at line 155 of file nmf\+\_\+method.\+hpp.
+
+\mbox{\label{classmlpack_1_1cf_1_1NMFPolicy_a0f733dde66e23287758de984b5151e36}} 
+\index{NMFPolicy@{NMFPolicy}!W@{W}}
+\index{W@{W}!NMFPolicy@{NMFPolicy}}
+\doxysubsubsection{W()}
+{\footnotesize\ttfamily const arma\+::mat\& W (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the Item Matrix. 
+
+
+
+Definition at line 147 of file nmf\+\_\+method.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/cf/decomposition\+\_\+policies/\textbf{ nmf\+\_\+method.\+hpp}\end{DoxyCompactItemize}

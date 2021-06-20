@@ -1,0 +1,674 @@
+\doxysection{RAModel Class Reference}
+\label{classmlpack_1_1neighbor_1_1RAModel}\index{RAModel@{RAModel}}
+
+
+The \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel} class provides an abstraction for the \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch} class, abstracting away the Tree\+Type parameter and allowing it to be specified at runtime in this class.  
+
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Tree\+Types} \{ \newline
+\textbf{ KD\+\_\+\+TREE}
+, \newline
+\textbf{ COVER\+\_\+\+TREE}
+, \newline
+\textbf{ R\+\_\+\+TREE}
+, \newline
+\textbf{ R\+\_\+\+STAR\+\_\+\+TREE}
+, \newline
+\textbf{ X\+\_\+\+TREE}
+, \newline
+\textbf{ HILBERT\+\_\+\+R\+\_\+\+TREE}
+, \newline
+\textbf{ R\+\_\+\+PLUS\+\_\+\+TREE}
+, \newline
+\textbf{ R\+\_\+\+PLUS\+\_\+\+PLUS\+\_\+\+TREE}
+, \newline
+\textbf{ UB\+\_\+\+TREE}
+, \newline
+\textbf{ OCTREE}
+ \}
+\begin{DoxyCompactList}\small\item\em The list of tree types we can use with \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ RAModel} (const \textbf{ RAModel} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel}. \end{DoxyCompactList}\item 
+\textbf{ RAModel} (\textbf{ RAModel} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel}. \end{DoxyCompactList}\item 
+\textbf{ RAModel} (\textbf{ Tree\+Types} tree\+Type=Tree\+Types\+::\+KD\+\_\+\+TREE, bool random\+Basis=false)
+\begin{DoxyCompactList}\small\item\em Initialize the \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel} with the given type and whether or not a random basis should be used. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+RAModel} ()
+\begin{DoxyCompactList}\small\item\em Clean memory, if necessary. \end{DoxyCompactList}\item 
+double \& \textbf{ Alpha} ()
+\begin{DoxyCompactList}\small\item\em Modify the desired success probability. \end{DoxyCompactList}\item 
+double \textbf{ Alpha} () const
+\begin{DoxyCompactList}\small\item\em Get the desired success probability. \end{DoxyCompactList}\item 
+void \textbf{ Build\+Model} (arma\+::mat \&\&reference\+Set, const size\+\_\+t leaf\+Size, const bool naive, const bool single\+Mode)
+\begin{DoxyCompactList}\small\item\em Build the reference tree. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Dataset} () const
+\begin{DoxyCompactList}\small\item\em Expose the dataset. \end{DoxyCompactList}\item 
+bool \& \textbf{ First\+Leaf\+Exact} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not we traverse to the first leaf without approximation. \end{DoxyCompactList}\item 
+bool \textbf{ First\+Leaf\+Exact} () const
+\begin{DoxyCompactList}\small\item\em Get whether or not we traverse to the first leaf without approximation. \end{DoxyCompactList}\item 
+void \textbf{ Initialize\+Model} (const bool naive, const bool single\+Mode)
+\begin{DoxyCompactList}\small\item\em Initialize the model\textquotesingle{}s memory. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Leaf\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the leaf size (only relevant when the kd-\/tree is used). \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Leaf\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the leaf size (only relevant when the kd-\/tree is used). \end{DoxyCompactList}\item 
+bool \& \textbf{ Naive} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not naive search is being used. \end{DoxyCompactList}\item 
+bool \textbf{ Naive} () const
+\begin{DoxyCompactList}\small\item\em Get whether or not naive search is being used. \end{DoxyCompactList}\item 
+\textbf{ RAModel} \& \textbf{ operator=} (const \textbf{ RAModel} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel}. \end{DoxyCompactList}\item 
+\textbf{ RAModel} \& \textbf{ operator=} (\textbf{ RAModel} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel}. \end{DoxyCompactList}\item 
+bool \& \textbf{ Random\+Basis} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not a random basis is being used. \end{DoxyCompactList}\item 
+bool \textbf{ Random\+Basis} () const
+\begin{DoxyCompactList}\small\item\em Get whether or not a random basis is being used. \end{DoxyCompactList}\item 
+bool \& \textbf{ Sample\+At\+Leaves} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not sampling is done at the leaves. \end{DoxyCompactList}\item 
+bool \textbf{ Sample\+At\+Leaves} () const
+\begin{DoxyCompactList}\small\item\em Get whether or not sampling is done at the leaves. \end{DoxyCompactList}\item 
+void \textbf{ Search} (arma\+::mat \&\&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Perform rank-\/approximate neighbor search, taking ownership of the query set. \end{DoxyCompactList}\item 
+void \textbf{ Search} (const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Perform rank-\/approximate neighbor search, using the reference set as the query set. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the model. \end{DoxyCompactList}\item 
+bool \& \textbf{ Single\+Mode} ()
+\begin{DoxyCompactList}\small\item\em Modify whether or not single-\/tree search is being used. \end{DoxyCompactList}\item 
+bool \textbf{ Single\+Mode} () const
+\begin{DoxyCompactList}\small\item\em Get whether or not single-\/tree search is being used. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Single\+Sample\+Limit} ()
+\begin{DoxyCompactList}\small\item\em Modify the limit on the size of a node that can be approximation. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Single\+Sample\+Limit} () const
+\begin{DoxyCompactList}\small\item\em Get the limit on the size of a node that can be approximated. \end{DoxyCompactList}\item 
+double \& \textbf{ Tau} ()
+\begin{DoxyCompactList}\small\item\em Modify the rank-\/approximation in percentile of the data. \end{DoxyCompactList}\item 
+double \textbf{ Tau} () const
+\begin{DoxyCompactList}\small\item\em Get the rank-\/approximation in percentile of the data. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Tree\+Name} () const
+\begin{DoxyCompactList}\small\item\em Get the name of the tree type. \end{DoxyCompactList}\item 
+\textbf{ Tree\+Types} \& \textbf{ Tree\+Type} ()
+\begin{DoxyCompactList}\small\item\em Modify the type of tree being used. \end{DoxyCompactList}\item 
+\textbf{ Tree\+Types} \textbf{ Tree\+Type} () const
+\begin{DoxyCompactList}\small\item\em Get the type of tree being used. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel} class provides an abstraction for the \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch} class, abstracting away the Tree\+Type parameter and allowing it to be specified at runtime in this class. 
+
+This class is written for the sake of the \textquotesingle{}allkrann\textquotesingle{} program, but is not necessarily restricted to that use. 
+
+Definition at line 257 of file ra\+\_\+model.\+hpp.
+
+
+
+\doxysubsection{Member Enumeration Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a6597b8539c6114170dc185d332ba4c8d}} 
+\index{RAModel@{RAModel}!TreeTypes@{TreeTypes}}
+\index{TreeTypes@{TreeTypes}!RAModel@{RAModel}}
+\doxysubsubsection{TreeTypes}
+{\footnotesize\ttfamily enum \textbf{ Tree\+Types}}
+
+
+
+The list of tree types we can use with \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch}. 
+
+Does not include ball trees; see \#338. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{KD\_TREE@{KD\_TREE}!RAModel@{RAModel}}\index{RAModel@{RAModel}!KD\_TREE@{KD\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a6597b8539c6114170dc185d332ba4c8daa688e9cd1158916bc183aa517724568c}} 
+KD\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{COVER\_TREE@{COVER\_TREE}!RAModel@{RAModel}}\index{RAModel@{RAModel}!COVER\_TREE@{COVER\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a6597b8539c6114170dc185d332ba4c8da92f172b47c8ae18ed401f8bf9f5ecad3}} 
+COVER\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\_TREE@{R\_TREE}!RAModel@{RAModel}}\index{RAModel@{RAModel}!R\_TREE@{R\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a6597b8539c6114170dc185d332ba4c8da2a93dc779a94d5f09b72ffbdc5ac9cd9}} 
+R\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\_STAR\_TREE@{R\_STAR\_TREE}!RAModel@{RAModel}}\index{RAModel@{RAModel}!R\_STAR\_TREE@{R\_STAR\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a6597b8539c6114170dc185d332ba4c8dae5b37a52c347bc7ef3d23fde0941d27b}} 
+R\+\_\+\+STAR\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{X\_TREE@{X\_TREE}!RAModel@{RAModel}}\index{RAModel@{RAModel}!X\_TREE@{X\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a6597b8539c6114170dc185d332ba4c8da6560e35678b39452afce0f0fcc7f6059}} 
+X\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HILBERT\_R\_TREE@{HILBERT\_R\_TREE}!RAModel@{RAModel}}\index{RAModel@{RAModel}!HILBERT\_R\_TREE@{HILBERT\_R\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a6597b8539c6114170dc185d332ba4c8da470c5bcf4135483a37e9a87f061e1c5c}} 
+HILBERT\+\_\+\+R\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\_PLUS\_TREE@{R\_PLUS\_TREE}!RAModel@{RAModel}}\index{RAModel@{RAModel}!R\_PLUS\_TREE@{R\_PLUS\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a6597b8539c6114170dc185d332ba4c8da4e91a297c1504b34ca1a9cdcd6ba22ff}} 
+R\+\_\+\+PLUS\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\_PLUS\_PLUS\_TREE@{R\_PLUS\_PLUS\_TREE}!RAModel@{RAModel}}\index{RAModel@{RAModel}!R\_PLUS\_PLUS\_TREE@{R\_PLUS\_PLUS\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a6597b8539c6114170dc185d332ba4c8da1208f6f2a7b337e4edbd02a8de98d3f5}} 
+R\+\_\+\+PLUS\+\_\+\+PLUS\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UB\_TREE@{UB\_TREE}!RAModel@{RAModel}}\index{RAModel@{RAModel}!UB\_TREE@{UB\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a6597b8539c6114170dc185d332ba4c8dae36341db74fc7194b238cf7c528a7fbc}} 
+UB\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OCTREE@{OCTREE}!RAModel@{RAModel}}\index{RAModel@{RAModel}!OCTREE@{OCTREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a6597b8539c6114170dc185d332ba4c8daabefbb1ea7a801b1b00c9b0709dcec50}} 
+OCTREE&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 264 of file ra\+\_\+model.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_aa46e3dcacefb0a08694fb0521c2d05b3}} 
+\index{RAModel@{RAModel}!RAModel@{RAModel}}
+\index{RAModel@{RAModel}!RAModel@{RAModel}}
+\doxysubsubsection{RAModel()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ RAModel} (\begin{DoxyParamCaption}\item[{\textbf{ Tree\+Types}}]{tree\+Type = {\ttfamily TreeTypes\+:\+:KD\+\_\+TREE},  }\item[{bool}]{random\+Basis = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Initialize the \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel} with the given type and whether or not a random basis should be used. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a8ef591cea1595a3b3ddd49c91bd9c6ed}} 
+\index{RAModel@{RAModel}!RAModel@{RAModel}}
+\index{RAModel@{RAModel}!RAModel@{RAModel}}
+\doxysubsubsection{RAModel()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ RAModel} (\begin{DoxyParamCaption}\item[{const \textbf{ RAModel} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy the given \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel} to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a26c8c355e98626832fb83d58fd47e79b}} 
+\index{RAModel@{RAModel}!RAModel@{RAModel}}
+\index{RAModel@{RAModel}!RAModel@{RAModel}}
+\doxysubsubsection{RAModel()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ RAModel} (\begin{DoxyParamCaption}\item[{\textbf{ RAModel} \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of the given \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel} to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a86741564b1d28a800d1c52993f36b8b6}} 
+\index{RAModel@{RAModel}!````~RAModel@{$\sim$RAModel}}
+\index{````~RAModel@{$\sim$RAModel}!RAModel@{RAModel}}
+\doxysubsubsection{$\sim$RAModel()}
+{\footnotesize\ttfamily $\sim$\textbf{ RAModel} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clean memory, if necessary. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_acbb0e4747a3a307bee88bad71e5eeaf1}} 
+\index{RAModel@{RAModel}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!RAModel@{RAModel}}
+\doxysubsubsection{Alpha()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Alpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the desired success probability. 
+
+
+
+Definition at line 355 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Alpha().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a500ecd077d5cc5fdbf6ceb095d8de9e1}} 
+\index{RAModel@{RAModel}!Alpha@{Alpha}}
+\index{Alpha@{Alpha}!RAModel@{RAModel}}
+\doxysubsubsection{Alpha()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Alpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the desired success probability. 
+
+
+
+Definition at line 353 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Alpha().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a394d212c5373090724aaea3ba24b482e}} 
+\index{RAModel@{RAModel}!BuildModel@{BuildModel}}
+\index{BuildModel@{BuildModel}!RAModel@{RAModel}}
+\doxysubsubsection{BuildModel()}
+{\footnotesize\ttfamily void Build\+Model (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{reference\+Set,  }\item[{const size\+\_\+t}]{leaf\+Size,  }\item[{const bool}]{naive,  }\item[{const bool}]{single\+Mode }\end{DoxyParamCaption})}
+
+
+
+Build the reference tree. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_aff320b9a86b77a150e630c01d5888273}} 
+\index{RAModel@{RAModel}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!RAModel@{RAModel}}
+\doxysubsubsection{Dataset()}
+{\footnotesize\ttfamily const arma\+::mat\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose the dataset. 
+
+
+
+Definition at line 335 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Dataset().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_aca2eb648feb965d3bcb0b0b73f8b2b0f}} 
+\index{RAModel@{RAModel}!FirstLeafExact@{FirstLeafExact}}
+\index{FirstLeafExact@{FirstLeafExact}!RAModel@{RAModel}}
+\doxysubsubsection{FirstLeafExact()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& First\+Leaf\+Exact (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify whether or not we traverse to the first leaf without approximation. 
+
+
+
+Definition at line 365 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+First\+Leaf\+Exact().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a17ec6e467897eb8aee3b519e0758e77d}} 
+\index{RAModel@{RAModel}!FirstLeafExact@{FirstLeafExact}}
+\index{FirstLeafExact@{FirstLeafExact}!RAModel@{RAModel}}
+\doxysubsubsection{FirstLeafExact()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool First\+Leaf\+Exact (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get whether or not we traverse to the first leaf without approximation. 
+
+
+
+Definition at line 363 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+First\+Leaf\+Exact().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a7f40b35e0dbe4860397eeeda65197d64}} 
+\index{RAModel@{RAModel}!InitializeModel@{InitializeModel}}
+\index{InitializeModel@{InitializeModel}!RAModel@{RAModel}}
+\doxysubsubsection{InitializeModel()}
+{\footnotesize\ttfamily void Initialize\+Model (\begin{DoxyParamCaption}\item[{const bool}]{naive,  }\item[{const bool}]{single\+Mode }\end{DoxyParamCaption})}
+
+
+
+Initialize the model\textquotesingle{}s memory. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a0966773f5b7ef0c324ed40b1cf4b94d1}} 
+\index{RAModel@{RAModel}!LeafSize@{LeafSize}}
+\index{LeafSize@{LeafSize}!RAModel@{RAModel}}
+\doxysubsubsection{LeafSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the leaf size (only relevant when the kd-\/tree is used). 
+
+
+
+Definition at line 375 of file ra\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_ab81b93ebb200783ca4c5747f31889fa0}} 
+\index{RAModel@{RAModel}!LeafSize@{LeafSize}}
+\index{LeafSize@{LeafSize}!RAModel@{RAModel}}
+\doxysubsubsection{LeafSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the leaf size (only relevant when the kd-\/tree is used). 
+
+
+
+Definition at line 373 of file ra\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_af7d397adca3f411b4e2d2f977b280ce6}} 
+\index{RAModel@{RAModel}!Naive@{Naive}}
+\index{Naive@{Naive}!RAModel@{RAModel}}
+\doxysubsubsection{Naive()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& Naive (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify whether or not naive search is being used. 
+
+
+
+Definition at line 345 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Naive().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a343230e7d7344e3f7d5f5f2eb89cf2c5}} 
+\index{RAModel@{RAModel}!Naive@{Naive}}
+\index{Naive@{Naive}!RAModel@{RAModel}}
+\doxysubsubsection{Naive()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Naive (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get whether or not naive search is being used. 
+
+
+
+Definition at line 343 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Naive().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_af3824273bd64946059c529f5c7ecb846}} 
+\index{RAModel@{RAModel}!operator=@{operator=}}
+\index{operator=@{operator=}!RAModel@{RAModel}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ RAModel}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ RAModel} \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy the given \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel} to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a9a431b4c5f393618c059481e1dc15db3}} 
+\index{RAModel@{RAModel}!operator=@{operator=}}
+\index{operator=@{operator=}!RAModel@{RAModel}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ RAModel}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ RAModel} \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of the given \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel} to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a8111114602e748b38c0875f82f323544}} 
+\index{RAModel@{RAModel}!RandomBasis@{RandomBasis}}
+\index{RandomBasis@{RandomBasis}!RAModel@{RAModel}}
+\doxysubsubsection{RandomBasis()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& Random\+Basis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify whether or not a random basis is being used. 
+
+Be sure to rebuild the model using \doxyref{Build\+Model()}{p.}{classmlpack_1_1neighbor_1_1RAModel_a394d212c5373090724aaea3ba24b482e}. 
+
+Definition at line 386 of file ra\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_ae3053ad1e3b42eb1ae4105aecd060cf6}} 
+\index{RAModel@{RAModel}!RandomBasis@{RandomBasis}}
+\index{RandomBasis@{RandomBasis}!RAModel@{RAModel}}
+\doxysubsubsection{RandomBasis()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Random\+Basis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get whether or not a random basis is being used. 
+
+
+
+Definition at line 383 of file ra\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a9f6d54dd0424f827becc2e2e9969b1bb}} 
+\index{RAModel@{RAModel}!SampleAtLeaves@{SampleAtLeaves}}
+\index{SampleAtLeaves@{SampleAtLeaves}!RAModel@{RAModel}}
+\doxysubsubsection{SampleAtLeaves()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& Sample\+At\+Leaves (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify whether or not sampling is done at the leaves. 
+
+
+
+Definition at line 360 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Sample\+At\+Leaves().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_aa9dd91d6b96e1d0b343c3cec27372036}} 
+\index{RAModel@{RAModel}!SampleAtLeaves@{SampleAtLeaves}}
+\index{SampleAtLeaves@{SampleAtLeaves}!RAModel@{RAModel}}
+\doxysubsubsection{SampleAtLeaves()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Sample\+At\+Leaves (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get whether or not sampling is done at the leaves. 
+
+
+
+Definition at line 358 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Sample\+At\+Leaves().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_af621a93ffd3ff29728b4f4d2380ccfd5}} 
+\index{RAModel@{RAModel}!Search@{Search}}
+\index{Search@{Search}!RAModel@{RAModel}}
+\doxysubsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{query\+Set,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances }\end{DoxyParamCaption})}
+
+
+
+Perform rank-\/approximate neighbor search, taking ownership of the query set. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a619c7d4931e628a0c199159c57b34cbd}} 
+\index{RAModel@{RAModel}!Search@{Search}}
+\index{Search@{Search}!RAModel@{RAModel}}
+\doxysubsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances }\end{DoxyParamCaption})}
+
+
+
+Perform rank-\/approximate neighbor search, using the reference set as the query set. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a65cba07328997659bec80b9879b15a51}} 
+\index{RAModel@{RAModel}!serialize@{serialize}}
+\index{serialize@{serialize}!RAModel@{RAModel}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the model. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_adadacd63ddeadf138d834b1fdc632773}} 
+\index{RAModel@{RAModel}!SingleMode@{SingleMode}}
+\index{SingleMode@{SingleMode}!RAModel@{RAModel}}
+\doxysubsubsection{SingleMode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& Single\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify whether or not single-\/tree search is being used. 
+
+
+
+Definition at line 340 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Single\+Mode().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a7477b3e8499a6158bbe177e7f30d4947}} 
+\index{RAModel@{RAModel}!SingleMode@{SingleMode}}
+\index{SingleMode@{SingleMode}!RAModel@{RAModel}}
+\doxysubsubsection{SingleMode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Single\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get whether or not single-\/tree search is being used. 
+
+
+
+Definition at line 338 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Single\+Mode().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_ae78a7b8e9c96a2dbf646a27efee047b1}} 
+\index{RAModel@{RAModel}!SingleSampleLimit@{SingleSampleLimit}}
+\index{SingleSampleLimit@{SingleSampleLimit}!RAModel@{RAModel}}
+\doxysubsubsection{SingleSampleLimit()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Single\+Sample\+Limit (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the limit on the size of a node that can be approximation. 
+
+
+
+Definition at line 370 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Single\+Sample\+Limit().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a3a2580f686a9de3078e499b1280e2a9f}} 
+\index{RAModel@{RAModel}!SingleSampleLimit@{SingleSampleLimit}}
+\index{SingleSampleLimit@{SingleSampleLimit}!RAModel@{RAModel}}
+\doxysubsubsection{SingleSampleLimit()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Single\+Sample\+Limit (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the limit on the size of a node that can be approximated. 
+
+
+
+Definition at line 368 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Single\+Sample\+Limit().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_ad522d61ed716a322376adea25ebdbc90}} 
+\index{RAModel@{RAModel}!Tau@{Tau}}
+\index{Tau@{Tau}!RAModel@{RAModel}}
+\doxysubsubsection{Tau()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the rank-\/approximation in percentile of the data. 
+
+
+
+Definition at line 350 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Tau().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a4a4b0fafde4cc4c856a53025dc8c4c21}} 
+\index{RAModel@{RAModel}!Tau@{Tau}}
+\index{Tau@{Tau}!RAModel@{RAModel}}
+\doxysubsubsection{Tau()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the rank-\/approximation in percentile of the data. 
+
+
+
+Definition at line 348 of file ra\+\_\+model.\+hpp.
+
+
+
+References RAWrapper\+Base\+::\+Tau().
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a98cbe53c61f1681514056f78a89a57b8}} 
+\index{RAModel@{RAModel}!TreeName@{TreeName}}
+\index{TreeName@{TreeName}!RAModel@{RAModel}}
+\doxysubsubsection{TreeName()}
+{\footnotesize\ttfamily std\+::string Tree\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the name of the tree type. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_a56b0460c7769ea1ef9d8314026ef36c6}} 
+\index{RAModel@{RAModel}!TreeType@{TreeType}}
+\index{TreeType@{TreeType}!RAModel@{RAModel}}
+\doxysubsubsection{TreeType()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Tree\+Types}\& Tree\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the type of tree being used. 
+
+
+
+Definition at line 380 of file ra\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1RAModel_adb3d0b75d7754ec6741d890232576ffc}} 
+\index{RAModel@{RAModel}!TreeType@{TreeType}}
+\index{TreeType@{TreeType}!RAModel@{RAModel}}
+\doxysubsubsection{TreeType()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Tree\+Types} Tree\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the type of tree being used. 
+
+
+
+Definition at line 378 of file ra\+\_\+model.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/rann/\textbf{ ra\+\_\+model.\+hpp}\end{DoxyCompactItemize}

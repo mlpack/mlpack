@@ -1,0 +1,45 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/bindings/python/import\+\_\+decl.hpp File Reference}
+\label{import__decl_8hpp}\index{/home/aakash/mlpack/src/mlpack/bindings/python/import\_decl.hpp@{/home/aakash/mlpack/src/mlpack/bindings/python/import\_decl.hpp}}
+Include dependency graph for import\+\_\+decl.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{import__decl_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=179pt]{import__decl_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::bindings}
+\item 
+ \textbf{ mlpack\+::bindings\+::python}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Import\+Decl} (util\+::\+Param\+Data \&, const size\+\_\+t, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em For a non-\/serializable type, print nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Import\+Decl} (util\+::\+Param\+Data \&, const size\+\_\+t, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em For a matrix type, print nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Import\+Decl} (util\+::\+Param\+Data \&d, const size\+\_\+t indent, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em For a serializable type, print a cppclass definition. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Import\+Decl} (util\+::\+Param\+Data \&d, const void $\ast$indent, void $\ast$)
+\begin{DoxyCompactList}\small\item\em Print the cppclass definition for a serializable model; print nothing for a non-\/serializable type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+For a serializable model, print the class import.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

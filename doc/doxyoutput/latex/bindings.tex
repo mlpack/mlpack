@@ -1,0 +1,941 @@
+\doxysection{Overview}\label{bindings_bindings_overview}
+mlpack has a system to automatically generate bindings to other languages, such as Python and command-\/line programs, and it is extensible to other languages with some amount of ease. The maintenance burden of this system is low, and it is designed in such a way that the bindings produced are always up to date across languages and up to date with the mlpack library itself.
+
+This document describes the full functioning of the system, and is a good place to start for someone who wishes to understand the system so that they can contribute a new binding language, or someone who wants to understand so they can adapt the system for use in their own project, or someone who is simply curious enough to see how the sausage is made.
+
+The document is split into several sections\+:
+
+
+\begin{DoxyItemize}
+\item \doxyref{Introduction}{p.}{bindings_bindings_intro}
+\item \doxyref{Writing code that can be turned into a binding}{p.}{bindings_bindings_code}
+\item \doxyref{How to write mlpack bindings}{p.}{bindings_bindings_general}
+\begin{DoxyItemize}
+\item \doxyref{Documenting a program with}{p.}{bindings_bindings_general_program_doc}
+\item \doxyref{Defining parameters for a program}{p.}{bindings_bindings_general_define_params}
+\item \doxyref{Using IO in an mlpack\+Main() function}{p.}{bindings_bindings_general_functions}
+\item \doxyref{More documentation on using IO}{p.}{bindings_bindings_general_more}
+\end{DoxyItemize}
+\item \doxyref{Structure of IO module and associated macros}{p.}{bindings_bindings_structure}
+\item \doxyref{Command-\/line program bindings}{p.}{bindings_bindings_cli}
+\begin{DoxyItemize}
+\item \doxyref{mlpack\+Main() definition}{p.}{bindings_bindings_cli_mlpack_main}
+\item \doxyref{Matrix and model parameter handling}{p.}{bindings_bindings_cli_matrix}
+\item \doxyref{Parsing the command line}{p.}{bindings_bindings_cli_parsing}
+\end{DoxyItemize}
+\item \doxyref{Python bindings}{p.}{bindings_bindings_python}
+\begin{DoxyItemize}
+\item \doxyref{Passing matrices to/from Python}{p.}{bindings_bindings_python_matrix}
+\item \doxyref{Passing model parameter to/from Python}{p.}{bindings_bindings_python_model}
+\item \doxyref{CMake generation of setup.\+py}{p.}{bindings_bindings_python_setup_py}
+\item \doxyref{Building the .pyx files}{p.}{bindings_bindings_python_build_pyx}
+\item \doxyref{Testing the Python bindings}{p.}{bindings_bindings_python_testing}
+\end{DoxyItemize}
+\item \doxyref{Adding new binding types}{p.}{bindings_bindings_new}
+\end{DoxyItemize}\doxysection{Introduction}\label{bindings_bindings_intro}
+C++ is not the most popular language on the planet, and it (unfortunately) can scare many away with its ultra-\/verbose error messages, confusing template rules, and complex metaprogramming techniques. Most practitioners of machine learning tend to avoid writing native C++ and instead prefer other languages---probably most notably Python.
+
+In the case of Python, many projects will use tools like SWIG ({\texttt{ http\+://www.\+swig.\+org/}}) to automatically generate bindings, or they might hand-\/write Cython. The same types of strategies may be used for other languages; hand-\/written MEX files may be used for MATLAB, hand-\/written RCpp bindings might be used for R bindings, and so forth.
+
+However, these approaches have a fundamental flaw\+: the hand-\/written bindings must be maintained, and risk going out of date as the rest of the library changes or new functionality is added. This incurs a maintenance burden\+: each major change to the library means that someone must update the bindings and test that they are still working. mlpack is not prepared to handle this maintenance workload; therefore an alternate solution is needed.
+
+At the time of the design of this system, mlpack shipped headers for a C++ library as well as many ($\sim$40) hand-\/written command-\/line programs that used the \doxyref{mlpack\+::\+IO}{p.}{classmlpack_1_1IO} object to manage command-\/line arguments. These programs all had similar structure, and could be logically split into three sections\+:
+
+
+\begin{DoxyItemize}
+\item parse the input options supplied by the user
+\item run the machine learning algorithm
+\item prepare the output to return to the user
+\end{DoxyItemize}
+
+The user might interface with this command-\/line program like the following\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\$ mlpack\_knn -\/r reference.csv -\/q query.csv -\/k 3 -\/d d.csv -\/n n.csv}
+
+\end{DoxyCode}
+
+
+That is, they would pass a number of input options---some were numeric values (like {\ttfamily -\/k} {\ttfamily 3} ); some were filenames (like {\ttfamily -\/r} {\ttfamily reference.\+csv} ); and a few other types also. Therefore, the first stage of the program---parsing input options---would be handled by reading the command line and loading any input matrices. Preparing the output, which usually consists of data matrices (i.\+e. {\ttfamily -\/d} {\ttfamily d.\+csv} ) involves saving the matrix returned by the algorithm to the user\textquotesingle{}s desired file.
+
+Ideally, any binding to any language would have this same structure, and the actual \char`\"{}run the machine learning algorithm\char`\"{} code could be identical. For MATLAB, for instance, we would not need to read the file {\ttfamily reference.\+csv} but instead the user would simply pass their data matrix as an argument. So each input and output parameter would need to be handled differently, but the algorithm could be run identically across all bindings.
+
+Therefore, design of an automatically-\/generated binding system would simply involve generating the boilerplate code necessary to parse input options for a given language, and to return output options to a user.\doxysection{Writing code that can be turned into a binding}\label{bindings_bindings_code}
+This section details what a binding file might actually look like. It is good to have this API in mind when reading the following sections.
+
+Each mlpack binding is typically contained in the {\ttfamily src/mlpack/methods/} folder corresponding to a given machine learning algorithm, with the suffix {\ttfamily \+\_\+main.\+cpp} ; so an example is {\ttfamily src/mlpack/methods/pca/pca\+\_\+main.\+cpp} .
+
+These files have roughly two parts\+:
+
+
+\begin{DoxyItemize}
+\item definition of the input and output parameters with {\ttfamily PARAM} macros
+\item implementation of {\ttfamily mlpack\+Main()}, which is the actual machine learning code
+\end{DoxyItemize}
+
+Here is a simple example file\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// This is a stripped version of mean\_shift\_main.cpp.}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <mlpack/prereqs.hpp>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <mlpack/core/util/cli.hpp>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <mlpack/core/util/mlpack\_main.hpp>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <mlpack/core/kernels/gaussian\_kernel.hpp>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}mean\_shift.hpp"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack;}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack::meanshift;}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack::kernel;}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Define the help text for the program.  The PRINT\_PARAM\_STRING() and}}
+\DoxyCodeLine{\textcolor{comment}{// PRINT\_DATASET() macros are used to print the name of the parameter as seen in}}
+\DoxyCodeLine{\textcolor{comment}{// the binding type that is being used, and the PRINT\_CALL() macro generates a}}
+\DoxyCodeLine{\textcolor{comment}{// sample invocation of the program in the language of the binding type that is}}
+\DoxyCodeLine{\textcolor{comment}{// being used.  Note that the macros must have + on either side of them.  We}}
+\DoxyCodeLine{\textcolor{comment}{// provide some extra references with the "{}SEE\_ALSO()"{} macro, which is used to}}
+\DoxyCodeLine{\textcolor{comment}{// generate documentation for the website.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Program Name.}}
+\DoxyCodeLine{BINDING\_NAME(\textcolor{stringliteral}{"{}Mean Shift Clustering"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Short description.}}
+\DoxyCodeLine{BINDING\_SHORT\_DESC(}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}A fast implementation of mean-\/shift clustering using dual-\/tree range "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}search.  Given a dataset, this uses the mean shift algorithm to produce "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}and return a clustering of the data."{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Long description.}}
+\DoxyCodeLine{BINDING\_LONG\_DESC(}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}This program performs mean shift clustering on the given dataset, storing "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}the learned cluster assignments either as a column of labels in the input "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}dataset or separately."{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)n"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}The input dataset should be specified with the "{}} +}
+\DoxyCodeLine{    PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}input"{}}) + \textcolor{stringliteral}{"{} parameter, and the radius used for search"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{} can be specified with the "{}} + PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}radius"{}}) + \textcolor{stringliteral}{"{} "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}parameter.  The maximum number of iterations before algorithm termination "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}is controlled with the "{}} + PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}max\_iterations"{}}) + \textcolor{stringliteral}{"{} "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}parameter."{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)n"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}The output labels may be saved with the "{}} + PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}output"{}}) +}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{} output parameter and the centroids of each cluster may be saved with the"{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{} "{}} + PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}centroid"{}}) + \textcolor{stringliteral}{"{} output parameter."{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Example.}}
+\DoxyCodeLine{BINDING\_EXAMPLE(}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}For example, to run mean shift clustering on the dataset "{}} +}
+\DoxyCodeLine{    PRINT\_DATASET(\textcolor{stringliteral}{"{}data"{}}) + \textcolor{stringliteral}{"{} and store the centroids to "{}} +}
+\DoxyCodeLine{    PRINT\_DATASET(\textcolor{stringliteral}{"{}centroids"{}}) + \textcolor{stringliteral}{"{}, the following command may be used: "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)n"{}} +}
+\DoxyCodeLine{    PRINT\_CALL(\textcolor{stringliteral}{"{}mean\_shift"{}}, \textcolor{stringliteral}{"{}input"{}}, \textcolor{stringliteral}{"{}data"{}}, \textcolor{stringliteral}{"{}centroid"{}}, \textcolor{stringliteral}{"{}centroids"{}}));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// See also...}}
+\DoxyCodeLine{BINDING\_SEE\_ALSO(\textcolor{stringliteral}{"{}@kmeans"{}}, \textcolor{stringliteral}{"{}\#kmeans"{}});}
+\DoxyCodeLine{BINDING\_SEE\_ALSO(\textcolor{stringliteral}{"{}@dbscan"{}}, \textcolor{stringliteral}{"{}\#dbscan"{}});}
+\DoxyCodeLine{BINDING\_SEE\_ALSO(\textcolor{stringliteral}{"{}Mean shift on Wikipedia"{}},}
+\DoxyCodeLine{        \textcolor{stringliteral}{"{}https://en.wikipedia.org/wiki/Mean\_shift"{}});}
+\DoxyCodeLine{BINDING\_SEE\_ALSO(\textcolor{stringliteral}{"{}Mean Shift, Mode Seeking, and Clustering (pdf)"{}},}
+\DoxyCodeLine{        \textcolor{stringliteral}{"{}http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.510.1222"{}}}
+\DoxyCodeLine{        \textcolor{stringliteral}{"{}\&rep=rep1\&type=pdf"{}});}
+\DoxyCodeLine{BINDING\_SEE\_ALSO(\textcolor{stringliteral}{"{}mlpack::mean\_shift::MeanShift C++ class documentation"{}},}
+\DoxyCodeLine{        \textcolor{stringliteral}{"{}@doxygen/classmlpack\_1\_1meanshift\_1\_1MeanShift.html"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Define parameters for the executable.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Required option: the user must give us a matrix.}}
+\DoxyCodeLine{PARAM\_MATRIX\_IN\_REQ(\textcolor{stringliteral}{"{}input"{}}, \textcolor{stringliteral}{"{}Input dataset to perform clustering on."{}}, \textcolor{stringliteral}{"{}i"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Output options: the user can save the output matrix of labels and/or the}}
+\DoxyCodeLine{\textcolor{comment}{// centroids.}}
+\DoxyCodeLine{PARAM\_UCOL\_OUT(\textcolor{stringliteral}{"{}output"{}}, \textcolor{stringliteral}{"{}Matrix to write output labels to."{}}, \textcolor{stringliteral}{"{}o"{}});}
+\DoxyCodeLine{PARAM\_MATRIX\_OUT(\textcolor{stringliteral}{"{}centroid"{}}, \textcolor{stringliteral}{"{}If specified, the centroids of each cluster will "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}be written to the given matrix."{}}, \textcolor{stringliteral}{"{}C"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Mean shift configuration options.}}
+\DoxyCodeLine{PARAM\_INT\_IN(\textcolor{stringliteral}{"{}max\_iterations"{}}, \textcolor{stringliteral}{"{}Maximum number of iterations before mean shift "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}terminates."{}}, \textcolor{stringliteral}{"{}m"{}}, 1000);}
+\DoxyCodeLine{PARAM\_DOUBLE\_IN(\textcolor{stringliteral}{"{}radius"{}}, \textcolor{stringliteral}{"{}If the distance between two centroids is less than "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}the given radius, one will be removed.  A radius of 0 or less means an "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}estimate will be calculated and used for the radius."{}}, \textcolor{stringliteral}{"{}r"{}}, 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} mlpackMain()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{// Process the parameters that the user passed.}}
+\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{double} radius = IO::GetParam<double>(\textcolor{stringliteral}{"{}radius"{}});}
+\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{int} maxIterations = IO::GetParam<int>(\textcolor{stringliteral}{"{}max\_iterations"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (maxIterations < 0)}
+\DoxyCodeLine{  \{}
+\DoxyCodeLine{    Log::Fatal << \textcolor{stringliteral}{"{}Invalid value for maximum iterations ("{}} << maxIterations <<}
+\DoxyCodeLine{        \textcolor{stringliteral}{"{})! Must be greater than or equal to 0."{}} << endl;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Warn, if the user did not specify that they wanted any output.}}
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (!IO::HasParam(\textcolor{stringliteral}{"{}output"{}}) \&\& !IO::HasParam(\textcolor{stringliteral}{"{}centroid"{}}))}
+\DoxyCodeLine{  \{}
+\DoxyCodeLine{    Log::Warn << \textcolor{stringliteral}{"{}-\/-\/output\_file, -\/-\/in\_place, and -\/-\/centroid\_file are not set; "{}}}
+\DoxyCodeLine{        << \textcolor{stringliteral}{"{}no results will be saved."{}} << endl;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  arma::mat dataset = std::move(IO::GetParam<arma::mat>(\textcolor{stringliteral}{"{}input"{}}));}
+\DoxyCodeLine{  arma::mat centroids;}
+\DoxyCodeLine{  arma::Col<size\_t> assignments;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Prepare and run the actual algorithm.}}
+\DoxyCodeLine{  MeanShift<> meanShift(radius, maxIterations);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  Timer::Start(\textcolor{stringliteral}{"{}clustering"{}});}
+\DoxyCodeLine{  Log::Info << \textcolor{stringliteral}{"{}Performing mean shift clustering..."{}} << endl;}
+\DoxyCodeLine{  meanShift.Cluster(dataset, assignments, centroids);}
+\DoxyCodeLine{  Timer::Stop(\textcolor{stringliteral}{"{}clustering"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  Log::Info << \textcolor{stringliteral}{"{}Found "{}} << centroids.n\_cols << \textcolor{stringliteral}{"{} centroids."{}} << endl;}
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (radius <= 0.0)}
+\DoxyCodeLine{    Log::Info << \textcolor{stringliteral}{"{}Estimated radius was "{}} << meanShift.Radius() << \textcolor{stringliteral}{"{}.\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Should we give the user the output matrix?}}
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (IO::HasParam(\textcolor{stringliteral}{"{}output"{}}))}
+\DoxyCodeLine{    IO::GetParam<arma::Col<size\_t>>(\textcolor{stringliteral}{"{}output"{}}) = std::move(assignments);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Should we give the user the centroid matrix?}}
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (IO::HasParam(\textcolor{stringliteral}{"{}centroid"{}}))}
+\DoxyCodeLine{    IO::GetParam<arma::mat>(\textcolor{stringliteral}{"{}centroid"{}}) = std::move(centroids);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+We can see that we have defined the basic program information in the {\ttfamily \doxyref{BINDING\+\_\+\+NAME()}{p.}{param_8hpp_a3610abda0a69dc19a08c50e713f615b7}}, {\ttfamily \doxyref{BINDING\+\_\+\+SHORT\+\_\+\+DESC()}{p.}{param_8hpp_a013f7f337d6139c7f6de3a4f0fa7b019}}, {\ttfamily \doxyref{BINDING\+\_\+\+LONG\+\_\+\+DESC()}{p.}{param_8hpp_a7f7cbd16d4fecab7136b5ca1cbcbb0a7}}, {\ttfamily \doxyref{BINDING\+\_\+\+EXAMPLE()}{p.}{param_8hpp_a9ffe1d6d254b3e50a5611f77ee381838}} and {\ttfamily \doxyref{BINDING\+\_\+\+SEE\+\_\+\+ALSO()}{p.}{param_8hpp_add4a79815b7f3972699cc414bfc9fe57}} macros. This is, for instance, what is displayed to describe the binding if the user passed the {\ttfamily -\/-\/help} option for a command-\/line program.
+
+Then, we define five parameters, three input and two output, that define the data and options that the mean shift clustering will function on. These parameters are defined with the {\ttfamily PARAM} macros, of which there are many. The names of these macros specify the type, whether the parameter is required, and whether the parameter is input or output. Some examples\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxyref{PARAM\+\_\+\+STRING\+\_\+\+IN()}{p.}{param_8hpp_a9514ae93b51ba592bc3299da8326bb80}} -- a string-\/type input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+MATRIX\+\_\+\+OUT()}{p.}{param_8hpp_a20f436f371a7613b532ae3a4c0416b30}} -- a matrix-\/type output parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+DOUBLE\+\_\+\+IN\+\_\+\+REQ()}{p.}{param_8hpp_a1236858e19f2e8be7da663d4aecfac9f}} -- a required double-\/type input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+UMATRIX\+\_\+\+IN()}{p.}{param_8hpp_a0db58e2b5c75754d200638093b9cc40f}} -- an unsigned matrix-\/type input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+MODEL\+\_\+\+IN()}{p.}{param_8hpp_a663f71826f69f70d119b5f577d20721e}} -- a serializable model-\/type input parameter
+\end{DoxyItemize}
+
+Note that each of these macros may have slightly different syntax. See the links above for further documentation.
+
+In order to write a new binding, then, you simply must write {\ttfamily \doxyref{BINDING\+\_\+\+NAME()}{p.}{param_8hpp_a3610abda0a69dc19a08c50e713f615b7}}, {\ttfamily \doxyref{BINDING\+\_\+\+SHORT\+\_\+\+DESC()}{p.}{param_8hpp_a013f7f337d6139c7f6de3a4f0fa7b019}}, {\ttfamily \doxyref{BINDING\+\_\+\+LONG\+\_\+\+DESC()}{p.}{param_8hpp_a7f7cbd16d4fecab7136b5ca1cbcbb0a7}}, {\ttfamily \doxyref{BINDING\+\_\+\+EXAMPLE()}{p.}{param_8hpp_a9ffe1d6d254b3e50a5611f77ee381838}} and {\ttfamily \doxyref{BINDING\+\_\+\+SEE\+\_\+\+ALSO()}{p.}{param_8hpp_add4a79815b7f3972699cc414bfc9fe57}} definitions of the program with some docuentation, define the input and output parameters as {\ttfamily PARAM} macros, and then write an {\ttfamily mlpack\+Main()} function that actually performs the functionality of the binding. Inside of {\ttfamily mlpack\+Main()}\+:
+
+
+\begin{DoxyItemize}
+\item All input parameters are accessible through {\ttfamily IO\+::\+Get\+Param$<$type$>$}(\char`\"{}name\char`\"{}).
+\item All output parameters should be set by the end of the function with the {\ttfamily IO\+::\+Get\+Param$<$type$>$}(\char`\"{}name\char`\"{}) method.
+\end{DoxyItemize}
+
+Then, assuming that your program is saved in the file {\ttfamily program\+\_\+name\+\_\+main.\+cpp}, generating bindings for other languages is a simple addition to the {\ttfamily CMake\+Lists.\+txt} file\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{add\_cli\_executable(program\_name)}
+\DoxyCodeLine{add\_python\_binding(program\_name)}
+\DoxyCodeLine{add\_markdown\_docs(program\_name \textcolor{stringliteral}{"{}cli;python"{}} \textcolor{stringliteral}{"{}category"{}})}
+
+\end{DoxyCode}
+
+
+In this example, {\ttfamily add\+\_\+markdown\+\_\+docs()} will generate documentation that is typically used to build the website. The \char`\"{}category\char`\"{} parameter should be one of the categories in {\ttfamily src/mlpack/bindings/markdown/\+Markdown\+Categories.\+cmake}.\doxysection{How to write mlpack bindings}\label{bindings_bindings_general}
+This section describes the general structure of the {\ttfamily IO} code and how one might write a new binding for mlpack. After reading this section it should be relatively clear how one could use the {\ttfamily IO} functionality along with CMake to add a binding for a new mlpack machine learning method. If it is not clear, then the examples in the following sections should clarify.\doxysubsection{Documenting a program with}\label{bindings_bindings_general_program_doc}
+{\ttfamily \doxyref{BINDING\+\_\+\+NAME()}{p.}{param_8hpp_a3610abda0a69dc19a08c50e713f615b7}}, {\ttfamily \doxyref{BINDING\+\_\+\+SHORT\+\_\+\+DESC()}{p.}{param_8hpp_a013f7f337d6139c7f6de3a4f0fa7b019}}, {\ttfamily \doxyref{BINDING\+\_\+\+LONG\+\_\+\+DESC()}{p.}{param_8hpp_a7f7cbd16d4fecab7136b5ca1cbcbb0a7}}, {\ttfamily \doxyref{BINDING\+\_\+\+EXAMPLE()}{p.}{param_8hpp_a9ffe1d6d254b3e50a5611f77ee381838}} and {\ttfamily \doxyref{BINDING\+\_\+\+SEE\+\_\+\+ALSO()}{p.}{param_8hpp_add4a79815b7f3972699cc414bfc9fe57}}.
+
+Any mlpack program should be documented with the {\ttfamily \doxyref{BINDING\+\_\+\+NAME()}{p.}{param_8hpp_a3610abda0a69dc19a08c50e713f615b7}}, {\ttfamily \doxyref{BINDING\+\_\+\+SHORT\+\_\+\+DESC()}{p.}{param_8hpp_a013f7f337d6139c7f6de3a4f0fa7b019}}, {\ttfamily \doxyref{BINDING\+\_\+\+LONG\+\_\+\+DESC()}{p.}{param_8hpp_a7f7cbd16d4fecab7136b5ca1cbcbb0a7}} , {\ttfamily \doxyref{BINDING\+\_\+\+EXAMPLE()}{p.}{param_8hpp_a9ffe1d6d254b3e50a5611f77ee381838}} and {\ttfamily \doxyref{BINDING\+\_\+\+SEE\+\_\+\+ALSO()}{p.}{param_8hpp_add4a79815b7f3972699cc414bfc9fe57}} macros, which is available from the {\ttfamily $<$\doxyref{mlpack/core/util/mlpack\+\_\+main.\+hpp}{p.}{mlpack__main_8hpp}$>$} header. The macros are of the form
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{BINDING\_NAME(\textcolor{stringliteral}{"{}program name"{}});}
+\DoxyCodeLine{BINDING\_SHORT\_DESC(\textcolor{stringliteral}{"{}This is a short, two-\/sentence description of what the program does."{}});}
+\DoxyCodeLine{BINDING\_LONG\_DESC(\textcolor{stringliteral}{"{}This is a long description of what the program does."{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{} It might be many lines long and have lots of details about different options."{}});}
+\DoxyCodeLine{BINDING\_EXAMPLE(\textcolor{stringliteral}{"{}This contains one example for this particular binding.\(\backslash\)n"{}} +}
+\DoxyCodeLine{    PROGRAM\_CALL(...));}
+\DoxyCodeLine{BINDING\_EXAMPLE(\textcolor{stringliteral}{"{}This contains another example for this particular binding.\(\backslash\)n"{}} +}
+\DoxyCodeLine{    PROGRAM\_CALL(...));}
+\DoxyCodeLine{\textcolor{comment}{// There could be many of these "{}see alsos"{}.}}
+\DoxyCodeLine{BINDING\_SEE\_ALSO(\textcolor{stringliteral}{"{}https://en.wikipedia.org/wiki/Machine\_learning"{}});}
+
+\end{DoxyCode}
+
+
+The short documentation should be two sentences indicating what the program implements and does, and a quick overview of how it can be used and what it should be used for. When writing new short documentation, it is a good idea to take a look at the existing documentation to get an idea of the general format.
+
+For the \char`\"{}see also\char`\"{} section, you can specify as many {\ttfamily SEE\+\_\+\+ALSO()} calls as you see fit. These are links used at the \char`\"{}see also\char`\"{} section of the website documentation for each binding, and it\textquotesingle{}s very important that relevant links are provided (also to other bindings). See the {\ttfamily SEE\+\_\+\+ALSO()} documentation for more details.
+
+Although it is possible to provide very short documentation, it is certainly better to provide a long description including
+
+
+\begin{DoxyItemize}
+\item what the program does
+\item a basic overview of what input and output parameters the program has
+\item at least one example invocation
+\end{DoxyItemize}
+
+Examples are very important, and are probably what most users are going to immediately search for, instead of taking a long time to read and carefully consider all of the written documentation.
+
+However, it is difficult to write language-\/agnostic documentation. For instance, in a command-\/line program, an output parameter \textquotesingle{}-\/-\/output\+\_\+file\textquotesingle{} would be specified on the command line as an input parameter, but in Python, the output parameter \textquotesingle{}output\textquotesingle{} would actually simply be returned from the call to the Python function. Therefore, we must be careful how our documentation refers to input and output parameters. The following general guidelines can help\+:
+
+
+\begin{DoxyItemize}
+\item Always refer to output parameters as \char`\"{}output parameters\char`\"{}, which is a fairly close term that can be interpreted to mean both \char`\"{}return values\char`\"{} for languages like Python and MATLAB and also \char`\"{}arguments given on the command line\char`\"{} for command line programs.
+\item Use the provided {\ttfamily PRINT\+\_\+\+PARAM\+\_\+\+STRING()} macro to print the names of parameters. For instance, {\ttfamily PRINT\+\_\+\+PARAM\+\_\+\+STRING(\char`\"{}shuffle\char`\"{})} will print {\ttfamily \textquotesingle{}-\/-\/shuffle\textquotesingle{}} for a command line program and {\ttfamily \textquotesingle{}shuffle\textquotesingle{}} for a Python binding. The {\ttfamily PRINT\+\_\+\+PARAM\+\_\+\+STRING()} macro also takes into account the type of the parameter.
+\item Use the provided {\ttfamily PRINT\+\_\+\+DATASET()} and {\ttfamily PRINT\+\_\+\+MODEL()} macro to introduce example datasets or models, which can be useful when introducing an example usage of the program. So you could write {\ttfamily \textquotesingle{}\char`\"{}to @c run @c with @c a    @c dataset @c \char`\"{}} {\ttfamily +} {\ttfamily PRINT\+\_\+\+DATASET}(\char`\"{}data\char`\"{}) {\ttfamily +} {\ttfamily \char`\"{}...\char`\"{}\textquotesingle{}}.
+\item Use the provided {\ttfamily PRINT\+\_\+\+CALL()} macro to print example invocations of the program. The first argument is the name of the program, and then the following arguments should be the name of a parameter followed by the value of that parameter.
+\item Never mention files in the documentation---files are only relevant to command-\/line programs. Similarly, avoid mentioning anything language-\/specific.
+\item Remember that some languages give output through return values and some give output using other input parameters. So the right verbiage to use is, e.\+g., {\ttfamily \textquotesingle{}the results may be saved using the PRINT\+\_\+\+PARAM\+\_\+\+STRING(\char`\"{}output\char`\"{}) parameter\textquotesingle{}}, and {\bfseries{not}} {\ttfamily \textquotesingle{}the results are returned through the PRINT\+\_\+\+PARAM\+\_\+\+STRING(\char`\"{}output\char`\"{}) parameter\textquotesingle{}}.
+\end{DoxyItemize}
+
+Each of these macros ({\ttfamily PRINT\+\_\+\+PARAM\+\_\+\+STRING()}, {\ttfamily PRINT\+\_\+\+DATASET()}, {\ttfamily PRINT\+\_\+\+MODEL()}, and {\ttfamily PRINT\+\_\+\+CALL()} ) provides different output depending on the language. Below are some example of documentation strings and their outputs for different languages. Note that the output might not be {\itshape exactly} as written or formatted here, but the general gist should be the same.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Input C++ (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{stringliteral}{"{}The parameter "{}} + PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}shuffle"{}}) + \textcolor{stringliteral}{"{}, if set, will shuffle "{}}}
+\DoxyCodeLine{  \textcolor{stringliteral}{"{}the data before learning."{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{Command-\/line program output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  The parameter \textcolor{stringliteral}{'-\/-\/shuffle'}, if set, will shuffle the data before learning.}
+\DoxyCodeLine{}
+\DoxyCodeLine{Python binding output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  The parameter \textcolor{stringliteral}{'shuffle'}, if set, will shuffle the data before learning.}
+\DoxyCodeLine{}
+\DoxyCodeLine{Julia binding output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  The parameter `shuffle`, if set, will shuffle the data before learning.}
+\DoxyCodeLine{}
+\DoxyCodeLine{Go binding output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  The parameter \textcolor{stringliteral}{"{}Shuffle"{}}, if set, will shuffle the data before learning.}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Input C++ (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{stringliteral}{"{}The output matrix can be saved with the "{}} + PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}output"{}}) +}
+\DoxyCodeLine{  \textcolor{stringliteral}{"{} output parameter."{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{Command-\/line program output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  The output matrix can be saved with the \textcolor{stringliteral}{'-\/-\/output\_file'} output parameter.}
+\DoxyCodeLine{}
+\DoxyCodeLine{Python binding output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  The output matrix can be saved with the \textcolor{stringliteral}{'output'} output parameter.}
+\DoxyCodeLine{}
+\DoxyCodeLine{Julia binding output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  The output matrix can be saved with the `output` output parameter.}
+\DoxyCodeLine{}
+\DoxyCodeLine{Go binding output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  The output matrix can be saved with the \textcolor{stringliteral}{"{}output"{}} output parameter.}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Input C++ (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{stringliteral}{"{}For example, to train a model on the dataset "{}} + PRINT\_DATASET(\textcolor{stringliteral}{"{}x"{}}) + \textcolor{stringliteral}{"{} and "{}}}
+\DoxyCodeLine{  \textcolor{stringliteral}{"{}save the output model to "{}} + PRINT\_MODEL(\textcolor{stringliteral}{"{}model"{}}) + \textcolor{stringliteral}{"{}, the following command"{}}}
+\DoxyCodeLine{  \textcolor{stringliteral}{"{} can be used:"{}}}
+\DoxyCodeLine{  \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)n"{}} +}
+\DoxyCodeLine{  PRINT\_CALL(\textcolor{stringliteral}{"{}program"{}}, \textcolor{stringliteral}{"{}input"{}}, \textcolor{stringliteral}{"{}x"{}}, \textcolor{stringliteral}{"{}output\_model"{}}, \textcolor{stringliteral}{"{}model"{}})}
+\DoxyCodeLine{}
+\DoxyCodeLine{Command-\/line program output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  For example, to train a model on the dataset 'x.csv' and save the output model}
+\DoxyCodeLine{  to 'model.bin', the following command can be used:}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \$ program -\/-\/input\_file x.csv -\/-\/output\_model\_file model.bin}
+\DoxyCodeLine{}
+\DoxyCodeLine{Python binding output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  For example, to train a model on the dataset 'x' and save the output model to}
+\DoxyCodeLine{  'model', the following command can be used:}
+\DoxyCodeLine{}
+\DoxyCodeLine{  >>> output = program(input=x)}
+\DoxyCodeLine{  >>> model = output['output\_model']}
+\DoxyCodeLine{}
+\DoxyCodeLine{Julia binding output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  For example, to train a model on the dataset `x` and save the output model to}
+\DoxyCodeLine{  `model`, the following command can be used:}
+\DoxyCodeLine{}
+\DoxyCodeLine{  julia> model = program(input=x)}
+\DoxyCodeLine{}
+\DoxyCodeLine{Go binding output (snippet):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  For example, to train a model on the dataset "{}x"{} and save the output model to}
+\DoxyCodeLine{  "{}model"{}, the following command can be used:}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{comment}{// Initialize optional parameters for Program().}}
+\DoxyCodeLine{    param := mlpack.ProgramOptions()}
+\DoxyCodeLine{    param.Input = x}
+\DoxyCodeLine{}
+\DoxyCodeLine{    model := mlpack.Program(param)}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Input C++ (full program, \textcolor{stringliteral}{'random\_numbers\_main.cpp'}):}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Program Name.}}
+\DoxyCodeLine{  BINDING\_NAME(\textcolor{stringliteral}{"{}Random Numbers"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Short description.}}
+\DoxyCodeLine{  BINDING\_SHORT\_DESC(\textcolor{stringliteral}{"{}An implementation of Random Numbers"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Long description.}}
+\DoxyCodeLine{  BINDING\_LONG\_DESC(}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}This program generates random numbers with a "{}}}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}variety of nonsensical techniques and example parameters.  The input "{}}}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}dataset, which will be ignored, can be specified with the "{}} +}
+\DoxyCodeLine{      PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}input"{}}) + \textcolor{stringliteral}{"{} parameter.  If you would like to subtract"{}}}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{} values from each number, specify the "{}} +}
+\DoxyCodeLine{      PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}subtract"{}}) + \textcolor{stringliteral}{"{} parameter.  The number of random "{}}}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}numbers to generate is specified with the "{}} +}
+\DoxyCodeLine{      PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}num\_values"{}}) + \textcolor{stringliteral}{"{} parameter."{}}}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)n"{}}}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}The output random numbers can be saved with the "{}} +}
+\DoxyCodeLine{      PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}output"{}}) + \textcolor{stringliteral}{"{} output parameter.  In addition, a "{}}}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}randomly generated linear regression model can be saved with the "{}} +}
+\DoxyCodeLine{      PRINT\_PARAM\_STRING(\textcolor{stringliteral}{"{}output\_model"{}}) + \textcolor{stringliteral}{"{} output parameter."{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Example.}}
+\DoxyCodeLine{  BINDING\_EXAMPLE(}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}For example, to generate 100 random numbers with 3 subtracted from them "{}}}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}and save the output to "{}} + PRINT\_DATASET(\textcolor{stringliteral}{"{}rand"{}}) + \textcolor{stringliteral}{"{} and the random "{}}}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}model to "{}} + PRINT\_MODEL(\textcolor{stringliteral}{"{}rand\_lr"{}}) + \textcolor{stringliteral}{"{}, use the following "{}}}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}command:"{}}}
+\DoxyCodeLine{      \textcolor{stringliteral}{"{}\(\backslash\)n\(\backslash\)n"{}} +}
+\DoxyCodeLine{      PRINT\_CALL(\textcolor{stringliteral}{"{}random\_numbers"{}}, \textcolor{stringliteral}{"{}num\_values"{}}, 100, \textcolor{stringliteral}{"{}subtract"{}}, 3, \textcolor{stringliteral}{"{}output"{}},}
+\DoxyCodeLine{          \textcolor{stringliteral}{"{}rand"{}}, \textcolor{stringliteral}{"{}output\_model"{}}, \textcolor{stringliteral}{"{}rand\_lr"{}}));}
+\DoxyCodeLine{}
+\DoxyCodeLine{Command line output:}
+\DoxyCodeLine{}
+\DoxyCodeLine{    Random Numbers}
+\DoxyCodeLine{}
+\DoxyCodeLine{    This program generates random numbers with a variety of nonsensical}
+\DoxyCodeLine{    techniques and example parameters.  The input dataset, which will be}
+\DoxyCodeLine{    ignored, can be specified with the \textcolor{stringliteral}{'-\/-\/input\_file'} parameter.  If you would}
+\DoxyCodeLine{    like to subtract values from each number, specify the \textcolor{stringliteral}{'-\/-\/subtract'}}
+\DoxyCodeLine{    parameter.  The number of random numbers to generate is specified with the}
+\DoxyCodeLine{    \textcolor{stringliteral}{'-\/-\/num\_values'} parameter.}
+\DoxyCodeLine{}
+\DoxyCodeLine{    The output random numbers can be saved with the \textcolor{stringliteral}{'-\/-\/output\_file'} output}
+\DoxyCodeLine{    parameter.  In addition, a randomly generated linear regression model can be}
+\DoxyCodeLine{    saved with the \textcolor{stringliteral}{'-\/-\/output\_model\_file'} output parameter.}
+\DoxyCodeLine{}
+\DoxyCodeLine{    For example, to generate 100 random numbers with 3 subtracted from them and}
+\DoxyCodeLine{    save the output to \textcolor{stringliteral}{'rand.csv'} and the random model to \textcolor{stringliteral}{'rand\_lr.bin'}, use the}
+\DoxyCodeLine{    following command:}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \$ random\_numbers -\/-\/num\_values 100 -\/-\/subtract 3 -\/-\/output\_file rand.csv}
+\DoxyCodeLine{      -\/-\/output\_model\_file rand\_lr.bin}
+\DoxyCodeLine{}
+\DoxyCodeLine{Python binding output:}
+\DoxyCodeLine{}
+\DoxyCodeLine{    Random Numbers}
+\DoxyCodeLine{}
+\DoxyCodeLine{    This program generates random numbers with a variety of nonsensical}
+\DoxyCodeLine{    techniques and example parameters.  The input dataset, which will be}
+\DoxyCodeLine{    ignored, can be specified with the \textcolor{stringliteral}{'input'} parameter.  If you would like to}
+\DoxyCodeLine{    subtract values from each number, specify the \textcolor{stringliteral}{'subtract'} parameter.  The}
+\DoxyCodeLine{    number of random numbers to generate is specified with the \textcolor{stringliteral}{'num\_values'}}
+\DoxyCodeLine{    parameter.}
+\DoxyCodeLine{}
+\DoxyCodeLine{    The output random numbers can be saved with the \textcolor{stringliteral}{'output'} output parameter.}
+\DoxyCodeLine{    In addition, a randomly generated linear regression model can be saved with}
+\DoxyCodeLine{    the \textcolor{stringliteral}{'output\_model'} output parameter.}
+\DoxyCodeLine{}
+\DoxyCodeLine{    For example, to generate 100 random numbers with 3 subtracted from them and}
+\DoxyCodeLine{    save the output to \textcolor{stringliteral}{'rand'} and the random model to \textcolor{stringliteral}{'rand\_lr'}, use the}
+\DoxyCodeLine{    following command:}
+\DoxyCodeLine{}
+\DoxyCodeLine{    >>> output = random\_numbers(num\_values=100, subtract=3)}
+\DoxyCodeLine{    >>> rand = output[\textcolor{stringliteral}{'output'}]}
+\DoxyCodeLine{    >>> rand\_lr = output[\textcolor{stringliteral}{'output\_model'}]}
+\DoxyCodeLine{}
+\DoxyCodeLine{Julia binding output:}
+\DoxyCodeLine{}
+\DoxyCodeLine{    Random Numbers}
+\DoxyCodeLine{}
+\DoxyCodeLine{    This program generates random numbers with a variety of nonsensical}
+\DoxyCodeLine{    techniques and example parameters.  The input dataset, which will be}
+\DoxyCodeLine{    ignored, can be specified with the `input` parameter.  If you would like to}
+\DoxyCodeLine{    subtract values from each number, specify the `subtract` parameter.  The}
+\DoxyCodeLine{    number of random numbers to generate is specified with the `num\_values`}
+\DoxyCodeLine{    parameter.}
+\DoxyCodeLine{}
+\DoxyCodeLine{    The output random numbers can be saved with the `output` output parameter.}
+\DoxyCodeLine{    In addition, a randomly generated linear regression model can be saved with}
+\DoxyCodeLine{    the `output\_model` output parameter.}
+\DoxyCodeLine{}
+\DoxyCodeLine{    For example, to generate 100 random numbers with 3 subtracted from them and}
+\DoxyCodeLine{    save the output to `rand` and the random model to `rand\_lr`, use the}
+\DoxyCodeLine{    following command:}
+\DoxyCodeLine{}
+\DoxyCodeLine{    ```julia}
+\DoxyCodeLine{    julia> rand, rand\_lr = random\_numbers(num\_values=100, subtract=3)}
+\DoxyCodeLine{    ```}
+\DoxyCodeLine{}
+\DoxyCodeLine{Go binding output:}
+\DoxyCodeLine{}
+\DoxyCodeLine{    Random Numbers}
+\DoxyCodeLine{}
+\DoxyCodeLine{    This program generates random numbers with a variety of nonsensical}
+\DoxyCodeLine{    techniques and example parameters.  The input dataset, which will be}
+\DoxyCodeLine{    ignored, can be specified with the \textcolor{stringliteral}{"{}Input"{}} parameter.  If you would like to}
+\DoxyCodeLine{    subtract values from each number, specify the \textcolor{stringliteral}{"{}Subtract"{}} parameter.  The}
+\DoxyCodeLine{    number of random numbers to generate is specified with the \textcolor{stringliteral}{"{}NumValues"{}}}
+\DoxyCodeLine{    parameter.}
+\DoxyCodeLine{}
+\DoxyCodeLine{    The output random numbers can be saved with the \textcolor{stringliteral}{"{}output"{}} output parameter.}
+\DoxyCodeLine{    In addition, a randomly generated linear regression model can be saved with}
+\DoxyCodeLine{    the \textcolor{stringliteral}{"{}outputModel"{}} output parameter.}
+\DoxyCodeLine{}
+\DoxyCodeLine{    For example, to generate 100 random numbers with 3 subtracted from them and}
+\DoxyCodeLine{    save the output to \textcolor{stringliteral}{"{}rand"{}} and the random model to \textcolor{stringliteral}{"{}randLr"{}}, use the}
+\DoxyCodeLine{    following command:}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{comment}{// Initialize optional parameters for RandomNumbers().}}
+\DoxyCodeLine{    param := mlpack.RandomNumbersOptions()}
+\DoxyCodeLine{    param.NumValues = 100}
+\DoxyCodeLine{    param.Subtract=3}
+\DoxyCodeLine{}
+\DoxyCodeLine{    rand, randLr := mlpack.RandomNumbers(param)}
+
+\end{DoxyCode}
+\doxysubsection{Defining parameters for a program}\label{bindings_bindings_general_define_params}
+There exist several macros that can be used after a {\ttfamily \doxyref{BINDING\+\_\+\+LONG\+\_\+\+DESC()}{p.}{param_8hpp_a7f7cbd16d4fecab7136b5ca1cbcbb0a7}} and {\ttfamily \doxyref{BINDING\+\_\+\+EXAMPLE()}{p.}{param_8hpp_a9ffe1d6d254b3e50a5611f77ee381838}} definition to define the parameters that can be specified for a given mlpack program. These macros all have the same general definition\+: the name of the macro specifies the type of the parameter, whether or not the parameter is required, and whether the parameter is an input or output parameter. Then as arguments to the macros, the name, description, and sometimes the single-\/character alias and the default value of the parameter.
+
+To give a flavor of how these definitions look, the definition
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{PARAM\_STRING\_IN(\textcolor{stringliteral}{"{}algorithm"{}}, \textcolor{stringliteral}{"{}The algorithm to use: 'svd' or 'blah'."{}}, \textcolor{stringliteral}{"{}a"{}});}
+
+\end{DoxyCode}
+
+
+will define a string input parameter {\ttfamily algorithm} (referenced as {\ttfamily \textquotesingle{}-\/-\/algorithm\textquotesingle{}} from the command-\/line or {\ttfamily \textquotesingle{}algorithm\textquotesingle{}} from Python) with the description {\ttfamily The algorithm to use\+: \textquotesingle{}svd\textquotesingle{} or \textquotesingle{}blah\textquotesingle{}.} The single-\/character alias {\ttfamily \textquotesingle{}-\/a\textquotesingle{}} can be used from a command-\/line program (but means nothing in Python).
+
+There are numerous different macros that can be used\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxyref{PARAM\+\_\+\+FLAG()}{p.}{param_8hpp_a59a38dfe16c56a278bd89817216a3739}} -\/ boolean flag parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+INT\+\_\+\+IN()}{p.}{param_8hpp_a627025f18abd2735345f03fd733ccd9b}} -\/ integer input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+INT\+\_\+\+OUT()}{p.}{param_8hpp_a50b8bfabec3f0b64fb6e15837da50aa0}} -\/ integer output parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+DOUBLE\+\_\+\+IN()}{p.}{param_8hpp_a14e7059294c684b01128819daea241d4}} -\/ double input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+DOUBLE\+\_\+\+OUT()}{p.}{param_8hpp_aa39a5fa65308f2d5581c01cfae5f9203}} -\/ double output parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+STRING\+\_\+\+IN()}{p.}{param_8hpp_a9514ae93b51ba592bc3299da8326bb80}} -\/ string input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+STRING\+\_\+\+OUT()}{p.}{param_8hpp_a94d8f8edc103da0e05f04fce245e8a93}} -\/ string output parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+MATRIX\+\_\+\+IN()}{p.}{param_8hpp_a49e6517671e6c8173dd3570de950363b}} -\/ double-\/valued matrix ({\ttfamily arma\+::mat}) input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+MATRIX\+\_\+\+OUT()}{p.}{param_8hpp_a20f436f371a7613b532ae3a4c0416b30}} -\/ double-\/valued matrix ({\ttfamily arma\+::mat}) output parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+UMATRIX\+\_\+\+IN()}{p.}{param_8hpp_a0db58e2b5c75754d200638093b9cc40f}} -\/ size\+\_\+t-\/valued matrix ({\ttfamily arma\+::\+Mat$<$size\+\_\+t$>$}) input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+UMATRIX\+\_\+\+OUT()}{p.}{param_8hpp_a145abfa58262c15f01139092ececc571}} -\/ size\+\_\+t-\/valued matrix ({\ttfamily arma\+::\+Mat$<$size\+\_\+t$>$}) output parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+TMATRIX\+\_\+\+IN()}{p.}{param_8hpp_a237697d0b35e7e6484e8ce52c0ed00c9}} -\/ transposed double-\/valued matrix ({\ttfamily arma\+::mat}) input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+TMATRIX\+\_\+\+OUT()}{p.}{param_8hpp_a76754d246b86d1b159270e4794c25019}} -\/ transposed double-\/valued matrix ({\ttfamily arma\+::mat}) output parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+MATRIX\+\_\+\+AND\+\_\+\+INFO\+\_\+\+IN()}{p.}{param_8hpp_a444c996b7e4b9dadaa5e43a7d7798f71}} -\/ matrix with categoricals input parameter ({\ttfamily std\+::tuple$<$data\+::\+Dataset\+Info, arma\+::mat})
+\item {\ttfamily \doxyref{PARAM\+\_\+\+COL\+\_\+\+IN()}{p.}{param_8hpp_a36713e2f7157727157af4a92f1c2ad5d}} -\/ double-\/valued column vector ({\ttfamily arma\+::vec}) input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+COL\+\_\+\+OUT()}{p.}{param_8hpp_a07120f558c6c681b2a27a719a7c39bd2}} -\/ double-\/valued column vector ({\ttfamily arma\+::vec}) output parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+UCOL\+\_\+\+IN()}{p.}{param_8hpp_a55c356a0f2cc3df7122b3f033033538e}} -\/ size\+\_\+t-\/valued column vector ({\ttfamily arma\+::\+Col$<$size\+\_\+t$>$}) input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+UCOL\+\_\+\+OUT()}{p.}{param_8hpp_ac8b7f343ae79cb1ec43a0d2eb791090d}} -\/ size\+\_\+t-\/valued column vector ({\ttfamily arma\+::\+Col$<$size\+\_\+t$>$}) output parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+ROW\+\_\+\+IN()}{p.}{param_8hpp_a503427b6b8cca3f0948487006e7f11b4}} -\/ double-\/valued row vector ({\ttfamily arma\+::rowvec}) input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+ROW\+\_\+\+OUT()}{p.}{param_8hpp_a9beb54447b7992ecff903397abb60f73}} -\/ double-\/valued row vector ({\ttfamily arma\+::rowvec}) output parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+VECTOR\+\_\+\+IN()}{p.}{param_8hpp_a8431e7deab47987cfdb2ae3f242c72bc}} -\/ {\ttfamily std\+::vector} input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+VECTOR\+\_\+\+OUT()}{p.}{param_8hpp_ac24919def62bd93f462cc3ff9d555cbc}} -\/ {\ttfamily std\+::vector} output parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+MODEL\+\_\+\+IN()}{p.}{param_8hpp_a663f71826f69f70d119b5f577d20721e}} -\/ serializable model input parameter
+\item {\ttfamily \doxyref{PARAM\+\_\+\+MODEL\+\_\+\+OUT()}{p.}{param_8hpp_a303372e5feffaee9bd0a4bb50f3011b1}} -\/ serializable model output parameter
+\end{DoxyItemize}
+
+And for input parameters, the parameter may also be required\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxyref{PARAM\+\_\+\+INT\+\_\+\+IN\+\_\+\+REQ()}{p.}{param_8hpp_a59102e55c5d69d23909a75bd6093f816}} 
+\item {\ttfamily \doxyref{PARAM\+\_\+\+DOUBLE\+\_\+\+IN\+\_\+\+REQ()}{p.}{param_8hpp_a1236858e19f2e8be7da663d4aecfac9f}} 
+\item {\ttfamily \doxyref{PARAM\+\_\+\+STRING\+\_\+\+IN\+\_\+\+REQ()}{p.}{param_8hpp_a39f209691f1ca8c649a40cb22cea5408}} 
+\item {\ttfamily \doxyref{PARAM\+\_\+\+MATRIX\+\_\+\+IN\+\_\+\+REQ()}{p.}{param_8hpp_a20dc72054c6568f040bdc8a5512acacb}} 
+\item {\ttfamily \doxyref{PARAM\+\_\+\+UMATRIX\+\_\+\+IN\+\_\+\+REQ()}{p.}{param_8hpp_aaf334355d68e6667f4e50e071eee4d63}} 
+\item {\ttfamily \doxyref{PARAM\+\_\+\+TMATRIX\+\_\+\+IN\+\_\+\+REQ()}{p.}{param_8hpp_a580cb0e5b1c587a4bc5b7211aa2c414b}} 
+\item {\ttfamily \doxyref{PARAM\+\_\+\+VECTOR\+\_\+\+IN\+\_\+\+REQ()}{p.}{param_8hpp_a83c3be131e322e0a661c8ddf9c3c7df6}} 
+\item {\ttfamily \doxyref{PARAM\+\_\+\+MODEL\+\_\+\+IN\+\_\+\+REQ()}{p.}{param_8hpp_a42961ca5512a6e6ab58cdcd15e374fca}} 
+\end{DoxyItemize}
+
+Click the links for each macro to read further documentation. Note also that each possible combination of {\ttfamily IN}, {\ttfamily OUT}, and {\ttfamily REQ} is not available---output options cannot be required, and some combinations simply have not been added because they have not been needed.
+
+The {\ttfamily \doxyref{PARAM\+\_\+\+MODEL\+\_\+\+IN()}{p.}{param_8hpp_a663f71826f69f70d119b5f577d20721e}} and {\ttfamily \doxyref{PARAM\+\_\+\+MODEL\+\_\+\+OUT()}{p.}{param_8hpp_a303372e5feffaee9bd0a4bb50f3011b1}} macros are used to serialize mlpack models. These could be used, for instance, to allow the user to save a trained model (like a linear regression model) or load an input model. The first parameter to the {\ttfamily \doxyref{PARAM\+\_\+\+MODEL\+\_\+\+IN()}{p.}{param_8hpp_a663f71826f69f70d119b5f577d20721e}} or {\ttfamily \doxyref{PARAM\+\_\+\+MODEL\+\_\+\+OUT()}{p.}{param_8hpp_a303372e5feffaee9bd0a4bb50f3011b1}} macro should be the C++ type of the model to be serialized; this type {\bfseries{must}} have a function {\ttfamily template$<$typename Archive$>$ void serialize(\+Archive\&)} (i.\+e. the type must be serializable via cereal). For example, to allow a user to specify an input model of type {\ttfamily Linear\+Regression}, the follow definition could be used\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{PARAM\_MODEL\_IN(LinearRegression, \textcolor{stringliteral}{"{}input\_model"{}}, \textcolor{stringliteral}{"{}The input model to be used."{}},}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}i"{}});}
+
+\end{DoxyCode}
+
+
+Then, the user will be able to specify their model from the command-\/line as {\ttfamily -\/-\/input\+\_\+model\+\_\+file} and from Python using the {\ttfamily input\+\_\+model} option to the generated binding.
+
+From the command line, matrix-\/type and model-\/type options (both input and output) are loaded from or saved to the specified file. This means that {\ttfamily \+\_\+file} is appended to the name of the parameter; so if the parameter name is {\ttfamily data} and it is of a matrix or model type, then the name that the user will specify on the command line will be {\ttfamily -\/-\/data\+\_\+file}. This displayed parameter name change {\bfseries{only}} occurs with matrix and model type parameters for command-\/line programs.
+
+The {\ttfamily PARAM\+\_\+\+MATRIX\+\_\+\+AND\+\_\+\+INFO()} macro defines a categorical matrix parameter (more specifically, a matrix type that can support categorical columns). From the C++ program side, this means that the parameter type is {\ttfamily std\+::tuple$<$data\+::\+Dataset\+Info, arma\+::mat$>$}. From the user side, for a command-\/line program, this means that the user will pass the filename of a dataset that can have categorical features, such as an ARFF dataset. For a Python program, the user may pass a Pandas matrix with categorical columns. When the program is run, the input that the user gives will be processed and the {\ttfamily data\+::\+Dataset\+Info} object will be filled with the dimension types and the {\ttfamily arma\+::mat} object will be filled with the data itself.
+
+To give some examples, the parameter definitions from the example \char`\"{}random\+\_\+numbers\char`\"{} program in the previous section are shown below.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{PARAM\_MATRIX\_IN(\textcolor{stringliteral}{"{}input"{}}, \textcolor{stringliteral}{"{}The input matrix that will be ignored."{}}, \textcolor{stringliteral}{"{}i"{}});}
+\DoxyCodeLine{PARAM\_DOUBLE\_IN(\textcolor{stringliteral}{"{}subtract"{}}, \textcolor{stringliteral}{"{}The value to subtract from each parameter."{}}, \textcolor{stringliteral}{"{}s"{}},}
+\DoxyCodeLine{    0.0); \textcolor{comment}{// Default value of 0.0.}}
+\DoxyCodeLine{PARAM\_INT\_IN(\textcolor{stringliteral}{"{}num\_samples"{}}, \textcolor{stringliteral}{"{}The number of samples to generate."{}}, \textcolor{stringliteral}{"{}n"{}}, 100);}
+\DoxyCodeLine{}
+\DoxyCodeLine{PARAM\_MATRIX\_OUT(\textcolor{stringliteral}{"{}output"{}}, \textcolor{stringliteral}{"{}The output matrix of random samples."{}}, \textcolor{stringliteral}{"{}o"{}});}
+\DoxyCodeLine{PARAM\_MODEL\_OUT(LinearRegression, \textcolor{stringliteral}{"{}output\_model"{}}, \textcolor{stringliteral}{"{}The randomly generated "{}}}
+\DoxyCodeLine{    \textcolor{stringliteral}{"{}linear regression output model."{}}, \textcolor{stringliteral}{"{}M"{}});}
+
+\end{DoxyCode}
+
+
+Note that even the parameter documentation strings must be a little be agnostic to the binding type, because the command-\/line interface is so different than the Python interface to the user.\doxysubsection{Using IO in an mlpack\+Main() function}\label{bindings_bindings_general_functions}
+mlpack\textquotesingle{}s {\ttfamily IO} module provides a unified abstract interface for getting input from and providing output to users without needing to consider the language (command-\/line, Python, MATLAB, etc.) that the user is running the program from. This means that after the {\ttfamily \doxyref{BINDING\+\_\+\+LONG\+\_\+\+DESC()}{p.}{param_8hpp_a7f7cbd16d4fecab7136b5ca1cbcbb0a7}} and {\ttfamily \doxyref{BINDING\+\_\+\+EXAMPLE()}{p.}{param_8hpp_a9ffe1d6d254b3e50a5611f77ee381838}} macros and the {\ttfamily PARAM\+\_\+$\ast$}() macros have been defined, a language-\/agnostic {\ttfamily mlpack\+Main()} function can be written. This function then can perform the actual computation that the entire program is meant to.
+
+Inside of an {\ttfamily mlpack\+Main()} function, the {\ttfamily \doxyref{mlpack\+::\+IO}{p.}{classmlpack_1_1IO}} module can be used to access input parameters and set output parameters. There are two main functions for this, plus a utility printing function\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxyref{IO\+::\+Get\+Param$<$\+T$>$()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9eee50cbae50b3464c59b88ab7b88e44}} -\/ get a reference to a parameter
+\item {\ttfamily IO\+::\+Has\+Param()} -\/ returns true if the user specified the parameter
+\item {\ttfamily \doxyref{IO\+::\+Get\+Printable\+Param$<$\+T$>$()}{p.}{namespacemlpack_1_1bindings_1_1cli_aaf7d940ea6f4c5984891552aad0a003a}} -\/ returns a string representing the value of the parameter
+\end{DoxyItemize}
+
+So, to print \char`\"{}hello\char`\"{} if the user specified the {\ttfamily print\+\_\+hello} parameter, the following code could be used\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (IO::HasParam(\textcolor{stringliteral}{"{}print\_hello"{}}))}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}Hello!"{}} << std::endl;}
+\DoxyCodeLine{\textcolor{keywordflow}{else}}
+\DoxyCodeLine{  std::cout << \textcolor{stringliteral}{"{}No greetings for you!"{}} << std::endl;}
+
+\end{DoxyCode}
+
+
+To access a string that a user passed in to the {\ttfamily string} parameter, the following code could be used\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{const} std::string\& str = IO::GetParam<std::string>(\textcolor{stringliteral}{"{}string"{}});}
+
+\end{DoxyCode}
+
+
+Matrix types are accessed in the same way\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack;}
+\DoxyCodeLine{}
+\DoxyCodeLine{arma::mat\& matrix = IO::GetParam<arma::mat>(\textcolor{stringliteral}{"{}matrix"{}});}
+
+\end{DoxyCode}
+
+
+Similarly, model types can be accessed. If a {\ttfamily Linear\+Regression} model was specified by the user as the parameter {\ttfamily model}, the following code can access the model\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack;}
+\DoxyCodeLine{}
+\DoxyCodeLine{LinearRegression\& lr = IO::GetParam<LinearRegression>(\textcolor{stringliteral}{"{}model"{}});}
+
+\end{DoxyCode}
+
+
+Matrices with categoricals are a little trickier to access since the C++ parameter type is {\ttfamily std\+::tuple$<$data\+::\+Dataset\+Info, arma\+::mat$>$}. The example below creates references to both the {\ttfamily Dataset\+Info} and matrix objects, assuming the user has passed a matrix with categoricals as the {\ttfamily matrix} parameter.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{typename} std::tuple<data::DatasetInfo, arma::mat> TupleType;}
+\DoxyCodeLine{data::DatasetInfo\& di = std::get<0>(IO::GetParam<TupleType>(\textcolor{stringliteral}{"{}matrix"{}}));}
+\DoxyCodeLine{arma::mat\& matrix = std::get<1>(IO::GetParam<TupleType>(\textcolor{stringliteral}{"{}matrix"{}}));}
+
+\end{DoxyCode}
+
+
+These two functions can be used to write an entire program. The third function, {\ttfamily \doxyref{Get\+Printable\+Param()}{p.}{namespacemlpack_1_1bindings_1_1cli_aaf7d940ea6f4c5984891552aad0a003a}}, can be used to help provide useful output in a program. Typically, this function should be used if you want to provide some kind of error message about a matrix or model parameter, but want to avoid printing the matrix itself. For instance, printing a matrix parameter with {\ttfamily \doxyref{Get\+Printable\+Param()}{p.}{namespacemlpack_1_1bindings_1_1cli_aaf7d940ea6f4c5984891552aad0a003a}} will print the filename for a command-\/line binding or the size of a matrix for a Python binding. {\ttfamily \doxyref{Get\+Printable\+Param()}{p.}{namespacemlpack_1_1bindings_1_1cli_aaf7d940ea6f4c5984891552aad0a003a}} for a model parameter will print the filename for the model for a command-\/line binding or a simple string representing the type of the model for a Python binding.
+
+Putting all of these ideas together, here is the {\ttfamily mlpack\+Main()} function that could be created for the \char`\"{}random\+\_\+numbers\char`\"{} program from earlier sections.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <mlpack/core/util/mlpack\_main.hpp>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// BINDING\_NAME(), BINDING\_SHORT\_DESC(), BINDING\_LONG\_DESC() , BINDING\_EXAMPLE(),}}
+\DoxyCodeLine{\textcolor{comment}{// BINDING\_SEE\_ALSO() and PARAM\_*() definitions should go here:}}
+\DoxyCodeLine{\textcolor{comment}{// ...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }mlpack;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} mlpackMain()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{// If the user passed an input matrix, tell them that we'll be ignoring it.}}
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (IO::HasParam(\textcolor{stringliteral}{"{}input"{}}))}
+\DoxyCodeLine{  \{}
+\DoxyCodeLine{    \textcolor{comment}{// Print the filename the user passed, if a command-\/line binding, or the}}
+\DoxyCodeLine{    \textcolor{comment}{// size of the matrix passed, if a Python binding.}}
+\DoxyCodeLine{    Log::Warn << \textcolor{stringliteral}{"{}The input matrix "{}}}
+\DoxyCodeLine{        << IO::GetPrintableParam<arma::mat>(\textcolor{stringliteral}{"{}input"{}}) << \textcolor{stringliteral}{"{} is ignored!"{}}}
+\DoxyCodeLine{        << std::endl;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Get the number of samples and also the value we should subtract.}}
+\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} numSamples = (size\_t) IO::GetParam<int>(\textcolor{stringliteral}{"{}num\_samples"{}});}
+\DoxyCodeLine{  \textcolor{keyword}{const} \textcolor{keywordtype}{double} subtractValue = IO::GetParam<double>(\textcolor{stringliteral}{"{}subtract"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Create the random matrix (1-\/dimensional).}}
+\DoxyCodeLine{  arma::mat output(1, numSamples, arma::fill::randu);}
+\DoxyCodeLine{  output -\/= subtractValue;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Save the output matrix if the user wants.}}
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (IO::HasParam(\textcolor{stringliteral}{"{}output"{}}))}
+\DoxyCodeLine{    IO::GetParam<arma::mat>(\textcolor{stringliteral}{"{}output"{}}) = std::move(output); \textcolor{comment}{// Avoid copy.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Did the user request a random linear regression model?}}
+\DoxyCodeLine{  \textcolor{keywordflow}{if} (IO::HasParam(\textcolor{stringliteral}{"{}output\_model"{}}))}
+\DoxyCodeLine{  \{}
+\DoxyCodeLine{    LinearRegression lr;}
+\DoxyCodeLine{    lr.Parameters().randu(10); \textcolor{comment}{// 10-\/dimensional (arbitrary).}}
+\DoxyCodeLine{    lr.Lambda() = 0.0;}
+\DoxyCodeLine{    lr.Intercept() = \textcolor{keyword}{false}; \textcolor{comment}{// No intercept term.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    IO::GetParam<LinearRegression>(\textcolor{stringliteral}{"{}output\_model"{}}) = std::move(lr);}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\doxysubsection{More documentation on using IO}\label{bindings_bindings_general_more}
+More documentation for the IO module can either be found on the \doxyref{mlpack\+::\+IO}{p.}{classmlpack_1_1IO} documentation page, or by reading the existing mlpack bindings. These can be found in the {\ttfamily src/mlpack/methods/} folders, by finding the {\ttfamily \+\_\+main.\+cpp} files. For instance, {\ttfamily src/mlpack/methods/neighbor\+\_\+search/knn\+\_\+main.\+cpp} is the k-\/nearest-\/neighbor search program definition.\doxysection{Structure of IO module and associated macros}\label{bindings_bindings_structure}
+This section describes the internal functionality of the IO module and the associated macros. If you are only interested in writing mlpack programs, this section is probably not worth reading.
+
+There are eight main components involved with mlpack bindings\+:
+
+
+\begin{DoxyItemize}
+\item the IO module, a singleton class that stores parameter information
+\item the mlpack\+Main() function that defines the functionality of the binding
+\item the \doxyref{BINDING\+\_\+\+NAME()}{p.}{param_8hpp_a3610abda0a69dc19a08c50e713f615b7} macro that defines the binding name
+\item the \doxyref{BINDING\+\_\+\+SHORT\+\_\+\+DESC()}{p.}{param_8hpp_a013f7f337d6139c7f6de3a4f0fa7b019} macro that defines the short description
+\item the \doxyref{BINDING\+\_\+\+LONG\+\_\+\+DESC()}{p.}{param_8hpp_a7f7cbd16d4fecab7136b5ca1cbcbb0a7} macro that defines the long description
+\item (optional) the \doxyref{BINDING\+\_\+\+EXAMPLE()}{p.}{param_8hpp_a9ffe1d6d254b3e50a5611f77ee381838} macro that defines example usages
+\item (optional) the \doxyref{BINDING\+\_\+\+SEE\+\_\+\+ALSO()}{p.}{param_8hpp_add4a79815b7f3972699cc414bfc9fe57} macro that defines \char`\"{}see also\char`\"{} links
+\item the PARAM\+\_\+$\ast$() macros that define parameters for the binding
+\end{DoxyItemize}
+
+The \doxyref{mlpack\+::\+IO}{p.}{classmlpack_1_1IO} module is a singleton class that stores, at runtime, the binding name, the documentation, and the parameter information and values. In order to do this, each parameter and the program documentation must make themselves known to the IO singleton. This is accomplished by having the {\ttfamily \doxyref{BINDING\+\_\+\+NAME()}{p.}{param_8hpp_a3610abda0a69dc19a08c50e713f615b7}}, {\ttfamily \doxyref{BINDING\+\_\+\+SHORT\+\_\+\+DESC()}{p.}{param_8hpp_a013f7f337d6139c7f6de3a4f0fa7b019}}, {\ttfamily \doxyref{BINDING\+\_\+\+LONG\+\_\+\+DESC()}{p.}{param_8hpp_a7f7cbd16d4fecab7136b5ca1cbcbb0a7}}, {\ttfamily \doxyref{BINDING\+\_\+\+EXAMPLE()}{p.}{param_8hpp_a9ffe1d6d254b3e50a5611f77ee381838}}, {\ttfamily \doxyref{BINDING\+\_\+\+SEE\+\_\+\+ALSO()}{p.}{param_8hpp_add4a79815b7f3972699cc414bfc9fe57}} and {\ttfamily PARAM\+\_\+$\ast$}() macros declare global variables that, in their constructors, register themselves with the IO singleton.
+
+The {\ttfamily \doxyref{BINDING\+\_\+\+NAME()}{p.}{param_8hpp_a3610abda0a69dc19a08c50e713f615b7}} macro declares an object of type \doxyref{mlpack\+::util\+::\+Program\+Name}{p.}{classmlpack_1_1util_1_1ProgramName}. The {\ttfamily \doxyref{BINDING\+\_\+\+SHORT\+\_\+\+DESC()}{p.}{param_8hpp_a013f7f337d6139c7f6de3a4f0fa7b019}} macro declares an object of type \doxyref{mlpack\+::util\+::\+Short\+Description}{p.}{classmlpack_1_1util_1_1ShortDescription}. The {\ttfamily \doxyref{BINDING\+\_\+\+LONG\+\_\+\+DESC()}{p.}{param_8hpp_a7f7cbd16d4fecab7136b5ca1cbcbb0a7}} macro declares an object of type \doxyref{mlpack\+::util\+::\+Long\+Description}{p.}{classmlpack_1_1util_1_1LongDescription}. The {\ttfamily \doxyref{BINDING\+\_\+\+EXAMPLE()}{p.}{param_8hpp_a9ffe1d6d254b3e50a5611f77ee381838}} macro declares an object of type \doxyref{mlpack\+::util\+::\+Example}{p.}{classmlpack_1_1util_1_1Example}. The {\ttfamily \doxyref{BINDING\+\_\+\+SEE\+\_\+\+ALSO()}{p.}{param_8hpp_add4a79815b7f3972699cc414bfc9fe57}} macro declares an object of type \doxyref{mlpack\+::util\+::\+See\+Also}{p.}{classmlpack_1_1util_1_1SeeAlso}. The {\ttfamily Program\+Name} class constructor calls IO\+::\+Register\+Program\+Name() in order to register the given program name. The {\ttfamily Short\+Description} class constructor calls IO\+::\+Register\+Short\+Description() in order to register the given short description. The {\ttfamily Long\+Description} class constructor calls IO\+::\+Register\+Long\+Description() in order to register the given long description. The {\ttfamily Example} class constructor calls IO\+::\+Register\+Example() in order to register the given example. The {\ttfamily See\+Also} class constructor calls IO\+::\+Register\+See\+Also() in order to register the given see-\/also link.
+
+The {\ttfamily PARAM\+\_\+$\ast$}() macros declare an object that will, in its constructor, call IO\+::\+Add() to register that parameter with the IO singleton. The specific type of that object will depend on the binding type being used.
+
+The IO\+::\+Add() function takes an \doxyref{mlpack\+::util\+::\+Param\+Data}{p.}{structmlpack_1_1util_1_1ParamData} object as its input. This {\ttfamily Param\+Data} object has a number of fields that must be set to properly describe the parameter. Each of the fields is documented and probably self-\/explanatory, but three fields deserve further explanation\+:
+
+
+\begin{DoxyItemize}
+\item the {\ttfamily std\+::string tname} member is used to encode the true type of the parameter---which is not known by the IO singleton at runtime. This should be set to {\ttfamily \doxyref{TYPENAME(\+T)}{p.}{param__data_8hpp_ac909d914008cce49fa42ddd10b9b36c5}} where {\ttfamily T} is the type of the parameter.
+\item the {\ttfamily boost\+::any value} member is used to hold the actual value of the parameter. Typically this will simply be the parameter held by a {\ttfamily boost\+::any} object, but for some types it may be more complex. For instance, for a command-\/line matrix option, the {\ttfamily value} parameter will actually hold a tuple containing both the filename and the matrix itself.
+\item the {\ttfamily std\+::string cpp\+Type} should be a string containing the type as seen in C++ code. Typically this can be encoded by stringifying a {\ttfamily PARAM\+\_\+$\ast$}() macro argument.
+\end{DoxyItemize}
+
+Thus, the global object defined by the {\ttfamily PARAM\+\_\+$\ast$}() macro must turn its arguments into a fully specified {\ttfamily Param\+Data} object and then call IO\+::\+Add() with it.
+
+With different binding types, different behavior is often required for the {\ttfamily \doxyref{Get\+Param$<$\+T$>$()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9eee50cbae50b3464c59b88ab7b88e44}}, {\ttfamily Has\+Param()}, and {\ttfamily \doxyref{Get\+Printable\+Param$<$\+T$>$()}{p.}{namespacemlpack_1_1bindings_1_1cli_aaf7d940ea6f4c5984891552aad0a003a}} functions. In order to handle this, the IO singleton also holds a function pointer map, so that a given type of option can call specific functionality for a certain task. This function map is accessible as {\ttfamily IO\+::function\+Map} and is not meant to be used by users, but instead by people writing binding types.
+
+Each function in the map must have signature
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} MapFunction(\textcolor{keyword}{const} util::ParamData\& d,}
+\DoxyCodeLine{                 \textcolor{keyword}{const} \textcolor{keywordtype}{void}* input,}
+\DoxyCodeLine{                 \textcolor{keywordtype}{void}* output);}
+
+\end{DoxyCode}
+
+
+The use of void pointers allows any type to be specified as input or output to the function without changing the signature for the map. The IO function map is of type
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{std::map<std::string, std::map<std::string,}
+\DoxyCodeLine{    void (*)(\textcolor{keyword}{const} util::ParamData\&, \textcolor{keyword}{const} \textcolor{keywordtype}{void}*, \textcolor{keywordtype}{void}*)>>}
+
+\end{DoxyCode}
+
+
+and the first map key is the typename ({\ttfamily tname}) of the parameter, and the second map key is the string name of the function. For instance, calling
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{const} util::ParamData\& d = IO::Parameters()[\textcolor{stringliteral}{"{}param"{}}];}
+\DoxyCodeLine{IO::GetSingleton().functionMap[d.tname][\textcolor{stringliteral}{"{}GetParam"{}}](d, input, output);}
+
+\end{DoxyCode}
+
+
+will call the {\ttfamily \doxyref{Get\+Param()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9eee50cbae50b3464c59b88ab7b88e44}} function for the type of the {\ttfamily \char`\"{}param\char`\"{}} parameter. Examples are probably easiest to understand how this functionality works; see the \doxyref{IO\+::\+Get\+Param$<$\+T$>$()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9eee50cbae50b3464c59b88ab7b88e44} source to see how this might be used.
+
+The IO singleton expects the following functions to be defined in the function map for each type\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily Get\+Param} -- return a pointer to the parameter in {\ttfamily output}.
+\item {\ttfamily Get\+Printable\+Param} -- return a pointer to a string description of the parameter in {\ttfamily output}.
+\end{DoxyItemize}
+
+If these functions are properly defined, then the IO module will work correctly. Other functions may also be defined; these may be used by other parts of the binding infrastructure for different languages.\doxysection{Command-\/line program bindings}\label{bindings_bindings_cli}
+This section describes the internal functionality of the command-\/line program binding generator. If you are only interested in writing mlpack programs, this section probably is not worth reading. This section is worth reading only if you want to know the specifics of how the {\ttfamily mlpack\+Main()} function and macros get turned into a fully working command-\/line program.
+
+The code for the command-\/line bindings is found in {\ttfamily src/mlpack/bindings/cli}.\doxysubsection{mlpack\+Main() definition}\label{bindings_bindings_cli_mlpack_main}
+Any command-\/line program must be compiled with the {\ttfamily BINDING\+\_\+\+TYPE} macro set to the value {\ttfamily BINDING\+\_\+\+TYPE\+\_\+\+CLI}. This is handled by the CMake macro {\ttfamily \doxyref{add\+\_\+cli\+\_\+executable()}{p.}{methods_2nmf_2CMakeLists_8txt_a05cd3fbacefda64d4c50d29c9ba6770b}}.
+
+When {\ttfamily BINDING\+\_\+\+TYPE} is set to {\ttfamily BINDING\+\_\+\+TYPE\+\_\+\+CLI}, the following is set in {\ttfamily \doxyref{src/mlpack/core/util/mlpack\+\_\+main.\+hpp}{p.}{mlpack__main_8hpp}}, which must be included by every mlpack binding\+:
+
+
+\begin{DoxyItemize}
+\item The options defined by {\ttfamily PARAM\+\_\+$\ast$}() macros are of type \doxyref{mlpack\+::bindings\+::cli\+::\+CLIOption}{p.}{classmlpack_1_1bindings_1_1cli_1_1CLIOption}.
+\item The parameter and value printing macros for {\ttfamily \doxyref{BINDING\+\_\+\+LONG\+\_\+\+DESC()}{p.}{param_8hpp_a7f7cbd16d4fecab7136b5ca1cbcbb0a7}} and \doxyref{BINDING\+\_\+\+EXAMPLE()}{p.}{param_8hpp_a9ffe1d6d254b3e50a5611f77ee381838} are set\+: The {\ttfamily PRINT\+\_\+\+PARAM\+\_\+\+STRING()} macro is defined as \doxyref{mlpack\+::bindings\+::cli\+::\+Param\+String()}{p.}{namespacemlpack_1_1bindings_1_1cli_ac64f8a790e82ba58a13eda3227ce14b5}. The {\ttfamily PRINT\+\_\+\+DATASET()} macro is defined as \doxyref{mlpack\+::bindings\+::cli\+::\+Print\+Dataset()}{p.}{namespacemlpack_1_1bindings_1_1cli_aae7c332a39af5d11ff2ccfe36918a9e8}. The {\ttfamily PRINT\+\_\+\+MODEL()} macro is defined as \doxyref{mlpack\+::bindings\+::cli\+::\+Print\+Model()}{p.}{namespacemlpack_1_1bindings_1_1cli_a399b457336a1e6dc98fa62162d78c97f}. The {\ttfamily PRINT\+\_\+\+CALL()} macro is defined as \doxyref{mlpack\+::bindings\+::cli\+::\+Program\+Call()}{p.}{namespacemlpack_1_1bindings_1_1cli_a88610ef05073988cd29e1ac4a37f5481}.
+\item The function {\ttfamily int main()} is defined as\+:
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char}** argv)}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  \textcolor{comment}{// Parse the command-\/line options; put them into IO.}}
+\DoxyCodeLine{  mlpack::bindings::cli::ParseCommandLine(argc, argv);}
+\DoxyCodeLine{}
+\DoxyCodeLine{  mlpackMain();}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{comment}{// Print output options, print verbose information, save model parameters,}}
+\DoxyCodeLine{  \textcolor{comment}{// clean up, and so forth.}}
+\DoxyCodeLine{  mlpack::bindings::cli::EndProgram();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Thus any mlpack command-\/line binding first processes the command-\/line arguments with \doxyref{mlpack\+::bindings\+::cli\+::\+Parse\+Command\+Line()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9f4d336f3d999569328497d0b8f37b35}, then runs the binding with {\ttfamily mlpack\+Main()}, then cleans up with \doxyref{mlpack\+::bindings\+::cli\+::\+End\+Program()}{p.}{namespacemlpack_1_1bindings_1_1cli_a0f5881c4001a8176d0ad6387b30c8b8a}.
+
+The {\ttfamily \doxyref{Parse\+Command\+Line()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9f4d336f3d999569328497d0b8f37b35}} function reads the input parameters and sets the values in IO. For matrix-\/type and model-\/type parameters, this reads the filenames from the command-\/line, but does not load the matrix or model. Instead the matrix or model is loaded the first time it is accessed with {\ttfamily \doxyref{Get\+Param$<$\+T$>$()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9eee50cbae50b3464c59b88ab7b88e44}}.
+
+The {\ttfamily -\/-\/help} parameter is handled by the \doxyref{mlpack\+::bindings\+::cli\+::\+Print\+Help()}{p.}{namespacemlpack_1_1bindings_1_1cli_a8ab11ab73071ec0432e656e9d6a922ea} function.
+
+At the end of program execution, the \doxyref{mlpack\+::bindings\+::cli\+::\+End\+Program()}{p.}{namespacemlpack_1_1bindings_1_1cli_a0f5881c4001a8176d0ad6387b30c8b8a} function is called. This writes any output matrix or model parameters to disk, and prints the program parameters and timers if {\ttfamily -\/-\/verbose} was given.\doxysubsection{Matrix and model parameter handling}\label{bindings_bindings_cli_matrix}
+For command line bindings, the matrix, model, and matrix with categorical type parameters all require special handling, since it is not possible to pass a matrix of any reasonable size or a model on the command line directly. Therefore for a matrix or model parameter, the user specifies the file containing that matrix or model parameter. If the parameter is an input parameter, then the file is loaded when {\ttfamily \doxyref{Get\+Param$<$\+T$>$()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9eee50cbae50b3464c59b88ab7b88e44}} is called. If the parameter is an output parameter, then the matrix or model is saved to the file when {\ttfamily \doxyref{End\+Program()}{p.}{namespacemlpack_1_1bindings_1_1cli_a0f5881c4001a8176d0ad6387b30c8b8a}} is called.
+
+The actual implementation of this is that the {\ttfamily boost\+::any value} member of the {\ttfamily Param\+Data} struct does not hold the model or the matrix, but instead a {\ttfamily std\+::tuple} containing both the matrix or the model, and the filename associated with that matrix or model.
+
+This means that functions like {\ttfamily \doxyref{Get\+Param$<$\+T$>$()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9eee50cbae50b3464c59b88ab7b88e44}} and {\ttfamily \doxyref{Get\+Printable\+Param$<$\+T$>$()}{p.}{namespacemlpack_1_1bindings_1_1cli_aaf7d940ea6f4c5984891552aad0a003a}} (and all of the other associated functions in the IO function map) must have special handling for matrix or model types. See those implementatipns for more details---the special handling is enforced via SFINAE.\doxysubsection{Parsing the command line}\label{bindings_bindings_cli_parsing}
+The {\ttfamily \doxyref{Parse\+Command\+Line()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9f4d336f3d999569328497d0b8f37b35}} function uses {\ttfamily CLI11} to read the values from the command line into the {\ttfamily Param\+Data} structs held by the IO singleton.
+
+In order to set up {\ttfamily CLI11}---and to keep its headers from needing to be included by the rest of the library---the code loops over each parameter known by the IO singleton and calls the {\ttfamily \char`\"{}\+Add\+To\+PO\char`\"{}} function from the function map. This in turn calls the necessary functions to register a given parameter with {\ttfamily CLI11}, and once all parameters have been registered, the facilities provided by {\ttfamily CLI11} are used to parse the command line input properly.\doxysection{Python bindings}\label{bindings_bindings_python}
+This section describes the internal functionality of the mlpack Python binding generator. If you are only interested in writing new bindings or building the bindings, this section is probably not worth reading. But if you are interested in the internal working of the Python binding generator, then this section is for you.
+
+The Python bindings are significantly more complex than the command line bindings because we cannot just compile directly to a finished product. Instead we need a multi-\/stage compilation\+:
+
+
+\begin{DoxyItemize}
+\item We must generate a setup.\+py file that can be used to compile the bindings.
+\item We must generate the .pyx (Cython) bindings for each program.
+\item Then we must build each .pyx into a .so that is loadable from Python.
+\item We must also test the Python bindings.
+\end{DoxyItemize}
+
+This is done with a combination of C++ code to generate the .pyx bindings, CMake to run the actual compilation and generate the setup.\+py file, some utility Python functions, and tests written in both Python and C++. This code is primarily contained in {\ttfamily src/mlpack/bindings/python/}.\doxysubsection{Passing matrices to/from Python}\label{bindings_bindings_python_matrix}
+The standard Python matrix library is numpy, so mlpack bindings should accept numpy matrices as input. Fortunately, numpy Cython bindings already exist, which make it easy to convert from a numpy object to an Armadillo object without copying any data. This code can be found in {\ttfamily src/mlpack/bindings/python/mlpack/arma\+\_\+numpy.\+pyx}, and is used by the Python {\ttfamily \doxyref{Get\+Param$<$\+T$>$()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9eee50cbae50b3464c59b88ab7b88e44}} functionality.
+
+mlpack also supports categorical matrices; in Python, the typical way of representing matrices with categorical features is with Pandas. Therefore, mlpack also accepts Pandas matrices, and if any of the Pandas matrix dimensions are categorical, these are properly encoded. The function {\ttfamily to\+\_\+matrix\+\_\+with\+\_\+info()} from {\ttfamily mlpack/bindings/python/mlpack/matrix\+\_\+utils.\+py} is used to perform this conversion.\doxysubsection{Passing model parameter to/from Python}\label{bindings_bindings_python_model}
+We use (or abuse) Cython functionality in order to give the user a model object that they can use in their Python code. However, we do not want to (or have the infrastructure to) write bindings for every method that a serializable model class might support; therefore, we only desire to return a memory pointer to the model to the user.
+
+In this way, a user that receives a model from an output parameter can then reuse the model as an input parameter to another binding (or the same binding).
+
+To return a function pointer we have to define a Cython class in the following way (this example is taken from the perceptron binding)\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cdef \textcolor{keyword}{extern} from \textcolor{stringliteral}{"{}</home/ryan/src/mlpack-\/rc/src/mlpack/methods/perceptron/perceptron\_main.cpp>"{}} nogil:}
+\DoxyCodeLine{  cdef \textcolor{keywordtype}{int} mlpackMain() nogil except +RuntimeError}
+\DoxyCodeLine{}
+\DoxyCodeLine{  cdef cppclass PerceptronModel:}
+\DoxyCodeLine{    PerceptronModel() nogil}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{cdef class PerceptronModelType:}
+\DoxyCodeLine{  cdef PerceptronModel* modelptr}
+\DoxyCodeLine{}
+\DoxyCodeLine{  def \_\_cinit\_\_(self):}
+\DoxyCodeLine{    self.modelptr = new PerceptronModel()}
+\DoxyCodeLine{}
+\DoxyCodeLine{  def \_\_dealloc\_\_(self):}
+\DoxyCodeLine{    del self.modelptr}
+
+\end{DoxyCode}
+
+
+This class definition is automatically generated when the .pyx file is automatically generated.\doxysubsection{CMake generation of setup.\+py}\label{bindings_bindings_python_setup_py}
+A boilerplate setup.\+py file can be found in {\ttfamily src/mlpack/bindings/python/setup.\+py.\+in}. This will be configured by CMake to produce the final {\ttfamily setup.\+py} file, but in order to do this, a list of the .pyx files to be compiled must be gathered.
+
+Therefore, the {\ttfamily add\+\_\+python\+\_\+binding()} macro is defined in {\ttfamily \doxyref{src/mlpack/bindings/python/\+CMake\+Lists.\+txt}{p.}{bindings_2python_2CMakeLists_8txt}}. This adds the given binding to the {\ttfamily MLPACK\+\_\+\+PYXS} variable, which is then inserted into {\ttfamily setup.\+py} as part of the {\ttfamily configure\+\_\+file()} step in {\ttfamily \doxyref{src/mlpack/\+CMake\+Lists.\+txt}{p.}{CMakeLists_8txt}}.\doxysubsection{Generation of .\+pyx files}\label{bindings_bindings_python_generate_pyx}
+A binding named {\ttfamily program} is built into a program called {\ttfamily generate\+\_\+pyx\+\_\+program} (this a CMake target, so you can build these individually if you like). The file {\ttfamily src/mlpack/bindings/python/generate\+\_\+pyx.\+cpp.\+in} is configured by CMake to set the name of the program and the {\ttfamily $\ast$\+\_\+main}.cpp file to include correctly, then the {\ttfamily \doxyref{mlpack\+::bindings\+::python\+::\+Print\+PYX()}{p.}{namespacemlpack_1_1bindings_1_1python_a6cd6a94b0d12a167d1f1e26ae35e4cb7}} function is called by the program. The {\ttfamily \doxyref{Print\+PYX()}{p.}{namespacemlpack_1_1bindings_1_1python_a6cd6a94b0d12a167d1f1e26ae35e4cb7}} function uses the parameters that have been set in the IO singleton by the {\ttfamily \doxyref{BINDING\+\_\+\+NAME()}{p.}{param_8hpp_a3610abda0a69dc19a08c50e713f615b7}}, {\ttfamily \doxyref{BINDING\+\_\+\+SHORT\+\_\+\+DESC()}{p.}{param_8hpp_a013f7f337d6139c7f6de3a4f0fa7b019}}, {\ttfamily \doxyref{BINDING\+\_\+\+LONG\+\_\+\+DESC()}{p.}{param_8hpp_a7f7cbd16d4fecab7136b5ca1cbcbb0a7}}, {\ttfamily \doxyref{BINDING\+\_\+\+EXAMPLE()}{p.}{param_8hpp_a9ffe1d6d254b3e50a5611f77ee381838}}, {\ttfamily \doxyref{BINDING\+\_\+\+SEE\+\_\+\+ALSO()}{p.}{param_8hpp_add4a79815b7f3972699cc414bfc9fe57}} and {\ttfamily PARAM\+\_\+$\ast$}() macros in order to actually print a fully-\/working .pyx file that can be compiled. The file has several sections\+:
+
+
+\begin{DoxyItemize}
+\item Python imports (numpy/pandas/cython/etc.)
+\item Cython imports of C++ utility functions and Armadillo functionality
+\item Cython imports of any necessary serializable model types
+\item Definitions of classes for serializable model types
+\item The binding function definition
+\item Documentation\+: input and output parameters
+\item The call to mlpack\+Main()
+\item Handling of output functionality
+\item Return of output parameters
+\end{DoxyItemize}
+
+Any output parameters for Python bindings are returned in a dict containing named elements.\doxysubsection{Building the .\+pyx files}\label{bindings_bindings_python_build_pyx}
+After building the {\ttfamily generate\+\_\+pyx\+\_\+program} target, the {\ttfamily build\+\_\+pyx\+\_\+program} target is built as a dependency of the {\ttfamily python} target. This simply takes the generated .pyx file and uses Python setuptools to compile this to a Python binding.\doxysubsection{Testing the Python bindings}\label{bindings_bindings_python_testing}
+We cannot do our tests only from the Boost Unit Test Framework in C++ because we need to see that we are able to load parameters properly from Python and return output correctly.
+
+The tests are in {\ttfamily src/mlpack/bindings/python/tests/} and test both the actual bindings and also the auxiliary Python code included in {\ttfamily src/mlpack/bindings/python/mlpack/}.\doxysection{Adding new binding types}\label{bindings_bindings_new}
+Adding a new binding type to mlpack is fairly straightforward once the general structure of the IO singleton and the function map that IO uses is understood. For each different language that bindings are desired for, the route to a solution will be particularly different---so it is hard to provide any general guidance for how to make new bindings that will be applicable to each language.
+
+In general, the first thing to handle will be how matrices are passed back and forth between the target language. Typically this might mean getting the memory address of an input matrix and wrapping an {\ttfamily arma\+::mat} object around that memory address. This can be handled in the {\ttfamily \doxyref{Get\+Param()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9eee50cbae50b3464c59b88ab7b88e44}} function that is part of the IO singleton function map; see {\ttfamily get\+\_\+param.\+hpp} for both the IO and Python bindings for an example (in {\ttfamily src/mlpack/bindings/cli/} and {\ttfamily src/mlpack/bindings/python/}).
+
+Serialization of models is also a tricky consideration; in some languages you will be able to pass a pointer to the model itself. This is generally best---users should not expect to be able to manipulate the model in the target language, but they should expect that they can pass a model back and forth without paying a runtime penalty. So, for example, serializing a model using a {\ttfamily boost\+::text\+\_\+oarchive} and then returning the string that represents the model is not acceptable, because that string can be extremely large and the time it takes to decode the model can be very large.
+
+The strategy of generating a binding definition for the target language, like what is done with Python, can be a useful strategy that should be considered. If this is the route that is desired, a large amount of CMake boilerplate may be necessary. The Python CMake configuration can be referred to as an example, but probably a large amount of adaptation to other languages will be necessary.
+
+Lastly, when adding a new language, be sure to make sure it works with the Markdown documentation generator. In order to make this happen, you will need to modify all of the {\ttfamily add\+\_\+markdown\+\_\+docs()} calls in the different {\ttfamily CMake\+Lists.\+txt} files to contain the name of the language you have written a binding for. You will also need to modify every function in {\ttfamily src/mlpack/bindings/markdown/print\+\_\+doc\+\_\+functions\+\_\+impl.\+hpp} to correctly call out to the corresponding function for the language that you have written bindings for. 

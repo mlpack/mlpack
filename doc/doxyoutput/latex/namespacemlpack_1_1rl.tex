@@ -1,0 +1,142 @@
+\doxysection{mlpack\+::rl Namespace Reference}
+\label{namespacemlpack_1_1rl}\index{mlpack::rl@{mlpack::rl}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Acrobot}
+\begin{DoxyCompactList}\small\item\em Implementation of \doxyref{Acrobot}{p.}{classmlpack_1_1rl_1_1Acrobot} game. \end{DoxyCompactList}\item 
+class \textbf{ Aggregated\+Policy}
+\item 
+class \textbf{ Async\+Learning}
+\begin{DoxyCompactList}\small\item\em Wrapper of various asynchronous learning algorithms, e.\+g. \end{DoxyCompactList}\item 
+class \textbf{ Cart\+Pole}
+\begin{DoxyCompactList}\small\item\em Implementation of Cart Pole task. \end{DoxyCompactList}\item 
+class \textbf{ Categorical\+DQN}
+\begin{DoxyCompactList}\small\item\em Implementation of the Categorical Deep Q-\/\+Learning network. \end{DoxyCompactList}\item 
+class \textbf{ Continuous\+Action\+Env}
+\begin{DoxyCompactList}\small\item\em To use the dummy environment, one may start by specifying the state and action dimensions. \end{DoxyCompactList}\item 
+class \textbf{ Continuous\+Double\+Pole\+Cart}
+\begin{DoxyCompactList}\small\item\em Implementation of Continuous Double Pole Cart Balancing task. \end{DoxyCompactList}\item 
+class \textbf{ Continuous\+Mountain\+Car}
+\begin{DoxyCompactList}\small\item\em Implementation of Continuous Mountain Car task. \end{DoxyCompactList}\item 
+class \textbf{ Discrete\+Action\+Env}
+\begin{DoxyCompactList}\small\item\em To use the dummy environment, one may start by specifying the state and action dimensions. \end{DoxyCompactList}\item 
+class \textbf{ Double\+Pole\+Cart}
+\begin{DoxyCompactList}\small\item\em Implementation of Double Pole Cart Balancing task. \end{DoxyCompactList}\item 
+class \textbf{ Dueling\+DQN}
+\begin{DoxyCompactList}\small\item\em Implementation of the Dueling Deep Q-\/\+Learning network. \end{DoxyCompactList}\item 
+class \textbf{ Greedy\+Policy}
+\begin{DoxyCompactList}\small\item\em Implementation for epsilon greedy policy. \end{DoxyCompactList}\item 
+class \textbf{ Mountain\+Car}
+\begin{DoxyCompactList}\small\item\em Implementation of Mountain Car task. \end{DoxyCompactList}\item 
+class \textbf{ NStep\+QLearning\+Worker}
+\begin{DoxyCompactList}\small\item\em Forward declaration of \doxyref{NStep\+QLearning\+Worker}{p.}{classmlpack_1_1rl_1_1NStepQLearningWorker}. \end{DoxyCompactList}\item 
+class \textbf{ One\+Step\+QLearning\+Worker}
+\begin{DoxyCompactList}\small\item\em Forward declaration of \doxyref{One\+Step\+QLearning\+Worker}{p.}{classmlpack_1_1rl_1_1OneStepQLearningWorker}. \end{DoxyCompactList}\item 
+class \textbf{ One\+Step\+Sarsa\+Worker}
+\begin{DoxyCompactList}\small\item\em Forward declaration of \doxyref{One\+Step\+Sarsa\+Worker}{p.}{classmlpack_1_1rl_1_1OneStepSarsaWorker}. \end{DoxyCompactList}\item 
+class \textbf{ Pendulum}
+\begin{DoxyCompactList}\small\item\em Implementation of \doxyref{Pendulum}{p.}{classmlpack_1_1rl_1_1Pendulum} task. \end{DoxyCompactList}\item 
+class \textbf{ Prioritized\+Replay}
+\begin{DoxyCompactList}\small\item\em Implementation of prioritized experience replay. \end{DoxyCompactList}\item 
+class \textbf{ QLearning}
+\begin{DoxyCompactList}\small\item\em Implementation of various Q-\/\+Learning algorithms, such as DQN, double DQN. \end{DoxyCompactList}\item 
+class \textbf{ Random\+Replay}
+\begin{DoxyCompactList}\small\item\em Implementation of random experience replay. \end{DoxyCompactList}\item 
+class \textbf{ Reward\+Clipping}
+\begin{DoxyCompactList}\small\item\em Interface for clipping the reward to some value between the specified maximum and minimum value (Clipping here is implemented as $ g_{\text{clipped}} = \max(g_{\text{min}}, \min(g_{\text{min}}, g))) $.) \end{DoxyCompactList}\item 
+class \textbf{ SAC}
+\begin{DoxyCompactList}\small\item\em Implementation of Soft Actor-\/\+Critic, a model-\/free off-\/policy actor-\/critic based deep reinforcement learning algorithm. \end{DoxyCompactList}\item 
+class \textbf{ Simple\+DQN}
+\item 
+class \textbf{ Sum\+Tree}
+\begin{DoxyCompactList}\small\item\em Implementation of \doxyref{Sum\+Tree}{p.}{classmlpack_1_1rl_1_1SumTree}. \end{DoxyCompactList}\item 
+class \textbf{ Training\+Config}
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Environment\+Type , typename Network\+Type , typename Updater\+Type , typename Policy\+Type $>$ }\\using \textbf{ NStep\+QLearning} = \textbf{ Async\+Learning}$<$ \textbf{ NStep\+QLearning\+Worker}$<$ Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type $>$, Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type $>$
+\begin{DoxyCompactList}\small\item\em Convenient typedef for async n step q-\/learning. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Environment\+Type , typename Network\+Type , typename Updater\+Type , typename Policy\+Type $>$ }\\using \textbf{ One\+Step\+QLearning} = \textbf{ Async\+Learning}$<$ \textbf{ One\+Step\+QLearning\+Worker}$<$ Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type $>$, Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type $>$
+\begin{DoxyCompactList}\small\item\em Convenient typedef for async one step q-\/learning. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Environment\+Type , typename Network\+Type , typename Updater\+Type , typename Policy\+Type $>$ }\\using \textbf{ One\+Step\+Sarsa} = \textbf{ Async\+Learning}$<$ \textbf{ One\+Step\+Sarsa\+Worker}$<$ Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type $>$, Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type $>$
+\begin{DoxyCompactList}\small\item\em Convenient typedef for async one step Sarsa. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\label{namespacemlpack_1_1rl_a5af8bcbe29f6b50332ea2ac7d7dd521b}} 
+\index{mlpack::rl@{mlpack::rl}!NStepQLearning@{NStepQLearning}}
+\index{NStepQLearning@{NStepQLearning}!mlpack::rl@{mlpack::rl}}
+\doxysubsubsection{NStepQLearning}
+{\footnotesize\ttfamily using \textbf{ NStep\+QLearning} =  \textbf{ Async\+Learning}$<$\textbf{ NStep\+QLearning\+Worker}$<$Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type$>$, Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type$>$}
+
+
+
+Convenient typedef for async n step q-\/learning. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Environment\+Type} & The type of the reinforcement learning task. \\
+\hline
+{\em Network\+Type} & The type of the network model. \\
+\hline
+{\em Updater\+Type} & The type of the optimizer. \\
+\hline
+{\em Policy\+Type} & The type of the behavior policy. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 231 of file async\+\_\+learning.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1rl_a3c2fb6897a13583e67422ad12286f6d1}} 
+\index{mlpack::rl@{mlpack::rl}!OneStepQLearning@{OneStepQLearning}}
+\index{OneStepQLearning@{OneStepQLearning}!mlpack::rl@{mlpack::rl}}
+\doxysubsubsection{OneStepQLearning}
+{\footnotesize\ttfamily using \textbf{ One\+Step\+QLearning} =  \textbf{ Async\+Learning}$<$\textbf{ One\+Step\+QLearning\+Worker}$<$Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type$>$, Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type$>$}
+
+
+
+Convenient typedef for async one step q-\/learning. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Environment\+Type} & The type of the reinforcement learning task. \\
+\hline
+{\em Network\+Type} & The type of the network model. \\
+\hline
+{\em Updater\+Type} & The type of the optimizer. \\
+\hline
+{\em Policy\+Type} & The type of the behavior policy. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 195 of file async\+\_\+learning.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1rl_ae44ae2a1270ac28a3d57dd93439839a4}} 
+\index{mlpack::rl@{mlpack::rl}!OneStepSarsa@{OneStepSarsa}}
+\index{OneStepSarsa@{OneStepSarsa}!mlpack::rl@{mlpack::rl}}
+\doxysubsubsection{OneStepSarsa}
+{\footnotesize\ttfamily using \textbf{ One\+Step\+Sarsa} =  \textbf{ Async\+Learning}$<$\textbf{ One\+Step\+Sarsa\+Worker}$<$Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type$>$, Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type$>$}
+
+
+
+Convenient typedef for async one step Sarsa. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Environment\+Type} & The type of the reinforcement learning task. \\
+\hline
+{\em Network\+Type} & The type of the network model. \\
+\hline
+{\em Updater\+Type} & The type of the optimizer. \\
+\hline
+{\em Policy\+Type} & The type of the behavior policy. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 213 of file async\+\_\+learning.\+hpp.
+

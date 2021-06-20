@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="cli_2print__doc__functions_8hpp" kind="file" language="C++">
+    <compoundname>print_doc_functions.hpp</compoundname>
+    <includes refid="hyphenate__string_8hpp" local="no">mlpack/core/util/hyphenate_string.hpp</includes>
+    <includes local="yes">print_doc_functions_impl.hpp</includes>
+    <incdepgraph>
+      <node id="2">
+        <label>mlpack/core/util/hyphenate_string.hpp</label>
+        <link refid="hyphenate__string_8hpp"/>
+      </node>
+      <node id="3">
+        <label>print_doc_functions_impl.hpp</label>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/cli/print_doc_functions.hpp</label>
+        <link refid="cli_2print__doc__functions_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1bindings">mlpack::bindings</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1bindings_1_1cli">mlpack::bindings::cli</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para>
+</simplesect>
+This will generate a string representing what a user should type to invoke a given option. For the command-line bindings, this will generate strings like &apos;<ndash/>param_name=x&apos; or &apos;<ndash/>param_name&apos;.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_BINDINGS_CLI_PRINT_DOC_FUNCTIONS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="hyphenate__string_8hpp" kindref="compound">mlpack/core/util/hyphenate_string.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">bindings<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">cli<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="namespacemlpack_1_1bindings_1_1cli_1ab95e39339701c7ad40bb9a5b963cc0e6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1ab95e39339701c7ad40bb9a5b963cc0e6" kindref="member">GetBindingName</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>bindingName);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="namespacemlpack_1_1bindings_1_1cli_1a46c26fbc865f5aa6bcd23d58014eb638" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1a46c26fbc865f5aa6bcd23d58014eb638" kindref="member">PrintImport</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>bindingName);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="namespacemlpack_1_1bindings_1_1cli_1ae595c11b747d9672427693f45872f912" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1ae595c11b747d9672427693f45872f912" kindref="member">PrintInputOptionInfo</ref>();</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42" refid="namespacemlpack_1_1bindings_1_1cli_1a5930dee85295f63edddd93ce3370d6db" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1a5930dee85295f63edddd93ce3370d6db" kindref="member">PrintOutputOptionInfo</ref>();</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="namespacemlpack_1_1bindings_1_1cli_1a91e9173c2229c660c39a414e0e0a0607" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1a91e9173c2229c660c39a414e0e0a0607" kindref="member">PrintTypeDocs</ref>();</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="53" refid="namespacemlpack_1_1bindings_1_1cli_1aab304ac19d1e7e55b52c0f3875e67edf" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1aab304ac19d1e7e55b52c0f3875e67edf" kindref="member">PrintValue</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T&amp;<sp/>value,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>quotes);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="namespacemlpack_1_1bindings_1_1cli_1ac7a0c5c5d23498f1677898eba2c57942" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1ac7a0c5c5d23498f1677898eba2c57942" kindref="member">PrintDefault</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="namespacemlpack_1_1bindings_1_1cli_1aae7c332a39af5d11ff2ccfe36918a9e8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1aae7c332a39af5d11ff2ccfe36918a9e8" kindref="member">PrintDataset</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>dataset);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="namespacemlpack_1_1bindings_1_1cli_1a399b457336a1e6dc98fa62162d78c97f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1a399b457336a1e6dc98fa62162d78c97f" kindref="member">PrintModel</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>model);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="namespacemlpack_1_1bindings_1_1cli_1ab2ccd550e94deccfc11c86e56fbd60aa" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1ab2ccd550e94deccfc11c86e56fbd60aa" kindref="member">PrintType</ref>(<ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref>&amp;<sp/>param);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="namespacemlpack_1_1bindings_1_1cli_1abc3f31c87ba14c2c66761361b9192f92" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1abc3f31c87ba14c2c66761361b9192f92" kindref="member">ProcessOptions</ref>();</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Args&gt;</highlight></codeline>
+<codeline lineno="85" refid="namespacemlpack_1_1bindings_1_1cli_1a4219256294452b9ec65efc8a03d5e224" refkind="member"><highlight class="normal">std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1abc3f31c87ba14c2c66761361b9192f92" kindref="member">ProcessOptions</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T&amp;<sp/>value,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Args...<sp/>args);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Args&gt;</highlight></codeline>
+<codeline lineno="94" refid="namespacemlpack_1_1bindings_1_1cli_1a88610ef05073988cd29e1ac4a37f5481" refkind="member"><highlight class="normal">std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1a88610ef05073988cd29e1ac4a37f5481" kindref="member">ProgramCall</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/><ref refid="namespacemlpack_1_1bindings_1_1go_1a24d855d329269931b59bdf1b36706a88" kindref="member">programName</ref>,<sp/>Args...<sp/>args);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="namespacemlpack_1_1bindings_1_1cli_1a61f79718ab4568bf8a4b263d2f822675" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1a88610ef05073988cd29e1ac4a37f5481" kindref="member">ProgramCall</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/><ref refid="namespacemlpack_1_1bindings_1_1go_1a24d855d329269931b59bdf1b36706a88" kindref="member">programName</ref>);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="namespacemlpack_1_1bindings_1_1cli_1ac64f8a790e82ba58a13eda3227ce14b5" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1ac64f8a790e82ba58a13eda3227ce14b5" kindref="member">ParamString</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="117" refid="namespacemlpack_1_1bindings_1_1cli_1a4af0435d1e849593bfc92207e6bd35f7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1bindings_1_1cli_1a4af0435d1e849593bfc92207e6bd35f7" kindref="member">IgnoreCheck</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T&amp;<sp/></highlight><highlight class="comment">/*<sp/>t<sp/>*/</highlight><highlight class="normal">)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/>}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>cli</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>bindings</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;print_doc_functions_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/cli/print_doc_functions.hpp"/>
+  </compounddef>
+</doxygen>

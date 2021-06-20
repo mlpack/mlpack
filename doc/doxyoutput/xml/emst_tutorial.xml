@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="emst_tutorial" kind="page">
+    <compoundname>emst_tutorial</compoundname>
+    <title>EMST Tutorial</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="emst_tutorial_1intro_emsttut">
+<title>Introduction</title>
+<para>The Euclidean Minimum Spanning Tree problem is widely used in machine learning and data mining applications. Given a set <formula id="191">$S$</formula> of points in <formula id="192">$\mathbf{R}^d$</formula>, our task is to compute lowest weight spanning tree in the complete graph on <formula id="191">$S$</formula> with edge weights given by the Euclidean distance between points.</para>
+<para>Among other applications, the EMST can be used to compute hierarchical clusterings of data. A <emphasis>single-linkage clustering</emphasis> can be obtained from the EMST by deleting all edges longer than a given cluster length. This technique is also referred to as a <emphasis>Friends-of-Friends</emphasis> clustering in the astronomy literature.</para>
+<para>mlpack includes an implementation of <bold>Dual-Tree Boruvka</bold> which uses <formula id="193">$kd$</formula>-trees by default; this is the empirically and theoretically fastest EMST algorithm. In addition, the implementation supports the use of different trees via templates. For more details, see the following paper:</para>
+<para><programlisting><codeline><highlight class="normal">@inproceedings{march2010fast,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={Fast<sp/>{E}uclidean<sp/>minimum<sp/>spanning<sp/>tree:<sp/>algorithm,<sp/>analysis,<sp/>and</highlight></codeline>
+<codeline><highlight class="normal">applications},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={March,<sp/>William<sp/>B.<sp/>and<sp/>Ram,<sp/>Parikshit<sp/>and<sp/>Gray,<sp/>Alexander<sp/>G.},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>booktitle={Proceedings<sp/>of<sp/>the<sp/>16th<sp/>ACM<sp/>SIGKDD<sp/>International<sp/>Conference<sp/>on</highlight></codeline>
+<codeline><highlight class="normal">Knowledge<sp/>Discovery<sp/>and<sp/>Data<sp/>Mining<sp/>(KDD<sp/>&apos;10)},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages={603--612},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2010},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>organization={ACM}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><bold>mlpack</bold> provides:</para>
+<para><itemizedlist>
+<listitem><para>a <ref refid="emst_tutorial_1cli_emsttut" kindref="member">simple command-line executable</ref> to compute the EMST of a given data set</para>
+</listitem><listitem><para>a <ref refid="emst_tutorial_1dtb_emsttut" kindref="member">simple C++ interface</ref> to compute the EMST</para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+<sect1 id="emst_tutorial_1toc_emsttut">
+<title>Table of Contents</title>
+<para>A list of all the sections this tutorial contains.</para>
+<para><itemizedlist>
+<listitem><para><ref refid="emst_tutorial_1intro_emsttut" kindref="member">Introduction</ref></para>
+</listitem><listitem><para><ref refid="emst_tutorial_1toc_emsttut" kindref="member">Table of Contents</ref></para>
+</listitem><listitem><para><ref refid="emst_tutorial_1cli_emsttut" kindref="member">Command-Line &apos;EMST&apos;</ref></para>
+</listitem><listitem><para><ref refid="emst_tutorial_1dtb_emsttut" kindref="member">The &apos;DualTreeBoruvka&apos; class</ref></para>
+</listitem><listitem><para><ref refid="emst_tutorial_1further_doc_emsttut" kindref="member">Further documentation</ref></para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+<sect1 id="emst_tutorial_1cli_emsttut">
+<title>Command-Line &apos;EMST&apos;</title>
+<para>The <computeroutput>mlpack_emst</computeroutput> executable in <bold>mlpack</bold> will compute the EMST of a given set of points and store the resulting edge list to a file.</para>
+<para>The output file contains an edge list representation of the MST in an <formula id="194">$n-1 \times 3 $</formula> matrix, where the first and second columns are labels of points and the third column is the edge weight. The edges are sorted in order of increasing weight.</para>
+<para>Below are several examples of simple usage (and the resultant output). The <computeroutput>-v</computeroutput> option is used so that verbose output is given. Further documentation on each individual option can be found by typing</para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_emst<sp/>--help</highlight></codeline>
+</programlisting></para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mlpack_emst<sp/>--input_file=dataset.csv<sp/>--output_file=edge_list.csv<sp/>-v</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Reading<sp/>in<sp/>data.</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Loading<sp/>&apos;dataset.csv&apos;<sp/>as<sp/>CSV<sp/>data.</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Data<sp/>read,<sp/>building<sp/>tree.</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Tree<sp/>built,<sp/>running<sp/>algorithm.</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>4<sp/>edges<sp/>found<sp/>so<sp/>far.</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>5<sp/>edges<sp/>found<sp/>so<sp/>far.</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Total<sp/>spanning<sp/>tree<sp/>length:<sp/>1002.45</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Saving<sp/>CSV<sp/>data<sp/>to<sp/>&apos;edge_list.csv&apos;.</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Execution<sp/>parameters:</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>help:<sp/>false</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>info:<sp/>&quot;&quot;</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>input_file:<sp/>dataset.csv</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>leaf_size:<sp/>1</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>naive:<sp/>false</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>output_file:<sp/>edge_list.csv</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>verbose:<sp/>true</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/>Program<sp/>timers:</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>emst/mst_computation:<sp/>0.000179s</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>emst/tree_building:<sp/>0.000061s</highlight></codeline>
+<codeline><highlight class="normal">[INFO<sp/>]<sp/><sp/><sp/>total_time:<sp/>0.052641s</highlight></codeline>
+</programlisting></para>
+<para>The code performs at most <formula id="195">$\log N$</formula> iterations for <formula id="196">$N$</formula> data points. It will print an update on the number of MST edges found after each iteration. Convenient program timers are given for different parts of the calculation at the bottom of the output, as well as the parameters the simulation was run with.</para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>cat<sp/>dataset.csv</highlight></codeline>
+<codeline><highlight class="normal">0,<sp/>0</highlight></codeline>
+<codeline><highlight class="normal">1,<sp/>1</highlight></codeline>
+<codeline><highlight class="normal">3,<sp/>3</highlight></codeline>
+<codeline><highlight class="normal">0.5,<sp/>0</highlight></codeline>
+<codeline><highlight class="normal">1000,<sp/>0</highlight></codeline>
+<codeline><highlight class="normal">1001,<sp/>0</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">$<sp/>cat<sp/>edge_list.csv</highlight></codeline>
+<codeline><highlight class="normal">0.0000000000e+00,3.0000000000e+00,5.0000000000e-01</highlight></codeline>
+<codeline><highlight class="normal">4.0000000000e+00,5.0000000000e+00,1.0000000000e+00</highlight></codeline>
+<codeline><highlight class="normal">1.0000000000e+00,3.0000000000e+00,1.1180339887e+00</highlight></codeline>
+<codeline><highlight class="normal">1.0000000000e+00,2.0000000000e+00,2.8284271247e+00</highlight></codeline>
+<codeline><highlight class="normal">2.0000000000e+00,4.0000000000e+00,9.9700451353e+02</highlight></codeline>
+</programlisting></para>
+<para>The input points are labeled 0-5. The output tells us that the MST connects point 0 to point 3, point 4 to point 5, point 1 to point 3, point 1 to point 2, and point 2 to point 4, with the corresponding edge weights given in the third column. The total length of the MST is also given in the verbose output.</para>
+<para>Note that it is also possible to compute the EMST using a naive ( <formula id="197">$O(N^2)$</formula>) algorithm for timing and comparison purposes, using the <computeroutput><ndash/>naive</computeroutput> option.</para>
+</sect1>
+<sect1 id="emst_tutorial_1dtb_emsttut">
+<title>The &apos;DualTreeBoruvka&apos; class</title>
+<para>The &apos;DualTreeBoruvka&apos; class contains our implementation of the Dual-Tree Boruvka algorithm.</para>
+<para>The class has two constructors: the first takes the data set, constructs the tree (where the type of tree constructed is the TreeType template parameter), and computes the MST. The second takes data set and an already constructed tree.</para>
+<para>The class provides one method that performs the MST computation: <programlisting><codeline><highlight class="normal">void<sp/>ComputeMST(const<sp/>arma::mat&amp;<sp/>results);</highlight></codeline>
+</programlisting></para>
+<para>This method stores the computed MST in the matrix results in the format given above.</para>
+</sect1>
+<sect1 id="emst_tutorial_1further_doc_emsttut">
+<title>Further documentation</title>
+<para>For further documentation on the DualTreeBoruvka class, consult the <ref refid="classmlpack_1_1emst_1_1DualTreeBoruvka" kindref="compound">complete API documentation</ref>. </para>
+</sect1>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/doc/tutorials/emst/emst.txt"/>
+  </compounddef>
+</doxygen>

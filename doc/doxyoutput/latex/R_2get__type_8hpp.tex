@@ -1,0 +1,59 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/bindings/\+R/get\+\_\+type.hpp File Reference}
+\label{R_2get__type_8hpp}\index{/home/aakash/mlpack/src/mlpack/bindings/R/get\_type.hpp@{/home/aakash/mlpack/src/mlpack/bindings/R/get\_type.hpp}}
+Include dependency graph for get\+\_\+type.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{R_2get__type_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{R_2get__type_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::bindings}
+\item 
+ \textbf{ mlpack\+::bindings\+::r}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Type} (util\+::\+Param\+Data \&, const typename boost\+::disable\+\_\+if$<$ util\+::\+Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Type} (util\+::\+Param\+Data \&, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Type} (util\+::\+Param\+Data \&, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Type} (util\+::\+Param\+Data \&d, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Type} (util\+::\+Param\+Data \&d, const typename boost\+::enable\+\_\+if$<$ util\+::\+Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Get\+Type} (util\+::\+Param\+Data \&d, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Function is used to generate the type names that are used in calls to functions like IO\+\_\+\+Set\+Param$<$type$>$() or set\+Param$<$type$>$(), and therefore what\textquotesingle{}s returned isn\textquotesingle{}t exactly the R native type used for that parameter type. \end{DoxyCompactList}\item 
+template$<$$>$ std\+::string \textbf{ Get\+Type$<$ bool $>$} (util\+::\+Param\+Data \&, const typename boost\+::disable\+\_\+if$<$ util\+::\+Is\+Std\+Vector$<$ bool $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ bool $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ bool $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ bool, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Type$<$ double $>$} (util\+::\+Param\+Data \&, const typename boost\+::disable\+\_\+if$<$ util\+::\+Is\+Std\+Vector$<$ double $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ double $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ double $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ double, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Type$<$ float $>$} (util\+::\+Param\+Data \&, const typename boost\+::disable\+\_\+if$<$ util\+::\+Is\+Std\+Vector$<$ float $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ float $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ float $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ float, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Type$<$ int $>$} (util\+::\+Param\+Data \&, const typename boost\+::disable\+\_\+if$<$ util\+::\+Is\+Std\+Vector$<$ int $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ int $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ int $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ int, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Type$<$ std\+::string $>$} (util\+::\+Param\+Data \&, const typename boost\+::disable\+\_\+if$<$ util\+::\+Is\+Std\+Vector$<$ std\+::string $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ std\+::string $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ std\+::string $>$$>$\+::type $\ast$, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ std\+::string, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Yashwant Singh
+\end{DoxyAuthor}
+Template metaprogramming to return the string representation of the type for the R bindings.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

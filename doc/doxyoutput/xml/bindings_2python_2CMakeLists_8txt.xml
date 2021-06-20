@@ -1,0 +1,424 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="bindings_2python_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="bindings_2python_2CMakeLists_8txt_1aef4e690914aa86a4abe04e8e9928871b" prot="public" static="no" mutable="no">
+        <type>src mlpack bindings <ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref> mlpack __init__ py</type>
+        <definition>src mlpack bindings python mlpack __init__ py __version__</definition>
+        <argsstring></argsstring>
+        <name>__version__</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" line="38" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="bindings_2python_2CMakeLists_8txt_1ad866171b6bf1f2f02d150f72971bc67a" prot="public" static="no" mutable="no">
+        <type>the following modules are not</type>
+        <definition>n testthat Following modules are not Following modules are not available</definition>
+        <argsstring></argsstring>
+        <name>available</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" line="78" column="32" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="bindings_2python_2CMakeLists_8txt_1a5b4074bc3828c30b7aacd91ad914c7ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PROPERTY INCLUDE_DIRECTORIES</type>
+        <definition>PROPERTY INCLUDE_DIRECTORIES add_custom_target</definition>
+        <argsstring>(python_configure COMMAND ${CMAKE_COMMAND} -D GENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/setup.py.in -D GENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py -D PACKAGE_VERSION=&quot;${PACKAGE_VERSION}&quot; -D ARMADILLO_LIBRARIES=&quot;${ARMADILLO_LIBRARIES}&quot; -D MLPACK_LIBRARY=$&lt; TARGET_LINKER_FILE:mlpack &gt; -D MLPACK_LIBDIR=$&lt; TARGET_LINKER_FILE_DIR:mlpack &gt; -D MLPACK_PYXS=&quot;${MLPACK_PYXS}&quot; -D OpenMP_CXX_FLAGS=&quot;${OpenMP_CXX_FLAGS}&quot; -D DISABLE_CFLAGS=&quot;${DISABLE_CFLAGS}&quot; -D CYTHON_INCLUDE_DIRECTORIES=&quot;${CYTHON_INCLUDE_DIRECTORIES}&quot; -D CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -D OUTPUT_DIR=${CMAKE_BINARY_DIR} -P &quot;${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake&quot; BYPRODUCTS &quot;${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py&quot; COMMENT &quot;Configuring setup.py...&quot;) add_dependencies(python_configure python_copy) add_dependencies(python_configured python_configure) file(APPEND $</argsstring>
+        <name>add_custom_target</name>
+        <param>
+          <type>python_configure COMMAND ${CMAKE_COMMAND} -D</type>
+          <declname>GENERATE_CPP_IN</declname>
+          <defval>${CMAKE_SOURCE_DIR}/src/mlpack/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/setup.py.in -D GENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/setup.py -D PACKAGE_VERSION=&quot;${PACKAGE_VERSION}&quot; -D ARMADILLO_LIBRARIES=&quot;${ARMADILLO_LIBRARIES}&quot; -D MLPACK_LIBRARY=$&lt; TARGET_LINKER_FILE:mlpack &gt; -D MLPACK_LIBDIR=$&lt; TARGET_LINKER_FILE_DIR:mlpack &gt; -D MLPACK_PYXS=&quot;${MLPACK_PYXS}&quot; -D OpenMP_CXX_FLAGS=&quot;${OpenMP_CXX_FLAGS}&quot; -D DISABLE_CFLAGS=&quot;${DISABLE_CFLAGS}&quot; -D CYTHON_INCLUDE_DIRECTORIES=&quot;${CYTHON_INCLUDE_DIRECTORIES}&quot; -D CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -D OUTPUT_DIR=${CMAKE_BINARY_DIR} -P &quot;${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake&quot; BYPRODUCTS &quot;${CMAKE_BINARY_DIR}/src/mlpack/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/setup.py&quot; COMMENT &quot;Configuring setup.py...&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" line="16" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" bodystart="16" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="bindings_2python_2CMakeLists_8txt_1a9fe2d0ea8f3f1034c797bb18dc2bb9b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>HAS_BFD_DL PARENT_SCOPE</type>
+        <definition>HAS_BFD_DL PARENT_SCOPE endif</definition>
+        <argsstring>() add_custom_target(python ALL DEPENDS mlpack) add_custom_target(python_copy ALL DEPENDS mlpack) add_custom_target(python_configured ALL) add_custom_command(TARGET python_copy PRE_BUILD COMMAND $</argsstring>
+        <name>endif</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" line="152" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" bodystart="152" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="bindings_2python_2CMakeLists_8txt_1a08ab313cc658fc8c2a6a9899f77e7382" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>macro</definition>
+        <argsstring>(add_python_binding name) endmacro() return() endmacro() macro(post_python_bindings) if(BUILDING_PYTHON_BINDINGS) get_property(CYTHON_INCLUDE_DIRECTORIES DIRECTORY $</argsstring>
+        <name>macro</name>
+        <param>
+          <type>add_python_binding</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" line="3" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" bodystart="3" bodyend="14"/>
+      </memberdef>
+      <memberdef kind="function" id="bindings_2python_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>macro</definition>
+        <argsstring>(not_found_return message) message(STATUS &quot;$</argsstring>
+        <name>macro</name>
+        <param>
+          <type>not_found_return</type>
+          <declname>message</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" line="1" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt" bodystart="1" bodyend="2"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="bindings_2python_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" refkind="member"><highlight class="normal"><ref refid="bindings_2go_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" kindref="member">macro</ref><sp/>(not_found_return<sp/>message)</highlight></codeline>
+<codeline lineno="2"><highlight class="normal"><sp/><sp/>message(STATUS<sp/></highlight><highlight class="stringliteral">&quot;${message}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="3" refid="bindings_2python_2CMakeLists_8txt_1a08ab313cc658fc8c2a6a9899f77e7382" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="bindings_2go_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" kindref="member">macro</ref><sp/>(add_python_binding<sp/>name)</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>Do<sp/>nothing.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/>endmacro<sp/>()</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/>return()</highlight></codeline>
+<codeline lineno="8"><highlight class="normal">endmacro<sp/>()</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><ref refid="bindings_2go_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" kindref="member">macro</ref><sp/>(post_python_bindings)</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>If<sp/>we<sp/>are<sp/>building<sp/>Python<sp/>bindings,<sp/>we<sp/>have<sp/>to<sp/>configure<sp/>setup.py<sp/>but<sp/>only</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#<sp/>after<sp/>we&apos;ve<sp/>recursed<sp/>into<sp/>methods/.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(BUILDING_PYTHON_BINDINGS)</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="bindings_2go_2CMakeLists_8txt_1a8fd9689bcd710a0fb5deb9e3bdbbd0b5" kindref="member">get_property</ref>(CYTHON_INCLUDE_DIRECTORIES<sp/>DIRECTORY<sp/>${CMAKE_CURRENT_SOURCE_DIR}</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>PROPERTY<sp/>INCLUDE_DIRECTORIES)</highlight></codeline>
+<codeline lineno="16" refid="bindings_2python_2CMakeLists_8txt_1a5b4074bc3828c30b7aacd91ad914c7ba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="bindings_2python_2CMakeLists_8txt_1a5b4074bc3828c30b7aacd91ad914c7ba" kindref="member">add_custom_target</ref>(python_configure</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>GENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/setup.py.in</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>GENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/setup.py</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>PACKAGE_VERSION=</highlight><highlight class="stringliteral">&quot;${PACKAGE_VERSION}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>ARMADILLO_LIBRARIES=</highlight><highlight class="stringliteral">&quot;${ARMADILLO_LIBRARIES}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>MLPACK_LIBRARY=$&lt;TARGET_LINKER_FILE:<ref refid="namespacemlpack" kindref="compound">mlpack</ref>&gt;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>MLPACK_LIBDIR=$&lt;TARGET_LINKER_FILE_DIR:<ref refid="namespacemlpack" kindref="compound">mlpack</ref>&gt;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>MLPACK_PYXS=</highlight><highlight class="stringliteral">&quot;${MLPACK_PYXS}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>OpenMP_CXX_FLAGS=</highlight><highlight class="stringliteral">&quot;${OpenMP_CXX_FLAGS}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>DISABLE_CFLAGS=</highlight><highlight class="stringliteral">&quot;${DISABLE_CFLAGS}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>CYTHON_INCLUDE_DIRECTORIES=</highlight><highlight class="stringliteral">&quot;${CYTHON_INCLUDE_DIRECTORIES}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-D<sp/>OUTPUT_DIR=${CMAKE_BINARY_DIR}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-P<sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BYPRODUCTS<sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>COMMENT<sp/></highlight><highlight class="stringliteral">&quot;Configuring<sp/>setup.py...&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>add_dependencies(python_configure<sp/>python_copy)</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>add_dependencies(python_configured<sp/>python_configure)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>Append<sp/>the<sp/>package<sp/>version<sp/>to<sp/>__init__.py<sp/>after<sp/>all<sp/>the<sp/>imports<sp/>are<sp/>loaded.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>file(APPEND<sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/__init__.py</highlight></codeline>
+<codeline lineno="38" refid="bindings_2python_2CMakeLists_8txt_1aef4e690914aa86a4abe04e8e9928871b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;__version__=&apos;${PACKAGE_VERSION}&apos;\n&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">endmacro<sp/>()</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>If<sp/>we<sp/>are<sp/>not<sp/>supposed<sp/>to<sp/>make<sp/>Python<sp/>bindings,<sp/>define<sp/>the<sp/>macro<sp/>so<sp/>it<sp/>does</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>nothing<sp/>and<sp/>leave<sp/>this<sp/>file.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(NOT<sp/>BUILD_PYTHON_BINDINGS)</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>not_found_return(</highlight><highlight class="stringliteral">&quot;Not<sp/>building<sp/>Python<sp/>bindings.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Generate<sp/>Python<sp/>setuptools<sp/>file.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Import<sp/>find_python_module.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><ref refid="bindings_2R_2CMakeLists_8txt_1a45548f086df473757b6a7c11f719387c" kindref="member">include</ref>(${CMAKE_SOURCE_DIR}/CMake/FindPythonModule.cmake)</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">find_package(PythonInterp)</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(NOT<sp/>PYTHON_EXECUTABLE)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(PY_NOT_FOUND_MSG<sp/></highlight><highlight class="stringliteral">&quot;${PY_NOT_FOUND_MSG}\n<sp/><sp/><sp/><sp/>-<sp/>Python&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref>()</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">find_python_module(distutils)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><ref refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" kindref="member">if</ref><sp/>(NOT<sp/>PY_DISTUTILS)</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(PY_NOT_FOUND_MSG<sp/>&quot;${PY_NOT_FOUND_MSG}\n<sp/><sp/><sp/><sp/>-<sp/>distutils</highlight><highlight class="stringliteral">&quot;)</highlight></codeline>
+<codeline lineno="58"><highlight class="stringliteral">endif<sp/>()</highlight></codeline>
+<codeline lineno="59"><highlight class="stringliteral">find_python_module(Cython<sp/>0.24)</highlight></codeline>
+<codeline lineno="60"><highlight class="stringliteral">if<sp/>(NOT<sp/>PY_CYTHON)</highlight></codeline>
+<codeline lineno="61"><highlight class="stringliteral"><sp/><sp/>set(PY_NOT_FOUND_MSG<sp/>&quot;</highlight><highlight class="normal">${PY_NOT_FOUND_MSG}\n<sp/><sp/><sp/><sp/>-<sp/>Cython</highlight><highlight class="stringliteral">&quot;)</highlight></codeline>
+<codeline lineno="62"><highlight class="stringliteral">endif<sp/>()</highlight></codeline>
+<codeline lineno="63"><highlight class="stringliteral">find_python_module(numpy)</highlight></codeline>
+<codeline lineno="64"><highlight class="stringliteral">if<sp/>(NOT<sp/>PY_NUMPY)</highlight></codeline>
+<codeline lineno="65"><highlight class="stringliteral"><sp/><sp/>set(PY_NOT_FOUND_MSG<sp/>&quot;</highlight><highlight class="normal">${PY_NOT_FOUND_MSG}\n<sp/><sp/><sp/><sp/>-<sp/>numpy</highlight><highlight class="stringliteral">&quot;)</highlight></codeline>
+<codeline lineno="66"><highlight class="stringliteral">endif<sp/>()</highlight></codeline>
+<codeline lineno="67"><highlight class="stringliteral">find_python_module(pandas<sp/>0.15.0)</highlight></codeline>
+<codeline lineno="68"><highlight class="stringliteral">if<sp/>(NOT<sp/>PY_PANDAS)</highlight></codeline>
+<codeline lineno="69"><highlight class="stringliteral"><sp/><sp/>set(PY_NOT_FOUND_MSG<sp/>&quot;</highlight><highlight class="normal">${PY_NOT_FOUND_MSG}\n<sp/><sp/><sp/><sp/>-<sp/>pandas</highlight><highlight class="stringliteral">&quot;)</highlight></codeline>
+<codeline lineno="70"><highlight class="stringliteral">endif<sp/>()</highlight></codeline>
+<codeline lineno="71"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="72"><highlight class="stringliteral">##<sp/>We<sp/>need<sp/>to<sp/>check<sp/>here<sp/>if<sp/>Python<sp/>and<sp/>other<sp/>dependencies<sp/>is<sp/>even<sp/>available,<sp/>as</highlight></codeline>
+<codeline lineno="73"><highlight class="stringliteral">##<sp/>it<sp/>is<sp/>require<sp/>to<sp/>build<sp/>python-bindings.</highlight></codeline>
+<codeline lineno="74"><highlight class="stringliteral">if<sp/>(FORCE_BUILD_PYTHON_BINDINGS)</highlight></codeline>
+<codeline lineno="75"><highlight class="stringliteral"><sp/><sp/>if<sp/>(NOT<sp/>PYTHON_EXECUTABLE<sp/>OR<sp/>NOT<sp/>PY_DISTUTILS<sp/>OR<sp/>NOT<sp/>PY_CYTHON<sp/>OR<sp/>NOT<sp/>PY_NUMPY</highlight></codeline>
+<codeline lineno="76"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>OR<sp/>NOT<sp/>PY_PANDAS)</highlight></codeline>
+<codeline lineno="77"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>unset(BUILD_PYTHON_BINDINGS<sp/>CACHE)</highlight></codeline>
+<codeline lineno="78" refid="bindings_2python_2CMakeLists_8txt_1ad866171b6bf1f2f02d150f72971bc67a" refkind="member"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>message(FATAL_ERROR<sp/>&quot;</highlight><highlight class="normal">\nCould<sp/>not<sp/>Build<sp/>Python<sp/>Bindings;<sp/>the<sp/>following<sp/>modules<sp/>are<sp/>not<sp/><ref refid="bindings_2python_2CMakeLists_8txt_1ad866171b6bf1f2f02d150f72971bc67a" kindref="member">available</ref>:<sp/>${PY_NOT_FOUND_MSG}</highlight><highlight class="stringliteral">&quot;)</highlight></codeline>
+<codeline lineno="79"><highlight class="stringliteral"><sp/><sp/>endif()</highlight></codeline>
+<codeline lineno="80"><highlight class="stringliteral">else()</highlight></codeline>
+<codeline lineno="81"><highlight class="stringliteral"><sp/><sp/>if<sp/>(NOT<sp/>PYTHON_EXECUTABLE<sp/>OR<sp/>NOT<sp/>PY_DISTUTILS<sp/>OR<sp/>NOT<sp/>PY_CYTHON<sp/>OR<sp/>NOT<sp/>PY_NUMPY</highlight></codeline>
+<codeline lineno="82"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>OR<sp/>NOT<sp/>PY_PANDAS)</highlight></codeline>
+<codeline lineno="83"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>unset(BUILD_PYTHON_BINDINGS<sp/>CACHE)</highlight></codeline>
+<codeline lineno="84"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>not_found_return(&quot;</highlight><highlight class="normal">Not<sp/>building<sp/>Python<sp/>bindings;<sp/>the<sp/>following<sp/>modules<sp/>are<sp/>not<sp/><ref refid="bindings_2python_2CMakeLists_8txt_1ad866171b6bf1f2f02d150f72971bc67a" kindref="member">available</ref>:<sp/>${PY_NOT_FOUND_MSG}</highlight><highlight class="stringliteral">&quot;)</highlight></codeline>
+<codeline lineno="85"><highlight class="stringliteral"><sp/><sp/>endif()</highlight></codeline>
+<codeline lineno="86"><highlight class="stringliteral">endif()</highlight></codeline>
+<codeline lineno="87"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="88"><highlight class="stringliteral">set(BUILDING_PYTHON_BINDINGS<sp/>ON<sp/>PARENT_SCOPE)</highlight></codeline>
+<codeline lineno="89"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="90"><highlight class="stringliteral">#<sp/>Nothing<sp/>in<sp/>this<sp/>directory<sp/>will<sp/>be<sp/>compiled<sp/>into<sp/>mlpack.</highlight></codeline>
+<codeline lineno="91"><highlight class="stringliteral">set(BINDING_SOURCES</highlight></codeline>
+<codeline lineno="92"><highlight class="stringliteral"><sp/><sp/>default_param.hpp</highlight></codeline>
+<codeline lineno="93"><highlight class="stringliteral"><sp/><sp/>default_param_impl.hpp</highlight></codeline>
+<codeline lineno="94"><highlight class="stringliteral"><sp/><sp/>generate_pyx.hpp</highlight></codeline>
+<codeline lineno="95"><highlight class="stringliteral"><sp/><sp/>generate_pyx.cpp</highlight></codeline>
+<codeline lineno="96"><highlight class="stringliteral"><sp/><sp/>get_arma_type.hpp</highlight></codeline>
+<codeline lineno="97"><highlight class="stringliteral"><sp/><sp/>get_cython_type.hpp</highlight></codeline>
+<codeline lineno="98"><highlight class="stringliteral"><sp/><sp/>get_numpy_type.hpp</highlight></codeline>
+<codeline lineno="99"><highlight class="stringliteral"><sp/><sp/>get_numpy_type_char.hpp</highlight></codeline>
+<codeline lineno="100"><highlight class="stringliteral"><sp/><sp/>get_param.hpp</highlight></codeline>
+<codeline lineno="101"><highlight class="stringliteral"><sp/><sp/>get_printable_param.hpp</highlight></codeline>
+<codeline lineno="102"><highlight class="stringliteral"><sp/><sp/>get_python_type.hpp</highlight></codeline>
+<codeline lineno="103"><highlight class="stringliteral"><sp/><sp/>import_decl.hpp</highlight></codeline>
+<codeline lineno="104"><highlight class="stringliteral"><sp/><sp/>print_class_defn.hpp</highlight></codeline>
+<codeline lineno="105"><highlight class="stringliteral"><sp/><sp/>print_defn.hpp</highlight></codeline>
+<codeline lineno="106"><highlight class="stringliteral"><sp/><sp/>print_doc.hpp</highlight></codeline>
+<codeline lineno="107"><highlight class="stringliteral"><sp/><sp/>print_doc_functions.hpp</highlight></codeline>
+<codeline lineno="108"><highlight class="stringliteral"><sp/><sp/>print_doc_functions_impl.hpp</highlight></codeline>
+<codeline lineno="109"><highlight class="stringliteral"><sp/><sp/>print_input_processing.hpp</highlight></codeline>
+<codeline lineno="110"><highlight class="stringliteral"><sp/><sp/>print_output_processing.hpp</highlight></codeline>
+<codeline lineno="111"><highlight class="stringliteral"><sp/><sp/>print_pyx.hpp</highlight></codeline>
+<codeline lineno="112"><highlight class="stringliteral"><sp/><sp/>print_pyx.cpp</highlight></codeline>
+<codeline lineno="113"><highlight class="stringliteral"><sp/><sp/>print_type_doc.hpp</highlight></codeline>
+<codeline lineno="114"><highlight class="stringliteral"><sp/><sp/>print_type_doc_impl.hpp</highlight></codeline>
+<codeline lineno="115"><highlight class="stringliteral"><sp/><sp/>py_option.hpp</highlight></codeline>
+<codeline lineno="116"><highlight class="stringliteral"><sp/><sp/>strip_type.hpp</highlight></codeline>
+<codeline lineno="117"><highlight class="stringliteral"><sp/><sp/>mlpack/arma_util.hpp</highlight></codeline>
+<codeline lineno="118"><highlight class="stringliteral"><sp/><sp/>setup.cfg</highlight></codeline>
+<codeline lineno="119"><highlight class="stringliteral"><sp/><sp/>copy_artifacts.py</highlight></codeline>
+<codeline lineno="120"><highlight class="stringliteral">)</highlight></codeline>
+<codeline lineno="121"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="122"><highlight class="stringliteral">#<sp/>These<sp/>are<sp/>all<sp/>the<sp/>files<sp/>we<sp/>need<sp/>to<sp/>compile<sp/>Cython<sp/>bindings<sp/>for<sp/>mlpack<sp/>that<sp/>are</highlight></codeline>
+<codeline lineno="123"><highlight class="stringliteral">#<sp/>not<sp/>a<sp/>part<sp/>of<sp/>mlpack<sp/>itself.</highlight></codeline>
+<codeline lineno="124"><highlight class="stringliteral">set(CYTHON_SOURCES</highlight></codeline>
+<codeline lineno="125"><highlight class="stringliteral"><sp/><sp/>#<sp/>mlpack/__init__.py<sp/>is<sp/>not<sp/>included<sp/>here---that<sp/>is<sp/>copied<sp/>separately.</highlight></codeline>
+<codeline lineno="126"><highlight class="stringliteral"><sp/><sp/>mlpack/arma_numpy.pxd</highlight></codeline>
+<codeline lineno="127"><highlight class="stringliteral"><sp/><sp/>mlpack/arma_numpy.pyx</highlight></codeline>
+<codeline lineno="128"><highlight class="stringliteral"><sp/><sp/>mlpack/arma.pxd</highlight></codeline>
+<codeline lineno="129"><highlight class="stringliteral"><sp/><sp/>mlpack/arma_util.hpp</highlight></codeline>
+<codeline lineno="130"><highlight class="stringliteral"><sp/><sp/>mlpack/io.pxd</highlight></codeline>
+<codeline lineno="131"><highlight class="stringliteral"><sp/><sp/>mlpack/io_util.hpp</highlight></codeline>
+<codeline lineno="132"><highlight class="stringliteral"><sp/><sp/>mlpack/matrix_utils.py</highlight></codeline>
+<codeline lineno="133"><highlight class="stringliteral"><sp/><sp/>mlpack/serialization.hpp</highlight></codeline>
+<codeline lineno="134"><highlight class="stringliteral"><sp/><sp/>mlpack/serialization.pxd</highlight></codeline>
+<codeline lineno="135"><highlight class="stringliteral"><sp/><sp/>mlpack/preprocess_json_params.py</highlight></codeline>
+<codeline lineno="136"><highlight class="stringliteral">)</highlight></codeline>
+<codeline lineno="137"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="138"><highlight class="stringliteral">set(TEST_SOURCES</highlight></codeline>
+<codeline lineno="139"><highlight class="stringliteral"><sp/><sp/>tests/dataset_info_test.py</highlight></codeline>
+<codeline lineno="140"><highlight class="stringliteral"><sp/><sp/>tests/test_python_binding.py</highlight></codeline>
+<codeline lineno="141"><highlight class="stringliteral">)</highlight></codeline>
+<codeline lineno="142"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="143"><highlight class="stringliteral">#<sp/>Set<sp/>the<sp/>include<sp/>directories<sp/>correctly.</highlight></codeline>
+<codeline lineno="144"><highlight class="stringliteral">get_property(CYTHON_INCLUDE_DIRECTORIES<sp/>DIRECTORY<sp/>${CMAKE_CURRENT_SOURCE_DIR}</highlight></codeline>
+<codeline lineno="145"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>PROPERTY<sp/>INCLUDE_DIRECTORIES)</highlight></codeline>
+<codeline lineno="146"><highlight class="stringliteral">set<sp/>(CYTHON_INCLDIRS<sp/>&quot;</highlight><highlight class="normal">${CYTHON_INCLUDE_DIRECTORIES}</highlight><highlight class="stringliteral">&quot;)</highlight></codeline>
+<codeline lineno="147"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="148"><highlight class="stringliteral">#<sp/>By<sp/>default,<sp/>Python<sp/>appears<sp/>to<sp/>compile<sp/>with<sp/>-DNDEBUG,<sp/>but<sp/>if<sp/>we<sp/>are<sp/>in<sp/>debug</highlight></codeline>
+<codeline lineno="149"><highlight class="stringliteral">#<sp/>mode<sp/>we<sp/>don&apos;t<sp/>want<sp/>that.<sp/><sp/>We<sp/>also<sp/>want<sp/>to<sp/>disable<sp/>HAS_BFD_DL<sp/>if<sp/>it<sp/>is<sp/>set.</highlight></codeline>
+<codeline lineno="150"><highlight class="stringliteral">if<sp/>(DEBUG)</highlight></codeline>
+<codeline lineno="151"><highlight class="stringliteral"><sp/><sp/>set(DISABLE_CFLAGS<sp/>&quot;</highlight><highlight class="normal">NDEBUG;HAS_BFD_DL</highlight><highlight class="stringliteral">&quot;<sp/>PARENT_SCOPE)</highlight></codeline>
+<codeline lineno="152" refid="bindings_2python_2CMakeLists_8txt_1a9fe2d0ea8f3f1034c797bb18dc2bb9b8" refkind="member"><highlight class="stringliteral">endif<sp/>()</highlight></codeline>
+<codeline lineno="153"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="154"><highlight class="stringliteral">add_custom_target(python<sp/>ALL<sp/>DEPENDS<sp/>mlpack)</highlight></codeline>
+<codeline lineno="155"><highlight class="stringliteral">add_custom_target(python_copy<sp/>ALL<sp/>DEPENDS<sp/>mlpack)</highlight></codeline>
+<codeline lineno="156"><highlight class="stringliteral">#<sp/>The<sp/>python_configure<sp/>target<sp/>is<sp/>added<sp/>later;<sp/>this<sp/>is<sp/>a<sp/>dummy<sp/>target.</highlight></codeline>
+<codeline lineno="157"><highlight class="stringliteral">add_custom_target(python_configured<sp/>ALL)</highlight></codeline>
+<codeline lineno="158"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="159"><highlight class="stringliteral">#<sp/>Copy<sp/>necessary<sp/>files<sp/>after<sp/>making<sp/>the<sp/>mlpack/<sp/>directory.</highlight></codeline>
+<codeline lineno="160"><highlight class="stringliteral">add_custom_command(TARGET<sp/>python_copy<sp/>PRE_BUILD</highlight></codeline>
+<codeline lineno="161"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>make_directory</highlight></codeline>
+<codeline lineno="162"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)</highlight></codeline>
+<codeline lineno="163"><highlight class="stringliteral">foreach(cython_file<sp/>${CYTHON_SOURCES})</highlight></codeline>
+<codeline lineno="164"><highlight class="stringliteral"><sp/><sp/>add_custom_command(TARGET<sp/>python_copy<sp/>PRE_BUILD</highlight></codeline>
+<codeline lineno="165"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>ARGS<sp/>-E<sp/>copy</highlight></codeline>
+<codeline lineno="166"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_CURRENT_SOURCE_DIR}/${cython_file}</highlight></codeline>
+<codeline lineno="167"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/)</highlight></codeline>
+<codeline lineno="168"><highlight class="stringliteral">endforeach()</highlight></codeline>
+<codeline lineno="169"><highlight class="stringliteral">add_custom_command(TARGET<sp/>python_copy<sp/>PRE_BUILD</highlight></codeline>
+<codeline lineno="170"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>ARGS<sp/>-E<sp/>copy</highlight></codeline>
+<codeline lineno="171"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_CURRENT_SOURCE_DIR}/setup.cfg</highlight></codeline>
+<codeline lineno="172"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/</highlight></codeline>
+<codeline lineno="173"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>BYPRODUCTS<sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${cython_file})</highlight></codeline>
+<codeline lineno="174"><highlight class="stringliteral">add_custom_command(TARGET<sp/>python_copy<sp/>PRE_BUILD</highlight></codeline>
+<codeline lineno="175"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>ARGS<sp/>-E<sp/>copy</highlight></codeline>
+<codeline lineno="176"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_CURRENT_SOURCE_DIR}/copy_artifacts.py</highlight></codeline>
+<codeline lineno="177"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)</highlight></codeline>
+<codeline lineno="178"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="179"><highlight class="stringliteral">if<sp/>(BUILD_TESTS)</highlight></codeline>
+<codeline lineno="180"><highlight class="stringliteral"><sp/><sp/>foreach(test_file<sp/>${TEST_SOURCES})</highlight></codeline>
+<codeline lineno="181"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>add_custom_command(TARGET<sp/>python_copy<sp/>PRE_BUILD</highlight></codeline>
+<codeline lineno="182"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>ARGS<sp/>-E<sp/>copy</highlight></codeline>
+<codeline lineno="183"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_CURRENT_SOURCE_DIR}/${test_file}</highlight></codeline>
+<codeline lineno="184"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/</highlight></codeline>
+<codeline lineno="185"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BYPRODUCTS<sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/tests/${test_file})</highlight></codeline>
+<codeline lineno="186"><highlight class="stringliteral"><sp/><sp/>endforeach<sp/>()</highlight></codeline>
+<codeline lineno="187"><highlight class="stringliteral">endif<sp/>()</highlight></codeline>
+<codeline lineno="188"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="189"><highlight class="stringliteral">#<sp/>Install<sp/>any<sp/>dependencies<sp/>via<sp/>setuptools<sp/>automatically.</highlight></codeline>
+<codeline lineno="190"><highlight class="stringliteral">add_custom_command(TARGET<sp/>python_configured<sp/>POST_BUILD</highlight></codeline>
+<codeline lineno="191"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>env<sp/>NO_BUILD=1<sp/>${PYTHON_EXECUTABLE}</highlight></codeline>
+<codeline lineno="192"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py<sp/>build</highlight></codeline>
+<codeline lineno="193"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>WORKING_DIRECTORY<sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)</highlight></codeline>
+<codeline lineno="194"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="195"><highlight class="stringliteral">#<sp/>Then<sp/>do<sp/>the<sp/>actual<sp/>build.</highlight></codeline>
+<codeline lineno="196"><highlight class="stringliteral">add_custom_command(TARGET<sp/>python<sp/>POST_BUILD</highlight></codeline>
+<codeline lineno="197"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>COMMAND<sp/>${PYTHON_EXECUTABLE}</highlight></codeline>
+<codeline lineno="198"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py<sp/>build_ext</highlight></codeline>
+<codeline lineno="199"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>DEPENDS<sp/>mlpack/arma_numpy.pxd</highlight></codeline>
+<codeline lineno="200"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mlpack/arma_numpy.pyx</highlight></codeline>
+<codeline lineno="201"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mlpack/arma.pxd</highlight></codeline>
+<codeline lineno="202"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mlpack/arma_util.hpp</highlight></codeline>
+<codeline lineno="203"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mlpack/io.pxd</highlight></codeline>
+<codeline lineno="204"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mlpack/io_util.hpp</highlight></codeline>
+<codeline lineno="205"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mlpack/matrix_utils.py</highlight></codeline>
+<codeline lineno="206"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mlpack/preprocess_json_params.py</highlight></codeline>
+<codeline lineno="207"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mlpack</highlight></codeline>
+<codeline lineno="208"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>WORKING_DIRECTORY<sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)</highlight></codeline>
+<codeline lineno="209"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="210"><highlight class="stringliteral">#<sp/>Copy<sp/>the<sp/>built<sp/>artifacts,<sp/>so<sp/>that<sp/>it<sp/>is<sp/>also<sp/>an<sp/>in-place<sp/>build.</highlight></codeline>
+<codeline lineno="211"><highlight class="stringliteral">add_custom_command(TARGET<sp/>python<sp/>POST_BUILD</highlight></codeline>
+<codeline lineno="212"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>COMMAND<sp/>${PYTHON_EXECUTABLE}</highlight></codeline>
+<codeline lineno="213"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/copy_artifacts.py</highlight></codeline>
+<codeline lineno="214"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>WORKING_DIRECTORY<sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)</highlight></codeline>
+<codeline lineno="215"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="216"><highlight class="stringliteral">add_dependencies(python<sp/>python_configured)</highlight></codeline>
+<codeline lineno="217"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="218"><highlight class="stringliteral">#<sp/>Configure<sp/>installation<sp/>script<sp/>file.</highlight></codeline>
+<codeline lineno="219"><highlight class="stringliteral">if<sp/>(NOT<sp/>PYTHON_INSTALL_PREFIX)</highlight></codeline>
+<codeline lineno="220"><highlight class="stringliteral"><sp/><sp/>set(PYTHON_INSTALL_PREFIX<sp/>&quot;</highlight><highlight class="normal">${CMAKE_INSTALL_PREFIX}</highlight><highlight class="stringliteral">&quot;)</highlight></codeline>
+<codeline lineno="221"><highlight class="stringliteral">endif<sp/>()</highlight></codeline>
+<codeline lineno="222"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="223"><highlight class="stringliteral">execute_process(COMMAND<sp/>${PYTHON_EXECUTABLE}</highlight></codeline>
+<codeline lineno="224"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">${CMAKE_CURRENT_SOURCE_DIR}/print_python_version.py</highlight><highlight class="stringliteral">&quot;</highlight></codeline>
+<codeline lineno="225"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">${PYTHON_INSTALL_PREFIX}</highlight><highlight class="stringliteral">&quot;</highlight></codeline>
+<codeline lineno="226"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>OUTPUT_VARIABLE<sp/>CMAKE_PYTHON_PATH)</highlight></codeline>
+<codeline lineno="227"><highlight class="stringliteral">string(STRIP<sp/>&quot;</highlight><highlight class="normal">${CMAKE_PYTHON_PATH}</highlight><highlight class="stringliteral">&quot;<sp/>CMAKE_PYTHON_PATH)</highlight></codeline>
+<codeline lineno="228"><highlight class="stringliteral">install(CODE<sp/>&quot;</highlight><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(ENV{PYTHONPATH}<sp/>${CMAKE_PYTHON_PATH})</highlight><highlight class="stringliteral">&quot;)</highlight></codeline>
+<codeline lineno="229"><highlight class="stringliteral">install(CODE<sp/>&quot;</highlight><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(PYTHON_EXECUTABLE<sp/>\</highlight><highlight class="stringliteral">&quot;${PYTHON_EXECUTABLE}\&quot;)&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="230"><highlight class="normal">install(CODE<sp/></highlight><highlight class="stringliteral">&quot;set(CMAKE_BINARY_DIR<sp/>\&quot;${CMAKE_BINARY_DIR}\&quot;)&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal">install(CODE<sp/></highlight><highlight class="stringliteral">&quot;set(PYTHON_INSTALL_PREFIX<sp/>\&quot;${PYTHON_INSTALL_PREFIX}\&quot;)&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="233"><highlight class="normal">install(CODE<sp/></highlight><highlight class="stringliteral">&quot;execute_process(COMMAND<sp/>mkdir<sp/>-p<sp/>$ENV{DESTDIR}${CMAKE_PYTHON_PATH})&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="234"><highlight class="normal">install(SCRIPT<sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_CURRENT_SOURCE_DIR}/PythonInstall.cmake&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Prepare<sp/>__init__.py<sp/>for<sp/>having<sp/>all<sp/>of<sp/>the<sp/>convenience<sp/>imports<sp/>appended<sp/>to<sp/>it.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal">file(COPY<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref>/__init__.py<sp/>DESTINATION</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/)</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><ref refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" kindref="member">if</ref><sp/>(WIN32)</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>Copy<sp/>all<sp/>necessary<sp/>DLLs<sp/>to<sp/>the<sp/>Python<sp/>build<sp/>directory.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal"><sp/>(dir<sp/>${DLL_COPY_DIRS})</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/>file(GLOB<sp/>dll_dir_files<sp/></highlight><highlight class="stringliteral">&quot;${dir}/*.dll&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/>file(COPY<sp/>${dll_dir_files}<sp/>DESTINATION<sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/)</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/>endforeach<sp/>()</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/>foreach<sp/>(dll<sp/>${DLL_COPY_LIBS})</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/>file(COPY<sp/>${dll}<sp/>DESTINATION<sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/)</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/>endforeach<sp/>()</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Add<sp/>a<sp/>macro<sp/>to<sp/>build<sp/>a<sp/>python<sp/>binding.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><ref refid="bindings_2go_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" kindref="member">macro</ref><sp/>(add_python_binding<sp/>name)</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(BUILD_PYTHON_BINDINGS)</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MLPACK_PYXS<sp/>${MLPACK_PYXS}<sp/></highlight><highlight class="stringliteral">&quot;${name}.pyx&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MLPACK_PYXS<sp/>${MLPACK_PYXS}<sp/>PARENT_SCOPE)</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/>add_custom_command(OUTPUT<sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/generate_pyx_${name}.cpp</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/generate_pyx.cpp.in</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/generate_pyx_${name}.cpp</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-DPROGRAM_NAME=${name}</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-P<sp/>${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>DEPENDS<sp/>${CMAKE_SOURCE_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/generate_pyx.cpp.in</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/>add_executable(generate_pyx_${name}</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/generate_pyx_${name}.cpp</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_SOURCE_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/print_pyx.hpp</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_SOURCE_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/print_pyx.cpp)</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/>target_link_libraries(generate_pyx_${name}<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>${MLPACK_LIBRARIES})</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/>set_target_properties(generate_pyx_${name}<sp/>PROPERTIES<sp/>COMPILE_FLAGS</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>-DBINDING_TYPE=<ref refid="mlpack__main_8hpp_1ae33a6c33a70ae353b274df73f2f17925" kindref="member">BINDING_TYPE_PYX</ref>)</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/>add_custom_command(TARGET<sp/>generate_pyx_${name}<sp/>POST_BUILD</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-DPROGRAM=$&lt;TARGET_FILE:generate_pyx_${name}&gt;</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-DOUTPUT_FILE=${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a4164342adb31720de63a384fd5b2845a" kindref="member">python</ref>/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/${name}.pyx</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-P<sp/>${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake)</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/>#<sp/>Build<sp/>the<sp/>pyx.<sp/><sp/>Since<sp/>distutils<sp/>doesn</highlight><highlight class="stringliteral">&apos;t<sp/>support<sp/>a<sp/>parallel<sp/>build,<sp/>we&apos;</highlight><highlight class="normal">ll</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/>#<sp/>enforce<sp/>it<sp/>here.<sp/><sp/>Although<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>will<sp/>always<sp/>be<sp/>rebuilt,<sp/>that</highlight><highlight class="stringliteral">&apos;s<sp/>okay<sp/>because</highlight></codeline>
+<codeline lineno="282"><highlight class="stringliteral"><sp/><sp/>#<sp/>distutils<sp/>will<sp/>determine<sp/>whether<sp/>or<sp/>not<sp/>it<sp/>*actually*<sp/>needs<sp/>to<sp/>be<sp/>rebuilt.</highlight></codeline>
+<codeline lineno="283"><highlight class="stringliteral"><sp/><sp/>add_custom_target(build_pyx_${name}</highlight></codeline>
+<codeline lineno="284"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>${PYTHON_EXECUTABLE}</highlight></codeline>
+<codeline lineno="285"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py</highlight></codeline>
+<codeline lineno="286"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>build_ext<sp/>--module=${name}.pyx</highlight></codeline>
+<codeline lineno="287"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>DEPENDS<sp/>generate_pyx_${name}</highlight></codeline>
+<codeline lineno="288"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>WORKING_DIRECTORY<sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/</highlight></codeline>
+<codeline lineno="289"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>COMMENT<sp/>&quot;Building<sp/>Cython<sp/>binding<sp/>${name}.so...&quot;)</highlight></codeline>
+<codeline lineno="290"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="291"><highlight class="stringliteral"><sp/><sp/>add_dependencies(python<sp/>build_pyx_${name})</highlight></codeline>
+<codeline lineno="292"><highlight class="stringliteral"><sp/><sp/>add_dependencies(build_pyx_${name}<sp/>generate_pyx_${name})</highlight></codeline>
+<codeline lineno="293"><highlight class="stringliteral"><sp/><sp/>add_dependencies(generate_pyx_${name}<sp/>python_configured)</highlight></codeline>
+<codeline lineno="294"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="295"><highlight class="stringliteral"><sp/><sp/>#<sp/>Add<sp/>the<sp/>convenience<sp/>import<sp/>to<sp/>__init__.py.<sp/><sp/>Note<sp/>that<sp/>this<sp/>happens<sp/>during</highlight></codeline>
+<codeline lineno="296"><highlight class="stringliteral"><sp/><sp/>#<sp/>configuration.</highlight></codeline>
+<codeline lineno="297"><highlight class="stringliteral"><sp/><sp/>file(APPEND<sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py</highlight></codeline>
+<codeline lineno="298"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>&quot;from<sp/>.${name}<sp/>import<sp/>${name}\n&quot;)</highlight></codeline>
+<codeline lineno="299"><highlight class="stringliteral">endif<sp/>()</highlight></codeline>
+<codeline lineno="300"><highlight class="stringliteral">endmacro<sp/>()</highlight></codeline>
+<codeline lineno="301"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="302"><highlight class="stringliteral">#<sp/>Add<sp/>a<sp/>test.</highlight></codeline>
+<codeline lineno="303"><highlight class="stringliteral">if<sp/>(BUILD_PYTHON_BINDINGS)</highlight></codeline>
+<codeline lineno="304"><highlight class="stringliteral"><sp/><sp/>add_test(NAME<sp/>python_bindings_test</highlight></codeline>
+<codeline lineno="305"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>COMMAND<sp/>${PYTHON_EXECUTABLE}</highlight></codeline>
+<codeline lineno="306"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py<sp/>test</highlight></codeline>
+<codeline lineno="307"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>WORKING_DIRECTORY<sp/>${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/)</highlight></codeline>
+<codeline lineno="308"><highlight class="stringliteral"><sp/><sp/>set_tests_properties(python_bindings_test</highlight></codeline>
+<codeline lineno="309"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>PROPERTIES<sp/>ENVIRONMENT<sp/>&quot;NO_BUILD=1;LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/lib/&quot;)</highlight></codeline>
+<codeline lineno="310"><highlight class="stringliteral">endif<sp/>()</highlight></codeline>
+<codeline lineno="311"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="312"><highlight class="stringliteral">if<sp/>(BUILD_TESTS)</highlight></codeline>
+<codeline lineno="313"><highlight class="stringliteral"><sp/><sp/>add_subdirectory(tests)</highlight></codeline>
+<codeline lineno="314"><highlight class="stringliteral">endif<sp/>()</highlight></codeline>
+<codeline lineno="315"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="316"><highlight class="stringliteral">set(MLPACK_PYXS<sp/>&quot;arma_numpy.pyx&quot;<sp/>${MLPACK_PYXS}<sp/>PARENT_SCOPE)</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/python/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

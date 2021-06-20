@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="bindings_2cli_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="bindings_2cli_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}) endforeach() set(MLPACK_SRCS $</argsstring>
+        <name>set</name>
+        <param>
+          <type>DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/cli/CMakeLists.txt" line="39" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/cli/CMakeLists.txt" bodystart="39" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(SOURCES add_to_cli11.hpp cli_option.hpp default_param.hpp default_param_impl.hpp delete_allocated_memory.hpp end_program.hpp get_allocated_memory.hpp get_param.hpp get_raw_param.hpp get_printable_param.hpp get_printable_param_impl.hpp get_printable_param_name.hpp get_printable_param_name_impl.hpp get_printable_param_value.hpp get_printable_param_value_impl.hpp in_place_copy.hpp map_parameter_name.hpp output_param.hpp output_param_impl.hpp parameter_type.hpp parse_command_line.hpp print_doc_functions.hpp print_doc_functions_impl.hpp print_help.hpp print_help.cpp print_type_doc.hpp print_type_doc_impl.hpp set_param.hpp string_type_param.hpp string_type_param_impl.hpp) set(DIR_SRCS) foreach(file $</argsstring>
+        <name>set</name>
+        <param>
+          <type>SOURCES add_to_cli11.hpp cli_option.hpp default_param.hpp default_param_impl.hpp delete_allocated_memory.hpp end_program.hpp get_allocated_memory.hpp get_param.hpp get_raw_param.hpp get_printable_param.hpp get_printable_param_impl.hpp get_printable_param_name.hpp get_printable_param_name_impl.hpp get_printable_param_value.hpp get_printable_param_value_impl.hpp in_place_copy.hpp map_parameter_name.hpp output_param.hpp output_param_impl.hpp parameter_type.hpp parse_command_line.hpp print_doc_functions.hpp print_doc_functions_impl.hpp print_help.hpp print_help.cpp print_type_doc.hpp print_type_doc_impl.hpp set_param.hpp string_type_param.hpp string_type_param_impl.</type>
+          <declname>hpp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/cli/CMakeLists.txt" line="3" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/cli/CMakeLists.txt" bodystart="3" bodyend="38"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#<sp/>Define<sp/>the<sp/>files<sp/>we<sp/>need<sp/>to<sp/>compile.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Anything<sp/>not<sp/>in<sp/>this<sp/>list<sp/>will<sp/>not<sp/>be<sp/>compiled<sp/>into<sp/>mlpack.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3" refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" refkind="member"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(SOURCES</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"><sp/><sp/>add_to_cli11.hpp</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/>cli_option.hpp</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/>default_param.hpp</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/>default_param_impl.hpp</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/>delete_allocated_memory.hpp</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/>end_program.hpp</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/>get_allocated_memory.hpp</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/>get_param.hpp</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/>get_raw_param.hpp</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/>get_printable_param.hpp</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/>get_printable_param_impl.hpp</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/>get_printable_param_name.hpp</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/>get_printable_param_name_impl.hpp</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/>get_printable_param_value.hpp</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/>get_printable_param_value_impl.hpp</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/>in_place_copy.hpp</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/>map_parameter_name.hpp</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/>output_param.hpp</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/>output_param_impl.hpp</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/>parameter_type.hpp</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/>parse_command_line.hpp</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/>print_doc_functions.hpp</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/>print_doc_functions_impl.hpp</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/>print_help.hpp</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/>print_help.cpp</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/>print_type_doc.hpp</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/>print_type_doc_impl.hpp</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/>set_param.hpp</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>string_type_param.hpp</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>string_type_param_impl.hpp</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Add<sp/>directory<sp/>name<sp/>to<sp/>sources.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal">(file<sp/>${SOURCES})</highlight></codeline>
+<codeline lineno="39" refid="bindings_2cli_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS<sp/>${DIR_SRCS}<sp/>${CMAKE_CURRENT_SOURCE_DIR}/${file})</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">endforeach()</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Append<sp/>source<sp/>(with<sp/>directory<sp/>name)<sp/>to<sp/>list<sp/>of<sp/>all<sp/>mlpack<sp/>sources<sp/>(used<sp/>at<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>parent<sp/>scope).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(MLPACK_SRCS<sp/>${MLPACK_SRCS}<sp/>${DIR_SRCS}<sp/>PARENT_SCOPE)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal">#<sp/>This<sp/><ref refid="bindings_2go_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" kindref="member">macro</ref><sp/>adds<sp/>a<sp/>command-line<sp/>executable<sp/>with<sp/>the<sp/>given<sp/>name.<sp/><sp/>It<sp/>assumes</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">#<sp/>that<sp/>the<sp/>file<sp/>with<sp/>main()<sp/>is<sp/>in<sp/>&lt;name&gt;_main.cpp,<sp/>and<sp/>produces<sp/>an<sp/>output</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>program<sp/>with<sp/>the<sp/>name<sp/>mlpack_&lt;name&gt;.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><ref refid="bindings_2go_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" kindref="member">macro</ref><sp/>(<ref refid="methods_2nmf_2CMakeLists_8txt_1a05cd3fbacefda64d4c50d29c9ba6770b" kindref="member">add_cli_executable</ref><sp/>name)</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(BUILD_CLI_EXECUTABLES)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>add_executable(mlpack_${name}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>${name}_main.cpp</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>#<sp/>Build<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>CLI<sp/>binding<sp/>binaries<sp/>statically.</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(NOT<sp/>BUILD_SHARED_LIBS)</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>target_link_libraries(mlpack_${name}<sp/>-</highlight><highlight class="keyword">static</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${ARMADILLO_LIBRARIES}</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${COMPILER_SUPPORT_LIBRARIES}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">()</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>Build<sp/>mlpack<sp/>CLI<sp/>binding<sp/>binaries<sp/>dynamically.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>target_link_libraries(mlpack_${name}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${ARMADILLO_LIBRARIES}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${COMPILER_SUPPORT_LIBRARIES}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref>()</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>Make<sp/>sure<sp/>that<sp/>we<sp/>set<sp/>BINDING_TYPE<sp/>to<sp/>cli<sp/>so<sp/>the<sp/>command-line<sp/>program<sp/>is</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#<sp/>compiled<sp/>with<sp/>the<sp/>correct<sp/>int<sp/>main()<sp/>call.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/>set_target_properties(mlpack_${name}<sp/>PROPERTIES<sp/>COMPILE_FLAGS</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>-DBINDING_TYPE=<ref refid="mlpack__main_8hpp_1ad5c18bfab7d2a12d110e155a48654f3c" kindref="member">BINDING_TYPE_CLI</ref>)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>install(TARGETS<sp/>mlpack_${name}<sp/>RUNTIME<sp/>DESTINATION<sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_INSTALL_BINDIR}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/>#<sp/>If<sp/>man<sp/>documentation<sp/>is<sp/>being<sp/>generated,<sp/>make<sp/>sure<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>is<sp/>a<sp/>dependency.</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><ref refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" kindref="member">if</ref><sp/>(TXT2MAN)</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>add_dependencies(man<sp/>mlpack_${name})</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+<codeline lineno="79"><highlight class="normal">endmacro<sp/>()</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/cli/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

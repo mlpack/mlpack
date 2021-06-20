@@ -1,0 +1,123 @@
+.TH "GivenInitialization" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GivenInitialization \- This initialization rule for \fBAMF\fP simply fills the W and H matrices with the matrices given to the constructor of this object\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGivenInitialization\fP ()"
+.br
+.ti -1c
+.RI "\fBGivenInitialization\fP (const arma::mat &&m, const bool whichMatrix=true)"
+.br
+.ti -1c
+.RI "\fBGivenInitialization\fP (const arma::mat &&w, const arma::mat &&h)"
+.br
+.ti -1c
+.RI "\fBGivenInitialization\fP (const arma::mat &m, const bool whichMatrix=true)"
+.br
+.ti -1c
+.RI "\fBGivenInitialization\fP (const arma::mat &w, const arma::mat &h)"
+.br
+.ti -1c
+.RI "template<typename MatType > void \fBInitialize\fP (const MatType &V, const size_t r, arma::mat &W, arma::mat &H)"
+.br
+.RI "Fill W and H with given matrices\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBInitializeOne\fP (const MatType &V, const size_t r, arma::mat &M, const bool whichMatrix=true)"
+.br
+.RI "Fill W or H with given matrix\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the object (in this case, there is nothing to serialize)\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+This initialization rule for \fBAMF\fP simply fills the W and H matrices with the matrices given to the constructor of this object\&. 
+
+Note that this object does not use std::move() during the \fBInitialize()\fP method, so it can be reused for multiple \fBAMF\fP objects, but will incur copies of the W and H matrices\&. 
+.PP
+Definition at line 27 of file given_init\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBGivenInitialization\fP ()\fC [inline]\fP"
+
+.PP
+Definition at line 31 of file given_init\&.hpp\&.
+.SS "\fBGivenInitialization\fP (const arma::mat & w, const arma::mat & h)\fC [inline]\fP"
+
+.PP
+Definition at line 34 of file given_init\&.hpp\&.
+.SS "\fBGivenInitialization\fP (const arma::mat && w, const arma::mat && h)\fC [inline]\fP"
+
+.PP
+Definition at line 39 of file given_init\&.hpp\&.
+.SS "\fBGivenInitialization\fP (const arma::mat & m, const bool whichMatrix = \fCtrue\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 47 of file given_init\&.hpp\&.
+.SS "\fBGivenInitialization\fP (const arma::mat && m, const bool whichMatrix = \fCtrue\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 64 of file given_init\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Initialize (const MatType & V, const size_t r, arma::mat & W, arma::mat & H)\fC [inline]\fP"
+
+.PP
+Fill W and H with given matrices\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIV\fP Input matrix\&. 
+.br
+\fIr\fP Rank of decomposition\&. 
+.br
+\fIW\fP W matrix, to be initialized to given matrix\&. 
+.br
+\fIH\fP H matrix, to be initialized to given matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 89 of file given_init\&.hpp\&.
+.PP
+References Log::Fatal\&.
+.SS "void InitializeOne (const MatType & V, const size_t r, arma::mat & M, const bool whichMatrix = \fCtrue\fP)\fC [inline]\fP"
+
+.PP
+Fill W or H with given matrix\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIV\fP Input matrix\&. 
+.br
+\fIr\fP Rank of decomposition\&. 
+.br
+\fIM\fP W or H matrix, to be initialized to given matrix\&. 
+.br
+\fIwhichMatrix\fP If true, initialize W\&. Otherwise, initialize H\&. 
+.RE
+.PP
+
+.PP
+Definition at line 144 of file given_init\&.hpp\&.
+.PP
+References Log::Fatal\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the object (in this case, there is nothing to serialize)\&. 
+.PP
+Definition at line 203 of file given_init\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

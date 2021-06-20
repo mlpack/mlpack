@@ -1,0 +1,1159 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1cv_1_1KFoldCV" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cv::KFoldCV</compoundname>
+    <includes refid="k__fold__cv_8hpp" local="no">k_fold_cv.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MLAlgorithm</type>
+      </param>
+      <param>
+        <type>typename Metric</type>
+      </param>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename PredictionsType</type>
+        <defval>typename <ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor" kindref="compound">MetaInfoExtractor</ref>&lt;MLAlgorithm, MatType&gt;::PredictionsType</defval>
+      </param>
+      <param>
+        <type>typename WeightsType</type>
+        <defval>typename <ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor" kindref="compound">MetaInfoExtractor</ref>&lt;MLAlgorithm, MatType,                 PredictionsType&gt;::WeightsType</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1KFoldCV_1a4a157c774ff84233650cf9292ff69c40" prot="private" static="no">
+        <type><ref refid="classmlpack_1_1cv_1_1CVBase" kindref="compound">CVBase</ref>&lt; MLAlgorithm, MatType, PredictionsType, WeightsType &gt;</type>
+        <definition>using Base =  CVBase&lt;MLAlgorithm, MatType, PredictionsType, WeightsType&gt;</definition>
+        <argsstring></argsstring>
+        <name>Base</name>
+        <briefdescription>
+<para>A short alias for <ref refid="classmlpack_1_1cv_1_1CVBase" kindref="compound">CVBase</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="185" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1KFoldCV_1a12a9b00b635f4868359d0554d4dbfc31" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1cv_1_1CVBase" kindref="compound">Base</ref></type>
+        <definition>Base base</definition>
+        <argsstring></argsstring>
+        <name>base</name>
+        <briefdescription>
+<para>An auxiliary object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="207" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1KFoldCV_1a98786215e3ba84ae8ff300d189fc261b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t binSize</definition>
+        <argsstring></argsstring>
+        <name>binSize</name>
+        <briefdescription>
+<para>The size of each bin in terms of data points. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="223" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1KFoldCV_1af004d46789d32b9155f2c0eb5b771181" prot="private" static="no" mutable="no">
+        <type>const size_t</type>
+        <definition>const size_t k</definition>
+        <argsstring></argsstring>
+        <name>k</name>
+        <briefdescription>
+<para>The number of bins in the dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="210" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1KFoldCV_1a408699498ca11b5bc3e6369fd546cc86" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t lastBinSize</definition>
+        <argsstring></argsstring>
+        <name>lastBinSize</name>
+        <briefdescription>
+<para>The original size of the dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="220" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1KFoldCV_1a4f600385748d2bfc2883f5d3f0b3c211" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; MLAlgorithm &gt;</type>
+        <definition>std::unique_ptr&lt;MLAlgorithm&gt; modelPtr</definition>
+        <argsstring></argsstring>
+        <name>modelPtr</name>
+        <briefdescription>
+<para>A pointer to a model from the last run of k-fold cross-validation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="226" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1KFoldCV_1ae41eaaefe61a0c886c8b3ec26da9df66" prot="private" static="no" mutable="no">
+        <type>WeightsType</type>
+        <definition>WeightsType weights</definition>
+        <argsstring></argsstring>
+        <name>weights</name>
+        <briefdescription>
+<para>The extended (by repeating the first k - 2 bins) weights. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="217" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1KFoldCV_1acc80249c914e057ad5b3c4e81f9287cd" prot="private" static="no" mutable="no">
+        <type>MatType</type>
+        <definition>MatType xs</definition>
+        <argsstring></argsstring>
+        <name>xs</name>
+        <briefdescription>
+<para>The extended (by repeating the first k - 2 bins) data points. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="213" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1KFoldCV_1aceb2d8be184e9b84b05226a314637509" prot="private" static="no" mutable="no">
+        <type>PredictionsType</type>
+        <definition>PredictionsType ys</definition>
+        <argsstring></argsstring>
+        <name>ys</name>
+        <briefdescription>
+<para>The extended (by repeating the first k - 2 bins) predictions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="215" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a76c8773b44f4abc851e38c2238442f42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>KFoldCV</definition>
+        <argsstring>(const size_t k, const MatType &amp;xs, const data::DatasetInfo &amp;datasetInfo, const PredictionsType &amp;ys, const size_t numClasses, const bool shuffle=true)</argsstring>
+        <name>KFoldCV</name>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>shuffle</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>This constructor can be used for multiclass classification algorithms that can take a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of folds (should be at least 2). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>xs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data points to cross-validate on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type information for each dimension of the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ys</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each data point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shuffle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to shuffle the data during construction. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="109" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1afb092e7c2b582406b3254f2edb0902a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>KFoldCV</definition>
+        <argsstring>(const size_t k, const MatType &amp;xs, const data::DatasetInfo &amp;datasetInfo, const PredictionsType &amp;ys, const size_t numClasses, const WeightsType &amp;weights, const bool shuffle=true)</argsstring>
+        <name>KFoldCV</name>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>shuffle</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>This constructor can be used for multiclass classification algorithms that can take a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter and support weighted learning. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of folds (should be at least 2). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>xs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data points to cross-validate on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type information for each dimension of the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ys</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each data point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observation weights (for boosting). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shuffle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to shuffle the data during construction. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="163" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a7968536f97e0123e2af12bdbbae08d9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>KFoldCV</definition>
+        <argsstring>(const size_t k, const MatType &amp;xs, const PredictionsType &amp;ys, const bool shuffle=true)</argsstring>
+        <name>KFoldCV</name>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>shuffle</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>This constructor can be used for regression algorithms and for binary classification algorithms. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of folds (should be at least 2). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>xs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data points to cross-validate on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ys</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions (labels for classification algorithms and responses for regression algorithms) for each data point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shuffle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to shuffle the data during construction. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="78" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1af0d5cf1c60beda485a47d8d5346d47fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>KFoldCV</definition>
+        <argsstring>(const size_t k, const MatType &amp;xs, const PredictionsType &amp;ys, const size_t numClasses, const bool shuffle=true)</argsstring>
+        <name>KFoldCV</name>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>shuffle</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>This constructor can be used for multiclass classification algorithms. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of folds (should be at least 2). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>xs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data points to cross-validate on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ys</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each data point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shuffle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to shuffle the data during construction. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="92" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a162cb1dd4f7ff1b59840c22f9c28a007" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>KFoldCV</definition>
+        <argsstring>(const size_t k, const MatType &amp;xs, const PredictionsType &amp;ys, const size_t numClasses, const WeightsType &amp;weights, const bool shuffle=true)</argsstring>
+        <name>KFoldCV</name>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>shuffle</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>This constructor can be used for multiclass classification algorithms that support weighted learning. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of folds (should be at least 2). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>xs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data points to cross-validate on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ys</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each data point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observation weights (for boosting). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shuffle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to shuffle the data during construction. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="144" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a6cf7957f89dfe39161e0c3538c971f2a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>KFoldCV</definition>
+        <argsstring>(const size_t k, const MatType &amp;xs, const PredictionsType &amp;ys, const WeightsType &amp;weights, const bool shuffle=true)</argsstring>
+        <name>KFoldCV</name>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>shuffle</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>This constructor can be used for regression and binary classification algorithms that support weighted learning. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of folds (should be at least 2). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>xs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data points to cross-validate on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ys</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions (labels for classification algorithms and responses for regression algorithms) for each data point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Observation weights (for boosting). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>shuffle</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to shuffle the data during construction. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="127" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a8e36d1ae2b8ec5f99d5d4a914a532c80" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const MLAlgorithmArgs &amp;...args)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Run k-fold cross-validation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>args</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Arguments for MLAlgorithm (in addition to the passed ones in the constructor). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="178" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1ab89814a92c5627562bbc60fb788f978a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MLAlgorithm &amp;</type>
+        <definition>MLAlgorithm&amp; Model</definition>
+        <argsstring>()</argsstring>
+        <name>Model</name>
+        <briefdescription>
+<para>Access and modify a model from the last run of k-fold cross-validation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="181" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1ad49f0c8d4d6c2d7e7465963145a3f636" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>bool</type>
+            <declname>Enabled</declname>
+            <defname>Enabled</defname>
+            <defval>!<ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1af9be7f6c420e961867c5945da0a3a339" kindref="member">Base::MIE::SupportsWeights</ref></defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;Enabled&gt;::type</defval>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Shuffle</definition>
+        <argsstring>()</argsstring>
+        <name>Shuffle</name>
+        <briefdescription>
+<para>Shuffle the data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This overload is called if weights are not supported by the model type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="194" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a95da99cde3b1d083683f5e4870263bc5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>bool</type>
+            <declname>Enabled</declname>
+            <defname>Enabled</defname>
+            <defval><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1af9be7f6c420e961867c5945da0a3a339" kindref="member">Base::MIE::SupportsWeights</ref></defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;Enabled&gt;::type</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Shuffle</definition>
+        <argsstring>()</argsstring>
+        <name>Shuffle</name>
+        <briefdescription>
+<para>Shuffle the data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This overload is called if weights are supported by the model type. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="203" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1ae1516a7f4c1d4c6f429098728087bf94" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>KFoldCV</definition>
+        <argsstring>(Base &amp;&amp;base, const size_t k, const MatType &amp;xs, const PredictionsType &amp;ys, const bool shuffle)</argsstring>
+        <name>KFoldCV</name>
+        <param>
+          <type><ref refid="classmlpack_1_1cv_1_1CVBase" kindref="compound">Base</ref> &amp;&amp;</type>
+          <declname>base</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>shuffle</declname>
+        </param>
+        <briefdescription>
+<para>Assert the k parameter and data consistency and initialize fields required for running k-fold cross-validation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="232" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a5fdde090ec5d8c3a478a7173ad8670f7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>KFoldCV</definition>
+        <argsstring>(Base &amp;&amp;base, const size_t k, const MatType &amp;xs, const PredictionsType &amp;ys, const WeightsType &amp;weights, const bool shuffle)</argsstring>
+        <name>KFoldCV</name>
+        <param>
+          <type><ref refid="classmlpack_1_1cv_1_1CVBase" kindref="compound">Base</ref> &amp;&amp;</type>
+          <declname>base</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>shuffle</declname>
+        </param>
+        <briefdescription>
+<para>Assert the k parameter and data consistency and initialize fields required for running k-fold cross-validation in the case of weighted learning. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="242" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a944d47f4937def3f0d6f17add1f7f8bc" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElementType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::Mat&lt; ElementType &gt;</type>
+        <definition>arma::Mat&lt;ElementType&gt; GetTrainingSubset</definition>
+        <argsstring>(arma::Mat&lt; ElementType &gt; &amp;m, const size_t i)</argsstring>
+        <name>GetTrainingSubset</name>
+        <param>
+          <type>arma::Mat&lt; ElementType &gt; &amp;</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Get the ith training subset from a variable of a matrix type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="285" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1ab2a291bef41b4b1c3208f4dd18a98e4d" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElementType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::Row&lt; ElementType &gt;</type>
+        <definition>arma::Row&lt;ElementType&gt; GetTrainingSubset</definition>
+        <argsstring>(arma::Row&lt; ElementType &gt; &amp;r, const size_t i)</argsstring>
+        <name>GetTrainingSubset</name>
+        <param>
+          <type>arma::Row&lt; ElementType &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Get the ith training subset from a variable of a row type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="292" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a628235943e3f7f593d41a2f45203f7d0" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElementType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::Mat&lt; ElementType &gt;</type>
+        <definition>arma::Mat&lt;ElementType&gt; GetValidationSubset</definition>
+        <argsstring>(arma::Mat&lt; ElementType &gt; &amp;m, const size_t i)</argsstring>
+        <name>GetValidationSubset</name>
+        <param>
+          <type>arma::Mat&lt; ElementType &gt; &amp;</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Get the ith validation subset from a variable of a matrix type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="299" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1ad0a1a3cc47b8113c8d3bc06e18b085c3" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElementType</type>
+          </param>
+        </templateparamlist>
+        <type>arma::Row&lt; ElementType &gt;</type>
+        <definition>arma::Row&lt;ElementType&gt; GetValidationSubset</definition>
+        <argsstring>(arma::Row&lt; ElementType &gt; &amp;r, const size_t i)</argsstring>
+        <name>GetValidationSubset</name>
+        <param>
+          <type>arma::Row&lt; ElementType &gt; &amp;</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Get the ith validation subset from a variable of a row type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="306" column="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a1d21c09c51afb92236c6258544358a68" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename DataType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void InitKFoldCVMat</definition>
+        <argsstring>(const DataType &amp;source, DataType &amp;destination)</argsstring>
+        <name>InitKFoldCVMat</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type>DataType &amp;</type>
+          <declname>destination</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the given destination matrix with the given source joined with its first k - 2 bins. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="254" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a09a78ea8c541ce10ed46d7b5fd9526ec" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>Enabled</declname>
+            <defname>Enabled</defname>
+            <defval>!<ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1af9be7f6c420e961867c5945da0a3a339" kindref="member">Base::MIE::SupportsWeights</ref></defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;Enabled&gt;::type</defval>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double TrainAndEvaluate</definition>
+        <argsstring>(const MLAlgorithmArgs &amp;...mlAlgorithmArgs)</argsstring>
+        <name>TrainAndEvaluate</name>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>mlAlgorithmArgs</declname>
+        </param>
+        <briefdescription>
+<para>Train and run evaluation in the case of non-weighted learning. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="262" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a6a377709a3774a1da0abfb781f1b14d2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>Enabled</declname>
+            <defname>Enabled</defname>
+            <defval><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1af9be7f6c420e961867c5945da0a3a339" kindref="member">Base::MIE::SupportsWeights</ref></defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;Enabled&gt;::type</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double TrainAndEvaluate</definition>
+        <argsstring>(const MLAlgorithmArgs &amp;...mlAlgorithmArgs)</argsstring>
+        <name>TrainAndEvaluate</name>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>mlAlgorithmArgs</declname>
+        </param>
+        <briefdescription>
+<para>Train and run evaluation in the case of supporting weighted learning. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="271" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1KFoldCV_1a2379831ef4f85efc11c99d0ce0cdcc25" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t ValidationSubsetFirstCol</definition>
+        <argsstring>(const size_t i)</argsstring>
+        <name>ValidationSubsetFirstCol</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Calculate the index of the first column of the ith validation subset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>We take the ith validation subset after the ith training subset if i &lt; k - 1 and before it otherwise. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="279" column="17"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The class <ref refid="classmlpack_1_1cv_1_1KFoldCV" kindref="compound">KFoldCV</ref> implements k-fold cross-validation for regression and classification algorithms. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>To construct a <ref refid="classmlpack_1_1cv_1_1KFoldCV" kindref="compound">KFoldCV</ref> object you need to pass the k parameter and arguments that specify data. For example, you can run 10-fold cross-validation for SoftmaxRegression in the following way.</para>
+<para><programlisting><codeline><highlight class="normal">//<sp/>100-point<sp/>5-dimensional<sp/>random<sp/>dataset.</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>data<sp/>=<sp/>arma::randu&lt;arma::mat&gt;(5,<sp/>100);</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Random<sp/>labels<sp/>in<sp/>the<sp/>[0,<sp/>4]<sp/>interval.</highlight></codeline>
+<codeline><highlight class="normal">arma::Row&lt;size_t&gt;<sp/>labels<sp/>=</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arma::randi&lt;arma::Row&lt;size_t&gt;&gt;(100,<sp/>arma::distr_param(0,<sp/>4));</highlight></codeline>
+<codeline><highlight class="normal">size_t<sp/>numClasses<sp/>=<sp/>5;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">KFoldCV&lt;SoftmaxRegression&lt;&gt;,<sp/>Accuracy&gt;<sp/>cv(10,<sp/>data,<sp/>labels,<sp/>numClasses);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">double<sp/>lambda<sp/>=<sp/>0.1;</highlight></codeline>
+<codeline><highlight class="normal">double<sp/>softmaxAccuracy<sp/>=<sp/>cv.Evaluate(lambda);</highlight></codeline>
+</programlisting></para>
+<para>Before calling <computeroutput><ref refid="classmlpack_1_1cv_1_1KFoldCV_1a8e36d1ae2b8ec5f99d5d4a914a532c80" kindref="member">Evaluate()</ref></computeroutput>, it is possible to shuffle the data by calling the <computeroutput><ref refid="classmlpack_1_1cv_1_1KFoldCV_1ad49f0c8d4d6c2d7e7465963145a3f636" kindref="member">Shuffle()</ref></computeroutput> function. Shuffling is performed at construction time if the parameter <computeroutput>shuffle</computeroutput> is set to <computeroutput>true</computeroutput> in the constructor.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MLAlgorithm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A machine learning algorithm. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A metric to assess the quality of a trained model. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>PredictionsType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of predictions (should be passed when the predictions type is a template parameter in Train methods of MLAlgorithm). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>WeightsType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of weights (should be passed when weighted learning is supported, and the weights type is a template parameter in Train methods of MLAlgorithm). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" line="65" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp" bodystart="66" bodyend="308"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a12a9b00b635f4868359d0554d4dbfc31" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>base</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a4a157c774ff84233650cf9292ff69c40" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>Base</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a98786215e3ba84ae8ff300d189fc261b" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>binSize</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a8e36d1ae2b8ec5f99d5d4a914a532c80" prot="public" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a944d47f4937def3f0d6f17add1f7f8bc" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>GetTrainingSubset</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1ab2a291bef41b4b1c3208f4dd18a98e4d" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>GetTrainingSubset</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a628235943e3f7f593d41a2f45203f7d0" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>GetValidationSubset</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1ad0a1a3cc47b8113c8d3bc06e18b085c3" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>GetValidationSubset</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a1d21c09c51afb92236c6258544358a68" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>InitKFoldCVMat</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1af004d46789d32b9155f2c0eb5b771181" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>k</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a7968536f97e0123e2af12bdbbae08d9d" prot="public" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>KFoldCV</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1af0d5cf1c60beda485a47d8d5346d47fe" prot="public" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>KFoldCV</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a76c8773b44f4abc851e38c2238442f42" prot="public" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>KFoldCV</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a6cf7957f89dfe39161e0c3538c971f2a" prot="public" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>KFoldCV</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a162cb1dd4f7ff1b59840c22f9c28a007" prot="public" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>KFoldCV</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1afb092e7c2b582406b3254f2edb0902a4" prot="public" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>KFoldCV</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1ae1516a7f4c1d4c6f429098728087bf94" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>KFoldCV</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a5fdde090ec5d8c3a478a7173ad8670f7" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>KFoldCV</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a408699498ca11b5bc3e6369fd546cc86" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>lastBinSize</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1ab89814a92c5627562bbc60fb788f978a" prot="public" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>Model</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a4f600385748d2bfc2883f5d3f0b3c211" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>modelPtr</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1ad49f0c8d4d6c2d7e7465963145a3f636" prot="public" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>Shuffle</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a95da99cde3b1d083683f5e4870263bc5" prot="public" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>Shuffle</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a09a78ea8c541ce10ed46d7b5fd9526ec" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>TrainAndEvaluate</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a6a377709a3774a1da0abfb781f1b14d2" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>TrainAndEvaluate</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1a2379831ef4f85efc11c99d0ce0cdcc25" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>ValidationSubsetFirstCol</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1ae41eaaefe61a0c886c8b3ec26da9df66" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>weights</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1acc80249c914e057ad5b3c4e81f9287cd" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>xs</name></member>
+      <member refid="classmlpack_1_1cv_1_1KFoldCV_1aceb2d8be184e9b84b05226a314637509" prot="private" virt="non-virtual"><scope>mlpack::cv::KFoldCV</scope><name>ys</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

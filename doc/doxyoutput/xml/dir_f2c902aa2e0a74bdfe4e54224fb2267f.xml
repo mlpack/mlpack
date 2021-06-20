@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_f2c902aa2e0a74bdfe4e54224fb2267f" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree</compoundname>
+    <innerfile refid="binary__space__tree_2binary__space__tree_8hpp">binary_space_tree.hpp</innerfile>
+    <innerfile refid="breadth__first__dual__tree__traverser_8hpp">breadth_first_dual_tree_traverser.hpp</innerfile>
+    <innerfile refid="binary__space__tree_2dual__tree__traverser_8hpp">dual_tree_traverser.hpp</innerfile>
+    <innerfile refid="mean__split_8hpp">mean_split.hpp</innerfile>
+    <innerfile refid="midpoint__split_8hpp">midpoint_split.hpp</innerfile>
+    <innerfile refid="rp__tree__max__split_8hpp">rp_tree_max_split.hpp</innerfile>
+    <innerfile refid="rp__tree__mean__split_8hpp">rp_tree_mean_split.hpp</innerfile>
+    <innerfile refid="binary__space__tree_2single__tree__traverser_8hpp">single_tree_traverser.hpp</innerfile>
+    <innerfile refid="binary__space__tree_2traits_8hpp">traits.hpp</innerfile>
+    <innerfile refid="core_2tree_2binary__space__tree_2typedef_8hpp">typedef.hpp</innerfile>
+    <innerfile refid="ub__tree__split_8hpp">ub_tree_split.hpp</innerfile>
+    <innerfile refid="vantage__point__split_8hpp">vantage_point_split.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,2955 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1bindings_1_1python" kind="namespace" language="C++">
+    <compoundname>mlpack::bindings::python</compoundname>
+    <innerclass refid="classmlpack_1_1bindings_1_1python_1_1PyOption" prot="public">mlpack::bindings::python::PyOption</innerclass>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacemlpack_1_1bindings_1_1python_1a24d855d329269931b59bdf1b36706a88" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string programName</definition>
+        <argsstring></argsstring>
+        <name>programName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/py_option.hpp" line="31" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/py_option.hpp" declline="31" declcolumn="20"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1addf1d7eb0392954f22f7938040bade44" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::DefaultParam</definition>
+        <argsstring>(util::ParamData &amp;data, const void *, void *output)</argsstring>
+        <name>DefaultParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Return the default value of an option. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is the function that will be placed into the <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> functionMap. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" line="80" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" bodystart="80" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a80e7aedca62a238ad65b9a0d7968c80c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::DefaultParamImpl</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::string &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; mlpack::data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>DefaultParamImpl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::string &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">mlpack::data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the default value of an option. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is for regular types. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" line="27" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" declline="27" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a0901c6d34e06ad95478679e8252f790f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::DefaultParamImpl</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>DefaultParamImpl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the default value of a model option (this returns the default filename, or &apos;&apos; if the default is no file). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" line="70" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" declline="70" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a7aa49c116918a65e880e73f639d2d896" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::DefaultParamImpl</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if&lt; std::is_same&lt; T, std::string &gt;&gt;::type *=0)</argsstring>
+        <name>DefaultParamImpl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; std::is_same&lt; T, std::string &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the default value of a string option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" line="48" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" declline="48" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1ae8535c4203054c48a933405a1845c007" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::DefaultParamImpl</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>DefaultParamImpl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the default value of a vector option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" line="40" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" declline="40" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a08646952a5207734a13c2e6d3c8f62e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::DefaultParamImpl</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if_c&lt; arma::is_arma_type&lt; T &gt;::value||std::is_same&lt; T, std::tuple&lt; mlpack::data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>DefaultParamImpl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if_c&lt; arma::is_arma_type&lt; T &gt;::value||std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">mlpack::data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or &apos;&apos; if the default is no file). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" line="58" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" declline="58" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a6e0e0614e11b883601227d5bf884fce6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetArmaType</definition>
+        <argsstring>()</argsstring>
+        <name>GetArmaType</name>
+        <briefdescription>
+<para>This is used for arma::Mat&lt;&gt; types; it will return &quot;mat&quot; for matrices, &quot;row&quot; for row vectors, and &quot;col&quot; for column vectors. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_arma_type.hpp" line="28" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_arma_type.hpp" bodystart="28" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a24efbbdd5edd02b416e5f53cff686a07" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetBindingName</definition>
+        <argsstring>(const std::string &amp;bindingName)</argsstring>
+        <name>GetBindingName</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
+        <briefdescription>
+<para>Given the name of a binding, print its Python name. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="25" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="25" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1aae1b43223a82e87c26dda721ffe1b64c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetCythonType</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>GetCythonType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" line="24" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" bodystart="24" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a01a87ad978f242a7b6c889690ce55a1d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetCythonType</definition>
+        <argsstring>(util::ParamData &amp;d, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>GetCythonType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" line="106" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" bodystart="106" bodyend="112"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a3a7c26c01db5e577f3d40870d5b9fd30" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetCythonType</definition>
+        <argsstring>(util::ParamData &amp;d, const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>GetCythonType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" line="92" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" bodystart="92" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a5b7ef19eb1efae59337f8ca8a68c8bc7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetCythonType</definition>
+        <argsstring>(util::ParamData &amp;d, const typename boost::enable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>GetCythonType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" line="84" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" bodystart="84" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a3eb6211ac8ddac3acc284d57c44e20de" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetCythonType&lt; bool &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; bool &gt;&gt;::type *, const typename boost::disable_if&lt; data::HasSerialize&lt; bool &gt;&gt;::type *, const typename boost::disable_if&lt; arma::is_arma_type&lt; bool &gt;&gt;::type *)</argsstring>
+        <name>GetCythonType&lt; bool &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; bool &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; bool &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; bool &gt;&gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" line="74" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" bodystart="74" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a376a58b3162f01312a81b83504f568ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetCythonType&lt; double &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; double &gt;&gt;::type *, const typename boost::disable_if&lt; data::HasSerialize&lt; double &gt;&gt;::type *, const typename boost::disable_if&lt; arma::is_arma_type&lt; double &gt;&gt;::type *)</argsstring>
+        <name>GetCythonType&lt; double &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; double &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; double &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; double &gt;&gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" line="44" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" bodystart="44" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1aaf9f486764e2a7d4780b3b865a42976c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetCythonType&lt; int &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; int &gt;&gt;::type *, const typename boost::disable_if&lt; data::HasSerialize&lt; int &gt;&gt;::type *, const typename boost::disable_if&lt; arma::is_arma_type&lt; int &gt;&gt;::type *)</argsstring>
+        <name>GetCythonType&lt; int &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; int &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; int &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; int &gt;&gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" line="34" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" bodystart="34" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a7081081aa4247623e8d1db6136102d94" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetCythonType&lt; size_t &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; size_t &gt;&gt;::type *, const typename boost::disable_if&lt; data::HasSerialize&lt; size_t &gt;&gt;::type *, const typename boost::disable_if&lt; arma::is_arma_type&lt; size_t &gt;&gt;::type *)</argsstring>
+        <name>GetCythonType&lt; size_t &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; size_t &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; size_t &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; size_t &gt;&gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" line="64" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" bodystart="64" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a61ad87233086dfafe8ea8e4e34e231c2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetCythonType&lt; std::string &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; std::string &gt;&gt;::type *, const typename boost::disable_if&lt; data::HasSerialize&lt; std::string &gt;&gt;::type *, const typename boost::disable_if&lt; arma::is_arma_type&lt; std::string &gt;&gt;::type *)</argsstring>
+        <name>GetCythonType&lt; std::string &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; std::string &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; std::string &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; std::string &gt;&gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" line="54" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_cython_type.hpp" bodystart="54" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a62060e3eede9c45540c426105c552ef4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetNumpyType</definition>
+        <argsstring>()</argsstring>
+        <name>GetNumpyType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type.hpp" line="22" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type.hpp" bodystart="22" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a1c682bf6da1b0aec259c40f05e6d0ad5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetNumpyType&lt; double &gt;</definition>
+        <argsstring>()</argsstring>
+        <name>GetNumpyType&lt; double &gt;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type.hpp" line="28" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type.hpp" bodystart="28" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a9be0b495a6023db3314fd406a9c7d1cb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetNumpyType&lt; size_t &gt;</definition>
+        <argsstring>()</argsstring>
+        <name>GetNumpyType&lt; size_t &gt;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type.hpp" line="34" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type.hpp" bodystart="34" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1acf355ab2766c7b6ce900b02402e8b22f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetNumpyTypeChar</definition>
+        <argsstring>()</argsstring>
+        <name>GetNumpyTypeChar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" line="23" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" bodystart="23" bodyend="26"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1ab65db7770f63b8cd83a53ebb8764138c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetNumpyTypeChar&lt; arma::Col&lt; size_t &gt; &gt;</definition>
+        <argsstring>()</argsstring>
+        <name>GetNumpyTypeChar&lt; arma::Col&lt; size_t &gt; &gt;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" line="36" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" bodystart="36" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1ac3ff131af41b583e1e0312f0cadd85d1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetNumpyTypeChar&lt; arma::mat &gt;</definition>
+        <argsstring>()</argsstring>
+        <name>GetNumpyTypeChar&lt; arma::mat &gt;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" line="49" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" bodystart="49" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a7af32159e75699310ce38618deb652d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetNumpyTypeChar&lt; arma::Mat&lt; size_t &gt; &gt;</definition>
+        <argsstring>()</argsstring>
+        <name>GetNumpyTypeChar&lt; arma::Mat&lt; size_t &gt; &gt;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" line="30" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" bodystart="30" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a30d1acd19b418db8d6ae54695cbc075f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetNumpyTypeChar&lt; arma::Row&lt; size_t &gt; &gt;</definition>
+        <argsstring>()</argsstring>
+        <name>GetNumpyTypeChar&lt; arma::Row&lt; size_t &gt; &gt;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" line="42" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" bodystart="42" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a9cd3725915ba360fa07cf321400a181e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetNumpyTypeChar&lt; arma::rowvec &gt;</definition>
+        <argsstring>()</argsstring>
+        <name>GetNumpyTypeChar&lt; arma::rowvec &gt;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" line="61" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" bodystart="61" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1ae37e41e8b171c5a1f95a567d5f2d05fa" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetNumpyTypeChar&lt; arma::vec &gt;</definition>
+        <argsstring>()</argsstring>
+        <name>GetNumpyTypeChar&lt; arma::vec &gt;</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" line="55" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_numpy_type_char.hpp" bodystart="55" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a2c83e23064b39a59ffd1b22c74a1d18e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::GetParam</definition>
+        <argsstring>(util::ParamData &amp;d, const void *, void *output)</argsstring>
+        <name>GetParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>All Python binding types are exactly what is held in the ParamData, so no special handling is necessary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_param.hpp" line="26" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_param.hpp" bodystart="26" bodyend="31"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a8f1846b0ae2b9ec7efac73e7cb42e339" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print an option of a simple type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" line="26" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" bodystart="26" bodyend="37"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a7c7b266ebf4e500c54deb2286da384ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print a serializable class option (this prints the class name). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" line="75" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" bodystart="75" bodyend="83"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1acd1fa320ba37f33e4f99524de02f78b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print a matrix option (this prints its size). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" line="59" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" bodystart="59" bodyend="69"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a080f5ea405f34421b9aa7890b224e2af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print a combination DatasetInfo/matrix parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" line="89" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" bodystart="89" bodyend="102"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a3eb8e5ce1a0e40f32dcf268eb1d4746e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::enable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print a vector option, with spaces between it. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" line="43" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" bodystart="43" bodyend="53"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a5f3b0aadfd9d42a5574b7f3a0565cb52" compoundref="param__data_8hpp" startline="82">ParamData::value</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1aa0c2d955696ab44c0ab58560503be031" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::GetPrintableParam</definition>
+        <argsstring>(util::ParamData &amp;data, const void *, void *output)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Print an option into a std::string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This should print a short, one-line representation of the object. The string will be stored in the output pointer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter data struct. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) Unused parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output storage for the string. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" line="114" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_param.hpp" bodystart="114" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1ad6abd609f63e481daf6827935495438e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" line="24" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" declline="24" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1ae37a682d330659caa949ae76f17ebbd0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" line="85" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" declline="85" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a8ca31c929f423d9b0fefef8ca03dc1ff" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::enable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" line="92" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" declline="92" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a6e9bffcf30c3b4b9dcd53b59b9c8cd88" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;d, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" line="98" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" declline="98" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a5aa0d6f0438898ff9b81db7b8f9c1b7f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;d, const typename boost::enable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" line="78" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" declline="78" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1afbe3788455628c38332b452b946fa310" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::GetPrintableType</definition>
+        <argsstring>(util::ParamData &amp;d, const void *, void *output)</argsstring>
+        <name>GetPrintableType</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" line="106" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" bodystart="106" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a30b583a945d1f88d73bc87682603c7a4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableType&lt; bool &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; bool &gt;&gt;::type *, const typename boost::disable_if&lt; data::HasSerialize&lt; bool &gt;&gt;::type *, const typename boost::disable_if&lt; arma::is_arma_type&lt; bool &gt;&gt;::type *, const typename boost::disable_if&lt; std::is_same&lt; bool, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *)</argsstring>
+        <name>GetPrintableType&lt; bool &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; bool &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; bool &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; bool &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; bool, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" line="69" column="8" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" declline="69" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1ac899c96d653773482ef953ef21b6a60e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableType&lt; double &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; double &gt;&gt;::type *, const typename boost::disable_if&lt; data::HasSerialize&lt; double &gt;&gt;::type *, const typename boost::disable_if&lt; arma::is_arma_type&lt; double &gt;&gt;::type *, const typename boost::disable_if&lt; std::is_same&lt; double, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *)</argsstring>
+        <name>GetPrintableType&lt; double &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; double &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; double &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; double &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; double, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" line="42" column="8" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" declline="42" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a78699240722ab3e72b39ddcaf4309325" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableType&lt; int &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; int &gt;&gt;::type *, const typename boost::disable_if&lt; data::HasSerialize&lt; int &gt;&gt;::type *, const typename boost::disable_if&lt; arma::is_arma_type&lt; int &gt;&gt;::type *, const typename boost::disable_if&lt; std::is_same&lt; int, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *)</argsstring>
+        <name>GetPrintableType&lt; int &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; int &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; int &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; int &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; int, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" line="33" column="8" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" declline="33" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1af9e36a90b5bd87c12a707c7841602166" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableType&lt; size_t &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; size_t &gt;&gt;::type *, const typename boost::disable_if&lt; data::HasSerialize&lt; size_t &gt;&gt;::type *, const typename boost::disable_if&lt; arma::is_arma_type&lt; size_t &gt;&gt;::type *, const typename boost::disable_if&lt; std::is_same&lt; size_t, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *)</argsstring>
+        <name>GetPrintableType&lt; size_t &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; size_t &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; size_t &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; size_t &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; size_t, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" line="60" column="8" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" declline="60" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a0b74f4fe624bf08d50b13d921f1b476e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::GetPrintableType&lt; std::string &gt;</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; util::IsStdVector&lt; std::string &gt;&gt;::type *, const typename boost::disable_if&lt; data::HasSerialize&lt; std::string &gt;&gt;::type *, const typename boost::disable_if&lt; arma::is_arma_type&lt; std::string &gt;&gt;::type *, const typename boost::disable_if&lt; std::is_same&lt; std::string, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *)</argsstring>
+        <name>GetPrintableType&lt; std::string &gt;</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; std::string &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; std::string &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; std::string &gt;&gt;::type *</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; std::string, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" line="51" column="8" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/get_printable_type.hpp" declline="51" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1aeb3b9177f23eddfc0d2d8d0b53518c67" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool mlpack::bindings::python::IgnoreCheck</definition>
+        <argsstring>(const std::string &amp;paramName)</argsstring>
+        <name>IgnoreCheck</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <briefdescription>
+<para>Print whether or not we should ignore a check on the given parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For Python bindings, we ignore any checks on output parameters, so if paramName is an output parameter, this returns true. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="113" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="113" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a7025812e38208c8df59d1a3d56c7d3f3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool mlpack::bindings::python::IgnoreCheck</definition>
+        <argsstring>(const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;constraints, const std::string &amp;paramName)</argsstring>
+        <name>IgnoreCheck</name>
+        <param>
+          <type>const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;</type>
+          <declname>constraints</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <briefdescription>
+<para>Print whether or not we should ignore a check on the given set of constraints. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For Python bindings, we ignore any checks on output parameters, so if any constraint parameter or the main parameter are output parameters, this returns true. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="128" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="128" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a29e51ddbf3f2cb4ddbc4d0f40c1474fa" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool mlpack::bindings::python::IgnoreCheck</definition>
+        <argsstring>(const std::vector&lt; std::string &gt; &amp;constraints)</argsstring>
+        <name>IgnoreCheck</name>
+        <param>
+          <type>const std::vector&lt; std::string &gt; &amp;</type>
+          <declname>constraints</declname>
+        </param>
+        <briefdescription>
+<para>Print whether or not we should ignore a check on the given set of constraints. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For Python bindings, we ignore any checks on output parameters, so if any parameter is an output parameter, this returns true. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="120" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="120" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a64c0a2dda975be94dac5b9f5c8eab9d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::ImportDecl</definition>
+        <argsstring>(util::ParamData &amp;, const size_t, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>ImportDecl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>For a non-serializable type, print nothing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/import_decl.hpp" line="53" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/import_decl.hpp" bodystart="53" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a47c9c478a80e8e7be2c17f87f634929d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::ImportDecl</definition>
+        <argsstring>(util::ParamData &amp;, const size_t, const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>ImportDecl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>For a matrix type, print nothing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/import_decl.hpp" line="66" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/import_decl.hpp" bodystart="66" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1aaf8d2ec60ff388711c55e631f6e4566f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::ImportDecl</definition>
+        <argsstring>(util::ParamData &amp;d, const size_t indent, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>ImportDecl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>indent</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>For a serializable type, print a cppclass definition. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>This will give output of the form:</para>
+<para>cdef cppclass Type: Type() nogil</para>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/import_decl.hpp" line="26" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/import_decl.hpp" bodystart="26" bodyend="47"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+        <references refid="namespacemlpack_1_1bindings_1_1python_1ad9aef93ac2450f69e902b2bae75296fa" compoundref="python_2strip__type_8hpp" startline="28" endline="50">StripType</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a0be0f6c09cc84674121d49178981fe19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::ImportDecl</definition>
+        <argsstring>(util::ParamData &amp;d, const void *indent, void *)</argsstring>
+        <name>ImportDecl</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>indent</declname>
+        </param>
+        <param>
+          <type>void *</type>
+        </param>
+        <briefdescription>
+<para>Print the cppclass definition for a serializable model; print nothing for a non-serializable type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter info struct. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>indent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to size_t indicating indent. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(output) Unused parameter. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/import_decl.hpp" line="83" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/import_decl.hpp" bodystart="83" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a439896a9de3ddc4c67f15b55b7dff2e3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::ParamString</definition>
+        <argsstring>(const std::string &amp;paramName)</argsstring>
+        <name>ParamString</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <briefdescription>
+<para>Given the parameter name, determine what it would actually be when passed to the command line. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="106" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="106" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a3ea59db131b61502a938f86816a21c1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintClassDefn</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>PrintClassDefn</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Non-serializable models don&apos;t require any special definitions, so this prints nothing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_class_defn.hpp" line="26" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_class_defn.hpp" bodystart="26" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a3b4859fba72d1572232e578bd78b015a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintClassDefn</definition>
+        <argsstring>(util::ParamData &amp;, const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>PrintClassDefn</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Matrices don&apos;t require any special definitions, so this prints nothing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_class_defn.hpp" line="38" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_class_defn.hpp" bodystart="38" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1aa8cb764eab62bf27d4602075f277599d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintClassDefn</definition>
+        <argsstring>(util::ParamData &amp;d, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>PrintClassDefn</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Serializable models require a special class definition. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>This will produce code like:</para>
+<para><programlisting><codeline><highlight class="normal">cdef<sp/>class<sp/>&lt;ModelType&gt;Type:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>cdef<sp/>&lt;ModelType&gt;*<sp/>modelptr</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>cdef<sp/>public<sp/>dict<sp/>scrubbed_params</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>def<sp/>__cinit__(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>self.modelptr<sp/>=<sp/>new<sp/>&lt;ModelType&gt;()</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>self.scrubbed_params<sp/>=<sp/>dict()</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>def<sp/>__dealloc__(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>del<sp/>self.modelptr</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>def<sp/>__getstate__(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>SerializeOut(self.modelptr,<sp/>&quot;&lt;ModelType&gt;&quot;)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>def<sp/>__setstate__(self,<sp/>state):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>SerializeIn(self.modelptr,<sp/>state,<sp/>&quot;&lt;ModelType&gt;&quot;)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>def<sp/>__reduce_ex__(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>(self.__class__,<sp/>(),<sp/>self.__getstate__())</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>def<sp/>_get_cpp_params(self):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>SerializeOutJSON(self.modelptr,<sp/>&quot;&lt;ModelType&gt;&quot;)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>def<sp/>_set_cpp_params(self,<sp/>state):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>SerializeInJSON(self.modelptr,<sp/>state,<sp/>&quot;&lt;ModelType&gt;&quot;)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>def<sp/>get_cpp_params(self,<sp/>return_str=False):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>params<sp/>=<sp/>self._get_cpp_params()</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>process_params_out(self,<sp/>params,<sp/>return_str=return_str)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>def<sp/>set_cpp_params(self,<sp/>params_dic):</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>params_str<sp/>=<sp/>process_params_in(self,<sp/>params_dic)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>self._set_cpp_params(params_str)</highlight></codeline>
+</programlisting></para>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_class_defn.hpp" line="49" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_class_defn.hpp" bodystart="49" bodyend="138"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+        <references refid="namespacemlpack_1_1bindings_1_1python_1ad9aef93ac2450f69e902b2bae75296fa" compoundref="python_2strip__type_8hpp" startline="28" endline="50">StripType</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a7096496e9709c3bf9a3c4c2d35fccea3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintClassDefn</definition>
+        <argsstring>(util::ParamData &amp;d, const void *, void *)</argsstring>
+        <name>PrintClassDefn</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+        </param>
+        <briefdescription>
+<para>Print the class definition to stdout. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Only serializable models require a different class definition, so anything else does nothing.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) Unused parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(output) Unused parameter. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_class_defn.hpp" line="149" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_class_defn.hpp" bodystart="149" bodyend="154"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1abfff680c34a36b80498b39de5c002bae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintDataset</definition>
+        <argsstring>(const std::string &amp;datasetName)</argsstring>
+        <name>PrintDataset</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>datasetName</declname>
+        </param>
+        <briefdescription>
+<para>Given the name of a matrix, print it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Here we do not need to modify anything. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="100" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="100" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a3862770cfbd7c639832a167c21c0e636" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintDefault</definition>
+        <argsstring>(const std::string &amp;paramName)</argsstring>
+        <name>PrintDefault</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <briefdescription>
+<para>Given a parameter name, print its corresponding default value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="55" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="55" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1aecc682142101d2111db7705da00a8775" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintDefn</definition>
+        <argsstring>(util::ParamData &amp;d, const void *, void *)</argsstring>
+        <name>PrintDefn</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+        </param>
+        <briefdescription>
+<para>Print the definition for a Python binding parameter to stdout. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is the definition in the function declaration. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_defn.hpp" line="26" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_defn.hpp" bodystart="26" bodyend="38"/>
+        <references refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" compoundref="bindings_2go_2CMakeLists_8txt" startline="3" endline="16">if</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" compoundref="param__data_8hpp" startline="71">ParamData::required</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1ad24641bda961439e033d20c7fecbacbc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintDoc</definition>
+        <argsstring>(util::ParamData &amp;d, const void *input, void *)</argsstring>
+        <name>PrintDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>void *</type>
+        </param>
+        <briefdescription>
+<para>Print the docstring documentation for a given parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>You are responsible for setting up the line<mdash/>this does not handle indentation or anything. This is meant to produce a line of documentation describing a single parameter.</para>
+<para>The indent parameter (void* input, which should be a pointer to a size_t) should be passed to know how much to indent for a new line.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter data struct. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to size_t containing indent. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(output) Unused parameter. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc.hpp" line="36" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc.hpp" bodystart="36" bodyend="65"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a378e4473b8cd1fccf534804887f2bc85" compoundref="param__data_8hpp" startline="58">ParamData::desc</references>
+        <references refid="namespacemlpack_1_1util_1a7b8929840f4891a96df1108873e1a1f9" compoundref="hyphenate__string_8hpp" startline="27" endline="73">mlpack::util::HyphenateString</references>
+        <references refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" compoundref="bindings_2go_2CMakeLists_8txt" startline="3" endline="16">if</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" compoundref="param__data_8hpp" startline="71">ParamData::required</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a02caa6bbd7dc53b45d0beb3178fa8bfa" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintImport</definition>
+        <argsstring>(const std::string &amp;bindingName)</argsstring>
+        <name>PrintImport</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>bindingName</declname>
+        </param>
+        <briefdescription>
+<para>Print any import information for the Python binding. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="30" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="30" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a8acf794a4cadb2cb27431245bed5bd16" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintInputOptionInfo</definition>
+        <argsstring>()</argsstring>
+        <name>PrintInputOptionInfo</name>
+        <briefdescription>
+<para>Print any special information about input options. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="35" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="35" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1aee67e03f9f9ba1b8e7a30d1f160b464c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintInputOptions</definition>
+        <argsstring>()</argsstring>
+        <name>PrintInputOptions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="58" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="58" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1aa54735f722600e44319257fd8d2becff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintInputOptions</definition>
+        <argsstring>(const std::string &amp;paramName, const T &amp;value, Args... args)</argsstring>
+        <name>PrintInputOptions</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>Args...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Print an input option. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will throw an exception if the parameter does not exist in <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref>. For a parameter &apos;x&apos; with value &apos;5&apos;, this will print something like x=5. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="66" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="66" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a9f757a36e42cdc6ccbfc296ca9439679" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintInputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const size_t indent, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0, const typename boost::enable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>PrintInputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>indent</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print input processing for a vector type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>This gives us code like: if param_name is not None: if isinstance(param_name, list): if len(param_name) &gt; 0: if isinstance(param_name[0], str): SetParam[vector[string]](&lt;const string&gt; &apos;param_name&apos;, param_name) <ref refid="classmlpack_1_1IO_1a12aa08b1280e9b33864a9845706e0e59" kindref="member">IO.SetPassed</ref>(&lt;const string&gt; &apos;param_name&apos;) else: raise TypeError(&quot;&apos;param_name&apos; must have type &apos;list of strs&apos;!&quot;) else: raise TypeError(&quot;&apos;param_name&apos; must have type &apos;list&apos;!&quot;)</para>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" line="164" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" bodystart="164" bodyend="245"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" compoundref="param__data_8hpp" startline="71">ParamData::required</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a3c827aec0d0ff3ae5ae7d565fcda5ced" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintInputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const size_t indent, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>PrintInputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>indent</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print input processing for a standard option type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>This gives us code like:</para>
+<sect1 id="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp_1autotoc_md0">
+<title>Detect if the parameter was passed; set if so.</title>
+<para>if param_name is not None: if isinstance(param_name, int): SetParam[int](&lt;const string&gt; &apos;param_name&apos;, param_name) <ref refid="classmlpack_1_1IO_1a12aa08b1280e9b33864a9845706e0e59" kindref="member">IO.SetPassed</ref>(&lt;const string&gt; &apos;param_name&apos;) else: raise TypeError(&quot;&apos;param_name&apos; must have type &apos;list&apos;!&quot;)</para>
+</sect1>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" line="31" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" bodystart="31" bodyend="158"/>
+        <references refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" compoundref="bindings_2go_2CMakeLists_8txt" startline="3" endline="16">if</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" compoundref="param__data_8hpp" startline="71">ParamData::required</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a6b8bcdebe252c46b6ee4131ea45465b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintInputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const size_t indent, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>PrintInputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>indent</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print input processing for a serializable type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>This gives us code like:</para>
+<sect1 id="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp_1autotoc_md2">
+<title>Detect if the parameter was passed; set if so.</title>
+<para>if param_name is not None: try: SetParamPtr[Model](&apos;param_name&apos;, (&lt;ModelType?&gt; param_name).modelptr, <ref refid="classmlpack_1_1IO_1a39eda1093ba2453f2b66d37153ac542c" kindref="member">IO.HasParam</ref>(&apos;copy_all_inputs&apos;)) except TypeError as e: if type(param_name).__name__ == &quot;ModelType&quot;: SetParamPtr[Model](&apos;param_name&apos;, (&lt;ModelType&gt; param_name).modelptr, <ref refid="classmlpack_1_1IO_1a39eda1093ba2453f2b66d37153ac542c" kindref="member">IO.HasParam</ref>(&apos;copy_all_inputs&apos;)) else: raise e <ref refid="classmlpack_1_1IO_1a12aa08b1280e9b33864a9845706e0e59" kindref="member">IO.SetPassed</ref>(&lt;const string&gt; &apos;param_name&apos;)</para>
+</sect1>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" line="372" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" bodystart="372" bodyend="439"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" compoundref="param__data_8hpp" startline="71">ParamData::required</references>
+        <references refid="namespacemlpack_1_1bindings_1_1python_1ad9aef93ac2450f69e902b2bae75296fa" compoundref="python_2strip__type_8hpp" startline="28" endline="50">StripType</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a544f01f8f04b0e90b6d165a7427f6e7a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintInputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const size_t indent, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>PrintInputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>indent</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print input processing for a matrix type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>This gives us code like:</para>
+<sect1 id="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp_1autotoc_md1">
+<title>Detect if the parameter was passed; set if so.</title>
+<para>if param_name is not None: param_name_tuple = to_matrix(param_name) if param_name_tuple[0].shape[0] == 1 or param_name_tuple[0].shape[1] == 1: param_name_tuple[0].shape = (param_name_tuple[0].size,) param_name_mat = arma_numpy.numpy_to_mat_s(param_name_tuple[0], param_name_tuple[1]) SetParam[mat](&lt;const string&gt; &apos;param_name&apos;, dereference(param_name_mat)) <ref refid="classmlpack_1_1IO_1a12aa08b1280e9b33864a9845706e0e59" kindref="member">IO.SetPassed</ref>(&lt;const string&gt; &apos;param_name&apos;)</para>
+</sect1>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" line="251" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" bodystart="251" bodyend="366"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" compoundref="param__data_8hpp" startline="71">ParamData::required</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a1f157c96afaed787e2a5b35298ca680d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintInputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const size_t indent, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>PrintInputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>indent</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print input processing for a matrix/DatasetInfo type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>We want to generate code like the following:</para>
+<para>if param_name is not None: param_name_tuple = to_matrix_with_info(param_name) if len(param_name_tuple[0].shape) &lt; 2: param_name_tuple[0].shape = (param_name_tuple[0].size,) param_name_mat = arma_numpy.numpy_to_matrix_d(param_name_tuple[0]) SetParamWithInfo[mat](&lt;const string&gt; &apos;param_name&apos;, dereference(param_name_mat), &amp;param_name_tuple[1][0]) <ref refid="classmlpack_1_1IO_1a12aa08b1280e9b33864a9845706e0e59" kindref="member">IO.SetPassed</ref>(&lt;const string&gt; &apos;param_name&apos;)</para>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" line="445" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" bodystart="445" bodyend="511"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" compoundref="param__data_8hpp" startline="71">ParamData::required</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a996892b33ffaf97639cecb66e7f77650" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintInputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const void *input, void *)</argsstring>
+        <name>PrintInputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>void *</type>
+        </param>
+        <briefdescription>
+<para>Given parameter information and the current number of spaces for indentation, print the code to process the input to cout. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This code assumes that data.input is true, and should not be called when data.input is false.</para>
+<para>The number of spaces to indent should be passed through the input pointer.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter data struct. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to size_t holding the indentation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(output) Unused parameter. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" line="525" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_input_processing.hpp" bodystart="525" bodyend="531"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a2c09399575bb61ca91eb665e67f1a2f6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintModel</definition>
+        <argsstring>(const std::string &amp;modelName)</argsstring>
+        <name>PrintModel</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>modelName</declname>
+        </param>
+        <briefdescription>
+<para>Given the name of a model, print it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Here we do not need to modify anything. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="94" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="94" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1af1b1c91db5f4872ad6a8420740665e47" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintOutputOptionInfo</definition>
+        <argsstring>()</argsstring>
+        <name>PrintOutputOptionInfo</name>
+        <briefdescription>
+<para>Print any special information about output options. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="40" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="40" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a4d147955dd7f5d654e112998d3ca51ca" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintOutputOptions</definition>
+        <argsstring>()</argsstring>
+        <name>PrintOutputOptions</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="71" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="71" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a6ed858166ad7d26009f2e85f1fa101c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintOutputOptions</definition>
+        <argsstring>(const std::string &amp;paramName, const T &amp;value, Args... args)</argsstring>
+        <name>PrintOutputOptions</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paramName</declname>
+        </param>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>Args...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="74" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="74" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a4ad9b3cc77bbb36c86c5346eb98620b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintOutputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const size_t indent, const bool onlyOutput, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>PrintOutputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>indent</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>onlyOutput</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print output processing for a regular parameter type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>This gives us code like:</para>
+<para>result = <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">IO.GetParam</ref>[int](&apos;param_name&apos;)</para>
+<para>This gives us code like:</para>
+<para>result[&apos;param_name&apos;] = <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">IO.GetParam</ref>[int](&apos;param_name&apos;)</para>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_output_processing.hpp" line="29" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_output_processing.hpp" bodystart="29" bodyend="79"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1adb00a6ddc1c45cf0858e91a5be674624" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintOutputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const size_t indent, const bool onlyOutput, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>PrintOutputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>indent</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>onlyOutput</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print output processing for a serializable model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>This gives us code like:</para>
+<para>result = ModelType() (&lt;ModelType?&gt; result).modelptr = GetParamPtr[Model](&apos;name&apos;)</para>
+<para>But we also have to check to ensure there aren&apos;t any input model parameters of the same type that could have the same model pointer. So we need to loop through all input parameters that have the same type, and double-check.</para>
+<para>This gives us code like:</para>
+<para>result[&apos;name&apos;] = ModelType() (&lt;ModelType?&gt; result[&apos;name&apos;]).modelptr = GetParamPtr[Model](&apos;name&apos;))</para>
+<para>But we also have to check to ensure there aren&apos;t any input model parameters of the same type that could have the same model pointer. So we need to loop through all input parameters that have the same type, and double-check.</para>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_output_processing.hpp" line="169" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_output_processing.hpp" bodystart="169" bodyend="281"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1ac31602a050d4b0bea81380c312d320b6" compoundref="param__data_8hpp" startline="84">ParamData::cppType</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a8ababadb8dc64acf8792317844e562ba" compoundref="param__data_8hpp" startline="73">ParamData::input</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+        <references refid="classmlpack_1_1IO_1a3eee2232cb321a8295fa908ba12868ad">IO::Parameters</references>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a89ebe0265f74c9919a622df7dccbfe5c" compoundref="param__data_8hpp" startline="71">ParamData::required</references>
+        <references refid="namespacemlpack_1_1bindings_1_1python_1ad9aef93ac2450f69e902b2bae75296fa" compoundref="python_2strip__type_8hpp" startline="28" endline="50">StripType</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1aecb4f9c6e5970d548e922f8ef18f23ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintOutputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const size_t indent, const bool onlyOutput, const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>PrintOutputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>indent</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>onlyOutput</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print output processing for a matrix type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>This gives us code like:</para>
+<para>result = arma_numpy.mat_to_numpy_X(<ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">IO.GetParam</ref>[mat](&quot;name&quot;))</para>
+<para>where X indicates the type to convert to.</para>
+<para>This gives us code like:</para>
+<para>result[&apos;param_name&apos;] = arma_numpy.mat_to_numpy_X(<ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">IO.GetParam</ref>[mat](&apos;name&apos;)</para>
+<para>where X indicates the type to convert to.</para>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_output_processing.hpp" line="85" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_output_processing.hpp" bodystart="85" bodyend="121"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1ab3d00ba5ed90f8820f650849b11c5007" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintOutputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const size_t indent, const bool onlyOutput, const typename boost::enable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>PrintOutputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>indent</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>onlyOutput</declname>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Print output processing for a dataset info / matrix combination. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>This gives us code like:</para>
+<para>result = arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat](&apos;name&apos;))</para>
+<para>This gives us code like:</para>
+<para>result[&apos;param_name&apos;] = arma_numpy.mat_to_numpy_X(GetParamWithInfo[mat](&apos;name&apos;))</para>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_output_processing.hpp" line="127" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_output_processing.hpp" bodystart="127" bodyend="163"/>
+        <references refid="structmlpack_1_1util_1_1ParamData_1a9b45b3e13bd9167aab02e17e08916231" compoundref="param__data_8hpp" startline="56">ParamData::name</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a9bc7b05f16ca6f11e1334707bd034a5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintOutputProcessing</definition>
+        <argsstring>(util::ParamData &amp;d, const void *input, void *)</argsstring>
+        <name>PrintOutputProcessing</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>void *</type>
+        </param>
+        <briefdescription>
+<para>Given parameter information and the current number of spaces for indentation, print the code to process the output to cout. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This code assumes that data.input is false, and should not be called when data.input is true. If this is the only output, the results will be different.</para>
+<para>The input pointer should be a pointer to a std::tuple&lt;size_t, bool&gt; where the first element is the indentation and the second element is a boolean representing whether or not this is the only output parameter.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parameter data struct. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to size_t holding the indentation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(output) Unused parameter. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_output_processing.hpp" line="298" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_output_processing.hpp" bodystart="298" bodyend="306"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a6cd6a94b0d12a167d1f1e26ae35e4cb7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintPYX</definition>
+        <argsstring>(const util::BindingDetails &amp;doc, const std::string &amp;mainFilename, const std::string &amp;functionName)</argsstring>
+        <name>PrintPYX</name>
+        <param>
+          <type>const <ref refid="structmlpack_1_1util_1_1BindingDetails" kindref="compound">util::BindingDetails</ref> &amp;</type>
+          <declname>doc</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>mainFilename</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>functionName</declname>
+        </param>
+        <briefdescription>
+<para>Given a list of parameter definition and program documentation, print a generated .pyx file to stdout. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>doc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Documentation for the program. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>mainFilename</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filename of the main program (i.e. &quot;/path/to/pca_main.cpp&quot;). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>functionName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the function (i.e. &quot;pca&quot;). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_pyx.hpp" line="31" column="6" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_pyx.hpp" declline="31" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a1253bb8f30c651dc3af0c56e817bb52f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; util::IsStdVector&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0, const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;&gt;::type *=0)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of an option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" line="26" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" declline="26" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a62411bebea8829e936ae0fb938cf2a99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *=0, const typename boost::enable_if&lt; data::HasSerialize&lt; T &gt;&gt;::type *=0)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename boost::disable_if&lt; arma::is_arma_type&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const typename boost::enable_if&lt; <ref refid="structmlpack_1_1data_1_1HasSerialize" kindref="compound">data::HasSerialize</ref>&lt; T &gt;&gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" line="63" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" declline="63" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a04e6313fa3bbcaeaf638f9697856c1db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; arma::is_arma_type&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a matrix option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" line="46" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" declline="46" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a2b4db0ac1426d513555f5172dd25b5bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; data::DatasetInfo, arma::mat &gt;&gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; std::is_same&lt; T, std::tuple&lt; <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref>, arma::mat &gt;&gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a matrix tuple option. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" line="54" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" declline="54" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1ab43363afc035bf95f3f9f53e9b669c49" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const typename std::enable_if&lt; util::IsStdVector&lt; T &gt;::value &gt;::type *=0)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const typename std::enable_if&lt; <ref refid="structmlpack_1_1util_1_1IsStdVector" kindref="compound">util::IsStdVector</ref>&lt; T &gt;::value &gt;::type *</type>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Return a string representing the command-line type of a vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" line="38" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" declline="38" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a1883607423bb52271836a8f41a96a9e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::PrintTypeDoc</definition>
+        <argsstring>(util::ParamData &amp;data, const void *, void *output)</argsstring>
+        <name>PrintTypeDoc</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+        </param>
+        <param>
+          <type>void *</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Print the command-line type of an option into a string. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" line="72" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_type_doc.hpp" bodystart="72" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a92ef6a64a9ca64c2cf8dca28e9d77674" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintValue</definition>
+        <argsstring>(const bool &amp;value, bool quotes)</argsstring>
+        <name>PrintValue</name>
+        <param>
+          <type>const bool &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>quotes</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="50" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="50" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a0d643eb3c0bdd232a1c6e50fbcb943d4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::PrintValue</definition>
+        <argsstring>(const T &amp;value, bool quotes)</argsstring>
+        <name>PrintValue</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>quotes</declname>
+        </param>
+        <briefdescription>
+<para>Given a parameter type, print the corresponding value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="46" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="46" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1af279250fe16b29931b6ec5f9c5196962" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::ProgramCall</definition>
+        <argsstring>(const std::string &amp;programName)</argsstring>
+        <name>ProgramCall</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>programName</declname>
+        </param>
+        <briefdescription>
+<para>Given the name of a binding, print a program call assuming that all options are specified. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="89" column="20" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="89" declcolumn="20"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a6735678589340d2ecc4d8f0c8746179b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::ProgramCall</definition>
+        <argsstring>(const std::string &amp;programName, Args... args)</argsstring>
+        <name>ProgramCall</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>programName</declname>
+        </param>
+        <param>
+          <type>Args...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" line="83" column="13" declfile="/home/aakash/mlpack/src/mlpack/bindings/python/print_doc_functions.hpp" declline="83" declcolumn="13"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1adea6945f820d4d090266903135f35729" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::SerializeIn</definition>
+        <argsstring>(T *t, const std::string &amp;str, const std::string &amp;name)</argsstring>
+        <name>SerializeIn</name>
+        <param>
+          <type>T *</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>str</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/mlpack/serialization.hpp" line="34" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/mlpack/serialization.hpp" bodystart="34" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a6a2dff1d929365bb624ff6a5659d9205" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::bindings::python::SerializeInJSON</definition>
+        <argsstring>(T *t, const std::string &amp;str, const std::string &amp;name)</argsstring>
+        <name>SerializeInJSON</name>
+        <param>
+          <type>T *</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>str</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/mlpack/serialization.hpp" line="54" column="6" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/mlpack/serialization.hpp" bodystart="54" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a6273a497a8744775c3c90fced897dd55" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::SerializeOut</definition>
+        <argsstring>(T *t, const std::string &amp;name)</argsstring>
+        <name>SerializeOut</name>
+        <param>
+          <type>T *</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/mlpack/serialization.hpp" line="22" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/mlpack/serialization.hpp" bodystart="22" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1a2a8eea6be336f87e143a069df9404bf6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>std::string mlpack::bindings::python::SerializeOutJSON</definition>
+        <argsstring>(T *t, const std::string &amp;name)</argsstring>
+        <name>SerializeOutJSON</name>
+        <param>
+          <type>T *</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/mlpack/serialization.hpp" line="42" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/mlpack/serialization.hpp" bodystart="42" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1bindings_1_1python_1ad9aef93ac2450f69e902b2bae75296fa" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void mlpack::bindings::python::StripType</definition>
+        <argsstring>(const std::string &amp;inputType, std::string &amp;strippedType, std::string &amp;printedType, std::string &amp;defaultsType)</argsstring>
+        <name>StripType</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>inputType</declname>
+        </param>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>strippedType</declname>
+        </param>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>printedType</declname>
+        </param>
+        <param>
+          <type>std::string &amp;</type>
+          <declname>defaultsType</declname>
+        </param>
+        <briefdescription>
+<para>Given an input type like, e.g., &quot;LogisticRegression&lt;&gt;&quot;, return three types that can be used in Python code. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>strippedType will be a type with no template parameters (e.g. &quot;LogisticRegression&quot;), printedType will be a printable type with the template parameters (e.g. &quot;LogisticRegression[]&quot;), and defaultsType will be a printable type with a default template parameter (e.g. &quot;LogisticRegression[T=*]&quot;) that can be used for class definitions. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/python/strip_type.hpp" line="28" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/python/strip_type.hpp" bodystart="28" bodyend="50"/>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1aaf8d2ec60ff388711c55e631f6e4566f" compoundref="import__decl_8hpp" startline="26" endline="47">ImportDecl</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1aa8cb764eab62bf27d4602075f277599d" compoundref="print__class__defn_8hpp" startline="49" endline="138">PrintClassDefn</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1a6b8bcdebe252c46b6ee4131ea45465b8" compoundref="python_2print__input__processing_8hpp" startline="372" endline="439">PrintInputProcessing</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1adb00a6ddc1c45cf0858e91a5be674624" compoundref="python_2print__output__processing_8hpp" startline="169" endline="281">PrintOutputProcessing</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/python/default_param.hpp" line="21" column="1"/>
+  </compounddef>
+</doxygen>

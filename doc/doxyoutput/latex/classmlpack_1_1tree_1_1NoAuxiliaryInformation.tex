@@ -1,0 +1,301 @@
+\doxysection{No\+Auxiliary\+Information$<$ Tree\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation}\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+
+
+Inheritance diagram for No\+Auxiliary\+Information$<$ Tree\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=263pt]{classmlpack_1_1tree_1_1NoAuxiliaryInformation__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ No\+Auxiliary\+Information} ()
+\begin{DoxyCompactList}\small\item\em Construct the auxiliary information object. \end{DoxyCompactList}\item 
+\textbf{ No\+Auxiliary\+Information} (const \textbf{ No\+Auxiliary\+Information} \&, Tree\+Type $\ast$, bool=true)
+\begin{DoxyCompactList}\small\item\em Construct the auxiliary information object. \end{DoxyCompactList}\item 
+\textbf{ No\+Auxiliary\+Information} (const Tree\+Type $\ast$)
+\begin{DoxyCompactList}\small\item\em Construct the auxiliary information object. \end{DoxyCompactList}\item 
+\textbf{ No\+Auxiliary\+Information} (\textbf{ No\+Auxiliary\+Information} \&\&)
+\begin{DoxyCompactList}\small\item\em Construct the auxiliary information object. \end{DoxyCompactList}\item 
+bool \textbf{ Handle\+Node\+Insertion} (Tree\+Type $\ast$, Tree\+Type $\ast$, bool)
+\begin{DoxyCompactList}\small\item\em Some tree types require to save some properties at the insertion process. \end{DoxyCompactList}\item 
+bool \textbf{ Handle\+Node\+Removal} (Tree\+Type $\ast$, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Some tree types require to save some properties at the deletion process. \end{DoxyCompactList}\item 
+bool \textbf{ Handle\+Point\+Deletion} (Tree\+Type $\ast$, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Some tree types require to save some properties at the deletion process. \end{DoxyCompactList}\item 
+bool \textbf{ Handle\+Point\+Insertion} (Tree\+Type $\ast$, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Some tree types require to save some properties at the insertion process. \end{DoxyCompactList}\item 
+void \textbf{ Nullify\+Data} ()
+\begin{DoxyCompactList}\small\item\em Nullify the auxiliary information in order to prevent an invalid free. \end{DoxyCompactList}\item 
+\textbf{ No\+Auxiliary\+Information} \& \textbf{ operator=} (const \textbf{ No\+Auxiliary\+Information} \&)
+\begin{DoxyCompactList}\small\item\em Copy the auxiliary information object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the information. \end{DoxyCompactList}\item 
+void \textbf{ Split\+Auxiliary\+Info} (Tree\+Type $\ast$, Tree\+Type $\ast$, size\+\_\+t, typename Tree\+Type\+::\+Elem\+Type)
+\begin{DoxyCompactList}\small\item\em The R++ tree requires to split the maximum bounding rectangle of a node that is being split. \end{DoxyCompactList}\item 
+bool \textbf{ Update\+Auxiliary\+Info} (Tree\+Type $\ast$)
+\begin{DoxyCompactList}\small\item\em Some tree types require to propagate the information upward. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Tree\+Type$>$\newline
+class mlpack\+::tree\+::\+No\+Auxiliary\+Information$<$ Tree\+Type $>$}
+
+
+
+Definition at line 20 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_a41bbcaf6c630c32c837415189b56d729}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!NoAuxiliaryInformation@{NoAuxiliaryInformation}}
+\index{NoAuxiliaryInformation@{NoAuxiliaryInformation}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{NoAuxiliaryInformation()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily \textbf{ No\+Auxiliary\+Information} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct the auxiliary information object. 
+
+
+
+Definition at line 24 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_a4b4ff1c5ac7199e4f3860718f711b508}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!NoAuxiliaryInformation@{NoAuxiliaryInformation}}
+\index{NoAuxiliaryInformation@{NoAuxiliaryInformation}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{NoAuxiliaryInformation()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily \textbf{ No\+Auxiliary\+Information} (\begin{DoxyParamCaption}\item[{const Tree\+Type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct the auxiliary information object. 
+
+
+
+Definition at line 26 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_a2c921a4942d57e69e5957fa085cb79ae}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!NoAuxiliaryInformation@{NoAuxiliaryInformation}}
+\index{NoAuxiliaryInformation@{NoAuxiliaryInformation}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{NoAuxiliaryInformation()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily \textbf{ No\+Auxiliary\+Information} (\begin{DoxyParamCaption}\item[{const \textbf{ No\+Auxiliary\+Information}$<$ Tree\+Type $>$ \&}]{,  }\item[{Tree\+Type $\ast$}]{,  }\item[{bool}]{ = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct the auxiliary information object. 
+
+
+
+Definition at line 28 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_af02670784348a6a76a19d05e5929d20a}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!NoAuxiliaryInformation@{NoAuxiliaryInformation}}
+\index{NoAuxiliaryInformation@{NoAuxiliaryInformation}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{NoAuxiliaryInformation()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily \textbf{ No\+Auxiliary\+Information} (\begin{DoxyParamCaption}\item[{\textbf{ No\+Auxiliary\+Information}$<$ Tree\+Type $>$ \&\&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct the auxiliary information object. 
+
+
+
+Definition at line 32 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_a351a1390fe22a0466044a786ac810799}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!HandleNodeInsertion@{HandleNodeInsertion}}
+\index{HandleNodeInsertion@{HandleNodeInsertion}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{HandleNodeInsertion()}
+{\footnotesize\ttfamily bool Handle\+Node\+Insertion (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{,  }\item[{Tree\+Type $\ast$}]{,  }\item[{bool}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Some tree types require to save some properties at the insertion process. 
+
+This method allows the auxiliary information the option of manipulating the tree in order to perform the insertion process. If the auxiliary information does that, then the method should return true; if the method returns false the \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} performs its default behavior.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (node) The node in which the node\+To\+Insert is being inserted. \\
+\hline
+{\em $\ast$} & (node\+To\+Insert) The node being inserted. \\
+\hline
+{\em $\ast$} & (insertion\+Level) The level of the tree at which the node\+To\+Insert should be inserted. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 67 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_a559b369ceed572ded92e741de7ec0ad6}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!HandleNodeRemoval@{HandleNodeRemoval}}
+\index{HandleNodeRemoval@{HandleNodeRemoval}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{HandleNodeRemoval()}
+{\footnotesize\ttfamily bool Handle\+Node\+Removal (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{,  }\item[{const}]{size\+\_\+t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Some tree types require to save some properties at the deletion process. 
+
+This method allows the auxiliary information the option of manipulating the tree in order to perform the deletion process. If the auxiliary information does that, then the method should return true; if the method returns false the \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} performs its default behavior.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (node) The node from which the node is being deleted. \\
+\hline
+{\em $\ast$} & (node\+Index) The local index of the node being deleted. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 99 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_a2a0b51ff5e8b14372750e4554a2155c7}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!HandlePointDeletion@{HandlePointDeletion}}
+\index{HandlePointDeletion@{HandlePointDeletion}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{HandlePointDeletion()}
+{\footnotesize\ttfamily bool Handle\+Point\+Deletion (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{,  }\item[{const}]{size\+\_\+t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Some tree types require to save some properties at the deletion process. 
+
+This method allows the auxiliary information the option of manipulating the tree in order to perform the deletion process. If the auxiliary information does that, then the method should return true; if the method returns false the \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} performs its default behavior.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (node) The node from which the point is being deleted. \\
+\hline
+{\em $\ast$} & (local\+Index) The local index of the point being deleted. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 84 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_af0332e7aa289d540dc2bfb89687d87f1}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!HandlePointInsertion@{HandlePointInsertion}}
+\index{HandlePointInsertion@{HandlePointInsertion}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{HandlePointInsertion()}
+{\footnotesize\ttfamily bool Handle\+Point\+Insertion (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{,  }\item[{const}]{size\+\_\+t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Some tree types require to save some properties at the insertion process. 
+
+This method allows the auxiliary information the option of manipulating the tree in order to perform the insertion process. If the auxiliary information does that, then the method should return true; if the method returns false the \doxyref{Rectangle\+Tree}{p.}{classmlpack_1_1tree_1_1RectangleTree} performs its default behavior.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (node) The node in which the point is being inserted. \\
+\hline
+{\em $\ast$} & (point) The global number of the point being inserted. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 50 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_a8dbe26c4727e347359f1da279659f0cd}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!NullifyData@{NullifyData}}
+\index{NullifyData@{NullifyData}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{NullifyData()}
+{\footnotesize\ttfamily void Nullify\+Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Nullify the auxiliary information in order to prevent an invalid free. 
+
+
+
+Definition at line 137 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_a4d41e9be1cf2d39444c8e26e3fb262b3}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{operator=()}
+{\footnotesize\ttfamily \textbf{ No\+Auxiliary\+Information}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ No\+Auxiliary\+Information}$<$ Tree\+Type $>$ \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Copy the auxiliary information object. 
+
+
+
+Definition at line 35 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the information. 
+
+
+
+Definition at line 144 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_a93fdc21f9f8e1a1cf97827af31be784e}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!SplitAuxiliaryInfo@{SplitAuxiliaryInfo}}
+\index{SplitAuxiliaryInfo@{SplitAuxiliaryInfo}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{SplitAuxiliaryInfo()}
+{\footnotesize\ttfamily void Split\+Auxiliary\+Info (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{,  }\item[{Tree\+Type $\ast$}]{,  }\item[{size\+\_\+t}]{,  }\item[{typename Tree\+Type\+::\+Elem\+Type}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The R++ tree requires to split the maximum bounding rectangle of a node that is being split. 
+
+This method is intended for that. This method is only necessary for an Auxiliary\+Information\+Type that is being used in conjunction with \doxyref{RPlus\+Tree\+Split}{p.}{classmlpack_1_1tree_1_1RPlusTreeSplit}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (tree\+One) The first subtree. \\
+\hline
+{\em $\ast$} & (tree\+Two) The second subtree. \\
+\hline
+{\em $\ast$} & (axis) The axis along which the split is performed. \\
+\hline
+{\em $\ast$} & (cut) The coordinate at which the node is split. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 127 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1NoAuxiliaryInformation_a2278181aedc87de10e09f467c794ef5e}} 
+\index{NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}!UpdateAuxiliaryInfo@{UpdateAuxiliaryInfo}}
+\index{UpdateAuxiliaryInfo@{UpdateAuxiliaryInfo}!NoAuxiliaryInformation$<$ TreeType $>$@{NoAuxiliaryInformation$<$ TreeType $>$}}
+\doxysubsubsection{UpdateAuxiliaryInfo()}
+{\footnotesize\ttfamily bool Update\+Auxiliary\+Info (\begin{DoxyParamCaption}\item[{Tree\+Type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Some tree types require to propagate the information upward. 
+
+This method should return false if this is not the case. If true is returned, the update will be propagated upward.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (node) The node in which the auxiliary information being update. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 111 of file no\+\_\+auxiliary\+\_\+information.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/rectangle\+\_\+tree/\textbf{ no\+\_\+auxiliary\+\_\+information.\+hpp}\end{DoxyCompactItemize}

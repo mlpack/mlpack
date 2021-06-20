@@ -1,0 +1,197 @@
+\doxysection{Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::Spill\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser}\index{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}}
+
+
+A generic dual-\/tree traverser for hybrid spill trees; see \doxyref{spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp}{p.}{spill__dual__tree__traverser_8hpp} for implementation.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Spill\+Dual\+Tree\+Traverser} (Rule\+Type \&rule)
+\begin{DoxyCompactList}\small\item\em Instantiate the dual-\/tree traverser with the given rule set. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Base\+Cases} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a base case was calculated. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Base\+Cases} () const
+\begin{DoxyCompactList}\small\item\em Get the number of times a base case was calculated. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Prunes} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Prunes} () const
+\begin{DoxyCompactList}\small\item\em Get the number of prunes. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Scores} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of times a node combination was scored. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Scores} () const
+\begin{DoxyCompactList}\small\item\em Get the number of times a node combination was scored. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Num\+Visited} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of visited combinations. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Visited} () const
+\begin{DoxyCompactList}\small\item\em Get the number of visited combinations. \end{DoxyCompactList}\item 
+void \textbf{ Traverse} (\textbf{ Spill\+Tree} \&query\+Node, \textbf{ Spill\+Tree} \&reference\+Node, const bool brute\+Force=false)
+\begin{DoxyCompactList}\small\item\em Traverse the two trees. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type = Axis\+Orthogonal\+Hyperplane, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type = Midpoint\+Space\+Split$>$\newline
+template$<$typename Metric\+Type, typename Statistic\+Type, typename Mat\+Type, template$<$ typename Hyperplane\+Metric\+Type $>$ class Hyperplane\+Type, template$<$ typename Split\+Metric\+Type, typename Split\+Mat\+Type $>$ class Split\+Type$>$\newline
+class mlpack\+::tree\+::\+Spill\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$\+::\+Spill\+Dual\+Tree\+Traverser$<$ Metric\+Type, Statistic\+Type, Mat\+Type, Hyperplane\+Type, Split\+Type $>$}
+
+A generic dual-\/tree traverser for hybrid spill trees; see \doxyref{spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp}{p.}{spill__dual__tree__traverser_8hpp} for implementation. 
+
+The Defeatist template parameter determines if the traverser must do defeatist search on overlapping nodes. 
+
+Definition at line 35 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a884fe01f82de7a4810d91e964112bea2}} 
+\index{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}!SpillDualTreeTraverser@{SpillDualTreeTraverser}}
+\index{SpillDualTreeTraverser@{SpillDualTreeTraverser}!SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}}
+\doxysubsubsection{SpillDualTreeTraverser()}
+{\footnotesize\ttfamily \textbf{ Spill\+Dual\+Tree\+Traverser} (\begin{DoxyParamCaption}\item[{Rule\+Type \&}]{rule }\end{DoxyParamCaption})}
+
+
+
+Instantiate the dual-\/tree traverser with the given rule set. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a56b8f525584ea0bf262fa6e413fe3672}} 
+\index{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}!NumBaseCases@{NumBaseCases}}
+\index{NumBaseCases@{NumBaseCases}!SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}}
+\doxysubsubsection{NumBaseCases()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of times a base case was calculated. 
+
+
+
+Definition at line 74 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_afc2a1471e0354570c99c25473d32433e}} 
+\index{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}!NumBaseCases@{NumBaseCases}}
+\index{NumBaseCases@{NumBaseCases}!SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}}
+\doxysubsubsection{NumBaseCases()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Base\+Cases (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of times a base case was calculated. 
+
+
+
+Definition at line 72 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_adf887190e9d9024ff244503e4aaf0732}} 
+\index{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}!NumPrunes@{NumPrunes}}
+\index{NumPrunes@{NumPrunes}!SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}}
+\doxysubsubsection{NumPrunes()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Prunes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of prunes. 
+
+
+
+Definition at line 59 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_ac2f6072011ee31a0a32f62e2a105a347}} 
+\index{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}!NumPrunes@{NumPrunes}}
+\index{NumPrunes@{NumPrunes}!SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}}
+\doxysubsubsection{NumPrunes()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Prunes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of prunes. 
+
+
+
+Definition at line 57 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a3c4c3ca7affdd40cc224370b87417125}} 
+\index{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}!NumScores@{NumScores}}
+\index{NumScores@{NumScores}!SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}}
+\doxysubsubsection{NumScores()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of times a node combination was scored. 
+
+
+
+Definition at line 69 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a9adf9744b1b9b4d74e0da6570010e63e}} 
+\index{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}!NumScores@{NumScores}}
+\index{NumScores@{NumScores}!SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}}
+\doxysubsubsection{NumScores()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Scores (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of times a node combination was scored. 
+
+
+
+Definition at line 67 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a970ffa1006597bf4b7388496c34eea2f}} 
+\index{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}!NumVisited@{NumVisited}}
+\index{NumVisited@{NumVisited}!SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}}
+\doxysubsubsection{NumVisited()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Num\+Visited (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of visited combinations. 
+
+
+
+Definition at line 64 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a6a5a81524ab8e6506495bdfb2f42fb2f}} 
+\index{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}!NumVisited@{NumVisited}}
+\index{NumVisited@{NumVisited}!SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}}
+\doxysubsubsection{NumVisited()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Num\+Visited (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of visited combinations. 
+
+
+
+Definition at line 62 of file spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1SpillTree_1_1SpillDualTreeTraverser_a48bc9c05f517820203a72349b79245d2}} 
+\index{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}!Traverse@{Traverse}}
+\index{Traverse@{Traverse}!SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$@{SpillTree$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$::SpillDualTreeTraverser$<$ MetricType, StatisticType, MatType, HyperplaneType, SplitType $>$}}
+\doxysubsubsection{Traverse()}
+{\footnotesize\ttfamily void Traverse (\begin{DoxyParamCaption}\item[{\textbf{ Spill\+Tree} \&}]{query\+Node,  }\item[{\textbf{ Spill\+Tree} \&}]{reference\+Node,  }\item[{const bool}]{brute\+Force = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Traverse the two trees. 
+
+This does not reset the number of prunes.
+
+
+\begin{DoxyParams}{Parameters}
+{\em query\+Node} & The query node to be traversed. \\
+\hline
+{\em reference\+Node} & The reference node to be traversed. \\
+\hline
+{\em brute\+Force} & If true, then do a brute-\/force search on the reference node instead of traversing any further. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/spill\+\_\+tree/\textbf{ spill\+\_\+dual\+\_\+tree\+\_\+traverser.\+hpp}\end{DoxyCompactItemize}

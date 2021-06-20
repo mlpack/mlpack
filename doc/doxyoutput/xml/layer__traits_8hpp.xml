@@ -1,0 +1,887 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="layer__traits_8hpp" kind="file" language="C++">
+    <compoundname>layer_traits.hpp</compoundname>
+    <includes refid="sfinae__utility_8hpp" local="no">mlpack/core/util/sfinae_utility.hpp</includes>
+    <includedby refid="brnn_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</includedby>
+    <includedby refid="ffn_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</includedby>
+    <includedby refid="layer_2add_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/layer/add.hpp</includedby>
+    <includedby refid="concatenate_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp</includedby>
+    <includedby refid="lookup_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp</includedby>
+    <includedby refid="padding_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/layer/padding.hpp</includedby>
+    <includedby refid="rnn_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</includedby>
+    <includedby refid="add__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/add_visitor.hpp</includedby>
+    <includedby refid="backward__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/backward_visitor.hpp</includedby>
+    <includedby refid="bias__set__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/bias_set_visitor.hpp</includedby>
+    <includedby refid="delete__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/delete_visitor.hpp</includedby>
+    <includedby refid="delta__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/delta_visitor.hpp</includedby>
+    <includedby refid="deterministic__set__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/deterministic_set_visitor.hpp</includedby>
+    <includedby refid="forward__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/forward_visitor.hpp</includedby>
+    <includedby refid="gradient__set__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_set_visitor.hpp</includedby>
+    <includedby refid="gradient__update__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_update_visitor.hpp</includedby>
+    <includedby refid="gradient__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_visitor.hpp</includedby>
+    <includedby refid="gradient__zero__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_zero_visitor.hpp</includedby>
+    <includedby refid="input__shape__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/input_shape_visitor.hpp</includedby>
+    <includedby refid="load__output__parameter__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/load_output_parameter_visitor.hpp</includedby>
+    <includedby refid="loss__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/loss_visitor.hpp</includedby>
+    <includedby refid="output__height__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp</includedby>
+    <includedby refid="output__parameter__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_parameter_visitor.hpp</includedby>
+    <includedby refid="output__width__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_width_visitor.hpp</includedby>
+    <includedby refid="parameters__set__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/parameters_set_visitor.hpp</includedby>
+    <includedby refid="parameters__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/parameters_visitor.hpp</includedby>
+    <includedby refid="reset__cell__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_cell_visitor.hpp</includedby>
+    <includedby refid="reset__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_visitor.hpp</includedby>
+    <includedby refid="reward__set__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp</includedby>
+    <includedby refid="run__set__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/run_set_visitor.hpp</includedby>
+    <includedby refid="save__output__parameter__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/save_output_parameter_visitor.hpp</includedby>
+    <includedby refid="set__input__height__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/set_input_height_visitor.hpp</includedby>
+    <includedby refid="set__input__width__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/set_input_width_visitor.hpp</includedby>
+    <includedby refid="weight__set__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/weight_set_visitor.hpp</includedby>
+    <includedby refid="weight__size__visitor_8hpp" local="no">/home/aakash/mlpack/src/mlpack/methods/ann/visitor/weight_size_visitor.hpp</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp</label>
+        <link refid="layer__traits_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>type_traits</label>
+      </node>
+      <node id="4">
+        <label>cstring</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="67">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/run_set_visitor.hpp</label>
+        <link refid="run__set__visitor_8hpp"/>
+      </node>
+      <node id="61">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/load_output_parameter_visitor.hpp</label>
+        <link refid="load__output__parameter__visitor_8hpp"/>
+      </node>
+      <node id="34">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/radial_basis_function.hpp</label>
+        <link refid="radial__basis__function_8hpp"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/parameters_visitor.hpp</label>
+        <link refid="parameters__visitor_8hpp"/>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/multiply_merge.hpp</label>
+        <link refid="multiply__merge_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/gru.hpp</label>
+        <link refid="gru_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/lookup.hpp</label>
+        <link refid="lookup_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/sequential.hpp</label>
+        <link refid="sequential_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_zero_visitor.hpp</label>
+        <link refid="gradient__zero__visitor_8hpp"/>
+      </node>
+      <node id="28">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/glimpse.hpp</label>
+        <link refid="glimpse_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/convolution.hpp</label>
+        <link refid="convolution_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer.hpp</label>
+        <link refid="layer_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/save_output_parameter_visitor.hpp</label>
+        <link refid="save__output__parameter__visitor_8hpp"/>
+      </node>
+      <node id="21">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent.hpp</label>
+        <link refid="recurrent_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_parameter_visitor.hpp</label>
+        <link refid="output__parameter__visitor_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_cell_visitor.hpp</label>
+        <link refid="reset__cell__visitor_8hpp"/>
+      </node>
+      <node id="44">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/forward_visitor.hpp</label>
+        <link refid="forward__visitor_8hpp"/>
+      </node>
+      <node id="30">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/linear3d.hpp</label>
+        <link refid="linear3d_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/rnn.hpp</label>
+        <link refid="rnn_8hpp"/>
+      </node>
+      <node id="5">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/categorical_dqn.hpp</label>
+        <link refid="categorical__dqn_8hpp"/>
+      </node>
+      <node id="16">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/adaptive_mean_pooling.hpp</label>
+        <link refid="adaptive__mean__pooling_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/vr_class_reward.hpp</label>
+        <link refid="vr__class__reward_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/add_visitor.hpp</label>
+        <link refid="add__visitor_8hpp"/>
+      </node>
+      <node id="45">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_visitor.hpp</label>
+        <link refid="gradient__visitor_8hpp"/>
+      </node>
+      <node id="62">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/loss_visitor.hpp</label>
+        <link refid="loss__visitor_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/padding.hpp</label>
+        <link refid="padding_8hpp"/>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/delete_visitor.hpp</label>
+        <link refid="delete__visitor_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/add.hpp</label>
+        <link refid="layer_2add_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/weight_norm.hpp</label>
+        <link refid="weight__norm_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/set_input_height_visitor.hpp</label>
+        <link refid="set__input__height__visitor_8hpp"/>
+      </node>
+      <node id="35">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/reparametrization.hpp</label>
+        <link refid="reparametrization_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/util/check_input_shape.hpp</label>
+        <link refid="check__input__shape_8hpp"/>
+      </node>
+      <node id="36">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp</label>
+        <link refid="transposed__convolution_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="63">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_height_visitor.hpp</label>
+        <link refid="output__height__visitor_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_types.hpp</label>
+        <link refid="layer__types_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp</label>
+        <link refid="network__init_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/add_merge.hpp</label>
+        <link refid="add__merge_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/linear_no_bias.hpp</label>
+        <link refid="linear__no__bias_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/brnn.hpp</label>
+        <link refid="brnn_8hpp"/>
+      </node>
+      <node id="10">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer_names.hpp</label>
+        <link refid="layer__names_8hpp"/>
+      </node>
+      <node id="60">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_update_visitor.hpp</label>
+        <link refid="gradient__update__visitor_8hpp"/>
+      </node>
+      <node id="65">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_visitor.hpp</label>
+        <link refid="reset__visitor_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/sac.hpp</label>
+        <link refid="sac_8hpp"/>
+      </node>
+      <node id="12">
+        <label>/home/aakash/mlpack/src/mlpack/tests/custom_layer.hpp</label>
+        <link refid="custom__layer_8hpp"/>
+      </node>
+      <node id="47">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/input_shape_visitor.hpp</label>
+        <link refid="input__shape__visitor_8hpp"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/recurrent_attention.hpp</label>
+        <link refid="recurrent__attention_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reward_set_visitor.hpp</label>
+        <link refid="reward__set__visitor_8hpp"/>
+      </node>
+      <node id="29">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/linear.hpp</label>
+        <link refid="linear_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="72">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/weight_size_visitor.hpp</label>
+        <link refid="weight__size__visitor_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat.hpp</label>
+        <link refid="concat_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/minibatch_discrimination.hpp</label>
+        <link refid="minibatch__discrimination_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/ffn.hpp</label>
+        <link refid="ffn_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp</label>
+        <link refid="layer__traits_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/dueling_dqn.hpp</label>
+        <link refid="dueling__dqn_8hpp"/>
+      </node>
+      <node id="26">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/concat_performance.hpp</label>
+        <link refid="concat__performance_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="70">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/set_input_width_visitor.hpp</label>
+        <link refid="set__input__width__visitor_8hpp"/>
+      </node>
+      <node id="18">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/dropconnect.hpp</label>
+        <link refid="dropconnect_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/bias_set_visitor.hpp</label>
+        <link refid="bias__set__visitor_8hpp"/>
+      </node>
+      <node id="41">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/copy_visitor.hpp</label>
+        <link refid="copy__visitor_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/output_width_visitor.hpp</label>
+        <link refid="output__width__visitor_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/delta_visitor.hpp</label>
+        <link refid="delta__visitor_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan.hpp</label>
+        <link refid="gan_8hpp"/>
+      </node>
+      <node id="24">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/atrous_convolution.hpp</label>
+        <link refid="atrous__convolution_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/backward_visitor.hpp</label>
+        <link refid="backward__visitor_8hpp"/>
+      </node>
+      <node id="7">
+        <label>/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp</label>
+        <link refid="simple__dqn_8hpp"/>
+      </node>
+      <node id="58">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/deterministic_set_visitor.hpp</label>
+        <link refid="deterministic__set__visitor_8hpp"/>
+      </node>
+      <node id="50">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/parameters_set_visitor.hpp</label>
+        <link refid="parameters__set__visitor_8hpp"/>
+      </node>
+      <node id="15">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/adaptive_max_pooling.hpp</label>
+        <link refid="adaptive__max__pooling_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/highway.hpp</label>
+        <link refid="highway_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="71">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/weight_set_visitor.hpp</label>
+        <link refid="weight__set__visitor_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/visitor/gradient_set_visitor.hpp</label>
+        <link refid="gradient__set__visitor_8hpp"/>
+      </node>
+      <node id="54">
+        <label>/home/aakash/mlpack/src/mlpack/methods/ann/layer/concatenate.hpp</label>
+        <link refid="concatenate_8hpp"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1ann_1_1LayerTraits" prot="public">mlpack::ann::LayerTraits</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1ann">mlpack::ann</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Marcus Edel</para>
+</simplesect>
+This provides the LayerTraits class, a template class to get information about various layers.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_ANN_LAYER_LAYER_TRAITS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_ANN_LAYER_LAYER_TRAITS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="sfinae__utility_8hpp" kindref="compound">mlpack/core/util/sfinae_utility.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">ann<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>LayerType&gt;</highlight></codeline>
+<codeline lineno="29" refid="classmlpack_1_1ann_1_1LayerTraits" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1ann_1_1LayerTraits" kindref="compound">LayerTraits</ref></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="35" refid="classmlpack_1_1ann_1_1LayerTraits_1aec3667955b84aa1f944329b5ca9ac6bc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1LayerTraits_1aec3667955b84aa1f944329b5ca9ac6bc" kindref="member">IsBinary</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="classmlpack_1_1ann_1_1LayerTraits_1a19ff589b2311f62ad44a0f47de8dc136" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1LayerTraits_1a19ff589b2311f62ad44a0f47de8dc136" kindref="member">IsOutputLayer</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="classmlpack_1_1ann_1_1LayerTraits_1a69580094e588b884a0eb0b30d268d6eb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1LayerTraits_1a69580094e588b884a0eb0b30d268d6eb" kindref="member">IsBiasLayer</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="48"><highlight class="comment"><sp/><sp/><sp/>*<sp/>This<sp/>is<sp/>true<sp/>if<sp/>the<sp/>layer<sp/>is<sp/>a<sp/>LSTM<sp/>layer.</highlight></codeline>
+<codeline lineno="49"><highlight class="comment"><sp/><sp/><sp/>**/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="classmlpack_1_1ann_1_1LayerTraits_1a816a2da3205a125090e7880005ff89cd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1LayerTraits_1a816a2da3205a125090e7880005ff89cd" kindref="member">IsLSTMLayer</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="53"><highlight class="comment"><sp/><sp/><sp/>*<sp/>This<sp/>is<sp/>true<sp/>if<sp/>the<sp/>layer<sp/>is<sp/>a<sp/>connection<sp/>layer.</highlight></codeline>
+<codeline lineno="54"><highlight class="comment"><sp/><sp/><sp/>**/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="classmlpack_1_1ann_1_1LayerTraits_1a4e4d37fda356f300a538357b06db74e3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1ann_1_1LayerTraits_1a4e4d37fda356f300a538357b06db74e3" kindref="member">IsConnection</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasGradientCheck&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>Gradient(...)<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(Gradient,<sp/>HasGradientCheck);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasDeterministicCheck&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="comment">//<sp/>pointer)<sp/>we<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>Deterministic()</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="namespacemlpack_1_1ann_1ae95d86bb222cc89639472577da586357" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(Deterministic,<sp/>HasDeterministicCheck);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasParametersCheck&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>Parameters()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69" refid="namespacemlpack_1_1ann_1add5ad48dbc07b098c8df806a7d100de7" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(Parameters,<sp/>HasParametersCheck);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasAddCheck&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="comment">//<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>Add()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="namespacemlpack_1_1ann_1a923497f92d9b28cfe7143d40e00c6bfc" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(<ref refid="classmlpack_1_1ann_1_1Add" kindref="compound">Add</ref>,<sp/>HasAddCheck);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasModelCheck&lt;T&gt;<sp/>type<sp/>we<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="comment">//<sp/>a<sp/>type<sp/>has<sp/>a<sp/>function<sp/>named<sp/>Model.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="namespacemlpack_1_1ann_1a5aeaf3e16247ebd569074c32cab63c70" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1a5aeaf3e16247ebd569074c32cab63c70" kindref="member">HAS_ANY_METHOD_FORM</ref>(Model,<sp/>HasModelCheck);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasLocationCheck&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>Location()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="namespacemlpack_1_1ann_1a9ddaef84cd236998b57624b9b4d2eebe" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(Location,<sp/>HasLocationCheck);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasResetCheck&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>Reset()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="namespacemlpack_1_1ann_1a7af914cacab417f183e2fc0051a5345a" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(Reset,<sp/>HasResetCheck);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasResetCheck&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>ResetCell()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89" refid="namespacemlpack_1_1ann_1a5278fc5426da6ac56df6540dabd508e8" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(ResetCell,<sp/>HasResetCellCheck);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasRewardCheck&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="comment">//<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>Reward()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="namespacemlpack_1_1ann_1ad4b16a6a10d1b1d3999d177f03b1f4a0" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(Reward,<sp/>HasRewardCheck);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasInputWidth&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="comment">//<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>InputWidth()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="namespacemlpack_1_1ann_1a4dfcd41ff0d3c6ea37dda6c9a35c832f" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(InputWidth,<sp/>HasInputWidth);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasInputHeight&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="comment">//<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>InputHeight()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="namespacemlpack_1_1ann_1addfd94f5ac2aa2225484ddddb06b8320" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(InputHeight,<sp/>HasInputHeight);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasRho&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>Rho()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="namespacemlpack_1_1ann_1a1e25664538ca94074ff5636b85902c8a" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(Rho,<sp/>HasRho);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasLoss&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="comment">//<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>Loss()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109" refid="namespacemlpack_1_1ann_1af302c82cfb8bb5c0871c8a876e70adcc" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(Loss,<sp/>HasLoss);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasRunCheck&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="comment">//<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>Run()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="namespacemlpack_1_1ann_1af4586b834d3c6bd15695550314404738" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(Run,<sp/>HasRunCheck);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasBiasCheck&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="comment">//<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>Bias()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117" refid="namespacemlpack_1_1ann_1aa339cfab0c5987cfec78736f19e50373" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(Bias,<sp/>HasBiasCheck);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasMaxIterationsC&lt;T,<sp/>U&gt;<sp/>type<sp/>(where<sp/>U<sp/>is<sp/>a<sp/>function<sp/>pointer)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="comment">//<sp/>we<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when<sp/>a<sp/>type<sp/>has<sp/>a<sp/>MaxIterations()<sp/>function.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="namespacemlpack_1_1ann_1a8e7950714181dc8adf55752f45467dd8" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1ac1b6745deedbcee048f2387da27389d4" kindref="member">HAS_MEM_FUNC</ref>(MaxIterations,<sp/>HasMaxIterations);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>gives<sp/>us<sp/>a<sp/>HasInShapeCheck&lt;T&gt;<sp/>type<sp/>we<sp/>can<sp/>use<sp/>with<sp/>SFINAE<sp/>to<sp/>catch<sp/>when</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="comment">//<sp/>a<sp/>type<sp/>has<sp/>a<sp/>function<sp/>named<sp/>InputShape.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="namespacemlpack_1_1ann_1aa333dabed73cee663a9adb47c167570e" refkind="member"><highlight class="normal"><ref refid="namespacemlpack_1_1ann_1a5aeaf3e16247ebd569074c32cab63c70" kindref="member">HAS_ANY_METHOD_FORM</ref>(InputShape,<sp/>HasInputShapeCheck);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>ann</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/layer_traits.hpp"/>
+  </compounddef>
+</doxygen>

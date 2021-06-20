@@ -1,0 +1,43 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/methods/neighbor\+\_\+search/typedef.hpp File Reference}
+\label{methods_2neighbor__search_2typedef_8hpp}\index{/home/aakash/mlpack/src/mlpack/methods/neighbor\_search/typedef.hpp@{/home/aakash/mlpack/src/mlpack/methods/neighbor\_search/typedef.hpp}}
+Include dependency graph for typedef.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{methods_2neighbor__search_2typedef_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{methods_2neighbor__search_2typedef_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::neighbor}
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$template$<$ typename Tree\+Metric\+Type, typename Tree\+Stat\+Type, typename Tree\+Mat\+Type $>$ class Tree\+Type = tree\+::\+SPTree$>$ }\\using \textbf{ Defeatist\+KNN} = Neighbor\+Search$<$ Nearest\+Neighbor\+Sort, metric\+::\+Euclidean\+Distance, arma\+::mat, Tree\+Type, Tree\+Type$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Nearest\+Neighbor\+Sort $>$, arma\+::mat $>$\+::template Defeatist\+Dual\+Tree\+Traverser, Tree\+Type$<$ metric\+::\+Euclidean\+Distance, Neighbor\+Search\+Stat$<$ Nearest\+Neighbor\+Sort $>$, arma\+::mat $>$\+::template Defeatist\+Single\+Tree\+Traverser $>$
+\begin{DoxyCompactList}\small\item\em The Defeatist\+KNN class is the k-\/nearest-\/neighbors method considering defeatist search. \end{DoxyCompactList}\item 
+typedef Neighbor\+Search$<$ Furthest\+Neighbor\+Sort, metric\+::\+Euclidean\+Distance $>$ \textbf{ KFN}
+\begin{DoxyCompactList}\small\item\em The KFN class is the k-\/furthest-\/neighbors method. \end{DoxyCompactList}\item 
+typedef Neighbor\+Search$<$ Nearest\+Neighbor\+Sort, metric\+::\+Euclidean\+Distance $>$ \textbf{ KNN}
+\begin{DoxyCompactList}\small\item\em The KNN class is the k-\/nearest-\/neighbors method. \end{DoxyCompactList}\item 
+typedef Defeatist\+KNN$<$ tree\+::\+SPTree $>$ \textbf{ Spill\+KNN}
+\begin{DoxyCompactList}\small\item\em The Spill\+KNN class is the k-\/nearest-\/neighbors method considering defeatist search on SPTree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Simple typedefs describing template instantiations of the Neighbor\+Search class which are commonly used. This is meant to be included by neighbor\+\_\+search.\+h but is a separate file for simplicity.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

@@ -1,0 +1,828 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1svm_1_1LinearSVMFunction" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::svm::LinearSVMFunction</compoundname>
+    <includes refid="linear__svm__function_8hpp" local="no">linear_svm_function.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVMFunction_1abc66b9c48f83e6314b3351409c68757c" prot="private" static="no" mutable="no">
+        <type>MatType</type>
+        <definition>MatType dataset</definition>
+        <argsstring></argsstring>
+        <name>dataset</name>
+        <briefdescription>
+<para>The datapoints for training. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="189" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a9ea1a8f5ef3e6d20b362385e1288c72c" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>The margin between the correct class and all other classes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="198" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVMFunction_1ab584b1c722e6d7db3c7a85c57ea37a18" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool fitIntercept</definition>
+        <argsstring></argsstring>
+        <name>fitIntercept</name>
+        <briefdescription>
+<para>Intercept term flag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="201" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVMFunction_1ae8c1fd887898f02783f0a8b5e9b04cb1" prot="private" static="no" mutable="no">
+        <type>arma::sp_mat</type>
+        <definition>arma::sp_mat groundTruth</definition>
+        <argsstring></argsstring>
+        <name>groundTruth</name>
+        <briefdescription>
+<para>Label matrix for provided data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="186" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a146cdce9a82b3555d1d83744c74ee3f2" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat initialPoint</definition>
+        <argsstring></argsstring>
+        <name>initialPoint</name>
+        <briefdescription>
+<para>The initial point, from which to start the optimization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="183" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a3db359547eed8cfd48ca821d95f577af" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double lambda</definition>
+        <argsstring></argsstring>
+        <name>lambda</name>
+        <briefdescription>
+<para>The regularization parameter for L2-regularization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="195" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="195" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a4dd554142bdfbb014ddcac55577facef" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numClasses</definition>
+        <argsstring></argsstring>
+        <name>numClasses</name>
+        <briefdescription>
+<para>Number of Classes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="192" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1af445da901fbdbaf4a6624eb7c59a219f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LinearSVMFunction</definition>
+        <argsstring>(const MatType &amp;dataset, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const double lambda=0.0001, const double delta=1.0, const bool fitIntercept=false)</argsstring>
+        <name>LinearSVMFunction</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>lambda</declname>
+          <defval>0.0001</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>delta</declname>
+          <defval>1.0</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>fitIntercept</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Construct the Linear SVM objective function with given parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input training data, each column associate with one sample </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels associated with the feature data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes for classification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>lambda</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>L2-regularization constant. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>delta</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Margin of difference between correct class and other classes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fitIntercept</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Intercept term flag. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="41" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1ae7b442671b21a94780f17a6624e1f31d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::sp_mat &amp;</type>
+        <definition>arma::sp_mat&amp; Dataset</definition>
+        <argsstring>()</argsstring>
+        <name>Dataset</name>
+        <briefdescription>
+<para>Modify the dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="168" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="168" bodyend="168"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a63f50b704711fa3661dc1ae565f51811" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::sp_mat &amp;</type>
+        <definition>const arma::sp_mat&amp; Dataset</definition>
+        <argsstring>() const</argsstring>
+        <name>Dataset</name>
+        <briefdescription>
+<para>Get the dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="166" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="166" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a1ca0efaedbc2e7e7542c89901cdcf2ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const arma::mat &amp;parameters)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate the hinge loss function for all the datapoints. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parameters of the SVM. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value of the loss function for the entire dataset. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="82" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a3b3e9347c2b7e25c47f3fba3baf12d19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Evaluate</definition>
+        <argsstring>(const arma::mat &amp;parameters, const size_t firstId, const size_t batchSize=1)</argsstring>
+        <name>Evaluate</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>firstId</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>batchSize</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Evaluate the hinge loss function on the specified datapoints. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parameters of the SVM. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>firstId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the datapoints to use for function evaluation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of batch to process. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value of the loss function for the given parameters. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="93" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a116bf353d6114dbaddc9bcad60f690b1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename GradType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double EvaluateWithGradient</definition>
+        <argsstring>(const arma::mat &amp;parameters, const size_t firstId, GradType &amp;gradient, const size_t batchSize=1) const</argsstring>
+        <name>EvaluateWithGradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>firstId</declname>
+        </param>
+        <param>
+          <type>GradType &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>batchSize</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Evaluate the gradient of the hinge loss function, following the LinearFunctionType requirements on the Gradient function followed by evaluation of the hinge loss function on the specified datapoints. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>GradType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the gradient matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parameters of the SVM. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>firstId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the datapoint to use for the gradient and function evaluation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Linear matrix to output the gradient into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the batch to process. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value of the loss function at the given parameters. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="155" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a1e5f0be6eadfa83bbea6f6152d04f735" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename GradType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double EvaluateWithGradient</definition>
+        <argsstring>(const arma::mat &amp;parameters, GradType &amp;gradient) const</argsstring>
+        <name>EvaluateWithGradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>GradType &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate the gradient of the hinge loss function, following the LinearFunctionType requirements on the Gradient function followed by evaluation of the hinge loss function on all the datapoints. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>GradType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the gradient matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parameters of the SVM. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Linear matrix to output the gradient into. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value of the loss function at the given parameters. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="137" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a2878e0828ecdc1d486b0f43a81f95059" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool FitIntercept</definition>
+        <argsstring>() const</argsstring>
+        <name>FitIntercept</name>
+        <briefdescription>
+<para>Gets the intercept flag. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="176" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="176" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1afb090fbee5f880dd69edde4cdd0797cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void GetGroundTruthMatrix</definition>
+        <argsstring>(const arma::Row&lt; size_t &gt; &amp;labels, arma::sp_mat &amp;groundTruth)</argsstring>
+        <name>GetGroundTruthMatrix</name>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>arma::sp_mat &amp;</type>
+          <declname>groundTruth</declname>
+        </param>
+        <briefdescription>
+<para>Constructs the ground truth label matrix with the passed labels. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels associated with the training data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>groundTruth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to arma::mat which stores the computed matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="73" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1ac193621da3a050a935bacdc988b990b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename GradType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::mat &amp;parameters, const size_t firstId, GradType &amp;gradient, const size_t batchSize=1)</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>firstId</declname>
+        </param>
+        <param>
+          <type>GradType &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>batchSize</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+<para>Evaluate the gradient of the hinge loss function, following the LinearFunctionType requirements on the Gradient function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>GradType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the gradient matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parameters of the SVM. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>firstId</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the datapoint to use for the gradient evaluation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Linear matrix to output the gradient into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>batchSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the batch to process. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="120" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a306147f4dffda5b0972a12de487ece8e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename GradType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::mat &amp;parameters, GradType &amp;gradient)</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>GradType &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate the gradient of the hinge loss function following the LinearFunctionType requirements on the Gradient function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>GradType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the gradient matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parameters</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The parameters of the SVM. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Linear matrix to output the gradient into. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="106" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1ab1582fd207a6b9a400cf27c710c5af06" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat &amp;</type>
+        <definition>arma::mat&amp; InitialPoint</definition>
+        <argsstring>()</argsstring>
+        <name>InitialPoint</name>
+        <briefdescription>
+<para>Modify the initial point for the optimization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="163" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="163" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a380e98a13444e16f7cd2984e23b32e2e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; InitialPoint</definition>
+        <argsstring>() const</argsstring>
+        <name>InitialPoint</name>
+        <briefdescription>
+<para>Return the initial point for the optimization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="161" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="161" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1aaf66629b989a326453647f42443c6a0c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Lambda</definition>
+        <argsstring>()</argsstring>
+        <name>Lambda</name>
+        <briefdescription>
+<para>Sets the regularization parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="171" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="171" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a53535041275cedd0ec3de67ca032aa94" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Lambda</definition>
+        <argsstring>() const</argsstring>
+        <name>Lambda</name>
+        <briefdescription>
+<para>Gets the regularization parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="173" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="173" bodyend="173"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumFunctions</definition>
+        <argsstring>() const</argsstring>
+        <name>NumFunctions</name>
+        <briefdescription>
+<para>Return the number of functions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="179" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1a2697cc8b37d7bca7c055228382a9b208" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Shuffle</definition>
+        <argsstring>()</argsstring>
+        <name>Shuffle</name>
+        <briefdescription>
+<para>Shuffle the dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="51" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1svm_1_1LinearSVMFunction_1af39490b2ae62f54b6a4c25a3d92ab0ce" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void InitializeWeights</definition>
+        <argsstring>(arma::mat &amp;weights, const size_t featureSize, const size_t numClasses, const bool fitIntercept=false)</argsstring>
+        <name>InitializeWeights</name>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>featureSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>fitIntercept</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Initialize Linear SVM weights (trainable parameters) with the given parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>weights</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will be filled with the initialized model weights. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>featureSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of features in the training set. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes for classification. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fitIntercept</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, an intercept is fitted. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="62" column="15"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The hinge loss function for the linear SVM objective function. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This is used by various ensmallen optimizers to train the linear SVM model. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/linear_svm/linear_svm_function.hpp" bodystart="29" bodyend="202"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1abc66b9c48f83e6314b3351409c68757c" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>dataset</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a63f50b704711fa3661dc1ae565f51811" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>Dataset</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1ae7b442671b21a94780f17a6624e1f31d" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>Dataset</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a9ea1a8f5ef3e6d20b362385e1288c72c" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a1ca0efaedbc2e7e7542c89901cdcf2ee" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a3b3e9347c2b7e25c47f3fba3baf12d19" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a1e5f0be6eadfa83bbea6f6152d04f735" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>EvaluateWithGradient</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a116bf353d6114dbaddc9bcad60f690b1" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>EvaluateWithGradient</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a2878e0828ecdc1d486b0f43a81f95059" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>FitIntercept</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1ab584b1c722e6d7db3c7a85c57ea37a18" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>fitIntercept</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1afb090fbee5f880dd69edde4cdd0797cd" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>GetGroundTruthMatrix</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a306147f4dffda5b0972a12de487ece8e" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1ac193621da3a050a935bacdc988b990b8" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1ae8c1fd887898f02783f0a8b5e9b04cb1" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>groundTruth</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1af39490b2ae62f54b6a4c25a3d92ab0ce" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>InitializeWeights</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a146cdce9a82b3555d1d83744c74ee3f2" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>initialPoint</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a380e98a13444e16f7cd2984e23b32e2e" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>InitialPoint</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1ab1582fd207a6b9a400cf27c710c5af06" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>InitialPoint</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a3db359547eed8cfd48ca821d95f577af" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>lambda</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1aaf66629b989a326453647f42443c6a0c" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>Lambda</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a53535041275cedd0ec3de67ca032aa94" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>Lambda</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1af445da901fbdbaf4a6624eb7c59a219f" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>LinearSVMFunction</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a4dd554142bdfbb014ddcac55577facef" prot="private" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>numClasses</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a1fa76af34a6e3ea927b307f0c318ee4b" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>NumFunctions</name></member>
+      <member refid="classmlpack_1_1svm_1_1LinearSVMFunction_1a2697cc8b37d7bca7c055228382a9b208" prot="public" virt="non-virtual"><scope>mlpack::svm::LinearSVMFunction</scope><name>Shuffle</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

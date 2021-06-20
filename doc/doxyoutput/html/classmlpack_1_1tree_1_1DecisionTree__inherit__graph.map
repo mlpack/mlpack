@@ -1,0 +1,5 @@
+<map id="DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;" name="DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;">
+<area shape="rect" id="node1" title="This class implements a generic decision tree learner." alt="" coords="5,80,331,136"/>
+<area shape="rect" id="node2" href="$classmlpack_1_1tree_1_1BestBinaryNumericSplit_1_1AuxiliarySplitInfo.html" title=" " alt="" coords="22,5,157,32"/>
+<area shape="rect" id="node3" href="$classmlpack_1_1tree_1_1AllCategoricalSplit_1_1AuxiliarySplitInfo.html" title=" " alt="" coords="181,5,315,32"/>
+</map>

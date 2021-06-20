@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1_1AuxiliarySplitInfo" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::BestBinaryNumericSplit::AuxiliarySplitInfo</compoundname>
+    <derivedcompoundref refid="classmlpack_1_1tree_1_1DecisionTree" prot="public" virt="non-virtual">DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;</derivedcompoundref>
+    <includes refid="best__binary__numeric__split_8hpp" local="no">best_binary_numeric_split.hpp</includes>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>DecisionTree&lt; FitnessFunction, NumericSplitType, CategoricalSplitType, DimensionSelectionType, NoRecursion &gt;</label>
+        <link refid="classmlpack_1_1tree_1_1DecisionTree"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>BestBinaryNumericSplit&lt; FitnessFunction &gt;::AuxiliarySplitInfo</label>
+        <link refid="classmlpack_1_1tree_1_1BestBinaryNumericSplit_1_1AuxiliarySplitInfo"/>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/decision_tree/best_binary_numeric_split.hpp" line="31" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/decision_tree/best_binary_numeric_split.hpp" bodystart="31" bodyend="31"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

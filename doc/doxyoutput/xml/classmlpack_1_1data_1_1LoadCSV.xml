@@ -1,0 +1,434 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1data_1_1LoadCSV" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::LoadCSV</compoundname>
+    <includes refid="load__csv_8hpp" local="no">load_csv.hpp</includes>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classmlpack_1_1data_1_1LoadCSV_1a73d22d9f5f7c9706a5ad1776d64853c8" prot="private" static="no">
+        <type>boost::iterator_range&lt; std::string::iterator &gt;</type>
+        <definition>using iter_type =  boost::iterator_range&lt;std::string::iterator&gt;</definition>
+        <argsstring></argsstring>
+        <name>iter_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="208" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1LoadCSV_1a2c4878ae6c48931c656d19c93406deca" prot="private" static="no" mutable="no">
+        <type>boost::spirit::qi::rule&lt; std::string::iterator, iter_type()&gt;</type>
+        <definition>boost::spirit::qi::rule&lt;std::string::iterator, iter_type()&gt; delimiterRule</definition>
+        <argsstring></argsstring>
+        <name>delimiterRule</name>
+        <briefdescription>
+<para>Spirit rule for delimiters (i.e. &apos;,&apos; for CSVs). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="363" column="27" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="363" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1LoadCSV_1a110d0f63b1860324c40bae0391908f88" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string extension</definition>
+        <argsstring></argsstring>
+        <name>extension</name>
+        <briefdescription>
+<para>Extension (type) of file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="366" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="366" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1LoadCSV_1ae80f820219e45772366a2a68de6a54c4" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string filename</definition>
+        <argsstring></argsstring>
+        <name>filename</name>
+        <briefdescription>
+<para>Name of file. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="368" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="368" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1LoadCSV_1a1e4c98fa2374fe0817bef5ffed9487a7" prot="private" static="no" mutable="no">
+        <type>std::ifstream</type>
+        <definition>std::ifstream inFile</definition>
+        <argsstring></argsstring>
+        <name>inFile</name>
+        <briefdescription>
+<para>Opened stream for reading. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="370" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="370" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1LoadCSV_1a7e86b240221cec507fccdf3a928493cd" prot="private" static="no" mutable="no">
+        <type>boost::spirit::qi::rule&lt; std::string::iterator, iter_type()&gt;</type>
+        <definition>boost::spirit::qi::rule&lt;std::string::iterator, iter_type()&gt; stringRule</definition>
+        <argsstring></argsstring>
+        <name>stringRule</name>
+        <briefdescription>
+<para>Spirit rule for parsing. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="361" column="27" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="361" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1LoadCSV_1a39a5511767ebc8669a67744d5f959a5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>LoadCSV</definition>
+        <argsstring>(const std::string &amp;file)</argsstring>
+        <name>LoadCSV</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>file</declname>
+        </param>
+        <briefdescription>
+<para>Construct the <ref refid="classmlpack_1_1data_1_1LoadCSV" kindref="compound">LoadCSV</ref> object on the given file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will construct the rules necessary for loading and attempt to open the file. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="43" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1LoadCSV_1ac22f0004512d4333b29b2e685ef3a5d7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename MapPolicy</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void GetMatrixSize</definition>
+        <argsstring>(size_t &amp;rows, size_t &amp;cols, DatasetMapper&lt; MapPolicy &gt; &amp;info)</argsstring>
+        <name>GetMatrixSize</name>
+        <param>
+          <type>size_t &amp;</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>size_t &amp;</type>
+          <declname>cols</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref>&lt; MapPolicy &gt; &amp;</type>
+          <declname>info</declname>
+        </param>
+        <briefdescription>
+<para>Peek at the file to determine the number of rows and columns in the matrix, assuming a non-transposed matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will also take a first pass over the data for <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref>, if MapPolicy::NeedsFirstPass is true. The info object will be re-initialized with the correct dimensionality.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rows</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to be filled with the number of rows. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to be filled with the number of columns. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> object to use for first pass. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="78" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="78" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1LoadCSV_1aa47dac31ae48b7a106733cbe1937c134" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename MapPolicy</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void GetTransposeMatrixSize</definition>
+        <argsstring>(size_t &amp;rows, size_t &amp;cols, DatasetMapper&lt; MapPolicy &gt; &amp;info)</argsstring>
+        <name>GetTransposeMatrixSize</name>
+        <param>
+          <type>size_t &amp;</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>size_t &amp;</type>
+          <declname>cols</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref>&lt; MapPolicy &gt; &amp;</type>
+          <declname>info</declname>
+        </param>
+        <briefdescription>
+<para>Peek at the file to determine the number of rows and columns in the matrix, assuming a transposed matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will also take a first pass over the data for <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref>, if MapPolicy::NeedsFirstPass is true. The info object will be re-initialized with the correct dimensionality.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>rows</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to be filled with the number of rows. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to be filled with the number of columns. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>info</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> object to use for first pass. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="151" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="151" bodyend="205"/>
+        <references refid="classmlpack_1_1data_1_1DatasetMapper_1ae0e1d3459cf5bee5e688beaadf9a4f04">DatasetMapper&lt; PolicyType, InputType &gt;::SetDimensionality</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1LoadCSV_1ac274f442f96c30aebefd561936c7afb4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename PolicyType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Load</definition>
+        <argsstring>(arma::Mat&lt; T &gt; &amp;inout, DatasetMapper&lt; PolicyType &gt; &amp;infoSet, const bool transpose=true)</argsstring>
+        <name>Load</name>
+        <param>
+          <type>arma::Mat&lt; T &gt; &amp;</type>
+          <declname>inout</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref>&lt; PolicyType &gt; &amp;</type>
+          <declname>infoSet</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>transpose</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Load the file into the given matrix with the given <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Throws exceptions on errors.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>inout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to load into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>infoSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> to use while loading. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>transpose</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, the matrix should be transposed on loading (default). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="55" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="55" bodyend="65"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1LoadCSV_1af22c9cffeaba67ac7320ae30d24e09f0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CheckOpen</definition>
+        <argsstring>()</argsstring>
+        <name>CheckOpen</name>
+        <briefdescription>
+<para>Check whether or not the file has successfully opened; throw an exception if not. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="214" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1LoadCSV_1a6b849752362af972447db4d4e3d58553" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename PolicyType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void NonTransposeParse</definition>
+        <argsstring>(arma::Mat&lt; T &gt; &amp;inout, DatasetMapper&lt; PolicyType &gt; &amp;infoSet)</argsstring>
+        <name>NonTransposeParse</name>
+        <param>
+          <type>arma::Mat&lt; T &gt; &amp;</type>
+          <declname>inout</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref>&lt; PolicyType &gt; &amp;</type>
+          <declname>infoSet</declname>
+        </param>
+        <briefdescription>
+<para>Parse a non-transposed matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>inout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to load into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>infoSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> object to load with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="223" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="223" bodyend="284"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1LoadCSV_1a8b14d2c399d70245bb1be82ed79a8190" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename PolicyType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void TransposeParse</definition>
+        <argsstring>(arma::Mat&lt; T &gt; &amp;inout, DatasetMapper&lt; PolicyType &gt; &amp;infoSet)</argsstring>
+        <name>TransposeParse</name>
+        <param>
+          <type>arma::Mat&lt; T &gt; &amp;</type>
+          <declname>inout</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref>&lt; PolicyType &gt; &amp;</type>
+          <declname>infoSet</declname>
+        </param>
+        <briefdescription>
+<para>Parse a transposed matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>inout</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to load into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>infoSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref> to load with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+<para>This is the parse rule for strings. When we get a string we have to pass it to the <ref refid="classmlpack_1_1data_1_1DatasetMapper" kindref="compound">DatasetMapper</ref>.</para>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="293" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="293" bodyend="358"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Load the csv file.This class use boost::spirit to implement the parser, please refer to following link <ulink url="http://theboostcpplibraries.com/boost.spirit">http://theboostcpplibraries.com/boost.spirit</ulink> for quick review. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/load_csv.hpp" bodystart="37" bodyend="371"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1af22c9cffeaba67ac7320ae30d24e09f0" prot="private" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>CheckOpen</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1a2c4878ae6c48931c656d19c93406deca" prot="private" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>delimiterRule</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1a110d0f63b1860324c40bae0391908f88" prot="private" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>extension</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1ae80f820219e45772366a2a68de6a54c4" prot="private" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>filename</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1ac22f0004512d4333b29b2e685ef3a5d7" prot="public" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>GetMatrixSize</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1aa47dac31ae48b7a106733cbe1937c134" prot="public" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>GetTransposeMatrixSize</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1a1e4c98fa2374fe0817bef5ffed9487a7" prot="private" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>inFile</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1a73d22d9f5f7c9706a5ad1776d64853c8" prot="private" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>iter_type</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1ac274f442f96c30aebefd561936c7afb4" prot="public" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>Load</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1a39a5511767ebc8669a67744d5f959a5e" prot="public" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>LoadCSV</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1a6b849752362af972447db4d4e3d58553" prot="private" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>NonTransposeParse</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1a7e86b240221cec507fccdf3a928493cd" prot="private" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>stringRule</name></member>
+      <member refid="classmlpack_1_1data_1_1LoadCSV_1a8b14d2c399d70245bb1be82ed79a8190" prot="private" virt="non-virtual"><scope>mlpack::data::LoadCSV</scope><name>TransposeParse</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

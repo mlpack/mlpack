@@ -1,0 +1,835 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1range_1_1RSModel" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::range::RSModel</compoundname>
+    <includes refid="rs__model_8hpp" local="no">rs_model.hpp</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="enum" id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8d" prot="public" static="no" strong="no">
+        <type></type>
+        <name>TreeTypes</name>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8daa688e9cd1158916bc183aa517724568c" prot="public">
+          <name>KD_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da92f172b47c8ae18ed401f8bf9f5ecad3" prot="public">
+          <name>COVER_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da2a93dc779a94d5f09b72ffbdc5ac9cd9" prot="public">
+          <name>R_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8dae5b37a52c347bc7ef3d23fde0941d27b" prot="public">
+          <name>R_STAR_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da994ef1bcca8841d5b7d1431b99fcb10d" prot="public">
+          <name>BALL_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da6560e35678b39452afce0f0fcc7f6059" prot="public">
+          <name>X_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da470c5bcf4135483a37e9a87f061e1c5c" prot="public">
+          <name>HILBERT_R_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da4e91a297c1504b34ca1a9cdcd6ba22ff" prot="public">
+          <name>R_PLUS_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da1208f6f2a7b337e4edbd02a8de98d3f5" prot="public">
+          <name>R_PLUS_PLUS_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8daa8a6aade44830d33165414079bf8dd1c" prot="public">
+          <name>VP_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8dae6815061fe1e77dc1b2ae96b07b40250" prot="public">
+          <name>RP_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da0e4ed6912ca7a8232754df8771365c96" prot="public">
+          <name>MAX_RP_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8dae36341db74fc7194b238cf7c528a7fbc" prot="public">
+          <name>UB_TREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8daabefbb1ea7a801b1b00c9b0709dcec50" prot="public">
+          <name>OCTREE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="209" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="210" bodyend="225"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RSModel_1abffeae6dee4a6bad9885ba0f39d309f3" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t leafSize</definition>
+        <argsstring></argsstring>
+        <name>leafSize</name>
+        <briefdescription>
+<para>(Only used for some tree types.) The leaf size to use when building a tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="355" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="355" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RSModel_1a58d43069f572c93d4569d25c57a9cb6a" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat q</definition>
+        <argsstring></argsstring>
+        <name>q</name>
+        <briefdescription>
+<para>Random projection matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="360" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="360" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RSModel_1a68c01c84182e9de56ad31dbf792d7a5b" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool randomBasis</definition>
+        <argsstring></argsstring>
+        <name>randomBasis</name>
+        <briefdescription>
+<para>If true, we randomly project the data into a new basis before search. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="358" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="358" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RSModel_1a511db816a013b9cb26130c551a4e6561" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1range_1_1RSWrapperBase" kindref="compound">RSWrapperBase</ref> *</type>
+        <definition>RSWrapperBase* rSearch</definition>
+        <argsstring></argsstring>
+        <name>rSearch</name>
+        <briefdescription>
+<para>rSearch holds an instance of the <ref refid="classmlpack_1_1range_1_1RangeSearch" kindref="compound">RangeSearch</ref> class for the current treeType. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>It is initialized every time BuildModel is executed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="366" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="366" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RSModel_1a4c037c9b8e9f3f7d429a0f3f4326a067" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref></type>
+        <definition>TreeTypes treeType</definition>
+        <argsstring></argsstring>
+        <name>treeType</name>
+        <briefdescription>
+<para>The type of tree we are using. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="352" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="352" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a8ed1e3cec17df0626ac2a5034df3b537" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RSModel</definition>
+        <argsstring>(const RSModel &amp;other)</argsstring>
+        <name>RSModel</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy the given <ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="242" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a3dd8fd1e68320b3ec82950d839664350" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RSModel</definition>
+        <argsstring>(const TreeTypes treeType=TreeTypes::KD_TREE, const bool randomBasis=false)</argsstring>
+        <name>RSModel</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref></type>
+          <declname>treeType</declname>
+          <defval>TreeTypes::KD_TREE</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>randomBasis</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Initialize the <ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> with the given type and whether or not a random basis should be used. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>treeType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of tree to use. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>randomBasis</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether or not to use a random basis. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="234" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a178ee2403468f92eadfe0d269e858aeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RSModel</definition>
+        <argsstring>(RSModel &amp;&amp;other)</argsstring>
+        <name>RSModel</name>
+        <param>
+          <type><ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Take ownership of the given <ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> to take ownership of. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="249" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a5f50179749aa6dfe66e789d6049c49ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>~RSModel</definition>
+        <argsstring>()</argsstring>
+        <name>~RSModel</name>
+        <briefdescription>
+<para>Clean memory, if necessary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="268" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a394d212c5373090724aaea3ba24b482e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BuildModel</definition>
+        <argsstring>(arma::mat &amp;&amp;referenceSet, const size_t leafSize, const bool naive, const bool singleMode)</argsstring>
+        <name>BuildModel</name>
+        <param>
+          <type>arma::mat &amp;&amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>leafSize</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>naive</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>singleMode</declname>
+        </param>
+        <briefdescription>
+<para>Build the reference tree on the given dataset with the given parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This takes possession of the reference set to avoid a copy.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>leafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Leaf size of tree (ignored for the cover tree). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>naive</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether naive search should be used. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>singleMode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether single-tree search should be used. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="317" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1aff320b9a86b77a150e630c01d5888273" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; Dataset</definition>
+        <argsstring>() const</argsstring>
+        <name>Dataset</name>
+        <briefdescription>
+<para>Expose the dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="275" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="275" bodyend="275"/>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a2effd31755e4ae5f85e14ed94e7fab8e">RSWrapperBase::Dataset</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a7f40b35e0dbe4860397eeeda65197d64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void InitializeModel</definition>
+        <argsstring>(const bool naive, const bool singleMode)</argsstring>
+        <name>InitializeModel</name>
+        <param>
+          <type>const bool</type>
+          <declname>naive</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>singleMode</declname>
+        </param>
+        <briefdescription>
+<para>Allocate the memory for the range search model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="306" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a0966773f5b7ef0c324ed40b1cf4b94d1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; LeafSize</definition>
+        <argsstring>()</argsstring>
+        <name>LeafSize</name>
+        <briefdescription>
+<para>Modify the leaf size (applicable to everything but the cover tree). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="290" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="290" bodyend="290"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1ab81b93ebb200783ca4c5747f31889fa0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t LeafSize</definition>
+        <argsstring>() const</argsstring>
+        <name>LeafSize</name>
+        <briefdescription>
+<para>Get the leaf size (applicable to everything but the cover tree). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="288" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="288" bodyend="288"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1af7d397adca3f411b4e2d2f977b280ce6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; Naive</definition>
+        <argsstring>()</argsstring>
+        <name>Naive</name>
+        <briefdescription>
+<para>Modify whether the model is in naive search mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="285" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="285" bodyend="285"/>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a76bdb2e751927f38210e7111c15cba08">RSWrapperBase::Naive</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a343230e7d7344e3f7d5f5f2eb89cf2c5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Naive</definition>
+        <argsstring>() const</argsstring>
+        <name>Naive</name>
+        <briefdescription>
+<para>Get whether the model is in naive search mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="283" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="283" bodyend="283"/>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a76bdb2e751927f38210e7111c15cba08">RSWrapperBase::Naive</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1aea8c23e3a7f72594cce88439d7a8e4e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> &amp;</type>
+        <definition>RSModel&amp; operator=</definition>
+        <argsstring>(const RSModel &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy the given <ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="256" column="11"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a6ac7e5a1e637c462fb01537fb14b2d40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> &amp;</type>
+        <definition>RSModel&amp; operator=</definition>
+        <argsstring>(RSModel &amp;&amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Take ownership of the given <ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref>&apos;s data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> to copy. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="263" column="11"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a8111114602e748b38c0875f82f323544" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; RandomBasis</definition>
+        <argsstring>()</argsstring>
+        <name>RandomBasis</name>
+        <briefdescription>
+<para>Modify whether a random basis is used (don&apos;t do this after the model has been built). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="301" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="301" bodyend="301"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1ae3053ad1e3b42eb1ae4105aecd060cf6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool RandomBasis</definition>
+        <argsstring>() const</argsstring>
+        <name>RandomBasis</name>
+        <briefdescription>
+<para>Get whether a random basis is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="298" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="298" bodyend="298"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a24f05d38662b2832148f426ebc930a30" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(arma::mat &amp;&amp;querySet, const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>arma::mat &amp;&amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1math_1ad17d9cabd4fd82cbed4ccd5e53b47d70" kindref="member">math::Range</ref> &amp;</type>
+          <declname>range</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; double &gt;&gt; &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <briefdescription>
+<para>Perform range search. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This takes possession of the query set, so the query set will not be usable after the search. For more information on the output format, see <ref refid="classmlpack_1_1range_1_1RangeSearch_1a0df148abcabf67c5876e942e12279f8e" kindref="member">RangeSearch&lt;&gt;::Search()</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>querySet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of query points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range to search for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output: neighbors falling within the desired range. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output: distances of neighbors. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="332" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a3868480bcd41a740550657144b5f7018" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt;&gt; &amp;distances)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1math_1ad17d9cabd4fd82cbed4ccd5e53b47d70" kindref="member">math::Range</ref> &amp;</type>
+          <declname>range</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; size_t &gt;&gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; double &gt;&gt; &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <briefdescription>
+<para>Perform monochromatic range search, with the reference set as the query set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For more information on the output format, see <ref refid="classmlpack_1_1range_1_1RangeSearch_1a0df148abcabf67c5876e942e12279f8e" kindref="member">RangeSearch&lt;&gt;::Search()</ref>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range to search for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output: neighbors falling within the desired range. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output: distances of neighbors. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="346" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the range search model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="272" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1adadacd63ddeadf138d834b1fdc632773" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool &amp;</type>
+        <definition>bool&amp; SingleMode</definition>
+        <argsstring>()</argsstring>
+        <name>SingleMode</name>
+        <briefdescription>
+<para>Modify whether the model is in single-tree search mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="280" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="280" bodyend="280"/>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a66d221dd25418821f76bb66bd9c98bce">RSWrapperBase::SingleMode</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool SingleMode</definition>
+        <argsstring>() const</argsstring>
+        <name>SingleMode</name>
+        <briefdescription>
+<para>Get whether the model is in single-tree search mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="278" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="278" bodyend="278"/>
+        <references refid="classmlpack_1_1range_1_1RSWrapperBase_1a66d221dd25418821f76bb66bd9c98bce">RSWrapperBase::SingleMode</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a56b0460c7769ea1ef9d8314026ef36c6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref> &amp;</type>
+        <definition>TreeTypes&amp; TreeType</definition>
+        <argsstring>()</argsstring>
+        <name>TreeType</name>
+        <briefdescription>
+<para>Modify the type of tree (don&apos;t do this after the model has been built). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="295" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="295" bodyend="295"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1adb3d0b75d7754ec6741d890232576ffc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8d" kindref="member">TreeTypes</ref></type>
+        <definition>TreeTypes TreeType</definition>
+        <argsstring>() const</argsstring>
+        <name>TreeType</name>
+        <briefdescription>
+<para>Get the type of tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="293" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="293" bodyend="293"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a444067d1e8832ff9d5c90d5d73045e5d" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CleanMemory</definition>
+        <argsstring>()</argsstring>
+        <name>CleanMemory</name>
+        <briefdescription>
+<para>Clean up memory. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="377" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RSModel_1a98cbe53c61f1681514056f78a89a57b8" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string TreeName</definition>
+        <argsstring>() const</argsstring>
+        <name>TreeName</name>
+        <briefdescription>
+<para>Return a string representing the name of the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is used for logging output. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="372" column="15"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1range_1_1RSModel" kindref="compound">RSModel</ref> class provides an abstraction for the <ref refid="classmlpack_1_1range_1_1RangeSearch" kindref="compound">RangeSearch</ref> class, abstracting away the TreeType parameter and allowing it to be specified at runtime. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This class is written for the sake of the <computeroutput>range_search</computeroutput> binding, but is not necessarily restricted to that usage. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" line="206" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/rs_model.hpp" bodystart="207" bodyend="378"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da994ef1bcca8841d5b7d1431b99fcb10d" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>BALL_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a394d212c5373090724aaea3ba24b482e" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>BuildModel</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a444067d1e8832ff9d5c90d5d73045e5d" prot="private" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>CleanMemory</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da92f172b47c8ae18ed401f8bf9f5ecad3" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>COVER_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1aff320b9a86b77a150e630c01d5888273" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>Dataset</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da470c5bcf4135483a37e9a87f061e1c5c" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>HILBERT_R_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a7f40b35e0dbe4860397eeeda65197d64" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>InitializeModel</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8daa688e9cd1158916bc183aa517724568c" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>KD_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1abffeae6dee4a6bad9885ba0f39d309f3" prot="private" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>leafSize</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1ab81b93ebb200783ca4c5747f31889fa0" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>LeafSize</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a0966773f5b7ef0c324ed40b1cf4b94d1" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>LeafSize</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da0e4ed6912ca7a8232754df8771365c96" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>MAX_RP_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a343230e7d7344e3f7d5f5f2eb89cf2c5" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>Naive</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1af7d397adca3f411b4e2d2f977b280ce6" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>Naive</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8daabefbb1ea7a801b1b00c9b0709dcec50" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>OCTREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1aea8c23e3a7f72594cce88439d7a8e4e3" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6ac7e5a1e637c462fb01537fb14b2d40" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a58d43069f572c93d4569d25c57a9cb6a" prot="private" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>q</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da1208f6f2a7b337e4edbd02a8de98d3f5" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>R_PLUS_PLUS_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da4e91a297c1504b34ca1a9cdcd6ba22ff" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>R_PLUS_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8dae5b37a52c347bc7ef3d23fde0941d27b" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>R_STAR_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da2a93dc779a94d5f09b72ffbdc5ac9cd9" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>R_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a68c01c84182e9de56ad31dbf792d7a5b" prot="private" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>randomBasis</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1ae3053ad1e3b42eb1ae4105aecd060cf6" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>RandomBasis</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a8111114602e748b38c0875f82f323544" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>RandomBasis</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8dae6815061fe1e77dc1b2ae96b07b40250" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>RP_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a511db816a013b9cb26130c551a4e6561" prot="private" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>rSearch</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a3dd8fd1e68320b3ec82950d839664350" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>RSModel</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a8ed1e3cec17df0626ac2a5034df3b537" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>RSModel</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a178ee2403468f92eadfe0d269e858aeb" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>RSModel</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a24f05d38662b2832148f426ebc930a30" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a3868480bcd41a740550657144b5f7018" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>Search</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a7477b3e8499a6158bbe177e7f30d4947" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>SingleMode</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1adadacd63ddeadf138d834b1fdc632773" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>SingleMode</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a98cbe53c61f1681514056f78a89a57b8" prot="private" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>TreeName</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1adb3d0b75d7754ec6741d890232576ffc" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>TreeType</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a56b0460c7769ea1ef9d8314026ef36c6" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>TreeType</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a4c037c9b8e9f3f7d429a0f3f4326a067" prot="private" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>treeType</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8d" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>TreeTypes</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8dae36341db74fc7194b238cf7c528a7fbc" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>UB_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8daa8a6aade44830d33165414079bf8dd1c" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>VP_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a6597b8539c6114170dc185d332ba4c8da6560e35678b39452afce0f0fcc7f6059" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>X_TREE</name></member>
+      <member refid="classmlpack_1_1range_1_1RSModel_1a5f50179749aa6dfe66e789d6049c49ab" prot="public" virt="non-virtual"><scope>mlpack::range::RSModel</scope><name>~RSModel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

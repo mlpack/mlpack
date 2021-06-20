@@ -1,0 +1,120 @@
+.TH "MetaInfoExtractor< MLAlgorithm, MT, PT, WT >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MetaInfoExtractor< MLAlgorithm, MT, PT, WT > \- \fBMetaInfoExtractor\fP is a tool for extracting meta information about a given machine learning algorithm\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "using \fBPredictionsType\fP = typename Select< \fBTF1\fP, \fBTF2\fP, \fBTF3\fP, \fBTF4\fP, \fBTF5\fP >::Type::PredictionsType"
+.br
+.RI "The type of predictions used in MLAlgorithm\&. "
+.ti -1c
+.RI "using \fBWeightsType\fP = typename Select< \fBWTF1\fP, \fBWTF2\fP, \fBWTF3\fP, \fBWTF4\fP, \fBWTF5\fP >::Type::WeightsType"
+.br
+.RI "The type of weights used in MLAlgorithm\&. "
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBIsSupported\fP = !std::is_same<\fBPredictionsType\fP, void*>::value"
+.br
+.RI "An indication whether PredictionsType has been identified (i\&.e\&. "
+.ti -1c
+.RI "static const bool \fBSupportsWeights\fP = !std::is_same<\fBWeightsType\fP, void*>::value"
+.br
+.RI "An indication whether MLAlgorithm supports weighted learning\&. "
+.ti -1c
+.RI "static const bool \fBTakesDatasetInfo\fP = Selects<\fBTF5\fP>::value"
+.br
+.RI "An indication whether MLAlgorithm takes a \fBdata::DatasetInfo\fP parameter\&. "
+.ti -1c
+.RI "static const bool \fBTakesNumClasses\fP = Selects<\fBTF4\fP, \fBTF5\fP>::value"
+.br
+.RI "An indication whether MLAlgorithm takes the numClasses (size_t) parameter\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MLAlgorithm, typename MT = arma::mat, typename PT = arma::Row<size_t>, typename WT = arma::rowvec>
+.br
+class mlpack::cv::MetaInfoExtractor< MLAlgorithm, MT, PT, WT >"
+\fBMetaInfoExtractor\fP is a tool for extracting meta information about a given machine learning algorithm\&. 
+
+It can be used to automatically extract the type of predictions and weights (if weighted learning is supported), whether the machine learning algorithm takes a DatasetInfo parameter or a numClasses parameter\&.
+.PP
+The following assumptions are made about the machine learning algorithm\&.
+.IP "1." 4
+All needed information can be extracted from signatures of Train methods\&.
+.IP "2." 4
+The machine learning algorithm contains either only non-templated Train methods or only templated ones\&.
+.IP "3." 4
+Train methods that can be used for extraction of needed information should be distinguishable by a number of arguments (for more information read discussion in https://github.com/mlpack/mlpack/issues/929)\&.
+.IP "4." 4
+If weighted learning is supported, passing weights is an option rather than a requirement\&.
+.PP
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIMLAlgorithm\fP A machine learning algorithm to investigate\&. 
+.br
+\fIMT\fP The type of data\&. 
+.br
+\fIPT\fP The type of predictions (should be passed when the predictions type is a template parameter in Train methods of MLAlgorithm)\&. 
+.br
+\fIWT\fP The type of weights (should be passed when weighted learning is supported, and the weights type is a template parameter in Train methods of MLAlgorithm)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 272 of file meta_info_extractor\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "using \fBPredictionsType\fP =  typename Select<\fBTF1\fP, \fBTF2\fP, \fBTF3\fP, \fBTF4\fP, \fBTF5\fP>::Type::PredictionsType"
+
+.PP
+The type of predictions used in MLAlgorithm\&. It is equal to void* if the extraction fails\&. 
+.PP
+Definition at line 318 of file meta_info_extractor\&.hpp\&.
+.SS "using \fBWeightsType\fP =  typename Select<\fBWTF1\fP, \fBWTF2\fP, \fBWTF3\fP, \fBWTF4\fP, \fBWTF5\fP>::Type::WeightsType"
+
+.PP
+The type of weights used in MLAlgorithm\&. It is equal to void* if the extraction fails\&. 
+.PP
+Definition at line 325 of file meta_info_extractor\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool IsSupported = !std::is_same<\fBPredictionsType\fP, void*>::value\fC [static]\fP"
+
+.PP
+An indication whether PredictionsType has been identified (i\&.e\&. MLAlgorithm is supported by \fBMetaInfoExtractor\fP)\&. 
+.PP
+Definition at line 332 of file meta_info_extractor\&.hpp\&.
+.SS "const bool SupportsWeights = !std::is_same<\fBWeightsType\fP, void*>::value\fC [static]\fP"
+
+.PP
+An indication whether MLAlgorithm supports weighted learning\&. 
+.PP
+Definition at line 337 of file meta_info_extractor\&.hpp\&.
+.SS "const bool TakesDatasetInfo = Selects<\fBTF5\fP>::value\fC [static]\fP"
+
+.PP
+An indication whether MLAlgorithm takes a \fBdata::DatasetInfo\fP parameter\&. 
+.PP
+Definition at line 342 of file meta_info_extractor\&.hpp\&.
+.SS "const bool TakesNumClasses = Selects<\fBTF4\fP, \fBTF5\fP>::value\fC [static]\fP"
+
+.PP
+An indication whether MLAlgorithm takes the numClasses (size_t) parameter\&. 
+.PP
+Definition at line 347 of file meta_info_extractor\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,156 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/tests/test\+\_\+catch\+\_\+tools.hpp File Reference}
+\label{test__catch__tools_8hpp}\index{/home/aakash/mlpack/src/mlpack/tests/test\_catch\_tools.hpp@{/home/aakash/mlpack/src/mlpack/tests/test\_catch\_tools.hpp}}
+Include dependency graph for test\+\_\+catch\+\_\+tools.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{test__catch__tools_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=228pt]{test__catch__tools_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ REQUIRE\+\_\+\+RELATIVE\+\_\+\+ERR}(L,  R,  E)~    REQUIRE(std\+::abs((R) -\/ (L)) $<$= (E) $\ast$ std\+::abs(R))
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Field\+Type , typename  = std\+::enable\+\_\+if\+\_\+t$<$              arma\+::is\+\_\+arma\+\_\+type$<$typename Field\+Type\+::object\+\_\+type$>$\+::value$>$$>$ }\\void \textbf{ Check\+Fields} (const Field\+Type \&a, const Field\+Type \&b)
+\item 
+void \textbf{ Check\+Matrices} (const arma\+::cube \&a, const arma\+::cube \&b, double tolerance=1e-\/5)
+\item 
+void \textbf{ Check\+Matrices} (const arma\+::mat \&a, const arma\+::mat \&b, double tolerance=1e-\/5)
+\item 
+void \textbf{ Check\+Matrices} (const arma\+::\+Mat$<$ size\+\_\+t $>$ \&a, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&b)
+\item 
+void \textbf{ Check\+Matrices\+Not\+Equal} (const arma\+::cube \&a, const arma\+::cube \&b, double tolerance=1e-\/5)
+\item 
+void \textbf{ Check\+Matrices\+Not\+Equal} (const arma\+::mat \&a, const arma\+::mat \&b, double tolerance=1e-\/5)
+\item 
+void \textbf{ Check\+Matrices\+Not\+Equal} (const arma\+::\+Mat$<$ size\+\_\+t $>$ \&a, const arma\+::\+Mat$<$ size\+\_\+t $>$ \&b)
+\item 
+std\+::string \textbf{ Filter\+File\+Name} (const std\+::string \&input\+String)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+This file includes some useful macros for tests.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\label{test__catch__tools_8hpp_aa02380f99fe064c7efddccac3ba7befb}} 
+\index{test\_catch\_tools.hpp@{test\_catch\_tools.hpp}!REQUIRE\_RELATIVE\_ERR@{REQUIRE\_RELATIVE\_ERR}}
+\index{REQUIRE\_RELATIVE\_ERR@{REQUIRE\_RELATIVE\_ERR}!test\_catch\_tools.hpp@{test\_catch\_tools.hpp}}
+\doxysubsubsection{REQUIRE\_RELATIVE\_ERR}
+{\footnotesize\ttfamily \#define REQUIRE\+\_\+\+RELATIVE\+\_\+\+ERR(\begin{DoxyParamCaption}\item[{}]{L,  }\item[{}]{R,  }\item[{}]{E }\end{DoxyParamCaption})~    REQUIRE(std\+::abs((R) -\/ (L)) $<$= (E) $\ast$ std\+::abs(R))}
+
+
+
+Definition at line 22 of file test\+\_\+catch\+\_\+tools.\+hpp.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\label{test__catch__tools_8hpp_aa71d85f71e7317a73a775fd88de2041c}} 
+\index{test\_catch\_tools.hpp@{test\_catch\_tools.hpp}!CheckFields@{CheckFields}}
+\index{CheckFields@{CheckFields}!test\_catch\_tools.hpp@{test\_catch\_tools.hpp}}
+\doxysubsubsection{CheckFields()}
+{\footnotesize\ttfamily void Check\+Fields (\begin{DoxyParamCaption}\item[{const Field\+Type \&}]{a,  }\item[{const Field\+Type \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 57 of file test\+\_\+catch\+\_\+tools.\+hpp.
+
+
+
+References Check\+Matrices().
+
+\mbox{\label{test__catch__tools_8hpp_afe966f828dc9f987f9f46f348947a729}} 
+\index{test\_catch\_tools.hpp@{test\_catch\_tools.hpp}!CheckMatrices@{CheckMatrices}}
+\index{CheckMatrices@{CheckMatrices}!test\_catch\_tools.hpp@{test\_catch\_tools.hpp}}
+\doxysubsubsection{CheckMatrices()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily void Check\+Matrices (\begin{DoxyParamCaption}\item[{const arma\+::cube \&}]{a,  }\item[{const arma\+::cube \&}]{b,  }\item[{double}]{tolerance = {\ttfamily 1e-\/5} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 68 of file test\+\_\+catch\+\_\+tools.\+hpp.
+
+\mbox{\label{test__catch__tools_8hpp_a069c1790abc5e691ac7bae18caab5c84}} 
+\index{test\_catch\_tools.hpp@{test\_catch\_tools.hpp}!CheckMatrices@{CheckMatrices}}
+\index{CheckMatrices@{CheckMatrices}!test\_catch\_tools.hpp@{test\_catch\_tools.hpp}}
+\doxysubsubsection{CheckMatrices()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily void Check\+Matrices (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{a,  }\item[{const arma\+::mat \&}]{b,  }\item[{double}]{tolerance = {\ttfamily 1e-\/5} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 26 of file test\+\_\+catch\+\_\+tools.\+hpp.
+
+
+
+Referenced by Check\+Fields().
+
+\mbox{\label{test__catch__tools_8hpp_a55e4e6a1b90fa29f377545ada95d9c13}} 
+\index{test\_catch\_tools.hpp@{test\_catch\_tools.hpp}!CheckMatrices@{CheckMatrices}}
+\index{CheckMatrices@{CheckMatrices}!test\_catch\_tools.hpp@{test\_catch\_tools.hpp}}
+\doxysubsubsection{CheckMatrices()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Check\+Matrices (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{a,  }\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 43 of file test\+\_\+catch\+\_\+tools.\+hpp.
+
+\mbox{\label{test__catch__tools_8hpp_ab8511b32e7ccb9f8b0c09b92f810908f}} 
+\index{test\_catch\_tools.hpp@{test\_catch\_tools.hpp}!CheckMatricesNotEqual@{CheckMatricesNotEqual}}
+\index{CheckMatricesNotEqual@{CheckMatricesNotEqual}!test\_catch\_tools.hpp@{test\_catch\_tools.hpp}}
+\doxysubsubsection{CheckMatricesNotEqual()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily void Check\+Matrices\+Not\+Equal (\begin{DoxyParamCaption}\item[{const arma\+::cube \&}]{a,  }\item[{const arma\+::cube \&}]{b,  }\item[{double}]{tolerance = {\ttfamily 1e-\/5} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 143 of file test\+\_\+catch\+\_\+tools.\+hpp.
+
+\mbox{\label{test__catch__tools_8hpp_ab286653ce1d929749c5595d969c9405d}} 
+\index{test\_catch\_tools.hpp@{test\_catch\_tools.hpp}!CheckMatricesNotEqual@{CheckMatricesNotEqual}}
+\index{CheckMatricesNotEqual@{CheckMatricesNotEqual}!test\_catch\_tools.hpp@{test\_catch\_tools.hpp}}
+\doxysubsubsection{CheckMatricesNotEqual()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily void Check\+Matrices\+Not\+Equal (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{a,  }\item[{const arma\+::mat \&}]{b,  }\item[{double}]{tolerance = {\ttfamily 1e-\/5} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 86 of file test\+\_\+catch\+\_\+tools.\+hpp.
+
+\mbox{\label{test__catch__tools_8hpp_a91052523ffe67c0b11c6731ad14689e1}} 
+\index{test\_catch\_tools.hpp@{test\_catch\_tools.hpp}!CheckMatricesNotEqual@{CheckMatricesNotEqual}}
+\index{CheckMatricesNotEqual@{CheckMatricesNotEqual}!test\_catch\_tools.hpp@{test\_catch\_tools.hpp}}
+\doxysubsubsection{CheckMatricesNotEqual()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Check\+Matrices\+Not\+Equal (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{a,  }\item[{const arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 118 of file test\+\_\+catch\+\_\+tools.\+hpp.
+
+\mbox{\label{test__catch__tools_8hpp_a2bef90617ddbfbbfc128fed05612d17a}} 
+\index{test\_catch\_tools.hpp@{test\_catch\_tools.hpp}!FilterFileName@{FilterFileName}}
+\index{FilterFileName@{FilterFileName}!test\_catch\_tools.hpp@{test\_catch\_tools.hpp}}
+\doxysubsubsection{FilterFileName()}
+{\footnotesize\ttfamily std\+::string Filter\+File\+Name (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{input\+String }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 176 of file test\+\_\+catch\+\_\+tools.\+hpp.
+
+
+
+Referenced by mlpack\+::\+Serialize\+Object(), mlpack\+::\+Serialize\+Pointer\+Object(), and mlpack\+::\+Test\+Armadillo\+Serialization().
+

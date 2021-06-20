@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_bbec50b7ef41909b43574b375d50302a" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/bindings/tests</compoundname>
+    <innerfile refid="clean__memory_8hpp">clean_memory.hpp</innerfile>
+    <innerfile refid="tests_2delete__allocated__memory_8hpp">delete_allocated_memory.hpp</innerfile>
+    <innerfile refid="tests_2get__allocated__memory_8hpp">get_allocated_memory.hpp</innerfile>
+    <innerfile refid="tests_2get__param_8hpp">get_param.hpp</innerfile>
+    <innerfile refid="tests_2get__printable__param_8hpp">get_printable_param.hpp</innerfile>
+    <innerfile refid="ignore__check_8hpp">ignore_check.hpp</innerfile>
+    <innerfile refid="test__option_8hpp">test_option.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/tests/"/>
+  </compounddef>
+</doxygen>

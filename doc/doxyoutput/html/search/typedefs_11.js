@@ -1,0 +1,24 @@
+var searchData=
+[
+  ['selu_6313',['SELU',['../namespacemlpack_1_1ann.html#ac08f9682be904369ec09e68b43b09fad',1,'mlpack::ann']]],
+  ['sigmoidlayer_6314',['SigmoidLayer',['../namespacemlpack_1_1ann.html#ad4f35bf0f4f5e2750668e17c2d07a27b',1,'mlpack::ann']]],
+  ['silufunctionlayer_6315',['SILUFunctionLayer',['../namespacemlpack_1_1ann.html#aefb7029510e09a06ddaef3ca52f77ba6',1,'mlpack::ann']]],
+  ['singletreetraverser_6316',['SingleTreeTraverser',['../classmlpack_1_1tree_1_1SpillTree.html#ae95fd7c19ba7e882936c55b022384887',1,'mlpack::tree::SpillTree']]],
+  ['softpluslayer_6317',['SoftPlusLayer',['../namespacemlpack_1_1ann.html#a3b84f714a815d838e34c11a59480cd1c',1,'mlpack::ann']]],
+  ['spillknn_6318',['SpillKNN',['../namespacemlpack_1_1neighbor.html#a8145bada084a13663f9e7707f91db6ff',1,'mlpack::neighbor']]],
+  ['split_6319',['Split',['../classmlpack_1_1tree_1_1BinarySpaceTree.html#a2fbe69d8cb6be0a0735b5df955708ade',1,'mlpack::tree::BinarySpaceTree']]],
+  ['splithistorystruct_6320',['SplitHistoryStruct',['../classmlpack_1_1tree_1_1XTreeAuxiliaryInformation.html#a0df6023a5e7dc3cf548bb28321445792',1,'mlpack::tree::XTreeAuxiliaryInformation']]],
+  ['splitinfo_6321',['SplitInfo',['../classmlpack_1_1tree_1_1HoeffdingNumericSplit.html#ab96dc0dd71f3e2aca194f2c83abc65a4',1,'mlpack::tree::HoeffdingNumericSplit::SplitInfo()'],['../classmlpack_1_1tree_1_1HoeffdingCategoricalSplit.html#ae55bc875c7f68cd63e45eb0ac35de5aa',1,'mlpack::tree::HoeffdingCategoricalSplit::SplitInfo()'],['../classmlpack_1_1tree_1_1BinaryNumericSplit.html#aef8eaa3db891d05ca25d008e036b316f',1,'mlpack::tree::BinaryNumericSplit::SplitInfo()']]],
+  ['splitpolicy_6322',['SplitPolicy',['../classmlpack_1_1tree_1_1RPlusTreeSplit.html#a0b150bc0b3a177f0ca7f3c4ce2d551f9',1,'mlpack::tree::RPlusTreeSplit']]],
+  ['sptree_6323',['SPTree',['../namespacemlpack_1_1tree.html#af141bd85a0c63728935fff9f5f8dd587',1,'mlpack::tree']]],
+  ['squaredeuclideandistance_6324',['SquaredEuclideanDistance',['../namespacemlpack_1_1metric.html#a42614a1b47a4de6037e67742b94dd24d',1,'mlpack::metric']]],
+  ['standardcovertree_6325',['StandardCoverTree',['../namespacemlpack_1_1tree.html#a6ed9d585969e7837af0d41e0c3975602',1,'mlpack::tree']]],
+  ['state_6326',['State',['../classmlpack_1_1rl_1_1RewardClipping.html#a1f6c591e4da193973060b0a606af688d',1,'mlpack::rl::RewardClipping']]],
+  ['statetype_6327',['StateType',['../classmlpack_1_1rl_1_1OneStepSarsaWorker.html#ada68ef405b7c331a2bee337614f00088',1,'mlpack::rl::OneStepSarsaWorker::StateType()'],['../classmlpack_1_1rl_1_1OneStepQLearningWorker.html#ada68ef405b7c331a2bee337614f00088',1,'mlpack::rl::OneStepQLearningWorker::StateType()'],['../classmlpack_1_1rl_1_1NStepQLearningWorker.html#ada68ef405b7c331a2bee337614f00088',1,'mlpack::rl::NStepQLearningWorker::StateType()'],['../classmlpack_1_1rl_1_1SAC.html#ada68ef405b7c331a2bee337614f00088',1,'mlpack::rl::SAC::StateType()'],['../classmlpack_1_1rl_1_1RandomReplay.html#ada68ef405b7c331a2bee337614f00088',1,'mlpack::rl::RandomReplay::StateType()'],['../classmlpack_1_1rl_1_1PrioritizedReplay.html#ada68ef405b7c331a2bee337614f00088',1,'mlpack::rl::PrioritizedReplay::StateType()'],['../classmlpack_1_1rl_1_1QLearning.html#ada68ef405b7c331a2bee337614f00088',1,'mlpack::rl::QLearning::StateType()']]],
+  ['staticserialize_6328',['StaticSerialize',['../structmlpack_1_1data_1_1HasSerializeFunction.html#a4d5a24efca8a97af89629fb4f9ad2835',1,'mlpack::data::HasSerializeFunction']]],
+  ['stattype_6329',['StatType',['../classmlpack_1_1det_1_1DTree.html#a5932a1a525043a5f2679749a681dc51f',1,'mlpack::det::DTree']]],
+  ['svdbatchfactorizer_6330',['SVDBatchFactorizer',['../namespacemlpack_1_1amf.html#aedb113157f87759c24e2368dfd7b9216',1,'mlpack::amf']]],
+  ['svdcompleteincrementalfactorizer_6331',['SVDCompleteIncrementalFactorizer',['../namespacemlpack_1_1amf.html#aeaa4b749fc1afc70451f096dca4228b5',1,'mlpack::amf']]],
+  ['svdincompleteincrementalfactorizer_6332',['SVDIncompleteIncrementalFactorizer',['../namespacemlpack_1_1amf.html#a681ac877cb603d00766e015ff4d4c294',1,'mlpack::amf']]],
+  ['swishfunctionlayer_6333',['SwishFunctionLayer',['../namespacemlpack_1_1ann.html#a8ea44af9d438cf5fc4098a0edc9e74a4',1,'mlpack::ann']]]
+];

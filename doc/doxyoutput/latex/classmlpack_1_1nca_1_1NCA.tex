@@ -1,0 +1,159 @@
+\doxysection{NCA$<$ Metric\+Type, Optimizer\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1nca_1_1NCA}\index{NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}}
+
+
+An implementation of Neighborhood Components Analysis, both a linear dimensionality reduction technique and a distance learning technique.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ NCA} (const arma\+::mat \&dataset, const arma\+::\+Row$<$ size\+\_\+t $>$ \&labels, Metric\+Type metric=Metric\+Type())
+\begin{DoxyCompactList}\small\item\em Construct the Neighborhood Components Analysis object. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Dataset} () const
+\begin{DoxyCompactList}\small\item\em Get the dataset reference. \end{DoxyCompactList}\item 
+const arma\+::\+Row$<$ size\+\_\+t $>$ \& \textbf{ Labels} () const
+\begin{DoxyCompactList}\small\item\em Get the labels reference. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... Callback\+Types$>$ }\\void \textbf{ Learn\+Distance} (arma\+::mat \&output\+Matrix, Callback\+Types \&\&... callbacks)
+\begin{DoxyCompactList}\small\item\em Perform Neighborhood Components Analysis. \end{DoxyCompactList}\item 
+Optimizer\+Type \& \textbf{ Optimizer} ()
+\item 
+const Optimizer\+Type \& \textbf{ Optimizer} () const
+\begin{DoxyCompactList}\small\item\em Get the optimizer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+Squared\+Euclidean\+Distance, typename Optimizer\+Type = ens\+::\+Standard\+SGD$>$\newline
+class mlpack\+::nca\+::\+NCA$<$ Metric\+Type, Optimizer\+Type $>$}
+
+An implementation of Neighborhood Components Analysis, both a linear dimensionality reduction technique and a distance learning technique. 
+
+The method seeks to improve k-\/nearest-\/neighbor classification on a dataset by scaling the dimensions. The method is nonparametric, and does not require a value of k. It works by using stochastic (\char`\"{}soft\char`\"{}) neighbor assignments and using optimization techniques over the gradient of the accuracy of the neighbor assignments.
+
+For more details, see the following published paper\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@inproceedings\{Goldberger2004,}
+\DoxyCodeLine{  author = \{Goldberger, Jacob and Roweis, Sam and Hinton, Geoff and}
+\DoxyCodeLine{      Salakhutdinov, Ruslan\},}
+\DoxyCodeLine{  booktitle = \{Advances in Neural Information Processing Systems 17\},}
+\DoxyCodeLine{  pages = \{513-\/-\/520\},}
+\DoxyCodeLine{  publisher = \{MIT Press\},}
+\DoxyCodeLine{  title = \{\{Neighbourhood Components Analysis\}\},}
+\DoxyCodeLine{  year = \{2004\}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+Definition at line 49 of file nca.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1nca_1_1NCA_a8a7a5b0fbf5a82acaf0e316944998f63}} 
+\index{NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}!NCA@{NCA}}
+\index{NCA@{NCA}!NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}}
+\doxysubsubsection{NCA()}
+{\footnotesize\ttfamily \textbf{ NCA} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{dataset,  }\item[{const arma\+::\+Row$<$ size\+\_\+t $>$ \&}]{labels,  }\item[{Metric\+Type}]{metric = {\ttfamily MetricType()} }\end{DoxyParamCaption})}
+
+
+
+Construct the Neighborhood Components Analysis object. 
+
+This simply stores the reference to the dataset and labels as well as the parameters for optimization before the actual optimization is performed.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset} & Input dataset. \\
+\hline
+{\em labels} & Input dataset labels. \\
+\hline
+{\em metric} & Instantiated metric to use. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1nca_1_1NCA_aff320b9a86b77a150e630c01d5888273}} 
+\index{NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}}
+\doxysubsubsection{Dataset()}
+{\footnotesize\ttfamily const arma\+::mat\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the dataset reference. 
+
+
+
+Definition at line 81 of file nca.\+hpp.
+
+\mbox{\label{classmlpack_1_1nca_1_1NCA_ae68718a757e9635f87377fd3935ca20d}} 
+\index{NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}!Labels@{Labels}}
+\index{Labels@{Labels}!NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}}
+\doxysubsubsection{Labels()}
+{\footnotesize\ttfamily const arma\+::\+Row$<$size\+\_\+t$>$\& Labels (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the labels reference. 
+
+
+
+Definition at line 83 of file nca.\+hpp.
+
+\mbox{\label{classmlpack_1_1nca_1_1NCA_a55126379a6e9673a59546f4e446e9ada}} 
+\index{NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}!LearnDistance@{LearnDistance}}
+\index{LearnDistance@{LearnDistance}!NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}}
+\doxysubsubsection{LearnDistance()}
+{\footnotesize\ttfamily void Learn\+Distance (\begin{DoxyParamCaption}\item[{arma\+::mat \&}]{output\+Matrix,  }\item[{Callback\+Types \&\&...}]{callbacks }\end{DoxyParamCaption})}
+
+
+
+Perform Neighborhood Components Analysis. 
+
+The output distance learning matrix is written into the passed reference. If \doxyref{Learn\+Distance()}{p.}{classmlpack_1_1nca_1_1NCA_a55126379a6e9673a59546f4e446e9ada} is called with an output\+Matrix which has the correct size (dataset.\+n\+\_\+rows x dataset.\+n\+\_\+rows), that matrix will be used as the starting point for optimization.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Callback\+Types} & Types of Callback functions. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em output\+Matrix} & Covariance matrix of Mahalanobis distance. \\
+\hline
+{\em callbacks} & Callback function for ensmallen optimizer {\ttfamily Optimizer\+Type}. See {\texttt{ https\+://www.\+ensmallen.\+org/docs.\+html\#callback-\/documentation}}. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1nca_1_1NCA_a213f61b8936eadf8a162e45b4c6188d0}} 
+\index{NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}!Optimizer@{Optimizer}}
+\index{Optimizer@{Optimizer}!NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}}
+\doxysubsubsection{Optimizer()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Optimizer\+Type\& Optimizer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 87 of file nca.\+hpp.
+
+\mbox{\label{classmlpack_1_1nca_1_1NCA_a3bdf808beacdb2f464caa78076a23a0a}} 
+\index{NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}!Optimizer@{Optimizer}}
+\index{Optimizer@{Optimizer}!NCA$<$ MetricType, OptimizerType $>$@{NCA$<$ MetricType, OptimizerType $>$}}
+\doxysubsubsection{Optimizer()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Optimizer\+Type\& Optimizer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the optimizer. 
+
+
+
+Definition at line 86 of file nca.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/nca/\textbf{ nca.\+hpp}\end{DoxyCompactItemize}

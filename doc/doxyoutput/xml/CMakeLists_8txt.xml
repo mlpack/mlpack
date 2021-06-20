@@ -1,0 +1,228 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="CMakeLists_8txt_1a8a24028927bf329a0faa3a334c41ae6a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>include_directories</definition>
+        <argsstring>(${CMAKE_CURRENT_BINARY_DIR}/..) set(MLPACK_SRCS $</argsstring>
+        <name>include_directories</name>
+        <param>
+          <declname>${CMAKE_CURRENT_BINARY_DIR}/</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/CMakeLists.txt" line="1" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/CMakeLists.txt" bodystart="1" bodyend="4"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="CMakeLists_8txt_1a8a24028927bf329a0faa3a334c41ae6a" refkind="member"><highlight class="normal"><ref refid="CMakeLists_8txt_1a8a24028927bf329a0faa3a334c41ae6a" kindref="member">include_directories</ref>(${CMAKE_CURRENT_BINARY_DIR}/..)<sp/>#<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref>/mlpack_export.hpp</highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal">#<sp/>Add<sp/>core.hpp<sp/>to<sp/>list<sp/>of<sp/>sources.</highlight></codeline>
+<codeline lineno="4"><highlight class="normal">set(MLPACK_SRCS<sp/>${MLPACK_SRCS}</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_CURRENT_SOURCE_DIR}/core.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_CURRENT_SOURCE_DIR}/prereqs.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">##<sp/>Recurse<sp/>into<sp/>both<sp/>core/<sp/>and<sp/>methods/.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIRS</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/>bindings</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/>core</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/>methods</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal">(dir<sp/>${DIRS})</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><ref refid="bindings_2CMakeLists_8txt_1a2dd21fa7c63bb562d3816a9953ff1594" kindref="member">add_subdirectory</ref>(${dir})</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">endforeach()</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>MLPACK_SRCS<sp/>is<sp/>set<sp/>in<sp/>the<sp/>subdirectories.<sp/><sp/>The<sp/>dependencies<sp/>(MLPACK_LIBRARIES)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>are<sp/>set<sp/>in<sp/>the<sp/>root<sp/>CMakeLists.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal">add_library(<ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>${MLPACK_SRCS})</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal">#<sp/>If<sp/>we<sp/>are<sp/>not<sp/>forcing<sp/>C++11<sp/>support,<sp/>check<sp/>that<sp/>the<sp/>compiler<sp/>supports<sp/>C++11</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">#<sp/>and<sp/>enable<sp/>it.</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">if<sp/>(NOT<sp/>FORCE_CXX11)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/>target_compile_features(<ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>PUBLIC</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_decltype</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_alias_templates</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_auto_type</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_lambdas</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_constexpr</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_rvalue_references</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_static_assert</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_template_template_parameters</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_delegating_constructors</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_variadic_templates</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_nullptr</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>cxx_noexcept</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/>)</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Generate<sp/>export<sp/>symbols<sp/>for<sp/>Windows,<sp/>instead<sp/>of<sp/>adding<sp/>__declspec(dllimport)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>and<sp/>__declspec(dllexport)<sp/>everywhere.<sp/><sp/>However,<sp/>those<sp/>modifiers<sp/>are<sp/>still</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>necessary<sp/>for<sp/>global<sp/>variables<sp/>(of<sp/>which<sp/>there<sp/>are<sp/>a<sp/>few<sp/>in<sp/>mlpack).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal">set_target_properties(<ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>PROPERTIES<sp/>WINDOWS_EXPORT_ALL_SYMBOLS<sp/>ON)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><ref refid="bindings_2R_2CMakeLists_8txt_1a45548f086df473757b6a7c11f719387c" kindref="member">include</ref>(GenerateExportHeader)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">generate_export_header(<ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>EXPORT_FILE_NAME<sp/>mlpack_export.hpp)</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(NOT<sp/>BUILD_SHARED_LIBS)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>add_definitions(-DMLPACK_STATIC_DEFINE)</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal">target_link_libraries(<ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>${MLPACK_LIBRARIES})</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal">set_target_properties(<ref refid="namespacemlpack" kindref="compound">mlpack</ref></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>PROPERTIES</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>VERSION<sp/>3.4</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>SOVERSION<sp/>3</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Backtrace<sp/>for<sp/>Linux<sp/>need<sp/>those<sp/>libs.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(CMAKE_SYSTEM_NAME<sp/>STREQUAL<sp/></highlight><highlight class="stringliteral">&quot;Linux&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(LIBBFD_FOUND<sp/>AND<sp/>LIBDL_FOUND<sp/>AND<sp/>DEBUG)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>target_link_libraries(<ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>${LIBBFD_LIBRARIES})</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>target_link_libraries(<ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>${LIBDL_LIBRARIES})</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref>()</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref>()</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal">set_target_properties(<ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>PROPERTIES<sp/>COTIRE_CXX_PREFIX_HEADER_INIT<sp/>&quot;prereqs.hpp&quot;)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">cotire(<ref refid="namespacemlpack" kindref="compound">mlpack</ref>)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><ref refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" kindref="member">if</ref><sp/>(BUILD_TESTS)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><ref refid="bindings_2CMakeLists_8txt_1a2dd21fa7c63bb562d3816a9953ff1594" kindref="member">add_subdirectory</ref>(tests)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Collect<sp/>all<sp/>header<sp/>files<sp/>in<sp/>the<sp/>library.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal">file(GLOB_RECURSE<sp/>INCLUDE_H_FILES<sp/>RELATIVE<sp/>${CMAKE_CURRENT_SOURCE_DIR}<sp/>*.h)</highlight></codeline>
+<codeline lineno="78"><highlight class="normal">file(GLOB_RECURSE<sp/>INCLUDE_HPP_FILES<sp/>RELATIVE<sp/>${CMAKE_CURRENT_SOURCE_DIR}<sp/>*.hpp)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(INCLUDE_FILES<sp/>${INCLUDE_H_FILES}<sp/>${INCLUDE_HPP_FILES})</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal">#<sp/>Move<sp/>all<sp/>of<sp/>these<sp/>header<sp/>files<sp/>to<sp/>&lt;builddir&gt;/<ref refid="bindings_2R_2CMakeLists_8txt_1a45548f086df473757b6a7c11f719387c" kindref="member">include</ref>/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/<sp/>after<sp/>the<sp/><ref refid="bindings_2R_2tests_2CMakeLists_8txt_1ab786d6d19e7d6e223b6a63f8d60a8b99" kindref="member">library</ref></highlight></codeline>
+<codeline lineno="82"><highlight class="normal">#<sp/>is<sp/>built.<sp/><sp/>First<sp/>we<sp/>have<sp/>to<sp/>create<sp/>that<sp/>directory<sp/>though.</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">add_custom_target(mlpack_headers)</highlight></codeline>
+<codeline lineno="84"><highlight class="normal">add_custom_command(TARGET<sp/>mlpack_headers<sp/>POST_BUILD</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>COMMENT<sp/></highlight><highlight class="stringliteral">&quot;Moving<sp/>header<sp/>files<sp/>to<sp/>include/mlpack/&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>ARGS<sp/>-E</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>make_directory<sp/>${CMAKE_BINARY_DIR}/<ref refid="bindings_2R_2CMakeLists_8txt_1a45548f086df473757b6a7c11f719387c" kindref="member">include</ref>/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>ARGS<sp/>-E</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>copy<sp/>${CMAKE_CURRENT_BINARY_DIR}/mlpack_export.hpp</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/<ref refid="bindings_2R_2CMakeLists_8txt_1a45548f086df473757b6a7c11f719387c" kindref="member">include</ref>/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal">#<sp/>Then<sp/>copy<sp/>each<sp/>of<sp/>the<sp/>header<sp/>files<sp/>over<sp/>to<sp/>that<sp/>directory.</highlight></codeline>
+<codeline lineno="93"><highlight class="normal">foreach(incl_file<sp/>${INCLUDE_FILES})</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>add_custom_command(TARGET<sp/>mlpack_headers<sp/>POST_BUILD</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>ARGS<sp/>-E</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>copy<sp/>${CMAKE_CURRENT_SOURCE_DIR}/${incl_file}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/<ref refid="bindings_2R_2CMakeLists_8txt_1a45548f086df473757b6a7c11f719387c" kindref="member">include</ref>/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/${incl_file}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BYPRODUCTS<sp/>${CMAKE_BINARY_DIR}/<ref refid="bindings_2R_2CMakeLists_8txt_1a45548f086df473757b6a7c11f719387c" kindref="member">include</ref>/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/${incl_file})</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">endforeach()</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>At<sp/>install<sp/>time,<sp/>we<sp/>simply<sp/>install<sp/>that<sp/>directory<sp/>of<sp/>header<sp/>files<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>collected<sp/>to<sp/>include/.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal">install(DIRECTORY<sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_BINARY_DIR}/include/mlpack&quot;</highlight><highlight class="normal"><sp/>DESTINATION</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_INSTALL_INCLUDEDIR}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Set<sp/>generated<sp/>executables<sp/>to<sp/>be<sp/>installed.<sp/><sp/>Unfortunately<sp/>they<sp/>must<sp/>manually</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>be<sp/>entered...</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal">install(TARGETS<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>RUNTIME<sp/>DESTINATION<sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_INSTALL_BINDIR}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>LIBRARY<sp/>DESTINATION<sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_INSTALL_LIBDIR}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>ARCHIVE<sp/>DESTINATION<sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_INSTALL_LIBDIR}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal">add_dependencies(<ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>mlpack_headers)</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Extract<sp/>the<sp/>version<sp/>number.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal">file(READ<sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_SOURCE_DIR}/src/mlpack/core/util/version.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/>VERSION_HPP_CONTENTS)</highlight></codeline>
+<codeline lineno="118"><highlight class="normal">string(REGEX<sp/>REPLACE<sp/></highlight><highlight class="stringliteral">&quot;.*#define<sp/>MLPACK_VERSION_MAJOR<sp/>([0-9]+).*&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;\\1&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><ref refid="src_2mlpack_2core_2util_2version_8hpp_1a567633158089daf2701fa92e4a61412d" kindref="member">MLPACK_VERSION_MAJOR</ref><sp/></highlight><highlight class="stringliteral">&quot;${VERSION_HPP_CONTENTS}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="120"><highlight class="normal">string(REGEX<sp/>REPLACE<sp/></highlight><highlight class="stringliteral">&quot;.*#define<sp/>MLPACK_VERSION_MINOR<sp/>([0-9]+).*&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;\\1&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><ref refid="src_2mlpack_2core_2util_2version_8hpp_1af78b6f6b98b2da5018980e12d3f6a071" kindref="member">MLPACK_VERSION_MINOR</ref><sp/></highlight><highlight class="stringliteral">&quot;${VERSION_HPP_CONTENTS}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="122"><highlight class="normal">string(REGEX<sp/>REPLACE<sp/></highlight><highlight class="stringliteral">&quot;.*#define<sp/>MLPACK_VERSION_PATCH<sp/>[\&quot;]?([0-9x]+)[\&quot;]?.*&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;\\1&quot;</highlight><highlight class="normal"><sp/><ref refid="src_2mlpack_2core_2util_2version_8hpp_1a15e1dc931a5bfb5a7d389aea99df4972" kindref="member">MLPACK_VERSION_PATCH</ref><sp/></highlight><highlight class="stringliteral">&quot;${VERSION_HPP_CONTENTS}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(PACKAGE_VERSION</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;${MLPACK_VERSION_MAJOR}.${MLPACK_VERSION_MINOR}.${MLPACK_VERSION_PATCH}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal">post_python_bindings()</highlight></codeline>
+<codeline lineno="129"><highlight class="normal">post_julia_setup()</highlight></codeline>
+<codeline lineno="130"><highlight class="normal">post_go_setup()</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>If<sp/>we<sp/>are<sp/>building<sp/>R-bindings,<sp/>we<sp/>have<sp/>to<sp/>run<sp/>some<sp/>setup<sp/>after<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>recurse<sp/>into<sp/>methods/.<sp/><sp/>If<sp/>not,<sp/>this<sp/>macro<sp/>is<sp/>empty.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal">post_r_setup()</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>If<sp/>we<sp/>are<sp/>building<sp/>Markdown<sp/>documentation,<sp/>we<sp/>have<sp/>to<sp/>run<sp/>some<sp/>setup<sp/>after<sp/>we</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>recurse<sp/>into<sp/>methods/.<sp/><sp/>If<sp/>not,<sp/>this<sp/>function<sp/>is<sp/>empty.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal">post_markdown_setup()</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Installing<sp/>CMake<sp/>Helper<sp/>Files<sp/>for<sp/>mlpack-config.cmake</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><ref refid="bindings_2R_2CMakeLists_8txt_1a45548f086df473757b6a7c11f719387c" kindref="member">include</ref>(${PROJECT_SOURCE_DIR}/CMake/CMakeExtras.cmake)</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><ref refid="bindings_2R_2CMakeLists_8txt_1a45548f086df473757b6a7c11f719387c" kindref="member">include</ref>(CMakePackageConfigHelpers)</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal">set_verbose(MLPACK_CMAKE_DIR<sp/>${CMAKE_INSTALL_LIBDIR}/cmake/<ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>CACHE<sp/>STRING</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Installation<sp/>directory<sp/>for<sp/>cmake<sp/>files,<sp/>relative<sp/>to<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_INSTALL_PREFIX}.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(VERSION_CONFIG<sp/>${PROJECT_BINARY_DIR}/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>-config-version.cmake)</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(PROJECT_CONFIG<sp/>${PROJECT_BINARY_DIR}/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>-config.cmake)</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(TARGETS_EXPORT_NAME<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref>-targets)</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(INSTALL_TARGETS<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref>)</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal">set_verbose(MLPACK_LIBS_DIR<sp/>${CMAKE_INSTALL_LIBDIR}<sp/>CACHE<sp/>STRING</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Installation<sp/>directory<sp/>for<sp/>libraries,<sp/>relative<sp/>to<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_INSTALL_PREFIX}.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal">set_verbose(MLPACK_INCS_DIR<sp/>${CMAKE_INSTALL_INCLUDEDIR}<sp/>CACHE<sp/>STRING</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;Installation<sp/>directory<sp/>for<sp/>include<sp/>files,<sp/>relative<sp/>to<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_INSTALL_PREFIX}.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal">#<sp/>Getting<sp/>the<sp/>absolute<sp/>path,<sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>some<sp/>reason<sp/>CMAKE<sp/>gets<sp/>confused,</highlight></codeline>
+<codeline lineno="164"><highlight class="normal">#<sp/>even<sp/>with<sp/>CMAKE_INSTALL_INCLUDEDIR</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(UNIX)</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/>GNUInstallDirs_get_absolute_install_dir(MLPACK_LIBS_DIR<sp/>CMAKE_INSTALL_LIBDIR)</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/>GNUInstallDirs_get_absolute_install_dir(MLPACK_INCS_DIR<sp/>CMAKE_INSTALL_INCLUDEDIR)</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref>()</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Generate<sp/>the<sp/>version,<sp/>config<sp/>and<sp/>target<sp/>files<sp/>into<sp/>the<sp/>build<sp/>directory.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal">write_basic_package_version_file(</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>${VERSION_CONFIG}</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>VERSION<sp/>${PACKAGE_VERSION}</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>COMPATIBILITY<sp/>SameMajorVersion)</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal">configure_package_config_file(</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>${PROJECT_SOURCE_DIR}/CMake/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>-config.cmake.in</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/>${PROJECT_CONFIG}</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>INSTALL_DESTINATION<sp/>${MLPACK_CMAKE_DIR}</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/>PATH_VARS<sp/>MLPACK_INCS_DIR)</highlight></codeline>
+<codeline lineno="181"><highlight class="normal">#<sp/>Use<sp/>a<sp/></highlight><highlight class="keyword">namespace</highlight><highlight class="normal"><sp/>because<sp/>CMake<sp/>provides<sp/>better<sp/>diagnostics<sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>namespaced</highlight></codeline>
+<codeline lineno="182"><highlight class="normal">#<sp/>imported<sp/>targets.</highlight></codeline>
+<codeline lineno="183"><highlight class="normal">export(TARGETS<sp/>${INSTALL_TARGETS}<sp/>NAMESPACE<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref>::</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/>FILE<sp/>${PROJECT_BINARY_DIR}/${TARGETS_EXPORT_NAME}.cmake)</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Install<sp/>version,<sp/>config<sp/>and<sp/>target<sp/>files.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal">install(FILES<sp/>${PROJECT_CONFIG}<sp/>${VERSION_CONFIG}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/>DESTINATION<sp/>${MLPACK_CMAKE_DIR})</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal">install(EXPORT<sp/>${TARGETS_EXPORT_NAME}</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>DESTINATION<sp/>${MLPACK_CMAKE_DIR}<sp/>NAMESPACE<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref>::)</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal">#<sp/>Install<sp/>the<sp/><ref refid="bindings_2R_2tests_2CMakeLists_8txt_1ab786d6d19e7d6e223b6a63f8d60a8b99" kindref="member">library</ref><sp/>and<sp/>headers.</highlight></codeline>
+<codeline lineno="194"><highlight class="normal">install(TARGETS<sp/>${INSTALL_TARGETS}<sp/>EXPORT<sp/>${TARGETS_EXPORT_NAME}</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/>LIBRARY<sp/>DESTINATION<sp/>${MLPACK_LIBS_DIR}</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/>ARCHIVE<sp/>DESTINATION<sp/>${MLPACK_LIBS_DIR}</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/>RUNTIME<sp/>DESTINATION<sp/>${CMAKE_INSTALL_BINDIR})</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

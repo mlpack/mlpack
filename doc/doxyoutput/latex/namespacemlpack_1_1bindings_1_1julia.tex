@@ -1,0 +1,1070 @@
+\doxysection{mlpack\+::bindings\+::julia Namespace Reference}
+\label{namespacemlpack_1_1bindings_1_1julia}\index{mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Julia\+Option}
+\begin{DoxyCompactList}\small\item\em The Julia option class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Default\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Return the default value of an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Default\+Param\+Impl} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::string $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Default\+Param\+Impl} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of a model option (this returns the default filename, or \textquotesingle{}\textquotesingle{} if the default is no file). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Default\+Param\+Impl} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::string $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of a string option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Default\+Param\+Impl} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of a vector option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Default\+Param\+Impl} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if\+\_\+c$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or \textquotesingle{}\textquotesingle{} if the default is no file). \end{DoxyCompactList}\item 
+std\+::string \textbf{ Get\+Binding\+Name} (const std\+::string \&binding\+Name)
+\begin{DoxyCompactList}\small\item\em Given the name of a binding, print its Julia name (this just returns the binding name). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Julia\+Type} (\textbf{ util\+::\+Param\+Data} \&, const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Julia\+Type} (\textbf{ util\+::\+Param\+Data} \&, const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Julia\+Type} (\textbf{ util\+::\+Param\+Data} \&d, const typename std\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Julia\+Type} (\textbf{ util\+::\+Param\+Data} \&d, const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Julia\+Type} (\textbf{ util\+::\+Param\+Data} \&d, const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Julia\+Type$<$ bool $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ bool $>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ bool $>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ bool, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ bool $>$\+::value $>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Julia\+Type$<$ double $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ double $>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ double $>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ double, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ double $>$\+::value $>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Julia\+Type$<$ int $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ int $>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ int $>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ int, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ int $>$\+::value $>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Julia\+Type$<$ size\+\_\+t $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ size\+\_\+t $>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ size\+\_\+t $>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ size\+\_\+t, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ size\+\_\+t $>$\+::value $>$\+::type $\ast$)
+\item 
+template$<$$>$ std\+::string \textbf{ Get\+Julia\+Type$<$ std\+::string $>$} (\textbf{ util\+::\+Param\+Data} \&, const typename std\+::enable\+\_\+if$<$ !\textbf{ util\+::\+Is\+Std\+Vector}$<$ std\+::string $>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$ !arma\+::is\+\_\+arma\+\_\+type$<$ std\+::string $>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ std\+::string, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$, const typename std\+::enable\+\_\+if$<$ !\textbf{ data\+::\+Has\+Serialize}$<$ std\+::string $>$\+::value $>$\+::type $\ast$)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Get\+Param} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em All Julia binding types are exactly what is held in the Param\+Data, so no special handling is necessary. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print an option of a simple type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a serializable class option (this prints the class name). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a matrix option (this prints its size). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a combination Dataset\+Info/matrix parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print a vector option, with spaces between it. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Get\+Printable\+Param} (\textbf{ util\+::\+Param\+Data} \&data, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Print an option into a std\+::string. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a model. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&data, const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a matrix option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&data, const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a matrix tuple option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&data, const typename std\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Get\+Printable\+Type} (\textbf{ util\+::\+Param\+Data} \&data, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Print the command-\/line type of an option into a string. \end{DoxyCompactList}\item 
+bool \textbf{ Ignore\+Check} (const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Print whether or not we should ignore a check on the given parameter. \end{DoxyCompactList}\item 
+bool \textbf{ Ignore\+Check} (const std\+::vector$<$ std\+::pair$<$ std\+::string, bool $>$$>$ \&constraints, const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Print whether or not we should ignore a check on the given set of constraints. \end{DoxyCompactList}\item 
+bool \textbf{ Ignore\+Check} (const std\+::vector$<$ std\+::string $>$ \&constraints)
+\begin{DoxyCompactList}\small\item\em Print whether or not we should ignore a check on the given set of constraints. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Param\+String} (const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Given the parameter name, determine what it would actually be when passed to the command line. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Dataset} (const std\+::string \&dataset)
+\begin{DoxyCompactList}\small\item\em Print a dataset type parameter. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Default} (const std\+::string \&param\+Name)
+\begin{DoxyCompactList}\small\item\em Given a parameter name, print its corresponding default value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Doc} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$, void $\ast$output)
+\item 
+std\+::string \textbf{ Print\+Import} (const std\+::string \&binding\+Name)
+\begin{DoxyCompactList}\small\item\em Print any imports for Julia. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Input\+Option\+Info} ()
+\begin{DoxyCompactList}\small\item\em Print any special information about input options. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Input\+Options} ()
+\item 
+{\footnotesize template$<$typename T , typename... Args$>$ }\\std\+::string \textbf{ Print\+Input\+Options} (const std\+::string \&param\+Name, const T \&value, Args... args)
+\begin{DoxyCompactList}\small\item\em Print an input option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Param} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$, void $\ast$)
+\begin{DoxyCompactList}\small\item\em Print the declaration of an input parameter as part of a line in a Julia function definition. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const std\+::string \&function\+Name, const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print the input processing for an Armadillo type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const std\+::string \&function\+Name, const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print the input processing (basically calling \doxyref{IO\+::\+Get\+Param$<$$>$()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}) for a matrix with Dataset\+Info type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const std\+::string \&function\+Name, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print the input processing for a serializable type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const std\+::string \&function\+Name, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print the input processing (basically calling \doxyref{IO\+::\+Get\+Param$<$$>$()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}) for a non-\/serializable type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Input\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$input, void $\ast$)
+\begin{DoxyCompactList}\small\item\em Print the input processing (basically calling \doxyref{IO\+::\+Get\+Param$<$$>$()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}) for a type. \end{DoxyCompactList}\item 
+void \textbf{ Print\+JL} (const \textbf{ util\+::\+Binding\+Details} \&doc, const std\+::string \&function\+Name, const std\+::string \&mlpack\+Julia\+Lib\+Suffix)
+\begin{DoxyCompactList}\small\item\em Print the code for a .jl binding for an mlpack program to stdout. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Model} (const std\+::string \&model)
+\begin{DoxyCompactList}\small\item\em Print a model type parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Model\+Type\+Import} (\textbf{ util\+::\+Param\+Data} \&, const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Matrices are serializable but here we also print nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Model\+Type\+Import} (\textbf{ util\+::\+Param\+Data} \&, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em If the type is not serializable, print nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Model\+Type\+Import} (\textbf{ util\+::\+Param\+Data} \&d, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em For non-\/matrix serializable types we need to print something. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Model\+Type\+Import} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$, void $\ast$)
+\begin{DoxyCompactList}\small\item\em If the type is serializable, print the definition of a special utility function to set a \doxyref{IO}{p.}{classmlpack_1_1IO} parameter of that type to stdout. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Output\+Option\+Info} ()
+\begin{DoxyCompactList}\small\item\em Print any special information about output options. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Output\+Options} ()
+\item 
+{\footnotesize template$<$typename T , typename... Args$>$ }\\std\+::string \textbf{ Print\+Output\+Options} (const std\+::string \&param\+Name, const T \&value, Args... args)
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Output\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const std\+::string \&function\+Name, const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print the output processing for an Armadillo type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Output\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const std\+::string \&function\+Name, const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print the output processing for a mat/\+Dataset\+Info tuple type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Output\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const std\+::string \&function\+Name, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print the output processing for a serializable type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Output\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const std\+::string \&function\+Name, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Print the output processing (basically calling \doxyref{IO\+::\+Get\+Param$<$$>$()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}) for a non-\/serializable type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Output\+Processing} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$input, void $\ast$)
+\begin{DoxyCompactList}\small\item\em Print the output processing (basically calling \doxyref{IO\+::\+Get\+Param$<$$>$()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}) for a type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Param\+Defn} (\textbf{ util\+::\+Param\+Data} \&, const std\+::string \&, const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Matrices are serializable but here we also print nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Param\+Defn} (\textbf{ util\+::\+Param\+Data} \&, const std\+::string \&, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em If the type is not serializable, print nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Param\+Defn} (\textbf{ util\+::\+Param\+Data} \&d, const std\+::string \&\textbf{ program\+Name}, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em For non-\/matrix serializable types we need to print something. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Param\+Defn} (\textbf{ util\+::\+Param\+Data} \&d, const void $\ast$input, void $\ast$)
+\begin{DoxyCompactList}\small\item\em If the type is serializable, print the definition of a special utility function to set a \doxyref{IO}{p.}{classmlpack_1_1IO} parameter of that type to stdout. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Type} (\textbf{ util\+::\+Param\+Data} \&param)
+\begin{DoxyCompactList}\small\item\em Print the type of a parameter that a user would specify from Julia. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of an option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a model. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a matrix option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a matrix tuple option. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const typename std\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string representing the command-\/line type of a vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Type\+Doc} (\textbf{ util\+::\+Param\+Data} \&data, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Print the command-\/line type of an option into a string. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Print\+Type\+Docs} ()
+\begin{DoxyCompactList}\small\item\em Print documentation for each of the types. \end{DoxyCompactList}\item 
+template$<$$>$ std\+::string \textbf{ Print\+Value} (const bool \&value, bool quotes)
+\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Print\+Value} (const T \&value, bool quotes)
+\begin{DoxyCompactList}\small\item\em Given a parameter type, print the corresponding value. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... Args$>$ }\\std\+::string \textbf{ Program\+Call} (const std\+::string \&\textbf{ program\+Name}, Args... args)
+\begin{DoxyCompactList}\small\item\em Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \textbf{ program\+Name}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a7d5cad8715c0bcb70ade6d7db2e12053}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!DefaultParam@{DefaultParam}}
+\index{DefaultParam@{DefaultParam}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{DefaultParam()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Default\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{output }\end{DoxyParamCaption})}
+
+
+
+Return the default value of an option. 
+
+This is the function that will be placed into the \doxyref{IO}{p.}{classmlpack_1_1IO} function\+Map. 
+
+Definition at line 80 of file default\+\_\+param.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ac4d13b54ddee907c40ec8aa7cdc674b6}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!DefaultParamImpl@{DefaultParamImpl}}
+\index{DefaultParamImpl@{DefaultParamImpl}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{DefaultParamImpl()\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Default\+Param\+Impl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::string $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the default value of an option. 
+
+This is for regular types. \mbox{\label{namespacemlpack_1_1bindings_1_1julia_a62eda0892cc407d543c1cbc4adde657e}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!DefaultParamImpl@{DefaultParamImpl}}
+\index{DefaultParamImpl@{DefaultParamImpl}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{DefaultParamImpl()\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Default\+Param\+Impl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the default value of a model option (this returns the default filename, or \textquotesingle{}\textquotesingle{} if the default is no file). 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a424d4c2bef344f8316726604f813731a}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!DefaultParamImpl@{DefaultParamImpl}}
+\index{DefaultParamImpl@{DefaultParamImpl}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{DefaultParamImpl()\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Default\+Param\+Impl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::string $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the default value of a string option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a7ca7c03888298332ca769b89fe9e6063}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!DefaultParamImpl@{DefaultParamImpl}}
+\index{DefaultParamImpl@{DefaultParamImpl}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{DefaultParamImpl()\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Default\+Param\+Impl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the default value of a vector option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a81c91a8b2625c5244c34075a645d26aa}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!DefaultParamImpl@{DefaultParamImpl}}
+\index{DefaultParamImpl@{DefaultParamImpl}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{DefaultParamImpl()\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Default\+Param\+Impl (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if\+\_\+c$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value$\vert$$\vert$std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ mlpack\+::data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or \textquotesingle{}\textquotesingle{} if the default is no file). 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a8d9828ad9cbc4d7a011cbe18bd7e6f0c}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetBindingName@{GetBindingName}}
+\index{GetBindingName@{GetBindingName}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetBindingName()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Binding\+Name (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{binding\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given the name of a binding, print its Julia name (this just returns the binding name). 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_af033dbeffe06831a82a2e386ae183825}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetJuliaType@{GetJuliaType}}
+\index{GetJuliaType@{GetJuliaType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetJuliaType()\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Julia\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 127 of file get\+\_\+julia\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ab6258340a09d7778996b7936009d6e1c}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetJuliaType@{GetJuliaType}}
+\index{GetJuliaType@{GetJuliaType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetJuliaType()\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Julia\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 22 of file get\+\_\+julia\+\_\+type.\+hpp.
+
+
+
+Referenced by Print\+Doc().
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a9af4056efe4d833964ddb6bbe6cf78ea}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetJuliaType@{GetJuliaType}}
+\index{GetJuliaType@{GetJuliaType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetJuliaType()\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Julia\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const typename std\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 98 of file get\+\_\+julia\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_aa9fe68e1da9daec9372965162d8bad94}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetJuliaType@{GetJuliaType}}
+\index{GetJuliaType@{GetJuliaType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetJuliaType()\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Julia\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 137 of file get\+\_\+julia\+\_\+type.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type, and mlpack\+::util\+::\+Strip\+Type().
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a280d7bac8b4d0ee4f89d8337b5eca7de}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetJuliaType@{GetJuliaType}}
+\index{GetJuliaType@{GetJuliaType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetJuliaType()\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Julia\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 109 of file get\+\_\+julia\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a1b3cc6b2b692d2fac7d986d33a08dd34}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetJuliaType$<$ bool $>$@{GetJuliaType$<$ bool $>$}}
+\index{GetJuliaType$<$ bool $>$@{GetJuliaType$<$ bool $>$}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetJuliaType$<$ bool $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::julia\+::\+Get\+Julia\+Type}$<$ bool $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ bool $>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ bool $>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ bool, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ bool $>$\+::value $>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 34 of file get\+\_\+julia\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a75357eff29c1a0027df10939cb595596}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetJuliaType$<$ double $>$@{GetJuliaType$<$ double $>$}}
+\index{GetJuliaType$<$ double $>$@{GetJuliaType$<$ double $>$}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetJuliaType$<$ double $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::julia\+::\+Get\+Julia\+Type}$<$ double $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ double $>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ double $>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ double, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ double $>$\+::value $>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 70 of file get\+\_\+julia\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a4e613577bf3bc33b4783d60d0e065f60}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetJuliaType$<$ int $>$@{GetJuliaType$<$ int $>$}}
+\index{GetJuliaType$<$ int $>$@{GetJuliaType$<$ int $>$}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetJuliaType$<$ int $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::julia\+::\+Get\+Julia\+Type}$<$ int $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ int $>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ int $>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ int, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ int $>$\+::value $>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 46 of file get\+\_\+julia\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a1c06ed990a6afe89e13c6afc62d8d607}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetJuliaType$<$ size\_t $>$@{GetJuliaType$<$ size\_t $>$}}
+\index{GetJuliaType$<$ size\_t $>$@{GetJuliaType$<$ size\_t $>$}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetJuliaType$<$ size\_t $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::julia\+::\+Get\+Julia\+Type}$<$ size\+\_\+t $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ util\+::\+Is\+Std\+Vector}$<$ size\+\_\+t $>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ size\+\_\+t $>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ size\+\_\+t, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ size\+\_\+t $>$\+::value $>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 58 of file get\+\_\+julia\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a843780cd462e7e51fc0201666099403c}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetJuliaType$<$ std::string $>$@{GetJuliaType$<$ std::string $>$}}
+\index{GetJuliaType$<$ std::string $>$@{GetJuliaType$<$ std::string $>$}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetJuliaType$<$ std::string $>$()}
+{\footnotesize\ttfamily std\+::string \textbf{ mlpack\+::bindings\+::julia\+::\+Get\+Julia\+Type}$<$ std\+::string $>$ (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$ !\textbf{ util\+::\+Is\+Std\+Vector}$<$ std\+::string $>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$ !arma\+::is\+\_\+arma\+\_\+type$<$ std\+::string $>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ std\+::string, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{,  }\item[{const typename std\+::enable\+\_\+if$<$ !\textbf{ data\+::\+Has\+Serialize}$<$ std\+::string $>$\+::value $>$\+::type $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 83 of file get\+\_\+julia\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ae4252a82393e350fb7688f6038062e6d}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetParam@{GetParam}}
+\index{GetParam@{GetParam}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetParam()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Get\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{output }\end{DoxyParamCaption})}
+
+
+
+All Julia binding types are exactly what is held in the Param\+Data, so no special handling is necessary. 
+
+
+
+Definition at line 26 of file get\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a5db46b750740fb5822484de47e48c8b0}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [1/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print an option of a simple type. 
+
+
+
+Definition at line 26 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a4283ed67763f61abbd25816621d8a9c4}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [2/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print a serializable class option (this prints the class name). 
+
+
+
+Definition at line 75 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type, and Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_aa702de20aa35aa3ac89db069b05adbad}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [3/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print a matrix option (this prints its size). 
+
+
+
+Definition at line 59 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a421bb63af9453194bd4fae9974e8d7a8}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [4/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print a combination Dataset\+Info/matrix parameter. 
+
+
+
+Definition at line 89 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a65f67c5293bb3878c2d30ee22c87a581}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [5/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print a vector option, with spaces between it. 
+
+
+
+Definition at line 43 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+
+
+References Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a40a6079f17369b7fc8d2b8673b8f88e8}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableParam@{GetPrintableParam}}
+\index{GetPrintableParam@{GetPrintableParam}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableParam()\hspace{0.1cm}{\footnotesize\ttfamily [6/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{output }\end{DoxyParamCaption})}
+
+
+
+Print an option into a std\+::string. 
+
+This should print a short, one-\/line representation of the object. The string will be stored in the output pointer.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Parameter data struct. \\
+\hline
+{\em $\ast$} & (input) Unused parameter. \\
+\hline
+{\em output} & Output storage for the string. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 114 of file get\+\_\+printable\+\_\+param.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ab2840922ecef48c3f883ea169b3dac40}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [1/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of an option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_af1753e5e55255c27fd1cdf8f21915895}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [2/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a model. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_acac62fd66dced7595d79aa70441652a2}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [3/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a matrix option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a791fb06a5c637870a266029a3b2ed6d8}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [4/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a matrix tuple option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ae25b2fae58b802c21f655cc5f7a37807}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [5/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename std\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a vector. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ab447f8966756bf0224070587c536e069}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!GetPrintableType@{GetPrintableType}}
+\index{GetPrintableType@{GetPrintableType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{GetPrintableType()\hspace{0.1cm}{\footnotesize\ttfamily [6/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{output }\end{DoxyParamCaption})}
+
+
+
+Print the command-\/line type of an option into a string. 
+
+
+
+Definition at line 70 of file get\+\_\+printable\+\_\+type.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a2721640ebb8e5ad4abf7e7be3d2cdac8}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!IgnoreCheck@{IgnoreCheck}}
+\index{IgnoreCheck@{IgnoreCheck}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{IgnoreCheck()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily bool mlpack\+::bindings\+::julia\+::\+Ignore\+Check (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{param\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print whether or not we should ignore a check on the given parameter. 
+
+For Julia bindings, we ignore any checks on output parameters, so if param\+Name is an output parameter, this returns true. \mbox{\label{namespacemlpack_1_1bindings_1_1julia_a48bbe25414605037ae8acd32ed73bdf5}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!IgnoreCheck@{IgnoreCheck}}
+\index{IgnoreCheck@{IgnoreCheck}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{IgnoreCheck()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily bool mlpack\+::bindings\+::julia\+::\+Ignore\+Check (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::pair$<$ std\+::string, bool $>$$>$ \&}]{constraints,  }\item[{const std\+::string \&}]{param\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print whether or not we should ignore a check on the given set of constraints. 
+
+For Julia bindings, we ignore any checks on output parameters, so if any constraint parameter or the main parameter are output parameters, this returns true. \mbox{\label{namespacemlpack_1_1bindings_1_1julia_af39b9d7b6b7d368b766fb1ef482d25b4}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!IgnoreCheck@{IgnoreCheck}}
+\index{IgnoreCheck@{IgnoreCheck}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{IgnoreCheck()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily bool mlpack\+::bindings\+::julia\+::\+Ignore\+Check (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::string $>$ \&}]{constraints }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print whether or not we should ignore a check on the given set of constraints. 
+
+For Julia bindings, we ignore any checks on output parameters, so if any parameter is an output parameter, this returns true. \mbox{\label{namespacemlpack_1_1bindings_1_1julia_a627997ec4999091e2c734c8e5369c456}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!ParamString@{ParamString}}
+\index{ParamString@{ParamString}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{ParamString()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Param\+String (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{param\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given the parameter name, determine what it would actually be when passed to the command line. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ab81006e8cf130a5968777dcf9c82baa3}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintDataset@{PrintDataset}}
+\index{PrintDataset@{PrintDataset}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintDataset()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Dataset (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{dataset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print a dataset type parameter. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a6a712d2a0342de59cfd5ac5033138d6f}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintDefault@{PrintDefault}}
+\index{PrintDefault@{PrintDefault}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintDefault()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Default (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{param\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given a parameter name, print its corresponding default value. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_afed98c7370d51aa61481387ba7e48329}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintDoc@{PrintDoc}}
+\index{PrintDoc@{PrintDoc}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintDoc()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{output }\end{DoxyParamCaption})}
+
+
+
+Definition at line 20 of file print\+\_\+doc.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type, Param\+Data\+::desc, Get\+Julia\+Type(), if(), Param\+Data\+::name, Param\+Data\+::required, and Param\+Data\+::value.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a74c8a5085c10ab376f52f7738bd5cf35}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintImport@{PrintImport}}
+\index{PrintImport@{PrintImport}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintImport()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Import (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{binding\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print any imports for Julia. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ad80395807c5fed5cb3ab8a9bf2461594}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintInputOptionInfo@{PrintInputOptionInfo}}
+\index{PrintInputOptionInfo@{PrintInputOptionInfo}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintInputOptionInfo()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Input\+Option\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print any special information about input options. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ad5a8197f925a177406f9ba8a7f54b626}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintInputOptions@{PrintInputOptions}}
+\index{PrintInputOptions@{PrintInputOptions}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintInputOptions()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Input\+Options (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ae8ccf211291da278631c06ce5b6f828a}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintInputOptions@{PrintInputOptions}}
+\index{PrintInputOptions@{PrintInputOptions}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintInputOptions()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Input\+Options (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{param\+Name,  }\item[{const T \&}]{value,  }\item[{Args...}]{args }\end{DoxyParamCaption})}
+
+
+
+Print an input option. 
+
+This will throw an exception if the parameter does not exist in \doxyref{IO}{p.}{classmlpack_1_1IO}. For a parameter \textquotesingle{}x\textquotesingle{} with value \textquotesingle{}5\textquotesingle{}, this will print something like x=5. \mbox{\label{namespacemlpack_1_1bindings_1_1julia_a64bffabfa040cc70a348df4b479707a5}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintInputParam@{PrintInputParam}}
+\index{PrintInputParam@{PrintInputParam}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintInputParam()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Input\+Param (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+Print the declaration of an input parameter as part of a line in a Julia function definition. 
+
+This doesn\textquotesingle{}t include any commas or anything. 
+
+Definition at line 27 of file print\+\_\+input\+\_\+param.\+hpp.
+
+
+
+References if(), Param\+Data\+::name, and Param\+Data\+::required.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a055d5024615073721cd327a2ba182c98}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintInputProcessing@{PrintInputProcessing}}
+\index{PrintInputProcessing@{PrintInputProcessing}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintInputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Input\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const std\+::string \&}]{function\+Name,  }\item[{const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print the input processing for an Armadillo type. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_abd8e1a70e4ac815dbf9c1962da0a3500}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintInputProcessing@{PrintInputProcessing}}
+\index{PrintInputProcessing@{PrintInputProcessing}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintInputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Input\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const std\+::string \&}]{function\+Name,  }\item[{const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print the input processing (basically calling \doxyref{IO\+::\+Get\+Param$<$$>$()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}) for a matrix with Dataset\+Info type. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a2eed6a97582961119310c7d5d6af4b09}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintInputProcessing@{PrintInputProcessing}}
+\index{PrintInputProcessing@{PrintInputProcessing}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintInputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Input\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const std\+::string \&}]{function\+Name,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print the input processing for a serializable type. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a5828f427d0a15620d4d703184c53acba}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintInputProcessing@{PrintInputProcessing}}
+\index{PrintInputProcessing@{PrintInputProcessing}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintInputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Input\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const std\+::string \&}]{function\+Name,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print the input processing (basically calling \doxyref{IO\+::\+Get\+Param$<$$>$()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}) for a non-\/serializable type. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a1588b6d6799cfb9a8e72aae21fb388ed}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintInputProcessing@{PrintInputProcessing}}
+\index{PrintInputProcessing@{PrintInputProcessing}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintInputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Input\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{input,  }\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+Print the input processing (basically calling \doxyref{IO\+::\+Get\+Param$<$$>$()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}) for a type. 
+
+
+
+Definition at line 70 of file print\+\_\+input\+\_\+processing.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a5215728242ec889f1ac23069f0227b87}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintJL@{PrintJL}}
+\index{PrintJL@{PrintJL}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintJL()}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+JL (\begin{DoxyParamCaption}\item[{const \textbf{ util\+::\+Binding\+Details} \&}]{doc,  }\item[{const std\+::string \&}]{function\+Name,  }\item[{const std\+::string \&}]{mlpack\+Julia\+Lib\+Suffix }\end{DoxyParamCaption})}
+
+
+
+Print the code for a .jl binding for an mlpack program to stdout. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a5cd774b4c9bb9014c222477c84dce52e}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintModel@{PrintModel}}
+\index{PrintModel@{PrintModel}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintModel()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Model (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{model }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print a model type parameter. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a821aee751627d1bcf602df375c1f8eb6}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintModelTypeImport@{PrintModelTypeImport}}
+\index{PrintModelTypeImport@{PrintModelTypeImport}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintModelTypeImport()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Model\+Type\+Import (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Matrices are serializable but here we also print nothing. 
+
+
+
+Definition at line 38 of file print\+\_\+model\+\_\+type\+\_\+import.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a24b9b38c5575eebc49cce49c847f76a6}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintModelTypeImport@{PrintModelTypeImport}}
+\index{PrintModelTypeImport@{PrintModelTypeImport}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintModelTypeImport()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Model\+Type\+Import (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+If the type is not serializable, print nothing. 
+
+
+
+Definition at line 26 of file print\+\_\+model\+\_\+type\+\_\+import.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a542a7f3046a7acf108d591facc8b2e02}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintModelTypeImport@{PrintModelTypeImport}}
+\index{PrintModelTypeImport@{PrintModelTypeImport}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintModelTypeImport()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Model\+Type\+Import (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+For non-\/matrix serializable types we need to print something. 
+
+
+
+Definition at line 49 of file print\+\_\+model\+\_\+type\+\_\+import.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type, and mlpack\+::util\+::\+Strip\+Type().
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_acee784e5e7d9447c5d8b597d1884cece}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintModelTypeImport@{PrintModelTypeImport}}
+\index{PrintModelTypeImport@{PrintModelTypeImport}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintModelTypeImport()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Model\+Type\+Import (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+If the type is serializable, print the definition of a special utility function to set a \doxyref{IO}{p.}{classmlpack_1_1IO} parameter of that type to stdout. 
+
+
+
+Definition at line 66 of file print\+\_\+model\+\_\+type\+\_\+import.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a2db624423dfe22092c563dd12f4bbe8d}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintOutputOptionInfo@{PrintOutputOptionInfo}}
+\index{PrintOutputOptionInfo@{PrintOutputOptionInfo}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintOutputOptionInfo()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Output\+Option\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print any special information about output options. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a458cbef16b35aa69753765e7ccdb0398}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintOutputOptions@{PrintOutputOptions}}
+\index{PrintOutputOptions@{PrintOutputOptions}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintOutputOptions()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Output\+Options (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a84456d410b020a60c7add64c3791e4d0}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintOutputOptions@{PrintOutputOptions}}
+\index{PrintOutputOptions@{PrintOutputOptions}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintOutputOptions()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Output\+Options (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{param\+Name,  }\item[{const T \&}]{value,  }\item[{Args...}]{args }\end{DoxyParamCaption})}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ad4af3ab71c4d1a6ec18f2346ca79063e}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintOutputProcessing@{PrintOutputProcessing}}
+\index{PrintOutputProcessing@{PrintOutputProcessing}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintOutputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Output\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const std\+::string \&}]{function\+Name,  }\item[{const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print the output processing for an Armadillo type. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a41cc552aa985d5a13364b9d1c7724bbe}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintOutputProcessing@{PrintOutputProcessing}}
+\index{PrintOutputProcessing@{PrintOutputProcessing}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintOutputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Output\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const std\+::string \&}]{function\+Name,  }\item[{const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print the output processing for a mat/\+Dataset\+Info tuple type. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a7430d34457a6b74829f15dd92b4ec60a}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintOutputProcessing@{PrintOutputProcessing}}
+\index{PrintOutputProcessing@{PrintOutputProcessing}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintOutputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Output\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const std\+::string \&}]{function\+Name,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print the output processing for a serializable type. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ac0fb78d1da3e1421a99570019fcea77b}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintOutputProcessing@{PrintOutputProcessing}}
+\index{PrintOutputProcessing@{PrintOutputProcessing}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintOutputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Output\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const std\+::string \&}]{function\+Name,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Print the output processing (basically calling \doxyref{IO\+::\+Get\+Param$<$$>$()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}) for a non-\/serializable type. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a3dcb15a14aeb2be23d072dbbdab71655}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintOutputProcessing@{PrintOutputProcessing}}
+\index{PrintOutputProcessing@{PrintOutputProcessing}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintOutputProcessing()\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Output\+Processing (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{input,  }\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+Print the output processing (basically calling \doxyref{IO\+::\+Get\+Param$<$$>$()}{p.}{classmlpack_1_1IO_a6c641e7bd5291c24b787f379f25cb9b8}) for a type. 
+
+
+
+Definition at line 71 of file print\+\_\+output\+\_\+processing.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a4ebebb3c590e6fa5273ee114720e9b04}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintParamDefn@{PrintParamDefn}}
+\index{PrintParamDefn@{PrintParamDefn}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintParamDefn()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Param\+Defn (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const std\+::string \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Matrices are serializable but here we also print nothing. 
+
+
+
+Definition at line 39 of file print\+\_\+param\+\_\+defn.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a3683963682a623f865411e97add139e9}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintParamDefn@{PrintParamDefn}}
+\index{PrintParamDefn@{PrintParamDefn}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintParamDefn()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Param\+Defn (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{,  }\item[{const std\+::string \&}]{,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$!\textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+If the type is not serializable, print nothing. 
+
+
+
+Definition at line 26 of file print\+\_\+param\+\_\+defn.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a15f2fbf7bd8137c68337e2dc4d353f56}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintParamDefn@{PrintParamDefn}}
+\index{PrintParamDefn@{PrintParamDefn}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintParamDefn()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Param\+Defn (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const std\+::string \&}]{program\+Name,  }\item[{const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename std\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+For non-\/matrix serializable types we need to print something. 
+
+
+
+Definition at line 51 of file print\+\_\+param\+\_\+defn.\+hpp.
+
+
+
+References Param\+Data\+::cpp\+Type, program\+Name, and mlpack\+::util\+::\+Strip\+Type().
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a6ee55e0f1174e16211881215702c87bb}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintParamDefn@{PrintParamDefn}}
+\index{PrintParamDefn@{PrintParamDefn}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintParamDefn()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Param\+Defn (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{d,  }\item[{const void $\ast$}]{input,  }\item[{void $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+If the type is serializable, print the definition of a special utility function to set a \doxyref{IO}{p.}{classmlpack_1_1IO} parameter of that type to stdout. 
+
+
+
+Definition at line 164 of file print\+\_\+param\+\_\+defn.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_aa1491585c928e9d37190e48ae4f19db0}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintType@{PrintType}}
+\index{PrintType@{PrintType}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintType()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Type (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{param }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print the type of a parameter that a user would specify from Julia. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a8e7452afff934cb6f80f4d170f5ecf05}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [1/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of an option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ad25458acb771117122a3729802d1657d}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [2/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0},  }\item[{const typename boost\+::enable\+\_\+if$<$ \textbf{ data\+::\+Has\+Serialize}$<$ T $>$$>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a model. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_aa9adb68ea7e1171bfee67b705d377b75}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [3/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a matrix option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ae404f1810f84708883c646689f27623e}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [4/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ \textbf{ data\+::\+Dataset\+Info}, arma\+::mat $>$$>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a matrix tuple option. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a8e38d88da05bb4334dedabdbbfea4d41}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [5/6]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const typename std\+::enable\+\_\+if$<$ \textbf{ util\+::\+Is\+Std\+Vector}$<$ T $>$\+::value $>$\+::type $\ast$}]{ = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Return a string representing the command-\/line type of a vector. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a610a7a01bff6563135726a27c2d4f980}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintTypeDoc@{PrintTypeDoc}}
+\index{PrintTypeDoc@{PrintTypeDoc}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintTypeDoc()\hspace{0.1cm}{\footnotesize\ttfamily [6/6]}}
+{\footnotesize\ttfamily void mlpack\+::bindings\+::julia\+::\+Print\+Type\+Doc (\begin{DoxyParamCaption}\item[{\textbf{ util\+::\+Param\+Data} \&}]{data,  }\item[{const void $\ast$}]{,  }\item[{void $\ast$}]{output }\end{DoxyParamCaption})}
+
+
+
+Print the command-\/line type of an option into a string. 
+
+
+
+Definition at line 72 of file print\+\_\+type\+\_\+doc.\+hpp.
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a66c87276bb72b6efb12d2b7d53202ca8}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintTypeDocs@{PrintTypeDocs}}
+\index{PrintTypeDocs@{PrintTypeDocs}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintTypeDocs()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Type\+Docs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Print documentation for each of the types. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ab215ccae826d137bb18e251b63f79318}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintValue@{PrintValue}}
+\index{PrintValue@{PrintValue}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintValue()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Value (\begin{DoxyParamCaption}\item[{const bool \&}]{value,  }\item[{bool}]{quotes }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_afddeb0074153b920a7da3051b1046675}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!PrintValue@{PrintValue}}
+\index{PrintValue@{PrintValue}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{PrintValue()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Print\+Value (\begin{DoxyParamCaption}\item[{const T \&}]{value,  }\item[{bool}]{quotes }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Given a parameter type, print the corresponding value. 
+
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_ab5edf3302fabe8ebafc3ed7228b149df}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!ProgramCall@{ProgramCall}}
+\index{ProgramCall@{ProgramCall}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{ProgramCall()}
+{\footnotesize\ttfamily std\+::string mlpack\+::bindings\+::julia\+::\+Program\+Call (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{program\+Name,  }\item[{Args...}]{args }\end{DoxyParamCaption})}
+
+
+
+Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call. 
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\label{namespacemlpack_1_1bindings_1_1julia_a24d855d329269931b59bdf1b36706a88}} 
+\index{mlpack::bindings::julia@{mlpack::bindings::julia}!programName@{programName}}
+\index{programName@{programName}!mlpack::bindings::julia@{mlpack::bindings::julia}}
+\doxysubsubsection{programName}
+{\footnotesize\ttfamily std\+::string program\+Name\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Referenced by Julia\+Option$<$ T $>$\+::\+Julia\+Option(), and Print\+Param\+Defn().
+

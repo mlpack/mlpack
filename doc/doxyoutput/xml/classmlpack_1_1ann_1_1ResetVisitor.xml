@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1ResetVisitor" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::ResetVisitor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">boost::static_visitor&lt; void &gt;</basecompoundref>
+    <includes refid="reset__visitor_8hpp" local="no">reset_visitor.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ResetVisitor_1a26bb3385c630118c35f4799f1509abbc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename LayerType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void operator()</definition>
+        <argsstring>(LayerType *layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>LayerType *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Execute the Reset() function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_visitor.hpp" line="31" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ResetVisitor_1ae35578e7ff874a320fe762bc0edfff04" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void operator()</definition>
+        <argsstring>(MoreTypes layer) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1ann_1a43629d7dff68779cabbd5ff7cb1448d0" kindref="member">MoreTypes</ref></type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_visitor.hpp" line="33" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ResetVisitor_1ade24f672001324f2d04bb399b9355931" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; HasResetCheck&lt; T, void(T::*)()&gt;::value &amp;&amp;!HasModelCheck&lt; T &gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; HasResetCheck&lt;T, void(T::*)()&gt;::value &amp;&amp; !HasModelCheck&lt;T&gt;::value, void&gt;::type ResetParameter</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>ResetParameter</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Execute the Reset() function for a module which implements the Reset() function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_visitor.hpp" line="42" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ResetVisitor_1aa593a9c763b6990bcd8726a704a195ea" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; !HasResetCheck&lt; T, void(T::*)()&gt;::value &amp;&amp;HasModelCheck&lt; T &gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; !HasResetCheck&lt;T, void(T::*)()&gt;::value &amp;&amp; HasModelCheck&lt;T&gt;::value, void&gt;::type ResetParameter</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>ResetParameter</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Execute the Reset() function for a module which implements the Model() function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_visitor.hpp" line="50" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ResetVisitor_1a538a2ea56b17dc37036232d197dc1880" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; HasResetCheck&lt; T, void(T::*)()&gt;::value &amp;&amp;HasModelCheck&lt; T &gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; HasResetCheck&lt;T, void(T::*)()&gt;::value &amp;&amp; HasModelCheck&lt;T&gt;::value, void&gt;::type ResetParameter</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>ResetParameter</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Execute the Reset() function for a module which implements the Reset() and Model() function. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_visitor.hpp" line="58" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1ResetVisitor_1ace2f5e9fa7acdd41774ff2d73a739705" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::enable_if&lt; !HasResetCheck&lt; T, void(T::*)()&gt;::value &amp;&amp;!HasModelCheck&lt; T &gt;::value, void &gt;::type</type>
+        <definition>std::enable_if&lt; !HasResetCheck&lt;T, void(T::*)()&gt;::value &amp;&amp; !HasModelCheck&lt;T&gt;::value, void&gt;::type ResetParameter</definition>
+        <argsstring>(T *layer) const</argsstring>
+        <name>ResetParameter</name>
+        <param>
+          <type>T *</type>
+          <declname>layer</declname>
+        </param>
+        <briefdescription>
+<para>Do not execute the Reset() function for a module which doesn&apos;t implement. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_visitor.hpp" line="66" column="3"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classmlpack_1_1ann_1_1ResetVisitor" kindref="compound">ResetVisitor</ref> executes the Reset() function. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>ResetVisitor</label>
+        <link refid="classmlpack_1_1ann_1_1ResetVisitor"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>static_visitor&lt; void &gt;</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>ResetVisitor</label>
+        <link refid="classmlpack_1_1ann_1_1ResetVisitor"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>static_visitor&lt; void &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_visitor.hpp" line="26" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/visitor/reset_visitor.hpp" bodystart="27" bodyend="67"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1ResetVisitor_1a26bb3385c630118c35f4799f1509abbc" prot="public" virt="non-virtual"><scope>mlpack::ann::ResetVisitor</scope><name>operator()</name></member>
+      <member refid="classmlpack_1_1ann_1_1ResetVisitor_1ae35578e7ff874a320fe762bc0edfff04" prot="public" virt="non-virtual"><scope>mlpack::ann::ResetVisitor</scope><name>operator()</name></member>
+      <member refid="classmlpack_1_1ann_1_1ResetVisitor_1ade24f672001324f2d04bb399b9355931" prot="private" virt="non-virtual"><scope>mlpack::ann::ResetVisitor</scope><name>ResetParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1ResetVisitor_1aa593a9c763b6990bcd8726a704a195ea" prot="private" virt="non-virtual"><scope>mlpack::ann::ResetVisitor</scope><name>ResetParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1ResetVisitor_1a538a2ea56b17dc37036232d197dc1880" prot="private" virt="non-virtual"><scope>mlpack::ann::ResetVisitor</scope><name>ResetParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1ResetVisitor_1ace2f5e9fa7acdd41774ff2d73a739705" prot="private" virt="non-virtual"><scope>mlpack::ann::ResetVisitor</scope><name>ResetParameter</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

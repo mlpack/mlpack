@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_3099d1bba52f245910b3238fbaac8af2" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/bindings/cli</compoundname>
+    <innerfile refid="add__to__cli11_8hpp">add_to_cli11.hpp</innerfile>
+    <innerfile refid="cli__option_8hpp">cli_option.hpp</innerfile>
+    <innerfile refid="cli_2default__param_8hpp">default_param.hpp</innerfile>
+    <innerfile refid="cli_2delete__allocated__memory_8hpp">delete_allocated_memory.hpp</innerfile>
+    <innerfile refid="end__program_8hpp">end_program.hpp</innerfile>
+    <innerfile refid="cli_2get__allocated__memory_8hpp">get_allocated_memory.hpp</innerfile>
+    <innerfile refid="cli_2get__param_8hpp">get_param.hpp</innerfile>
+    <innerfile refid="cli_2get__printable__param_8hpp">get_printable_param.hpp</innerfile>
+    <innerfile refid="cli_2get__printable__param__name_8hpp">get_printable_param_name.hpp</innerfile>
+    <innerfile refid="cli_2get__printable__param__value_8hpp">get_printable_param_value.hpp</innerfile>
+    <innerfile refid="cli_2get__printable__type_8hpp">get_printable_type.hpp</innerfile>
+    <innerfile refid="get__raw__param_8hpp">get_raw_param.hpp</innerfile>
+    <innerfile refid="in__place__copy_8hpp">in_place_copy.hpp</innerfile>
+    <innerfile refid="map__parameter__name_8hpp">map_parameter_name.hpp</innerfile>
+    <innerfile refid="output__param_8hpp">output_param.hpp</innerfile>
+    <innerfile refid="parameter__type_8hpp">parameter_type.hpp</innerfile>
+    <innerfile refid="parse__command__line_8hpp">parse_command_line.hpp</innerfile>
+    <innerfile refid="cli_2print__doc__functions_8hpp">print_doc_functions.hpp</innerfile>
+    <innerfile refid="print__help_8hpp">print_help.hpp</innerfile>
+    <innerfile refid="cli_2print__type__doc_8hpp">print_type_doc.hpp</innerfile>
+    <innerfile refid="set__param_8hpp">set_param.hpp</innerfile>
+    <innerfile refid="string__type__param_8hpp">string_type_param.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/cli/"/>
+  </compounddef>
+</doxygen>

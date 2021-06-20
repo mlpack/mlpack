@@ -1,0 +1,49 @@
+.TH "DeterministicSetVisitor" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DeterministicSetVisitor \- \fBDeterministicSetVisitor\fP set the deterministic parameter given the deterministic value\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDeterministicSetVisitor\fP (const bool deterministic=true)"
+.br
+.RI "Set the deterministic parameter given the current deterministic value\&. "
+.ti -1c
+.RI "template<typename LayerType > void \fBoperator()\fP (LayerType *layer) const"
+.br
+.RI "Set the deterministic parameter\&. "
+.ti -1c
+.RI "void \fBoperator()\fP (\fBMoreTypes\fP layer) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBDeterministicSetVisitor\fP set the deterministic parameter given the deterministic value\&. 
+.PP
+Definition at line 28 of file deterministic_set_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBDeterministicSetVisitor\fP (const bool deterministic = \fCtrue\fP)"
+
+.PP
+Set the deterministic parameter given the current deterministic value\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void operator() (LayerType * layer) const"
+
+.PP
+Set the deterministic parameter\&. 
+.SS "void operator() (\fBMoreTypes\fP layer) const"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

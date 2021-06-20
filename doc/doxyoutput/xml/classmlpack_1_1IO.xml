@@ -1,0 +1,865 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1IO" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::IO</compoundname>
+    <includes refid="io_8hpp" local="no">io.hpp</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1IO_1a5164306ed0dd7d34c35310f93fb02563" prot="public" static="no">
+        <type>std::map&lt; std::string, std::map&lt; std::string, void(*)(<ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;, const void *, void *)&gt; &gt;</type>
+        <definition>typedef std::map&lt;std::string, std::map&lt;std::string, void (*)(util::ParamData&amp;, const void*, void*)&gt; &gt; FunctionMapType</definition>
+        <argsstring></argsstring>
+        <name>FunctionMapType</name>
+        <briefdescription>
+<para>Map for functions and types. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Use as functionMap[&quot;typename&quot;][&quot;functionName&quot;]. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="312" column="2" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="312" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1IO_1a7d026933df7a8c24cae539dab626d3e2" prot="private" static="no" mutable="no">
+        <type>std::map&lt; char, std::string &gt;</type>
+        <definition>std::map&lt;char, std::string&gt; aliases</definition>
+        <argsstring></argsstring>
+        <name>aliases</name>
+        <briefdescription>
+<para>Convenience map from alias values to names. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="304" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="304" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1a9f6e568d2db09a7405644497b6b2d59f" prot="private" static="no" mutable="no">
+        <type>std::map&lt; std::string, <ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &gt;</type>
+        <definition>std::map&lt;std::string, util::ParamData&gt; parameters</definition>
+        <argsstring></argsstring>
+        <name>parameters</name>
+        <briefdescription>
+<para>Map of parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="306" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="306" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1a633a07bb688dd5a1fba5338c8efc6929" prot="private" static="no" mutable="no">
+        <type>std::map&lt; std::string, std::tuple&lt; std::map&lt; std::string, <ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &gt;, std::map&lt; char, std::string &gt;, <ref refid="classmlpack_1_1IO_1a5164306ed0dd7d34c35310f93fb02563" kindref="member">FunctionMapType</ref> &gt; &gt;</type>
+        <definition>std::map&lt;std::string, std::tuple&lt;std::map&lt;std::string, util::ParamData&gt;, std::map&lt;char, std::string&gt;, FunctionMapType&gt; &gt; storageMap</definition>
+        <argsstring></argsstring>
+        <name>storageMap</name>
+        <briefdescription>
+<para>Storage map for parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="318" column="2" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="318" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1IO_1aba5a4e3036cfa1d1c55012097b0b50cc" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool didParse</definition>
+        <argsstring></argsstring>
+        <name>didParse</name>
+        <briefdescription>
+<para>True, if <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> was used to parse command line options. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="322" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="322" bodyend="-1"/>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" compoundref="parse__command__line_8hpp" startline="36" endline="152">mlpack::bindings::cli::ParseCommandLine</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1aa22e2ce779d7df54dde6a4d7458ef1a0" prot="public" static="no" mutable="no">
+        <type><ref refid="structmlpack_1_1util_1_1BindingDetails" kindref="compound">util::BindingDetails</ref></type>
+        <definition>util::BindingDetails doc</definition>
+        <argsstring></argsstring>
+        <name>doc</name>
+        <briefdescription>
+<para>Holds the bindingDetails objects. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="335" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="335" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1a1a6b843f1c06bc4c23630d76510b491e" prot="public" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1IO_1a5164306ed0dd7d34c35310f93fb02563" kindref="member">FunctionMapType</ref></type>
+        <definition>FunctionMapType functionMap</definition>
+        <argsstring></argsstring>
+        <name>functionMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="313" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="313" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a0f5881c4001a8176d0ad6387b30c8b8a" compoundref="end__program_8hpp" startline="26" endline="96">mlpack::bindings::cli::EndProgram</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" compoundref="parse__command__line_8hpp" startline="36" endline="152">mlpack::bindings::cli::ParseCommandLine</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1a24d855d329269931b59bdf1b36706a88" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string programName</definition>
+        <argsstring></argsstring>
+        <name>programName</name>
+        <briefdescription>
+<para>Holds the name of the program for <ndash/>version. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is the true program name (argv[0]) not what is given in BindingDetails. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="326" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="326" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1IO_1aca4a039cfb9a63fbe2d98febc7ae337b" prot="public" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1Timers" kindref="compound">Timers</ref></type>
+        <definition>Timers timer</definition>
+        <argsstring></argsstring>
+        <name>timer</name>
+        <briefdescription>
+<para>Holds the timer objects. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="329" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="329" bodyend="-1"/>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a0f5881c4001a8176d0ad6387b30c8b8a" compoundref="end__program_8hpp" startline="26" endline="96">mlpack::bindings::cli::EndProgram</referencedby>
+        <referencedby refid="namespacemlpack_1_1util_1aa51cc50fad843f33d826c5bd80711ccf" compoundref="go_2mlpack_2capi_2io__util_8hpp" startline="84" endline="88">mlpack::util::ResetTimers</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classmlpack_1_1IO_1a50de43af5bed41f30c071d8cce0e81bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Timer</definition>
+        <argsstring></argsstring>
+        <name>Timer</name>
+        <param>
+          <type><ref refid="classmlpack_1_1Timer" kindref="compound">Timer</ref></type>
+        </param>
+        <briefdescription>
+<para>So that <ref refid="classmlpack_1_1Timer_1aa052af5e185f178dcfd540b95d2b1d11" kindref="member">Timer::Start()</ref> and <ref refid="classmlpack_1_1Timer_1ad5249f0e0368bf00dbd1bd6570160950" kindref="member">Timer::Stop()</ref> can access the timer variable. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="332" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="332" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1IO_1adc908d81414046d89563fd0571d55cac" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Add</definition>
+        <argsstring>(util::ParamData &amp;&amp;d)</argsstring>
+        <name>Add</name>
+        <param>
+          <type><ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &amp;&amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+<para>Adds a parameter to the hierarchy; use the PARAM_*() macros instead of this (i.e. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>PARAM_INT()).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Utility structure holding parameter data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="181" column="15"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a5be18c0eeb63369cb449da84dc3ea7ed" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::map&lt; char, std::string &gt; &amp;</type>
+        <definition>static std::map&lt;char, std::string&gt;&amp; Aliases</definition>
+        <argsstring>()</argsstring>
+        <name>Aliases</name>
+        <briefdescription>
+<para>Return a modifiable list of aliases that <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> knows about. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="259" column="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a6686cc4e364afe1e9e63b6059fdfe4d4" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void CheckInputMatrices</definition>
+        <argsstring>()</argsstring>
+        <name>CheckInputMatrices</name>
+        <briefdescription>
+<para>Checks all input matrices for NaN and inf values, exits if found any. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="300" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a13e26de32fbf867cff10d99e6660a1ce" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void CheckInputMatrix</definition>
+        <argsstring>(const T &amp;matrix, const std::string &amp;identifier)</argsstring>
+        <name>CheckInputMatrix</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>identifier</declname>
+        </param>
+        <briefdescription>
+<para>Utility function for <ref refid="classmlpack_1_1IO_1a6686cc4e364afe1e9e63b6059fdfe4d4" kindref="member">CheckInputMatrices()</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>matrix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to check. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>identifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter in question. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="229" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a311c68c417bf994e4bf952dcce4a874d" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void ClearSettings</definition>
+        <argsstring>()</argsstring>
+        <name>ClearSettings</name>
+        <briefdescription>
+<para>Clear all of the settings, removing all parameters and function mappings. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="295" column="15"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T &amp;</type>
+        <definition>static T&amp; GetParam</definition>
+        <argsstring>(const std::string &amp;identifier)</argsstring>
+        <name>GetParam</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>identifier</declname>
+        </param>
+        <briefdescription>
+<para>Get the value of type T found while parsing. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>You can set the value using this reference safely.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>identifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the parameter in question. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="197" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a9273a321ef422a2aa57ee98f5b169632" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::string</type>
+        <definition>static std::string GetPrintableParam</definition>
+        <argsstring>(const std::string &amp;identifier)</argsstring>
+        <name>GetPrintableParam</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>identifier</declname>
+        </param>
+        <briefdescription>
+<para>Cast the given parameter of the given type to a short, printable std::string, for use in status messages. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Ideally the message returned here should be only a handful of characters, and certainly no longer than one line.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>identifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the parameter in question. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="208" column="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1aa3080f329734511912ebe72f9ed30656" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T &amp;</type>
+        <definition>static T&amp; GetRawParam</definition>
+        <argsstring>(const std::string &amp;identifier)</argsstring>
+        <name>GetRawParam</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>identifier</declname>
+        </param>
+        <briefdescription>
+<para>Get the raw value of the parameter before any processing that <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">GetParam()</ref> might normally do. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>So, e.g., for command-line programs, this does not perform any data loading or manipulation like <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">GetParam()</ref> does. So if you want to access a matrix or model (or similar) parameter before it is loaded, this is the method to use.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>identifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the parameter in question. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="220" column="12"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1aacf8da2c1644e932b3cbd46703a3d889" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> &amp;</type>
+        <definition>static IO&amp; GetSingleton</definition>
+        <argsstring>()</argsstring>
+        <name>GetSingleton</name>
+        <briefdescription>
+<para>Retrieve the singleton. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>As an end user, if you are just using the <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> object, you should not need to use this function<mdash/>the other static functions should be sufficient.</para>
+<para>In this case, the singleton is used to store data for the static methods, as there is no point in defining static methods only to have users call private instance methods.</para>
+<para><simplesect kind="return"><para>The singleton instance for use in the static methods. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="254" column="13"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a0f5881c4001a8176d0ad6387b30c8b8a" compoundref="end__program_8hpp" startline="26" endline="96">mlpack::bindings::cli::EndProgram</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" compoundref="parse__command__line_8hpp" startline="36" endline="152">mlpack::bindings::cli::ParseCommandLine</referencedby>
+        <referencedby refid="namespacemlpack_1_1util_1aa51cc50fad843f33d826c5bd80711ccf" compoundref="go_2mlpack_2capi_2io__util_8hpp" startline="84" endline="88">mlpack::util::ResetTimers</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a39eda1093ba2453f2b66d37153ac542c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>static bool HasParam</definition>
+        <argsstring>(const std::string &amp;identifier)</argsstring>
+        <name>HasParam</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>identifier</declname>
+        </param>
+        <briefdescription>
+<para>See if the specified flag was found while parsing. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>identifier</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the parameter in question. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="188" column="15"/>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a0f5881c4001a8176d0ad6387b30c8b8a" compoundref="end__program_8hpp" startline="26" endline="96">mlpack::bindings::cli::EndProgram</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" compoundref="parse__command__line_8hpp" startline="36" endline="152">mlpack::bindings::cli::ParseCommandLine</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a0a4e362b05cd037fc620e27877f3bf4f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void MakeInPlaceCopy</definition>
+        <argsstring>(const std::string &amp;outputParamName, const std::string &amp;inputParamName)</argsstring>
+        <name>MakeInPlaceCopy</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>outputParamName</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>inputParamName</declname>
+        </param>
+        <briefdescription>
+<para>Given two (matrix) parameters, ensure that the first is an in-place copy of the second. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This will generally do nothing (as the bindings already do this automatically), except for command-line bindings, where we need to ensure that the output filename is the same as the input filename.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>outputParamName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of output (matrix) parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>inputParamName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of input (matrix) parameter. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="240" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a3eee2232cb321a8295fa908ba12868ad" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::map&lt; std::string, <ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref> &gt; &amp;</type>
+        <definition>static std::map&lt;std::string, util::ParamData&gt;&amp; Parameters</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Return a modifiable list of parameters that <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> knows about. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="257" column="19"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1cli_1_1CLIOption_1a0f704d6254efd250f762171f2f6069f3" compoundref="cli__option_8hpp" startline="68" endline="164">CLIOption&lt; N &gt;::CLIOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a0f5881c4001a8176d0ad6387b30c8b8a" compoundref="end__program_8hpp" startline="26" endline="96">mlpack::bindings::cli::EndProgram</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" compoundref="parse__command__line_8hpp" startline="36" endline="152">mlpack::bindings::cli::ParseCommandLine</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1python_1adb00a6ddc1c45cf0858e91a5be674624" compoundref="python_2print__output__processing_8hpp" startline="169" endline="281">mlpack::bindings::python::PrintOutputProcessing</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a1025ff079f4aa3baecf036ab0bc32be5" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>static std::string ProgramName</definition>
+        <argsstring>()</argsstring>
+        <name>ProgramName</name>
+        <briefdescription>
+<para>Get the program name as set by the <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref> macro. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="262" column="22"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" compoundref="parse__command__line_8hpp" startline="36" endline="152">mlpack::bindings::cli::ParseCommandLine</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a6de90cea213fa99eaa5d5f354fabfaa0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void RestoreSettings</definition>
+        <argsstring>(const std::string &amp;name, const bool fatal=true)</argsstring>
+        <name>RestoreSettings</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>fatal</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Restore all of the parameters and function mappings of the given name, if they exist. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A std::invalid_argument exception will be thrown if fatal is true and no settings with the given name have been stored (with <ref refid="classmlpack_1_1IO_1ad30747ed34d1dcf57dad194ff8d09138" kindref="member">StoreSettings()</ref>).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of settings to restore. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fatal</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether to throw an exception on an unknown name. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="290" column="15"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a12aa08b1280e9b33864a9845706e0e59" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void SetPassed</definition>
+        <argsstring>(const std::string &amp;name)</argsstring>
+        <name>SetPassed</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+<para>Mark a particular parameter as passed. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="269" column="15"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+        <referencedby refid="namespacemlpack_1_1util_1a997283ede9320ae143e5cf3314efe0a4" compoundref="test__helper_8hpp" startline="29" endline="34">mlpack::util::SetInputParam</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1ad30747ed34d1dcf57dad194ff8d09138" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void StoreSettings</definition>
+        <argsstring>(const std::string &amp;name)</argsstring>
+        <name>StoreSettings</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+<para>Take all parameters and function mappings and store them, under the given name. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This can later be restored with <ref refid="classmlpack_1_1IO_1a6de90cea213fa99eaa5d5f354fabfaa0" kindref="member">RestoreSettings()</ref>. If settings have already been saved under the given name, they will be overwritten. This also clears the current parameters and function map.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of settings to save. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="279" column="15"/>
+        <referencedby refid="classmlpack_1_1bindings_1_1go_1_1GoOption_1a89c79fb6c96bbd487c943bb75cec173e" compoundref="go__option_8hpp" startline="60" endline="126">GoOption&lt; T &gt;::GoOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1julia_1_1JuliaOption_1aea03d5b83c4f5a6710aa32fcc36def97" compoundref="julia__option_8hpp" startline="45" endline="114">JuliaOption&lt; T &gt;::JuliaOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1markdown_1_1MDOption_1a5e8beab62dc76222b892d3e1fb1971cf" compoundref="md__option_8hpp" startline="41" endline="102">MDOption&lt; T &gt;::MDOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1python_1_1PyOption_1a046281af7e5fcabb167599ddf9f77355" compoundref="py__option_8hpp" startline="45" endline="112">PyOption&lt; T &gt;::PyOption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1r_1_1ROption_1a1f221718e10a0cd7ebc05c382eaa9a56" compoundref="R__option_8hpp" startline="52" endline="114">ROption&lt; T &gt;::ROption</referencedby>
+        <referencedby refid="classmlpack_1_1bindings_1_1tests_1_1TestOption_1a10bcdfca4bfb433ccbe8ee7a97e5379a" compoundref="test__option_8hpp" startline="61" endline="108">TestOption&lt; N &gt;::TestOption</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1IO_1aa0f040401c8ee59c4cbac0b887b86766" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IO</definition>
+        <argsstring>()</argsstring>
+        <name>IO</name>
+        <briefdescription>
+<para>Make the constructor private, to preclude unauthorized instances. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="340" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1ab97f38cc7c806a9ca1ac423f65e9b00c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>IO</definition>
+        <argsstring>(const IO &amp;other)</argsstring>
+        <name>IO</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Private copy constructor; we don&apos;t want copies floating around. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="343" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1IO_1a137c8f8039ba21a200513a45af990409" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> &amp;</type>
+        <definition>IO&amp; operator=</definition>
+        <argsstring>(const IO &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Private copy operator; we don&apos;t want copies floating around. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="345" column="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Parses the command line for parameters and holds user-specified parameters. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> class is a subsystem by which parameters for machine learning methods can be specified and accessed. In conjunction with the macros PARAM_DOUBLE, PARAM_INT, PARAM_STRING, PARAM_FLAG, and others, this class aims to make user configurability of mlpack methods very easy. There are only three methods in <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> that a user should need: <ref refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" kindref="member">IO::ParseCommandLine()</ref>, <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">IO::GetParam()</ref>, and <ref refid="classmlpack_1_1IO_1a39eda1093ba2453f2b66d37153ac542c" kindref="member">IO::HasParam()</ref> (in addition to the PARAM_*() macros).</para>
+<sect1 id="classmlpack_1_1IO_1addparam">
+<title>Adding parameters to a program</title>
+<para><programlisting><codeline><highlight class="normal">$<sp/>./executable<sp/>--bar=5</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="note"><para>The = is optional; a space can also be used.</para>
+</simplesect>
+A parameter is specified by using one of the following macros (this is not a complete list; see core/io/io.hpp):</para>
+<para><itemizedlist>
+<listitem><para><ref refid="param_8hpp_1a59a38dfe16c56a278bd89817216a3739" kindref="member">PARAM_FLAG(ID, DESC, ALIAS)</ref></para>
+</listitem><listitem><para>PARAM_DOUBLE(ID, DESC, ALIAS, DEF)</para>
+</listitem><listitem><para>PARAM_INT(ID, DESC, ALIAS, DEF)</para>
+</listitem><listitem><para>PARAM_STRING(ID, DESC, ALIAS, DEF)</para>
+</listitem></itemizedlist>
+</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DESC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Short description of the parameter (one/two sentences). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>ALIAS</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An alias for the parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>DEF</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default value of the parameter.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+The flag (boolean) type automatically defaults to false; it is specified merely as a flag on the command line (no &apos;=true&apos; is required).</para>
+<para>Here is an example of a few parameters being defined; this is for the KNN binding (methods/neighbor_search/knn_main.cpp):</para>
+<para><programlisting><codeline><highlight class="normal">PARAM_STRING_REQ(&quot;reference_file&quot;,<sp/>&quot;File<sp/>containing<sp/>the<sp/>reference<sp/>dataset.&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;r&quot;);</highlight></codeline>
+<codeline><highlight class="normal">PARAM_STRING_REQ(&quot;distances_file&quot;,<sp/>&quot;File<sp/>to<sp/>output<sp/>distances<sp/>into.&quot;,<sp/>&quot;d&quot;);</highlight></codeline>
+<codeline><highlight class="normal">PARAM_STRING_REQ(&quot;neighbors_file&quot;,<sp/>&quot;File<sp/>to<sp/>output<sp/>neighbors<sp/>into.&quot;,<sp/>&quot;n&quot;);</highlight></codeline>
+<codeline><highlight class="normal">PARAM_INT_REQ(&quot;k&quot;,<sp/>&quot;Number<sp/>of<sp/>furthest<sp/>neighbors<sp/>to<sp/>find.&quot;,<sp/>&quot;k&quot;);</highlight></codeline>
+<codeline><highlight class="normal">PARAM_STRING(&quot;query_file&quot;,<sp/>&quot;File<sp/>containing<sp/>query<sp/>points<sp/>(optional).&quot;,<sp/>&quot;q&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;&quot;);</highlight></codeline>
+<codeline><highlight class="normal">PARAM_INT(&quot;leaf_size&quot;,<sp/>&quot;Leaf<sp/>size<sp/>for<sp/>tree<sp/>building.&quot;,<sp/>&quot;l&quot;,<sp/>20);</highlight></codeline>
+<codeline><highlight class="normal">PARAM_FLAG(&quot;naive&quot;,<sp/>&quot;If<sp/>true,<sp/>O(n^2)<sp/>naive<sp/>mode<sp/>is<sp/>used<sp/>for<sp/>computation.&quot;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;N&quot;);</highlight></codeline>
+<codeline><highlight class="normal">PARAM_FLAG(&quot;single_mode&quot;,<sp/>&quot;If<sp/>true,<sp/>single-tree<sp/>search<sp/>is<sp/>used<sp/>(as<sp/>opposed<sp/>&quot;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>&quot;to<sp/>dual-tree<sp/>search.&quot;,<sp/>&quot;s&quot;);</highlight></codeline>
+</programlisting></para>
+<para>More documentation is available on the PARAM_*() macros in the documentation for core/io/io.hpp.</para>
+</sect1>
+<sect1 id="classmlpack_1_1IO_1programinfo">
+<title>Documenting the program itself</title>
+<para>In addition to allowing documentation for each individual parameter and module, the <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref> macro provides support for documenting the programName, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref> macro provides support for documenting the shortDescription, <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref> macro provides support for documenting the longDescription, the <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> macro provides support for documenting the example and the <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref> macro provides support for documenting the seeAlso. There should only be one instance of the <ref refid="param_8hpp_1a3610abda0a69dc19a08c50e713f615b7" kindref="member">BINDING_NAME()</ref>, <ref refid="param_8hpp_1a013f7f337d6139c7f6de3a4f0fa7b019" kindref="member">BINDING_SHORT_DESC()</ref> and <ref refid="param_8hpp_1a7f7cbd16d4fecab7136b5ca1cbcbb0a7" kindref="member">BINDING_LONG_DESC()</ref> macros and there can be multiple instance of <ref refid="param_8hpp_1a9ffe1d6d254b3e50a5611f77ee381838" kindref="member">BINDING_EXAMPLE()</ref> and <ref refid="param_8hpp_1add4a79815b7f3972699cc414bfc9fe57" kindref="member">BINDING_SEE_ALSO()</ref> macro. Below is an example:</para>
+<para><programlisting><codeline><highlight class="normal">BINDING_NAME(&quot;Maximum<sp/>Variance<sp/>Unfolding&quot;);</highlight></codeline>
+<codeline><highlight class="normal">BINDING_SHORT_DESC(&quot;An<sp/>implementation<sp/>of<sp/>Maximum<sp/>Variance<sp/>Unfolding&quot;);</highlight></codeline>
+<codeline><highlight class="normal">BINDING_LONG_DESC(<sp/>&quot;This<sp/>program<sp/>performs<sp/>maximum<sp/>&quot;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>&quot;variance<sp/>unfolding<sp/>on<sp/>the<sp/>given<sp/>dataset,<sp/>writing<sp/>a<sp/>lower-dimensional<sp/>&quot;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/>&quot;unfolded<sp/>dataset<sp/>to<sp/>the<sp/>given<sp/>output<sp/>file.&quot;);</highlight></codeline>
+<codeline><highlight class="normal">BINDING_EXAMPLE(&quot;mvu&quot;,<sp/>&quot;input&quot;,<sp/>&quot;dataset&quot;,<sp/>&quot;new_dim&quot;,<sp/>5,<sp/>&quot;output&quot;,<sp/>&quot;output&quot;);</highlight></codeline>
+<codeline><highlight class="normal">BINDING_SEE_ALSO(&quot;Perceptron&quot;,<sp/>&quot;#perceptron&quot;);</highlight></codeline>
+</programlisting></para>
+<para>This description should be verbose, and explain to a non-expert user what the program does and how to use it. If relevant, paper citations should be included.</para>
+</sect1>
+<sect1 id="classmlpack_1_1IO_1parseio">
+<title>Parsing the command line with IO</title>
+<para>To have <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> parse the command line at the beginning of code execution, only a call to <ref refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" kindref="member">ParseCommandLine()</ref> is necessary:</para>
+<para><programlisting><codeline><highlight class="normal">int<sp/>main(int<sp/>argc,<sp/>char**<sp/>argv)</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>IO::ParseCommandLine(argc,<sp/>argv);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/>...</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> provides <ndash/>help and <ndash/>info options which give nicely formatted documentation of each option; the documentation is generated from the DESC arguments in the PARAM_*() macros.</para>
+</sect1>
+<sect1 id="classmlpack_1_1IO_1getparam">
+<title>Getting parameters with IO</title>
+<para>When the parameters have been defined, the next important thing is how to access them. For this, the <ref refid="classmlpack_1_1IO_1a39eda1093ba2453f2b66d37153ac542c" kindref="member">HasParam()</ref> and <ref refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" kindref="member">GetParam()</ref> methods are used. For instance, to see if the user passed the flag (boolean) &quot;naive&quot;:</para>
+<para><programlisting><codeline><highlight class="normal">if<sp/>(IO::HasParam(&quot;naive&quot;))</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>Log::Info<sp/>&lt;&lt;<sp/>&quot;Naive<sp/>has<sp/>been<sp/>passed!&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>To get the value of a parameter, such as a string, use GetParam:</para>
+<para><programlisting><codeline><highlight class="normal">const<sp/>std::string<sp/>filename<sp/>=<sp/>IO::GetParam&lt;std::string&gt;(&quot;filename&quot;);</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="note"><para>Options should only be defined in files which define <computeroutput>main()</computeroutput> (that is, main bindings). If options are defined elsewhere, they may be spuriously included into other bindings and confuse users. Similarly, if your binding has options which you did not define, it is probably because the option is defined somewhere else and included in your binding.</para>
+</simplesect>
+<xrefsect id="bug_1_bug000001"><xreftitle>Bug</xreftitle><xrefdescription><para>The <bold>COUNTER</bold> variable is used in most cases to guarantee a unique global identifier for options declared using the PARAM_*() macros. However, not all compilers have this support<ndash/>most notably, gcc &lt; 4.3. In that case, the <bold>LINE</bold> macro is used as an attempt to get a unique global identifier, but collisions are still possible, and they produce bizarre error messages. See <ulink url="https://github.com/mlpack/mlpack/issues/100">https://github.com/mlpack/mlpack/issues/100</ulink> for more information. </para>
+</xrefdescription></xrefsect></para>
+</sect1>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>IO</label>
+        <link refid="classmlpack_1_1IO"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>doc</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>timer</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Timers</label>
+        <link refid="classmlpack_1_1Timers"/>
+      </node>
+      <node id="2">
+        <label>BindingDetails</label>
+        <link refid="structmlpack_1_1util_1_1BindingDetails"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" line="172" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/io.hpp" bodystart="173" bodyend="346"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1IO_1adc908d81414046d89563fd0571d55cac" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>Add</name></member>
+      <member refid="classmlpack_1_1IO_1a7d026933df7a8c24cae539dab626d3e2" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>aliases</name></member>
+      <member refid="classmlpack_1_1IO_1a5be18c0eeb63369cb449da84dc3ea7ed" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>Aliases</name></member>
+      <member refid="classmlpack_1_1IO_1a6686cc4e364afe1e9e63b6059fdfe4d4" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>CheckInputMatrices</name></member>
+      <member refid="classmlpack_1_1IO_1a13e26de32fbf867cff10d99e6660a1ce" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>CheckInputMatrix</name></member>
+      <member refid="classmlpack_1_1IO_1a311c68c417bf994e4bf952dcce4a874d" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>ClearSettings</name></member>
+      <member refid="classmlpack_1_1IO_1aba5a4e3036cfa1d1c55012097b0b50cc" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>didParse</name></member>
+      <member refid="classmlpack_1_1IO_1aa22e2ce779d7df54dde6a4d7458ef1a0" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>doc</name></member>
+      <member refid="classmlpack_1_1IO_1a1a6b843f1c06bc4c23630d76510b491e" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>functionMap</name></member>
+      <member refid="classmlpack_1_1IO_1a5164306ed0dd7d34c35310f93fb02563" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>FunctionMapType</name></member>
+      <member refid="classmlpack_1_1IO_1a6c641e7bd5291c24b787f379f25cb9b8" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>GetParam</name></member>
+      <member refid="classmlpack_1_1IO_1a9273a321ef422a2aa57ee98f5b169632" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>GetPrintableParam</name></member>
+      <member refid="classmlpack_1_1IO_1aa3080f329734511912ebe72f9ed30656" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>GetRawParam</name></member>
+      <member refid="classmlpack_1_1IO_1aacf8da2c1644e932b3cbd46703a3d889" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>GetSingleton</name></member>
+      <member refid="classmlpack_1_1IO_1a39eda1093ba2453f2b66d37153ac542c" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>HasParam</name></member>
+      <member refid="classmlpack_1_1IO_1aa0f040401c8ee59c4cbac0b887b86766" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>IO</name></member>
+      <member refid="classmlpack_1_1IO_1ab97f38cc7c806a9ca1ac423f65e9b00c" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>IO</name></member>
+      <member refid="classmlpack_1_1IO_1a0a4e362b05cd037fc620e27877f3bf4f" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>MakeInPlaceCopy</name></member>
+      <member refid="classmlpack_1_1IO_1a137c8f8039ba21a200513a45af990409" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>operator=</name></member>
+      <member refid="classmlpack_1_1IO_1a3eee2232cb321a8295fa908ba12868ad" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1IO_1a9f6e568d2db09a7405644497b6b2d59f" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>parameters</name></member>
+      <member refid="classmlpack_1_1IO_1a24d855d329269931b59bdf1b36706a88" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>programName</name></member>
+      <member refid="classmlpack_1_1IO_1a1025ff079f4aa3baecf036ab0bc32be5" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>ProgramName</name></member>
+      <member refid="classmlpack_1_1IO_1a6de90cea213fa99eaa5d5f354fabfaa0" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>RestoreSettings</name></member>
+      <member refid="classmlpack_1_1IO_1a12aa08b1280e9b33864a9845706e0e59" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>SetPassed</name></member>
+      <member refid="classmlpack_1_1IO_1a633a07bb688dd5a1fba5338c8efc6929" prot="private" virt="non-virtual"><scope>mlpack::IO</scope><name>storageMap</name></member>
+      <member refid="classmlpack_1_1IO_1ad30747ed34d1dcf57dad194ff8d09138" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>StoreSettings</name></member>
+      <member refid="classmlpack_1_1IO_1aca4a039cfb9a63fbe2d98febc7ae337b" prot="public" virt="non-virtual"><scope>mlpack::IO</scope><name>timer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

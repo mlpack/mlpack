@@ -1,0 +1,49 @@
+.TH "ForwardVisitor" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ForwardVisitor \- \fBForwardVisitor\fP executes the Forward() function given the input and output parameter\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBForwardVisitor\fP (const arma::mat &input, arma::mat &output)"
+.br
+.RI "Execute the Forward() function given the input and output parameter\&. "
+.ti -1c
+.RI "template<typename LayerType > void \fBoperator()\fP (LayerType *layer) const"
+.br
+.RI "Execute the Forward() function\&. "
+.ti -1c
+.RI "void \fBoperator()\fP (\fBMoreTypes\fP layer) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBForwardVisitor\fP executes the Forward() function given the input and output parameter\&. 
+.PP
+Definition at line 28 of file forward_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBForwardVisitor\fP (const arma::mat & input, arma::mat & output)"
+
+.PP
+Execute the Forward() function given the input and output parameter\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void operator() (LayerType * layer) const"
+
+.PP
+Execute the Forward() function\&. 
+.SS "void operator() (\fBMoreTypes\fP layer) const"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1tree_1_1RPTreeMaxSplit_1_1SplitInfo" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::tree::RPTreeMaxSplit::SplitInfo</compoundname>
+    <includes refid="rp__tree__max__split_8hpp" local="no">rp_tree_max_split.hpp</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1tree_1_1RPTreeMaxSplit_1_1SplitInfo_1a620f4f39e225b65a841f34c53b94515f" prot="public" static="no" mutable="no">
+        <type>arma::Col&lt; <ref refid="classmlpack_1_1tree_1_1RPTreeMaxSplit_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref> &gt;</type>
+        <definition>arma::Col&lt;ElemType&gt; direction</definition>
+        <argsstring></argsstring>
+        <name>direction</name>
+        <briefdescription>
+<para>The normal vector to the hyperplane that splits the node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/rp_tree_max_split.hpp" line="41" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/rp_tree_max_split.hpp" bodystart="41" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1tree_1_1RPTreeMaxSplit_1af0fc61f469596cb8796d1966564ecbcb" compoundref="rp__tree__max__split_8hpp" startline="116" endline="119">RPTreeMaxSplit&lt; BoundType, MatType &gt;::AssignToLeftNode</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="structmlpack_1_1tree_1_1RPTreeMaxSplit_1_1SplitInfo_1a0940adf91ff7f1747d68384a012683d3" prot="public" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1tree_1_1RPTreeMaxSplit_1a227d0c7e23e98fcd6c81ecab357a791f" kindref="member">ElemType</ref></type>
+        <definition>ElemType splitVal</definition>
+        <argsstring></argsstring>
+        <name>splitVal</name>
+        <briefdescription>
+<para>The value according to which the node is being split. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/rp_tree_max_split.hpp" line="43" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/rp_tree_max_split.hpp" bodystart="43" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1tree_1_1RPTreeMaxSplit_1af0fc61f469596cb8796d1966564ecbcb" compoundref="rp__tree__max__split_8hpp" startline="116" endline="119">RPTreeMaxSplit&lt; BoundType, MatType &gt;::AssignToLeftNode</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An information about the partition. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/rp_tree_max_split.hpp" line="38" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/binary_space_tree/rp_tree_max_split.hpp" bodystart="39" bodyend="44"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1tree_1_1RPTreeMaxSplit_1_1SplitInfo_1a620f4f39e225b65a841f34c53b94515f" prot="public" virt="non-virtual"><scope>mlpack::tree::RPTreeMaxSplit::SplitInfo</scope><name>direction</name></member>
+      <member refid="structmlpack_1_1tree_1_1RPTreeMaxSplit_1_1SplitInfo_1a0940adf91ff7f1747d68384a012683d3" prot="public" virt="non-virtual"><scope>mlpack::tree::RPTreeMaxSplit::SplitInfo</scope><name>splitVal</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,168 @@
+\doxysection{Given\+Initialization Class Reference}
+\label{classmlpack_1_1amf_1_1GivenInitialization}\index{GivenInitialization@{GivenInitialization}}
+
+
+This initialization rule for \doxyref{AMF}{p.}{classmlpack_1_1amf_1_1AMF} simply fills the W and H matrices with the matrices given to the constructor of this object.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Given\+Initialization} ()
+\item 
+\textbf{ Given\+Initialization} (const arma\+::mat \&\&m, const bool which\+Matrix=true)
+\item 
+\textbf{ Given\+Initialization} (const arma\+::mat \&\&w, const arma\+::mat \&\&h)
+\item 
+\textbf{ Given\+Initialization} (const arma\+::mat \&m, const bool which\+Matrix=true)
+\item 
+\textbf{ Given\+Initialization} (const arma\+::mat \&w, const arma\+::mat \&h)
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Initialize} (const Mat\+Type \&V, const size\+\_\+t r, arma\+::mat \&W, arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em Fill W and H with given matrices. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Initialize\+One} (const Mat\+Type \&V, const size\+\_\+t r, arma\+::mat \&M, const bool which\+Matrix=true)
+\begin{DoxyCompactList}\small\item\em Fill W or H with given matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the object (in this case, there is nothing to serialize). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This initialization rule for \doxyref{AMF}{p.}{classmlpack_1_1amf_1_1AMF} simply fills the W and H matrices with the matrices given to the constructor of this object. 
+
+Note that this object does not use std\+::move() during the \doxyref{Initialize()}{p.}{classmlpack_1_1amf_1_1GivenInitialization_af7816b2608658041cf35befb4c3946b9} method, so it can be reused for multiple \doxyref{AMF}{p.}{classmlpack_1_1amf_1_1AMF} objects, but will incur copies of the W and H matrices. 
+
+Definition at line 27 of file given\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1amf_1_1GivenInitialization_a53bd9dba6a4228dec311182f3b764f31}} 
+\index{GivenInitialization@{GivenInitialization}!GivenInitialization@{GivenInitialization}}
+\index{GivenInitialization@{GivenInitialization}!GivenInitialization@{GivenInitialization}}
+\doxysubsubsection{GivenInitialization()\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily \textbf{ Given\+Initialization} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 31 of file given\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1GivenInitialization_a1e16c4be542c7629394a4a6bdf0e30af}} 
+\index{GivenInitialization@{GivenInitialization}!GivenInitialization@{GivenInitialization}}
+\index{GivenInitialization@{GivenInitialization}!GivenInitialization@{GivenInitialization}}
+\doxysubsubsection{GivenInitialization()\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily \textbf{ Given\+Initialization} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{w,  }\item[{const arma\+::mat \&}]{h }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 34 of file given\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1GivenInitialization_a46b01fb0c1f3a5cd31013bbdee063866}} 
+\index{GivenInitialization@{GivenInitialization}!GivenInitialization@{GivenInitialization}}
+\index{GivenInitialization@{GivenInitialization}!GivenInitialization@{GivenInitialization}}
+\doxysubsubsection{GivenInitialization()\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily \textbf{ Given\+Initialization} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&\&}]{w,  }\item[{const arma\+::mat \&\&}]{h }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 39 of file given\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1GivenInitialization_ae2f9c59d5f5b4ec7a836084150f85cef}} 
+\index{GivenInitialization@{GivenInitialization}!GivenInitialization@{GivenInitialization}}
+\index{GivenInitialization@{GivenInitialization}!GivenInitialization@{GivenInitialization}}
+\doxysubsubsection{GivenInitialization()\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily \textbf{ Given\+Initialization} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{m,  }\item[{const bool}]{which\+Matrix = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 47 of file given\+\_\+init.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1GivenInitialization_a361454d5a5a17e475976df9e8fd3ac18}} 
+\index{GivenInitialization@{GivenInitialization}!GivenInitialization@{GivenInitialization}}
+\index{GivenInitialization@{GivenInitialization}!GivenInitialization@{GivenInitialization}}
+\doxysubsubsection{GivenInitialization()\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily \textbf{ Given\+Initialization} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&\&}]{m,  }\item[{const bool}]{which\+Matrix = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 64 of file given\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1amf_1_1GivenInitialization_af7816b2608658041cf35befb4c3946b9}} 
+\index{GivenInitialization@{GivenInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!GivenInitialization@{GivenInitialization}}
+\doxysubsubsection{Initialize()}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{V,  }\item[{const size\+\_\+t}]{r,  }\item[{arma\+::mat \&}]{W,  }\item[{arma\+::mat \&}]{H }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Fill W and H with given matrices. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix. \\
+\hline
+{\em r} & Rank of decomposition. \\
+\hline
+{\em W} & W matrix, to be initialized to given matrix. \\
+\hline
+{\em H} & H matrix, to be initialized to given matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 89 of file given\+\_\+init.\+hpp.
+
+
+
+References Log\+::\+Fatal.
+
+\mbox{\label{classmlpack_1_1amf_1_1GivenInitialization_ab36c483763ea43179dd94fac38e29f03}} 
+\index{GivenInitialization@{GivenInitialization}!InitializeOne@{InitializeOne}}
+\index{InitializeOne@{InitializeOne}!GivenInitialization@{GivenInitialization}}
+\doxysubsubsection{InitializeOne()}
+{\footnotesize\ttfamily void Initialize\+One (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{V,  }\item[{const size\+\_\+t}]{r,  }\item[{arma\+::mat \&}]{M,  }\item[{const bool}]{which\+Matrix = {\ttfamily true} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Fill W or H with given matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix. \\
+\hline
+{\em r} & Rank of decomposition. \\
+\hline
+{\em M} & W or H matrix, to be initialized to given matrix. \\
+\hline
+{\em which\+Matrix} & If true, initialize W. Otherwise, initialize H. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 144 of file given\+\_\+init.\+hpp.
+
+
+
+References Log\+::\+Fatal.
+
+\mbox{\label{classmlpack_1_1amf_1_1GivenInitialization_a65cba07328997659bec80b9879b15a51}} 
+\index{GivenInitialization@{GivenInitialization}!serialize@{serialize}}
+\index{serialize@{serialize}!GivenInitialization@{GivenInitialization}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the object (in this case, there is nothing to serialize). 
+
+
+
+Definition at line 203 of file given\+\_\+init.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/amf/init\+\_\+rules/\textbf{ given\+\_\+init.\+hpp}\end{DoxyCompactItemize}

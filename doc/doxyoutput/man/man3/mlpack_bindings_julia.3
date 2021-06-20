@@ -1,0 +1,700 @@
+.TH "mlpack::bindings::julia" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::bindings::julia
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBJuliaOption\fP"
+.br
+.RI "The Julia option class\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > void \fBDefaultParam\fP (\fButil::ParamData\fP &data, const void *, void *output)"
+.br
+.RI "Return the default value of an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::string >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Return the default value of an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return the default value of a model option (this returns the default filename, or '' if the default is no file)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< std::is_same< T, std::string >>::type *=0)"
+.br
+.RI "Return the default value of a string option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type *=0)"
+.br
+.RI "Return the default value of a vector option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if_c< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or '' if the default is no file)\&. "
+.ti -1c
+.RI "std::string \fBGetBindingName\fP (const std::string &bindingName)"
+.br
+.RI "Given the name of a binding, print its Julia name (this just returns the binding name)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetJuliaType\fP (\fButil::ParamData\fP &, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetJuliaType\fP (\fButil::ParamData\fP &, const typename std::enable_if<!\fButil::IsStdVector\fP< T >::value >::type *=0, const typename std::enable_if<!arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0, const typename std::enable_if<!\fBdata::HasSerialize\fP< T >::value >::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetJuliaType\fP (\fButil::ParamData\fP &d, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type *=0, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0, const typename std::enable_if<!arma::is_arma_type< T >::value >::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetJuliaType\fP (\fButil::ParamData\fP &d, const typename std::enable_if<!\fButil::IsStdVector\fP< T >::value >::type *=0, const typename std::enable_if<!arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBGetJuliaType\fP (\fButil::ParamData\fP &d, const typename std::enable_if<!\fButil::IsStdVector\fP< T >::value >::type *=0, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0, const typename std::enable_if< arma::is_arma_type< T >::value >::type *=0)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetJuliaType< bool >\fP (\fButil::ParamData\fP &, const typename std::enable_if<!\fButil::IsStdVector\fP< bool >::value >::type *, const typename std::enable_if<!arma::is_arma_type< bool >::value >::type *, const typename std::enable_if<!std::is_same< bool, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *, const typename std::enable_if<!\fBdata::HasSerialize\fP< bool >::value >::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetJuliaType< double >\fP (\fButil::ParamData\fP &, const typename std::enable_if<!\fButil::IsStdVector\fP< double >::value >::type *, const typename std::enable_if<!arma::is_arma_type< double >::value >::type *, const typename std::enable_if<!std::is_same< double, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *, const typename std::enable_if<!\fBdata::HasSerialize\fP< double >::value >::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetJuliaType< int >\fP (\fButil::ParamData\fP &, const typename std::enable_if<!\fButil::IsStdVector\fP< int >::value >::type *, const typename std::enable_if<!arma::is_arma_type< int >::value >::type *, const typename std::enable_if<!std::is_same< int, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *, const typename std::enable_if<!\fBdata::HasSerialize\fP< int >::value >::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetJuliaType< size_t >\fP (\fButil::ParamData\fP &, const typename std::enable_if<!\fButil::IsStdVector\fP< size_t >::value >::type *, const typename std::enable_if<!arma::is_arma_type< size_t >::value >::type *, const typename std::enable_if<!std::is_same< size_t, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *, const typename std::enable_if<!\fBdata::HasSerialize\fP< size_t >::value >::type *)"
+.br
+.ti -1c
+.RI "template<> std::string \fBGetJuliaType< std::string >\fP (\fButil::ParamData\fP &, const typename std::enable_if< !\fButil::IsStdVector\fP< std::string >::value >::type *, const typename std::enable_if< !arma::is_arma_type< std::string >::value >::type *, const typename std::enable_if<!std::is_same< std::string, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *, const typename std::enable_if< !\fBdata::HasSerialize\fP< std::string >::value >::type *)"
+.br
+.ti -1c
+.RI "template<typename T > void \fBGetParam\fP (\fButil::ParamData\fP &d, const void *, void *output)"
+.br
+.RI "All Julia binding types are exactly what is held in the ParamData, so no special handling is necessary\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Print an option of a simple type\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Print a serializable class option (this prints the class name)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "Print a matrix option (this prints its size)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Print a combination DatasetInfo/matrix parameter\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type *=0)"
+.br
+.RI "Print a vector option, with spaces between it\&. "
+.ti -1c
+.RI "template<typename T > void \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const void *, void *output)"
+.br
+.RI "Print an option into a std::string\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Return a string representing the command-line type of an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a model\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const typename std::enable_if< arma::is_arma_type< T >::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a matrix option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a matrix tuple option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a vector\&. "
+.ti -1c
+.RI "template<typename T > void \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const void *, void *output)"
+.br
+.RI "Print the command-line type of an option into a string\&. "
+.ti -1c
+.RI "bool \fBIgnoreCheck\fP (const std::string &paramName)"
+.br
+.RI "Print whether or not we should ignore a check on the given parameter\&. "
+.ti -1c
+.RI "bool \fBIgnoreCheck\fP (const std::vector< std::pair< std::string, bool >> &constraints, const std::string &paramName)"
+.br
+.RI "Print whether or not we should ignore a check on the given set of constraints\&. "
+.ti -1c
+.RI "bool \fBIgnoreCheck\fP (const std::vector< std::string > &constraints)"
+.br
+.RI "Print whether or not we should ignore a check on the given set of constraints\&. "
+.ti -1c
+.RI "std::string \fBParamString\fP (const std::string &paramName)"
+.br
+.RI "Given the parameter name, determine what it would actually be when passed to the command line\&. "
+.ti -1c
+.RI "std::string \fBPrintDataset\fP (const std::string &dataset)"
+.br
+.RI "Print a dataset type parameter\&. "
+.ti -1c
+.RI "std::string \fBPrintDefault\fP (const std::string &paramName)"
+.br
+.RI "Given a parameter name, print its corresponding default value\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintDoc\fP (\fButil::ParamData\fP &d, const void *, void *output)"
+.br
+.ti -1c
+.RI "std::string \fBPrintImport\fP (const std::string &bindingName)"
+.br
+.RI "Print any imports for Julia\&. "
+.ti -1c
+.RI "std::string \fBPrintInputOptionInfo\fP ()"
+.br
+.RI "Print any special information about input options\&. "
+.ti -1c
+.RI "std::string \fBPrintInputOptions\fP ()"
+.br
+.ti -1c
+.RI "template<typename T , typename\&.\&.\&. Args> std::string \fBPrintInputOptions\fP (const std::string &paramName, const T &value, Args\&.\&.\&. args)"
+.br
+.RI "Print an input option\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputParam\fP (\fButil::ParamData\fP &d, const void *, void *)"
+.br
+.RI "Print the declaration of an input parameter as part of a line in a Julia function definition\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputProcessing\fP (\fButil::ParamData\fP &d, const std::string &functionName, const typename std::enable_if< arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Print the input processing for an Armadillo type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputProcessing\fP (\fButil::ParamData\fP &d, const std::string &functionName, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Print the input processing (basically calling \fBIO::GetParam<>()\fP) for a matrix with DatasetInfo type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputProcessing\fP (\fButil::ParamData\fP &d, const std::string &functionName, const typename std::enable_if<!arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type *=0, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Print the input processing for a serializable type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputProcessing\fP (\fButil::ParamData\fP &d, const std::string &functionName, const typename std::enable_if<!arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if<!\fBdata::HasSerialize\fP< T >::value >::type *=0, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Print the input processing (basically calling \fBIO::GetParam<>()\fP) for a non-serializable type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintInputProcessing\fP (\fButil::ParamData\fP &d, const void *input, void *)"
+.br
+.RI "Print the input processing (basically calling \fBIO::GetParam<>()\fP) for a type\&. "
+.ti -1c
+.RI "void \fBPrintJL\fP (const \fButil::BindingDetails\fP &doc, const std::string &functionName, const std::string &mlpackJuliaLibSuffix)"
+.br
+.RI "Print the code for a \&.jl binding for an mlpack program to stdout\&. "
+.ti -1c
+.RI "std::string \fBPrintModel\fP (const std::string &model)"
+.br
+.RI "Print a model type parameter\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintModelTypeImport\fP (\fButil::ParamData\fP &, const typename std::enable_if< arma::is_arma_type< T >::value >::type *=0)"
+.br
+.RI "Matrices are serializable but here we also print nothing\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintModelTypeImport\fP (\fButil::ParamData\fP &, const typename std::enable_if<!arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if<!\fBdata::HasSerialize\fP< T >::value >::type *=0)"
+.br
+.RI "If the type is not serializable, print nothing\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintModelTypeImport\fP (\fButil::ParamData\fP &d, const typename std::enable_if<!arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type *=0)"
+.br
+.RI "For non-matrix serializable types we need to print something\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintModelTypeImport\fP (\fButil::ParamData\fP &d, const void *, void *)"
+.br
+.RI "If the type is serializable, print the definition of a special utility function to set a \fBIO\fP parameter of that type to stdout\&. "
+.ti -1c
+.RI "std::string \fBPrintOutputOptionInfo\fP ()"
+.br
+.RI "Print any special information about output options\&. "
+.ti -1c
+.RI "std::string \fBPrintOutputOptions\fP ()"
+.br
+.ti -1c
+.RI "template<typename T , typename\&.\&.\&. Args> std::string \fBPrintOutputOptions\fP (const std::string &paramName, const T &value, Args\&.\&.\&. args)"
+.br
+.ti -1c
+.RI "template<typename T > void \fBPrintOutputProcessing\fP (\fButil::ParamData\fP &d, const std::string &functionName, const typename std::enable_if< arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Print the output processing for an Armadillo type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintOutputProcessing\fP (\fButil::ParamData\fP &d, const std::string &functionName, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Print the output processing for a mat/DatasetInfo tuple type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintOutputProcessing\fP (\fButil::ParamData\fP &d, const std::string &functionName, const typename std::enable_if<!arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type *=0, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Print the output processing for a serializable type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintOutputProcessing\fP (\fButil::ParamData\fP &d, const std::string &functionName, const typename std::enable_if<!arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if<!\fBdata::HasSerialize\fP< T >::value >::type *=0, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Print the output processing (basically calling \fBIO::GetParam<>()\fP) for a non-serializable type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintOutputProcessing\fP (\fButil::ParamData\fP &d, const void *input, void *)"
+.br
+.RI "Print the output processing (basically calling \fBIO::GetParam<>()\fP) for a type\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintParamDefn\fP (\fButil::ParamData\fP &, const std::string &, const typename std::enable_if< arma::is_arma_type< T >::value >::type *=0)"
+.br
+.RI "Matrices are serializable but here we also print nothing\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintParamDefn\fP (\fButil::ParamData\fP &, const std::string &, const typename std::enable_if<!arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if<!\fBdata::HasSerialize\fP< T >::value >::type *=0)"
+.br
+.RI "If the type is not serializable, print nothing\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintParamDefn\fP (\fButil::ParamData\fP &d, const std::string &\fBprogramName\fP, const typename std::enable_if<!arma::is_arma_type< T >::value >::type *=0, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type *=0)"
+.br
+.RI "For non-matrix serializable types we need to print something\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintParamDefn\fP (\fButil::ParamData\fP &d, const void *input, void *)"
+.br
+.RI "If the type is serializable, print the definition of a special utility function to set a \fBIO\fP parameter of that type to stdout\&. "
+.ti -1c
+.RI "std::string \fBPrintType\fP (\fButil::ParamData\fP &param)"
+.br
+.RI "Print the type of a parameter that a user would specify from Julia\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Return a string representing the command-line type of an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a model\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename std::enable_if< arma::is_arma_type< T >::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a matrix option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a matrix tuple option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a vector\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const void *, void *output)"
+.br
+.RI "Print the command-line type of an option into a string\&. "
+.ti -1c
+.RI "std::string \fBPrintTypeDocs\fP ()"
+.br
+.RI "Print documentation for each of the types\&. "
+.ti -1c
+.RI "template<> std::string \fBPrintValue\fP (const bool &value, bool quotes)"
+.br
+.ti -1c
+.RI "template<typename T > std::string \fBPrintValue\fP (const T &value, bool quotes)"
+.br
+.RI "Given a parameter type, print the corresponding value\&. "
+.ti -1c
+.RI "template<typename\&.\&.\&. Args> std::string \fBProgramCall\fP (const std::string &\fBprogramName\fP, Args\&.\&.\&. args)"
+.br
+.RI "Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call\&. "
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "std::string \fBprogramName\fP"
+.br
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void mlpack::bindings::julia::DefaultParam (\fButil::ParamData\fP & data, const void *, void * output)"
+
+.PP
+Return the default value of an option\&. This is the function that will be placed into the \fBIO\fP functionMap\&. 
+.PP
+Definition at line 80 of file default_param\&.hpp\&.
+.SS "std::string mlpack::bindings::julia::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::string >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Return the default value of an option\&. This is for regular types\&. 
+.SS "std::string mlpack::bindings::julia::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return the default value of a model option (this returns the default filename, or '' if the default is no file)\&. 
+.SS "std::string mlpack::bindings::julia::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if< std::is_same< T, std::string >>::type * = \fC0\fP)"
+
+.PP
+Return the default value of a string option\&. 
+.SS "std::string mlpack::bindings::julia::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return the default value of a vector option\&. 
+.SS "std::string mlpack::bindings::julia::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if_c< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or '' if the default is no file)\&. 
+.SS "std::string mlpack::bindings::julia::GetBindingName (const std::string & bindingName)\fC [inline]\fP"
+
+.PP
+Given the name of a binding, print its Julia name (this just returns the binding name)\&. 
+.SS "std::string mlpack::bindings::julia::GetJuliaType (\fButil::ParamData\fP &, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 127 of file get_julia_type\&.hpp\&.
+.SS "std::string mlpack::bindings::julia::GetJuliaType (\fButil::ParamData\fP &, const typename std::enable_if<!\fButil::IsStdVector\fP< T >::value >::type * = \fC0\fP, const typename std::enable_if<!arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP, const typename std::enable_if<!\fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 22 of file get_julia_type\&.hpp\&.
+.PP
+Referenced by PrintDoc()\&.
+.SS "std::string mlpack::bindings::julia::GetJuliaType (\fButil::ParamData\fP & d, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type * = \fC0\fP, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP, const typename std::enable_if<!arma::is_arma_type< T >::value >::type * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 98 of file get_julia_type\&.hpp\&.
+.SS "std::string mlpack::bindings::julia::GetJuliaType (\fButil::ParamData\fP & d, const typename std::enable_if<!\fButil::IsStdVector\fP< T >::value >::type * = \fC0\fP, const typename std::enable_if<!arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 137 of file get_julia_type\&.hpp\&.
+.PP
+References ParamData::cppType, and mlpack::util::StripType()\&.
+.SS "std::string mlpack::bindings::julia::GetJuliaType (\fButil::ParamData\fP & d, const typename std::enable_if<!\fButil::IsStdVector\fP< T >::value >::type * = \fC0\fP, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP, const typename std::enable_if< arma::is_arma_type< T >::value >::type * = \fC0\fP)\fC [inline]\fP"
+
+.PP
+Definition at line 109 of file get_julia_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::julia::GetJuliaType\fP< bool > (\fButil::ParamData\fP &, const typename std::enable_if<!\fButil::IsStdVector\fP< bool >::value >::type *, const typename std::enable_if<!arma::is_arma_type< bool >::value >::type *, const typename std::enable_if<!std::is_same< bool, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *, const typename std::enable_if<!\fBdata::HasSerialize\fP< bool >::value >::type *)\fC [inline]\fP"
+
+.PP
+Definition at line 34 of file get_julia_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::julia::GetJuliaType\fP< double > (\fButil::ParamData\fP &, const typename std::enable_if<!\fButil::IsStdVector\fP< double >::value >::type *, const typename std::enable_if<!arma::is_arma_type< double >::value >::type *, const typename std::enable_if<!std::is_same< double, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *, const typename std::enable_if<!\fBdata::HasSerialize\fP< double >::value >::type *)\fC [inline]\fP"
+
+.PP
+Definition at line 70 of file get_julia_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::julia::GetJuliaType\fP< int > (\fButil::ParamData\fP &, const typename std::enable_if<!\fButil::IsStdVector\fP< int >::value >::type *, const typename std::enable_if<!arma::is_arma_type< int >::value >::type *, const typename std::enable_if<!std::is_same< int, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *, const typename std::enable_if<!\fBdata::HasSerialize\fP< int >::value >::type *)\fC [inline]\fP"
+
+.PP
+Definition at line 46 of file get_julia_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::julia::GetJuliaType\fP< size_t > (\fButil::ParamData\fP &, const typename std::enable_if<!\fButil::IsStdVector\fP< size_t >::value >::type *, const typename std::enable_if<!arma::is_arma_type< size_t >::value >::type *, const typename std::enable_if<!std::is_same< size_t, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *, const typename std::enable_if<!\fBdata::HasSerialize\fP< size_t >::value >::type *)\fC [inline]\fP"
+
+.PP
+Definition at line 58 of file get_julia_type\&.hpp\&.
+.SS "std::string \fBmlpack::bindings::julia::GetJuliaType\fP< std::string > (\fButil::ParamData\fP &, const typename std::enable_if< !\fButil::IsStdVector\fP< std::string >::value >::type *, const typename std::enable_if< !arma::is_arma_type< std::string >::value >::type *, const typename std::enable_if<!std::is_same< std::string, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *, const typename std::enable_if< !\fBdata::HasSerialize\fP< std::string >::value >::type *)\fC [inline]\fP"
+
+.PP
+Definition at line 83 of file get_julia_type\&.hpp\&.
+.SS "void mlpack::bindings::julia::GetParam (\fButil::ParamData\fP & d, const void *, void * output)"
+
+.PP
+All Julia binding types are exactly what is held in the ParamData, so no special handling is necessary\&. 
+.PP
+Definition at line 26 of file get_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "std::string mlpack::bindings::julia::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Print an option of a simple type\&. 
+.PP
+Definition at line 26 of file get_printable_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "std::string mlpack::bindings::julia::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Print a serializable class option (this prints the class name)\&. 
+.PP
+Definition at line 75 of file get_printable_param\&.hpp\&.
+.PP
+References ParamData::cppType, and ParamData::value\&.
+.SS "std::string mlpack::bindings::julia::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Print a matrix option (this prints its size)\&. 
+.PP
+Definition at line 59 of file get_printable_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "std::string mlpack::bindings::julia::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Print a combination DatasetInfo/matrix parameter\&. 
+.PP
+Definition at line 89 of file get_printable_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "std::string mlpack::bindings::julia::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Print a vector option, with spaces between it\&. 
+.PP
+Definition at line 43 of file get_printable_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "void mlpack::bindings::julia::GetPrintableParam (\fButil::ParamData\fP & data, const void *, void * output)"
+
+.PP
+Print an option into a std::string\&. This should print a short, one-line representation of the object\&. The string will be stored in the output pointer\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Parameter data struct\&. 
+.br
+\fI*\fP (input) Unused parameter\&. 
+.br
+\fIoutput\fP Output storage for the string\&. 
+.RE
+.PP
+
+.PP
+Definition at line 114 of file get_printable_param\&.hpp\&.
+.SS "std::string mlpack::bindings::julia::GetPrintableType (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of an option\&. 
+.SS "std::string mlpack::bindings::julia::GetPrintableType (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a model\&. 
+.SS "std::string mlpack::bindings::julia::GetPrintableType (\fButil::ParamData\fP & data, const typename std::enable_if< arma::is_arma_type< T >::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a matrix option\&. 
+.SS "std::string mlpack::bindings::julia::GetPrintableType (\fButil::ParamData\fP & data, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a matrix tuple option\&. 
+.SS "std::string mlpack::bindings::julia::GetPrintableType (\fButil::ParamData\fP & data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a vector\&. 
+.SS "void mlpack::bindings::julia::GetPrintableType (\fButil::ParamData\fP & data, const void *, void * output)"
+
+.PP
+Print the command-line type of an option into a string\&. 
+.PP
+Definition at line 70 of file get_printable_type\&.hpp\&.
+.SS "bool mlpack::bindings::julia::IgnoreCheck (const std::string & paramName)\fC [inline]\fP"
+
+.PP
+Print whether or not we should ignore a check on the given parameter\&. For Julia bindings, we ignore any checks on output parameters, so if paramName is an output parameter, this returns true\&. 
+.SS "bool mlpack::bindings::julia::IgnoreCheck (const std::vector< std::pair< std::string, bool >> & constraints, const std::string & paramName)\fC [inline]\fP"
+
+.PP
+Print whether or not we should ignore a check on the given set of constraints\&. For Julia bindings, we ignore any checks on output parameters, so if any constraint parameter or the main parameter are output parameters, this returns true\&. 
+.SS "bool mlpack::bindings::julia::IgnoreCheck (const std::vector< std::string > & constraints)\fC [inline]\fP"
+
+.PP
+Print whether or not we should ignore a check on the given set of constraints\&. For Julia bindings, we ignore any checks on output parameters, so if any parameter is an output parameter, this returns true\&. 
+.SS "std::string mlpack::bindings::julia::ParamString (const std::string & paramName)\fC [inline]\fP"
+
+.PP
+Given the parameter name, determine what it would actually be when passed to the command line\&. 
+.SS "std::string mlpack::bindings::julia::PrintDataset (const std::string & dataset)\fC [inline]\fP"
+
+.PP
+Print a dataset type parameter\&. 
+.SS "std::string mlpack::bindings::julia::PrintDefault (const std::string & paramName)\fC [inline]\fP"
+
+.PP
+Given a parameter name, print its corresponding default value\&. 
+.SS "void mlpack::bindings::julia::PrintDoc (\fButil::ParamData\fP & d, const void *, void * output)"
+
+.PP
+Definition at line 20 of file print_doc\&.hpp\&.
+.PP
+References ParamData::cppType, ParamData::desc, GetJuliaType(), if(), ParamData::name, ParamData::required, and ParamData::value\&.
+.SS "std::string mlpack::bindings::julia::PrintImport (const std::string & bindingName)\fC [inline]\fP"
+
+.PP
+Print any imports for Julia\&. 
+.SS "std::string mlpack::bindings::julia::PrintInputOptionInfo ()\fC [inline]\fP"
+
+.PP
+Print any special information about input options\&. 
+.SS "std::string mlpack::bindings::julia::PrintInputOptions ()\fC [inline]\fP"
+
+.SS "std::string mlpack::bindings::julia::PrintInputOptions (const std::string & paramName, const T & value, Args\&.\&.\&. args)"
+
+.PP
+Print an input option\&. This will throw an exception if the parameter does not exist in \fBIO\fP\&. For a parameter 'x' with value '5', this will print something like x=5\&. 
+.SS "void mlpack::bindings::julia::PrintInputParam (\fButil::ParamData\fP & d, const void *, void *)"
+
+.PP
+Print the declaration of an input parameter as part of a line in a Julia function definition\&. This doesn't include any commas or anything\&. 
+.PP
+Definition at line 27 of file print_input_param\&.hpp\&.
+.PP
+References if(), ParamData::name, and ParamData::required\&.
+.SS "void mlpack::bindings::julia::PrintInputProcessing (\fButil::ParamData\fP & d, const std::string & functionName, const typename std::enable_if< arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Print the input processing for an Armadillo type\&. 
+.SS "void mlpack::bindings::julia::PrintInputProcessing (\fButil::ParamData\fP & d, const std::string & functionName, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Print the input processing (basically calling \fBIO::GetParam<>()\fP) for a matrix with DatasetInfo type\&. 
+.SS "void mlpack::bindings::julia::PrintInputProcessing (\fButil::ParamData\fP & d, const std::string & functionName, const typename std::enable_if<!arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Print the input processing for a serializable type\&. 
+.SS "void mlpack::bindings::julia::PrintInputProcessing (\fButil::ParamData\fP & d, const std::string & functionName, const typename std::enable_if<!arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if<!\fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Print the input processing (basically calling \fBIO::GetParam<>()\fP) for a non-serializable type\&. 
+.SS "void mlpack::bindings::julia::PrintInputProcessing (\fButil::ParamData\fP & d, const void * input, void *)"
+
+.PP
+Print the input processing (basically calling \fBIO::GetParam<>()\fP) for a type\&. 
+.PP
+Definition at line 70 of file print_input_processing\&.hpp\&.
+.SS "void mlpack::bindings::julia::PrintJL (const \fButil::BindingDetails\fP & doc, const std::string & functionName, const std::string & mlpackJuliaLibSuffix)"
+
+.PP
+Print the code for a \&.jl binding for an mlpack program to stdout\&. 
+.SS "std::string mlpack::bindings::julia::PrintModel (const std::string & model)\fC [inline]\fP"
+
+.PP
+Print a model type parameter\&. 
+.SS "void mlpack::bindings::julia::PrintModelTypeImport (\fButil::ParamData\fP &, const typename std::enable_if< arma::is_arma_type< T >::value >::type * = \fC0\fP)"
+
+.PP
+Matrices are serializable but here we also print nothing\&. 
+.PP
+Definition at line 38 of file print_model_type_import\&.hpp\&.
+.SS "void mlpack::bindings::julia::PrintModelTypeImport (\fButil::ParamData\fP &, const typename std::enable_if<!arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if<!\fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+If the type is not serializable, print nothing\&. 
+.PP
+Definition at line 26 of file print_model_type_import\&.hpp\&.
+.SS "void mlpack::bindings::julia::PrintModelTypeImport (\fButil::ParamData\fP & d, const typename std::enable_if<!arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+For non-matrix serializable types we need to print something\&. 
+.PP
+Definition at line 49 of file print_model_type_import\&.hpp\&.
+.PP
+References ParamData::cppType, and mlpack::util::StripType()\&.
+.SS "void mlpack::bindings::julia::PrintModelTypeImport (\fButil::ParamData\fP & d, const void *, void *)"
+
+.PP
+If the type is serializable, print the definition of a special utility function to set a \fBIO\fP parameter of that type to stdout\&. 
+.PP
+Definition at line 66 of file print_model_type_import\&.hpp\&.
+.SS "std::string mlpack::bindings::julia::PrintOutputOptionInfo ()\fC [inline]\fP"
+
+.PP
+Print any special information about output options\&. 
+.SS "std::string mlpack::bindings::julia::PrintOutputOptions ()\fC [inline]\fP"
+
+.SS "std::string mlpack::bindings::julia::PrintOutputOptions (const std::string & paramName, const T & value, Args\&.\&.\&. args)"
+
+.SS "void mlpack::bindings::julia::PrintOutputProcessing (\fButil::ParamData\fP & d, const std::string & functionName, const typename std::enable_if< arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Print the output processing for an Armadillo type\&. 
+.SS "void mlpack::bindings::julia::PrintOutputProcessing (\fButil::ParamData\fP & d, const std::string & functionName, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Print the output processing for a mat/DatasetInfo tuple type\&. 
+.SS "void mlpack::bindings::julia::PrintOutputProcessing (\fButil::ParamData\fP & d, const std::string & functionName, const typename std::enable_if<!arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Print the output processing for a serializable type\&. 
+.SS "void mlpack::bindings::julia::PrintOutputProcessing (\fButil::ParamData\fP & d, const std::string & functionName, const typename std::enable_if<!arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if<!\fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP, const typename std::enable_if<!std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Print the output processing (basically calling \fBIO::GetParam<>()\fP) for a non-serializable type\&. 
+.SS "void mlpack::bindings::julia::PrintOutputProcessing (\fButil::ParamData\fP & d, const void * input, void *)"
+
+.PP
+Print the output processing (basically calling \fBIO::GetParam<>()\fP) for a type\&. 
+.PP
+Definition at line 71 of file print_output_processing\&.hpp\&.
+.SS "void mlpack::bindings::julia::PrintParamDefn (\fButil::ParamData\fP &, const std::string &, const typename std::enable_if< arma::is_arma_type< T >::value >::type * = \fC0\fP)"
+
+.PP
+Matrices are serializable but here we also print nothing\&. 
+.PP
+Definition at line 39 of file print_param_defn\&.hpp\&.
+.SS "void mlpack::bindings::julia::PrintParamDefn (\fButil::ParamData\fP &, const std::string &, const typename std::enable_if<!arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if<!\fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+If the type is not serializable, print nothing\&. 
+.PP
+Definition at line 26 of file print_param_defn\&.hpp\&.
+.SS "void mlpack::bindings::julia::PrintParamDefn (\fButil::ParamData\fP & d, const std::string & programName, const typename std::enable_if<!arma::is_arma_type< T >::value >::type * = \fC0\fP, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+For non-matrix serializable types we need to print something\&. 
+.PP
+Definition at line 51 of file print_param_defn\&.hpp\&.
+.PP
+References ParamData::cppType, programName, and mlpack::util::StripType()\&.
+.SS "void mlpack::bindings::julia::PrintParamDefn (\fButil::ParamData\fP & d, const void * input, void *)"
+
+.PP
+If the type is serializable, print the definition of a special utility function to set a \fBIO\fP parameter of that type to stdout\&. 
+.PP
+Definition at line 164 of file print_param_defn\&.hpp\&.
+.SS "std::string mlpack::bindings::julia::PrintType (\fButil::ParamData\fP & param)\fC [inline]\fP"
+
+.PP
+Print the type of a parameter that a user would specify from Julia\&. 
+.SS "std::string mlpack::bindings::julia::PrintTypeDoc (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of an option\&. 
+.SS "std::string mlpack::bindings::julia::PrintTypeDoc (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a model\&. 
+.SS "std::string mlpack::bindings::julia::PrintTypeDoc (\fButil::ParamData\fP & data, const typename std::enable_if< arma::is_arma_type< T >::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a matrix option\&. 
+.SS "std::string mlpack::bindings::julia::PrintTypeDoc (\fButil::ParamData\fP & data, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a matrix tuple option\&. 
+.SS "std::string mlpack::bindings::julia::PrintTypeDoc (\fButil::ParamData\fP & data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a vector\&. 
+.SS "void mlpack::bindings::julia::PrintTypeDoc (\fButil::ParamData\fP & data, const void *, void * output)"
+
+.PP
+Print the command-line type of an option into a string\&. 
+.PP
+Definition at line 72 of file print_type_doc\&.hpp\&.
+.SS "std::string mlpack::bindings::julia::PrintTypeDocs ()\fC [inline]\fP"
+
+.PP
+Print documentation for each of the types\&. 
+.SS "std::string mlpack::bindings::julia::PrintValue (const bool & value, bool quotes)\fC [inline]\fP"
+
+.SS "std::string mlpack::bindings::julia::PrintValue (const T & value, bool quotes)\fC [inline]\fP"
+
+.PP
+Given a parameter type, print the corresponding value\&. 
+.SS "std::string mlpack::bindings::julia::ProgramCall (const std::string & programName, Args\&.\&.\&. args)"
+
+.PP
+Given a name of a binding and a variable number of arguments (and their contents), print the corresponding function call\&. 
+.SH "Variable Documentation"
+.PP 
+.SS "std::string programName\fC [extern]\fP"
+
+.PP
+Referenced by JuliaOption< T >::JuliaOption(), and PrintParamDefn()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

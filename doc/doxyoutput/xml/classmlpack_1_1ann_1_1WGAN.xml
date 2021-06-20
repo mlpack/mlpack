@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1WGAN" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::WGAN</compoundname>
+    <includes refid="gan__policies_8hpp" local="no">gan_policies.hpp</includes>
+    <briefdescription>
+<para>For more information, see the following paper: </para>
+    </briefdescription>
+    <detaileddescription>
+<para><programlisting><codeline><highlight class="normal">@article{Arjovsky17,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/><sp/><sp/><sp/>=<sp/>{Martin<sp/>Arjovsky,<sp/>Soumith<sp/>Chintala<sp/>and<sp/>Léon<sp/>Bottou},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/><sp/><sp/><sp/><sp/>=<sp/>{Wasserstein<sp/>GAN},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{2017},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>url<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{https://arxiv.org/abs/1701.07875},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>eprint<sp/><sp/><sp/><sp/>=<sp/>{1701.07875},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan_policies.hpp" line="63" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/gan/gan_policies.hpp" bodystart="63" bodyend="63"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

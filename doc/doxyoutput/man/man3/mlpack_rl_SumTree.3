@@ -1,0 +1,211 @@
+.TH "SumTree< T >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SumTree< T > \- Implementation of \fBSumTree\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSumTree\fP ()"
+.br
+.RI "Default constructor\&. "
+.ti -1c
+.RI "\fBSumTree\fP (const size_t capacity)"
+.br
+.RI "Construct an instance of \fBSumTree\fP class\&. "
+.ti -1c
+.RI "void \fBBatchUpdate\fP (const arma::ucolvec &indices, const arma::Col< T > &data)"
+.br
+.RI "Update the data with batch rather loop over the indices with set method\&. "
+.ti -1c
+.RI "size_t \fBFindPrefixSum\fP (T mass)"
+.br
+.RI "Find the highest index \fCidx\fP in the array such that sum(arr[0] + arr[1] + \&.\&.\&. "
+.ti -1c
+.RI "T \fBGet\fP (size_t idx)"
+.br
+.RI "Get the data array with idx\&. "
+.ti -1c
+.RI "void \fBSet\fP (size_t idx, const T value)"
+.br
+.RI "Set the data array with idx\&. "
+.ti -1c
+.RI "T \fBSum\fP ()"
+.br
+.RI "Shortcut for calculating the sum of whole array\&. "
+.ti -1c
+.RI "T \fBSum\fP (const size_t start, size_t end)"
+.br
+.RI "Calculate the sum of contiguous subsequence of the array\&. "
+.ti -1c
+.RI "T \fBSumHelper\fP (const size_t start, const size_t end, const size_t node, const size_t nodeStart, const size_t nodeEnd)"
+.br
+.RI "Help function for the \fCsum\fP function\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename T>
+.br
+class mlpack::rl::SumTree< T >"
+Implementation of \fBSumTree\fP\&. 
+
+Build a Segment Tree like data structure\&. https://en.wikipedia.org/wiki/Segment_tree
+.PP
+Used to maintain prefix-sum of an array\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIT\fP The array's element type\&. 
+.RE
+.PP
+
+.PP
+Definition at line 32 of file sumtree\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSumTree\fP ()\fC [inline]\fP"
+
+.PP
+Default constructor\&. 
+.PP
+Definition at line 38 of file sumtree\&.hpp\&.
+.SS "\fBSumTree\fP (const size_t capacity)\fC [inline]\fP"
+
+.PP
+Construct an instance of \fBSumTree\fP class\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcapacity\fP Size of data\&. 
+.RE
+.PP
+
+.PP
+Definition at line 46 of file sumtree\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void BatchUpdate (const arma::ucolvec & indices, const arma::Col< T > & data)\fC [inline]\fP"
+
+.PP
+Update the data with batch rather loop over the indices with set method\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIindices\fP The indices of data to be changed\&. 
+.br
+\fIdata\fP The data that array with indices to be\&. 
+.RE
+.PP
+
+.PP
+Definition at line 75 of file sumtree\&.hpp\&.
+.PP
+Referenced by PrioritizedReplay< EnvironmentType >::UpdatePriorities()\&.
+.SS "size_t FindPrefixSum (T mass)\fC [inline]\fP"
+
+.PP
+Find the highest index \fCidx\fP in the array such that sum(arr[0] + arr[1] + \&.\&.\&. 
+.IP "\(bu" 2
+arr[idx]) <= mass\&.
+.PP
+.PP
+\fBParameters\fP
+.RS 4
+\fImass\fP The upper bound of segment array sum\&. 
+.RE
+.PP
+
+.PP
+Definition at line 163 of file sumtree\&.hpp\&.
+.PP
+Referenced by PrioritizedReplay< EnvironmentType >::SampleProportional()\&.
+.SS "T Get (size_t idx)\fC [inline]\fP"
+
+.PP
+Get the data array with idx\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIidx\fP The array idx to get data\&. 
+.RE
+.PP
+
+.PP
+Definition at line 93 of file sumtree\&.hpp\&.
+.PP
+Referenced by PrioritizedReplay< EnvironmentType >::Sample()\&.
+.SS "void Set (size_t idx, const T value)\fC [inline]\fP"
+
+.PP
+Set the data array with idx\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIidx\fP The array idx to be changed\&. 
+.br
+\fIvalue\fP The data that array with idx to be\&. 
+.RE
+.PP
+
+.PP
+Definition at line 57 of file sumtree\&.hpp\&.
+.PP
+Referenced by PrioritizedReplay< EnvironmentType >::Store()\&.
+.SS "T Sum ()\fC [inline]\fP"
+
+.PP
+Shortcut for calculating the sum of whole array\&. 
+.PP
+Definition at line 152 of file sumtree\&.hpp\&.
+.SS "T Sum (const size_t start, size_t end)\fC [inline]\fP"
+
+.PP
+Calculate the sum of contiguous subsequence of the array\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIstart\fP The starting position of subsequence\&. 
+.br
+\fIend\fP The end position of subsequence\&. 
+.RE
+.PP
+
+.PP
+Definition at line 143 of file sumtree\&.hpp\&.
+.PP
+References SumTree< T >::SumHelper()\&.
+.PP
+Referenced by PrioritizedReplay< EnvironmentType >::Sample(), and PrioritizedReplay< EnvironmentType >::SampleProportional()\&.
+.SS "T SumHelper (const size_t start, const size_t end, const size_t node, const size_t nodeStart, const size_t nodeEnd)\fC [inline]\fP"
+
+.PP
+Help function for the \fCsum\fP function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIstart\fP The starting position of subsequence\&. 
+.br
+\fIend\fP The end position of subsequence\&. 
+.br
+\fInode\fP Reference position\&. 
+.br
+\fInodeStart\fP Starting position of reference segment\&. 
+.br
+\fInodeEnd\fP End position of reference segment\&. 
+.RE
+.PP
+
+.PP
+Definition at line 108 of file sumtree\&.hpp\&.
+.PP
+Referenced by SumTree< T >::Sum()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

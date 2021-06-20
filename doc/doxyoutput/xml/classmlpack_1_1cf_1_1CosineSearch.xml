@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1cf_1_1CosineSearch" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cf::CosineSearch</compoundname>
+    <includes refid="cosine__search_8hpp" local="no">cosine_search.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1cf_1_1CosineSearch_1a3b447237ff1ef834500926f5b31a0425" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacemlpack_1_1neighbor_1ac8d70069e8acb12c5ba9a8536ae6ace4" kindref="member">neighbor::KNN</ref></type>
+        <definition>neighbor::KNN neighborSearch</definition>
+        <argsstring></argsstring>
+        <name>neighborSearch</name>
+        <briefdescription>
+<para>NeighborSearch object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp" line="89" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1CosineSearch_1a3c05953c20d36d4ea490e3d3aa879704" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>CosineSearch</definition>
+        <argsstring>(const arma::mat &amp;referenceSet)</argsstring>
+        <name>CosineSearch</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <briefdescription>
+<para>Constructor with reference set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All vectors in reference set are normalized to unit length.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference points. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp" line="53" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp" bodystart="53" bodyend="59"/>
+        <references refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a27ba39af83e3cb01f2e6fbec159adf0e">NeighborSearch&lt; SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;::Train</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cf_1_1CosineSearch_1a5ce7aae85679ed26a716bcb8d7c8ee7b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Search</definition>
+        <argsstring>(const arma::mat &amp;query, const size_t k, arma::Mat&lt; size_t &gt; &amp;neighbors, arma::mat &amp;similarities)</argsstring>
+        <name>Search</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>query</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>similarities</declname>
+        </param>
+        <briefdescription>
+<para>Given a set of query points, find the nearest k neighbors, and return similarities. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Similarities are non-negative and no larger than one.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>query</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A set of query points. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>k</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of neighbors to search. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Nearest neighbors. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>similarities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Similarities between query point and its neighbors. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp" line="70" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp" bodystart="70" bodyend="85"/>
+        <references refid="classmlpack_1_1neighbor_1_1NeighborSearch_1a0de302ca0602fe721ac01f073d5e630f">NeighborSearch&lt; SortPolicy, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;::Search</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Nearest neighbor search with cosine distance. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Note that, with normalized vectors, neighbor search with cosine distance is equivalent to neighbor search with Euclidean distance. Therefore, instead of performing neighbor search directly with cosine distance, we first normalize all vectors to unit length, and then use <ref refid="namespacemlpack_1_1neighbor_1ac8d70069e8acb12c5ba9a8536ae6ace4" kindref="member">neighbor::KNN</ref> (i.e. NeighborSearch with Euclidean distance, KDTree). Cosine similarities are calculated from Euclidean distance.</para>
+<para>An example of how to use <ref refid="classmlpack_1_1cf_1_1CosineSearch" kindref="compound">CosineSearch</ref> in CF is shown below:</para>
+<para><programlisting><codeline><highlight class="normal">extern<sp/>arma::mat<sp/>data;<sp/>//<sp/>data<sp/>is<sp/>a<sp/>(user,<sp/>item,<sp/>rating)<sp/>table.</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Users<sp/>for<sp/>whom<sp/>recommendations<sp/>are<sp/>generated.</highlight></codeline>
+<codeline><highlight class="normal">extern<sp/>arma::Col&lt;size_t&gt;<sp/>users;</highlight></codeline>
+<codeline><highlight class="normal">arma::Mat&lt;size_t&gt;<sp/>recommendations;<sp/>//<sp/>Resulting<sp/>recommendations.</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">CFType&lt;&gt;<sp/>cf(data);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Generate<sp/>10<sp/>recommendations<sp/>for<sp/>all<sp/>users.</highlight></codeline>
+<codeline><highlight class="normal">cf.template<sp/>GetRecommendations&lt;CosineSearch&gt;(10,<sp/>recommendations);</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp" line="44" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp" bodystart="45" bodyend="90"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cf_1_1CosineSearch_1a3c05953c20d36d4ea490e3d3aa879704" prot="public" virt="non-virtual"><scope>mlpack::cf::CosineSearch</scope><name>CosineSearch</name></member>
+      <member refid="classmlpack_1_1cf_1_1CosineSearch_1a3b447237ff1ef834500926f5b31a0425" prot="private" virt="non-virtual"><scope>mlpack::cf::CosineSearch</scope><name>neighborSearch</name></member>
+      <member refid="classmlpack_1_1cf_1_1CosineSearch_1a5ce7aae85679ed26a716bcb8d7c8ee7b" prot="public" virt="non-virtual"><scope>mlpack::cf::CosineSearch</scope><name>Search</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

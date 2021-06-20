@@ -1,0 +1,71 @@
+\doxysection{Go\+Option$<$ T $>$ Class Template Reference}
+\label{classmlpack_1_1bindings_1_1go_1_1GoOption}\index{GoOption$<$ T $>$@{GoOption$<$ T $>$}}
+
+
+The Go option class.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Go\+Option} (const T default\+Value, const std\+::string \&identifier, const std\+::string \&description, const std\+::string \&alias, const std\+::string \&cpp\+Name, const bool required=false, const bool input=true, const bool no\+Transpose=false, const std\+::string \&=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Construct a \doxyref{Go\+Option}{p.}{classmlpack_1_1bindings_1_1go_1_1GoOption} object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class mlpack\+::bindings\+::go\+::\+Go\+Option$<$ T $>$}
+
+The Go option class. 
+
+Definition at line 39 of file go\+\_\+option.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1bindings_1_1go_1_1GoOption_a89c79fb6c96bbd487c943bb75cec173e}} 
+\index{GoOption$<$ T $>$@{GoOption$<$ T $>$}!GoOption@{GoOption}}
+\index{GoOption@{GoOption}!GoOption$<$ T $>$@{GoOption$<$ T $>$}}
+\doxysubsubsection{GoOption()}
+{\footnotesize\ttfamily \textbf{ Go\+Option} (\begin{DoxyParamCaption}\item[{const T}]{default\+Value,  }\item[{const std\+::string \&}]{identifier,  }\item[{const std\+::string \&}]{description,  }\item[{const std\+::string \&}]{alias,  }\item[{const std\+::string \&}]{cpp\+Name,  }\item[{const bool}]{required = {\ttfamily false},  }\item[{const bool}]{input = {\ttfamily true},  }\item[{const bool}]{no\+Transpose = {\ttfamily false},  }\item[{const std\+::string \&}]{ = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a \doxyref{Go\+Option}{p.}{classmlpack_1_1bindings_1_1go_1_1GoOption} object. 
+
+When constructed, it will register itself with \doxyref{IO}{p.}{classmlpack_1_1IO}. The test\+Name parameter is not used and added for compatibility reasons.
+
+
+\begin{DoxyParams}{Parameters}
+{\em default\+Value} & Default value this parameter will be initialized to (for flags, this should be false, for instance). \\
+\hline
+{\em identifier} & The name of the option (no dashes in front; for --help, we would pass \char`\"{}help\char`\"{}). \\
+\hline
+{\em description} & A short string describing the option. \\
+\hline
+{\em alias} & Short name of the parameter. \char`\"{}\char`\"{} for no alias. \\
+\hline
+{\em cpp\+Name} & Name of the C++ type of this parameter (i.\+e. \char`\"{}int\char`\"{}). \\
+\hline
+{\em required} & Whether or not the option is required at runtime. \\
+\hline
+{\em input} & Whether or not the option is an input option. \\
+\hline
+{\em no\+Transpose} & If the parameter is a matrix and this is true, then the matrix will not be transposed on loading. \\
+\hline
+{\em $\ast$} & (test\+Name) Is not used and added for compatibility reasons. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 60 of file go\+\_\+option.\+hpp.
+
+
+
+References IO\+::\+Add(), Param\+Data\+::alias, IO\+::\+Clear\+Settings(), Param\+Data\+::cpp\+Type, Param\+Data\+::desc, IO\+::function\+Map, IO\+::\+Get\+Singleton(), Param\+Data\+::input, Param\+Data\+::loaded, Param\+Data\+::name, Param\+Data\+::no\+Transpose, Param\+Data\+::persistent, mlpack\+::bindings\+::go\+::program\+Name, Param\+Data\+::required, IO\+::\+Restore\+Settings(), IO\+::\+Store\+Settings(), Param\+Data\+::tname, TYPENAME, Param\+Data\+::value, and Param\+Data\+::was\+Passed.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/bindings/go/\textbf{ go\+\_\+option.\+hpp}\end{DoxyCompactItemize}

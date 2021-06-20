@@ -1,0 +1,468 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1kde_1_1KDEWrapper" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::kde::KDEWrapper</compoundname>
+    <basecompoundref refid="classmlpack_1_1kde_1_1KDEWrapperBase" prot="public" virt="non-virtual">KDEWrapperBase</basecompoundref>
+    <includes refid="kde__model_8hpp" local="no">kde_model.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename KernelType</type>
+      </param>
+      <param>
+        <type>template&lt; typename TreeMetricType, typename TreeStatType, typename TreeMatType &gt; class</type>
+        <declname>TreeType</declname>
+        <defname>TreeType</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="protected-type">
+      <memberdef kind="typedef" id="classmlpack_1_1kde_1_1KDEWrapper_1a08dd59a40d62d4fc10a4e324568d9651" prot="protected" static="no">
+        <type><ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref>&lt; KernelType, <ref refid="namespacemlpack_1_1metric_1a0306f114fdf32dcdfa8f015408cfc37d" kindref="member">metric::EuclideanDistance</ref>, arma::mat, TreeType &gt;</type>
+        <definition>typedef KDE&lt;KernelType, metric::EuclideanDistance, arma::mat, TreeType&gt; KDEType</definition>
+        <argsstring></argsstring>
+        <name>KDEType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="217" column="2" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1kde_1_1KDEWrapper_1a24107e389a24c7c0a972615f1c8aff83" prot="protected" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1kde_1_1KDEWrapper_1a08dd59a40d62d4fc10a4e324568d9651" kindref="member">KDEType</ref></type>
+        <definition>KDEType kde</definition>
+        <argsstring></argsstring>
+        <name>kde</name>
+        <briefdescription>
+<para>The instantiated <ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref> object that we are wrapping. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="220" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a57131241225d7fa21c80fff9d967677f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>KDEWrapper</definition>
+        <argsstring>(const double relError, const double absError, const KernelType &amp;kernel)</argsstring>
+        <name>KDEWrapper</name>
+        <param>
+          <type>const double</type>
+          <declname>relError</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>absError</declname>
+        </param>
+        <param>
+          <type>const KernelType &amp;</type>
+          <declname>kernel</declname>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1kde_1_1KDEWrapper" kindref="compound">KDEWrapper</ref> object, initializing the internally-held <ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="142" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="142" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a667ffa45aeea3422b7892b1c06f80669" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual ~KDEWrapper</definition>
+        <argsstring>()</argsstring>
+        <name>~KDEWrapper</name>
+        <briefdescription>
+<para>Destruct the <ref refid="classmlpack_1_1kde_1_1KDEWrapper" kindref="compound">KDEWrapper</ref> (nothing to do). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="155" column="11" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="155" bodyend="155"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a0b9d34d8e38ac36cd2ca2118466d0953" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void AbsoluteError</definition>
+        <argsstring>(const double eps)</argsstring>
+        <name>AbsoluteError</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a1c0162417e08001b37ce9aaacc761773">AbsoluteError</reimplements>
+        <param>
+          <type>const double</type>
+          <declname>eps</declname>
+        </param>
+        <briefdescription>
+<para>Modify the absolute error tolerance. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="164" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="164" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a3d47a1b167a794ee6c4d646ee46254b6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Bandwidth</definition>
+        <argsstring>(const double bw)</argsstring>
+        <name>Bandwidth</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a1ebaea5971fb978c1e23657dc8c55a17">Bandwidth</reimplements>
+        <param>
+          <type>const double</type>
+          <declname>bw</declname>
+        </param>
+        <briefdescription>
+<para>Modify the bandwidth of the kernel. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="158" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="158" bodyend="158"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a0ba337bbc529b82831c60d60b9441d08" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classmlpack_1_1kde_1_1KDEWrapper" kindref="compound">KDEWrapper</ref> *</type>
+        <definition>virtual KDEWrapper* Clone</definition>
+        <argsstring>() const</argsstring>
+        <name>Clone</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ae7622cb6081c01a9346b9845c916be0a">Clone</reimplements>
+        <briefdescription>
+<para>Create a new <ref refid="classmlpack_1_1kde_1_1KDEWrapper" kindref="compound">KDEWrapper</ref> that is the same as this one. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will properly handle polymorphism. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="152" column="22" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="152" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a52a2ccd4d4e143187436097916dae748" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Evaluate</definition>
+        <argsstring>(arma::mat &amp;&amp;querySet, arma::vec &amp;estimates)</argsstring>
+        <name>Evaluate</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a7815883137a47fda73c3ac1f608eef0a">Evaluate</reimplements>
+        <param>
+          <type>arma::mat &amp;&amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>estimates</declname>
+        </param>
+        <briefdescription>
+<para>Perform bichromatic <ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref> (i.e. <ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref> with a separate query set). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="200" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1aecea217fc025d169adadd10f78a77fa5" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Evaluate</definition>
+        <argsstring>(arma::vec &amp;estimates)</argsstring>
+        <name>Evaluate</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ae9574287052493ece978538a96a8fb98">Evaluate</reimplements>
+        <param>
+          <type>arma::vec &amp;</type>
+          <declname>estimates</declname>
+        </param>
+        <briefdescription>
+<para>Perform monochromatic <ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref> (i.e. with the reference set as the query set). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="204" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a4bbcfabadfb5b781249c7ea4125677ac" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void MCBreakCoef</definition>
+        <argsstring>(const double b)</argsstring>
+        <name>MCBreakCoef</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ad7e08030744c69b2c47446d9d846487c">MCBreakCoef</reimplements>
+        <param>
+          <type>const double</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Modify the Monte Carlo break coefficient. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="189" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="189" bodyend="189"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a04a0caefbe404092e3d18baabd3baef7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void MCEntryCoef</definition>
+        <argsstring>(const double e)</argsstring>
+        <name>MCEntryCoef</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a2e9a7a651dd745d46880139cc0e7b720">MCEntryCoef</reimplements>
+        <param>
+          <type>const double</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+<para>Modify the Monte Carlo entry coefficient. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="186" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="186" bodyend="186"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1adfcd113c0ea444a40d8720aa693e6686" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>size_t &amp;</type>
+        <definition>virtual size_t&amp; MCInitialSampleSize</definition>
+        <argsstring>()</argsstring>
+        <name>MCInitialSampleSize</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1abb328957925b5cd31e13e8e27efc0071">MCInitialSampleSize</reimplements>
+        <briefdescription>
+<para>Modify the Monte Carlo sample size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="180" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="180" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a615951cec49961d82ea4497a3073b7b8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>size_t</type>
+        <definition>virtual size_t MCInitialSampleSize</definition>
+        <argsstring>() const</argsstring>
+        <name>MCInitialSampleSize</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1aa17a084342c0caafda4d046545e5993b">MCInitialSampleSize</reimplements>
+        <briefdescription>
+<para>Get the Monte Carlo sample size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="175" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="175" bodyend="178"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a3cb963e1bd6ee5c7d1121d774bb17afc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void MCProb</definition>
+        <argsstring>(const double mcProb)</argsstring>
+        <name>MCProb</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a73f434ac1df0cc309db1e11c9439059d">MCProb</reimplements>
+        <param>
+          <type>const double</type>
+          <declname>mcProb</declname>
+        </param>
+        <briefdescription>
+<para>Modify the Monte Carlo probability. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="172" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="172" bodyend="172"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1afe26b90d4fcc474c9d074bad2a667279" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="namespacemlpack_1_1kde_1a0ff4f94721e558082ebf9d0ef6183d38" kindref="member">KDEMode</ref> &amp;</type>
+        <definition>virtual KDEMode&amp; Mode</definition>
+        <argsstring>()</argsstring>
+        <name>Mode</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a06cd29610512406d9ea63f325856983a">Mode</reimplements>
+        <briefdescription>
+<para>Modify the search mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="194" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="194" bodyend="194"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a80cc32208d4e19c3196d97d0992829ef" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="namespacemlpack_1_1kde_1a0ff4f94721e558082ebf9d0ef6183d38" kindref="member">KDEMode</ref></type>
+        <definition>virtual KDEMode Mode</definition>
+        <argsstring>() const</argsstring>
+        <name>Mode</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ab38fc729a0a6f58a4d9ef6e38a9959cf">Mode</reimplements>
+        <briefdescription>
+<para>Get the search mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="192" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="192" bodyend="192"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1aa9f25dddb2e9608e47417d6808adfb2f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>bool &amp;</type>
+        <definition>virtual bool&amp; MonteCarlo</definition>
+        <argsstring>()</argsstring>
+        <name>MonteCarlo</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ad5ee40ede39f0233b7f01e74d3c1e1c0">MonteCarlo</reimplements>
+        <briefdescription>
+<para>Modify whether Monte Carlo search is being used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="169" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="169" bodyend="169"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a3c91c4e6858fc5d602622548d043fdc2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>virtual bool MonteCarlo</definition>
+        <argsstring>() const</argsstring>
+        <name>MonteCarlo</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1a7e1172b47c3d2775ceb49bed772c44cf">MonteCarlo</reimplements>
+        <briefdescription>
+<para>Get whether Monte Carlo search is being used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="167" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="167" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a50e2786ac18e3f69fb4e164b68920390" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void RelativeError</definition>
+        <argsstring>(const double eps)</argsstring>
+        <name>RelativeError</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1aef3e830b36580b39b0ddb75ea89f4d8a">RelativeError</reimplements>
+        <param>
+          <type>const double</type>
+          <declname>eps</declname>
+        </param>
+        <briefdescription>
+<para>Modify the relative error tolerance. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="161" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="161" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the <ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref> model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="208" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="208" bodyend="211"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kde_1_1KDEWrapper_1ac9780b7b68f55a2fb2df95768aec1bd4" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>virtual void Train</definition>
+        <argsstring>(arma::mat &amp;&amp;referenceSet)</argsstring>
+        <name>Train</name>
+        <reimplements refid="classmlpack_1_1kde_1_1KDEWrapperBase_1af72c25a0ebac1dc4d40f76b9a2f5e149">Train</reimplements>
+        <param>
+          <type>arma::mat &amp;&amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <briefdescription>
+<para>Train the model (build the tree). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="197" column="16"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classmlpack_1_1kde_1_1KDEWrapper" kindref="compound">KDEWrapper</ref> is a wrapper class for all <ref refid="classmlpack_1_1kde_1_1KDE" kindref="compound">KDE</ref> types supported by <ref refid="classmlpack_1_1kde_1_1KDEModel" kindref="compound">KDEModel</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It can be extended with new child classes if new functionality for certain types is needed. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>KDEWrapper&lt; KernelType, TreeType &gt;</label>
+        <link refid="classmlpack_1_1kde_1_1KDEWrapper"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>KDEWrapperBase</label>
+        <link refid="classmlpack_1_1kde_1_1KDEWrapperBase"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="3">
+        <label>KDE&lt; KernelType, metric::EuclideanDistance, arma::mat, TreeType &gt;</label>
+        <link refid="classmlpack_1_1kde_1_1KDE"/>
+        <childnode refid="4" relation="template-instance">
+          <edgelabel>&lt; KernelType, metric::EuclideanDistance, arma::mat, TreeType &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>KDEWrapper&lt; KernelType, TreeType &gt;</label>
+        <link refid="classmlpack_1_1kde_1_1KDEWrapper"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>kde</edgelabel>
+        </childnode>
+      </node>
+      <node id="4">
+        <label>KDE&lt; KernelType, MetricType, MatType, TreeType, DualTreeTraversalType, SingleTreeTraversalType &gt;</label>
+        <link refid="classmlpack_1_1kde_1_1KDE"/>
+      </node>
+      <node id="2">
+        <label>KDEWrapperBase</label>
+        <link refid="classmlpack_1_1kde_1_1KDEWrapperBase"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" line="138" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kde/kde_model.hpp" bodystart="139" bodyend="221"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a0b9d34d8e38ac36cd2ca2118466d0953" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>AbsoluteError</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a3d47a1b167a794ee6c4d646ee46254b6" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>Bandwidth</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a0ba337bbc529b82831c60d60b9441d08" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>Clone</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a52a2ccd4d4e143187436097916dae748" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1aecea217fc025d169adadd10f78a77fa5" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>Evaluate</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a24107e389a24c7c0a972615f1c8aff83" prot="protected" virt="non-virtual"><scope>mlpack::kde::KDEWrapper</scope><name>kde</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a08dd59a40d62d4fc10a4e324568d9651" prot="protected" virt="non-virtual"><scope>mlpack::kde::KDEWrapper</scope><name>KDEType</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a57131241225d7fa21c80fff9d967677f" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEWrapper</scope><name>KDEWrapper</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ac1313101961cb19928ea3946dedc6ad9" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEWrapper</scope><name>KDEWrapperBase</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a4bbcfabadfb5b781249c7ea4125677ac" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>MCBreakCoef</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a04a0caefbe404092e3d18baabd3baef7" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>MCEntryCoef</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a615951cec49961d82ea4497a3073b7b8" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>MCInitialSampleSize</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1adfcd113c0ea444a40d8720aa693e6686" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>MCInitialSampleSize</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a3cb963e1bd6ee5c7d1121d774bb17afc" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>MCProb</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a80cc32208d4e19c3196d97d0992829ef" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>Mode</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1afe26b90d4fcc474c9d074bad2a667279" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>Mode</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a3c91c4e6858fc5d602622548d043fdc2" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>MonteCarlo</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1aa9f25dddb2e9608e47417d6808adfb2f" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>MonteCarlo</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a50e2786ac18e3f69fb4e164b68920390" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>RelativeError</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::kde::KDEWrapper</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1ac9780b7b68f55a2fb2df95768aec1bd4" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapper_1a667ffa45aeea3422b7892b1c06f80669" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>~KDEWrapper</name></member>
+      <member refid="classmlpack_1_1kde_1_1KDEWrapperBase_1ae58d12a345c8353b6c5338e620e68d59" prot="public" virt="virtual"><scope>mlpack::kde::KDEWrapper</scope><name>~KDEWrapperBase</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

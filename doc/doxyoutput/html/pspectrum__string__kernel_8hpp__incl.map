@@ -1,0 +1,52 @@
+<map id="/home/aakash/mlpack/src/mlpack/core/kernels/pspectrum_string_kernel.hpp" name="/home/aakash/mlpack/src/mlpack/core/kernels/pspectrum_string_kernel.hpp">
+<area shape="rect" id="node1" title=" " alt="" coords="1213,5,1428,61"/>
+<area shape="rect" id="node2" title=" " alt="" coords="619,310,670,337"/>
+<area shape="rect" id="node3" title=" " alt="" coords="135,399,194,426"/>
+<area shape="rect" id="node4" title=" " alt="" coords="2311,117,2373,143"/>
+<area shape="rect" id="node5" href="$prereqs_8hpp.html" title="The core includes that mlpack expects; standard C++ includes and Armadillo." alt="" coords="2136,117,2287,143"/>
+<area shape="rect" id="node43" href="$log_8hpp.html" title=" " alt="" coords="241,213,419,240"/>
+<area shape="rect" id="node50" title=" " alt="" coords="2397,109,2580,151"/>
+<area shape="rect" id="node6" title=" " alt="" coords="4725,213,4788,240"/>
+<area shape="rect" id="node7" title=" " alt="" coords="771,213,836,240"/>
+<area shape="rect" id="node8" title=" " alt="" coords="861,213,919,240"/>
+<area shape="rect" id="node9" title=" " alt="" coords="943,213,1010,240"/>
+<area shape="rect" id="node10" title=" " alt="" coords="1034,213,1101,240"/>
+<area shape="rect" id="node11" title=" " alt="" coords="1125,213,1186,240"/>
+<area shape="rect" id="node12" title=" " alt="" coords="1211,213,1276,240"/>
+<area shape="rect" id="node13" title=" " alt="" coords="1301,213,1367,240"/>
+<area shape="rect" id="node14" title=" " alt="" coords="1392,213,1479,240"/>
+<area shape="rect" id="node15" title=" " alt="" coords="1503,213,1557,240"/>
+<area shape="rect" id="node16" title=" " alt="" coords="1581,213,1641,240"/>
+<area shape="rect" id="node17" title=" " alt="" coords="1666,206,1858,247"/>
+<area shape="rect" id="node18" href="$arma__traits_8hpp.html" title=" " alt="" coords="1882,206,2047,247"/>
+<area shape="rect" id="node19" title=" " alt="" coords="1861,489,2053,515"/>
+<area shape="rect" id="node20" title=" " alt="" coords="2077,489,2257,515"/>
+<area shape="rect" id="node21" title=" " alt="" coords="2354,481,2533,523"/>
+<area shape="rect" id="node22" title=" " alt="" coords="2669,489,2847,515"/>
+<area shape="rect" id="node23" title=" " alt="" coords="2827,213,2993,240"/>
+<area shape="rect" id="node24" title=" " alt="" coords="2960,392,3103,433"/>
+<area shape="rect" id="node25" title=" " alt="" coords="3018,213,3189,240"/>
+<area shape="rect" id="node26" title=" " alt="" coords="3213,213,3380,240"/>
+<area shape="rect" id="node27" href="$unordered__map_8hpp.html" title="This file is backported from cereal 1.3 to support the serialization of objects of type associative c..." alt="" coords="4493,206,4649,247"/>
+<area shape="rect" id="node30" title=" " alt="" coords="3455,213,3626,240"/>
+<area shape="rect" id="node31" title=" " alt="" coords="3127,399,3301,426"/>
+<area shape="rect" id="node32" href="$is__loading_8hpp.html" title=" " alt="" coords="1801,392,1947,433"/>
+<area shape="rect" id="node33" href="$is__saving_8hpp.html" title=" " alt="" coords="2022,392,2169,433"/>
+<area shape="rect" id="node34" title=" " alt="" coords="3650,206,3842,247"/>
+<area shape="rect" id="node35" href="$array__wrapper_8hpp.html" title=" " alt="" coords="2193,392,2341,433"/>
+<area shape="rect" id="node36" href="$pointer__variant__wrapper_8hpp.html" title=" " alt="" coords="2426,303,2639,344"/>
+<area shape="rect" id="node38" href="$pointer__wrapper_8hpp.html" title=" " alt="" coords="2365,399,2521,426"/>
+<area shape="rect" id="node39" href="$pointer__vector__variant__wrapper_8hpp.html" title=" " alt="" coords="2426,199,2599,255"/>
+<area shape="rect" id="node40" href="$pointer__vector__wrapper_8hpp.html" title=" " alt="" coords="2664,310,2868,337"/>
+<area shape="rect" id="node41" href="$has__serialize_8hpp.html" title=" " alt="" coords="3329,303,3491,344"/>
+<area shape="rect" id="node42" href="$arma__config__check_8hpp.html" title=" " alt="" coords="3866,206,4031,247"/>
+<area shape="rect" id="node47" href="$timers_8hpp.html" title=" " alt="" coords="545,213,747,240"/>
+<area shape="rect" id="node48" href="$deprecated_8hpp.html" title=" " alt="" coords="4055,213,4287,240"/>
+<area shape="rect" id="node49" href="$size__checks_8hpp.html" title=" " alt="" coords="4311,206,4469,247"/>
+<area shape="rect" id="node28" href="$pair__associative__container_8hpp.html" title="This file is backported from cereal 1.3 to support the serialization of objects of type associative c..." alt="" coords="4270,310,4494,337"/>
+<area shape="rect" id="node29" title=" " alt="" coords="4517,310,4641,337"/>
+<area shape="rect" id="node37" title=" " alt="" coords="2546,399,2682,426"/>
+<area shape="rect" id="node44" title=" " alt="" coords="37,310,236,337"/>
+<area shape="rect" id="node45" href="$prefixedoutstream_8hpp.html" title=" " alt="" coords="425,310,595,337"/>
+<area shape="rect" id="node46" href="$nulloutstream_8hpp.html" title=" " alt="" coords="259,310,401,337"/>
+</map>

@@ -1,0 +1,136 @@
+.TH "KDEStat" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+KDEStat \- Extra data for each node in the tree for the task of kernel density estimation\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBKDEStat\fP ()"
+.br
+.RI "Initialize the statistic\&. "
+.ti -1c
+.RI "template<typename TreeType > \fBKDEStat\fP (TreeType &)"
+.br
+.RI "Initialization for a fully initialized node\&. "
+.ti -1c
+.RI "double & \fBAccumAlpha\fP ()"
+.br
+.RI "Modify accumulated Monte Carlo alpha of the node\&. "
+.ti -1c
+.RI "double \fBAccumAlpha\fP () const"
+.br
+.RI "Get accumulated Monte Carlo alpha of the node\&. "
+.ti -1c
+.RI "double & \fBAccumError\fP ()"
+.br
+.RI "Modify accumulated error tolerance of the node\&. "
+.ti -1c
+.RI "double \fBAccumError\fP () const"
+.br
+.RI "Get accumulated error tolerance of the node\&. "
+.ti -1c
+.RI "double & \fBMCAlpha\fP ()"
+.br
+.RI "Modify Monte Carlo alpha of the node\&. "
+.ti -1c
+.RI "double \fBMCAlpha\fP () const"
+.br
+.RI "Get Monte Carlo alpha of the node\&. "
+.ti -1c
+.RI "double & \fBMCBeta\fP ()"
+.br
+.RI "Modify accumulated Monte Carlo alpha of the node\&. "
+.ti -1c
+.RI "double \fBMCBeta\fP () const"
+.br
+.RI "Get accumulated Monte Carlo alpha of the node\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the statistic to/from an archive\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Extra data for each node in the tree for the task of kernel density estimation\&. 
+.PP
+Definition at line 24 of file kde_stat\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBKDEStat\fP ()\fC [inline]\fP"
+
+.PP
+Initialize the statistic\&. 
+.PP
+Definition at line 28 of file kde_stat\&.hpp\&.
+.SS "\fBKDEStat\fP (TreeType &)\fC [inline]\fP"
+
+.PP
+Initialization for a fully initialized node\&. 
+.PP
+Definition at line 37 of file kde_stat\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double& AccumAlpha ()\fC [inline]\fP"
+
+.PP
+Modify accumulated Monte Carlo alpha of the node\&. 
+.PP
+Definition at line 54 of file kde_stat\&.hpp\&.
+.SS "double AccumAlpha () const\fC [inline]\fP"
+
+.PP
+Get accumulated Monte Carlo alpha of the node\&. 
+.PP
+Definition at line 51 of file kde_stat\&.hpp\&.
+.SS "double& AccumError ()\fC [inline]\fP"
+
+.PP
+Modify accumulated error tolerance of the node\&. 
+.PP
+Definition at line 60 of file kde_stat\&.hpp\&.
+.SS "double AccumError () const\fC [inline]\fP"
+
+.PP
+Get accumulated error tolerance of the node\&. 
+.PP
+Definition at line 57 of file kde_stat\&.hpp\&.
+.SS "double& MCAlpha ()\fC [inline]\fP"
+
+.PP
+Modify Monte Carlo alpha of the node\&. 
+.PP
+Definition at line 66 of file kde_stat\&.hpp\&.
+.SS "double MCAlpha () const\fC [inline]\fP"
+
+.PP
+Get Monte Carlo alpha of the node\&. 
+.PP
+Definition at line 63 of file kde_stat\&.hpp\&.
+.SS "double& MCBeta ()\fC [inline]\fP"
+
+.PP
+Modify accumulated Monte Carlo alpha of the node\&. 
+.PP
+Definition at line 48 of file kde_stat\&.hpp\&.
+.SS "double MCBeta () const\fC [inline]\fP"
+
+.PP
+Get accumulated Monte Carlo alpha of the node\&. 
+.PP
+Definition at line 45 of file kde_stat\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the statistic to/from an archive\&. 
+.PP
+Definition at line 70 of file kde_stat\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

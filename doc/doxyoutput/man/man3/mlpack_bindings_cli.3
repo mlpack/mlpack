@@ -1,0 +1,1190 @@
+.TH "mlpack::bindings::cli" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::bindings::cli
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBCLIOption\fP"
+.br
+.RI "A static object whose constructor registers a parameter with the \fBIO\fP class\&. "
+.ti -1c
+.RI "struct \fBParameterType\fP"
+.br
+.RI "Utility struct to return the type that CLI11 should accept for a given input type\&. "
+.ti -1c
+.RI "struct \fBParameterType< arma::Col< eT > >\fP"
+.br
+.RI "For vector types, CLI11 will accept a std::string, not an arma::Col<eT> (since it is not clear how to specify a vector on the command-line)\&. "
+.ti -1c
+.RI "struct \fBParameterType< arma::Mat< eT > >\fP"
+.br
+.RI "For matrix types, CLI11 will accept a std::string, not an arma::mat (since it is not clear how to specify a matrix on the command-line)\&. "
+.ti -1c
+.RI "struct \fBParameterType< arma::Row< eT > >\fP"
+.br
+.RI "For row vector types, CLI11 will accept a std::string, not an arma::Row<eT> (since it is not clear how to specify a vector on the command-line)\&. "
+.ti -1c
+.RI "struct \fBParameterType< std::tuple< mlpack::data::DatasetMapper< PolicyType, std::string >, arma::Mat< eT > > >\fP"
+.br
+.RI "For matrix+dataset info types, we should accept a std::string\&. "
+.ti -1c
+.RI "struct \fBParameterTypeDeducer\fP"
+.br
+.ti -1c
+.RI "struct \fBParameterTypeDeducer< true, T >\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > void \fBAddToCLI11\fP (const std::string &cliName, \fButil::ParamData\fP &param, CLI::App &app, const typename boost::disable_if< std::is_same< T, bool >>::type *=0, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Add an option to CLI11\&. "
+.ti -1c
+.RI "template<typename T > void \fBAddToCLI11\fP (const std::string &cliName, \fButil::ParamData\fP &param, CLI::App &app, const typename boost::disable_if< std::is_same< T, bool >>::type *=0, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::enable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Add a tuple option to CLI11\&. "
+.ti -1c
+.RI "template<typename T > void \fBAddToCLI11\fP (const std::string &cliName, \fButil::ParamData\fP &param, CLI::App &app, const typename boost::disable_if< std::is_same< T, bool >>::type *=0, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Add a serializable option to CLI11\&. "
+.ti -1c
+.RI "template<typename T > void \fBAddToCLI11\fP (const std::string &cliName, \fButil::ParamData\fP &param, CLI::App &app, const typename boost::disable_if< std::is_same< T, bool >>::type *=0, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Add an arma matrix to CLI11\&. "
+.ti -1c
+.RI "template<typename T > void \fBAddToCLI11\fP (const std::string &cliName, \fButil::ParamData\fP &param, CLI::App &app, const typename boost::enable_if< std::is_same< T, bool >>::type *=0, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Add a boolean option to CLI11\&. "
+.ti -1c
+.RI "template<typename T > void \fBAddToCLI11\fP (\fButil::ParamData\fP &param, const void *, void *output)"
+.br
+.RI "Add an option to CLI11\&. "
+.ti -1c
+.RI "template<typename T > void \fBDefaultParam\fP (\fButil::ParamData\fP &data, const void *, void *output)"
+.br
+.RI "Return the default value of an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::string >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Return the default value of an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return the default value of a model option (this returns the default filename, or '' if the default is no file)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< std::is_same< T, std::string >>::type *=0)"
+.br
+.RI "Return the default value of a string option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type *=0)"
+.br
+.RI "Return the default value of a vector option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBDefaultParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if_c< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or '' if the default is no file)\&. "
+.ti -1c
+.RI "template<typename T > void \fBDeleteAllocatedMemory\fP (\fButil::ParamData\fP &d, const void *, void *)"
+.br
+.ti -1c
+.RI "template<typename T > void \fBDeleteAllocatedMemoryImpl\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > void \fBDeleteAllocatedMemoryImpl\fP (\fButil::ParamData\fP &, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > void \fBDeleteAllocatedMemoryImpl\fP (\fButil::ParamData\fP &d, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.ti -1c
+.RI "void \fBEndProgram\fP ()"
+.br
+.RI "Handle command-line program termination\&. "
+.ti -1c
+.RI "template<typename T > void * \fBGetAllocatedMemory\fP (\fButil::ParamData\fP &, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > void * \fBGetAllocatedMemory\fP (\fButil::ParamData\fP &, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > void * \fBGetAllocatedMemory\fP (\fButil::ParamData\fP &d, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.ti -1c
+.RI "template<typename T > void \fBGetAllocatedMemory\fP (\fButil::ParamData\fP &d, const void *, void *output)"
+.br
+.ti -1c
+.RI "std::string \fBGetBindingName\fP (const std::string &bindingName)"
+.br
+.RI "Given the name of a binding, print its command-line name (this returns 'mlpack_<bindingName>'\&. "
+.ti -1c
+.RI "template<typename T > T & \fBGetParam\fP (\fButil::ParamData\fP &d, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "This overload is called when nothing special needs to happen to the name of the parameter\&. "
+.ti -1c
+.RI "template<typename T > T *& \fBGetParam\fP (\fButil::ParamData\fP &d, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return a serializable object\&. "
+.ti -1c
+.RI "template<typename T > T & \fBGetParam\fP (\fButil::ParamData\fP &d, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "Return a matrix parameter\&. "
+.ti -1c
+.RI "template<typename T > T & \fBGetParam\fP (\fButil::ParamData\fP &d, const typename boost::enable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Return a matrix/dataset info parameter\&. "
+.ti -1c
+.RI "template<typename T > void \fBGetParam\fP (\fButil::ParamData\fP &d, const void *, void *output)"
+.br
+.RI "Return a parameter casted to the given type\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Print an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Print a model option (this just prints the filename)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename std::enable_if< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Print a matrix/tuple option (this just prints the filename)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type *=0)"
+.br
+.RI "Print a vector option, with spaces between it\&. "
+.ti -1c
+.RI "template<typename T > void \fBGetPrintableParam\fP (\fButil::ParamData\fP &data, const void *, void *output)"
+.br
+.RI "Print an option into a std::string\&. "
+.ti -1c
+.RI "template<typename T > void \fBGetPrintableParamName\fP (\fButil::ParamData\fP &d, const void *, void *output)"
+.br
+.RI "Get the parameter's name as seen by the user\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParamName\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Get the parameter name for a type that has no special handling\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParamName\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Get the parameter name for a serializable model type (where the user has to pass the file that holds the matrix)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParamName\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "Get the parameter name for a matrix type (where the user has to pass the file that holds the matrix)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParamName\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Get the parameter name for a mapped matrix type (where the user has to pass the file that holds the matrix)\&. "
+.ti -1c
+.RI "template<typename T > void \fBGetPrintableParamValue\fP (\fButil::ParamData\fP &d, const void *input, void *output)"
+.br
+.RI "Get the parameter's name as seen by the user\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParamValue\fP (\fButil::ParamData\fP &data, const std::string &value, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Get the parameter name for a type that has no special handling\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParamValue\fP (\fButil::ParamData\fP &data, const std::string &value, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Get the parameter name for a serializable model type (where the user has to pass the file that holds the matrix)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParamValue\fP (\fButil::ParamData\fP &data, const std::string &value, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "Get the parameter name for a matrix type (where the user has to pass the file that holds the matrix)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableParamValue\fP (\fButil::ParamData\fP &data, const std::string &value, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Get the parameter name for a mapped matrix type (where the user has to pass the file that holds the matrix)\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Return a string representing the command-line type of an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a model\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const typename std::enable_if< arma::is_arma_type< T >::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a matrix option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a matrix tuple option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a vector\&. "
+.ti -1c
+.RI "template<typename T > void \fBGetPrintableType\fP (\fButil::ParamData\fP &data, const void *, void *output)"
+.br
+.RI "Print the command-line type of an option into a string\&. "
+.ti -1c
+.RI "template<typename T > T & \fBGetRawParam\fP (\fButil::ParamData\fP &d, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "This overload is called when nothing special needs to happen to the name of the parameter\&. "
+.ti -1c
+.RI "template<typename T > T *& \fBGetRawParam\fP (\fButil::ParamData\fP &d, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return the name of a model parameter\&. "
+.ti -1c
+.RI "template<typename T > T & \fBGetRawParam\fP (\fButil::ParamData\fP &d, const typename boost::enable_if_c< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Return a matrix parameter\&. "
+.ti -1c
+.RI "template<typename T > void \fBGetRawParam\fP (\fButil::ParamData\fP &d, const void *, void *output)"
+.br
+.RI "Return a parameter casted to the given type\&. "
+.ti -1c
+.RI "template<typename T > bool \fBIgnoreCheck\fP (const T &)"
+.br
+.RI "Return whether or not a runtime check on parameters should be ignored\&. "
+.ti -1c
+.RI "template<typename T > void \fBInPlaceCopy\fP (\fButil::ParamData\fP &d, const void *input, void *)"
+.br
+.RI "Make the given ParamData be an in-place copy of the input\&. "
+.ti -1c
+.RI "template<typename T > void \fBInPlaceCopyInternal\fP (\fButil::ParamData\fP &, \fButil::ParamData\fP &, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "This overload is called when nothing special needs to happen to make something an in-place copy\&. "
+.ti -1c
+.RI "template<typename T > void \fBInPlaceCopyInternal\fP (\fButil::ParamData\fP &d, \fButil::ParamData\fP &input, const typename std::enable_if< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Modify the filename for any type that needs to be loaded from disk to match the filename of the input parameter, for a matrix/DatasetInfo parameter\&. "
+.ti -1c
+.RI "template<typename T > void \fBInPlaceCopyInternal\fP (\fButil::ParamData\fP &d, \fButil::ParamData\fP &input, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type *=0)"
+.br
+.RI "Modify the filename for any type that needs to be loaded from disk to match the filename of the input parameter\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBMapParameterName\fP (const std::string &identifier, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "If needed, map the parameter name to the name that is used by CLI11\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBMapParameterName\fP (const std::string &identifier, const typename boost::enable_if_c< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value||\fBdata::HasSerialize\fP< T >::value >::type *=0)"
+.br
+.RI "Map the parameter name to the name that is used by CLI11\&. "
+.ti -1c
+.RI "template<typename T > void \fBMapParameterName\fP (\fButil::ParamData\fP &d, const void *, void *output)"
+.br
+.RI "Map the parameter name to the name seen by CLI\&. "
+.ti -1c
+.RI "template<typename T > void \fBOutputParam\fP (\fButil::ParamData\fP &data, const void *, void *)"
+.br
+.RI "Output an option\&. "
+.ti -1c
+.RI "template<typename T > void \fBOutputParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Output an option (print to stdout)\&. "
+.ti -1c
+.RI "template<typename T > void \fBOutputParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Output a serializable class option (this saves it to the given file)\&. "
+.ti -1c
+.RI "template<typename T > void \fBOutputParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< arma::is_arma_type< T >>::type *=0)"
+.br
+.RI "Output a matrix option (this saves it to the given file)\&. "
+.ti -1c
+.RI "template<typename T > void \fBOutputParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Output a mapped dataset\&. "
+.ti -1c
+.RI "template<typename T > void \fBOutputParamImpl\fP (\fButil::ParamData\fP &data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type *=0)"
+.br
+.RI "Output a vector option (print to stdout)\&. "
+.ti -1c
+.RI "\fBPARAM_FLAG\fP ('help', 'Default help info\&.', 'h')"
+.br
+.ti -1c
+.RI "\fBPARAM_FLAG\fP ('verbose', 'Display informational messages and the full list of ' 'parameters and timers at the end of execution\&.', 'v')"
+.br
+.ti -1c
+.RI "\fBPARAM_FLAG\fP ('version', 'Display the version of mlpack\&.', 'V')"
+.br
+.ti -1c
+.RI "\fBPARAM_STRING_IN\fP ('info', 'Print help on a specific option\&.', '', '')"
+.br
+.ti -1c
+.RI "std::string \fBParamString\fP (const std::string &paramName)"
+.br
+.RI "Print what a user would type to invoke the given option name\&. "
+.ti -1c
+.RI "void \fBParseCommandLine\fP (int argc, char **argv)"
+.br
+.RI "Parse the command line, setting all of the options inside of the CLI object to their appropriate given values\&. "
+.ti -1c
+.RI "std::string \fBPrintDataset\fP (const std::string &dataset)"
+.br
+.RI "Print a dataset type parameter (add \&.csv and return)\&. "
+.ti -1c
+.RI "std::string \fBPrintDefault\fP (const std::string &paramName)"
+.br
+.RI "Given a parameter name, print its corresponding default value\&. "
+.ti -1c
+.RI "void \fBPrintHelp\fP (const std::string &param='')"
+.br
+.RI "Print the help for the given parameter\&. "
+.ti -1c
+.RI "std::string \fBPrintImport\fP (const std::string &bindingName)"
+.br
+.RI "Print any imports for CLI (there are none, so this returns an empty string)\&. "
+.ti -1c
+.RI "std::string \fBPrintInputOptionInfo\fP ()"
+.br
+.RI "Print any special information about input options\&. "
+.ti -1c
+.RI "std::string \fBPrintModel\fP (const std::string &model)"
+.br
+.RI "Print a model type parameter (add \&.bin and return)\&. "
+.ti -1c
+.RI "std::string \fBPrintOutputOptionInfo\fP ()"
+.br
+.RI "Print any special information about output options\&. "
+.ti -1c
+.RI "std::string \fBPrintType\fP (\fButil::ParamData\fP &param)"
+.br
+.RI "Print the type of a parameter that a user would specify from the command-line\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type *=0)"
+.br
+.RI "Return a string representing the command-line type of an option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a model\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename std::enable_if< arma::is_arma_type< T >::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a matrix option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a matrix tuple option\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type *=0)"
+.br
+.RI "Return a string representing the command-line type of a vector\&. "
+.ti -1c
+.RI "template<typename T > void \fBPrintTypeDoc\fP (\fButil::ParamData\fP &data, const void *, void *output)"
+.br
+.RI "Print the command-line type of an option into a string\&. "
+.ti -1c
+.RI "std::string \fBPrintTypeDocs\fP ()"
+.br
+.RI "Print documentation for each of the types\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBPrintValue\fP (const T &value, bool quotes)"
+.br
+.RI "Given a parameter type, print the corresponding value\&. "
+.ti -1c
+.RI "std::string \fBProcessOptions\fP ()"
+.br
+.RI "Base case for recursion\&. "
+.ti -1c
+.RI "template<typename T , typename\&.\&.\&. Args> std::string \fBProcessOptions\fP (const std::string &paramName, const T &value, Args\&.\&.\&. args)"
+.br
+.RI "Print an option for a command-line argument\&. "
+.ti -1c
+.RI "std::string \fBProgramCall\fP (const std::string &programName)"
+.br
+.RI "Given a program name, print a program call invocation assuming that all options are specified\&. "
+.ti -1c
+.RI "template<typename\&.\&.\&. Args> std::string \fBProgramCall\fP (const std::string &programName, Args\&.\&.\&. args)"
+.br
+.RI "Given a program name and arguments for it, print what its invocation would be\&. "
+.ti -1c
+.RI "template<typename T > void \fBSetParam\fP (\fButil::ParamData\fP &d, const boost::any &, const typename boost::enable_if< std::is_same< T, bool >>::type *=0)"
+.br
+.RI "This overload is called to set a boolean\&. "
+.ti -1c
+.RI "template<typename T > void \fBSetParam\fP (\fButil::ParamData\fP &d, const boost::any &value, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type *=0, const typename boost::disable_if< std::is_same< T, bool >>::type *=0)"
+.br
+.RI "This overload is called when nothing special needs to happen to the name of the parameter\&. "
+.ti -1c
+.RI "template<typename T > void \fBSetParam\fP (\fButil::ParamData\fP &d, const boost::any &value, const typename boost::disable_if< arma::is_arma_type< T >>::type *=0, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Set a serializable object\&. "
+.ti -1c
+.RI "template<typename T > void \fBSetParam\fP (\fButil::ParamData\fP &d, const boost::any &value, const typename std::enable_if< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type *=0)"
+.br
+.RI "Set a matrix parameter, a matrix/dataset info parameter\&. "
+.ti -1c
+.RI "template<typename T > void \fBSetParam\fP (\fButil::ParamData\fP &d, const void *input, void *)"
+.br
+.RI "Return a parameter casted to the given type\&. "
+.ti -1c
+.RI "template<typename T > void \fBStringTypeParam\fP (\fButil::ParamData\fP &, const void *, void *output)"
+.br
+.RI "Return a string containing the type of a parameter\&. "
+.ti -1c
+.RI "template<> void \fBStringTypeParam< bool >\fP (\fButil::ParamData\fP &, const void *, void *output)"
+.br
+.RI "Return 'bool'\&. "
+.ti -1c
+.RI "template<> void \fBStringTypeParam< double >\fP (\fButil::ParamData\fP &, const void *, void *output)"
+.br
+.RI "Return 'double'\&. "
+.ti -1c
+.RI "template<> void \fBStringTypeParam< int >\fP (\fButil::ParamData\fP &, const void *, void *output)"
+.br
+.RI "Return 'int'\&. "
+.ti -1c
+.RI "template<> void \fBStringTypeParam< std::string >\fP (\fButil::ParamData\fP &, const void *, void *output)"
+.br
+.RI "Return 'string'\&. "
+.ti -1c
+.RI "template<> void \fBStringTypeParam< std::tuple< mlpack::data::DatasetInfo, arma::mat > >\fP (\fButil::ParamData\fP &, const void *, void *output)"
+.br
+.RI "Return 'string';\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBStringTypeParamImpl\fP (const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type *=0, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return a string containing the type of the parameter\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBStringTypeParamImpl\fP (const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type *=0)"
+.br
+.RI "Return a string containing the type of the parameter,\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBStringTypeParamImpl\fP (const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type *=0)"
+.br
+.RI "Return a string containing the type of the parameter, for vector options\&. "
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void mlpack::bindings::cli::AddToCLI11 (const std::string & cliName, \fButil::ParamData\fP & param, CLI::App & app, const typename boost::disable_if< std::is_same< T, bool >>::type * = \fC0\fP, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Add an option to CLI11\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcliName\fP The name of the option to add to CLI11\&. 
+.br
+\fIparam\fP an object of \fButil::ParamData\fP\&. 
+.br
+\fIapp\fP a CLI11 object to add parameter to\&. 
+.RE
+.PP
+
+.PP
+Definition at line 127 of file add_to_cli11\&.hpp\&.
+.PP
+References ParamData::desc, ParamData::value, and ParamData::wasPassed\&.
+.SS "void mlpack::bindings::cli::AddToCLI11 (const std::string & cliName, \fButil::ParamData\fP & param, CLI::App & app, const typename boost::disable_if< std::is_same< T, bool >>::type * = \fC0\fP, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::enable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Add a tuple option to CLI11\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcliName\fP The name of the option to add to CLI11\&. 
+.br
+\fIparam\fP an object of \fButil::ParamData\fP\&. 
+.br
+\fIapp\fP A CLI11 object to add parameter to\&. 
+.RE
+.PP
+
+.PP
+Definition at line 33 of file add_to_cli11\&.hpp\&.
+.PP
+References ParamData::desc, ParamData::value, and ParamData::wasPassed\&.
+.SS "void mlpack::bindings::cli::AddToCLI11 (const std::string & cliName, \fButil::ParamData\fP & param, CLI::App & app, const typename boost::disable_if< std::is_same< T, bool >>::type * = \fC0\fP, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Add a serializable option to CLI11\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcliName\fP The name of the option to add to CLI11\&. 
+.br
+\fIparam\fP an object of \fButil::ParamData\fP\&. 
+.br
+\fIapp\fP a CLI11 object to add parameter to\&. 
+.RE
+.PP
+
+.PP
+Definition at line 65 of file add_to_cli11\&.hpp\&.
+.PP
+References ParamData::desc, ParamData::value, and ParamData::wasPassed\&.
+.SS "void mlpack::bindings::cli::AddToCLI11 (const std::string & cliName, \fButil::ParamData\fP & param, CLI::App & app, const typename boost::disable_if< std::is_same< T, bool >>::type * = \fC0\fP, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Add an arma matrix to CLI11\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcliName\fP The name of the option to add to CLI11\&. 
+.br
+\fIparam\fP an object of \fButil::ParamData\fP\&. 
+.br
+\fIapp\fP a CLI11 object to add parameter to\&. 
+.RE
+.PP
+
+.PP
+Definition at line 97 of file add_to_cli11\&.hpp\&.
+.PP
+References ParamData::desc, ParamData::value, and ParamData::wasPassed\&.
+.SS "void mlpack::bindings::cli::AddToCLI11 (const std::string & cliName, \fButil::ParamData\fP & param, CLI::App & app, const typename boost::enable_if< std::is_same< T, bool >>::type * = \fC0\fP, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Add a boolean option to CLI11\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcliName\fP The name of the option to add to CLI11\&. 
+.br
+\fIparam\fP an object of \fButil::ParamData\fP\&. 
+.br
+\fIapp\fP a CLI11 object to add parameter to\&. 
+.RE
+.PP
+
+.PP
+Definition at line 157 of file add_to_cli11\&.hpp\&.
+.PP
+References ParamData::desc\&.
+.SS "void mlpack::bindings::cli::AddToCLI11 (\fButil::ParamData\fP & param, const void *, void * output)"
+
+.PP
+Add an option to CLI11\&. This is the function meant to be used in the CLI function map\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIparam\fP Parameter data\&. 
+.br
+\fI*\fP (input) Unused void pointer\&. 
+.br
+\fIoutput\fP Void pointer to options_description object\&. 
+.RE
+.PP
+
+.PP
+Definition at line 188 of file add_to_cli11\&.hpp\&.
+.PP
+References ParamData::alias, and ParamData::name\&.
+.SS "void mlpack::bindings::cli::DefaultParam (\fButil::ParamData\fP & data, const void *, void * output)"
+
+.PP
+Return the default value of an option\&. This is the function that will be placed into the CLI functionMap\&. 
+.PP
+Definition at line 80 of file default_param\&.hpp\&.
+.SS "std::string mlpack::bindings::cli::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::string >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Return the default value of an option\&. This is for regular types\&. 
+.SS "std::string mlpack::bindings::cli::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return the default value of a model option (this returns the default filename, or '' if the default is no file)\&. 
+.SS "std::string mlpack::bindings::cli::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if< std::is_same< T, std::string >>::type * = \fC0\fP)"
+
+.PP
+Return the default value of a string option\&. 
+.SS "std::string mlpack::bindings::cli::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return the default value of a vector option\&. 
+.SS "std::string mlpack::bindings::cli::DefaultParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if_c< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Return the default value of a matrix option, a tuple option, a serializable option, or a string option (this returns the default filename, or '' if the default is no file)\&. 
+.SS "void mlpack::bindings::cli::DeleteAllocatedMemory (\fButil::ParamData\fP & d, const void *, void *)"
+
+.PP
+Definition at line 50 of file delete_allocated_memory\&.hpp\&.
+.SS "void mlpack::bindings::cli::DeleteAllocatedMemoryImpl (\fButil::ParamData\fP &, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Definition at line 22 of file delete_allocated_memory\&.hpp\&.
+.SS "void mlpack::bindings::cli::DeleteAllocatedMemoryImpl (\fButil::ParamData\fP &, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Definition at line 31 of file delete_allocated_memory\&.hpp\&.
+.SS "void mlpack::bindings::cli::DeleteAllocatedMemoryImpl (\fButil::ParamData\fP & d, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Definition at line 39 of file delete_allocated_memory\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "void mlpack::bindings::cli::EndProgram ()\fC [inline]\fP"
+
+.PP
+Handle command-line program termination\&. If --help or --info was passed, we won't make it here, so we don't have to write any contingencies for that\&. 
+.PP
+Definition at line 26 of file end_program\&.hpp\&.
+.PP
+References IO::functionMap, Timers::GetAllTimers(), IO::GetSingleton(), IO::HasParam(), Log::Info, ParamData::input, IO::Parameters(), Timers::PrintTimer(), Timers::StopAllTimers(), IO::timer, and ParamData::tname\&.
+.SS "void* mlpack::bindings::cli::GetAllocatedMemory (\fButil::ParamData\fP &, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Definition at line 23 of file get_allocated_memory\&.hpp\&.
+.SS "void* mlpack::bindings::cli::GetAllocatedMemory (\fButil::ParamData\fP &, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Definition at line 32 of file get_allocated_memory\&.hpp\&.
+.SS "void* mlpack::bindings::cli::GetAllocatedMemory (\fButil::ParamData\fP & d, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Definition at line 40 of file get_allocated_memory\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "void mlpack::bindings::cli::GetAllocatedMemory (\fButil::ParamData\fP & d, const void *, void * output)"
+
+.PP
+Definition at line 52 of file get_allocated_memory\&.hpp\&.
+.SS "std::string mlpack::bindings::cli::GetBindingName (const std::string & bindingName)\fC [inline]\fP"
+
+.PP
+Given the name of a binding, print its command-line name (this returns 'mlpack_<bindingName>'\&. 
+.SS "T& mlpack::bindings::cli::GetParam (\fButil::ParamData\fP & d, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+This overload is called when nothing special needs to happen to the name of the parameter\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP ParamData object to get parameter value from\&. 
+.RE
+.PP
+
+.PP
+Definition at line 29 of file get_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "T*& mlpack::bindings::cli::GetParam (\fButil::ParamData\fP & d, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return a serializable object\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP ParamData object to get parameter value from\&. 
+.RE
+.PP
+
+.PP
+Definition at line 111 of file get_param\&.hpp\&.
+.PP
+References ParamData::input, mlpack::data::Load(), ParamData::loaded, and ParamData::value\&.
+.SS "T& mlpack::bindings::cli::GetParam (\fButil::ParamData\fP & d, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Return a matrix parameter\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP ParamData object to get parameter value from\&. 
+.RE
+.PP
+
+.PP
+Definition at line 46 of file get_param\&.hpp\&.
+.PP
+References ParamData::input, mlpack::data::Load(), ParamData::loaded, ParamData::noTranspose, and ParamData::value\&.
+.SS "T& mlpack::bindings::cli::GetParam (\fButil::ParamData\fP & d, const typename boost::enable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Return a matrix/dataset info parameter\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP ParamData object to get parameter value from\&. 
+.RE
+.PP
+
+.PP
+Definition at line 81 of file get_param\&.hpp\&.
+.PP
+References ParamData::input, mlpack::data::Load(), ParamData::loaded, ParamData::noTranspose, and ParamData::value\&.
+.SS "void mlpack::bindings::cli::GetParam (\fButil::ParamData\fP & d, const void *, void * output)"
+
+.PP
+Return a parameter casted to the given type\&. Type checking does not happen here!
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Parameter information\&. 
+.br
+\fI*\fP (input) Unused parameter\&. 
+.br
+\fIoutput\fP Place to store pointer to value\&. 
+.RE
+.PP
+
+.PP
+Definition at line 140 of file get_param\&.hpp\&.
+.SS "std::string mlpack::bindings::cli::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Print an option\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableParam (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Print a model option (this just prints the filename)\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableParam (\fButil::ParamData\fP & data, const typename std::enable_if< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Print a matrix/tuple option (this just prints the filename)\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableParam (\fButil::ParamData\fP & data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+Print a vector option, with spaces between it\&. 
+.SS "void mlpack::bindings::cli::GetPrintableParam (\fButil::ParamData\fP & data, const void *, void * output)"
+
+.PP
+Print an option into a std::string\&. This should print a short, one-line representation of the object\&. The string will be stored in the output pointer\&. 
+.PP
+Definition at line 69 of file get_printable_param\&.hpp\&.
+.SS "void mlpack::bindings::cli::GetPrintableParamName (\fButil::ParamData\fP & d, const void *, void * output)"
+
+.PP
+Get the parameter's name as seen by the user\&. 
+.PP
+Definition at line 67 of file get_printable_param_name\&.hpp\&.
+.SS "std::string mlpack::bindings::cli::GetPrintableParamName (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Get the parameter name for a type that has no special handling\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableParamName (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Get the parameter name for a serializable model type (where the user has to pass the file that holds the matrix)\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableParamName (\fButil::ParamData\fP & data, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Get the parameter name for a matrix type (where the user has to pass the file that holds the matrix)\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableParamName (\fButil::ParamData\fP & data, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Get the parameter name for a mapped matrix type (where the user has to pass the file that holds the matrix)\&. 
+.SS "void mlpack::bindings::cli::GetPrintableParamValue (\fButil::ParamData\fP & d, const void * input, void * output)"
+
+.PP
+Get the parameter's name as seen by the user\&. 
+.PP
+Definition at line 71 of file get_printable_param_value\&.hpp\&.
+.SS "std::string mlpack::bindings::cli::GetPrintableParamValue (\fButil::ParamData\fP & data, const std::string & value, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Get the parameter name for a type that has no special handling\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableParamValue (\fButil::ParamData\fP & data, const std::string & value, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Get the parameter name for a serializable model type (where the user has to pass the file that holds the matrix)\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableParamValue (\fButil::ParamData\fP & data, const std::string & value, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Get the parameter name for a matrix type (where the user has to pass the file that holds the matrix)\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableParamValue (\fButil::ParamData\fP & data, const std::string & value, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Get the parameter name for a mapped matrix type (where the user has to pass the file that holds the matrix)\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableType (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of an option\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableType (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a model\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableType (\fButil::ParamData\fP & data, const typename std::enable_if< arma::is_arma_type< T >::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a matrix option\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableType (\fButil::ParamData\fP & data, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a matrix tuple option\&. 
+.SS "std::string mlpack::bindings::cli::GetPrintableType (\fButil::ParamData\fP & data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a vector\&. 
+.SS "void mlpack::bindings::cli::GetPrintableType (\fButil::ParamData\fP & data, const void *, void * output)"
+
+.PP
+Print the command-line type of an option into a string\&. 
+.PP
+Definition at line 70 of file get_printable_type\&.hpp\&.
+.SS "T& mlpack::bindings::cli::GetRawParam (\fButil::ParamData\fP & d, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+This overload is called when nothing special needs to happen to the name of the parameter\&. 
+.PP
+Definition at line 28 of file get_raw_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "T*& mlpack::bindings::cli::GetRawParam (\fButil::ParamData\fP & d, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return the name of a model parameter\&. 
+.PP
+Definition at line 60 of file get_raw_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "T& mlpack::bindings::cli::GetRawParam (\fButil::ParamData\fP & d, const typename boost::enable_if_c< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Return a matrix parameter\&. 
+.PP
+Definition at line 43 of file get_raw_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "void mlpack::bindings::cli::GetRawParam (\fButil::ParamData\fP & d, const void *, void * output)"
+
+.PP
+Return a parameter casted to the given type\&. Type checking does not happen here!
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Parameter information\&. 
+.br
+\fI*\fP (input) Unused parameter\&. 
+.br
+\fIoutput\fP Place to store pointer to value\&. 
+.RE
+.PP
+
+.PP
+Definition at line 80 of file get_raw_param\&.hpp\&.
+.SS "bool mlpack::bindings::cli::IgnoreCheck (const T &)\fC [inline]\fP"
+
+.PP
+Return whether or not a runtime check on parameters should be ignored\&. We don't ignore any runtime checks for CLI bindings, so this always returns false\&. 
+.PP
+Definition at line 117 of file print_doc_functions\&.hpp\&.
+.SS "void mlpack::bindings::cli::InPlaceCopy (\fButil::ParamData\fP & d, const void * input, void *)"
+
+.PP
+Make the given ParamData be an in-place copy of the input\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Parameter information\&. 
+.br
+\fIinput\fP Input ParamData we would like be the source of the in-place copy\&. 
+.br
+\fI*\fP (output) Unused parameter\&. 
+.RE
+.PP
+
+.PP
+Definition at line 100 of file in_place_copy\&.hpp\&.
+.SS "void mlpack::bindings::cli::InPlaceCopyInternal (\fButil::ParamData\fP &, \fButil::ParamData\fP &, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+This overload is called when nothing special needs to happen to make something an in-place copy\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (d) ParamData object to get parameter value from\&. (Unused\&.) 
+.br
+\fI*\fP (input) ParamData object that represents the option we are making a copy of\&. (Unused\&.) 
+.RE
+.PP
+
+.PP
+Definition at line 31 of file in_place_copy\&.hpp\&.
+.SS "void mlpack::bindings::cli::InPlaceCopyInternal (\fButil::ParamData\fP & d, \fButil::ParamData\fP & input, const typename std::enable_if< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Modify the filename for any type that needs to be loaded from disk to match the filename of the input parameter, for a matrix/DatasetInfo parameter\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP ParamData object we want to make into an in-place copy\&. 
+.br
+\fIinput\fP ParamData object whose filename we should copy\&. 
+.RE
+.PP
+
+.PP
+Definition at line 50 of file in_place_copy\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "void mlpack::bindings::cli::InPlaceCopyInternal (\fButil::ParamData\fP & d, \fButil::ParamData\fP & input, const typename std::enable_if< \fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+Modify the filename for any type that needs to be loaded from disk to match the filename of the input parameter\&. For serializable objects\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP ParamData object we want to make into an in-place copy\&. 
+.br
+\fIinput\fP ParamData object whose filename we should copy\&. 
+.RE
+.PP
+
+.PP
+Definition at line 76 of file in_place_copy\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "std::string mlpack::bindings::cli::MapParameterName (const std::string & identifier, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+If needed, map the parameter name to the name that is used by CLI11\&. This overload simply returns the same name, so it is used for primitive types\&. 
+.PP
+Definition at line 28 of file map_parameter_name\&.hpp\&.
+.PP
+Referenced by CLIOption< N >::CLIOption()\&.
+.SS "std::string mlpack::bindings::cli::MapParameterName (const std::string & identifier, const typename boost::enable_if_c< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>::value||\fBdata::HasSerialize\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+Map the parameter name to the name that is used by CLI11\&. This overload addresses matrices and models, where the parameter name has '_file' appended to it (since a filename will be provided)\&. 
+.PP
+Definition at line 44 of file map_parameter_name\&.hpp\&.
+.SS "void mlpack::bindings::cli::MapParameterName (\fButil::ParamData\fP & d, const void *, void * output)"
+
+.PP
+Map the parameter name to the name seen by CLI\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Parameter data\&. 
+.br
+\fI*\fP (input) Unused parameter\&. 
+.br
+\fIoutput\fP Pointer to std::string that will hold the mapped name\&. 
+.RE
+.PP
+
+.PP
+Definition at line 63 of file map_parameter_name\&.hpp\&.
+.PP
+References ParamData::name\&.
+.SS "void mlpack::bindings::cli::OutputParam (\fButil::ParamData\fP & data, const void *, void *)"
+
+.PP
+Output an option\&. This is the function that will be called by the \fBIO\fP module\&. 
+.PP
+Definition at line 74 of file output_param\&.hpp\&.
+.SS "void mlpack::bindings::cli::OutputParamImpl (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Output an option (print to stdout)\&. 
+.SS "void mlpack::bindings::cli::OutputParamImpl (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Output a serializable class option (this saves it to the given file)\&. 
+.SS "void mlpack::bindings::cli::OutputParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if< arma::is_arma_type< T >>::type * = \fC0\fP)"
+
+.PP
+Output a matrix option (this saves it to the given file)\&. 
+.SS "void mlpack::bindings::cli::OutputParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Output a mapped dataset\&. 
+.SS "void mlpack::bindings::cli::OutputParamImpl (\fButil::ParamData\fP & data, const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Output a vector option (print to stdout)\&. 
+.SS "mlpack::bindings::cli::PARAM_FLAG ('help', 'Default help info\&.', 'h')"
+
+.SS "mlpack::bindings::cli::PARAM_FLAG ('verbose', 'Display informational messages and the full list of ' 'parameters and timers at the end of execution\&.', 'v')"
+
+.SS "mlpack::bindings::cli::PARAM_FLAG ('version', 'Display the version of mlpack\&.', 'V')"
+
+.SS "mlpack::bindings::cli::PARAM_STRING_IN ('info', 'Print help on a specific option\&.', '', '')"
+
+.SS "std::string mlpack::bindings::cli::ParamString (const std::string & paramName)\fC [inline]\fP"
+
+.PP
+Print what a user would type to invoke the given option name\&. Note that the name \fImust\fP exist in the CLI module\&. (Note that because of the way \fBBINDING_LONG_DESC()\fP and \fBBINDING_EXAMPLE()\fP is structured, this doesn't mean that all of the PARAM_*() declarataions need to come before \fBBINDING_LONG_DESC()\fP and \fBBINDING_EXAMPLE()\fP declaration\&.) 
+.SS "void mlpack::bindings::cli::ParseCommandLine (int argc, char ** argv)"
+
+.PP
+Parse the command line, setting all of the options inside of the CLI object to their appropriate given values\&. 
+.PP
+Definition at line 36 of file parse_command_line\&.hpp\&.
+.PP
+References Log::Debug, IO::didParse, Log::Fatal, IO::functionMap, IO::GetSingleton(), mlpack::util::GetVersion(), IO::HasParam(), PrefixedOutStream::ignoreInput, Log::Info, IO::Parameters(), PrintHelp(), IO::ProgramName(), ParamData::required, and ParamData::tname\&.
+.SS "std::string mlpack::bindings::cli::PrintDataset (const std::string & dataset)\fC [inline]\fP"
+
+.PP
+Print a dataset type parameter (add \&.csv and return)\&. 
+.SS "std::string mlpack::bindings::cli::PrintDefault (const std::string & paramName)\fC [inline]\fP"
+
+.PP
+Given a parameter name, print its corresponding default value\&. 
+.SS "void mlpack::bindings::cli::PrintHelp (const std::string & param = \fC''\fP)"
+
+.PP
+Print the help for the given parameter\&. If no parameter is specified, then help will be printed for all parameters\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIparam\fP Parameter name to print help for\&. 
+.RE
+.PP
+
+.PP
+Referenced by ParseCommandLine()\&.
+.SS "std::string mlpack::bindings::cli::PrintImport (const std::string & bindingName)\fC [inline]\fP"
+
+.PP
+Print any imports for CLI (there are none, so this returns an empty string)\&. 
+.SS "std::string mlpack::bindings::cli::PrintInputOptionInfo ()\fC [inline]\fP"
+
+.PP
+Print any special information about input options\&. 
+.SS "std::string mlpack::bindings::cli::PrintModel (const std::string & model)\fC [inline]\fP"
+
+.PP
+Print a model type parameter (add \&.bin and return)\&. 
+.SS "std::string mlpack::bindings::cli::PrintOutputOptionInfo ()\fC [inline]\fP"
+
+.PP
+Print any special information about output options\&. 
+.SS "std::string mlpack::bindings::cli::PrintType (\fButil::ParamData\fP & param)\fC [inline]\fP"
+
+.PP
+Print the type of a parameter that a user would specify from the command-line\&. 
+.SS "std::string mlpack::bindings::cli::PrintTypeDoc (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of an option\&. 
+.SS "std::string mlpack::bindings::cli::PrintTypeDoc (\fButil::ParamData\fP & data, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a model\&. 
+.SS "std::string mlpack::bindings::cli::PrintTypeDoc (\fButil::ParamData\fP & data, const typename std::enable_if< arma::is_arma_type< T >::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a matrix option\&. 
+.SS "std::string mlpack::bindings::cli::PrintTypeDoc (\fButil::ParamData\fP & data, const typename std::enable_if< std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a matrix tuple option\&. 
+.SS "std::string mlpack::bindings::cli::PrintTypeDoc (\fButil::ParamData\fP & data, const typename std::enable_if< \fButil::IsStdVector\fP< T >::value >::type * = \fC0\fP)"
+
+.PP
+Return a string representing the command-line type of a vector\&. 
+.SS "void mlpack::bindings::cli::PrintTypeDoc (\fButil::ParamData\fP & data, const void *, void * output)"
+
+.PP
+Print the command-line type of an option into a string\&. 
+.PP
+Definition at line 72 of file print_type_doc\&.hpp\&.
+.SS "std::string mlpack::bindings::cli::PrintTypeDocs ()\fC [inline]\fP"
+
+.PP
+Print documentation for each of the types\&. 
+.SS "std::string mlpack::bindings::cli::PrintValue (const T & value, bool quotes)\fC [inline]\fP"
+
+.PP
+Given a parameter type, print the corresponding value\&. 
+.SS "std::string mlpack::bindings::cli::ProcessOptions ()\fC [inline]\fP"
+
+.PP
+Base case for recursion\&. 
+.SS "std::string mlpack::bindings::cli::ProcessOptions (const std::string & paramName, const T & value, Args\&.\&.\&. args)"
+
+.PP
+Print an option for a command-line argument\&. 
+.SS "std::string mlpack::bindings::cli::ProgramCall (const std::string & programName)\fC [inline]\fP"
+
+.PP
+Given a program name, print a program call invocation assuming that all options are specified\&. 
+.SS "std::string mlpack::bindings::cli::ProgramCall (const std::string & programName, Args\&.\&.\&. args)"
+
+.PP
+Given a program name and arguments for it, print what its invocation would be\&. 
+.SS "void mlpack::bindings::cli::SetParam (\fButil::ParamData\fP & d, const boost::any &, const typename boost::enable_if< std::is_same< T, bool >>::type * = \fC0\fP)"
+
+.PP
+This overload is called to set a boolean\&. 
+.PP
+Definition at line 44 of file set_param\&.hpp\&.
+.PP
+References ParamData::value, and ParamData::wasPassed\&.
+.SS "void mlpack::bindings::cli::SetParam (\fButil::ParamData\fP & d, const boost::any & value, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat >>>::type * = \fC0\fP, const typename boost::disable_if< std::is_same< T, bool >>::type * = \fC0\fP)"
+
+.PP
+This overload is called when nothing special needs to happen to the name of the parameter\&. 
+.PP
+Definition at line 27 of file set_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "void mlpack::bindings::cli::SetParam (\fButil::ParamData\fP & d, const boost::any & value, const typename boost::disable_if< arma::is_arma_type< T >>::type * = \fC0\fP, const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Set a serializable object\&. This sets the filename referring to the parameter\&. 
+.PP
+Definition at line 76 of file set_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "void mlpack::bindings::cli::SetParam (\fButil::ParamData\fP & d, const boost::any & value, const typename std::enable_if< arma::is_arma_type< T >::value||std::is_same< T, std::tuple< \fBdata::DatasetInfo\fP, arma::mat >>::value >::type * = \fC0\fP)"
+
+.PP
+Set a matrix parameter, a matrix/dataset info parameter\&. These set the filename referring to the parameter\&. 
+.PP
+Definition at line 58 of file set_param\&.hpp\&.
+.PP
+References ParamData::value\&.
+.SS "void mlpack::bindings::cli::SetParam (\fButil::ParamData\fP & d, const void * input, void *)"
+
+.PP
+Return a parameter casted to the given type\&. Type checking does not happen here!
+.PP
+\fBParameters\fP
+.RS 4
+\fId\fP Parameter information\&. 
+.br
+\fIinput\fP Unused parameter\&. 
+.br
+\fI*\fP (output) Place to store pointer to value\&. 
+.RE
+.PP
+
+.PP
+Definition at line 97 of file set_param\&.hpp\&.
+.SS "void mlpack::bindings::cli::StringTypeParam (\fButil::ParamData\fP &, const void *, void * output)"
+
+.PP
+Return a string containing the type of a parameter\&. This overload is used if we don't have a primitive type\&. 
+.PP
+Definition at line 51 of file string_type_param\&.hpp\&.
+.SS "void \fBmlpack::bindings::cli::StringTypeParam\fP< bool > (\fButil::ParamData\fP &, const void *, void * output)\fC [inline]\fP"
+
+.PP
+Return 'bool'\&. 
+.SS "void \fBmlpack::bindings::cli::StringTypeParam\fP< double > (\fButil::ParamData\fP &, const void *, void * output)\fC [inline]\fP"
+
+.PP
+Return 'double'\&. 
+.SS "void \fBmlpack::bindings::cli::StringTypeParam\fP< int > (\fButil::ParamData\fP &, const void *, void * output)\fC [inline]\fP"
+
+.PP
+Return 'int'\&. 
+.SS "void \fBmlpack::bindings::cli::StringTypeParam\fP< std::string > (\fButil::ParamData\fP &, const void *, void * output)\fC [inline]\fP"
+
+.PP
+Return 'string'\&. 
+.SS "void \fBmlpack::bindings::cli::StringTypeParam\fP< std::tuple< \fBmlpack::data::DatasetInfo\fP, arma::mat > > (\fButil::ParamData\fP &, const void *, void * output)\fC [inline]\fP"
+
+.PP
+Return 'string';\&. 
+.SS "std::string mlpack::bindings::cli::StringTypeParamImpl (const typename boost::disable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP, const typename boost::disable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return a string containing the type of the parameter\&. 
+.SS "std::string mlpack::bindings::cli::StringTypeParamImpl (const typename boost::enable_if< \fBdata::HasSerialize\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return a string containing the type of the parameter,\&. 
+.SS "std::string mlpack::bindings::cli::StringTypeParamImpl (const typename boost::enable_if< \fButil::IsStdVector\fP< T >>::type * = \fC0\fP)"
+
+.PP
+Return a string containing the type of the parameter, for vector options\&. 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

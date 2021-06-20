@@ -1,0 +1,800 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1rl_1_1Acrobot" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::rl::Acrobot</compoundname>
+    <includes refid="acrobot_8hpp" local="no">acrobot.hpp</includes>
+    <innerclass refid="classmlpack_1_1rl_1_1Acrobot_1_1Action" prot="public">mlpack::rl::Acrobot::Action</innerclass>
+    <innerclass refid="classmlpack_1_1rl_1_1Acrobot_1_1State" prot="public">mlpack::rl::Acrobot::State</innerclass>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1a0c790792348e951b9e3606edc7bb532b" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double doneReward</definition>
+        <argsstring></argsstring>
+        <name>doneReward</name>
+        <briefdescription>
+<para>Locally-stored done reward. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="392" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="392" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1a03e28be41881b703c836edbfe9b51b17" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double dt</definition>
+        <argsstring></argsstring>
+        <name>dt</name>
+        <briefdescription>
+<para>Locally-stored dt for RK4 method. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="389" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="389" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1a922f2c43a75edbe2ee21ea7ba7b5cb2c" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double gravity</definition>
+        <argsstring></argsstring>
+        <name>gravity</name>
+        <briefdescription>
+<para>Locally-stored gravity. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="359" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="359" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1a3276c108f5bf4d48e1c92f3997803f4b" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double linkCom1</definition>
+        <argsstring></argsstring>
+        <name>linkCom1</name>
+        <briefdescription>
+<para>Locally-stored position of link 1. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="374" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="374" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1a408826bdc1fbe4ea51921e326e16377a" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double linkCom2</definition>
+        <argsstring></argsstring>
+        <name>linkCom2</name>
+        <briefdescription>
+<para>Locally-stored position of link 2. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="377" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="377" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1a53e5e8249745f7ff64ad8ab76038f19e" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double linkLength1</definition>
+        <argsstring></argsstring>
+        <name>linkLength1</name>
+        <briefdescription>
+<para>Locally-stored length of link 1. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="362" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="362" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1a0990d7648c6b0397dd467bd142cb5d67" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double linkLength2</definition>
+        <argsstring></argsstring>
+        <name>linkLength2</name>
+        <briefdescription>
+<para>Locally-stored length of link 2. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="365" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="365" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1a699cd5e992f8a969f9a36655ba1137f0" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double linkMass1</definition>
+        <argsstring></argsstring>
+        <name>linkMass1</name>
+        <briefdescription>
+<para>Locally-stored mass of link 1. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="368" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="368" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1a4696448a3ff66ce21a81017dec4afd4d" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double linkMass2</definition>
+        <argsstring></argsstring>
+        <name>linkMass2</name>
+        <briefdescription>
+<para>Locally-stored mass of link 2. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="371" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="371" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1a15beef171a89f32e86d780233054edfa" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double linkMoi</definition>
+        <argsstring></argsstring>
+        <name>linkMoi</name>
+        <briefdescription>
+<para>Locally-stored moment of intertia value. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="380" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="380" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1ac29b91fba0f71e460dee7cf4c503e01a" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxSteps</definition>
+        <argsstring></argsstring>
+        <name>maxSteps</name>
+        <briefdescription>
+<para>Locally-stored maximum number of steps. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="356" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="356" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1ab42474eb5bd8823dc9aef4fca82e3523" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double maxVel1</definition>
+        <argsstring></argsstring>
+        <name>maxVel1</name>
+        <briefdescription>
+<para>Locally-stored max angular velocity of link1. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="383" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="383" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1a2fc90b1862111d308f8755b9c18c5d38" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double maxVel2</definition>
+        <argsstring></argsstring>
+        <name>maxVel2</name>
+        <briefdescription>
+<para>Locally-stored max angular velocity of link2. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="386" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="386" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1Acrobot_1ae754109e026bb4da3884361bd386d333" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t stepsPerformed</definition>
+        <argsstring></argsstring>
+        <name>stepsPerformed</name>
+        <briefdescription>
+<para>Locally-stored number of steps performed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="395" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="395" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1aec02bb2af46695046cac2de68ef3ece5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>Acrobot</definition>
+        <argsstring>(const size_t maxSteps=500, const double gravity=9.81, const double linkLength1=1.0, const double linkLength2=1.0, const double linkMass1=1.0, const double linkMass2=1.0, const double linkCom1=0.5, const double linkCom2=0.5, const double linkMoi=1.0, const double maxVel1=4 *M_PI, const double maxVel2=9 *M_PI, const double dt=0.2, const double doneReward=0)</argsstring>
+        <name>Acrobot</name>
+        <param>
+          <type>const size_t</type>
+          <declname>maxSteps</declname>
+          <defval>500</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>gravity</declname>
+          <defval>9.81</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>linkLength1</declname>
+          <defval>1.0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>linkLength2</declname>
+          <defval>1.0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>linkMass1</declname>
+          <defval>1.0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>linkMass2</declname>
+          <defval>1.0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>linkCom1</declname>
+          <defval>0.5</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>linkCom2</declname>
+          <defval>0.5</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>linkMoi</declname>
+          <defval>1.0</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>maxVel1</declname>
+          <defval>4 *<ref refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" kindref="member">M_PI</ref></defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>maxVel2</declname>
+          <defval>9 *<ref refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" kindref="member">M_PI</ref></defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>dt</declname>
+          <defval>0.2</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>doneReward</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Construct a <ref refid="classmlpack_1_1rl_1_1Acrobot" kindref="compound">Acrobot</ref> instance using the given constants. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>maxSteps</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of steps after which the episode terminates. If the value is 0, there is no limit. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gravity</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The gravity parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>linkLength1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The length of link 1. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>linkLength2</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The length of link 2. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>linkMass1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The mass of link 1. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>linkMass2</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The mass of link 2. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>linkCom1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The position of the center of mass of link 1. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>linkCom2</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The position of the center of mass of link 2. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>linkMoi</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The moments of inertia for both links. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxVel1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The max angular velocity of link1. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxVel2</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The max angular velocity of link2. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The differential value. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>doneReward</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The reward recieved by the agent on success. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="122" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="122" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1a781c862b1afe7d673da7025f0b2a244c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::colvec</type>
+        <definition>arma::colvec Dsdt</definition>
+        <argsstring>(arma::colvec state, const double torque) const</argsstring>
+        <name>Dsdt</name>
+        <param>
+          <type>arma::colvec</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>torque</declname>
+        </param>
+        <briefdescription>
+<para>This is the ordinary differential equations required for estimation of nextState through RK4 method. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current <ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>torque</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The torque Applied. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="249" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="249" bodyend="287"/>
+        <references refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" compoundref="prereqs_8hpp" startline="39">M_PI</references>
+        <referencedby refid="classmlpack_1_1rl_1_1Acrobot_1ae09ec5b585b264b14d2831e689021a5e" compoundref="acrobot_8hpp" startline="335" endline="344">Acrobot::Rk4</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1aa9f537249fa0c1e62b38197996ab4c6a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref></type>
+        <definition>State InitialSample</definition>
+        <argsstring>()</argsstring>
+        <name>InitialSample</name>
+        <briefdescription>
+<para>This function does random initialization of state space. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="213" column="9" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="213" bodyend="217"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1a7fd056133dfd315e4bf45c408f99326f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool IsTerminal</definition>
+        <argsstring>(const State &amp;state) const</argsstring>
+        <name>IsTerminal</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+<para>This function checks if the acrobot has reached the terminal state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current <ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if state is a terminal state, otherwise false. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="225" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="225" bodyend="240"/>
+        <references refid="classmlpack_1_1Log_1a6e069f745e1bbea8ccc4c1d39bf56089" compoundref="log_8hpp" startline="84">Log::Info</references>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1afb4243a32fb34c0111c15cb02ec78244" compoundref="acrobot_8hpp" startline="55" endline="55">Acrobot::State::Theta1</references>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a057c077512000b708c6db341e1669ee3" compoundref="acrobot_8hpp" startline="60" endline="60">Acrobot::State::Theta2</references>
+        <referencedby refid="classmlpack_1_1rl_1_1Acrobot_1a311ac19edc537dee94f37b7cce93d908" compoundref="acrobot_8hpp" startline="160" endline="193">Acrobot::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1a64c84cebc489c6fdfd7f057e127b0aef" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MaxSteps</definition>
+        <argsstring>()</argsstring>
+        <name>MaxSteps</name>
+        <briefdescription>
+<para>Set the maximum number of steps allowed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="352" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="352" bodyend="352"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1ad8fd6d8f7581c82e73556491b79a8907" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MaxSteps</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxSteps</name>
+        <briefdescription>
+<para>Get the maximum number of steps allowed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="350" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="350" bodyend="350"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1ae09ec5b585b264b14d2831e689021a5e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::colvec</type>
+        <definition>arma::colvec Rk4</definition>
+        <argsstring>(const arma::colvec state, const double torque) const</argsstring>
+        <name>Rk4</name>
+        <param>
+          <type>const arma::colvec</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>torque</declname>
+        </param>
+        <briefdescription>
+<para>This function calls the RK4 iterative method to estimate the next state based on given ordinary differential equation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current <ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>torque</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The torque applied. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="335" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="335" bodyend="344"/>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1a781c862b1afe7d673da7025f0b2a244c" compoundref="acrobot_8hpp" startline="249" endline="287">Acrobot::Dsdt</references>
+        <referencedby refid="classmlpack_1_1rl_1_1Acrobot_1a311ac19edc537dee94f37b7cce93d908" compoundref="acrobot_8hpp" startline="160" endline="193">Acrobot::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1af2bb860eaefeaa62a40f5cf940793704" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Sample</definition>
+        <argsstring>(const State &amp;state, const Action &amp;action)</argsstring>
+        <name>Sample</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action" kindref="compound">Action</ref> &amp;</type>
+          <declname>action</declname>
+        </param>
+        <briefdescription>
+<para>Dynamics of the <ref refid="classmlpack_1_1rl_1_1Acrobot" kindref="compound">Acrobot</ref> System. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>To get reward and next state based on current state and current action. This function calls the Sample function to estimate the next state return reward for taking a particular action.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current <ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>action</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The action taken. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>nextState The next state. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="204" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="204" bodyend="208"/>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1a311ac19edc537dee94f37b7cce93d908" compoundref="acrobot_8hpp" startline="160" endline="193">Acrobot::Sample</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1a311ac19edc537dee94f37b7cce93d908" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Sample</definition>
+        <argsstring>(const State &amp;state, const Action &amp;action, State &amp;nextState)</argsstring>
+        <name>Sample</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action" kindref="compound">Action</ref> &amp;</type>
+          <declname>action</declname>
+        </param>
+        <param>
+          <type><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref> &amp;</type>
+          <declname>nextState</declname>
+        </param>
+        <briefdescription>
+<para>Dynamics of the <ref refid="classmlpack_1_1rl_1_1Acrobot" kindref="compound">Acrobot</ref> System. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>To get reward and next state based on current state and current action. Always return -1 reward.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>state</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The current <ref refid="classmlpack_1_1rl_1_1Acrobot_1_1State" kindref="compound">State</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>action</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The action taken. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>nextState</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The next state. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>reward, it&apos;s always -1.0. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+<para>The value of angular velocity is bounded in min and max value.</para>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="160" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="160" bodyend="193"/>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1ac10567562fe926ea105ce91a5bbc81c8" compoundref="acrobot_8hpp" startline="65" endline="65">Acrobot::State::AngularVelocity1</references>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1acab5e143bb40f694cf0a3341d457fdc8" compoundref="acrobot_8hpp" startline="70" endline="70">Acrobot::State::AngularVelocity2</references>
+        <references refid="namespacemlpack_1_1math_1a0fa7f378ef122a2fc2b82009b436cdeb" compoundref="clamp_8hpp" startline="53" endline="62">mlpack::math::ClampRange</references>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1a7fd056133dfd315e4bf45c408f99326f" compoundref="acrobot_8hpp" startline="225" endline="240">Acrobot::IsTerminal</references>
+        <references refid="prereqs_8hpp_1ae71449b1cc6e6250b91f539153a7a0d3" compoundref="prereqs_8hpp" startline="39">M_PI</references>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1ae09ec5b585b264b14d2831e689021a5e" compoundref="acrobot_8hpp" startline="335" endline="344">Acrobot::Rk4</references>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1afb4243a32fb34c0111c15cb02ec78244" compoundref="acrobot_8hpp" startline="55" endline="55">Acrobot::State::Theta1</references>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1_1State_1a057c077512000b708c6db341e1669ee3" compoundref="acrobot_8hpp" startline="60" endline="60">Acrobot::State::Theta2</references>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1ae12a0a80a61e21f6e1b722f4ad7d0b81" compoundref="acrobot_8hpp" startline="322" endline="326">Acrobot::Torque</references>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1a9f977aba34c92e5f5f9249d8738ec85a" compoundref="acrobot_8hpp" startline="298" endline="314">Acrobot::Wrap</references>
+        <referencedby refid="classmlpack_1_1rl_1_1Acrobot_1af2bb860eaefeaa62a40f5cf940793704" compoundref="acrobot_8hpp" startline="204" endline="208">Acrobot::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1a5fe06563064ebcee88c593e1673f03d4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t StepsPerformed</definition>
+        <argsstring>() const</argsstring>
+        <name>StepsPerformed</name>
+        <briefdescription>
+<para>Get the number of steps performed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="347" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="347" bodyend="347"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1ae12a0a80a61e21f6e1b722f4ad7d0b81" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Torque</definition>
+        <argsstring>(const Action &amp;action) const</argsstring>
+        <name>Torque</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action" kindref="compound">Action</ref> &amp;</type>
+          <declname>action</declname>
+        </param>
+        <briefdescription>
+<para>This function calculates the torque for a particular action. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>0 : negative torque, 1 : zero torque, 2 : positive torque.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>action</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1rl_1_1Acrobot_1_1Action" kindref="compound">Action</ref> taken. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="322" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="322" bodyend="326"/>
+        <references refid="classmlpack_1_1rl_1_1Acrobot_1_1Action_1aae7cee579dae25461f6f47c95c41bd9a" compoundref="acrobot_8hpp" startline="98">Acrobot::Action::action</references>
+        <references refid="namespacemlpack_1_1math_1a305db122ade561ba1fe874bd51e9797d" compoundref="random_8hpp" startline="83" endline="86">mlpack::math::Random</references>
+        <referencedby refid="classmlpack_1_1rl_1_1Acrobot_1a311ac19edc537dee94f37b7cce93d908" compoundref="acrobot_8hpp" startline="160" endline="193">Acrobot::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1Acrobot_1a9f977aba34c92e5f5f9249d8738ec85a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Wrap</definition>
+        <argsstring>(double value, const double minimum, const double maximum) const</argsstring>
+        <name>Wrap</name>
+        <param>
+          <type>double</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minimum</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>maximum</declname>
+        </param>
+        <briefdescription>
+<para>Wrap funtion is required to truncate the angle value from -180 to 180. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function will make sure that value will always be between minimum to maximum.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scalar value to wrap. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minimum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum range of wrap. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maximum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum range of wrap. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="298" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="298" bodyend="314"/>
+        <referencedby refid="classmlpack_1_1rl_1_1Acrobot_1a311ac19edc537dee94f37b7cce93d908" compoundref="acrobot_8hpp" startline="160" endline="193">Acrobot::Sample</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of <ref refid="classmlpack_1_1rl_1_1Acrobot" kindref="compound">Acrobot</ref> game. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><ref refid="classmlpack_1_1rl_1_1Acrobot" kindref="compound">Acrobot</ref> is a 2-link pendulum with only the second joint actuated. Intitially, both links point downwards. The goal is to swing the end-effector at a height at least the length of one link above the base. Both links can swing freely and can pass by each other, i.e., they don&apos;t collide when they have the same angle. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/acrobot.hpp" bodystart="29" bodyend="396"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1aec02bb2af46695046cac2de68ef3ece5" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>Acrobot</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a0c790792348e951b9e3606edc7bb532b" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>doneReward</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a781c862b1afe7d673da7025f0b2a244c" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>Dsdt</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a03e28be41881b703c836edbfe9b51b17" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>dt</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a922f2c43a75edbe2ee21ea7ba7b5cb2c" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>gravity</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1aa9f537249fa0c1e62b38197996ab4c6a" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>InitialSample</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a7fd056133dfd315e4bf45c408f99326f" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>IsTerminal</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a3276c108f5bf4d48e1c92f3997803f4b" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>linkCom1</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a408826bdc1fbe4ea51921e326e16377a" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>linkCom2</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a53e5e8249745f7ff64ad8ab76038f19e" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>linkLength1</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a0990d7648c6b0397dd467bd142cb5d67" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>linkLength2</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a699cd5e992f8a969f9a36655ba1137f0" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>linkMass1</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a4696448a3ff66ce21a81017dec4afd4d" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>linkMass2</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a15beef171a89f32e86d780233054edfa" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>linkMoi</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1ac29b91fba0f71e460dee7cf4c503e01a" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>maxSteps</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1ad8fd6d8f7581c82e73556491b79a8907" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>MaxSteps</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a64c84cebc489c6fdfd7f057e127b0aef" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>MaxSteps</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1ab42474eb5bd8823dc9aef4fca82e3523" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>maxVel1</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a2fc90b1862111d308f8755b9c18c5d38" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>maxVel2</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1ae09ec5b585b264b14d2831e689021a5e" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>Rk4</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a311ac19edc537dee94f37b7cce93d908" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>Sample</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1af2bb860eaefeaa62a40f5cf940793704" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>Sample</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1ae754109e026bb4da3884361bd386d333" prot="private" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>stepsPerformed</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a5fe06563064ebcee88c593e1673f03d4" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>StepsPerformed</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1ae12a0a80a61e21f6e1b722f4ad7d0b81" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>Torque</name></member>
+      <member refid="classmlpack_1_1rl_1_1Acrobot_1a9f977aba34c92e5f5f9249d8738ec85a" prot="public" virt="non-virtual"><scope>mlpack::rl::Acrobot</scope><name>Wrap</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

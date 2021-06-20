@@ -1,0 +1,97 @@
+\doxysection{Binding\+Info Class Reference}
+\label{classmlpack_1_1bindings_1_1markdown_1_1BindingInfo}\index{BindingInfo@{BindingInfo}}
+
+
+The \doxyref{Binding\+Info}{p.}{classmlpack_1_1bindings_1_1markdown_1_1BindingInfo} class is used by the Markdown documentation generator to store multiple documentation objects, indexed by both the binding name (i.\+e.  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \textbf{ util\+::\+Binding\+Details} \& \textbf{ Get\+Binding\+Details} (const std\+::string \&binding\+Name)
+\begin{DoxyCompactList}\small\item\em Return a Binding\+Details object for a given binding\+Name. \end{DoxyCompactList}\item 
+static \textbf{ Binding\+Info} \& \textbf{ Get\+Singleton} ()
+\begin{DoxyCompactList}\small\item\em Get the singleton. \end{DoxyCompactList}\item 
+static std\+::string \& \textbf{ Language} ()
+\begin{DoxyCompactList}\small\item\em Get or modify the current language (don\textquotesingle{}t set it to something invalid!). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::unordered\+\_\+map$<$ std\+::string, \textbf{ util\+::\+Binding\+Details} $>$ \textbf{ map}
+\begin{DoxyCompactList}\small\item\em Internally-\/held map for mapping a binding name to a Binding\+Details. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \doxyref{Binding\+Info}{p.}{classmlpack_1_1bindings_1_1markdown_1_1BindingInfo} class is used by the Markdown documentation generator to store multiple documentation objects, indexed by both the binding name (i.\+e. 
+
+\char`\"{}knn\char`\"{}) and the language (i.\+e. \char`\"{}cli\char`\"{}). 
+
+Definition at line 30 of file binding\+\_\+info.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_a46877eca896d2c4458fbeab3277675d1}} 
+\index{BindingInfo@{BindingInfo}!GetBindingDetails@{GetBindingDetails}}
+\index{GetBindingDetails@{GetBindingDetails}!BindingInfo@{BindingInfo}}
+\doxysubsubsection{GetBindingDetails()}
+{\footnotesize\ttfamily static \textbf{ util\+::\+Binding\+Details}\& Get\+Binding\+Details (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{binding\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Return a Binding\+Details object for a given binding\+Name. 
+
+\mbox{\label{classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_a10e347723a80667c48bd5a3c60d9b870}} 
+\index{BindingInfo@{BindingInfo}!GetSingleton@{GetSingleton}}
+\index{GetSingleton@{GetSingleton}!BindingInfo@{BindingInfo}}
+\doxysubsubsection{GetSingleton()}
+{\footnotesize\ttfamily static \textbf{ Binding\+Info}\& Get\+Singleton (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get the singleton. 
+
+
+
+Referenced by Example\+Wrapper\+::\+Example\+Wrapper(), Long\+Description\+Wrapper\+::\+Long\+Description\+Wrapper(), Program\+Name\+Wrapper\+::\+Program\+Name\+Wrapper(), See\+Also\+Wrapper\+::\+See\+Also\+Wrapper(), and Short\+Description\+Wrapper\+::\+Short\+Description\+Wrapper().
+
+\mbox{\label{classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_a6ddf4e79a94a2a67a7539583f77d1081}} 
+\index{BindingInfo@{BindingInfo}!Language@{Language}}
+\index{Language@{Language}!BindingInfo@{BindingInfo}}
+\doxysubsubsection{Language()}
+{\footnotesize\ttfamily static std\+::string\& Language (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get or modify the current language (don\textquotesingle{}t set it to something invalid!). 
+
+
+
+Referenced by mlpack\+::bindings\+::markdown\+::\+Default\+Param(), mlpack\+::bindings\+::markdown\+::\+Get\+Printable\+Type(), and mlpack\+::bindings\+::markdown\+::\+Print\+Type\+Doc().
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1bindings_1_1markdown_1_1BindingInfo_a11738b577fb016e05929ab8b548d436e}} 
+\index{BindingInfo@{BindingInfo}!map@{map}}
+\index{map@{map}!BindingInfo@{BindingInfo}}
+\doxysubsubsection{map}
+{\footnotesize\ttfamily std\+::unordered\+\_\+map$<$std\+::string, \textbf{ util\+::\+Binding\+Details}$>$ map}
+
+
+
+Internally-\/held map for mapping a binding name to a Binding\+Details. 
+
+
+
+Definition at line 44 of file binding\+\_\+info.\+hpp.
+
+
+
+Referenced by Example\+Wrapper\+::\+Example\+Wrapper(), Long\+Description\+Wrapper\+::\+Long\+Description\+Wrapper(), Program\+Name\+Wrapper\+::\+Program\+Name\+Wrapper(), See\+Also\+Wrapper\+::\+See\+Also\+Wrapper(), and Short\+Description\+Wrapper\+::\+Short\+Description\+Wrapper().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/bindings/markdown/\textbf{ binding\+\_\+info.\+hpp}\end{DoxyCompactItemize}

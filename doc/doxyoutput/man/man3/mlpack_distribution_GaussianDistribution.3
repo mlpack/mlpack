@@ -1,0 +1,241 @@
+.TH "GaussianDistribution" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GaussianDistribution \- A single multivariate Gaussian distribution\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGaussianDistribution\fP ()"
+.br
+.RI "Default constructor, which creates a Gaussian with zero dimension\&. "
+.ti -1c
+.RI "\fBGaussianDistribution\fP (const arma::vec &mean, const arma::mat &covariance)"
+.br
+.RI "Create a Gaussian distribution with the given mean and covariance\&. "
+.ti -1c
+.RI "\fBGaussianDistribution\fP (const size_t dimension)"
+.br
+.RI "Create a Gaussian distribution with zero mean and identity covariance with the given dimensionality\&. "
+.ti -1c
+.RI "const arma::mat & \fBCovariance\fP () const"
+.br
+.RI "Return the covariance matrix\&. "
+.ti -1c
+.RI "void \fBCovariance\fP (arma::mat &&covariance)"
+.br
+.ti -1c
+.RI "void \fBCovariance\fP (const arma::mat &covariance)"
+.br
+.RI "Set the covariance\&. "
+.ti -1c
+.RI "size_t \fBDimensionality\fP () const"
+.br
+.RI "Return the dimensionality of this distribution\&. "
+.ti -1c
+.RI "const arma::mat & \fBInvCov\fP () const"
+.br
+.RI "Return the invCov\&. "
+.ti -1c
+.RI "double \fBLogDetCov\fP () const"
+.br
+.RI "Return the logDetCov\&. "
+.ti -1c
+.RI "void \fBLogProbability\fP (const arma::mat &x, arma::vec &logProbabilities) const"
+.br
+.RI "Returns the \fBLog\fP probability of the given matrix\&. "
+.ti -1c
+.RI "double \fBLogProbability\fP (const arma::vec &observation) const"
+.br
+.RI "Return the log probability of the given observation\&. "
+.ti -1c
+.RI "arma::vec & \fBMean\fP ()"
+.br
+.RI "Return a modifiable copy of the mean\&. "
+.ti -1c
+.RI "const arma::vec & \fBMean\fP () const"
+.br
+.RI "Return the mean\&. "
+.ti -1c
+.RI "void \fBProbability\fP (const arma::mat &x, arma::vec &probabilities) const"
+.br
+.RI "Calculates the multivariate Gaussian probability density function for each data point (column) in the given matrix\&. "
+.ti -1c
+.RI "double \fBProbability\fP (const arma::vec &observation) const"
+.br
+.RI "Return the probability of the given observation\&. "
+.ti -1c
+.RI "arma::vec \fBRandom\fP () const"
+.br
+.RI "Return a randomly generated observation according to the probability distribution defined by this object\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the distribution\&. "
+.ti -1c
+.RI "void \fBTrain\fP (const arma::mat &observations)"
+.br
+.RI "Estimate the Gaussian distribution directly from the given observations\&. "
+.ti -1c
+.RI "void \fBTrain\fP (const arma::mat &observations, const arma::vec &probabilities)"
+.br
+.RI "Estimate the Gaussian distribution from the given observations, taking into account the probability of each observation actually being from this distribution\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A single multivariate Gaussian distribution\&. 
+.PP
+Definition at line 24 of file gaussian_distribution\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBGaussianDistribution\fP ()\fC [inline]\fP"
+
+.PP
+Default constructor, which creates a Gaussian with zero dimension\&. 
+.PP
+Definition at line 45 of file gaussian_distribution\&.hpp\&.
+.SS "\fBGaussianDistribution\fP (const size_t dimension)\fC [inline]\fP"
+
+.PP
+Create a Gaussian distribution with zero mean and identity covariance with the given dimensionality\&. 
+.PP
+Definition at line 51 of file gaussian_distribution\&.hpp\&.
+.SS "\fBGaussianDistribution\fP (const arma::vec & mean, const arma::mat & covariance)"
+
+.PP
+Create a Gaussian distribution with the given mean and covariance\&. covariance is expected to be positive definite\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "const arma::mat& Covariance () const\fC [inline]\fP"
+
+.PP
+Return the covariance matrix\&. 
+.PP
+Definition at line 156 of file gaussian_distribution\&.hpp\&.
+.PP
+Referenced by RegressionDistribution::RegressionDistribution()\&.
+.SS "void Covariance (arma::mat && covariance)"
+
+.SS "void Covariance (const arma::mat & covariance)"
+
+.PP
+Set the covariance\&. 
+.SS "size_t Dimensionality () const\fC [inline]\fP"
+
+.PP
+Return the dimensionality of this distribution\&. 
+.PP
+Definition at line 69 of file gaussian_distribution\&.hpp\&.
+.SS "const arma::mat& InvCov () const\fC [inline]\fP"
+
+.PP
+Return the invCov\&. 
+.PP
+Definition at line 166 of file gaussian_distribution\&.hpp\&.
+.SS "double LogDetCov () const\fC [inline]\fP"
+
+.PP
+Return the logDetCov\&. 
+.PP
+Definition at line 169 of file gaussian_distribution\&.hpp\&.
+.SS "void LogProbability (const arma::mat & x, arma::vec & logProbabilities) const\fC [inline]\fP"
+
+.PP
+Returns the \fBLog\fP probability of the given matrix\&. These values are stored in logProbabilities\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP List of observations\&. 
+.br
+\fIlogProbabilities\fP Output log probabilities for each input observation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 108 of file gaussian_distribution\&.hpp\&.
+.SS "double LogProbability (const arma::vec & observation) const"
+
+.PP
+Return the log probability of the given observation\&. 
+.PP
+Referenced by GaussianDistribution::Probability()\&.
+.SS "arma::vec& Mean ()\fC [inline]\fP"
+
+.PP
+Return a modifiable copy of the mean\&. 
+.PP
+Definition at line 151 of file gaussian_distribution\&.hpp\&.
+.SS "const arma::vec& Mean () const\fC [inline]\fP"
+
+.PP
+Return the mean\&. 
+.PP
+Definition at line 146 of file gaussian_distribution\&.hpp\&.
+.SS "void Probability (const arma::mat & x, arma::vec & probabilities) const\fC [inline]\fP"
+
+.PP
+Calculates the multivariate Gaussian probability density function for each data point (column) in the given matrix\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP List of observations\&. 
+.br
+\fIprobabilities\fP Output probabilities for each input observation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 91 of file gaussian_distribution\&.hpp\&.
+.PP
+References GaussianDistribution::LogProbability()\&.
+.SS "double Probability (const arma::vec & observation) const\fC [inline]\fP"
+
+.PP
+Return the probability of the given observation\&. 
+.PP
+Definition at line 74 of file gaussian_distribution\&.hpp\&.
+.PP
+References GaussianDistribution::LogProbability()\&.
+.SS "arma::vec Random () const"
+
+.PP
+Return a randomly generated observation according to the probability distribution defined by this object\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Random observation from this Gaussian distribution\&. 
+.RE
+.PP
+
+.PP
+Referenced by LogisticRegressionTestData()\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the distribution\&. 
+.PP
+Definition at line 175 of file gaussian_distribution\&.hpp\&.
+.SS "void Train (const arma::mat & observations)"
+
+.PP
+Estimate the Gaussian distribution directly from the given observations\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIobservations\fP List of observations\&. 
+.RE
+.PP
+
+.SS "void Train (const arma::mat & observations, const arma::vec & probabilities)"
+
+.PP
+Estimate the Gaussian distribution from the given observations, taking into account the probability of each observation actually being from this distribution\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,299 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1MarginRankingLoss" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::MarginRankingLoss</compoundname>
+    <includes refid="margin__ranking__loss_8hpp" local="no">margin_ranking_loss.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MarginRankingLoss_1a89dbb84b687c00c3a4f49d26adea665d" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double margin</definition>
+        <argsstring></argsstring>
+        <name>margin</name>
+        <briefdescription>
+<para>The margin value used in calculating Margin Ranking Loss. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" line="94" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1MarginRankingLoss_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" line="91" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MarginRankingLoss_1a28d56cfc63a5a75cd5479f335c65df0c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>MarginRankingLoss</definition>
+        <argsstring>(const double margin=1.0)</argsstring>
+        <name>MarginRankingLoss</name>
+        <param>
+          <type>const double</type>
+          <declname>margin</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1MarginRankingLoss" kindref="compound">MarginRankingLoss</ref> object with Hyperparameter margin. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Hyperparameter margin defines a minimum distance between correctly ranked samples. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" line="43" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MarginRankingLoss_1add41dbaf358dc099750dc6064cb7e0d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename PredictionType</type>
+          </param>
+          <param>
+            <type>typename TargetType</type>
+          </param>
+          <param>
+            <type>typename LossType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const PredictionType &amp;prediction, const TargetType &amp;target, LossType &amp;loss)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const PredictionType &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>const TargetType &amp;</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type>LossType &amp;</type>
+          <declname>loss</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions used for evaluating the specified loss function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label vector which contains -1 or 1 values. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>loss</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated error. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" line="69" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MarginRankingLoss_1ab3640059898ea76c13709b8099316fe8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename PredictionType</type>
+          </param>
+          <param>
+            <type>typename TargetType</type>
+          </param>
+        </templateparamlist>
+        <type>PredictionType::elem_type</type>
+        <definition>PredictionType::elem_type Forward</definition>
+        <argsstring>(const PredictionType &amp;prediction, const TargetType &amp;target)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const PredictionType &amp;</type>
+          <declname>prediction</declname>
+        </param>
+        <param>
+          <type>const TargetType &amp;</type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+<para>Computes the Margin Ranking Loss function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>prediction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Predictions used for evaluating the specified loss function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The label vector which contains values of -1 or 1. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" line="53" column="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MarginRankingLoss_1ab8c4d252f686cdc9c5972df28e65dcab" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Margin</definition>
+        <argsstring>()</argsstring>
+        <name>Margin</name>
+        <briefdescription>
+<para>Modify the margin parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" line="81" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MarginRankingLoss_1ac29c2c851ff367f45f9ec075352c5b83" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Margin</definition>
+        <argsstring>() const</argsstring>
+        <name>Margin</name>
+        <briefdescription>
+<para>Get the margin parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" line="79" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" bodystart="79" bodyend="79"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MarginRankingLoss_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" line="76" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" bodystart="76" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MarginRankingLoss_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" line="74" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" bodystart="74" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1MarginRankingLoss_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" line="87" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Margin ranking loss measures the loss given inputs and a label vector with values of 1 or -1. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>If the label is 1 then the first input should be ranked higher than the second input at a distance larger than a margin, and vice- versa if the label is -1.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" line="35" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/loss_functions/margin_ranking_loss.hpp" bodystart="36" bodyend="95"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1MarginRankingLoss_1add41dbaf358dc099750dc6064cb7e0d7" prot="public" virt="non-virtual"><scope>mlpack::ann::MarginRankingLoss</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1MarginRankingLoss_1ab3640059898ea76c13709b8099316fe8" prot="public" virt="non-virtual"><scope>mlpack::ann::MarginRankingLoss</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a89dbb84b687c00c3a4f49d26adea665d" prot="private" virt="non-virtual"><scope>mlpack::ann::MarginRankingLoss</scope><name>margin</name></member>
+      <member refid="classmlpack_1_1ann_1_1MarginRankingLoss_1ac29c2c851ff367f45f9ec075352c5b83" prot="public" virt="non-virtual"><scope>mlpack::ann::MarginRankingLoss</scope><name>Margin</name></member>
+      <member refid="classmlpack_1_1ann_1_1MarginRankingLoss_1ab8c4d252f686cdc9c5972df28e65dcab" prot="public" virt="non-virtual"><scope>mlpack::ann::MarginRankingLoss</scope><name>Margin</name></member>
+      <member refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a28d56cfc63a5a75cd5479f335c65df0c" prot="public" virt="non-virtual"><scope>mlpack::ann::MarginRankingLoss</scope><name>MarginRankingLoss</name></member>
+      <member refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::MarginRankingLoss</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a8bae962cc603d1cab8d80ec78f8d505d" prot="public" virt="non-virtual"><scope>mlpack::ann::MarginRankingLoss</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::MarginRankingLoss</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1MarginRankingLoss_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::MarginRankingLoss</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

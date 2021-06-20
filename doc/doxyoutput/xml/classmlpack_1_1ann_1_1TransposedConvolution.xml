@@ -1,0 +1,1871 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1TransposedConvolution" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::TransposedConvolution</compoundname>
+    <includes refid="transposed__convolution_8hpp" local="no">transposed_convolution.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename ForwardConvolutionRule</type>
+        <defval><ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt;<ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref>&gt;</defval>
+      </param>
+      <param>
+        <type>typename BackwardConvolutionRule</type>
+        <defval><ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt;<ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref>&gt;</defval>
+      </param>
+      <param>
+        <type>typename GradientConvolutionRule</type>
+        <defval><ref refid="classmlpack_1_1ann_1_1NaiveConvolution" kindref="compound">NaiveConvolution</ref>&lt;<ref refid="classmlpack_1_1ann_1_1ValidConvolution" kindref="compound">ValidConvolution</ref>&gt;</defval>
+      </param>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a8c8c651bbe5b8997c23cceb68ef09144" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t aH</definition>
+        <argsstring></argsstring>
+        <name>aH</name>
+        <briefdescription>
+<para>Locally-stored number of zeros added to the bottom of input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="425" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="425" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a0c1ebfe867e7763f681c7d0c82bd33f0" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t aW</definition>
+        <argsstring></argsstring>
+        <name>aW</name>
+        <briefdescription>
+<para>Locally-stored number of zeros added to the right of input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="422" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="422" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1acc8b6b6879b002e34f544046de374ce8" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t batchSize</definition>
+        <argsstring></argsstring>
+        <name>batchSize</name>
+        <briefdescription>
+<para>Locally-stored number of input units. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="395" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="395" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a35e5d5131882d895839756e882c8fa47" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat bias</definition>
+        <argsstring></argsstring>
+        <name>bias</name>
+        <briefdescription>
+<para>Locally-stored bias term object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="434" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="434" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="470" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="470" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1ad080a9d4310c85b25056686dccd617df" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType gradient</definition>
+        <argsstring></argsstring>
+        <name>gradient</name>
+        <briefdescription>
+<para>Locally-stored gradient object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="473" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="473" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1af9a0cf39f7adb2b710501e6adfbafde6" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube gradientTemp</definition>
+        <argsstring></argsstring>
+        <name>gradientTemp</name>
+        <briefdescription>
+<para>Locally-stored transformed gradient parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="461" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="461" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1acff45188c35aab01df4b868ccb60380a" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube gTemp</definition>
+        <argsstring></argsstring>
+        <name>gTemp</name>
+        <briefdescription>
+<para>Locally-stored transformed error parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="458" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="458" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a38c315aedc14b3dcd10038537ae1c7b8" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube inputExpandedTemp</definition>
+        <argsstring></argsstring>
+        <name>inputExpandedTemp</name>
+        <briefdescription>
+<para>Locally-stored transformed expanded input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="455" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="455" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a2ec74fab321e9f3405ab039bfc076ad5" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inputHeight</definition>
+        <argsstring></argsstring>
+        <name>inputHeight</name>
+        <briefdescription>
+<para>Locally-stored input height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="440" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="440" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a9454d427799838ee16187afe98d20543" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube inputPaddedTemp</definition>
+        <argsstring></argsstring>
+        <name>inputPaddedTemp</name>
+        <briefdescription>
+<para>Locally-stored transformed padded input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="452" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="452" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a9ed1298793b1995f8bb9d2bec6991823" prot="private" static="no" mutable="no">
+        <type>InputDataType</type>
+        <definition>InputDataType inputParameter</definition>
+        <argsstring></argsstring>
+        <name>inputParameter</name>
+        <briefdescription>
+<para>Locally-stored input parameter object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="476" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="476" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a31d1d11207207222fa86f463515dd5dd" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inputWidth</definition>
+        <argsstring></argsstring>
+        <name>inputWidth</name>
+        <briefdescription>
+<para>Locally-stored input width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="437" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="437" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1ad8790e1135ba331e561e2151f527a9d7" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t inSize</definition>
+        <argsstring></argsstring>
+        <name>inSize</name>
+        <briefdescription>
+<para>Locally-stored number of input channels. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="389" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="389" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a5edf789e292d666badc50933288c030c" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t kernelHeight</definition>
+        <argsstring></argsstring>
+        <name>kernelHeight</name>
+        <briefdescription>
+<para>Locally-stored filter/kernel height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="401" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="401" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a56f93caaa26d703cfb801a4c74f839bd" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t kernelWidth</definition>
+        <argsstring></argsstring>
+        <name>kernelWidth</name>
+        <briefdescription>
+<para>Locally-stored filter/kernel width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="398" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="398" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1afe9f432eaa87ede5b515d7fb11c9ad9d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t outputHeight</definition>
+        <argsstring></argsstring>
+        <name>outputHeight</name>
+        <briefdescription>
+<para>Locally-stored output height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="446" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="446" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="479" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="479" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a1e995f0561d7a30db4ee6a0273a1d778" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube outputTemp</definition>
+        <argsstring></argsstring>
+        <name>outputTemp</name>
+        <briefdescription>
+<para>Locally-stored transformed output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="449" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="449" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a446dd57a9f4815cd276990ee17d72d0b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t outputWidth</definition>
+        <argsstring></argsstring>
+        <name>outputWidth</name>
+        <briefdescription>
+<para>Locally-stored output width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="443" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="443" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1acb5c7006cb90f1e71af53ef3ea75fafd" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t outSize</definition>
+        <argsstring></argsstring>
+        <name>outSize</name>
+        <briefdescription>
+<para>Locally-stored number of output channels. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="392" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="392" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a5d10a3cc37f38008f1466e150dc2d7a6" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1Padding" kindref="compound">ann::Padding</ref></type>
+        <definition>ann::Padding paddingBackward</definition>
+        <argsstring></argsstring>
+        <name>paddingBackward</name>
+        <briefdescription>
+<para>Locally-stored padding layer for back propagation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="467" column="4" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="467" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a7d06e1d5476d81219f095c11147bc642" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1Padding" kindref="compound">ann::Padding</ref></type>
+        <definition>ann::Padding paddingForward</definition>
+        <argsstring></argsstring>
+        <name>paddingForward</name>
+        <briefdescription>
+<para>Locally-stored padding layer for forward propagation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="464" column="4" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="464" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a8412826fd9f9983f0d2d864f5925ea3d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t padHBottom</definition>
+        <argsstring></argsstring>
+        <name>padHBottom</name>
+        <briefdescription>
+<para>Locally-stored bottom padding height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="416" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="416" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a6e8d3011abb3e8d5e816ef5c3bf9c00a" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t padHTop</definition>
+        <argsstring></argsstring>
+        <name>padHTop</name>
+        <briefdescription>
+<para>Locally-stored top padding height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="419" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="419" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a381f0b65156c656c1cdf0ac092fa6b17" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t padWLeft</definition>
+        <argsstring></argsstring>
+        <name>padWLeft</name>
+        <briefdescription>
+<para>Locally-stored left-side padding width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="410" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="410" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1af57576f7026aa28ee83a1a65ced6e0d6" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t padWRight</definition>
+        <argsstring></argsstring>
+        <name>padWRight</name>
+        <briefdescription>
+<para>Locally-stored right-side padding width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="413" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="413" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a01f3c104377154bf5ac87fdbc99b87db" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t strideHeight</definition>
+        <argsstring></argsstring>
+        <name>strideHeight</name>
+        <briefdescription>
+<para>Locally-stored stride of the filter in y-direction. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="407" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="407" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1aa221493625d4568210be89fee84c909f" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t strideWidth</definition>
+        <argsstring></argsstring>
+        <name>strideWidth</name>
+        <briefdescription>
+<para>Locally-stored stride of the filter in x-direction. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="404" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="404" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a022f63390051c3be0c6016205f6eea72" prot="private" static="no" mutable="no">
+        <type>arma::cube</type>
+        <definition>arma::cube weight</definition>
+        <argsstring></argsstring>
+        <name>weight</name>
+        <briefdescription>
+<para>Locally-stored weight object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="431" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="431" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1TransposedConvolution_1a01827f0de7715c4480dd12b4aa12e886" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType weights</definition>
+        <argsstring></argsstring>
+        <name>weights</name>
+        <briefdescription>
+<para>Locally-stored weight object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="428" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="428" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a69a268c24f008adcf0b22d07eefee849" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TransposedConvolution</definition>
+        <argsstring>()</argsstring>
+        <name>TransposedConvolution</name>
+        <briefdescription>
+<para>Create the Transposed <ref refid="classmlpack_1_1ann_1_1Convolution" kindref="compound">Convolution</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="53" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a2f27a931f4ba80e8828cee3fd2e4c183" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TransposedConvolution</definition>
+        <argsstring>(const size_t inSize, const size_t outSize, const size_t kernelWidth, const size_t kernelHeight, const size_t strideWidth, const size_t strideHeight, const std::tuple&lt; size_t, size_t &gt; &amp;padW, const std::tuple&lt; size_t, size_t &gt; &amp;padH, const size_t inputWidth=0, const size_t inputHeight=0, const size_t outputWidth=0, const size_t outputHeight=0, const std::string &amp;paddingType=&quot;None&quot;)</argsstring>
+        <name>TransposedConvolution</name>
+        <param>
+          <type>const size_t</type>
+          <declname>inSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>outSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>kernelWidth</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>kernelHeight</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>strideWidth</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>strideHeight</declname>
+        </param>
+        <param>
+          <type>const std::tuple&lt; size_t, size_t &gt; &amp;</type>
+          <declname>padW</declname>
+        </param>
+        <param>
+          <type>const std::tuple&lt; size_t, size_t &gt; &amp;</type>
+          <declname>padH</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>inputWidth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>inputHeight</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>outputWidth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>outputHeight</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paddingType</declname>
+          <defval>&quot;None&quot;</defval>
+        </param>
+        <briefdescription>
+<para>Create the Transposed <ref refid="classmlpack_1_1ann_1_1Convolution" kindref="compound">Convolution</ref> object using the specified number of input maps, output maps, filter size, stride and padding parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Note: The equivalent stride of a transposed convolution operation is always equal to 1. In this implementation, stride of filter represents the stride of the associated convolution operation. Note: <ref refid="classmlpack_1_1ann_1_1Padding" kindref="compound">Padding</ref> of input represents padding of associated convolution operation.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>inSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of input maps. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>outSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of output maps. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernelWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Width of the filter/kernel. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernelHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Height of the filter/kernel. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>strideWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Stride of filter application in the x direction. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>strideHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Stride of filter application in the y direction. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>padW</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A two-value tuple indicating padding widths of the input. First value is padding at left side. Second value is padding on right side. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>padH</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A two-value tuple indicating padding heights of the input. First value is padding at top. Second value is padding on bottom. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>inputWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The width of the input data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>inputHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The height of the input data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>outputWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The width of the output data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>outputHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The height of the output data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>paddingType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of padding (Valid or Same). Defaults to None. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="121" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a3a60c5d37e8c45da06e5a09ac75680bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>TransposedConvolution</definition>
+        <argsstring>(const size_t inSize, const size_t outSize, const size_t kernelWidth, const size_t kernelHeight, const size_t strideWidth=1, const size_t strideHeight=1, const size_t padW=0, const size_t padH=0, const size_t inputWidth=0, const size_t inputHeight=0, const size_t outputWidth=0, const size_t outputHeight=0, const std::string &amp;paddingType=&quot;None&quot;)</argsstring>
+        <name>TransposedConvolution</name>
+        <param>
+          <type>const size_t</type>
+          <declname>inSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>outSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>kernelWidth</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>kernelHeight</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>strideWidth</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>strideHeight</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>padW</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>padH</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>inputWidth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>inputHeight</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>outputWidth</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>outputHeight</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>paddingType</declname>
+          <defval>&quot;None&quot;</defval>
+        </param>
+        <briefdescription>
+<para>Create the Transposed <ref refid="classmlpack_1_1ann_1_1Convolution" kindref="compound">Convolution</ref> object using the specified number of input maps, output maps, filter size, stride and padding parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Note: The equivalent stride of a transposed convolution operation is always equal to 1. In this implementation, stride of filter represents the stride of the associated convolution operation. Note: <ref refid="classmlpack_1_1ann_1_1Padding" kindref="compound">Padding</ref> of input represents padding of associated convolution operation.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>inSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of input maps. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>outSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of output maps. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernelWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Width of the filter/kernel. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kernelHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Height of the filter/kernel. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>strideWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Stride of filter application in the x direction. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>strideHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Stride of filter application in the y direction. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>padW</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1ann_1_1Padding" kindref="compound">Padding</ref> width of the input. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>padH</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1ann_1_1Padding" kindref="compound">Padding</ref> height of the input. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>inputWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The width of the input data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>inputHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The height of the input data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>outputWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The width of the output data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>outputHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The height of the output data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>paddingType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of padding (Valid or Same). Defaults to None. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="79" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;, const arma::Mat&lt; eT &gt; &amp;gy, arma::Mat&lt; eT &gt; &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(input) The propagated input activation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="160" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a398f0702633d5ba7afe6057d25f4b78c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat &amp;</type>
+        <definition>arma::mat&amp; Bias</definition>
+        <argsstring>()</argsstring>
+        <name>Bias</name>
+        <briefdescription>
+<para>Modify the bias of the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="189" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="189" bodyend="189"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1ab94cce6a9d6baed0badd20f4a409e9af" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::mat const  &amp;</type>
+        <definition>arma::mat const&amp; Bias</definition>
+        <argsstring>() const</argsstring>
+        <name>Bias</name>
+        <briefdescription>
+<para>Get the bias of the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="187" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="187" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="204" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="204" bodyend="204"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="202" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="202" bodyend="202"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a461f849bc638c15bec262dc9c3a58abe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="148" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a19abce4739c3b0b658b612537e21956a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Gradient</definition>
+        <argsstring>()</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Modify the gradient. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="209" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="209" bodyend="209"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Gradient</definition>
+        <argsstring>() const</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Get the gradient. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="207" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="207" bodyend="207"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a9eb69a40c783e082307be5cb1ffab921" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;, const arma::Mat&lt; eT &gt; &amp;error, arma::Mat&lt; eT &gt; &amp;gradient)</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="172" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1aefbba724eec397a928d5460bb209a360" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; InputHeight</definition>
+        <argsstring>()</argsstring>
+        <name>InputHeight</name>
+        <briefdescription>
+<para>Modify the input height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="219" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="219" bodyend="219"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1ac34354aab4ed6f9145908b19eade6a24" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>InputHeight</name>
+        <briefdescription>
+<para>Get the input height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="217" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="217" bodyend="217"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a063c3b1053c7979a7dd2e7bbd2bf1f8a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType &amp;</type>
+        <definition>InputDataType&amp; InputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Modify the input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="194" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="194" bodyend="194"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1aaffd593b3ab627f8b5aae2a1f53634b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>InputDataType const  &amp;</type>
+        <definition>InputDataType const&amp; InputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>InputParameter</name>
+        <briefdescription>
+<para>Get the input parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="192" column="23" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="192" bodyend="192"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a13ab93f234244a68f6ade76287284447" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputShape</definition>
+        <argsstring>() const</argsstring>
+        <name>InputShape</name>
+        <briefdescription>
+<para>Get the shape of the input. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="278" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="278" bodyend="281"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a5a4c4984aa897a28d516e638e7ea5308" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputSize</definition>
+        <argsstring>() const</argsstring>
+        <name>InputSize</name>
+        <briefdescription>
+<para>Get the input size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="232" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="232" bodyend="232"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a238e9d308df611a9300a4ca6756fef4d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; InputWidth</definition>
+        <argsstring>()</argsstring>
+        <name>InputWidth</name>
+        <briefdescription>
+<para>Modify input the width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="214" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="214" bodyend="214"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a432efdff77411903044ae87ec3aec70f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t InputWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>InputWidth</name>
+        <briefdescription>
+<para>Get the input width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="212" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="212" bodyend="212"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a46b2c28d89959067f549f9f45d2626c5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; KernelHeight</definition>
+        <argsstring>()</argsstring>
+        <name>KernelHeight</name>
+        <briefdescription>
+<para>Modify the kernel height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="245" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="245" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a6c15e2e3416651fac44621acbbdac9e9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t KernelHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>KernelHeight</name>
+        <briefdescription>
+<para>Get the kernel height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="243" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="243" bodyend="243"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a5fbae452ceda395f5566833e06ba3615" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; KernelWidth</definition>
+        <argsstring>()</argsstring>
+        <name>KernelWidth</name>
+        <briefdescription>
+<para>Modify the kernel width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="240" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="240" bodyend="240"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a656302bc9b300692aa71abe2a614c7b1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t KernelWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>KernelWidth</name>
+        <briefdescription>
+<para>Get the kernel width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="238" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="238" bodyend="238"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1ac5112abf9f5e1face13ed965a8755b1d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; OutputHeight</definition>
+        <argsstring>()</argsstring>
+        <name>OutputHeight</name>
+        <briefdescription>
+<para>Modify the output height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="229" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="229" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a96a6294ed9ca8d24be9bb5eb53db7f25" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t OutputHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputHeight</name>
+        <briefdescription>
+<para>Get the output height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="227" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="227" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="199" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="199" bodyend="199"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="197" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="197" bodyend="197"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a99c1d948c984b9e76fb5e37e2145427a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t OutputSize</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputSize</name>
+        <briefdescription>
+<para>Get the output size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="235" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="235" bodyend="235"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a54579ec9924e2a4a5bc0a4fb822ce80c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; OutputWidth</definition>
+        <argsstring>()</argsstring>
+        <name>OutputWidth</name>
+        <briefdescription>
+<para>Modify the output width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="224" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="224" bodyend="224"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1aa2b647f9e029826314b4f572fe96878d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t OutputWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputWidth</name>
+        <briefdescription>
+<para>Get the output width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="222" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="222" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a49d01b2dacca58ba01d883045100b823" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; PadHBottom</definition>
+        <argsstring>()</argsstring>
+        <name>PadHBottom</name>
+        <briefdescription>
+<para>Modify the bottom padding height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="265" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="265" bodyend="265"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a7772e9861fa1c1922b00428172315939" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t PadHBottom</definition>
+        <argsstring>() const</argsstring>
+        <name>PadHBottom</name>
+        <briefdescription>
+<para>Get the bottom padding height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="263" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="263" bodyend="263"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a9ea976eb369189ecbe7be7e53e323d5e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; PadHTop</definition>
+        <argsstring>()</argsstring>
+        <name>PadHTop</name>
+        <briefdescription>
+<para>Modify the top padding height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="260" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="260" bodyend="260"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1ae6d766575008c2909e51d00b1ef619a1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t PadHTop</definition>
+        <argsstring>() const</argsstring>
+        <name>PadHTop</name>
+        <briefdescription>
+<para>Get the top padding height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="258" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="258" bodyend="258"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a10cf922741cd487e0904c933e6500760" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; PadWLeft</definition>
+        <argsstring>()</argsstring>
+        <name>PadWLeft</name>
+        <briefdescription>
+<para>Modify the left padding width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="270" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="270" bodyend="270"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a353cb5238a6b33f0d740c3ab17da11b4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t PadWLeft</definition>
+        <argsstring>() const</argsstring>
+        <name>PadWLeft</name>
+        <briefdescription>
+<para>Get the left padding width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="268" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="268" bodyend="268"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a97efc672230a48247bd19a1bcd51624f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; PadWRight</definition>
+        <argsstring>()</argsstring>
+        <name>PadWRight</name>
+        <briefdescription>
+<para>Modify the right padding width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="275" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="275" bodyend="275"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a7f164b19d31d8d4ec4988513c139bf55" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t PadWRight</definition>
+        <argsstring>() const</argsstring>
+        <name>PadWRight</name>
+        <briefdescription>
+<para>Get the right padding width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="273" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="273" bodyend="273"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a9c5c5900772a689d5a6b59778ec67120" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Parameters</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Modify the parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="179" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="179" bodyend="179"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1aa530552c7ef915c952fbacc77b965c90" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Parameters</definition>
+        <argsstring>() const</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Get the parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="177" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="177" bodyend="177"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Reset</definition>
+        <argsstring>()</argsstring>
+        <name>Reset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="138" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="292" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a0dd3de9c8a9060e927c575b57a021e8b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; StrideHeight</definition>
+        <argsstring>()</argsstring>
+        <name>StrideHeight</name>
+        <briefdescription>
+<para>Modify the stride height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="255" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="255" bodyend="255"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a1894b819a7ff82a5576fc8deb8ba7457" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t StrideHeight</definition>
+        <argsstring>() const</argsstring>
+        <name>StrideHeight</name>
+        <briefdescription>
+<para>Get the stride height. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="253" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="253" bodyend="253"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1af40557db9372b513440e06a5e42cc599" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; StrideWidth</definition>
+        <argsstring>()</argsstring>
+        <name>StrideWidth</name>
+        <briefdescription>
+<para>Modify the stride width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="250" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="250" bodyend="250"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1ad8fd9eb6de956c3e9d82242793fd2db1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t StrideWidth</definition>
+        <argsstring>() const</argsstring>
+        <name>StrideWidth</name>
+        <briefdescription>
+<para>Get the stride width. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="248" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="248" bodyend="248"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a7efcee6fad13ea8a7a431168fe0ad55a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::cube &amp;</type>
+        <definition>arma::cube&amp; Weight</definition>
+        <argsstring>()</argsstring>
+        <name>Weight</name>
+        <briefdescription>
+<para>Modify the weight of the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="184" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="184" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a18753fb91ac2d21cb52a432cfa0253e5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::cube const  &amp;</type>
+        <definition>arma::cube const&amp; Weight</definition>
+        <argsstring>() const</argsstring>
+        <name>Weight</name>
+        <briefdescription>
+<para>Get the weight of the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="182" column="20" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="182" bodyend="182"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a7a2704698a50d9e00dfb083f3a863579" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t WeightSize</definition>
+        <argsstring>() const</argsstring>
+        <name>WeightSize</name>
+        <briefdescription>
+<para>Get the size of the weight matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="284" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="284" bodyend="287"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1aee9d524caf2b6e2774e1606ef8398b6c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void InitializeSamePadding</definition>
+        <argsstring>()</argsstring>
+        <name>InitializeSamePadding</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="314" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a99d08b897d4c84eabd38cdb58b37f9f3" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void InsertZeros</definition>
+        <argsstring>(const arma::Cube&lt; eT &gt; &amp;input, const size_t strideWidth, const size_t strideHeight, arma::Cube&lt; eT &gt; &amp;output)</argsstring>
+        <name>InsertZeros</name>
+        <param>
+          <type>const arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>strideWidth</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>strideHeight</declname>
+        </param>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="373" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="373" bodyend="386"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a2a3471d08bb125fa47fe26984515d0ad" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void InsertZeros</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const size_t strideWidth, const size_t strideHeight, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>InsertZeros</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>strideWidth</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>strideHeight</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="340" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="340" bodyend="361"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a4ab3f0e798b87bf65d3a0abad535434e" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Rotate180</definition>
+        <argsstring>(const arma::Cube&lt; eT &gt; &amp;input, arma::Cube&lt; eT &gt; &amp;output)</argsstring>
+        <name>Rotate180</name>
+        <param>
+          <type>const arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Cube&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="302" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="302" bodyend="309"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1TransposedConvolution_1a5ee0b589e0dd841e8d5f837e25c5a8f8" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Rotate180</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, arma::Mat&lt; eT &gt; &amp;output)</argsstring>
+        <name>Rotate180</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="323" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="323" bodyend="327"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of the Transposed <ref refid="classmlpack_1_1ann_1_1Convolution" kindref="compound">Convolution</ref> class. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The Transposed <ref refid="classmlpack_1_1ann_1_1Convolution" kindref="compound">Convolution</ref> class represents a single layer of a neural network.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>ForwardConvolutionRule</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1ann_1_1Convolution" kindref="compound">Convolution</ref> to perform forward process. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>BackwardConvolutionRule</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1ann_1_1Convolution" kindref="compound">Convolution</ref> to perform backward process. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>GradientConvolutionRule</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classmlpack_1_1ann_1_1Convolution" kindref="compound">Convolution</ref> to calculate gradient. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" line="49" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/transposed_convolution.hpp" bodystart="50" bodyend="480"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a8c8c651bbe5b8997c23cceb68ef09144" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>aH</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a0c1ebfe867e7763f681c7d0c82bd33f0" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>aW</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1ad9ad1a3bdb0f3fff5c839ed155e4bbf8" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1acc8b6b6879b002e34f544046de374ce8" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>batchSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1ab94cce6a9d6baed0badd20f4a409e9af" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Bias</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a398f0702633d5ba7afe6057d25f4b78c" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Bias</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a35e5d5131882d895839756e882c8fa47" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>bias</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a461f849bc638c15bec262dc9c3a58abe" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a9eb69a40c783e082307be5cb1ffab921" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a19abce4739c3b0b658b612537e21956a" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1ad080a9d4310c85b25056686dccd617df" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1af9a0cf39f7adb2b710501e6adfbafde6" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>gradientTemp</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1acff45188c35aab01df4b868ccb60380a" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>gTemp</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1aee9d524caf2b6e2774e1606ef8398b6c" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>InitializeSamePadding</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a38c315aedc14b3dcd10038537ae1c7b8" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>inputExpandedTemp</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1ac34354aab4ed6f9145908b19eade6a24" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>InputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1aefbba724eec397a928d5460bb209a360" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>InputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a2ec74fab321e9f3405ab039bfc076ad5" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>inputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a9454d427799838ee16187afe98d20543" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>inputPaddedTemp</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a9ed1298793b1995f8bb9d2bec6991823" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>inputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1aaffd593b3ab627f8b5aae2a1f53634b0" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a063c3b1053c7979a7dd2e7bbd2bf1f8a" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>InputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a13ab93f234244a68f6ade76287284447" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>InputShape</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a5a4c4984aa897a28d516e638e7ea5308" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>InputSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a31d1d11207207222fa86f463515dd5dd" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>inputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a432efdff77411903044ae87ec3aec70f" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>InputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a238e9d308df611a9300a4ca6756fef4d" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>InputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a2a3471d08bb125fa47fe26984515d0ad" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>InsertZeros</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a99d08b897d4c84eabd38cdb58b37f9f3" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>InsertZeros</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1ad8790e1135ba331e561e2151f527a9d7" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>inSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a6c15e2e3416651fac44621acbbdac9e9" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>KernelHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a46b2c28d89959067f549f9f45d2626c5" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>KernelHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a5edf789e292d666badc50933288c030c" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>kernelHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a656302bc9b300692aa71abe2a614c7b1" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>KernelWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a5fbae452ceda395f5566833e06ba3615" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>KernelWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a56f93caaa26d703cfb801a4c74f839bd" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>kernelWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1afe9f432eaa87ede5b515d7fb11c9ad9d" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>outputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a96a6294ed9ca8d24be9bb5eb53db7f25" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>OutputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1ac5112abf9f5e1face13ed965a8755b1d" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>OutputHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a99c1d948c984b9e76fb5e37e2145427a" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>OutputSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a1e995f0561d7a30db4ee6a0273a1d778" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>outputTemp</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1aa2b647f9e029826314b4f572fe96878d" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>OutputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a54579ec9924e2a4a5bc0a4fb822ce80c" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>OutputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a446dd57a9f4815cd276990ee17d72d0b" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>outputWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1acb5c7006cb90f1e71af53ef3ea75fafd" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>outSize</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a5d10a3cc37f38008f1466e150dc2d7a6" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>paddingBackward</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a7d06e1d5476d81219f095c11147bc642" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>paddingForward</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a7772e9861fa1c1922b00428172315939" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>PadHBottom</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a49d01b2dacca58ba01d883045100b823" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>PadHBottom</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a8412826fd9f9983f0d2d864f5925ea3d" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>padHBottom</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1ae6d766575008c2909e51d00b1ef619a1" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>PadHTop</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a9ea976eb369189ecbe7be7e53e323d5e" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>PadHTop</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a6e8d3011abb3e8d5e816ef5c3bf9c00a" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>padHTop</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a353cb5238a6b33f0d740c3ab17da11b4" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>PadWLeft</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a10cf922741cd487e0904c933e6500760" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>PadWLeft</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a381f0b65156c656c1cdf0ac092fa6b17" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>padWLeft</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a7f164b19d31d8d4ec4988513c139bf55" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>PadWRight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a97efc672230a48247bd19a1bcd51624f" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>PadWRight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1af57576f7026aa28ee83a1a65ced6e0d6" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>padWRight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1aa530552c7ef915c952fbacc77b965c90" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a9c5c5900772a689d5a6b59778ec67120" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Reset</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a4ab3f0e798b87bf65d3a0abad535434e" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Rotate180</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a5ee0b589e0dd841e8d5f837e25c5a8f8" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Rotate180</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a1894b819a7ff82a5576fc8deb8ba7457" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>StrideHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a0dd3de9c8a9060e927c575b57a021e8b" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>StrideHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a01f3c104377154bf5ac87fdbc99b87db" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>strideHeight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1aa221493625d4568210be89fee84c909f" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>strideWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1ad8fd9eb6de956c3e9d82242793fd2db1" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>StrideWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1af40557db9372b513440e06a5e42cc599" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>StrideWidth</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a69a268c24f008adcf0b22d07eefee849" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>TransposedConvolution</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a3a60c5d37e8c45da06e5a09ac75680bf" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>TransposedConvolution</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a2f27a931f4ba80e8828cee3fd2e4c183" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>TransposedConvolution</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a022f63390051c3be0c6016205f6eea72" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>weight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a18753fb91ac2d21cb52a432cfa0253e5" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Weight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a7efcee6fad13ea8a7a431168fe0ad55a" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>Weight</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a01827f0de7715c4480dd12b4aa12e886" prot="private" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>weights</name></member>
+      <member refid="classmlpack_1_1ann_1_1TransposedConvolution_1a7a2704698a50d9e00dfb083f3a863579" prot="public" virt="non-virtual"><scope>mlpack::ann::TransposedConvolution</scope><name>WeightSize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

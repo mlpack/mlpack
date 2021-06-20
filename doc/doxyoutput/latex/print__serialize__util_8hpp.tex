@@ -1,0 +1,45 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/bindings/\+R/print\+\_\+serialize\+\_\+util.hpp File Reference}
+\label{print__serialize__util_8hpp}\index{/home/aakash/mlpack/src/mlpack/bindings/R/print\_serialize\_util.hpp@{/home/aakash/mlpack/src/mlpack/bindings/R/print\_serialize\_util.hpp}}
+Include dependency graph for print\+\_\+serialize\+\_\+util.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=184pt]{print__serialize__util_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=184pt]{print__serialize__util_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::bindings}
+\item 
+ \textbf{ mlpack\+::bindings\+::r}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Serialize\+Util} (util\+::\+Param\+Data \&, const typename std\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Matrices are serializable but here we also print nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Serialize\+Util} (util\+::\+Param\+Data \&, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$!data\+::\+Has\+Serialize$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em If the type is not serializable, print nothing. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Serialize\+Util} (util\+::\+Param\+Data \&d, const typename std\+::enable\+\_\+if$<$!arma\+::is\+\_\+arma\+\_\+type$<$ T $>$\+::value $>$\+::type $\ast$=0, const typename std\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$\+::value $>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em For non-\/matrix serializable types we need to print something. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Print\+Serialize\+Util} (util\+::\+Param\+Data \&d, const void $\ast$, void $\ast$)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Yashwant Singh Parihar
+\end{DoxyAuthor}
+Print the serialize utility in a R binding .R file for a given parameter.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

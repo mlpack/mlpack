@@ -1,0 +1,79 @@
+.TH "/home/aakash/mlpack/src/mlpack/bindings/cli/string_type_param.hpp" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/aakash/mlpack/src/mlpack/bindings/cli/string_type_param.hpp
+.SH SYNOPSIS
+.br
+.PP
+.SS "Namespaces"
+
+.in +1c
+.ti -1c
+.RI " \fBmlpack\fP"
+.br
+.RI "Linear algebra utility functions, generally performed on matrices or vectors\&. "
+.ti -1c
+.RI " \fBmlpack::bindings\fP"
+.br
+.ti -1c
+.RI " \fBmlpack::bindings::cli\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename T > void \fBStringTypeParam\fP (util::ParamData &, const void *, void *output)"
+.br
+.RI "Return a string containing the type of a parameter\&. "
+.ti -1c
+.RI "template<> void \fBStringTypeParam< bool >\fP (util::ParamData &, const void *, void *output)"
+.br
+.RI "Return 'bool'\&. "
+.ti -1c
+.RI "template<> void \fBStringTypeParam< double >\fP (util::ParamData &, const void *, void *output)"
+.br
+.RI "Return 'double'\&. "
+.ti -1c
+.RI "template<> void \fBStringTypeParam< int >\fP (util::ParamData &, const void *, void *output)"
+.br
+.RI "Return 'int'\&. "
+.ti -1c
+.RI "template<> void \fBStringTypeParam< std::string >\fP (util::ParamData &, const void *, void *output)"
+.br
+.RI "Return 'string'\&. "
+.ti -1c
+.RI "template<> void \fBStringTypeParam< std::tuple< mlpack::data::DatasetInfo, arma::mat > >\fP (util::ParamData &, const void *, void *output)"
+.br
+.RI "Return 'string';\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBStringTypeParamImpl\fP (const typename boost::disable_if< util::IsStdVector< T >>::type *=0, const typename boost::disable_if< data::HasSerialize< T >>::type *=0)"
+.br
+.RI "Return a string containing the type of the parameter\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBStringTypeParamImpl\fP (const typename boost::enable_if< data::HasSerialize< T >>::type *=0)"
+.br
+.RI "Return a string containing the type of the parameter,\&. "
+.ti -1c
+.RI "template<typename T > std::string \fBStringTypeParamImpl\fP (const typename boost::enable_if< util::IsStdVector< T >>::type *=0)"
+.br
+.RI "Return a string containing the type of the parameter, for vector options\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.PP
+\fBAuthor\fP
+.RS 4
+Ryan Curtin
+.RE
+.PP
+Given a util::ParamData object, return a string containing the type of the input parameter as given on the command-line\&.
+.PP
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license\&. You should have received a copy of the 3-clause BSD license along with mlpack\&. If not, see http://www.opensource.org/licenses/BSD-3-Clause for more information\&. 
+.PP
+Definition in file \fBstring_type_param\&.hpp\fP\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

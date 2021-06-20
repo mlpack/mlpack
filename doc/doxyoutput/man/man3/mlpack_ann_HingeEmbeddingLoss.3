@@ -1,0 +1,113 @@
+.TH "HingeEmbeddingLoss< InputDataType, OutputDataType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+HingeEmbeddingLoss< InputDataType, OutputDataType > \- The Hinge Embedding loss function is often used to compute the loss between y_true and y_pred\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHingeEmbeddingLoss\fP ()"
+.br
+.RI "Create the Hinge Embedding object\&. "
+.ti -1c
+.RI "template<typename PredictionType , typename TargetType , typename LossType > void \fBBackward\fP (const PredictionType &prediction, const TargetType &target, LossType &loss)"
+.br
+.RI "Ordinary feed backward pass of a neural network\&. "
+.ti -1c
+.RI "template<typename PredictionType , typename TargetType > PredictionType::elem_type \fBForward\fP (const PredictionType &prediction, const TargetType &target)"
+.br
+.RI "Computes the Hinge Embedding loss function\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the loss function\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::HingeEmbeddingLoss< InputDataType, OutputDataType >"
+The Hinge Embedding loss function is often used to compute the loss between y_true and y_pred\&. 
+
+
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 36 of file hinge_embedding_loss\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBHingeEmbeddingLoss\fP ()"
+
+.PP
+Create the Hinge Embedding object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const PredictionType & prediction, const TargetType & target, LossType & loss)"
+
+.PP
+Ordinary feed backward pass of a neural network\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIprediction\fP Prediction used for evaluating the specified loss function\&. 
+.br
+\fItarget\fP The target vector\&. 
+.br
+\fIloss\fP The calculated error\&. 
+.RE
+.PP
+
+.SS "PredictionType::elem_type Forward (const PredictionType & prediction, const TargetType & target)"
+
+.PP
+Computes the Hinge Embedding loss function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIprediction\fP Prediction used for evaluating the specified loss function\&. 
+.br
+\fItarget\fP Target data to compare with\&. 
+.RE
+.PP
+
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 71 of file hinge_embedding_loss\&.hpp\&.
+.SS "OutputDataType& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 69 of file hinge_embedding_loss\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the loss function\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

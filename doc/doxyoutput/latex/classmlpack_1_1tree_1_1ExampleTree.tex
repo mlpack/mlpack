@@ -1,0 +1,377 @@
+\doxysection{Example\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1tree_1_1ExampleTree}\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+
+
+This is not an actual space tree but instead an example tree that exists to show and document all the functions that mlpack trees must implement.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Example\+Tree} (const Mat\+Type \&dataset, Metric\+Type \&metric)
+\begin{DoxyCompactList}\small\item\em This constructor will build the tree given a dataset and an instantiated metric. \end{DoxyCompactList}\item 
+void \textbf{ Centroid} (arma\+::vec \&centroid) const
+\begin{DoxyCompactList}\small\item\em Fill the given vector with the center of the node. \end{DoxyCompactList}\item 
+\textbf{ Example\+Tree} \& \textbf{ Child} (const size\+\_\+t i)
+\begin{DoxyCompactList}\small\item\em Modify a particular child of this node. \end{DoxyCompactList}\item 
+const \textbf{ Example\+Tree} \& \textbf{ Child} (const size\+\_\+t i) const
+\begin{DoxyCompactList}\small\item\em Return a particular child of this node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Descendant} (const size\+\_\+t i) const
+\begin{DoxyCompactList}\small\item\em Get the index of a particular descendant point. \end{DoxyCompactList}\item 
+double \textbf{ Furthest\+Descendant\+Distance} () const
+\begin{DoxyCompactList}\small\item\em Get the distance from the center of the node to the furthest descendant point of this node. \end{DoxyCompactList}\item 
+double \textbf{ Max\+Distance} (const \textbf{ Example\+Tree} \&other) const
+\begin{DoxyCompactList}\small\item\em Return the maximum distance between this node and another node. \end{DoxyCompactList}\item 
+double \textbf{ Max\+Distance} (const Mat\+Type \&point) const
+\begin{DoxyCompactList}\small\item\em Return the maximum distance between this node and a point. \end{DoxyCompactList}\item 
+Metric\+Type \& \textbf{ Metric} ()
+\begin{DoxyCompactList}\small\item\em Modify the instantiated metric for this node. \end{DoxyCompactList}\item 
+const Metric\+Type \& \textbf{ Metric} () const
+\begin{DoxyCompactList}\small\item\em Get the instantiated metric for this node. \end{DoxyCompactList}\item 
+double \textbf{ Min\+Distance} (const \textbf{ Example\+Tree} \&other) const
+\begin{DoxyCompactList}\small\item\em Return the minimum distance between this node and another node. \end{DoxyCompactList}\item 
+double \textbf{ Min\+Distance} (const Mat\+Type \&point) const
+\begin{DoxyCompactList}\small\item\em Return the minimum distance between this node and a point. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Children} () const
+\begin{DoxyCompactList}\small\item\em Return the number of children of this node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Descendants} () const
+\begin{DoxyCompactList}\small\item\em Get the number of descendant points. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Points} () const
+\begin{DoxyCompactList}\small\item\em Return the number of points held in this node. \end{DoxyCompactList}\item 
+\textbf{ Example\+Tree} $\ast$ \textbf{ Parent} () const
+\begin{DoxyCompactList}\small\item\em Return the parent node (NULL if this is the root of the tree). \end{DoxyCompactList}\item 
+double \textbf{ Parent\+Distance} () const
+\begin{DoxyCompactList}\small\item\em Get the distance from the center of this node to the center of the parent node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Point} (const size\+\_\+t i) const
+\begin{DoxyCompactList}\small\item\em Return the index of a particular point of this node. \end{DoxyCompactList}\item 
+\textbf{ math\+::\+Range} \textbf{ Range\+Distance} (const \textbf{ Example\+Tree} \&other) const
+\begin{DoxyCompactList}\small\item\em Return both the minimum and maximum distances between this node and another node as a \doxyref{math\+::\+Range}{p.}{namespacemlpack_1_1math_ad17d9cabd4fd82cbed4ccd5e53b47d70} object. \end{DoxyCompactList}\item 
+\textbf{ math\+::\+Range} \textbf{ Range\+Distance} (const Mat\+Type \&point) const
+\begin{DoxyCompactList}\small\item\em Return both the minimum and maximum distances between this node and a point as a \doxyref{math\+::\+Range}{p.}{namespacemlpack_1_1math_ad17d9cabd4fd82cbed4ccd5e53b47d70} object. \end{DoxyCompactList}\item 
+Statistic\+Type \& \textbf{ Stat} ()
+\begin{DoxyCompactList}\small\item\em Modify the statistic for this node. \end{DoxyCompactList}\item 
+const Statistic\+Type \& \textbf{ Stat} () const
+\begin{DoxyCompactList}\small\item\em Get the statistic for this node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Metric\+Type = metric\+::\+LMetric$<$2, true$>$, typename Statistic\+Type = Empty\+Statistic, typename Mat\+Type = arma\+::mat$>$\newline
+class mlpack\+::tree\+::\+Example\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$}
+
+This is not an actual space tree but instead an example tree that exists to show and document all the functions that mlpack trees must implement. 
+
+For a better overview of trees, see \doxyref{The Tree\+Type policy in mlpack}{p.}{trees}. Also be aware that the implementations of each of the methods in this example tree are entirely fake and do not work; this example tree exists for its API, not its implementation.
+
+Note that trees often have different properties. These properties are known at compile-\/time through the \doxyref{mlpack\+::tree\+::\+Tree\+Traits}{p.}{classmlpack_1_1tree_1_1TreeTraits} class, and some properties may imply the existence (or non-\/existence) of certain functions. Refer to the \doxyref{Tree\+Traits}{p.}{classmlpack_1_1tree_1_1TreeTraits} for more documentation on that.
+
+The three template parameters below must be template parameters to the tree, in the order given below. More template parameters are fine, but they must come after the first three.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Metric\+Type} & This defines the space in which the tree will be built. For some trees, arbitrary metrics cannot be used, and a template metaprogramming approach should be used to issue a compile-\/time error if a metric cannot be used with a specific tree type. One example is the \doxyref{tree\+::\+Binary\+Space\+Tree}{p.}{classmlpack_1_1tree_1_1BinarySpaceTree} tree type, which cannot work with the \doxyref{metric\+::\+IPMetric}{p.}{classmlpack_1_1metric_1_1IPMetric} class. \\
+\hline
+{\em Statistic\+Type} & A tree node can hold a statistic, which is sometimes useful for various dual-\/tree algorithms. The tree itself does not need to know anything about how the statistic works, but it needs to hold a Statistic\+Type in each node. It can be assumed that the Statistic\+Type class has a constructor Statistic\+Type(const Example\+Tree\&). \\
+\hline
+{\em Mat\+Type} & A tree could be built on a dense matrix or a sparse matrix. All mlpack trees should be able to support any Armadillo-\/compatible matrix type. When the tree is written it should be assumed that Mat\+Type has the same functionality as arma\+::mat. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 56 of file example\+\_\+tree.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_a71d6f5460a87b7734b9bf02a9105f883}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!ExampleTree@{ExampleTree}}
+\index{ExampleTree@{ExampleTree}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{ExampleTree()}
+{\footnotesize\ttfamily \textbf{ Example\+Tree} (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{dataset,  }\item[{Metric\+Type \&}]{metric }\end{DoxyParamCaption})}
+
+
+
+This constructor will build the tree given a dataset and an instantiated metric. 
+
+Note that the parameter is a Mat\+Type\& and not an arma\+::mat\&. The dataset is not modified by the tree-\/building process (if it is, see the documentation for \doxyref{mlpack\+::tree\+::\+Tree\+Traits\+::\+Rearranges\+Dataset}{p.}{classmlpack_1_1tree_1_1TreeTraits_aba7aca795787a6fe3e8bbdae13edc70b} for how to deal with that situation). The Metric\+Type parameter is necessary even though some metrics do not hold any state. This is so that the tree does not have to worry about instantiating the metric (if the tree had to worry about this, this would almost certainly incur additional runtime complexity and a larger runtime size of the tree node objects, which is to be avoided). The metric can\textquotesingle{}t be const, in case Metric\+Type\+::\+Evaluate() is non-\/const.
+
+When this constructor is finished, the entire tree will be built and ready to use. The constructor should call the constructor of the statistic for each node that is built (see \doxyref{tree\+::\+Empty\+Statistic}{p.}{classmlpack_1_1tree_1_1EmptyStatistic} for more information).
+
+
+\begin{DoxyParams}{Parameters}
+{\em dataset} & The dataset that the tree will be built on. \\
+\hline
+{\em metric} & The instantiated metric to use to build the dataset. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_a63dbc8529d1a516434ab56626a778a51}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!Centroid@{Centroid}}
+\index{Centroid@{Centroid}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{Centroid()}
+{\footnotesize\ttfamily void Centroid (\begin{DoxyParamCaption}\item[{arma\+::vec \&}]{centroid }\end{DoxyParamCaption}) const}
+
+
+
+Fill the given vector with the center of the node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em centroid} & Vector to be filled with the center of the node. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_aba85f31fd90cc21118e0539bbffe5f52}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!Child@{Child}}
+\index{Child@{Child}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{Child()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Example\+Tree}\& Child (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption})}
+
+
+
+Modify a particular child of this node. 
+
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_ab569c9e59d44e466743e4a674e747e3f}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!Child@{Child}}
+\index{Child@{Child}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{Child()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const \textbf{ Example\+Tree}\& Child (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption}) const}
+
+
+
+Return a particular child of this node. 
+
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_a4dd10db2b40e7eb4b00125c35bf1ed3b}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!Descendant@{Descendant}}
+\index{Descendant@{Descendant}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{Descendant()}
+{\footnotesize\ttfamily size\+\_\+t Descendant (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption}) const}
+
+
+
+Get the index of a particular descendant point. 
+
+The ordering of the descendants does not matter, as long as calling Descendant(0) through Descendant(\doxyref{Num\+Descendants()}{p.}{classmlpack_1_1tree_1_1ExampleTree_a2a85eb34222f1fc073940e8c89274e81} -\/ 1) will return the indices of every unique descendant point of the node. \mbox{\label{classmlpack_1_1tree_1_1ExampleTree_afbd27efe2092e752e37e37aafd667beb}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!FurthestDescendantDistance@{FurthestDescendantDistance}}
+\index{FurthestDescendantDistance@{FurthestDescendantDistance}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{FurthestDescendantDistance()}
+{\footnotesize\ttfamily double Furthest\+Descendant\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the distance from the center of the node to the furthest descendant point of this node. 
+
+This does not necessarily need to be the exact furthest descendant distance but instead can be an upper bound. See the definitions in \doxyref{The Tree\+Type policy in mlpack}{p.}{trees} for more information. \mbox{\label{classmlpack_1_1tree_1_1ExampleTree_a440a75b7b6b9535ac3a0bd5de3a5edf0}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!MaxDistance@{MaxDistance}}
+\index{MaxDistance@{MaxDistance}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{MaxDistance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Max\+Distance (\begin{DoxyParamCaption}\item[{const \textbf{ Example\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ \&}]{other }\end{DoxyParamCaption}) const}
+
+
+
+Return the maximum distance between this node and another node. 
+
+It is not required that the exact maximum distance between the two nodes be returned but instead an upper bound on the maximum distance will suffice. See the definitions in \doxyref{The Tree\+Type policy in mlpack}{p.}{trees} for more information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Node to return [upper bound on] maximum distance to. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_aba1de56cd0c3a91c91ad7b9055d03036}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!MaxDistance@{MaxDistance}}
+\index{MaxDistance@{MaxDistance}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{MaxDistance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Max\+Distance (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{point }\end{DoxyParamCaption}) const}
+
+
+
+Return the maximum distance between this node and a point. 
+
+It is not required that the exact maximum distance between the node and the point is returned but instead an upper bound on the maximum distance will suffice. See the definitions in \doxyref{The Tree\+Type policy in mlpack}{p.}{trees} for more information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to return [upper bound on] maximum distance to. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_acc71d930ed90e73b2bc0c360835c5371}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!Metric@{Metric}}
+\index{Metric@{Metric}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{Metric()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Metric\+Type\& Metric (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Modify the instantiated metric for this node. 
+
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_aac4d643c62af7d9cc2a072aea10d2b32}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!Metric@{Metric}}
+\index{Metric@{Metric}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{Metric()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Metric\+Type\& Metric (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the instantiated metric for this node. 
+
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_a5b65e6d5aaf2961b201a48e3a939026e}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!MinDistance@{MinDistance}}
+\index{MinDistance@{MinDistance}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{MinDistance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Min\+Distance (\begin{DoxyParamCaption}\item[{const \textbf{ Example\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ \&}]{other }\end{DoxyParamCaption}) const}
+
+
+
+Return the minimum distance between this node and another node. 
+
+It is not required that the exact minimum distance between the two nodes be returned but instead a lower bound on the minimum distance will suffice. See the definitions in \doxyref{The Tree\+Type policy in mlpack}{p.}{trees} for more information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Node to return [lower bound on] minimum distance to. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_acc1d69c72174899bf6410555a6cf3c8a}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!MinDistance@{MinDistance}}
+\index{MinDistance@{MinDistance}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{MinDistance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Min\+Distance (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{point }\end{DoxyParamCaption}) const}
+
+
+
+Return the minimum distance between this node and a point. 
+
+It is not required that the exact minimum distance between the node and the point is returned but instead a lower bound on the minimum distance will suffice. See the definitions in \doxyref{The Tree\+Type policy in mlpack}{p.}{trees} for more information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to return [lower bound on] minimum distance to. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_a1f7ec083be66d58a3e02e12956bf005e}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!NumChildren@{NumChildren}}
+\index{NumChildren@{NumChildren}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{NumChildren()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Children (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the number of children of this node. 
+
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_a2a85eb34222f1fc073940e8c89274e81}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!NumDescendants@{NumDescendants}}
+\index{NumDescendants@{NumDescendants}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{NumDescendants()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Descendants (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the number of descendant points. 
+
+This is the number of unique points held in this node plus the number of points held in all descendant nodes. This could be calculated at build-\/time and cached, or could be calculated at run-\/time. This may be harder to calculate for trees that may hold points in multiple nodes (like cover trees and spill trees, for instance). \mbox{\label{classmlpack_1_1tree_1_1ExampleTree_a352077c26368da0ee570c0b7f062b1e3}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!NumPoints@{NumPoints}}
+\index{NumPoints@{NumPoints}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{NumPoints()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Points (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the number of points held in this node. 
+
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_aeedee01f5a1cabdeeffa09263f746ec6}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!Parent@{Parent}}
+\index{Parent@{Parent}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{Parent()}
+{\footnotesize\ttfamily \textbf{ Example\+Tree}$\ast$ Parent (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the parent node (NULL if this is the root of the tree). 
+
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_acddc03b68e8b86e9c4bc689b35b4539c}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!ParentDistance@{ParentDistance}}
+\index{ParentDistance@{ParentDistance}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{ParentDistance()}
+{\footnotesize\ttfamily double Parent\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the distance from the center of this node to the center of the parent node. 
+
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_a72ca4074cde05e9efd635fe11328ecf1}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!Point@{Point}}
+\index{Point@{Point}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{Point()}
+{\footnotesize\ttfamily size\+\_\+t Point (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{i }\end{DoxyParamCaption}) const}
+
+
+
+Return the index of a particular point of this node. 
+
+mlpack trees do not, in general, hold the actual dataset, and instead just hold the indices of the points they contain. Thus, you might use this function in code like this\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{arma::vec thirdPoint = dataset.col(treeNode.Point(2));}
+
+\end{DoxyCode}
+ \mbox{\label{classmlpack_1_1tree_1_1ExampleTree_a4fa2b9714ec826a499844feb9e5b0428}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!RangeDistance@{RangeDistance}}
+\index{RangeDistance@{RangeDistance}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{RangeDistance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ math\+::\+Range} Range\+Distance (\begin{DoxyParamCaption}\item[{const \textbf{ Example\+Tree}$<$ Metric\+Type, Statistic\+Type, Mat\+Type $>$ \&}]{other }\end{DoxyParamCaption}) const}
+
+
+
+Return both the minimum and maximum distances between this node and another node as a \doxyref{math\+::\+Range}{p.}{namespacemlpack_1_1math_ad17d9cabd4fd82cbed4ccd5e53b47d70} object. 
+
+This overload is given because it is possible that, for some tree types, calculation of both at once is faster than a call to \doxyref{Min\+Distance()}{p.}{classmlpack_1_1tree_1_1ExampleTree_acc1d69c72174899bf6410555a6cf3c8a} then \doxyref{Max\+Distance()}{p.}{classmlpack_1_1tree_1_1ExampleTree_aba1de56cd0c3a91c91ad7b9055d03036}. It is not necessary that the minimum and maximum distances be exact; it is sufficient to return a lower bound on the minimum distance and an upper bound on the maximum distance. See the definitions in \doxyref{The Tree\+Type policy in mlpack}{p.}{trees} for more information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Node to return [bounds on] minimum and maximum distances to. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_aaf54e9f75afbc73648797db8f00fff65}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!RangeDistance@{RangeDistance}}
+\index{RangeDistance@{RangeDistance}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{RangeDistance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ math\+::\+Range} Range\+Distance (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{point }\end{DoxyParamCaption}) const}
+
+
+
+Return both the minimum and maximum distances between this node and a point as a \doxyref{math\+::\+Range}{p.}{namespacemlpack_1_1math_ad17d9cabd4fd82cbed4ccd5e53b47d70} object. 
+
+This overload is given because it is possible that, for some tree types, calculation of both at once is faster than a call to \doxyref{Min\+Distance()}{p.}{classmlpack_1_1tree_1_1ExampleTree_acc1d69c72174899bf6410555a6cf3c8a} then \doxyref{Max\+Distance()}{p.}{classmlpack_1_1tree_1_1ExampleTree_aba1de56cd0c3a91c91ad7b9055d03036}. It is not necessary that the minimum and maximum distances be exact; it is sufficient to return a lower bound on the minimum distance and an upper bound on the maximum distance. See the definitions in \doxyref{The Tree\+Type policy in mlpack}{p.}{trees} for more information.
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & Point to return [bounds on] minimum and maximum distances to. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_aac2d3c104b89109f3df4a9a8cad244da}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!Stat@{Stat}}
+\index{Stat@{Stat}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{Stat()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Statistic\+Type\& Stat (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Modify the statistic for this node. 
+
+\mbox{\label{classmlpack_1_1tree_1_1ExampleTree_ad8b29c84ac793742cd15834f9f4c4f31}} 
+\index{ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}!Stat@{Stat}}
+\index{Stat@{Stat}!ExampleTree$<$ MetricType, StatisticType, MatType $>$@{ExampleTree$<$ MetricType, StatisticType, MatType $>$}}
+\doxysubsubsection{Stat()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Statistic\+Type\& Stat (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the statistic for this node. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/tree/\textbf{ example\+\_\+tree.\+hpp}\end{DoxyCompactItemize}

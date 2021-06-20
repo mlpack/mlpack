@@ -1,0 +1,127 @@
+.TH "IdentityFunction" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+IdentityFunction \- The identity function, defined by\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename eT > static void \fBDeriv\fP (const arma::Cube< eT > &y, arma::Cube< eT > &x)"
+.br
+.RI "Computes the first derivatives of the identity function using a 3rd order tensor as input\&. "
+.ti -1c
+.RI "static double \fBDeriv\fP (const double)"
+.br
+.RI "Computes the first derivative of the identity function\&. "
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBDeriv\fP (const InputVecType &y, OutputVecType &x)"
+.br
+.RI "Computes the first derivatives of the identity function\&. "
+.ti -1c
+.RI "static double \fBFn\fP (const double x)"
+.br
+.RI "Computes the identity function\&. "
+.ti -1c
+.RI "template<typename InputVecType , typename OutputVecType > static void \fBFn\fP (const InputVecType &x, OutputVecType &y)"
+.br
+.RI "Computes the identity function\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+The identity function, defined by\&. 
+
+\begin{eqnarray*} f(x) &=& x \\ f'(x) &=& 1 \end{eqnarray*} 
+.PP
+Definition at line 28 of file identity_function\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "static void Deriv (const arma::Cube< eT > & y, arma::Cube< eT > & x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivatives of the identity function using a 3rd order tensor as input\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIy\fP Input activations\&. 
+.br
+\fIx\fP The resulting derivatives\&. 
+.RE
+.PP
+
+.PP
+Definition at line 85 of file identity_function\&.hpp\&.
+.SS "static double Deriv (const double)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivative of the identity function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (x) Input data\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+f'(x) 
+.RE
+.PP
+
+.PP
+Definition at line 60 of file identity_function\&.hpp\&.
+.SS "static void Deriv (const InputVecType & y, OutputVecType & x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the first derivatives of the identity function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIy\fP Input data/activation\&. 
+.br
+\fIx\fP The resulting derivatives\&. 
+.RE
+.PP
+
+.PP
+Definition at line 72 of file identity_function\&.hpp\&.
+.SS "static double Fn (const double x)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the identity function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Input data\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+f(x)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 37 of file identity_function\&.hpp\&.
+.SS "static void Fn (const InputVecType & x, OutputVecType & y)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+Computes the identity function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP Input data\&. 
+.br
+\fIy\fP The resulting output activation\&. 
+.RE
+.PP
+
+.PP
+Definition at line 49 of file identity_function\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

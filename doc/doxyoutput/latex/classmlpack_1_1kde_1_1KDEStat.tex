@@ -1,0 +1,204 @@
+\doxysection{KDEStat Class Reference}
+\label{classmlpack_1_1kde_1_1KDEStat}\index{KDEStat@{KDEStat}}
+
+
+Extra data for each node in the tree for the task of kernel density estimation.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ KDEStat} ()
+\begin{DoxyCompactList}\small\item\em Initialize the statistic. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\\textbf{ KDEStat} (Tree\+Type \&)
+\begin{DoxyCompactList}\small\item\em Initialization for a fully initialized node. \end{DoxyCompactList}\item 
+double \& \textbf{ Accum\+Alpha} ()
+\begin{DoxyCompactList}\small\item\em Modify accumulated Monte Carlo alpha of the node. \end{DoxyCompactList}\item 
+double \textbf{ Accum\+Alpha} () const
+\begin{DoxyCompactList}\small\item\em Get accumulated Monte Carlo alpha of the node. \end{DoxyCompactList}\item 
+double \& \textbf{ Accum\+Error} ()
+\begin{DoxyCompactList}\small\item\em Modify accumulated error tolerance of the node. \end{DoxyCompactList}\item 
+double \textbf{ Accum\+Error} () const
+\begin{DoxyCompactList}\small\item\em Get accumulated error tolerance of the node. \end{DoxyCompactList}\item 
+double \& \textbf{ MCAlpha} ()
+\begin{DoxyCompactList}\small\item\em Modify Monte Carlo alpha of the node. \end{DoxyCompactList}\item 
+double \textbf{ MCAlpha} () const
+\begin{DoxyCompactList}\small\item\em Get Monte Carlo alpha of the node. \end{DoxyCompactList}\item 
+double \& \textbf{ MCBeta} ()
+\begin{DoxyCompactList}\small\item\em Modify accumulated Monte Carlo alpha of the node. \end{DoxyCompactList}\item 
+double \textbf{ MCBeta} () const
+\begin{DoxyCompactList}\small\item\em Get accumulated Monte Carlo alpha of the node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the statistic to/from an archive. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Extra data for each node in the tree for the task of kernel density estimation. 
+
+Definition at line 24 of file kde\+\_\+stat.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kde_1_1KDEStat_acffee2b814c792035ae39738acb47a91}} 
+\index{KDEStat@{KDEStat}!KDEStat@{KDEStat}}
+\index{KDEStat@{KDEStat}!KDEStat@{KDEStat}}
+\doxysubsubsection{KDEStat()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ KDEStat} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the statistic. 
+
+
+
+Definition at line 28 of file kde\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEStat_a3aeb7df5d75c45ff9510a2088e9a21b5}} 
+\index{KDEStat@{KDEStat}!KDEStat@{KDEStat}}
+\index{KDEStat@{KDEStat}!KDEStat@{KDEStat}}
+\doxysubsubsection{KDEStat()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ KDEStat} (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialization for a fully initialized node. 
+
+
+
+Definition at line 37 of file kde\+\_\+stat.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kde_1_1KDEStat_aad708d8c87d9b3c99eb9c5b3dd8daca0}} 
+\index{KDEStat@{KDEStat}!AccumAlpha@{AccumAlpha}}
+\index{AccumAlpha@{AccumAlpha}!KDEStat@{KDEStat}}
+\doxysubsubsection{AccumAlpha()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Accum\+Alpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify accumulated Monte Carlo alpha of the node. 
+
+
+
+Definition at line 54 of file kde\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEStat_a172b2e6cd43b627158e558e3dacd2c13}} 
+\index{KDEStat@{KDEStat}!AccumAlpha@{AccumAlpha}}
+\index{AccumAlpha@{AccumAlpha}!KDEStat@{KDEStat}}
+\doxysubsubsection{AccumAlpha()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Accum\+Alpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get accumulated Monte Carlo alpha of the node. 
+
+
+
+Definition at line 51 of file kde\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEStat_a0d4ba0b1d3b68be5db83e8fa87fefa0d}} 
+\index{KDEStat@{KDEStat}!AccumError@{AccumError}}
+\index{AccumError@{AccumError}!KDEStat@{KDEStat}}
+\doxysubsubsection{AccumError()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Accum\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify accumulated error tolerance of the node. 
+
+
+
+Definition at line 60 of file kde\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEStat_a4b14a5b766c31f255c9e540cd8c34e26}} 
+\index{KDEStat@{KDEStat}!AccumError@{AccumError}}
+\index{AccumError@{AccumError}!KDEStat@{KDEStat}}
+\doxysubsubsection{AccumError()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Accum\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get accumulated error tolerance of the node. 
+
+
+
+Definition at line 57 of file kde\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEStat_aced11fd0267dbf63565d068cc93f2374}} 
+\index{KDEStat@{KDEStat}!MCAlpha@{MCAlpha}}
+\index{MCAlpha@{MCAlpha}!KDEStat@{KDEStat}}
+\doxysubsubsection{MCAlpha()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& MCAlpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify Monte Carlo alpha of the node. 
+
+
+
+Definition at line 66 of file kde\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEStat_a6eeba0b6322d51e189693f8b6750d949}} 
+\index{KDEStat@{KDEStat}!MCAlpha@{MCAlpha}}
+\index{MCAlpha@{MCAlpha}!KDEStat@{KDEStat}}
+\doxysubsubsection{MCAlpha()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double MCAlpha (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get Monte Carlo alpha of the node. 
+
+
+
+Definition at line 63 of file kde\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEStat_a87e9dbd91538272fd963fb4dc9acf345}} 
+\index{KDEStat@{KDEStat}!MCBeta@{MCBeta}}
+\index{MCBeta@{MCBeta}!KDEStat@{KDEStat}}
+\doxysubsubsection{MCBeta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& MCBeta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify accumulated Monte Carlo alpha of the node. 
+
+
+
+Definition at line 48 of file kde\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEStat_ac96f65761044e25d12633a47c17bda0e}} 
+\index{KDEStat@{KDEStat}!MCBeta@{MCBeta}}
+\index{MCBeta@{MCBeta}!KDEStat@{KDEStat}}
+\doxysubsubsection{MCBeta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double MCBeta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get accumulated Monte Carlo alpha of the node. 
+
+
+
+Definition at line 45 of file kde\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1kde_1_1KDEStat_a65cba07328997659bec80b9879b15a51}} 
+\index{KDEStat@{KDEStat}!serialize@{serialize}}
+\index{serialize@{serialize}!KDEStat@{KDEStat}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the statistic to/from an archive. 
+
+
+
+Definition at line 70 of file kde\+\_\+stat.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kde/\textbf{ kde\+\_\+stat.\+hpp}\end{DoxyCompactItemize}

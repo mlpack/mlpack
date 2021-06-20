@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1hmm" kind="namespace" language="C++">
+    <compoundname>mlpack::hmm</compoundname>
+    <innerclass refid="classmlpack_1_1hmm_1_1HMM" prot="public">mlpack::hmm::HMM</innerclass>
+    <innerclass refid="classmlpack_1_1hmm_1_1HMMModel" prot="public">mlpack::hmm::HMMModel</innerclass>
+    <innerclass refid="classmlpack_1_1hmm_1_1HMMRegression" prot="public">mlpack::hmm::HMMRegression</innerclass>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16c" prot="public" static="no" strong="no">
+        <type>char</type>
+        <name>HMMType</name>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca64734afa619ac2b99385e32727f85ff1" prot="public">
+          <name>DiscreteHMM</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca74e1b407727f5d574e3105d78ee5ffe3" prot="public">
+          <name>GaussianHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca7e049029f4e8b94057bf0925e1601b78" prot="public">
+          <name>GaussianMixtureModelHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca792ff370f9e0e105b8c923132979f8eb" prot="public">
+          <name>DiagonalGaussianMixtureModelHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca64734afa619ac2b99385e32727f85ff1" prot="public">
+          <name>DiscreteHMM</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca74e1b407727f5d574e3105d78ee5ffe3" prot="public">
+          <name>GaussianHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca7e049029f4e8b94057bf0925e1601b78" prot="public">
+          <name>GaussianMixtureModelHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca792ff370f9e0e105b8c923132979f8eb" prot="public">
+          <name>DiagonalGaussianMixtureModelHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_model.hpp" line="22" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_model.hpp" bodystart="23" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="enum" id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16c" prot="public" static="no" strong="no">
+        <type>char</type>
+        <name>HMMType</name>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca64734afa619ac2b99385e32727f85ff1" prot="public">
+          <name>DiscreteHMM</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca74e1b407727f5d574e3105d78ee5ffe3" prot="public">
+          <name>GaussianHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca7e049029f4e8b94057bf0925e1601b78" prot="public">
+          <name>GaussianMixtureModelHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca792ff370f9e0e105b8c923132979f8eb" prot="public">
+          <name>DiagonalGaussianMixtureModelHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca64734afa619ac2b99385e32727f85ff1" prot="public">
+          <name>DiscreteHMM</name>
+          <initializer>= 0</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca74e1b407727f5d574e3105d78ee5ffe3" prot="public">
+          <name>GaussianHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca7e049029f4e8b94057bf0925e1601b78" prot="public">
+          <name>GaussianMixtureModelHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16ca792ff370f9e0e105b8c923132979f8eb" prot="public">
+          <name>DiagonalGaussianMixtureModelHMM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+<para>HMMType, to be stored on disk. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is of type char, which is one byte. (I&apos;m not sure what will happen on systems where one byte is not eight bits.) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_util.hpp" line="22" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_util.hpp" bodystart="23" bodyend="28"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1hmm_1a096edad8f73173064a7dcc8bc5626298" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ActionType</type>
+          </param>
+          <param>
+            <type>typename ExtraInfoType</type>
+            <defval>void</defval>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::hmm::LoadHMMAndPerformAction</definition>
+        <argsstring>(const std::string &amp;modelFile, ExtraInfoType *x=NULL)</argsstring>
+        <name>LoadHMMAndPerformAction</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>modelFile</declname>
+        </param>
+        <param>
+          <type>ExtraInfoType *</type>
+          <declname>x</declname>
+          <defval>NULL</defval>
+        </param>
+        <briefdescription>
+<para>ActionType should implement static void Apply(HMMType&amp;). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_util.hpp" line="32" column="6" declfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_util.hpp" declline="32" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1hmm_1a35e2585a8da30e70484008c4e2a56972" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename HMMType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::hmm::SaveHMM</definition>
+        <argsstring>(HMMType &amp;hmm, const std::string &amp;modelFile)</argsstring>
+        <name>SaveHMM</name>
+        <param>
+          <type><ref refid="namespacemlpack_1_1hmm_1a79ea7de57741e9a6014dbda957c1a16c" kindref="member">HMMType</ref> &amp;</type>
+          <declname>hmm</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>modelFile</declname>
+        </param>
+        <briefdescription>
+<para>Save an <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> to a file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The file must also encode what type of <ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref> is being stored. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_util.hpp" line="38" column="6" declfile="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_util.hpp" declline="38" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Hidden Markov Models. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp" line="21" column="1"/>
+  </compounddef>
+</doxygen>

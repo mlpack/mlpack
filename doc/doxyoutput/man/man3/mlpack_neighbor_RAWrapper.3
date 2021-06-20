@@ -1,0 +1,321 @@
+.TH "RAWrapper< TreeType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RAWrapper< TreeType > \- \fBRAWrapper\fP is a wrapper class for most \fBRASearch\fP types\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBRAWrapperBase\fP\&.
+.PP
+Inherited by \fBLeafSizeRAWrapper< TreeType >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRAWrapper\fP (const bool singleMode, const bool naive)"
+.br
+.RI "Construct the \fBRAWrapper\fP object, initializing the internally-held \fBRASearch\fP object\&. "
+.ti -1c
+.RI "virtual \fB~RAWrapper\fP ()"
+.br
+.RI "Delete the \fBRAWrapper\fP object\&. "
+.ti -1c
+.RI "double & \fBAlpha\fP ()"
+.br
+.RI "Modify the value of alpha\&. "
+.ti -1c
+.RI "double \fBAlpha\fP () const"
+.br
+.RI "Get the value of alpha\&. "
+.ti -1c
+.RI "virtual \fBRAWrapper\fP * \fBClone\fP () const"
+.br
+.RI "Create a copy of this \fBRAWrapper\fP object\&. "
+.ti -1c
+.RI "const arma::mat & \fBDataset\fP () const"
+.br
+.RI "Get a reference to the reference set\&. "
+.ti -1c
+.RI "bool & \fBFirstLeafExact\fP ()"
+.br
+.RI "Modify whether to do exact search at the first leaf\&. "
+.ti -1c
+.RI "bool \fBFirstLeafExact\fP () const"
+.br
+.RI "Get whether to do exact search at the first leaf\&. "
+.ti -1c
+.RI "bool & \fBNaive\fP ()"
+.br
+.RI "Modify whether naive search is being used\&. "
+.ti -1c
+.RI "bool \fBNaive\fP () const"
+.br
+.RI "Get whether naive search is being used\&. "
+.ti -1c
+.RI "bool & \fBSampleAtLeaves\fP ()"
+.br
+.RI "Modify whether to do sampling at leaves\&. "
+.ti -1c
+.RI "bool \fBSampleAtLeaves\fP () const"
+.br
+.RI "Get whether to do sampling at leaves\&. "
+.ti -1c
+.RI "virtual void \fBSearch\fP (arma::mat &&querySet, const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances, const size_t)"
+.br
+.RI "Perform bichromatic neighbor search (i\&.e\&. "
+.ti -1c
+.RI "virtual void \fBSearch\fP (const size_t k, arma::Mat< size_t > &neighbors, arma::mat &distances)"
+.br
+.RI "Perform monochromatic neighbor search (i\&.e\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the \fBRASearch\fP model\&. "
+.ti -1c
+.RI "bool & \fBSingleMode\fP ()"
+.br
+.RI "Modify whether single-tree search is being used\&. "
+.ti -1c
+.RI "bool \fBSingleMode\fP () const"
+.br
+.RI "Get whether single-tree search is being used\&. "
+.ti -1c
+.RI "size_t & \fBSingleSampleLimit\fP ()"
+.br
+.RI "Modify the single sample limit\&. "
+.ti -1c
+.RI "size_t \fBSingleSampleLimit\fP () const"
+.br
+.RI "Get the single sample limit\&. "
+.ti -1c
+.RI "double & \fBTau\fP ()"
+.br
+.RI "Modify the value of tau\&. "
+.ti -1c
+.RI "double \fBTau\fP () const"
+.br
+.RI "Get the value of tau\&. "
+.ti -1c
+.RI "virtual void \fBTrain\fP (arma::mat &&referenceSet, const size_t)"
+.br
+.RI "Train the model\&. For \fBRAWrapper\fP, we ignore the leaf size\&. "
+.in -1c
+.SS "Protected Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBRASearch\fP< \fBNearestNeighborSort\fP, \fBmetric::EuclideanDistance\fP, arma::mat, TreeType > \fBRAType\fP"
+.br
+.in -1c
+.SS "Protected Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBRAType\fP \fBra\fP"
+.br
+.RI "The instantiated \fBRASearch\fP object that we are wrapping\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<template< typename TreeMetricType, typename TreeStatType, typename TreeMatType > class TreeType>
+.br
+class mlpack::neighbor::RAWrapper< TreeType >"
+\fBRAWrapper\fP is a wrapper class for most \fBRASearch\fP types\&. 
+.PP
+Definition at line 109 of file ra_model\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBRASearch\fP<\fBNearestNeighborSort\fP, \fBmetric::EuclideanDistance\fP, arma::mat, TreeType> \fBRAType\fP\fC [protected]\fP"
+
+.PP
+Definition at line 194 of file ra_model\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRAWrapper\fP (const bool singleMode, const bool naive)\fC [inline]\fP"
+
+.PP
+Construct the \fBRAWrapper\fP object, initializing the internally-held \fBRASearch\fP object\&. 
+.PP
+Definition at line 114 of file ra_model\&.hpp\&.
+.SS "virtual ~\fBRAWrapper\fP ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Delete the \fBRAWrapper\fP object\&. 
+.PP
+Definition at line 121 of file ra_model\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double& Alpha ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Modify the value of alpha\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 148 of file ra_model\&.hpp\&.
+.SS "double Alpha () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Get the value of alpha\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 146 of file ra_model\&.hpp\&.
+.SS "virtual \fBRAWrapper\fP* Clone () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Create a copy of this \fBRAWrapper\fP object\&. This correctly handles polymorphism\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Reimplemented in \fBLeafSizeRAWrapper< TreeType >\fP\&.
+.PP
+Definition at line 125 of file ra_model\&.hpp\&.
+.SS "const arma::mat& Dataset () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Get a reference to the reference set\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 128 of file ra_model\&.hpp\&.
+.SS "bool& FirstLeafExact ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Modify whether to do exact search at the first leaf\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 138 of file ra_model\&.hpp\&.
+.SS "bool FirstLeafExact () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Get whether to do exact search at the first leaf\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 136 of file ra_model\&.hpp\&.
+.SS "bool& Naive ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Modify whether naive search is being used\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 163 of file ra_model\&.hpp\&.
+.SS "bool Naive () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Get whether naive search is being used\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 161 of file ra_model\&.hpp\&.
+.SS "bool& SampleAtLeaves ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Modify whether to do sampling at leaves\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 143 of file ra_model\&.hpp\&.
+.SS "bool SampleAtLeaves () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Get whether to do sampling at leaves\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 141 of file ra_model\&.hpp\&.
+.SS "virtual void Search (arma::mat && querySet, const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances, const size_t)\fC [virtual]\fP"
+
+.PP
+Perform bichromatic neighbor search (i\&.e\&. search with a separate query set)\&. For \fBRAWrapper\fP, we ignore the leaf size\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Reimplemented in \fBLeafSizeRAWrapper< TreeType >\fP\&.
+.SS "virtual void Search (const size_t k, arma::Mat< size_t > & neighbors, arma::mat & distances)\fC [virtual]\fP"
+
+.PP
+Perform monochromatic neighbor search (i\&.e\&. search where the reference set is used as the query set)\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the \fBRASearch\fP model\&. 
+.PP
+Definition at line 185 of file ra_model\&.hpp\&.
+.SS "bool& SingleMode ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Modify whether single-tree search is being used\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 158 of file ra_model\&.hpp\&.
+.SS "bool SingleMode () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Get whether single-tree search is being used\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 156 of file ra_model\&.hpp\&.
+.SS "size_t& SingleSampleLimit ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Modify the single sample limit\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 133 of file ra_model\&.hpp\&.
+.SS "size_t SingleSampleLimit () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Get the single sample limit\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 131 of file ra_model\&.hpp\&.
+.SS "double& Tau ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Modify the value of tau\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 153 of file ra_model\&.hpp\&.
+.SS "double Tau () const\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Get the value of tau\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Definition at line 151 of file ra_model\&.hpp\&.
+.SS "virtual void Train (arma::mat && referenceSet, const size_t)\fC [virtual]\fP"
+
+.PP
+Train the model\&. For \fBRAWrapper\fP, we ignore the leaf size\&. 
+.PP
+Implements \fBRAWrapperBase\fP\&.
+.PP
+Reimplemented in \fBLeafSizeRAWrapper< TreeType >\fP\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "\fBRAType\fP ra\fC [protected]\fP"
+
+.PP
+The instantiated \fBRASearch\fP object that we are wrapping\&. 
+.PP
+Definition at line 197 of file ra_model\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

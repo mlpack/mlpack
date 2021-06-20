@@ -1,0 +1,317 @@
+\doxysection{Double\+Pole\+Cart Class Reference}
+\label{classmlpack_1_1rl_1_1DoublePoleCart}\index{DoublePoleCart@{DoublePoleCart}}
+
+
+Implementation of Double Pole Cart Balancing task.  
+
+
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Action}
+\begin{DoxyCompactList}\small\item\em Implementation of action of Double Pole Cart. \end{DoxyCompactList}\item 
+class \textbf{ State}
+\begin{DoxyCompactList}\small\item\em Implementation of the state of Double Pole Cart. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Double\+Pole\+Cart} (const size\+\_\+t max\+Steps=0, const double m1=0.\+1, const double m2=0.\+01, const double l1=0.\+5, const double l2=0.\+05, const double gravity=9.\+8, const double mass\+Cart=1.\+0, const double force\+Mag=10.\+0, const double tau=0.\+02, const double theta\+Threshold\+Radians=36 $\ast$2 $\ast$3.\+1416/360, const double x\+Threshold=2.\+4, const double done\+Reward=0.\+0)
+\begin{DoxyCompactList}\small\item\em Construct a Double Pole Cart instance using the given constants. \end{DoxyCompactList}\item 
+void \textbf{ Dsdt} (const \textbf{ State} \&state, const \textbf{ Action} \&action, arma\+::vec \&dydx)
+\begin{DoxyCompactList}\small\item\em This is the ordinary differential equations required for estimation of next state through RK4 method. \end{DoxyCompactList}\item 
+\textbf{ State} \textbf{ Initial\+Sample} ()
+\begin{DoxyCompactList}\small\item\em Initial state representation is randomly generated within [-\/0.\+05, 0.\+05]. \end{DoxyCompactList}\item 
+bool \textbf{ Is\+Terminal} (const \textbf{ State} \&state) const
+\begin{DoxyCompactList}\small\item\em This function checks if the car has reached the terminal state. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Max\+Steps} ()
+\begin{DoxyCompactList}\small\item\em Set the maximum number of steps allowed. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Max\+Steps} () const
+\begin{DoxyCompactList}\small\item\em Get the maximum number of steps allowed. \end{DoxyCompactList}\item 
+void \textbf{ RK4} (const \textbf{ State} \&state, const \textbf{ Action} \&action, arma\+::vec \&dydx, \textbf{ State} \&next\+State)
+\begin{DoxyCompactList}\small\item\em This function calls the RK4 iterative method to estimate the next state based on given ordinary differential equation. \end{DoxyCompactList}\item 
+double \textbf{ Sample} (const \textbf{ State} \&state, const \textbf{ Action} \&action)
+\begin{DoxyCompactList}\small\item\em Dynamics of Double Pole Cart. \end{DoxyCompactList}\item 
+double \textbf{ Sample} (const \textbf{ State} \&state, const \textbf{ Action} \&action, \textbf{ State} \&next\+State)
+\begin{DoxyCompactList}\small\item\em Dynamics of Double Pole Cart instance. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Steps\+Performed} () const
+\begin{DoxyCompactList}\small\item\em Get the number of steps performed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Implementation of Double Pole Cart Balancing task. 
+
+This is an extension of the existing \doxyref{Cart\+Pole}{p.}{classmlpack_1_1rl_1_1CartPole} environment. The environment comprises of a cart of a cart with two poles of different lengths and masses. The agent is meant to balance the poles by applying force on the cart. 
+
+Definition at line 27 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_a06e56cc33403fd32ffa82a1b7065bd71}} 
+\index{DoublePoleCart@{DoublePoleCart}!DoublePoleCart@{DoublePoleCart}}
+\index{DoublePoleCart@{DoublePoleCart}!DoublePoleCart@{DoublePoleCart}}
+\doxysubsubsection{DoublePoleCart()}
+{\footnotesize\ttfamily \textbf{ Double\+Pole\+Cart} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{max\+Steps = {\ttfamily 0},  }\item[{const double}]{m1 = {\ttfamily 0.1},  }\item[{const double}]{m2 = {\ttfamily 0.01},  }\item[{const double}]{l1 = {\ttfamily 0.5},  }\item[{const double}]{l2 = {\ttfamily 0.05},  }\item[{const double}]{gravity = {\ttfamily 9.8},  }\item[{const double}]{mass\+Cart = {\ttfamily 1.0},  }\item[{const double}]{force\+Mag = {\ttfamily 10.0},  }\item[{const double}]{tau = {\ttfamily 0.02},  }\item[{const double}]{theta\+Threshold\+Radians = {\ttfamily 36~$\ast$~2~$\ast$~3.1416~/~360},  }\item[{const double}]{x\+Threshold = {\ttfamily 2.4},  }\item[{const double}]{done\+Reward = {\ttfamily 0.0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a Double Pole Cart instance using the given constants. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Steps} & The number of steps after which the episode terminates. If the value is 0, there is no limit. \\
+\hline
+{\em m1} & The mass of the first pole. \\
+\hline
+{\em m2} & The mass of the second pole. \\
+\hline
+{\em l1} & The length of the first pole. \\
+\hline
+{\em l2} & The length of the second pole. \\
+\hline
+{\em gravity} & The gravity constant. \\
+\hline
+{\em mass\+Cart} & The mass of the cart. \\
+\hline
+{\em force\+Mag} & The magnitude of the applied force. \\
+\hline
+{\em tau} & The time interval. \\
+\hline
+{\em theta\+Threshold\+Radians} & The maximum angle. \\
+\hline
+{\em x\+Threshold} & The maximum position. \\
+\hline
+{\em done\+Reward} & Reward recieved by agent on success. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 123 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_aec6c83f7450927b7520a0c057babc128}} 
+\index{DoublePoleCart@{DoublePoleCart}!Dsdt@{Dsdt}}
+\index{Dsdt@{Dsdt}!DoublePoleCart@{DoublePoleCart}}
+\doxysubsubsection{Dsdt()}
+{\footnotesize\ttfamily void Dsdt (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{state,  }\item[{const \textbf{ Action} \&}]{action,  }\item[{arma\+::vec \&}]{dydx }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This is the ordinary differential equations required for estimation of next state through RK4 method. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & The current state. \\
+\hline
+{\em action} & The action taken. \\
+\hline
+{\em dydx} & The differential. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 197 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+References Double\+Pole\+Cart\+::\+Action\+::action, Double\+Pole\+Cart\+::\+State\+::\+Angle(), and Double\+Pole\+Cart\+::\+State\+::\+Angular\+Velocity().
+
+
+
+Referenced by Double\+Pole\+Cart\+::\+RK4(), and Double\+Pole\+Cart\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_aa9f537249fa0c1e62b38197996ab4c6a}} 
+\index{DoublePoleCart@{DoublePoleCart}!InitialSample@{InitialSample}}
+\index{InitialSample@{InitialSample}!DoublePoleCart@{DoublePoleCart}}
+\doxysubsubsection{InitialSample()}
+{\footnotesize\ttfamily \textbf{ State} Initial\+Sample (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initial state representation is randomly generated within [-\/0.\+05, 0.\+05]. 
+
+\begin{DoxyReturn}{Returns}
+Initial state for each episode. 
+\end{DoxyReturn}
+
+
+Definition at line 289 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_a7fd056133dfd315e4bf45c408f99326f}} 
+\index{DoublePoleCart@{DoublePoleCart}!IsTerminal@{IsTerminal}}
+\index{IsTerminal@{IsTerminal}!DoublePoleCart@{DoublePoleCart}}
+\doxysubsubsection{IsTerminal()}
+{\footnotesize\ttfamily bool Is\+Terminal (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{state }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function checks if the car has reached the terminal state. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & The desired state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if state is a terminal state, otherwise false. 
+\end{DoxyReturn}
+
+
+Definition at line 301 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+References Double\+Pole\+Cart\+::\+State\+::\+Angle(), Log\+::\+Info, and Double\+Pole\+Cart\+::\+State\+::\+Position().
+
+
+
+Referenced by Double\+Pole\+Cart\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_a64c84cebc489c6fdfd7f057e127b0aef}} 
+\index{DoublePoleCart@{DoublePoleCart}!MaxSteps@{MaxSteps}}
+\index{MaxSteps@{MaxSteps}!DoublePoleCart@{DoublePoleCart}}
+\doxysubsubsection{MaxSteps()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Max\+Steps (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the maximum number of steps allowed. 
+
+
+
+Definition at line 329 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_ad8fd6d8f7581c82e73556491b79a8907}} 
+\index{DoublePoleCart@{DoublePoleCart}!MaxSteps@{MaxSteps}}
+\index{MaxSteps@{MaxSteps}!DoublePoleCart@{DoublePoleCart}}
+\doxysubsubsection{MaxSteps()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Max\+Steps (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the maximum number of steps allowed. 
+
+
+
+Definition at line 327 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_afb8fc975886aa60312d63dff046af34a}} 
+\index{DoublePoleCart@{DoublePoleCart}!RK4@{RK4}}
+\index{RK4@{RK4}!DoublePoleCart@{DoublePoleCart}}
+\doxysubsubsection{RK4()}
+{\footnotesize\ttfamily void RK4 (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{state,  }\item[{const \textbf{ Action} \&}]{action,  }\item[{arma\+::vec \&}]{dydx,  }\item[{\textbf{ State} \&}]{next\+State }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function calls the RK4 iterative method to estimate the next state based on given ordinary differential equation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & The current state. \\
+\hline
+{\em action} & The action to be applied. \\
+\hline
+{\em dydx} & The differential. \\
+\hline
+{\em next\+State} & The next state. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 238 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+References Double\+Pole\+Cart\+::\+State\+::\+Data(), and Double\+Pole\+Cart\+::\+Dsdt().
+
+
+
+Referenced by Double\+Pole\+Cart\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_af2bb860eaefeaa62a40f5cf940793704}} 
+\index{DoublePoleCart@{DoublePoleCart}!Sample@{Sample}}
+\index{Sample@{Sample}!DoublePoleCart@{DoublePoleCart}}
+\doxysubsubsection{Sample()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Sample (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{state,  }\item[{const \textbf{ Action} \&}]{action }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Dynamics of Double Pole Cart. 
+
+Get reward based on current state and current action.
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & The current state. \\
+\hline
+{\em action} & The current action. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+reward, it\textquotesingle{}s always 1.\+0. 
+\end{DoxyReturn}
+
+
+Definition at line 278 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+References Double\+Pole\+Cart\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_a311ac19edc537dee94f37b7cce93d908}} 
+\index{DoublePoleCart@{DoublePoleCart}!Sample@{Sample}}
+\index{Sample@{Sample}!DoublePoleCart@{DoublePoleCart}}
+\doxysubsubsection{Sample()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Sample (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{state,  }\item[{const \textbf{ Action} \&}]{action,  }\item[{\textbf{ State} \&}]{next\+State }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Dynamics of Double Pole Cart instance. 
+
+Get reward and next state based on current state and current action.
+
+
+\begin{DoxyParams}{Parameters}
+{\em state} & The current state. \\
+\hline
+{\em action} & The current action. \\
+\hline
+{\em next\+State} & The next state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+reward, it\textquotesingle{}s always 1.\+0. 
+\end{DoxyReturn}
+When done is false, it means that the cartpole has fallen down. For this case the reward is 1.\+0.
+
+Definition at line 159 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+References Double\+Pole\+Cart\+::\+State\+::\+Angular\+Velocity(), Double\+Pole\+Cart\+::\+Dsdt(), Double\+Pole\+Cart\+::\+Is\+Terminal(), Double\+Pole\+Cart\+::\+RK4(), and Double\+Pole\+Cart\+::\+State\+::\+Velocity().
+
+
+
+Referenced by Double\+Pole\+Cart\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1DoublePoleCart_a5fe06563064ebcee88c593e1673f03d4}} 
+\index{DoublePoleCart@{DoublePoleCart}!StepsPerformed@{StepsPerformed}}
+\index{StepsPerformed@{StepsPerformed}!DoublePoleCart@{DoublePoleCart}}
+\doxysubsubsection{StepsPerformed()}
+{\footnotesize\ttfamily size\+\_\+t Steps\+Performed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of steps performed. 
+
+
+
+Definition at line 324 of file double\+\_\+pole\+\_\+cart.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/environment/\textbf{ double\+\_\+pole\+\_\+cart.\+hpp}\end{DoxyCompactItemize}

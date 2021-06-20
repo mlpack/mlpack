@@ -1,0 +1,312 @@
+.TH "cv" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+cv \- Cross-Validation 
+
+.SH "Introduction"
+.PP
+\fBmlpack\fP implements cross-validation support for its learning algorithms, for a variety of performance measures\&. Cross-validation is useful for determining an estimate of how well the learner will generalize to un-seen test data\&. It is a commonly used part of the data science pipeline\&.
+.PP
+In short, given some learner and some performance measure, we wish to get an average of the performance measure given different splits of the dataset into training data and validation data\&. The learner is trained on the training data, and the performance measure is evaluated on the validation data\&.
+.PP
+mlpack currently implements two easy-to-use forms of cross-validation:
+.PP
+.IP "\(bu" 2
+\fBsimple\fP \fBcross-validation\fP, where we simply desire the performance measure on a single split of the data into a training set and validation set
+.IP "\(bu" 2
+\fBk-fold\fP \fBcross-validation\fP, where we split the data k ways and desire the average performance measure on each of the k splits of the data
+.PP
+.PP
+In this tutorial we will see the usage examples and details of the cross-validation module\&. Because the cross-validation code is generic and can be used with any learner and performance measure, any use of the cross-validation code in mlpack has to be in C++\&.
+.PP
+This tutorial is split into the following sections:
+.PP
+.IP "\(bu" 2
+\fBSimple cross-validation examples\fP Simple cross-validation examples
+.IP "  \(bu" 4
+\fB10-fold cross-validation on softmax regression\fP 10-fold cross-validation on softmax regression
+.IP "  \(bu" 4
+\fB10-fold cross-validation on weighted decision trees\fP 10-fold cross-validation on weighted decision trees
+.IP "  \(bu" 4
+\fB10-fold cross-validation with categorical decision trees\fP 10-fold cross-validation with categorical decision trees
+.IP "  \(bu" 4
+\fBSimple cross-validation for linear regression\fP Simple cross-validation for linear regression
+.PP
+
+.IP "\(bu" 2
+\fBPerformance measures\fP Performance measures
+.IP "\(bu" 2
+\fBThe KFoldCV and SimpleCV classes\fP The \fC\fBKFoldCV\fP\fP and \fC\fBSimpleCV\fP\fP classes
+.IP "\(bu" 2
+\fBFurther references\fP Further reference
+.PP
+.SH "Simple cross-validation examples"
+.PP
+.SS "10-fold cross-validation on softmax regression"
+Suppose we have some data to train and validate on, as defined below:
+.PP
+.PP
+.nf
+// 100-point 6-dimensional random dataset\&.
+arma::mat data = arma::randu<arma::mat>(6, 100);
+// Random labels in the [0, 4] interval\&.
+arma::Row<size_t> labels =
+    arma::randi<arma::Row<size_t>>(100, arma::distr_param(0, 4));
+size_t numClasses = 5;
+.fi
+.PP
+.PP
+The code above generates an 100-point random 6-dimensional dataset with 5 classes\&.
+.PP
+To run 10-fold cross-validation for softmax regression with accuracy as a performance measure, we can write the following piece of code\&.
+.PP
+.PP
+.nf
+KFoldCV<SoftmaxRegression, Accuracy> cv(10, data, labels, numClasses);
+double lambda = 0\&.1;
+double softmaxAccuracy = cv\&.Evaluate(lambda);
+.fi
+.PP
+.PP
+Note that the \fCEvaluate\fP method of \fC\fBKFoldCV\fP\fP takes any hyperparameters of an algorithm---that is, anything that is not \fCdata\fP, \fClabels\fP, \fCnumClasses\fP, \fCdatasetInfo\fP, or \fCweights\fP (those last three may not be present for every algorithm type)\&. To be more specific, in this example the \fCEvaluate\fP method relies on the following \fBSoftmaxRegression\fP constructor:
+.PP
+.PP
+.nf
+template<typename OptimizerType = mlpack::optimization::L_BFGS>
+SoftmaxRegression(const arma::mat& data,
+                  const arma::Row<size_t>& labels,
+                  const size_t numClasses,
+                  const double lambda = 0\&.0001,
+                  const bool fitIntercept = false,
+                  OptimizerType optimizer = OptimizerType());
+.fi
+.PP
+.PP
+which has the parameter \fClambda\fP after three conventional arguments (\fCdata\fP, \fClabels\fP and \fCnumClasses\fP)\&. We can skip passing \fCfitIntercept\fP and \fCoptimizer\fP since there are the default values\&. (Technically, we don't even need to pass \fClambda\fP since there is a default value\&.)
+.PP
+In general to cross-validate you need to specify what machine learning algorithm and metric you are going to use, and then to pass some conventional data-related parameters into one of the cross-validation constructors and all other parameters (which are generally hyperparameters) into the \fCEvaluate\fP method\&.
+.SS "10-fold cross-validation on weighted decision trees"
+In the following example we will cross-validate \fBDecisionTree\fP with weights\&. This is very similar to the previous example, except that we also have instance weights for each point in the dataset\&. We can generate weights for the dataset from the previous example with the code below:
+.PP
+.PP
+.nf
+// Random weights for every point from the code snippet above\&.
+arma::rowvec weights = arma::randu<arma::mat>(1, 100);
+.fi
+.PP
+.PP
+Given those weights for each point, we can now perform cross-validation by also passing the weights to the constructor of \fC\fBKFoldCV\fP:\fP 
+.PP
+.PP
+.nf
+KFoldCV<DecisionTree<>, Accuracy> cv2(10, data, labels, numClasses, weights);
+size_t minimumLeafSize = 8;
+double weightedDecisionTreeAccuracy = cv2\&.Evaluate(minimumLeafSize);
+.fi
+.PP
+.PP
+As with the previous example, internally this call to \fCcv2\&.Evaluate()\fP relies on the following \fBDecisionTree\fP constructor:
+.PP
+.PP
+.nf
+template<typename MatType, typename LabelsType, typename WeightsType>
+DecisionTree(MatType&& data,
+             LabelsType&& labels,
+             const size_t numClasses,
+             WeightsType&& weights,
+             const size_t minimumLeafSize = 10,
+             const std::enable_if_t<arma::is_arma_type<
+                 typename std::remove_reference<WeightsType>::type>::value>*
+                  = 0);
+.fi
+.PP
+.SS "10-fold cross-validation with categorical decision trees"
+\fBDecisionTree\fP models can be constructed in multiple other ways\&. For example, if we have a dataset with both categorical and numerical features, we can also perform cross-validation by using the associated \fC\fBdata::DatasetInfo\fP\fP object\&. Thus, given some \fC\fBdata::DatasetInfo\fP\fP object called \fCdatasetInfo\fP (that perhaps was produced by a call to \fC\fBdata::Load()\fP\fP ), we can perform k-fold cross-validation in a similar manner to the other examples:
+.PP
+.PP
+.nf
+KFoldCV<DecisionTree<>, Accuracy> cv3(10, data, datasetInfo, labels,
+    numClasses);
+double decisionTreeWithDIAccuracy = cv3\&.Evaluate(minimumLeafSize);
+.fi
+.PP
+.PP
+This particular call to \fCcv3\&.Evaluate()\fP relies on the following \fBDecisionTree\fP constructor:
+.PP
+.PP
+.nf
+template<typename MatType, typename LabelsType>
+DecisionTree(MatType&& data,
+             const data::DatasetInfo& datasetInfo,
+             LabelsType&& labels,
+             const size_t numClasses,
+             const size_t minimumLeafSize = 10);
+.fi
+.PP
+.SS "Simple cross-validation for linear regression"
+\fC\fBSimpleCV\fP\fP has the same interface as \fC\fBKFoldCV\fP\fP, except it takes as one of its arguments a proportion (from 0 to 1) of data used as a validation set\&. For example, to validate \fBLinearRegression\fP with 20% of the data used in the validation set we can write the following code\&.
+.PP
+.PP
+.nf
+// Random responses for every point from the code snippet in the beginning of
+// the tutorial\&.
+arma::rowvec responses = arma::randu<arma::rowvec>(100);
+
+SimpleCV<LinearRegression, MSE> cv4(0\&.2, data, responses);
+double lrLambda = 0\&.05;
+double lrMSE = cv4\&.Evaluate(lrLambda);
+.fi
+.PP
+.SH "Performance measures"
+.PP
+The cross-validation classes require a performance measure to be specified\&. \fBmlpack\fP has a number of performance measures implemented; below is a list:
+.PP
+.IP "\(bu" 2
+\fBmlpack::cv::Accuracy\fP: a simple measure of accuracy
+.IP "\(bu" 2
+\fBmlpack::cv::F1\fP: the \fBF1\fP score; depends on an averaging strategy
+.IP "\(bu" 2
+\fBmlpack::cv::MSE\fP: minimum squared error (for regression problems)
+.IP "\(bu" 2
+\fBmlpack::cv::Precision\fP: the precision, for classification problems
+.IP "\(bu" 2
+\fBmlpack::cv::Recall\fP: the recall, for classification problems
+.PP
+.PP
+In addition, it is not difficult to implement a custom performance measure\&. A class following the structure below can be used:
+.PP
+.PP
+.nf
+class CustomMeasure
+{
+  //
+  // This evaluates the metric given a trained model and a set of data (with
+  // labels or responses) to evaluate on\&.  The data parameter will be a type of
+  // Armadillo matrix, and the labels will be the labels that go with the model\&.
+  //
+  // If you know that your model is a classification model (and thus that
+  // ResponsesType will be arma::Row<size_t>), it is ok to replace the
+  // ResponsesType template parameter with arma::Row<size_t>\&.
+  //
+  template<typename MLAlgorithm, typename DataType, typename ResponsesType>
+  static double Evaluate(MLAlgorithm& model,
+                         const DataType& data,
+                         const ResponsesType& labels)
+  {
+    // Inside the method you should call model\&.Predict() and compare the
+    // values with the labels, in order to get the desired performance measure
+    // and return it\&.
+  }
+};
+.fi
+.PP
+.PP
+Once this is implemented, then \fCCustomMeasure\fP (or whatever the class is called) is easy to use as a custom performance measure with \fC\fBKFoldCV\fP\fP or \fC\fBSimpleCV\fP\fP\&.
+.SH "The KFoldCV and SimpleCV classes"
+.PP
+This section provides details about the \fC\fBKFoldCV\fP\fP and \fC\fBSimpleCV\fP\fP classes\&. The cross-validation infrastructure is based on heavy amounts of template metaprogramming, so that any \fBmlpack\fP learner and any performance measure can be used\&. Both classes have two required template parameters and one optional parameter:
+.PP
+.IP "\(bu" 2
+\fCMLAlgorithm:\fP the type of learner to be used
+.IP "\(bu" 2
+\fCMetric:\fP the performance measure to be evaluated
+.IP "\(bu" 2
+\fCMatType:\fP the type of matrix used to store the data
+.PP
+.PP
+In addition, there are two more template parameters, but these are automatically extracted from the given \fCMLAlgorithm\fP class, and users should not need to specify these parameters except when using an unconventional type like \fCarma::fmat\fP for data points\&.
+.PP
+The general structure of the \fC\fBKFoldCV\fP\fP and \fC\fBSimpleCV\fP\fP classes is split into two parts:
+.PP
+.IP "\(bu" 2
+The constructor: create the object, and store the data for the \fCMLAlgorithm\fP training\&.
+.IP "\(bu" 2
+The \fCEvaluate()\fP method: take any non-data parameters for the \fCMLAlgorithm\fP and calculate the desired performance measure\&.
+.PP
+.PP
+This split is important because it defines the API: all data-related parameters are passed to the constructor, whereas algorithm hyperparameters are passed to the \fCEvaluate()\fP method\&.
+.SS "The KFoldCV and SimpleCV constructors"
+There are six constructors available for \fC\fBKFoldCV\fP\fP and \fC\fBSimpleCV\fP\fP, each tailored for a different learning situation\&. Each is given below for the \fC\fBKFoldCV\fP\fP class, but the same constructors are also available for the \fC\fBSimpleCV\fP\fP class, with the exception that instead of specifying \fCk\fP, the number of folds, the \fC\fBSimpleCV\fP\fP class takes a parameter between 0 and 1 specifying the percentage of the dataset to use as a validation set\&.
+.PP
+.IP "\(bu" 2
+\fCKFoldCV(k, xs, ys)\fP: this is for unweighted regression applications and two-class classification applications; \fCxs\fP is the dataset and \fCys\fP are the responses or labels for each point in the dataset\&.
+.IP "\(bu" 2
+\fCKFoldCV(k, xs, ys, numClasses)\fP: this is for unweighted classification applications; \fCxs\fP is the dataset, \fCys\fP are the class labels for each data point, and \fCnumClasses\fP is the number of classes in the dataset\&.
+.IP "\(bu" 2
+\fCKFoldCV(k, xs, datasetInfo, ys, numClasses)\fP: this is for unweighted categorical/numeric classification applications; \fCxs\fP is the dataset, \fCdatasetInfo\fP is a \fBdata::DatasetInfo\fP object that holds the types of each dimension in the dataset, \fCys\fP are the class labels for each data point, and \fCnumClasses\fP is the number of classes in the dataset\&.
+.IP "\(bu" 2
+\fCKFoldCV(k, xs, ys, weights)\fP: this is for weighted regression or two-class classification applications; \fCxs\fP is the dataset, \fCys\fP are the responses or labels for each point in the dataset, and \fCweights\fP are the weights for each point in the dataset\&.
+.IP "\(bu" 2
+\fCKFoldCV(k, xs, ys, numClasses, weights)\fP: this is for weighted classification applications; \fCxs\fP is the dataset, \fCys\fP are the class labels for each point in the dataset; \fCnumClasses\fP is the number of classes in the dataset, and \fCweights\fP holds the weights for each point in the dataset\&.
+.IP "\(bu" 2
+\fCKFoldCV(k, xs, datasetInfo, ys, numClasses, weights)\fP: this is for weighted cateogrical/numeric classification applications; \fCxs\fP is the dataset, \fCdatasetInfo\fP is a \fBdata::DatasetInfo\fP object that holds the types of each dimension in the dataset, \fCys\fP are the class labels for each data point, \fCnumClasses\fP is the number of classes in each dataset, and \fCweights\fP holds the weights for each point in the dataset\&.
+.PP
+.PP
+Note that the constructor you should use is the constructor that most closely matches the constructor of the machine learning algorithm you would like performance measures of\&. So, for instance, if you are doing multi-class softmax regression, you could call the constructor \fC'SoftmaxRegression(xs, ys, numClasses)'\fP\&. Therefore, for \fC\fBKFoldCV\fP\fP you would call the constructor \fC'KFoldCV(k, xs, ys, numClasses)'\fP and for \fC\fBSimpleCV\fP\fP you would call the constructor \fC'SimpleCV(pct, xs, ys, numClasses)'\fP\&.
+.SS "The Evaluate() method"
+The other method that \fC\fBKFoldCV\fP\fP and \fC\fBSimpleCV\fP\fP have is the method to actually calculate the performance measure: \fCEvaluate()\fP\&. The \fCEvaluate()\fP method takes any hyperparameters that would follow the data arguments to the constructor or \fCTrain()\fP method of the given \fCMLAlgorithm\fP\&. The \fCEvaluate()\fP method takes no more arguments than that, and returns the desired performance measure on the dataset\&.
+.PP
+Therefore, let us suppose that we are interested in cross-validating the performance of a softmax regression model, and that we have constructed the appropriate \fC\fBKFoldCV\fP\fP object using the code below:
+.PP
+.PP
+.nf
+KFoldCV<SoftmaxRegression, Precision> cv(k, data, labels, numClasses);
+.fi
+.PP
+.PP
+The \fBSoftmaxRegression\fP class has the constructor
+.PP
+.PP
+.nf
+template<typename OptimizerType = mlpack::optimization::L_BFGS>
+SoftmaxRegression(const arma::mat& data,
+                  const arma::Row<size_t>& labels,
+                  const size_t numClasses,
+                  const double lambda = 0\&.0001,
+                  const bool fitIntercept = false,
+                  OptimizerType optimizer = OptimizerType());
+.fi
+.PP
+.PP
+Note that all parameters after are \fCnumClasses\fP are optional\&. This means that we can specify none or any of them in our call to \fCEvaluate()\fP\&. Below is some example code showing three different ways we can call \fCEvaluate()\fP with the \fCcv\fP object from the code snippet above\&.
+.PP
+.PP
+.nf
+// First, call with all defaults\&.
+double result1 = cv\&.Evaluate();
+
+// Next, call with lambda set to 0\&.1 and fitIntercept set to true\&.
+double result2 = cv\&.Evaluate(0\&.1, true);
+
+// Lastly, create a custom optimizer to use for optimization, and use a lambda
+// value of 0\&.5 and fit no intercept\&.
+optimization::SGD<> sgd(0\&.05, 50000); // Step size of 0\&.05, 50k max iterations\&.
+double result3 = cv\&.Evaluate(0\&.5, false, sgd);
+.fi
+.PP
+.PP
+The same general idea applies to any \fCMLAlgorithm:\fP all hyperparameters must be passed to the \fCEvaluate()\fP method of \fC\fBKFoldCV\fP\fP or \fC\fBSimpleCV\fP\fP\&.
+.SH "Further references"
+.PP
+For further documentation, please see the associated Doxygen documentation for each of the relevant classes:
+.PP
+.IP "\(bu" 2
+\fBmlpack::cv::SimpleCV\fP
+.IP "\(bu" 2
+\fBmlpack::cv::KFoldCV\fP
+.IP "\(bu" 2
+\fBmlpack::cv::Accuracy\fP
+.IP "\(bu" 2
+\fBmlpack::cv::F1\fP
+.IP "\(bu" 2
+\fBmlpack::cv::MSE\fP
+.IP "\(bu" 2
+\fBmlpack::cv::Precision\fP
+.IP "\(bu" 2
+\fBmlpack::cv::Recall\fP
+.PP
+.PP
+If you are interested in implementing a different cross-validation strategy than k-fold cross-validation or simple cross-validation, take a look at the implementations of each of those classes to guide your implementation\&.
+.PP
+In addition, the \fBhyperparameter tuner\fP documentation may also be relevant\&. 

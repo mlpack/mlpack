@@ -1,0 +1,133 @@
+.TH "DTBStat" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DTBStat \- A statistic for use with mlpack trees, which stores the upper bound on distance to nearest neighbors and the component which this node belongs to\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDTBStat\fP ()"
+.br
+.RI "A generic initializer\&. "
+.ti -1c
+.RI "template<typename TreeType > \fBDTBStat\fP (const TreeType &node)"
+.br
+.RI "This is called when a node is finished initializing\&. "
+.ti -1c
+.RI "double & \fBBound\fP ()"
+.br
+.RI "Modify the total bound for pruning\&. "
+.ti -1c
+.RI "double \fBBound\fP () const"
+.br
+.RI "Get the total bound for pruning\&. "
+.ti -1c
+.RI "int & \fBComponentMembership\fP ()"
+.br
+.RI "Modify the component membership of this node\&. "
+.ti -1c
+.RI "int \fBComponentMembership\fP () const"
+.br
+.RI "Get the component membership of this node\&. "
+.ti -1c
+.RI "double & \fBMaxNeighborDistance\fP ()"
+.br
+.RI "Modify the maximum neighbor distance\&. "
+.ti -1c
+.RI "double \fBMaxNeighborDistance\fP () const"
+.br
+.RI "Get the maximum neighbor distance\&. "
+.ti -1c
+.RI "double & \fBMinNeighborDistance\fP ()"
+.br
+.RI "Modify the minimum neighbor distance\&. "
+.ti -1c
+.RI "double \fBMinNeighborDistance\fP () const"
+.br
+.RI "Get the minimum neighbor distance\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A statistic for use with mlpack trees, which stores the upper bound on distance to nearest neighbors and the component which this node belongs to\&. 
+.PP
+Definition at line 24 of file dtb_stat\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBDTBStat\fP ()\fC [inline]\fP"
+
+.PP
+A generic initializer\&. Sets the maximum neighbor distance to its default, and the component membership to -1 (no component)\&. 
+.PP
+Definition at line 49 of file dtb_stat\&.hpp\&.
+.SS "\fBDTBStat\fP (const TreeType & node)\fC [inline]\fP"
+
+.PP
+This is called when a node is finished initializing\&. We set the maximum neighbor distance to its default, and if possible, we set the component membership of the node (if it has only one point and no children)\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fInode\fP Node that has been finished\&. 
+.RE
+.PP
+
+.PP
+Definition at line 63 of file dtb_stat\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double& Bound ()\fC [inline]\fP"
+
+.PP
+Modify the total bound for pruning\&. 
+.PP
+Definition at line 84 of file dtb_stat\&.hpp\&.
+.SS "double Bound () const\fC [inline]\fP"
+
+.PP
+Get the total bound for pruning\&. 
+.PP
+Definition at line 82 of file dtb_stat\&.hpp\&.
+.SS "int& ComponentMembership ()\fC [inline]\fP"
+
+.PP
+Modify the component membership of this node\&. 
+.PP
+Definition at line 89 of file dtb_stat\&.hpp\&.
+.SS "int ComponentMembership () const\fC [inline]\fP"
+
+.PP
+Get the component membership of this node\&. 
+.PP
+Definition at line 87 of file dtb_stat\&.hpp\&.
+.SS "double& MaxNeighborDistance ()\fC [inline]\fP"
+
+.PP
+Modify the maximum neighbor distance\&. 
+.PP
+Definition at line 74 of file dtb_stat\&.hpp\&.
+.SS "double MaxNeighborDistance () const\fC [inline]\fP"
+
+.PP
+Get the maximum neighbor distance\&. 
+.PP
+Definition at line 72 of file dtb_stat\&.hpp\&.
+.SS "double& MinNeighborDistance ()\fC [inline]\fP"
+
+.PP
+Modify the minimum neighbor distance\&. 
+.PP
+Definition at line 79 of file dtb_stat\&.hpp\&.
+.SS "double MinNeighborDistance () const\fC [inline]\fP"
+
+.PP
+Get the minimum neighbor distance\&. 
+.PP
+Definition at line 77 of file dtb_stat\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

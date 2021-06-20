@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1Log" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::Log</compoundname>
+    <includes refid="log_8hpp" local="no">log.hpp</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1Log_1a6b0108441adaafe36dbe523901a38c35" prot="public" static="yes" mutable="no">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream&amp; cout</definition>
+        <argsstring></argsstring>
+        <name>cout</name>
+        <briefdescription>
+<para>Reference to cout, if necessary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" line="93" column="23" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1Log_1afd147ffc8dcfdceaccad2fa1dde00e30" prot="public" static="yes" mutable="no">
+        <type>MLPACK_EXPORT <ref refid="classmlpack_1_1util_1_1NullOutStream" kindref="compound">util::NullOutStream</ref></type>
+        <definition>MLPACK_EXPORT util::NullOutStream Debug</definition>
+        <argsstring></argsstring>
+        <name>Debug</name>
+        <briefdescription>
+<para>MLPACK_EXPORT is required for global variables, so that they are properly exported by the Windows compiler. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Dumps debug output into the bit nether regions. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" line="79" column="44" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" bodystart="79" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1gmm_1_1DiagonalGMM_1a789ea6c102741e2b8305042a12b933fb" compoundref="diagonal__gmm_8hpp" startline="92" endline="101">DiagonalGMM::DiagonalGMM</referencedby>
+        <referencedby refid="classmlpack_1_1gmm_1_1GMM_1a0848a828790e4f2dcebd3be297c31622" compoundref="gmm_8hpp" startline="96" endline="105">GMM::GMM</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" compoundref="parse__command__line_8hpp" startline="36" endline="152">mlpack::bindings::cli::ParseCommandLine</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1Log_1a5b72fcdfa48547883454fbc59be9caf1" prot="public" static="yes" mutable="no">
+        <type>MLPACK_EXPORT <ref refid="classmlpack_1_1util_1_1PrefixedOutStream" kindref="compound">util::PrefixedOutStream</ref></type>
+        <definition>MLPACK_EXPORT util::PrefixedOutStream Fatal</definition>
+        <argsstring></argsstring>
+        <name>Fatal</name>
+        <briefdescription>
+<para>Prints fatal messages prefixed with [FATAL], then terminates the program. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" line="90" column="48" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" bodystart="90" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1gmm_1_1EigenvalueRatioConstraint_1a134e924e06bc32dab43ca2743652a8ec" compoundref="eigenvalue__ratio__constraint_8hpp" startline="36" endline="57">EigenvalueRatioConstraint::EigenvalueRatioConstraint</referencedby>
+        <referencedby refid="classmlpack_1_1gmm_1_1PositiveDefiniteConstraint_1a1e68c9489180b84b3a8d1e265a3d8a8f" compoundref="positive__definite__constraint_8hpp" startline="36" endline="68">PositiveDefiniteConstraint::ApplyConstraint</referencedby>
+        <referencedby refid="classmlpack_1_1gmm_1_1EigenvalueRatioConstraint_1adf5c45a082c066d121b5dcb6d35cc038" compoundref="eigenvalue__ratio__constraint_8hpp" startline="62" endline="82">EigenvalueRatioConstraint::ApplyConstraint</referencedby>
+        <referencedby refid="classmlpack_1_1kpca_1_1NystroemKernelRule_1a9043568ae7d441d997df28a9963c2c39" compoundref="kernel__pca_2kernel__rules_2nystroem__method_8hpp" startline="40" endline="82">NystroemKernelRule&lt; KernelType, PointSelectionPolicy &gt;::ApplyKernelMatrix</referencedby>
+        <referencedby refid="classmlpack_1_1kpca_1_1NaiveKernelRule_1a38b9096fb257a933f5681831c9654671" compoundref="naive__method_8hpp" startline="35" endline="92">NaiveKernelRule&lt; KernelType &gt;::ApplyKernelMatrix</referencedby>
+        <referencedby refid="classmlpack_1_1kernel_1_1SphericalKernel_1a9bcc650e49c4b0578d4eb5a62810622a" compoundref="spherical__kernel_8hpp" startline="62" endline="84">SphericalKernel::ConvolutionIntegral</referencedby>
+        <referencedby refid="namespacemlpack_1_1util_1abe07e42de35ab2a768e1a84af6466ca1" compoundref="go_2mlpack_2capi_2io__util_8hpp" startline="76" endline="79">mlpack::util::DisableBacktrace</referencedby>
+        <referencedby refid="classmlpack_1_1cf_1_1AverageInterpolation_1ac92ff2a2cfcb48bda46221a1a31de9b3" compoundref="average__interpolation_8hpp" startline="65" endline="86">AverageInterpolation::GetWeights</referencedby>
+        <referencedby refid="classmlpack_1_1cf_1_1SimilarityInterpolation_1af7b773858d4545121a8a09195d0b7a2e" compoundref="similarity__interpolation_8hpp" startline="67" endline="96">SimilarityInterpolation::GetWeights</referencedby>
+        <referencedby refid="classmlpack_1_1cf_1_1RegressionInterpolation_1ac1e5284cad449c49a0b5e026c5a795a7" compoundref="regression__interpolation_8hpp" startline="95" endline="176">RegressionInterpolation::GetWeights</referencedby>
+        <referencedby refid="classmlpack_1_1data_1_1MeanImputation_1a94b8353ed4d68b10e2dd59d5e7dc15ca" compoundref="mean__imputation_8hpp" startline="37" endline="98">MeanImputation&lt; T &gt;::Impute</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1KathirvalavakumarSubavathiInitialization_1ae2f3e6d570824a160b687ff9f734f83c" compoundref="kathirvalavakumar__subavathi__init_8hpp" startline="137" endline="144">KathirvalavakumarSubavathiInitialization::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1NguyenWidrowInitialization_1ae2f3e6d570824a160b687ff9f734f83c" compoundref="nguyen__widrow__init_8hpp" startline="130" endline="137">NguyenWidrowInitialization::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1OivsInitialization_1ae2f3e6d570824a160b687ff9f734f83c" compoundref="oivs__init_8hpp" startline="137" endline="144">OivsInitialization&lt; ActivationFunction &gt;::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1OrthogonalInitialization_1ae2f3e6d570824a160b687ff9f734f83c" compoundref="orthogonal__init_8hpp" startline="97" endline="104">OrthogonalInitialization::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1ConstInitialization_1af2d770912321b8b9ca7b03ab98f735c0" compoundref="const__init_8hpp" startline="56" endline="62">ConstInitialization::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1GaussianInitialization_1af2d770912321b8b9ca7b03ab98f735c0" compoundref="gaussian__init_8hpp" startline="67" endline="73">GaussianInitialization::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1GlorotInitializationType_1a54fcd93db85307de25bcba421a1e7167" compoundref="glorot__init_8hpp" startline="127" endline="135">GlorotInitializationType&lt; Uniform &gt;::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1HeInitialization_1af2d770912321b8b9ca7b03ab98f735c0" compoundref="he__init_8hpp" startline="87" endline="100">HeInitialization::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1LecunNormalInitialization_1af2d770912321b8b9ca7b03ab98f735c0" compoundref="lecun__normal__init_8hpp" startline="93" endline="106">LecunNormalInitialization::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1ann_1_1RandomInitialization_1af2d770912321b8b9ca7b03ab98f735c0" compoundref="ann_2init__rules_2random__init_8hpp" startline="72" endline="80">RandomInitialization::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1amf_1_1GivenInitialization_1af7816b2608658041cf35befb4c3946b9" compoundref="given__init_8hpp" startline="89" endline="133">GivenInitialization::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1amf_1_1GivenInitialization_1ab36c483763ea43179dd94fac38e29f03" compoundref="given__init_8hpp" startline="144" endline="199">GivenInitialization::InitializeOne</referencedby>
+        <referencedby refid="classmlpack_1_1cf_1_1ZScoreNormalization_1a87410cc06d847eef46d0dfdb137c6be7" compoundref="z__score__normalization_8hpp" startline="49" endline="69">ZScoreNormalization::Normalize</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" compoundref="parse__command__line_8hpp" startline="36" endline="152">mlpack::bindings::cli::ParseCommandLine</referencedby>
+        <referencedby refid="classmlpack_1_1distribution_1_1DiscreteDistribution_1ab72935d592516e77511d0b5e703c0d41" compoundref="discrete__distribution_8hpp" startline="127" endline="156">DiscreteDistribution::Probability</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1Log_1a6e069f745e1bbea8ccc4c1d39bf56089" prot="public" static="yes" mutable="no">
+        <type>MLPACK_EXPORT <ref refid="classmlpack_1_1util_1_1PrefixedOutStream" kindref="compound">util::PrefixedOutStream</ref></type>
+        <definition>MLPACK_EXPORT util::PrefixedOutStream Info</definition>
+        <argsstring></argsstring>
+        <name>Info</name>
+        <briefdescription>
+<para>Prints informational messages if <ndash/>verbose is specified, prefixed with [INFO ]. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" line="84" column="48" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" bodystart="84" bodyend="-1"/>
+        <referencedby refid="namespacemlpack_1_1util_1a25bab37c162e45dbf873923b99603bb9" compoundref="go_2mlpack_2capi_2io__util_8hpp" startline="68" endline="71">mlpack::util::DisableVerbose</referencedby>
+        <referencedby refid="namespacemlpack_1_1util_1a511ac95ccd5cd83a09e13c4437eb0e45" compoundref="go_2mlpack_2capi_2io__util_8hpp" startline="60" endline="63">mlpack::util::EnableVerbose</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a0f5881c4001a8176d0ad6387b30c8b8a" compoundref="end__program_8hpp" startline="26" endline="96">mlpack::bindings::cli::EndProgram</referencedby>
+        <referencedby refid="classmlpack_1_1amf_1_1SimpleResidueTermination_1a21aa00d1db37e94076e46c66313514df" compoundref="simple__residue__termination_8hpp" startline="76" endline="95">SimpleResidueTermination::IsConverged</referencedby>
+        <referencedby refid="classmlpack_1_1amf_1_1SimpleToleranceTermination_1a21aa00d1db37e94076e46c66313514df" compoundref="simple__tolerance__termination_8hpp" startline="76" endline="157">SimpleToleranceTermination&lt; MatType &gt;::IsConverged</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1Pendulum_1a7061ffc3be37983a46a312973a375c0a" compoundref="pendulum_8hpp" startline="227" endline="236">Pendulum::IsTerminal</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1Acrobot_1a7fd056133dfd315e4bf45c408f99326f" compoundref="acrobot_8hpp" startline="225" endline="240">Acrobot::IsTerminal</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1CartPole_1a7fd056133dfd315e4bf45c408f99326f" compoundref="cart__pole_8hpp" startline="219" endline="234">CartPole::IsTerminal</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1ContinuousDoublePoleCart_1a7fd056133dfd315e4bf45c408f99326f" compoundref="continuous__double__pole__cart_8hpp" startline="295" endline="315">ContinuousDoublePoleCart::IsTerminal</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1ContinuousMountainCar_1a7fd056133dfd315e4bf45c408f99326f" compoundref="continuous__mountain__car_8hpp" startline="200" endline="214">ContinuousMountainCar::IsTerminal</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1DoublePoleCart_1a7fd056133dfd315e4bf45c408f99326f" compoundref="double__pole__cart_8hpp" startline="301" endline="321">DoublePoleCart::IsTerminal</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1MountainCar_1a7fd056133dfd315e4bf45c408f99326f" compoundref="mountain__car_8hpp" startline="202" endline="216">MountainCar::IsTerminal</referencedby>
+        <referencedby refid="namespacemlpack_1_1bindings_1_1cli_1a9f4d336f3d999569328497d0b8f37b35" compoundref="parse__command__line_8hpp" startline="36" endline="152">mlpack::bindings::cli::ParseCommandLine</referencedby>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1Log_1af8dd463e0db2840410fe6b1165429d5b" prot="public" static="yes" mutable="no">
+        <type>MLPACK_EXPORT <ref refid="classmlpack_1_1util_1_1PrefixedOutStream" kindref="compound">util::PrefixedOutStream</ref></type>
+        <definition>MLPACK_EXPORT util::PrefixedOutStream Warn</definition>
+        <argsstring></argsstring>
+        <name>Warn</name>
+        <briefdescription>
+<para>Prints warning messages prefixed with [WARN ]. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" line="87" column="48" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" bodystart="87" bodyend="-1"/>
+        <referencedby refid="classmlpack_1_1gmm_1_1EigenvalueRatioConstraint_1a134e924e06bc32dab43ca2743652a8ec" compoundref="eigenvalue__ratio__constraint_8hpp" startline="36" endline="57">EigenvalueRatioConstraint::EigenvalueRatioConstraint</referencedby>
+        <referencedby refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a98cfff3b4dc8dcf4679050651517114b" compoundref="max__iteration__termination_8hpp" startline="33" endline="41">MaxIterationTermination::MaxIterationTermination</referencedby>
+        <referencedby refid="classmlpack_1_1amf_1_1RandomAcolInitialization_1a02a3610958f42b7dbef8bd5063ceaee7" compoundref="random__acol__init_8hpp" startline="52" endline="84">RandomAcolInitialization&lt; columnsToAverage &gt;::Initialize</referencedby>
+        <referencedby refid="classmlpack_1_1cf_1_1CFType_1ab907e6b81f7b38e654d185077603466f" compoundref="cf_8hpp" startline="147" endline="156">CFType&lt; DecompositionPolicy, NormalizationType &gt;::NumUsersForSimilarity</referencedby>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1Log_1acf2da487d1dac6cd100996cf82eba5e8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Assert</definition>
+        <argsstring>(bool condition, const std::string &amp;message=&quot;Assert Failed.&quot;)</argsstring>
+        <name>Assert</name>
+        <param>
+          <type>bool</type>
+          <declname>condition</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>message</declname>
+          <defval>&quot;Assert Failed.&quot;</defval>
+        </param>
+        <briefdescription>
+<para>Checks if the specified condition is true. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If not, halts program execution and prints a custom error message. Does nothing in non-debug mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" line="64" column="15"/>
+        <referencedby refid="classmlpack_1_1emst_1_1EdgePair_1af3f7bffad4afa6cf42a2638be0323fad" compoundref="edge__pair_8hpp" startline="45" endline="50">EdgePair::EdgePair</referencedby>
+        <referencedby refid="namespacemlpack_1_1tree_1_1split_1ae701f1590f5c0fb8ddea4af189f3ee8a" compoundref="perform__split_8hpp" startline="36" endline="83">mlpack::tree::split::PerformSplit</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Provides a convenient way to give formatted output. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The <ref refid="classmlpack_1_1Log" kindref="compound">Log</ref> class has four members which can be used in the same way ostreams can be used:</para>
+<para><itemizedlist>
+<listitem><para><ref refid="classmlpack_1_1Log_1afd147ffc8dcfdceaccad2fa1dde00e30" kindref="member">Log::Debug</ref></para>
+</listitem><listitem><para><ref refid="classmlpack_1_1Log_1a6e069f745e1bbea8ccc4c1d39bf56089" kindref="member">Log::Info</ref></para>
+</listitem><listitem><para><ref refid="classmlpack_1_1Log_1af8dd463e0db2840410fe6b1165429d5b" kindref="member">Log::Warn</ref></para>
+</listitem><listitem><para><ref refid="classmlpack_1_1Log_1a5b72fcdfa48547883454fbc59be9caf1" kindref="member">Log::Fatal</ref></para>
+</listitem></itemizedlist>
+</para>
+<para>Each of these will prefix a tag to the output (for easy filtering), and the fatal output will terminate the program when a newline is encountered. An example is given below.</para>
+<para><programlisting><codeline><highlight class="normal">Log::Info<sp/>&lt;&lt;<sp/>&quot;Checking<sp/>a<sp/>condition.&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(!someCondition())</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>Log::Warn<sp/>&lt;&lt;<sp/>&quot;someCondition()<sp/>is<sp/>not<sp/>satisfied!&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal">Log::Info<sp/>&lt;&lt;<sp/>&quot;Checking<sp/>an<sp/>important<sp/>condition.&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(!someImportantCondition())</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>Log::Fatal<sp/>&lt;&lt;<sp/>&quot;someImportantCondition()<sp/>is<sp/>not<sp/>satisfied!<sp/>Terminating.&quot;;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>Log::Fatal<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Any messages sent to <ref refid="classmlpack_1_1Log_1afd147ffc8dcfdceaccad2fa1dde00e30" kindref="member">Log::Debug</ref> will not be shown when compiling in non-debug mode. Messages to <ref refid="classmlpack_1_1Log_1a6e069f745e1bbea8ccc4c1d39bf56089" kindref="member">Log::Info</ref> will only be shown when the <ndash/>verbose flag is given to the program (or rather, the <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> class).</para>
+<para><simplesect kind="see"><para>PrefixedOutStream, NullOutStream, <ref refid="classmlpack_1_1IO" kindref="compound">IO</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>Log</label>
+        <link refid="classmlpack_1_1Log"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>Fatal</edgelabel>
+          <edgelabel>Info</edgelabel>
+          <edgelabel>Warn</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>Debug</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>PrefixedOutStream</label>
+        <link refid="classmlpack_1_1util_1_1PrefixedOutStream"/>
+      </node>
+      <node id="3">
+        <label>NullOutStream</label>
+        <link refid="classmlpack_1_1util_1_1NullOutStream"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" line="56" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/log.hpp" bodystart="57" bodyend="94"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1Log_1acf2da487d1dac6cd100996cf82eba5e8" prot="public" virt="non-virtual"><scope>mlpack::Log</scope><name>Assert</name></member>
+      <member refid="classmlpack_1_1Log_1a6b0108441adaafe36dbe523901a38c35" prot="public" virt="non-virtual"><scope>mlpack::Log</scope><name>cout</name></member>
+      <member refid="classmlpack_1_1Log_1afd147ffc8dcfdceaccad2fa1dde00e30" prot="public" virt="non-virtual"><scope>mlpack::Log</scope><name>Debug</name></member>
+      <member refid="classmlpack_1_1Log_1a5b72fcdfa48547883454fbc59be9caf1" prot="public" virt="non-virtual"><scope>mlpack::Log</scope><name>Fatal</name></member>
+      <member refid="classmlpack_1_1Log_1a6e069f745e1bbea8ccc4c1d39bf56089" prot="public" virt="non-virtual"><scope>mlpack::Log</scope><name>Info</name></member>
+      <member refid="classmlpack_1_1Log_1af8dd463e0db2840410fe6b1165429d5b" prot="public" virt="non-virtual"><scope>mlpack::Log</scope><name>Warn</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

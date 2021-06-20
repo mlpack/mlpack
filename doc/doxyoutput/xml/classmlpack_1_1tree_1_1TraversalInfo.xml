@@ -1,0 +1,224 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1TraversalInfo" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::TraversalInfo</compoundname>
+    <includes refid="traversal__info_8hpp" local="no">traversal_info.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename TreeType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1TraversalInfo_1a5210d29f3192b5e01426740502013a0d" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double lastBaseCase</definition>
+        <argsstring></argsstring>
+        <name>lastBaseCase</name>
+        <briefdescription>
+<para>The last base case. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="90" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1TraversalInfo_1aba0e2e7f090fde4eaf846abbfb1d7065" prot="private" static="no" mutable="no">
+        <type>TreeType *</type>
+        <definition>TreeType* lastQueryNode</definition>
+        <argsstring></argsstring>
+        <name>lastQueryNode</name>
+        <briefdescription>
+<para>The last query node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="84" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1TraversalInfo_1a4222e4a5372a97e413bc61ec53204075" prot="private" static="no" mutable="no">
+        <type>TreeType *</type>
+        <definition>TreeType* lastReferenceNode</definition>
+        <argsstring></argsstring>
+        <name>lastReferenceNode</name>
+        <briefdescription>
+<para>The last reference node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="86" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1tree_1_1TraversalInfo_1ad0e8b9af39c1f3db9278e599e44240a9" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double lastScore</definition>
+        <argsstring></argsstring>
+        <name>lastScore</name>
+        <briefdescription>
+<para>The last score. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="88" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1TraversalInfo_1a1ea7365c8870a18471fbe685af8a93c1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>TraversalInfo</definition>
+        <argsstring>()</argsstring>
+        <name>TraversalInfo</name>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">TraversalInfo</ref> object and initialize the pointers to NULL. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="56" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="56" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1TraversalInfo_1a9843847879aa1003924dbb1b70bddaf2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; LastBaseCase</definition>
+        <argsstring>()</argsstring>
+        <name>LastBaseCase</name>
+        <briefdescription>
+<para>Modify the base case associated with the last node combination. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="80" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="80" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1TraversalInfo_1a396c1897a37eabe0501694f1273724b8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double LastBaseCase</definition>
+        <argsstring>() const</argsstring>
+        <name>LastBaseCase</name>
+        <briefdescription>
+<para>Get the base case associated with the last node combination. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="78" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="78" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1TraversalInfo_1a73879eca4d456d15499133f852ff7a78" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>TreeType *&amp;</type>
+        <definition>TreeType*&amp; LastQueryNode</definition>
+        <argsstring>()</argsstring>
+        <name>LastQueryNode</name>
+        <briefdescription>
+<para>Modify the last query node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="65" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="65" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1TraversalInfo_1a240b4e3c069d0abebd0842000cae156d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>TreeType *</type>
+        <definition>TreeType* LastQueryNode</definition>
+        <argsstring>() const</argsstring>
+        <name>LastQueryNode</name>
+        <briefdescription>
+<para>Get the last query node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="63" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="63" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1TraversalInfo_1a163f1e230d32c86f66e1575c00cd2197" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>TreeType *&amp;</type>
+        <definition>TreeType*&amp; LastReferenceNode</definition>
+        <argsstring>()</argsstring>
+        <name>LastReferenceNode</name>
+        <briefdescription>
+<para>Modify the last reference node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="70" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="70" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1TraversalInfo_1af07facd9a7140804dac091df72bffa92" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>TreeType *</type>
+        <definition>TreeType* LastReferenceNode</definition>
+        <argsstring>() const</argsstring>
+        <name>LastReferenceNode</name>
+        <briefdescription>
+<para>Get the last reference node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="68" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="68" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1TraversalInfo_1a52c6142d80e7c08d1234b18a23076364" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; LastScore</definition>
+        <argsstring>()</argsstring>
+        <name>LastScore</name>
+        <briefdescription>
+<para>Modify the score associated with the last query and reference nodes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="75" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="75" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1TraversalInfo_1abebc9923f270ea47c68b1f09d6e13ddb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double LastScore</definition>
+        <argsstring>() const</argsstring>
+        <name>LastScore</name>
+        <briefdescription>
+<para>Get the score associated with the last query and reference nodes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="73" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="73" bodyend="73"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">TraversalInfo</ref> class holds traversal information which is used in dual-tree (and single-tree) traversals. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>A traversal should be updating the members of this class before Score() is called. This class should be held as a member of the RuleType class and the interface to it should be through a <ref refid="classmlpack_1_1tree_1_1TraversalInfo_1a1ea7365c8870a18471fbe685af8a93c1" kindref="member">TraversalInfo()</ref> method.</para>
+<para>The information held by this class is the last node combination visited before the current node combination was recursed into, and the score resulting from when Score() was called on that combination. However, this information is identical for a query node and a reference node in a particular node combination, so traversals only need to update the <ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">TraversalInfo</ref> object in a query node (and the algorithms should only use the <ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">TraversalInfo</ref> object from a query node).</para>
+<para>In general, this auxiliary traversal information is used to try and make a prune without needing to call BaseCase() or calculate the distance between nodes. Using this information you can place bounds on the distance between the two nodes quickly.</para>
+<para>If the traversal is not updating the members of this class correctly, a likely result is a null pointer dereference. Dual-tree algorithms should assume that the members are set properly and should not need to check for null pointers.</para>
+<para>There is one exception, which is the root node combination; the score can be set to 0 and the query and reference nodes can just be set to the root nodes; no algorithm should be able to prune the root combination anyway. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" line="50" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/traversal_info.hpp" bodystart="51" bodyend="91"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1a5210d29f3192b5e01426740502013a0d" prot="private" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>lastBaseCase</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1a396c1897a37eabe0501694f1273724b8" prot="public" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>LastBaseCase</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1a9843847879aa1003924dbb1b70bddaf2" prot="public" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>LastBaseCase</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1aba0e2e7f090fde4eaf846abbfb1d7065" prot="private" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>lastQueryNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1a240b4e3c069d0abebd0842000cae156d" prot="public" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>LastQueryNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1a73879eca4d456d15499133f852ff7a78" prot="public" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>LastQueryNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1a4222e4a5372a97e413bc61ec53204075" prot="private" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>lastReferenceNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1af07facd9a7140804dac091df72bffa92" prot="public" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>LastReferenceNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1a163f1e230d32c86f66e1575c00cd2197" prot="public" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>LastReferenceNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1ad0e8b9af39c1f3db9278e599e44240a9" prot="private" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>lastScore</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1abebc9923f270ea47c68b1f09d6e13ddb" prot="public" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>LastScore</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1a52c6142d80e7c08d1234b18a23076364" prot="public" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>LastScore</name></member>
+      <member refid="classmlpack_1_1tree_1_1TraversalInfo_1a1ea7365c8870a18471fbe685af8a93c1" prot="public" virt="non-virtual"><scope>mlpack::tree::TraversalInfo</scope><name>TraversalInfo</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

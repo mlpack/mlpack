@@ -1,0 +1,301 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1data_1_1ZCAWhitening" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::ZCAWhitening</compoundname>
+    <includes refid="zca__whitening_8hpp" local="no">zca_whitening.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1data_1_1ZCAWhitening_1ae7852198f8977ef3483a2d10eec81446" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1data_1_1PCAWhitening" kindref="compound">PCAWhitening</ref></type>
+        <definition>PCAWhitening pca</definition>
+        <argsstring></argsstring>
+        <name>pca</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" line="112" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ZCAWhitening_1ada219c9dd0fbf3d6e728aca8f5711fbb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>ZCAWhitening</definition>
+        <argsstring>(double eps=0.00005)</argsstring>
+        <name>ZCAWhitening</name>
+        <param>
+          <type>double</type>
+          <declname>eps</declname>
+          <defval>0.00005</defval>
+        </param>
+        <briefdescription>
+<para>A constructor to set the regularization parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>eps</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Regularization parameter. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" line="55" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" bodystart="55" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ZCAWhitening_1a5d2e9b59773a10f622f833c406435cf4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; EigenValues</definition>
+        <argsstring>() const</argsstring>
+        <name>EigenValues</name>
+        <briefdescription>
+<para>Get the eigenvalues vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" line="98" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" bodystart="98" bodyend="98"/>
+        <references refid="classmlpack_1_1data_1_1PCAWhitening_1a5d2e9b59773a10f622f833c406435cf4" compoundref="pca__whitening_8hpp" startline="117" endline="117">PCAWhitening::EigenValues</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ZCAWhitening_1a6a2521e3588c5bb0ff6191c68d97b217" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; EigenVectors</definition>
+        <argsstring>() const</argsstring>
+        <name>EigenVectors</name>
+        <briefdescription>
+<para>Get the eigenvector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" line="100" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" bodystart="100" bodyend="100"/>
+        <references refid="classmlpack_1_1data_1_1PCAWhitening_1a6a2521e3588c5bb0ff6191c68d97b217" compoundref="pca__whitening_8hpp" startline="119" endline="119">PCAWhitening::EigenVectors</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ZCAWhitening_1af6d960193bb5db37e51416e12bf720de" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Epsilon</definition>
+        <argsstring>() const</argsstring>
+        <name>Epsilon</name>
+        <briefdescription>
+<para>Get the regularization parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" line="102" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" bodystart="102" bodyend="102"/>
+        <references refid="classmlpack_1_1data_1_1PCAWhitening_1a3ababd597760bb1f9782ad2c17aadb41" compoundref="pca__whitening_8hpp" startline="121" endline="121">PCAWhitening::Epsilon</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ZCAWhitening_1a0b68c1a39a21e56e10f5b9250b056244" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Fit</definition>
+        <argsstring>(const MatType &amp;input)</argsstring>
+        <name>Fit</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <briefdescription>
+<para>Function to fit features, to find out the min max and scale. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to fit. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" line="63" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" bodystart="63" bodyend="66"/>
+        <references refid="classmlpack_1_1data_1_1PCAWhitening_1a0b68c1a39a21e56e10f5b9250b056244" compoundref="pca__whitening_8hpp" startline="71" endline="78">PCAWhitening::Fit</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ZCAWhitening_1afb0e67c6fbf5a527f63469bbbf07066c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void InverseTransform</definition>
+        <argsstring>(const MatType &amp;input, MatType &amp;output)</argsstring>
+        <name>InverseTransform</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Function to retrieve original dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scaled dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix with original Dataset. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" line="88" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" bodystart="88" bodyend="93"/>
+        <references refid="classmlpack_1_1data_1_1PCAWhitening_1a5d2e9b59773a10f622f833c406435cf4" compoundref="pca__whitening_8hpp" startline="117" endline="117">PCAWhitening::EigenValues</references>
+        <references refid="classmlpack_1_1data_1_1PCAWhitening_1a6a2521e3588c5bb0ff6191c68d97b217" compoundref="pca__whitening_8hpp" startline="119" endline="119">PCAWhitening::EigenVectors</references>
+        <references refid="classmlpack_1_1data_1_1PCAWhitening_1a95996a797e721bc9acc0c9a5d697fdcf" compoundref="pca__whitening_8hpp" startline="115" endline="115">PCAWhitening::ItemMean</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ZCAWhitening_1a95996a797e721bc9acc0c9a5d697fdcf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::vec &amp;</type>
+        <definition>const arma::vec&amp; ItemMean</definition>
+        <argsstring>() const</argsstring>
+        <name>ItemMean</name>
+        <briefdescription>
+<para>Get the mean row vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" line="96" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" bodystart="96" bodyend="96"/>
+        <references refid="classmlpack_1_1data_1_1PCAWhitening_1a95996a797e721bc9acc0c9a5d697fdcf" compoundref="pca__whitening_8hpp" startline="115" endline="115">PCAWhitening::ItemMean</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ZCAWhitening_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" line="105" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" bodystart="105" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1ZCAWhitening_1a7bc470a1e097f5b0aaf2396691432b3f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Transform</definition>
+        <argsstring>(const MatType &amp;input, MatType &amp;output)</argsstring>
+        <name>Transform</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Function for ZCA whitening. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to scale features. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix with whitened features. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" line="75" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" bodystart="75" bodyend="79"/>
+        <references refid="classmlpack_1_1data_1_1PCAWhitening_1a6a2521e3588c5bb0ff6191c68d97b217" compoundref="pca__whitening_8hpp" startline="119" endline="119">PCAWhitening::EigenVectors</references>
+        <references refid="classmlpack_1_1data_1_1PCAWhitening_1a7bc470a1e097f5b0aaf2396691432b3f" compoundref="pca__whitening_8hpp" startline="87" endline="98">PCAWhitening::Transform</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A simple <ref refid="classmlpack_1_1data_1_1ZCAWhitening" kindref="compound">ZCAWhitening</ref> class. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Whitens a matrix using the eigendecomposition of the covariance matrix. Whitening means the covariance matrix of the result is the identity matrix.</para>
+<para>For whitening related formula and more info, check the link below. <ulink url="http://ufldl.stanford.edu/tutorial/unsupervised/PCAWhitening/">http://ufldl.stanford.edu/tutorial/unsupervised/PCAWhitening/</ulink></para>
+<para><programlisting><codeline><highlight class="normal">arma::mat<sp/>input;</highlight></codeline>
+<codeline><highlight class="normal">Load(&quot;train.csv&quot;,<sp/>input);</highlight></codeline>
+<codeline><highlight class="normal">arma::mat<sp/>output;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Fit<sp/>the<sp/>features.</highlight></codeline>
+<codeline><highlight class="normal">ZCAWhitening<sp/>scale;</highlight></codeline>
+<codeline><highlight class="normal">scale.Fit(input)</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Scale<sp/>the<sp/>features.</highlight></codeline>
+<codeline><highlight class="normal">scale.Transform(input,<sp/>output);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Retransform<sp/>the<sp/>input.</highlight></codeline>
+<codeline><highlight class="normal">scale.InverseTransform(output,<sp/>input);</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" line="47" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/scaler_methods/zca_whitening.hpp" bodystart="48" bodyend="113"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1ZCAWhitening_1a5d2e9b59773a10f622f833c406435cf4" prot="public" virt="non-virtual"><scope>mlpack::data::ZCAWhitening</scope><name>EigenValues</name></member>
+      <member refid="classmlpack_1_1data_1_1ZCAWhitening_1a6a2521e3588c5bb0ff6191c68d97b217" prot="public" virt="non-virtual"><scope>mlpack::data::ZCAWhitening</scope><name>EigenVectors</name></member>
+      <member refid="classmlpack_1_1data_1_1ZCAWhitening_1af6d960193bb5db37e51416e12bf720de" prot="public" virt="non-virtual"><scope>mlpack::data::ZCAWhitening</scope><name>Epsilon</name></member>
+      <member refid="classmlpack_1_1data_1_1ZCAWhitening_1a0b68c1a39a21e56e10f5b9250b056244" prot="public" virt="non-virtual"><scope>mlpack::data::ZCAWhitening</scope><name>Fit</name></member>
+      <member refid="classmlpack_1_1data_1_1ZCAWhitening_1afb0e67c6fbf5a527f63469bbbf07066c" prot="public" virt="non-virtual"><scope>mlpack::data::ZCAWhitening</scope><name>InverseTransform</name></member>
+      <member refid="classmlpack_1_1data_1_1ZCAWhitening_1a95996a797e721bc9acc0c9a5d697fdcf" prot="public" virt="non-virtual"><scope>mlpack::data::ZCAWhitening</scope><name>ItemMean</name></member>
+      <member refid="classmlpack_1_1data_1_1ZCAWhitening_1ae7852198f8977ef3483a2d10eec81446" prot="private" virt="non-virtual"><scope>mlpack::data::ZCAWhitening</scope><name>pca</name></member>
+      <member refid="classmlpack_1_1data_1_1ZCAWhitening_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::data::ZCAWhitening</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1data_1_1ZCAWhitening_1a7bc470a1e097f5b0aaf2396691432b3f" prot="public" virt="non-virtual"><scope>mlpack::data::ZCAWhitening</scope><name>Transform</name></member>
+      <member refid="classmlpack_1_1data_1_1ZCAWhitening_1ada219c9dd0fbf3d6e728aca8f5711fbb" prot="public" virt="non-virtual"><scope>mlpack::data::ZCAWhitening</scope><name>ZCAWhitening</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

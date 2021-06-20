@@ -1,0 +1,260 @@
+.TH "DoublePoleCart" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DoublePoleCart \- Implementation of Double Pole Cart Balancing task\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAction\fP"
+.br
+.RI "Implementation of action of Double Pole Cart\&. "
+.ti -1c
+.RI "class \fBState\fP"
+.br
+.RI "Implementation of the state of Double Pole Cart\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBDoublePoleCart\fP (const size_t maxSteps=0, const double m1=0\&.1, const double m2=0\&.01, const double l1=0\&.5, const double l2=0\&.05, const double gravity=9\&.8, const double massCart=1\&.0, const double forceMag=10\&.0, const double tau=0\&.02, const double thetaThresholdRadians=36 *2 *3\&.1416/360, const double xThreshold=2\&.4, const double doneReward=0\&.0)"
+.br
+.RI "Construct a Double Pole Cart instance using the given constants\&. "
+.ti -1c
+.RI "void \fBDsdt\fP (const \fBState\fP &state, const \fBAction\fP &action, arma::vec &dydx)"
+.br
+.RI "This is the ordinary differential equations required for estimation of next state through RK4 method\&. "
+.ti -1c
+.RI "\fBState\fP \fBInitialSample\fP ()"
+.br
+.RI "Initial state representation is randomly generated within [-0\&.05, 0\&.05]\&. "
+.ti -1c
+.RI "bool \fBIsTerminal\fP (const \fBState\fP &state) const"
+.br
+.RI "This function checks if the car has reached the terminal state\&. "
+.ti -1c
+.RI "size_t & \fBMaxSteps\fP ()"
+.br
+.RI "Set the maximum number of steps allowed\&. "
+.ti -1c
+.RI "size_t \fBMaxSteps\fP () const"
+.br
+.RI "Get the maximum number of steps allowed\&. "
+.ti -1c
+.RI "void \fBRK4\fP (const \fBState\fP &state, const \fBAction\fP &action, arma::vec &dydx, \fBState\fP &nextState)"
+.br
+.RI "This function calls the RK4 iterative method to estimate the next state based on given ordinary differential equation\&. "
+.ti -1c
+.RI "double \fBSample\fP (const \fBState\fP &state, const \fBAction\fP &action)"
+.br
+.RI "Dynamics of Double Pole Cart\&. "
+.ti -1c
+.RI "double \fBSample\fP (const \fBState\fP &state, const \fBAction\fP &action, \fBState\fP &nextState)"
+.br
+.RI "Dynamics of Double Pole Cart instance\&. "
+.ti -1c
+.RI "size_t \fBStepsPerformed\fP () const"
+.br
+.RI "Get the number of steps performed\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Implementation of Double Pole Cart Balancing task\&. 
+
+This is an extension of the existing \fBCartPole\fP environment\&. The environment comprises of a cart of a cart with two poles of different lengths and masses\&. The agent is meant to balance the poles by applying force on the cart\&. 
+.PP
+Definition at line 27 of file double_pole_cart\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBDoublePoleCart\fP (const size_t maxSteps = \fC0\fP, const double m1 = \fC0\&.1\fP, const double m2 = \fC0\&.01\fP, const double l1 = \fC0\&.5\fP, const double l2 = \fC0\&.05\fP, const double gravity = \fC9\&.8\fP, const double massCart = \fC1\&.0\fP, const double forceMag = \fC10\&.0\fP, const double tau = \fC0\&.02\fP, const double thetaThresholdRadians = \fC36 * 2 * 3\&.1416 / 360\fP, const double xThreshold = \fC2\&.4\fP, const double doneReward = \fC0\&.0\fP)\fC [inline]\fP"
+
+.PP
+Construct a Double Pole Cart instance using the given constants\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImaxSteps\fP The number of steps after which the episode terminates\&. If the value is 0, there is no limit\&. 
+.br
+\fIm1\fP The mass of the first pole\&. 
+.br
+\fIm2\fP The mass of the second pole\&. 
+.br
+\fIl1\fP The length of the first pole\&. 
+.br
+\fIl2\fP The length of the second pole\&. 
+.br
+\fIgravity\fP The gravity constant\&. 
+.br
+\fImassCart\fP The mass of the cart\&. 
+.br
+\fIforceMag\fP The magnitude of the applied force\&. 
+.br
+\fItau\fP The time interval\&. 
+.br
+\fIthetaThresholdRadians\fP The maximum angle\&. 
+.br
+\fIxThreshold\fP The maximum position\&. 
+.br
+\fIdoneReward\fP Reward recieved by agent on success\&. 
+.RE
+.PP
+
+.PP
+Definition at line 123 of file double_pole_cart\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void Dsdt (const \fBState\fP & state, const \fBAction\fP & action, arma::vec & dydx)\fC [inline]\fP"
+
+.PP
+This is the ordinary differential equations required for estimation of next state through RK4 method\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIstate\fP The current state\&. 
+.br
+\fIaction\fP The action taken\&. 
+.br
+\fIdydx\fP The differential\&. 
+.RE
+.PP
+
+.PP
+Definition at line 197 of file double_pole_cart\&.hpp\&.
+.PP
+References DoublePoleCart::Action::action, DoublePoleCart::State::Angle(), and DoublePoleCart::State::AngularVelocity()\&.
+.PP
+Referenced by DoublePoleCart::RK4(), and DoublePoleCart::Sample()\&.
+.SS "\fBState\fP InitialSample ()\fC [inline]\fP"
+
+.PP
+Initial state representation is randomly generated within [-0\&.05, 0\&.05]\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Initial state for each episode\&. 
+.RE
+.PP
+
+.PP
+Definition at line 289 of file double_pole_cart\&.hpp\&.
+.SS "bool IsTerminal (const \fBState\fP & state) const\fC [inline]\fP"
+
+.PP
+This function checks if the car has reached the terminal state\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIstate\fP The desired state\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+true if state is a terminal state, otherwise false\&. 
+.RE
+.PP
+
+.PP
+Definition at line 301 of file double_pole_cart\&.hpp\&.
+.PP
+References DoublePoleCart::State::Angle(), Log::Info, and DoublePoleCart::State::Position()\&.
+.PP
+Referenced by DoublePoleCart::Sample()\&.
+.SS "size_t& MaxSteps ()\fC [inline]\fP"
+
+.PP
+Set the maximum number of steps allowed\&. 
+.PP
+Definition at line 329 of file double_pole_cart\&.hpp\&.
+.SS "size_t MaxSteps () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of steps allowed\&. 
+.PP
+Definition at line 327 of file double_pole_cart\&.hpp\&.
+.SS "void RK4 (const \fBState\fP & state, const \fBAction\fP & action, arma::vec & dydx, \fBState\fP & nextState)\fC [inline]\fP"
+
+.PP
+This function calls the RK4 iterative method to estimate the next state based on given ordinary differential equation\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIstate\fP The current state\&. 
+.br
+\fIaction\fP The action to be applied\&. 
+.br
+\fIdydx\fP The differential\&. 
+.br
+\fInextState\fP The next state\&. 
+.RE
+.PP
+
+.PP
+Definition at line 238 of file double_pole_cart\&.hpp\&.
+.PP
+References DoublePoleCart::State::Data(), and DoublePoleCart::Dsdt()\&.
+.PP
+Referenced by DoublePoleCart::Sample()\&.
+.SS "double Sample (const \fBState\fP & state, const \fBAction\fP & action)\fC [inline]\fP"
+
+.PP
+Dynamics of Double Pole Cart\&. Get reward based on current state and current action\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIstate\fP The current state\&. 
+.br
+\fIaction\fP The current action\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+reward, it's always 1\&.0\&. 
+.RE
+.PP
+
+.PP
+Definition at line 278 of file double_pole_cart\&.hpp\&.
+.PP
+References DoublePoleCart::Sample()\&.
+.SS "double Sample (const \fBState\fP & state, const \fBAction\fP & action, \fBState\fP & nextState)\fC [inline]\fP"
+
+.PP
+Dynamics of Double Pole Cart instance\&. Get reward and next state based on current state and current action\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIstate\fP The current state\&. 
+.br
+\fIaction\fP The current action\&. 
+.br
+\fInextState\fP The next state\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+reward, it's always 1\&.0\&. 
+.RE
+.PP
+When done is false, it means that the cartpole has fallen down\&. For this case the reward is 1\&.0\&.
+.PP
+Definition at line 159 of file double_pole_cart\&.hpp\&.
+.PP
+References DoublePoleCart::State::AngularVelocity(), DoublePoleCart::Dsdt(), DoublePoleCart::IsTerminal(), DoublePoleCart::RK4(), and DoublePoleCart::State::Velocity()\&.
+.PP
+Referenced by DoublePoleCart::Sample()\&.
+.SS "size_t StepsPerformed () const\fC [inline]\fP"
+
+.PP
+Get the number of steps performed\&. 
+.PP
+Definition at line 324 of file double_pole_cart\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

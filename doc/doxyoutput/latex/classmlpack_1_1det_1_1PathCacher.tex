@@ -1,0 +1,246 @@
+\doxysection{Path\+Cacher Class Reference}
+\label{classmlpack_1_1det_1_1PathCacher}\index{PathCacher@{PathCacher}}
+
+
+This class is responsible for caching the path to each node of the tree.  
+
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Path\+Format} \{ \newline
+\textbf{ Format\+LR}
+, \newline
+\textbf{ Format\+LR\+\_\+\+ID}
+, \newline
+\textbf{ Format\+ID\+\_\+\+LR}
+ \}
+\begin{DoxyCompactList}\small\item\em Possible formats to use for output. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\\textbf{ Path\+Cacher} (\textbf{ Path\+Format} fmt, \textbf{ DTree}$<$ Mat\+Type, int $>$ $\ast$tree)
+\begin{DoxyCompactList}\small\item\em Construct a \doxyref{Path\+Cacher}{p.}{classmlpack_1_1det_1_1PathCacher} object on the given tree with the given format. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Enter} (const \textbf{ DTree}$<$ Mat\+Type, int $>$ $\ast$node, const \textbf{ DTree}$<$ Mat\+Type, int $>$ $\ast$parent)
+\begin{DoxyCompactList}\small\item\em Enter a given node. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Leave} (const \textbf{ DTree}$<$ Mat\+Type, int $>$ $\ast$node, const \textbf{ DTree}$<$ Mat\+Type, int $>$ $\ast$parent)
+\begin{DoxyCompactList}\small\item\em Leave the given node. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Nodes} () const
+\begin{DoxyCompactList}\small\item\em Get the number of nodes in the path cache. \end{DoxyCompactList}\item 
+int \textbf{ Parent\+Of} (int tag) const
+\begin{DoxyCompactList}\small\item\em Get the parent tag of a given tag. \end{DoxyCompactList}\item 
+const std\+::string \& \textbf{ Path\+For} (int tag) const
+\begin{DoxyCompactList}\small\item\em Return the constructed path for a given tag. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef std\+::vector$<$ std\+::pair$<$ int, std\+::string $>$ $>$ \textbf{ Path\+Cache\+Type}
+\item 
+typedef std\+::list$<$ std\+::pair$<$ bool, int $>$ $>$ \textbf{ Path\+Type}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \textbf{ Build\+String} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Path\+Format} \textbf{ format}
+\item 
+\textbf{ Path\+Type} \textbf{ path}
+\item 
+\textbf{ Path\+Cache\+Type} \textbf{ path\+Cache}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for caching the path to each node of the tree. 
+
+Its instance is provided to \doxyref{Enumerate\+Tree()}{p.}{namespacemlpack_1_1tree_abab37b0038f14ab4dcdf83c60468e923} utility ONCE and it caches the paths to all the leafs and then easily (and quickly) retrieves these paths for each test entry. 
+
+Definition at line 80 of file dt\+\_\+utils.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_a3556ea9f8a86ca23b6c205c23f0e0f11}} 
+\index{PathCacher@{PathCacher}!PathCacheType@{PathCacheType}}
+\index{PathCacheType@{PathCacheType}!PathCacher@{PathCacher}}
+\doxysubsubsection{PathCacheType}
+{\footnotesize\ttfamily typedef std\+::vector$<$std\+::pair$<$int, std\+::string$>$ $>$ \textbf{ Path\+Cache\+Type}\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line 136 of file dt\+\_\+utils.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_af21ffd6b8b037b9235c00547b371def3}} 
+\index{PathCacher@{PathCacher}!PathType@{PathType}}
+\index{PathType@{PathType}!PathCacher@{PathCacher}}
+\doxysubsubsection{PathType}
+{\footnotesize\ttfamily typedef std\+::list$<$std\+::pair$<$bool, int$>$ $>$ \textbf{ Path\+Type}\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line 135 of file dt\+\_\+utils.\+hpp.
+
+
+
+\doxysubsection{Member Enumeration Documentation}
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_ad42c791e18217f9f8ec4b75e3b832d59}} 
+\index{PathCacher@{PathCacher}!PathFormat@{PathFormat}}
+\index{PathFormat@{PathFormat}!PathCacher@{PathCacher}}
+\doxysubsubsection{PathFormat}
+{\footnotesize\ttfamily enum \textbf{ Path\+Format}}
+
+
+
+Possible formats to use for output. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FormatLR@{FormatLR}!PathCacher@{PathCacher}}\index{PathCacher@{PathCacher}!FormatLR@{FormatLR}}}\mbox{\label{classmlpack_1_1det_1_1PathCacher_ad42c791e18217f9f8ec4b75e3b832d59a5e04095213d836ceee073d53425709e1}} 
+Format\+LR&Print only whether we went left or right. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FormatLR\_ID@{FormatLR\_ID}!PathCacher@{PathCacher}}\index{PathCacher@{PathCacher}!FormatLR\_ID@{FormatLR\_ID}}}\mbox{\label{classmlpack_1_1det_1_1PathCacher_ad42c791e18217f9f8ec4b75e3b832d59ab0b26eeb16bd5e237d3c4149f81d1b24}} 
+Format\+LR\+\_\+\+ID&Print the direction, then the tag of the node. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FormatID\_LR@{FormatID\_LR}!PathCacher@{PathCacher}}\index{PathCacher@{PathCacher}!FormatID\_LR@{FormatID\_LR}}}\mbox{\label{classmlpack_1_1det_1_1PathCacher_ad42c791e18217f9f8ec4b75e3b832d59a3a8b8d2daa2fad886dfb77b20737a2e1}} 
+Format\+ID\+\_\+\+LR&Print the tag of the node, then the direction. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 86 of file dt\+\_\+utils.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_ac2117a674303c683520652b1e3506cc5}} 
+\index{PathCacher@{PathCacher}!PathCacher@{PathCacher}}
+\index{PathCacher@{PathCacher}!PathCacher@{PathCacher}}
+\doxysubsubsection{PathCacher()}
+{\footnotesize\ttfamily \textbf{ Path\+Cacher} (\begin{DoxyParamCaption}\item[{\textbf{ Path\+Format}}]{fmt,  }\item[{\textbf{ DTree}$<$ Mat\+Type, int $>$ $\ast$}]{tree }\end{DoxyParamCaption})}
+
+
+
+Construct a \doxyref{Path\+Cacher}{p.}{classmlpack_1_1det_1_1PathCacher} object on the given tree with the given format. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fmt} & Format to use for output. \\
+\hline
+{\em tree} & Tree to cache paths in. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_ad564bef941bc27ad1a335367f504af66}} 
+\index{PathCacher@{PathCacher}!BuildString@{BuildString}}
+\index{BuildString@{BuildString}!PathCacher@{PathCacher}}
+\doxysubsubsection{BuildString()}
+{\footnotesize\ttfamily std\+::string Build\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_a7825e68e15d3d8cc33e44db3d0801527}} 
+\index{PathCacher@{PathCacher}!Enter@{Enter}}
+\index{Enter@{Enter}!PathCacher@{PathCacher}}
+\doxysubsubsection{Enter()}
+{\footnotesize\ttfamily void Enter (\begin{DoxyParamCaption}\item[{const \textbf{ DTree}$<$ Mat\+Type, int $>$ $\ast$}]{node,  }\item[{const \textbf{ DTree}$<$ Mat\+Type, int $>$ $\ast$}]{parent }\end{DoxyParamCaption})}
+
+
+
+Enter a given node. 
+
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_a1cac9b036f3b4aadf7bbf098d65ff37e}} 
+\index{PathCacher@{PathCacher}!Leave@{Leave}}
+\index{Leave@{Leave}!PathCacher@{PathCacher}}
+\doxysubsubsection{Leave()}
+{\footnotesize\ttfamily void Leave (\begin{DoxyParamCaption}\item[{const \textbf{ DTree}$<$ Mat\+Type, int $>$ $\ast$}]{node,  }\item[{const \textbf{ DTree}$<$ Mat\+Type, int $>$ $\ast$}]{parent }\end{DoxyParamCaption})}
+
+
+
+Leave the given node. 
+
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_a5745ee58508df730d6557dc103ede353}} 
+\index{PathCacher@{PathCacher}!NumNodes@{NumNodes}}
+\index{NumNodes@{NumNodes}!PathCacher@{PathCacher}}
+\doxysubsubsection{NumNodes()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Nodes (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of nodes in the path cache. 
+
+
+
+Definition at line 132 of file dt\+\_\+utils.\+hpp.
+
+
+
+References Path\+Cacher\+::path\+Cache.
+
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_ab3f0e671c8ef70476a2a3b0dffb3d24d}} 
+\index{PathCacher@{PathCacher}!ParentOf@{ParentOf}}
+\index{ParentOf@{ParentOf}!PathCacher@{PathCacher}}
+\doxysubsubsection{ParentOf()}
+{\footnotesize\ttfamily int Parent\+Of (\begin{DoxyParamCaption}\item[{int}]{tag }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the parent tag of a given tag. 
+
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_a1cf438e5bc7c1c934766705a081885d8}} 
+\index{PathCacher@{PathCacher}!PathFor@{PathFor}}
+\index{PathFor@{PathFor}!PathCacher@{PathCacher}}
+\doxysubsubsection{PathFor()}
+{\footnotesize\ttfamily const std\+::string\& Path\+For (\begin{DoxyParamCaption}\item[{int}]{tag }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the constructed path for a given tag. 
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_a2fbade9ce67adf733de0cbac35148550}} 
+\index{PathCacher@{PathCacher}!format@{format}}
+\index{format@{format}!PathCacher@{PathCacher}}
+\doxysubsubsection{format}
+{\footnotesize\ttfamily \textbf{ Path\+Format} format\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line 139 of file dt\+\_\+utils.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_a137e67424ef34c606fa1dfea3e80ac12}} 
+\index{PathCacher@{PathCacher}!path@{path}}
+\index{path@{path}!PathCacher@{PathCacher}}
+\doxysubsubsection{path}
+{\footnotesize\ttfamily \textbf{ Path\+Type} path\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line 138 of file dt\+\_\+utils.\+hpp.
+
+\mbox{\label{classmlpack_1_1det_1_1PathCacher_af671c808edc779f96d20c26e301d46be}} 
+\index{PathCacher@{PathCacher}!pathCache@{pathCache}}
+\index{pathCache@{pathCache}!PathCacher@{PathCacher}}
+\doxysubsubsection{pathCache}
+{\footnotesize\ttfamily \textbf{ Path\+Cache\+Type} path\+Cache\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line 140 of file dt\+\_\+utils.\+hpp.
+
+
+
+Referenced by Path\+Cacher\+::\+Num\+Nodes().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/det/\textbf{ dt\+\_\+utils.\+hpp}\end{DoxyCompactItemize}

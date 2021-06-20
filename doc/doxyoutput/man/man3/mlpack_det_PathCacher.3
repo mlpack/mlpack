@@ -1,0 +1,175 @@
+.TH "PathCacher" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PathCacher \- This class is responsible for caching the path to each node of the tree\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBPathFormat\fP { \fBFormatLR\fP, \fBFormatLR_ID\fP, \fBFormatID_LR\fP }"
+.br
+.RI "Possible formats to use for output\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType > \fBPathCacher\fP (\fBPathFormat\fP fmt, \fBDTree\fP< MatType, int > *tree)"
+.br
+.RI "Construct a \fBPathCacher\fP object on the given tree with the given format\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBEnter\fP (const \fBDTree\fP< MatType, int > *node, const \fBDTree\fP< MatType, int > *parent)"
+.br
+.RI "Enter a given node\&. "
+.ti -1c
+.RI "template<typename MatType > void \fBLeave\fP (const \fBDTree\fP< MatType, int > *node, const \fBDTree\fP< MatType, int > *parent)"
+.br
+.RI "Leave the given node\&. "
+.ti -1c
+.RI "size_t \fBNumNodes\fP () const"
+.br
+.RI "Get the number of nodes in the path cache\&. "
+.ti -1c
+.RI "int \fBParentOf\fP (int tag) const"
+.br
+.RI "Get the parent tag of a given tag\&. "
+.ti -1c
+.RI "const std::string & \fBPathFor\fP (int tag) const"
+.br
+.RI "Return the constructed path for a given tag\&. "
+.in -1c
+.SS "Protected Types"
+
+.in +1c
+.ti -1c
+.RI "typedef std::vector< std::pair< int, std::string > > \fBPathCacheType\fP"
+.br
+.ti -1c
+.RI "typedef std::list< std::pair< bool, int > > \fBPathType\fP"
+.br
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "std::string \fBBuildString\fP ()"
+.br
+.in -1c
+.SS "Protected Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBPathFormat\fP \fBformat\fP"
+.br
+.ti -1c
+.RI "\fBPathType\fP \fBpath\fP"
+.br
+.ti -1c
+.RI "\fBPathCacheType\fP \fBpathCache\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+This class is responsible for caching the path to each node of the tree\&. 
+
+Its instance is provided to \fBEnumerateTree()\fP utility ONCE and it caches the paths to all the leafs and then easily (and quickly) retrieves these paths for each test entry\&. 
+.PP
+Definition at line 80 of file dt_utils\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef std::vector<std::pair<int, std::string> > \fBPathCacheType\fP\fC [protected]\fP"
+
+.PP
+Definition at line 136 of file dt_utils\&.hpp\&.
+.SS "typedef std::list<std::pair<bool, int> > \fBPathType\fP\fC [protected]\fP"
+
+.PP
+Definition at line 135 of file dt_utils\&.hpp\&.
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "enum \fBPathFormat\fP"
+
+.PP
+Possible formats to use for output\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIFormatLR \fP\fP
+Print only whether we went left or right\&. 
+.TP
+\fB\fIFormatLR_ID \fP\fP
+Print the direction, then the tag of the node\&. 
+.TP
+\fB\fIFormatID_LR \fP\fP
+Print the tag of the node, then the direction\&. 
+.PP
+Definition at line 86 of file dt_utils\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBPathCacher\fP (\fBPathFormat\fP fmt, \fBDTree\fP< MatType, int > * tree)"
+
+.PP
+Construct a \fBPathCacher\fP object on the given tree with the given format\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIfmt\fP Format to use for output\&. 
+.br
+\fItree\fP Tree to cache paths in\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "std::string BuildString ()\fC [inline]\fP, \fC [protected]\fP"
+
+.SS "void Enter (const \fBDTree\fP< MatType, int > * node, const \fBDTree\fP< MatType, int > * parent)"
+
+.PP
+Enter a given node\&. 
+.SS "void Leave (const \fBDTree\fP< MatType, int > * node, const \fBDTree\fP< MatType, int > * parent)"
+
+.PP
+Leave the given node\&. 
+.SS "size_t NumNodes () const\fC [inline]\fP"
+
+.PP
+Get the number of nodes in the path cache\&. 
+.PP
+Definition at line 132 of file dt_utils\&.hpp\&.
+.PP
+References PathCacher::pathCache\&.
+.SS "int ParentOf (int tag) const\fC [inline]\fP"
+
+.PP
+Get the parent tag of a given tag\&. 
+.SS "const std::string& PathFor (int tag) const\fC [inline]\fP"
+
+.PP
+Return the constructed path for a given tag\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "\fBPathFormat\fP format\fC [protected]\fP"
+
+.PP
+Definition at line 139 of file dt_utils\&.hpp\&.
+.SS "\fBPathType\fP path\fC [protected]\fP"
+
+.PP
+Definition at line 138 of file dt_utils\&.hpp\&.
+.SS "\fBPathCacheType\fP pathCache\fC [protected]\fP"
+
+.PP
+Definition at line 140 of file dt_utils\&.hpp\&.
+.PP
+Referenced by PathCacher::NumNodes()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

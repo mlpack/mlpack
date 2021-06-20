@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="core_2util_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="core_2util_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}) endforeach() set(MLPACK_SRCS $</argsstring>
+        <name>set</name>
+        <param>
+          <type>DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/CMakeLists.txt" line="42" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/CMakeLists.txt" bodystart="42" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="core_2util_2CMakeLists_8txt_1a48c9c7d092b3719046f9f1c16adba191" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(SOURCES arma_traits.hpp arma_config.hpp arma_config_check.hpp backtrace.hpp backtrace.cpp binding_details.hpp io.hpp io.cpp io_impl.hpp deprecated.hpp hyphenate_string.hpp is_std_vector.hpp log.hpp log.cpp mlpack_main.hpp nulloutstream.hpp param.hpp param_checks.hpp param_checks_impl.hpp param_data.hpp prefixedoutstream.hpp prefixedoutstream.cpp prefixedoutstream_impl.hpp program_doc.hpp program_doc.cpp size_checks.hpp sfinae_utility.hpp singletons.cpp timers.hpp timers.cpp to_lower.hpp version.hpp version.cpp) set(DIR_SRCS) foreach(file $</argsstring>
+        <name>set</name>
+        <param>
+          <type>SOURCES arma_traits.hpp arma_config.hpp arma_config_check.hpp backtrace.hpp backtrace.cpp binding_details.hpp io.hpp io.cpp io_impl.hpp deprecated.hpp hyphenate_string.hpp is_std_vector.hpp log.hpp log.cpp mlpack_main.hpp nulloutstream.hpp param.hpp param_checks.hpp param_checks_impl.hpp param_data.hpp prefixedoutstream.hpp prefixedoutstream.cpp prefixedoutstream_impl.hpp program_doc.hpp program_doc.cpp size_checks.hpp sfinae_utility.hpp singletons.cpp timers.hpp timers.cpp to_lower.hpp version.hpp version.</type>
+          <declname>cpp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/util/CMakeLists.txt" line="3" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/util/CMakeLists.txt" bodystart="3" bodyend="41"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#<sp/>Define<sp/>the<sp/>files<sp/>we<sp/>need<sp/>to<sp/>compile.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Anything<sp/>not<sp/>in<sp/>this<sp/>list<sp/>will<sp/>not<sp/>be<sp/>compiled<sp/>into<sp/>mlpack.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3" refid="core_2util_2CMakeLists_8txt_1a48c9c7d092b3719046f9f1c16adba191" refkind="member"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(SOURCES</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"><sp/><sp/>arma_traits.hpp</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/>arma_config.hpp</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/>arma_config_check.hpp</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/>backtrace.hpp</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/>backtrace.cpp</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/>binding_details.hpp</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/>io.hpp</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/>io.cpp</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/>io_impl.hpp</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/>deprecated.hpp</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/>hyphenate_string.hpp</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/>is_std_vector.hpp</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/>log.hpp</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/>log.cpp</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/>mlpack_main.hpp</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/>nulloutstream.hpp</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/>param.hpp</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/>param_checks.hpp</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/>param_checks_impl.hpp</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/>param_data.hpp</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/>prefixedoutstream.hpp</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/>prefixedoutstream.cpp</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/>prefixedoutstream_impl.hpp</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/>program_doc.hpp</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/>program_doc.cpp</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/>size_checks.hpp</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/>sfinae_utility.hpp</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/>singletons.cpp</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>timers.hpp</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>timers.cpp</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/>to_lower.hpp</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>version.hpp</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>version.cpp</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>add<sp/>directory<sp/>name<sp/>to<sp/>sources</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS)</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal">(file<sp/>${SOURCES})</highlight></codeline>
+<codeline lineno="42" refid="core_2util_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS<sp/>${DIR_SRCS}<sp/>${CMAKE_CURRENT_SOURCE_DIR}/${file})</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">endforeach()</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Append<sp/>sources<sp/>(with<sp/>directory<sp/>name)<sp/>to<sp/>list<sp/>of<sp/>all<sp/>mlpack<sp/>sources<sp/>(used<sp/>at</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>the<sp/>parent<sp/>scope).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(MLPACK_SRCS<sp/>${MLPACK_SRCS}<sp/>${DIR_SRCS}<sp/>PARENT_SCOPE)</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/util/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

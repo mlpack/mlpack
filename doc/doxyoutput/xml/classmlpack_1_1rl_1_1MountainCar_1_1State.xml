@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1rl_1_1MountainCar_1_1State" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::rl::MountainCar::State</compoundname>
+    <includes refid="mountain__car_8hpp" local="no">mountain_car.hpp</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1MountainCar_1_1State_1ae813298f34ef9d793885fc04b54dff99" prot="public" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr size_t</type>
+        <definition>constexpr size_t dimension</definition>
+        <argsstring></argsstring>
+        <name>dimension</name>
+        <initializer>= 2</initializer>
+        <briefdescription>
+<para>Dimension of the encoded state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" line="69" column="29" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1MountainCar_1_1State_1a05ce11e72e37bd0034387e3a763a18ee" prot="private" static="no" mutable="no">
+        <type>arma::colvec</type>
+        <definition>arma::colvec data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Locally-stored velocity and position vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" line="73" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1MountainCar_1_1State_1a790355057d12e9c1ce7643551c16fecd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>State</definition>
+        <argsstring>()</argsstring>
+        <name>State</name>
+        <briefdescription>
+<para>Construct a state instance. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" line="41" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" bodystart="41" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1MountainCar_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>State</definition>
+        <argsstring>(const arma::colvec &amp;data)</argsstring>
+        <name>State</name>
+        <param>
+          <type>const arma::colvec &amp;</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Construct a state based on the given data. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data for the velocity and position. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" line="49" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" bodystart="49" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1MountainCar_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>arma::colvec &amp;</type>
+        <definition>arma::colvec&amp; Data</definition>
+        <argsstring>()</argsstring>
+        <name>Data</name>
+        <briefdescription>
+<para>Modify the internal representation of the state. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" line="53" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" bodystart="53" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1MountainCar_1_1State_1a8c1a320788b55fad936455caf0acb62a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const arma::colvec &amp;</type>
+        <definition>const arma::colvec&amp; Encode</definition>
+        <argsstring>() const</argsstring>
+        <name>Encode</name>
+        <briefdescription>
+<para>Encode the state to a column vector. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" line="66" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" bodystart="66" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1MountainCar_1_1State_1a005c39713bc5c65715a94572bfb5fc29" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Position</definition>
+        <argsstring>()</argsstring>
+        <name>Position</name>
+        <briefdescription>
+<para>Modify the position. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" line="63" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" bodystart="63" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Position</definition>
+        <argsstring>() const</argsstring>
+        <name>Position</name>
+        <briefdescription>
+<para>Get the position. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" line="61" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" bodystart="61" bodyend="61"/>
+        <referencedby refid="classmlpack_1_1rl_1_1MountainCar_1aa9f537249fa0c1e62b38197996ab4c6a" compoundref="mountain__car_8hpp" startline="187" endline="194">MountainCar::InitialSample</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1MountainCar_1a7fd056133dfd315e4bf45c408f99326f" compoundref="mountain__car_8hpp" startline="202" endline="216">MountainCar::IsTerminal</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1MountainCar_1a311ac19edc537dee94f37b7cce93d908" compoundref="mountain__car_8hpp" startline="133" endline="165">MountainCar::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1MountainCar_1_1State_1a2bdce16cfc8c84b65f13ee9fffab1266" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Velocity</definition>
+        <argsstring>()</argsstring>
+        <name>Velocity</name>
+        <briefdescription>
+<para>Modify the velocity. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" line="58" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" bodystart="58" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Velocity</definition>
+        <argsstring>() const</argsstring>
+        <name>Velocity</name>
+        <briefdescription>
+<para>Get the velocity. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" line="56" column="12" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" bodystart="56" bodyend="56"/>
+        <referencedby refid="classmlpack_1_1rl_1_1MountainCar_1aa9f537249fa0c1e62b38197996ab4c6a" compoundref="mountain__car_8hpp" startline="187" endline="194">MountainCar::InitialSample</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1MountainCar_1a311ac19edc537dee94f37b7cce93d908" compoundref="mountain__car_8hpp" startline="133" endline="165">MountainCar::Sample</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of state of Mountain Car. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Each state is a (velocity, position) vector. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" line="35" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/environment/mountain_car.hpp" bodystart="36" bodyend="74"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a05ce11e72e37bd0034387e3a763a18ee" prot="private" virt="non-virtual"><scope>mlpack::rl::MountainCar::State</scope><name>data</name></member>
+      <member refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1ad6a50c7b5fced2e931d9a4b4ff989ed6" prot="public" virt="non-virtual"><scope>mlpack::rl::MountainCar::State</scope><name>Data</name></member>
+      <member refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1ae813298f34ef9d793885fc04b54dff99" prot="public" virt="non-virtual"><scope>mlpack::rl::MountainCar::State</scope><name>dimension</name></member>
+      <member refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a8c1a320788b55fad936455caf0acb62a" prot="public" virt="non-virtual"><scope>mlpack::rl::MountainCar::State</scope><name>Encode</name></member>
+      <member refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1adc41cb3d3f5bdd1bd67dc963ce78c20c" prot="public" virt="non-virtual"><scope>mlpack::rl::MountainCar::State</scope><name>Position</name></member>
+      <member refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a005c39713bc5c65715a94572bfb5fc29" prot="public" virt="non-virtual"><scope>mlpack::rl::MountainCar::State</scope><name>Position</name></member>
+      <member refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a790355057d12e9c1ce7643551c16fecd" prot="public" virt="non-virtual"><scope>mlpack::rl::MountainCar::State</scope><name>State</name></member>
+      <member refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a8bc7967f6d91a3c94f9b3f502297a926" prot="public" virt="non-virtual"><scope>mlpack::rl::MountainCar::State</scope><name>State</name></member>
+      <member refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a5281cef88d4e272d6cb8581bff91195a" prot="public" virt="non-virtual"><scope>mlpack::rl::MountainCar::State</scope><name>Velocity</name></member>
+      <member refid="classmlpack_1_1rl_1_1MountainCar_1_1State_1a2bdce16cfc8c84b65f13ee9fffab1266" prot="public" virt="non-virtual"><scope>mlpack::rl::MountainCar::State</scope><name>Velocity</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

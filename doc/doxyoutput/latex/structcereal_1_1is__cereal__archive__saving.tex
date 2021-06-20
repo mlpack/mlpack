@@ -1,0 +1,45 @@
+\doxysection{is\+\_\+cereal\+\_\+archive\+\_\+saving$<$ Archive $>$ Struct Template Reference}
+\label{structcereal_1_1is__cereal__archive__saving}\index{is\_cereal\_archive\_saving$<$ Archive $>$@{is\_cereal\_archive\_saving$<$ Archive $>$}}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+constexpr static bool \textbf{ value}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Archive$>$\newline
+struct cereal\+::is\+\_\+cereal\+\_\+archive\+\_\+saving$<$ Archive $>$}
+
+
+
+Definition at line 28 of file is\+\_\+saving.\+hpp.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{structcereal_1_1is__cereal__archive__saving_a49fbb098cf0b6a3101ae272f42349f37}} 
+\index{is\_cereal\_archive\_saving$<$ Archive $>$@{is\_cereal\_archive\_saving$<$ Archive $>$}!value@{value}}
+\index{value@{value}!is\_cereal\_archive\_saving$<$ Archive $>$@{is\_cereal\_archive\_saving$<$ Archive $>$}}
+\doxysubsubsection{value}
+{\footnotesize\ttfamily constexpr static bool value\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= std::is\_same<Archive,}
+\DoxyCodeLine{      cereal::BinaryOutputArchive>::value ||}
+\DoxyCodeLine{}
+\DoxyCodeLine{      std::is\_same<Archive, cereal::JSONOutputArchive>::value ||}
+\DoxyCodeLine{}
+\DoxyCodeLine{      std::is\_same<Archive, cereal::XMLOutputArchive>::value}
+
+\end{DoxyCode}
+
+
+Definition at line 32 of file is\+\_\+saving.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/cereal/\textbf{ is\+\_\+saving.\+hpp}\end{DoxyCompactItemize}

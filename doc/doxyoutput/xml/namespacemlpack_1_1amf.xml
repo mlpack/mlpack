@@ -1,0 +1,232 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1amf" kind="namespace" language="C++">
+    <compoundname>mlpack::amf</compoundname>
+    <innerclass refid="classmlpack_1_1amf_1_1AMF" prot="public">mlpack::amf::AMF</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1AverageInitialization" prot="public">mlpack::amf::AverageInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1CompleteIncrementalTermination" prot="public">mlpack::amf::CompleteIncrementalTermination</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1GivenInitialization" prot="public">mlpack::amf::GivenInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1IncompleteIncrementalTermination" prot="public">mlpack::amf::IncompleteIncrementalTermination</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1MaxIterationTermination" prot="public">mlpack::amf::MaxIterationTermination</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1MergeInitialization" prot="public">mlpack::amf::MergeInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1NMFALSUpdate" prot="public">mlpack::amf::NMFALSUpdate</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1NMFMultiplicativeDistanceUpdate" prot="public">mlpack::amf::NMFMultiplicativeDistanceUpdate</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1NMFMultiplicativeDivergenceUpdate" prot="public">mlpack::amf::NMFMultiplicativeDivergenceUpdate</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1RandomAcolInitialization" prot="public">mlpack::amf::RandomAcolInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1RandomInitialization" prot="public">mlpack::amf::RandomInitialization</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1SimpleResidueTermination" prot="public">mlpack::amf::SimpleResidueTermination</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1SimpleToleranceTermination" prot="public">mlpack::amf::SimpleToleranceTermination</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1SVDBatchLearning" prot="public">mlpack::amf::SVDBatchLearning</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning" prot="public">mlpack::amf::SVDCompleteIncrementalLearning</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning_3_01arma_1_1sp__mat_01_4" prot="public">mlpack::amf::SVDCompleteIncrementalLearning&lt; arma::sp_mat &gt;</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1SVDIncompleteIncrementalLearning" prot="public">mlpack::amf::SVDIncompleteIncrementalLearning</innerclass>
+    <innerclass refid="classmlpack_1_1amf_1_1ValidationRMSETermination" prot="public">mlpack::amf::ValidationRMSETermination</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacemlpack_1_1amf_1a3e3179901b352438bc974218b6ba0fab" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1amf_1_1AMF" kindref="compound">amf::AMF</ref>&lt; <ref refid="classmlpack_1_1amf_1_1SimpleResidueTermination" kindref="compound">amf::SimpleResidueTermination</ref>, <ref refid="classmlpack_1_1amf_1_1RandomAcolInitialization" kindref="compound">amf::RandomAcolInitialization</ref>&lt;&gt;, <ref refid="classmlpack_1_1amf_1_1NMFALSUpdate" kindref="compound">amf::NMFALSUpdate</ref> &gt;</type>
+        <definition>typedef amf::AMF&lt;amf::SimpleResidueTermination, amf::RandomAcolInitialization&lt;&gt;, amf::NMFALSUpdate&gt; NMFALSFactorizer</definition>
+        <argsstring></argsstring>
+        <name>NMFALSFactorizer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="143" column="2" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1amf_1aedb113157f87759c24e2368dfd7b9216" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+            <defval>arma::mat</defval>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmlpack_1_1amf_1_1AMF" kindref="compound">amf::AMF</ref>&lt; <ref refid="classmlpack_1_1amf_1_1SimpleResidueTermination" kindref="compound">amf::SimpleResidueTermination</ref>, <ref refid="classmlpack_1_1amf_1_1RandomAcolInitialization" kindref="compound">amf::RandomAcolInitialization</ref>&lt;&gt;, <ref refid="classmlpack_1_1amf_1_1SVDBatchLearning" kindref="compound">amf::SVDBatchLearning</ref> &gt;</type>
+        <definition>using SVDBatchFactorizer =  amf::AMF&lt; amf::SimpleResidueTermination, amf::RandomAcolInitialization&lt;&gt;, amf::SVDBatchLearning&gt;</definition>
+        <argsstring></argsstring>
+        <name>SVDBatchFactorizer</name>
+        <briefdescription>
+<para>Convenience typedefs. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>SVDBatchFactorizer factorizes given matrix V into two matrices W and H by gradient descent. SVD batch learning is described in paper &apos;A Guide to singular Value Decomposition&apos; by Chih-Chao Ma.</para>
+<para><simplesect kind="see"><para><ref refid="classmlpack_1_1amf_1_1SVDBatchLearning" kindref="compound">SVDBatchLearning</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="155" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1amf_1aeaa4b749fc1afc70451f096dca4228b5" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>class MatType</type>
+            <defval>arma::mat</defval>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmlpack_1_1amf_1_1AMF" kindref="compound">amf::AMF</ref>&lt; <ref refid="classmlpack_1_1amf_1_1SimpleResidueTermination" kindref="compound">amf::SimpleResidueTermination</ref>, <ref refid="classmlpack_1_1amf_1_1RandomAcolInitialization" kindref="compound">amf::RandomAcolInitialization</ref>&lt;&gt;, <ref refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning" kindref="compound">amf::SVDCompleteIncrementalLearning</ref>&lt; MatType &gt; &gt;</type>
+        <definition>using SVDCompleteIncrementalFactorizer =  amf::AMF&lt; amf::SimpleResidueTermination, amf::RandomAcolInitialization&lt;&gt;, amf::SVDCompleteIncrementalLearning&lt;MatType&gt; &gt;</definition>
+        <argsstring></argsstring>
+        <name>SVDCompleteIncrementalFactorizer</name>
+        <briefdescription>
+<para>SVDCompleteIncrementalFactorizer factorizes given matrix V into two matrices W and H by complete incremental gradient descent. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>SVD complete incremental learning is described in paper &apos;A Guide to singular Value Decomposition&apos; by Chih-Chao Ma.</para>
+<para><simplesect kind="see"><para><ref refid="classmlpack_1_1amf_1_1SVDCompleteIncrementalLearning" kindref="compound">SVDCompleteIncrementalLearning</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="182" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1amf_1a681ac877cb603d00766e015ff4d4c294" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>class MatType</type>
+            <defval>arma::mat</defval>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmlpack_1_1amf_1_1AMF" kindref="compound">amf::AMF</ref>&lt; <ref refid="classmlpack_1_1amf_1_1SimpleResidueTermination" kindref="compound">amf::SimpleResidueTermination</ref>, <ref refid="classmlpack_1_1amf_1_1RandomAcolInitialization" kindref="compound">amf::RandomAcolInitialization</ref>&lt;&gt;, <ref refid="classmlpack_1_1amf_1_1SVDIncompleteIncrementalLearning" kindref="compound">amf::SVDIncompleteIncrementalLearning</ref> &gt;</type>
+        <definition>using SVDIncompleteIncrementalFactorizer =  amf::AMF&lt; amf::SimpleResidueTermination, amf::RandomAcolInitialization&lt;&gt;, amf::SVDIncompleteIncrementalLearning&gt;</definition>
+        <argsstring></argsstring>
+        <name>SVDIncompleteIncrementalFactorizer</name>
+        <briefdescription>
+<para>SVDIncompleteIncrementalFactorizer factorizes given matrix V into two matrices W and H by incomplete incremental gradient descent. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>SVD incomplete incremental learning is described in paper &apos;A Guide to singular Value Decomposition&apos; by Chih-Chao Ma.</para>
+<para><simplesect kind="see"><para><ref refid="classmlpack_1_1amf_1_1SVDIncompleteIncrementalLearning" kindref="compound">SVDIncompleteIncrementalLearning</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="169" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" bodystart="172" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1amf_1aff87130b0b4854026fdb315627b93916" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::amf::SVDBatchLearning::HUpdate&lt; arma::sp_mat &gt;</definition>
+        <argsstring>(const arma::sp_mat &amp;V, const arma::mat &amp;W, arma::mat &amp;H)</argsstring>
+        <name>SVDBatchLearning::HUpdate&lt; arma::sp_mat &gt;</name>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="230" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="230" bodyend="255"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1amf_1afe7f98a0fec98543b68a87ed1f044af0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::amf::SVDBatchLearning::WUpdate&lt; arma::sp_mat &gt;</definition>
+        <argsstring>(const arma::sp_mat &amp;V, arma::mat &amp;W, const arma::mat &amp;H)</argsstring>
+        <name>SVDBatchLearning::WUpdate&lt; arma::sp_mat &gt;</name>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>TODO : Merge this template specialized function for sparse matrix using common row_col_iterator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>WUpdate function specialization for sparse matrix </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="202" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="202" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1amf_1a1e85a4f6a4f543e56b2f8b1587cd2dd6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::amf::SVDIncompleteIncrementalLearning::HUpdate&lt; arma::sp_mat &gt;</definition>
+        <argsstring>(const arma::sp_mat &amp;V, const arma::mat &amp;W, arma::mat &amp;H)</argsstring>
+        <name>SVDIncompleteIncrementalLearning::HUpdate&lt; arma::sp_mat &gt;</name>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_incomplete_incremental_learning.hpp" line="185" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_incomplete_incremental_learning.hpp" bodystart="185" bodyend="206"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1amf_1acbc9573bcb3df2b5dd1d20cd7a1e4c85" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::amf::SVDIncompleteIncrementalLearning::WUpdate&lt; arma::sp_mat &gt;</definition>
+        <argsstring>(const arma::sp_mat &amp;V, arma::mat &amp;W, const arma::mat &amp;H)</argsstring>
+        <name>SVDIncompleteIncrementalLearning::WUpdate&lt; arma::sp_mat &gt;</name>
+        <param>
+          <type>const arma::sp_mat &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>TODO : Merge this template specialized function for sparse matrix using common row_col_iterator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>template specialiazed functions for sparse matrices </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_incomplete_incremental_learning.hpp" line="166" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_incomplete_incremental_learning.hpp" bodystart="166" bodyend="182"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Alternating Matrix Factorization. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/amf.hpp" line="36" column="1"/>
+  </compounddef>
+</doxygen>

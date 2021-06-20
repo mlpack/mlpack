@@ -1,0 +1,128 @@
+\doxysection{Random\+Dimension\+Select Class Reference}
+\label{classmlpack_1_1tree_1_1RandomDimensionSelect}\index{RandomDimensionSelect@{RandomDimensionSelect}}
+
+
+This dimension selection policy only selects one single random dimension.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Random\+Dimension\+Select} ()
+\begin{DoxyCompactList}\small\item\em Construct the \doxyref{Random\+Dimension\+Select}{p.}{classmlpack_1_1tree_1_1RandomDimensionSelect} object with the given number of dimensions. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Begin} () const
+\begin{DoxyCompactList}\small\item\em Get the first dimension to select from. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Dimensions} ()
+\begin{DoxyCompactList}\small\item\em Set the number of dimensions. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Dimensions} () const
+\begin{DoxyCompactList}\small\item\em Get the number of dimensions. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ End} () const
+\begin{DoxyCompactList}\small\item\em Get the last dimension to select from. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Next} () const
+\begin{DoxyCompactList}\small\item\em Get the next (last) dimensions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This dimension selection policy only selects one single random dimension. 
+
+Definition at line 21 of file random\+\_\+dimension\+\_\+select.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1RandomDimensionSelect_a98e9de334962fe439b30607b4730a4b5}} 
+\index{RandomDimensionSelect@{RandomDimensionSelect}!RandomDimensionSelect@{RandomDimensionSelect}}
+\index{RandomDimensionSelect@{RandomDimensionSelect}!RandomDimensionSelect@{RandomDimensionSelect}}
+\doxysubsubsection{RandomDimensionSelect()}
+{\footnotesize\ttfamily \textbf{ Random\+Dimension\+Select} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct the \doxyref{Random\+Dimension\+Select}{p.}{classmlpack_1_1tree_1_1RandomDimensionSelect} object with the given number of dimensions. 
+
+
+
+Definition at line 28 of file random\+\_\+dimension\+\_\+select.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1tree_1_1RandomDimensionSelect_ac50a3a009687e641fd8249e011f628d4}} 
+\index{RandomDimensionSelect@{RandomDimensionSelect}!Begin@{Begin}}
+\index{Begin@{Begin}!RandomDimensionSelect@{RandomDimensionSelect}}
+\doxysubsubsection{Begin()}
+{\footnotesize\ttfamily size\+\_\+t Begin (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the first dimension to select from. 
+
+
+
+Definition at line 33 of file random\+\_\+dimension\+\_\+select.\+hpp.
+
+
+
+References mlpack\+::math\+::\+Rand\+Int().
+
+\mbox{\label{classmlpack_1_1tree_1_1RandomDimensionSelect_a04965eda723772715cd9668f4f18fd7b}} 
+\index{RandomDimensionSelect@{RandomDimensionSelect}!Dimensions@{Dimensions}}
+\index{Dimensions@{Dimensions}!RandomDimensionSelect@{RandomDimensionSelect}}
+\doxysubsubsection{Dimensions()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Dimensions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the number of dimensions. 
+
+
+
+Definition at line 49 of file random\+\_\+dimension\+\_\+select.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RandomDimensionSelect_ae1720906306f12d748df9bd6c4d75a7b}} 
+\index{RandomDimensionSelect@{RandomDimensionSelect}!Dimensions@{Dimensions}}
+\index{Dimensions@{Dimensions}!RandomDimensionSelect@{RandomDimensionSelect}}
+\doxysubsubsection{Dimensions()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Dimensions (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of dimensions. 
+
+
+
+Definition at line 47 of file random\+\_\+dimension\+\_\+select.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RandomDimensionSelect_a8d5a763647411c8a0f06e031c4611a0f}} 
+\index{RandomDimensionSelect@{RandomDimensionSelect}!End@{End}}
+\index{End@{End}!RandomDimensionSelect@{RandomDimensionSelect}}
+\doxysubsubsection{End()}
+{\footnotesize\ttfamily size\+\_\+t End (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the last dimension to select from. 
+
+
+
+Definition at line 38 of file random\+\_\+dimension\+\_\+select.\+hpp.
+
+\mbox{\label{classmlpack_1_1tree_1_1RandomDimensionSelect_a9dbdb1618653a9c0b7d19ca6363d67da}} 
+\index{RandomDimensionSelect@{RandomDimensionSelect}!Next@{Next}}
+\index{Next@{Next}!RandomDimensionSelect@{RandomDimensionSelect}}
+\doxysubsubsection{Next()}
+{\footnotesize\ttfamily size\+\_\+t Next (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the next (last) dimensions. 
+
+We only allow one dimension, so any \textquotesingle{}next\textquotesingle{} dimension is past our bounds. 
+
+Definition at line 44 of file random\+\_\+dimension\+\_\+select.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/decision\+\_\+tree/\textbf{ random\+\_\+dimension\+\_\+select.\+hpp}\end{DoxyCompactItemize}

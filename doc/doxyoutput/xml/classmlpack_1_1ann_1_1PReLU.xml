@@ -1,0 +1,526 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1PReLU" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::PReLU</compoundname>
+    <includes refid="parametric__relu_8hpp" local="no">parametric_relu.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+      <param>
+        <type>typename OutputDataType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PReLU_1ae0466c1fab4a443ed9086a65a7c0c1f3" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType alpha</definition>
+        <argsstring></argsstring>
+        <name>alpha</name>
+        <briefdescription>
+<para>Leakyness Parameter object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="139" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PReLU_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType delta</definition>
+        <argsstring></argsstring>
+        <name>delta</name>
+        <briefdescription>
+<para>Locally-stored delta object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="133" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PReLU_1ad080a9d4310c85b25056686dccd617df" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType gradient</definition>
+        <argsstring></argsstring>
+        <name>gradient</name>
+        <briefdescription>
+<para>Locally-stored gradient object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="142" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PReLU_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" static="no" mutable="no">
+        <type>OutputDataType</type>
+        <definition>OutputDataType outputParameter</definition>
+        <argsstring></argsstring>
+        <name>outputParameter</name>
+        <briefdescription>
+<para>Locally-stored output parameter object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="136" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1PReLU_1a661633f13e0205ac3b5a982207caf3b0" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double userAlpha</definition>
+        <argsstring></argsstring>
+        <name>userAlpha</name>
+        <briefdescription>
+<para>Leakyness Parameter given by user in the range 0 &lt; alpha &lt; 1. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="145" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a8ede8521c8f993924dcf0e0794262394" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>PReLU</definition>
+        <argsstring>(const double userAlpha=0.03)</argsstring>
+        <name>PReLU</name>
+        <param>
+          <type>const double</type>
+          <declname>userAlpha</declname>
+          <defval>0.03</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1ann_1_1PReLU" kindref="compound">PReLU</ref> object using the specified parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The non zero gradient can be adjusted by specifying tha parameter alpha in the range 0 to 1. Default (alpha = 0.03). This parameter is trainable.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>userAlpha</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Non zero gradient </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="56" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1acbb0e4747a3a307bee88bad71e5eeaf1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Alpha</definition>
+        <argsstring>()</argsstring>
+        <name>Alpha</name>
+        <briefdescription>
+<para>Modify the non zero gradient. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="120" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="120" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a21679485637bdec3078ec74d71572980" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double const  &amp;</type>
+        <definition>double const&amp; Alpha</definition>
+        <argsstring>() const</argsstring>
+        <name>Alpha</name>
+        <briefdescription>
+<para>Get the non zero gradient. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="118" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="118" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1aef8c56f1f8624bd006afec8b3bcda9d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename DataType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Backward</definition>
+        <argsstring>(const DataType &amp;input, const DataType &amp;gy, DataType &amp;g)</argsstring>
+        <name>Backward</name>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const DataType &amp;</type>
+          <declname>gy</declname>
+        </param>
+        <param>
+          <type>DataType &amp;</type>
+          <declname>g</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Using the results from the feed forward pass.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The propagated input activation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gy</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The backpropagated error. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>g</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="83" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1ad6601342d560219ce951d554e69e5e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Delta</definition>
+        <argsstring>()</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Modify the delta. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="110" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="110" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Delta</definition>
+        <argsstring>() const</argsstring>
+        <name>Delta</name>
+        <briefdescription>
+<para>Get the delta. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="108" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="108" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a09440df0a90bdcc766e56e097d91205b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename InputType</type>
+          </param>
+          <param>
+            <type>typename OutputType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Forward</definition>
+        <argsstring>(const InputType &amp;input, OutputType &amp;output)</argsstring>
+        <name>Forward</name>
+        <param>
+          <type>const InputType &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>OutputType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <briefdescription>
+<para>Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data used for evaluating the specified function. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Resulting output activation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="71" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a19abce4739c3b0b658b612537e21956a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Gradient</definition>
+        <argsstring>()</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Modify the gradient. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="115" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="115" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Gradient</definition>
+        <argsstring>() const</argsstring>
+        <name>Gradient</name>
+        <briefdescription>
+<para>Get the gradient. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="113" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="113" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1aaf577db350e2130754490d8486fba215" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Gradient</definition>
+        <argsstring>(const arma::Mat&lt; eT &gt; &amp;input, const arma::Mat&lt; eT &gt; &amp;error, arma::Mat&lt; eT &gt; &amp;gradient)</argsstring>
+        <name>Gradient</name>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>input</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>error</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>gradient</declname>
+        </param>
+        <briefdescription>
+<para>Calculate the gradient using the output delta and the input activation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>input</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input parameter used for calculating the gradient. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated error. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>gradient</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The calculated gradient. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="93" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a21d5f745f02c709625a4ee0907f004a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; OutputParameter</definition>
+        <argsstring>()</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Modify the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="105" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="105" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; OutputParameter</definition>
+        <argsstring>() const</argsstring>
+        <name>OutputParameter</name>
+        <briefdescription>
+<para>Get the output parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="103" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="103" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a9c5c5900772a689d5a6b59778ec67120" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType &amp;</type>
+        <definition>OutputDataType&amp; Parameters</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Modify the parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="100" column="18" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="100" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1aa530552c7ef915c952fbacc77b965c90" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>OutputDataType const  &amp;</type>
+        <definition>OutputDataType const&amp; Parameters</definition>
+        <argsstring>() const</argsstring>
+        <name>Parameters</name>
+        <briefdescription>
+<para>Get the parameters. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="98" column="24" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="98" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Reset</definition>
+        <argsstring>()</argsstring>
+        <name>Reset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="61" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the layer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="129" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1PReLU_1a7a2704698a50d9e00dfb083f3a863579" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t WeightSize</definition>
+        <argsstring>() const</argsstring>
+        <name>WeightSize</name>
+        <briefdescription>
+<para>Get size of weights. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="123" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="123" bodyend="123"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1ann_1_1PReLU" kindref="compound">PReLU</ref> activation function, defined by (where alpha is trainable) </para>
+    </briefdescription>
+    <detaileddescription>
+<para><formula id="120">\begin{eqnarray*} f(x) &amp;=&amp; \max(x, alpha*x) \\ f&apos;(x) &amp;=&amp; \left\{ \begin{array}{lr} 1 &amp; : x &gt; 0 \\ alpha &amp; : x \le 0 \end{array} \right. \end{eqnarray*}</formula></para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>InputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>OutputDataType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" line="45" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/parametric_relu.hpp" bodystart="46" bodyend="146"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1ae0466c1fab4a443ed9086a65a7c0c1f3" prot="private" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>alpha</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a21679485637bdec3078ec74d71572980" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Alpha</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1acbb0e4747a3a307bee88bad71e5eeaf1" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Alpha</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1aef8c56f1f8624bd006afec8b3bcda9d6" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Backward</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a94a1c23fb1e8ea69218123e216f406a8" prot="private" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a797f7edb44dd081e5e2b3cc316eef6bd" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1ad6601342d560219ce951d554e69e5e87" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Delta</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a09440df0a90bdcc766e56e097d91205b" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Forward</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1ad080a9d4310c85b25056686dccd617df" prot="private" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1aaf577db350e2130754490d8486fba215" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a0f1f4e6d93472d83852731a96c8c3f59" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a19abce4739c3b0b658b612537e21956a" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Gradient</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a77fc4c7d9e92ac78bf2c4239477f54bc" prot="private" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>outputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a0ee21c2a36e5abad1e7a9d5dd00849f9" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a21d5f745f02c709625a4ee0907f004a5" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>OutputParameter</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1aa530552c7ef915c952fbacc77b965c90" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a9c5c5900772a689d5a6b59778ec67120" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Parameters</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a8ede8521c8f993924dcf0e0794262394" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>PReLU</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a372de693ad40b3f42839c8ec6ac845f4" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>Reset</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a661633f13e0205ac3b5a982207caf3b0" prot="private" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>userAlpha</name></member>
+      <member refid="classmlpack_1_1ann_1_1PReLU_1a7a2704698a50d9e00dfb083f3a863579" prot="public" virt="non-virtual"><scope>mlpack::ann::PReLU</scope><name>WeightSize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

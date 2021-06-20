@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1Poisson1Function" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::Poisson1Function</compoundname>
+    <includes refid="poisson1__function_8hpp" local="no">poisson1_function.hpp</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Poisson1Function_1a163d34fd09f8edf457164f5033c635cf" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Deriv</definition>
+        <argsstring>(const double y)</argsstring>
+        <name>Deriv</name>
+        <param>
+          <type>const double</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+<para>Computes the first derivative of the Poisson one function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>y</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>f&apos;(x) </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/poisson1_function.hpp" line="60" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/poisson1_function.hpp" bodystart="60" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Poisson1Function_1a0ad035ec996acd7025807d0e9e082887" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename InputVecType</type>
+          </param>
+          <param>
+            <type>typename OutputVecType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Deriv</definition>
+        <argsstring>(const InputVecType &amp;x, OutputVecType &amp;y)</argsstring>
+        <name>Deriv</name>
+        <param>
+          <type>const InputVecType &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>OutputVecType &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+<para>Computes the first derivatives of the Poisson one function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>y</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The resulting derivatives. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/poisson1_function.hpp" line="72" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/poisson1_function.hpp" bodystart="72" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Poisson1Function_1a11bd9a1195e6b107f9fee73643bc328b" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>static double Fn</definition>
+        <argsstring>(const double x)</argsstring>
+        <name>Fn</name>
+        <param>
+          <type>const double</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Computes the Poisson one function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>f(x). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/poisson1_function.hpp" line="37" column="17" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/poisson1_function.hpp" bodystart="37" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1Poisson1Function_1af6cf5da90eb6312e3e25c9b8bd9c3527" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename InputVecType</type>
+          </param>
+          <param>
+            <type>typename OutputVecType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Fn</definition>
+        <argsstring>(const InputVecType &amp;x, OutputVecType &amp;y)</argsstring>
+        <name>Fn</name>
+        <param>
+          <type>const InputVecType &amp;</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>OutputVecType &amp;</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+<para>Computes the Poisson one function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>y</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The resulting output activation. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/poisson1_function.hpp" line="49" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/poisson1_function.hpp" bodystart="49" bodyend="52"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The Poisson one function, defined by. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><formula id="94">\begin{eqnarray*} f(x) = (x - 1) * e^-x \\ f&apos;(x) = e^-x + (1 - x) * e^-x \\ \end{eqnarray*}</formula> </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/poisson1_function.hpp" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/activation_functions/poisson1_function.hpp" bodystart="29" bodyend="76"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1Poisson1Function_1a163d34fd09f8edf457164f5033c635cf" prot="public" virt="non-virtual"><scope>mlpack::ann::Poisson1Function</scope><name>Deriv</name></member>
+      <member refid="classmlpack_1_1ann_1_1Poisson1Function_1a0ad035ec996acd7025807d0e9e082887" prot="public" virt="non-virtual"><scope>mlpack::ann::Poisson1Function</scope><name>Deriv</name></member>
+      <member refid="classmlpack_1_1ann_1_1Poisson1Function_1a11bd9a1195e6b107f9fee73643bc328b" prot="public" virt="non-virtual"><scope>mlpack::ann::Poisson1Function</scope><name>Fn</name></member>
+      <member refid="classmlpack_1_1ann_1_1Poisson1Function_1af6cf5da90eb6312e3e25c9b8bd9c3527" prot="public" virt="non-virtual"><scope>mlpack::ann::Poisson1Function</scope><name>Fn</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,269 @@
+\doxysection{Param\+Data Struct Reference}
+\label{structmlpack_1_1util_1_1ParamData}\index{ParamData@{ParamData}}
+
+
+This structure holds all of the information about a single parameter, including its value (which is set when \doxyref{Parse\+Command\+Line()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9f4d336f3d999569328497d0b8f37b35} is called).  
+
+
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+char \textbf{ alias}
+\begin{DoxyCompactList}\small\item\em Alias for this parameter. \end{DoxyCompactList}\item 
+std\+::string \textbf{ cpp\+Type}
+\begin{DoxyCompactList}\small\item\em The true name of the type, as it would be written in C++. \end{DoxyCompactList}\item 
+std\+::string \textbf{ desc}
+\begin{DoxyCompactList}\small\item\em Description of this parameter, if any. \end{DoxyCompactList}\item 
+bool \textbf{ input}
+\begin{DoxyCompactList}\small\item\em True if this option is an input option (otherwise, it is output). \end{DoxyCompactList}\item 
+bool \textbf{ loaded}
+\begin{DoxyCompactList}\small\item\em If this is an input parameter that needs extra loading, this indicates whether or not it has been loaded. \end{DoxyCompactList}\item 
+std\+::string \textbf{ name}
+\begin{DoxyCompactList}\small\item\em Name of this parameter. \end{DoxyCompactList}\item 
+bool \textbf{ no\+Transpose}
+\begin{DoxyCompactList}\small\item\em True if this is a matrix that should not be transposed. \end{DoxyCompactList}\item 
+bool \textbf{ persistent}
+\begin{DoxyCompactList}\small\item\em If this should be preserved across different settings (i.\+e. \end{DoxyCompactList}\item 
+bool \textbf{ required}
+\begin{DoxyCompactList}\small\item\em True if this option is required. \end{DoxyCompactList}\item 
+std\+::string \textbf{ tname}
+\begin{DoxyCompactList}\small\item\em Type information of this parameter. \end{DoxyCompactList}\item 
+boost\+::any \textbf{ value}
+\begin{DoxyCompactList}\small\item\em The actual value that is held. \end{DoxyCompactList}\item 
+bool \textbf{ was\+Passed}
+\begin{DoxyCompactList}\small\item\em True if the option was passed to the program. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This structure holds all of the information about a single parameter, including its value (which is set when \doxyref{Parse\+Command\+Line()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9f4d336f3d999569328497d0b8f37b35} is called). 
+
+It does not hold any information about whether or not it was passed---that is handled elsewhere. A \doxyref{Param\+Data}{p.}{structmlpack_1_1util_1_1ParamData} struct is only useful in order to get \char`\"{}static\char`\"{} information about a parameter. Note that some parameter types have internal types but also different types that are used by CLI11 (specifically, matrix and model types map to strings).
+
+This structure is somewhat unwieldy and is likely to be refactored at some point in the future, but for now it does the job fine. 
+
+Definition at line 52 of file param\+\_\+data.\+hpp.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{structmlpack_1_1util_1_1ParamData_a367d2c852ad5beb11758c57d8ece7316}} 
+\index{ParamData@{ParamData}!alias@{alias}}
+\index{alias@{alias}!ParamData@{ParamData}}
+\doxysubsubsection{alias}
+{\footnotesize\ttfamily char alias}
+
+
+
+Alias for this parameter. 
+
+
+
+Definition at line 63 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), Test\+Option$<$ N $>$\+::\+Test\+Option(), and mlpack\+::bindings\+::cli\+::\+Add\+To\+CLI11().
+
+\mbox{\label{structmlpack_1_1util_1_1ParamData_ac31602a050d4b0bea81380c312d320b6}} 
+\index{ParamData@{ParamData}!cppType@{cppType}}
+\index{cppType@{cppType}!ParamData@{ParamData}}
+\doxysubsubsection{cppType}
+{\footnotesize\ttfamily std\+::string cpp\+Type}
+
+
+
+The true name of the type, as it would be written in C++. 
+
+
+
+Definition at line 84 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), Test\+Option$<$ N $>$\+::\+Test\+Option(), mlpack\+::bindings\+::python\+::\+Get\+Cython\+Type(), mlpack\+::bindings\+::go\+::\+Get\+Go\+Type(), mlpack\+::bindings\+::julia\+::\+Get\+Julia\+Type(), mlpack\+::bindings\+::go\+::\+Get\+Printable\+Param(), mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Param(), mlpack\+::bindings\+::markdown\+::\+Get\+Printable\+Param(), mlpack\+::bindings\+::python\+::\+Get\+Printable\+Param(), mlpack\+::bindings\+::r\+::\+Get\+Printable\+Param(), mlpack\+::bindings\+::r\+::\+Get\+RType(), mlpack\+::bindings\+::go\+::\+Get\+Type(), mlpack\+::bindings\+::r\+::\+Get\+Type(), mlpack\+::bindings\+::python\+::\+Import\+Decl(), mlpack\+::bindings\+::python\+::\+Print\+Class\+Defn(), mlpack\+::bindings\+::go\+::\+Print\+Defn\+Input(), mlpack\+::bindings\+::go\+::\+Print\+Defn\+Output(), mlpack\+::bindings\+::julia\+::\+Print\+Doc(), mlpack\+::bindings\+::r\+::\+Print\+Doc(), mlpack\+::bindings\+::python\+::\+Print\+Doc(), mlpack\+::bindings\+::go\+::\+Print\+Doc(), mlpack\+::bindings\+::go\+::\+Print\+Input\+Processing(), mlpack\+::bindings\+::python\+::\+Print\+Input\+Processing(), mlpack\+::bindings\+::r\+::\+Print\+Input\+Processing(), mlpack\+::bindings\+::go\+::\+Print\+Method\+Init(), mlpack\+::bindings\+::julia\+::\+Print\+Model\+Type\+Import(), mlpack\+::bindings\+::python\+::\+Print\+Output\+Processing(), mlpack\+::bindings\+::go\+::\+Print\+Output\+Processing(), mlpack\+::bindings\+::julia\+::\+Print\+Param\+Defn(), and mlpack\+::bindings\+::r\+::\+Print\+Serialize\+Util().
+
+\mbox{\label{structmlpack_1_1util_1_1ParamData_a378e4473b8cd1fccf534804887f2bc85}} 
+\index{ParamData@{ParamData}!desc@{desc}}
+\index{desc@{desc}!ParamData@{ParamData}}
+\doxysubsubsection{desc}
+{\footnotesize\ttfamily std\+::string desc}
+
+
+
+Description of this parameter, if any. 
+
+
+
+Definition at line 58 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), Test\+Option$<$ N $>$\+::\+Test\+Option(), mlpack\+::bindings\+::cli\+::\+Add\+To\+CLI11(), mlpack\+::bindings\+::julia\+::\+Print\+Doc(), mlpack\+::bindings\+::r\+::\+Print\+Doc(), mlpack\+::bindings\+::python\+::\+Print\+Doc(), and mlpack\+::bindings\+::go\+::\+Print\+Doc().
+
+\mbox{\label{structmlpack_1_1util_1_1ParamData_a8ababadb8dc64acf8792317844e562ba}} 
+\index{ParamData@{ParamData}!input@{input}}
+\index{input@{input}!ParamData@{ParamData}}
+\doxysubsubsection{input}
+{\footnotesize\ttfamily bool input}
+
+
+
+True if this option is an input option (otherwise, it is output). 
+
+
+
+Definition at line 73 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), Test\+Option$<$ N $>$\+::\+Test\+Option(), mlpack\+::bindings\+::cli\+::\+End\+Program(), mlpack\+::bindings\+::cli\+::\+Get\+Param(), and mlpack\+::bindings\+::python\+::\+Print\+Output\+Processing().
+
+\mbox{\label{structmlpack_1_1util_1_1ParamData_a992c70a16169035bc9e2e8f9953d91ed}} 
+\index{ParamData@{ParamData}!loaded@{loaded}}
+\index{loaded@{loaded}!ParamData@{ParamData}}
+\doxysubsubsection{loaded}
+{\footnotesize\ttfamily bool loaded}
+
+
+
+If this is an input parameter that needs extra loading, this indicates whether or not it has been loaded. 
+
+
+
+Definition at line 76 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), Test\+Option$<$ N $>$\+::\+Test\+Option(), and mlpack\+::bindings\+::cli\+::\+Get\+Param().
+
+\mbox{\label{structmlpack_1_1util_1_1ParamData_a9b45b3e13bd9167aab02e17e08916231}} 
+\index{ParamData@{ParamData}!name@{name}}
+\index{name@{name}!ParamData@{ParamData}}
+\doxysubsubsection{name}
+{\footnotesize\ttfamily std\+::string name}
+
+
+
+Name of this parameter. 
+
+This is the name used for Has\+Param() and \doxyref{Get\+Param()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9eee50cbae50b3464c59b88ab7b88e44}. 
+
+Definition at line 56 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), Test\+Option$<$ N $>$\+::\+Test\+Option(), mlpack\+::bindings\+::cli\+::\+Add\+To\+CLI11(), mlpack\+::bindings\+::cli\+::\+Map\+Parameter\+Name(), mlpack\+::bindings\+::python\+::\+Print\+Defn(), mlpack\+::bindings\+::go\+::\+Print\+Defn\+Input(), mlpack\+::bindings\+::julia\+::\+Print\+Doc(), mlpack\+::bindings\+::r\+::\+Print\+Doc(), mlpack\+::bindings\+::python\+::\+Print\+Doc(), mlpack\+::bindings\+::go\+::\+Print\+Doc(), mlpack\+::bindings\+::julia\+::\+Print\+Input\+Param(), mlpack\+::bindings\+::r\+::\+Print\+Input\+Param(), mlpack\+::bindings\+::go\+::\+Print\+Input\+Processing(), mlpack\+::bindings\+::python\+::\+Print\+Input\+Processing(), mlpack\+::bindings\+::r\+::\+Print\+Input\+Processing(), mlpack\+::bindings\+::go\+::\+Print\+Method\+Config(), mlpack\+::bindings\+::go\+::\+Print\+Method\+Init(), mlpack\+::bindings\+::python\+::\+Print\+Output\+Processing(), mlpack\+::bindings\+::go\+::\+Print\+Output\+Processing(), mlpack\+::bindings\+::r\+::\+Print\+Output\+Processing(), and mlpack\+::bindings\+::r\+::\+Print\+Serialize\+Util().
+
+\mbox{\label{structmlpack_1_1util_1_1ParamData_a203e71e5671737f2e7d33147dd19f391}} 
+\index{ParamData@{ParamData}!noTranspose@{noTranspose}}
+\index{noTranspose@{noTranspose}!ParamData@{ParamData}}
+\doxysubsubsection{noTranspose}
+{\footnotesize\ttfamily bool no\+Transpose}
+
+
+
+True if this is a matrix that should not be transposed. 
+
+Ignored if the parameter is not a matrix. 
+
+Definition at line 69 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), Test\+Option$<$ N $>$\+::\+Test\+Option(), and mlpack\+::bindings\+::cli\+::\+Get\+Param().
+
+\mbox{\label{structmlpack_1_1util_1_1ParamData_aea39f2c5cb5ec83de4d1f81b1a74f0cc}} 
+\index{ParamData@{ParamData}!persistent@{persistent}}
+\index{persistent@{persistent}!ParamData@{ParamData}}
+\doxysubsubsection{persistent}
+{\footnotesize\ttfamily bool persistent}
+
+
+
+If this should be preserved across different settings (i.\+e. 
+
+if it should exist for every binding), this should be set to true. 
+
+Definition at line 79 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), and Test\+Option$<$ N $>$\+::\+Test\+Option().
+
+\mbox{\label{structmlpack_1_1util_1_1ParamData_a89ebe0265f74c9919a622df7dccbfe5c}} 
+\index{ParamData@{ParamData}!required@{required}}
+\index{required@{required}!ParamData@{ParamData}}
+\doxysubsubsection{required}
+{\footnotesize\ttfamily bool required}
+
+
+
+True if this option is required. 
+
+
+
+Definition at line 71 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), Test\+Option$<$ N $>$\+::\+Test\+Option(), mlpack\+::bindings\+::cli\+::\+Parse\+Command\+Line(), mlpack\+::bindings\+::python\+::\+Print\+Defn(), mlpack\+::bindings\+::go\+::\+Print\+Defn\+Input(), mlpack\+::bindings\+::julia\+::\+Print\+Doc(), mlpack\+::bindings\+::r\+::\+Print\+Doc(), mlpack\+::bindings\+::python\+::\+Print\+Doc(), mlpack\+::bindings\+::go\+::\+Print\+Doc(), mlpack\+::bindings\+::julia\+::\+Print\+Input\+Param(), mlpack\+::bindings\+::r\+::\+Print\+Input\+Param(), mlpack\+::bindings\+::go\+::\+Print\+Input\+Processing(), mlpack\+::bindings\+::python\+::\+Print\+Input\+Processing(), mlpack\+::bindings\+::r\+::\+Print\+Input\+Processing(), mlpack\+::bindings\+::go\+::\+Print\+Method\+Config(), mlpack\+::bindings\+::go\+::\+Print\+Method\+Init(), and mlpack\+::bindings\+::python\+::\+Print\+Output\+Processing().
+
+\mbox{\label{structmlpack_1_1util_1_1ParamData_a87a03c93b016f6878e3a0609835b426e}} 
+\index{ParamData@{ParamData}!tname@{tname}}
+\index{tname@{tname}!ParamData@{ParamData}}
+\doxysubsubsection{tname}
+{\footnotesize\ttfamily std\+::string tname}
+
+
+
+Type information of this parameter. 
+
+Note that this is \doxyref{TYPENAME()}{p.}{param__data_8hpp_ac909d914008cce49fa42ddd10b9b36c5} of the user-\/visible parameter type, not whatever is given by Parameter\+Type$<$$>$. 
+
+Definition at line 61 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), Test\+Option$<$ N $>$\+::\+Test\+Option(), mlpack\+::bindings\+::cli\+::\+End\+Program(), and mlpack\+::bindings\+::cli\+::\+Parse\+Command\+Line().
+
+\mbox{\label{structmlpack_1_1util_1_1ParamData_a5f3b0aadfd9d42a5574b7f3a0565cb52}} 
+\index{ParamData@{ParamData}!value@{value}}
+\index{value@{value}!ParamData@{ParamData}}
+\doxysubsubsection{value}
+{\footnotesize\ttfamily boost\+::any value}
+
+
+
+The actual value that is held. 
+
+If the user has passed a different type, this may be a tuple containing multiple values. 
+
+Definition at line 82 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), Test\+Option$<$ N $>$\+::\+Test\+Option(), mlpack\+::bindings\+::cli\+::\+Add\+To\+CLI11(), mlpack\+::bindings\+::cli\+::\+Delete\+Allocated\+Memory\+Impl(), mlpack\+::bindings\+::tests\+::\+Delete\+Allocated\+Memory\+Impl(), mlpack\+::bindings\+::cli\+::\+Get\+Allocated\+Memory(), mlpack\+::bindings\+::tests\+::\+Get\+Allocated\+Memory(), mlpack\+::bindings\+::tests\+::\+Get\+Param(), mlpack\+::bindings\+::cli\+::\+Get\+Param(), mlpack\+::bindings\+::go\+::\+Get\+Param(), mlpack\+::bindings\+::julia\+::\+Get\+Param(), mlpack\+::bindings\+::markdown\+::\+Get\+Param(), mlpack\+::bindings\+::python\+::\+Get\+Param(), mlpack\+::bindings\+::r\+::\+Get\+Param(), mlpack\+::bindings\+::go\+::\+Get\+Printable\+Param(), mlpack\+::bindings\+::julia\+::\+Get\+Printable\+Param(), mlpack\+::bindings\+::markdown\+::\+Get\+Printable\+Param(), mlpack\+::bindings\+::python\+::\+Get\+Printable\+Param(), mlpack\+::bindings\+::r\+::\+Get\+Printable\+Param(), mlpack\+::bindings\+::cli\+::\+Get\+Raw\+Param(), mlpack\+::bindings\+::cli\+::\+In\+Place\+Copy\+Internal(), mlpack\+::bindings\+::julia\+::\+Print\+Doc(), mlpack\+::bindings\+::r\+::\+Print\+Doc(), mlpack\+::bindings\+::go\+::\+Print\+Doc(), mlpack\+::bindings\+::go\+::\+Print\+Input\+Processing(), mlpack\+::bindings\+::go\+::\+Print\+Method\+Init(), and mlpack\+::bindings\+::cli\+::\+Set\+Param().
+
+\mbox{\label{structmlpack_1_1util_1_1ParamData_a5afa034ef66e23047379bcba2eb70b8d}} 
+\index{ParamData@{ParamData}!wasPassed@{wasPassed}}
+\index{wasPassed@{wasPassed}!ParamData@{ParamData}}
+\doxysubsubsection{wasPassed}
+{\footnotesize\ttfamily bool was\+Passed}
+
+
+
+True if the option was passed to the program. 
+
+Note that was\+Passed may be set by either \doxyref{Parse\+Command\+Line()}{p.}{namespacemlpack_1_1bindings_1_1cli_a9f4d336f3d999569328497d0b8f37b35} or Set\+Passed(). 
+
+Definition at line 66 of file param\+\_\+data.\+hpp.
+
+
+
+Referenced by CLIOption$<$ N $>$\+::\+CLIOption(), Go\+Option$<$ T $>$\+::\+Go\+Option(), Julia\+Option$<$ T $>$\+::\+Julia\+Option(), MDOption$<$ T $>$\+::\+MDOption(), Py\+Option$<$ T $>$\+::\+Py\+Option(), ROption$<$ T $>$\+::\+ROption(), Test\+Option$<$ N $>$\+::\+Test\+Option(), mlpack\+::bindings\+::cli\+::\+Add\+To\+CLI11(), and mlpack\+::bindings\+::cli\+::\+Set\+Param().
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/util/\textbf{ param\+\_\+data.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,159 @@
+\doxysection{NMFALSUpdate Class Reference}
+\label{classmlpack_1_1amf_1_1NMFALSUpdate}\index{NMFALSUpdate@{NMFALSUpdate}}
+
+
+This class implements a method titled \textquotesingle{}Alternating Least Squares\textquotesingle{} described in the following paper\+:  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ NMFALSUpdate} ()
+\begin{DoxyCompactList}\small\item\em Empty constructor required for the Update\+Rule template. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Initialize} (const Mat\+Type \&, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Set initial values for the factorization. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the object (in this case, there is nothing to serialize). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void \textbf{ HUpdate} (const Mat\+Type \&V, const arma\+::mat \&W, arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the encoding matrix H. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\static void \textbf{ WUpdate} (const Mat\+Type \&V, arma\+::mat \&W, const arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em The update rule for the basis matrix W. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class implements a method titled \textquotesingle{}Alternating Least Squares\textquotesingle{} described in the following paper\+: 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@article\{paatero1994positive,}
+\DoxyCodeLine{ title=\{Positive matrix factorization: A non-\/negative factor model with}
+\DoxyCodeLine{     optimal utilization of error estimates of data values\},}
+\DoxyCodeLine{ author=\{Paatero, P. and Tapper, U.\},}
+\DoxyCodeLine{ journal=\{Environmetrics\},}
+\DoxyCodeLine{ volume=\{5\},}
+\DoxyCodeLine{ number=\{2\},}
+\DoxyCodeLine{ pages=\{111-\/-\/126\},}
+\DoxyCodeLine{ year=\{1994\}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+It uses the least squares projection formula to reduce the error value of $ \sqrt{\sum_i \sum_j(V-WH)^2} $ by alternately calculating W and H respectively while holding the other matrix constant. 
+
+Definition at line 41 of file nmf\+\_\+als.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1amf_1_1NMFALSUpdate_a3482d9d8fc18996cee80de1f698b3a09}} 
+\index{NMFALSUpdate@{NMFALSUpdate}!NMFALSUpdate@{NMFALSUpdate}}
+\index{NMFALSUpdate@{NMFALSUpdate}!NMFALSUpdate@{NMFALSUpdate}}
+\doxysubsubsection{NMFALSUpdate()}
+{\footnotesize\ttfamily \textbf{ NMFALSUpdate} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Empty constructor required for the Update\+Rule template. 
+
+
+
+Definition at line 45 of file nmf\+\_\+als.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1amf_1_1NMFALSUpdate_ad2a433d7e149001f0f44caa8967d20a6}} 
+\index{NMFALSUpdate@{NMFALSUpdate}!HUpdate@{HUpdate}}
+\index{HUpdate@{HUpdate}!NMFALSUpdate@{NMFALSUpdate}}
+\doxysubsubsection{HUpdate()}
+{\footnotesize\ttfamily static void HUpdate (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{V,  }\item[{const arma\+::mat \&}]{W,  }\item[{arma\+::mat \&}]{H }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The update rule for the encoding matrix H. 
+
+The formula used is
+
+\[ H = \frac{W^T V}{W^T W} \]
+
+The function takes in all the matrices and only changes the value of the H matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix. \\
+\hline
+{\em H} & Encoding matrix to be updated. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 105 of file nmf\+\_\+als.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1NMFALSUpdate_aac5af164b10635addd7ff7bb934a4db3}} 
+\index{NMFALSUpdate@{NMFALSUpdate}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!NMFALSUpdate@{NMFALSUpdate}}
+\doxysubsubsection{Initialize()}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{,  }\item[{const}]{size\+\_\+t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set initial values for the factorization. 
+
+In this case, we don\textquotesingle{}t need to set anything. 
+
+Definition at line 52 of file nmf\+\_\+als.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1NMFALSUpdate_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{NMFALSUpdate@{NMFALSUpdate}!serialize@{serialize}}
+\index{serialize@{serialize}!NMFALSUpdate@{NMFALSUpdate}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the object (in this case, there is nothing to serialize). 
+
+
+
+Definition at line 123 of file nmf\+\_\+als.\+hpp.
+
+\mbox{\label{classmlpack_1_1amf_1_1NMFALSUpdate_a79b17bfdd69326a4f9f7d17c698ee6af}} 
+\index{NMFALSUpdate@{NMFALSUpdate}!WUpdate@{WUpdate}}
+\index{WUpdate@{WUpdate}!NMFALSUpdate@{NMFALSUpdate}}
+\doxysubsubsection{WUpdate()}
+{\footnotesize\ttfamily static void WUpdate (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{V,  }\item[{arma\+::mat \&}]{W,  }\item[{const arma\+::mat \&}]{H }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+The update rule for the basis matrix W. 
+
+The formula used isa
+
+\[ W^T = \frac{H V^T}{H H^T} \]
+
+The function takes in all the matrices and only changes the value of the W matrix.
+
+
+\begin{DoxyParams}{Parameters}
+{\em V} & Input matrix to be factorized. \\
+\hline
+{\em W} & Basis matrix to be updated. \\
+\hline
+{\em H} & Encoding matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 72 of file nmf\+\_\+als.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/amf/update\+\_\+rules/\textbf{ nmf\+\_\+als.\+hpp}\end{DoxyCompactItemize}

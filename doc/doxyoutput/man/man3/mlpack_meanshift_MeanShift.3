@@ -1,0 +1,180 @@
+.TH "MeanShift< UseKernel, KernelType, MatType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+MeanShift< UseKernel, KernelType, MatType > \- This class implements mean shift clustering\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBMeanShift\fP (const double radius=0, const size_t maxIterations=1000, const KernelType kernel=KernelType())"
+.br
+.RI "Create a mean shift object and set the parameters which mean shift will be run with\&. "
+.ti -1c
+.RI "void \fBCluster\fP (const MatType &data, arma::Row< size_t > &assignments, arma::mat &centroids, bool forceConvergence=true, bool useSeeds=true)"
+.br
+.RI "Perform mean shift clustering on the data, returning a list of cluster assignments and centroids\&. "
+.ti -1c
+.RI "double \fBEstimateRadius\fP (const MatType &data, const double ratio=0\&.2)"
+.br
+.RI "Give an estimation of radius based on given dataset\&. "
+.ti -1c
+.RI "KernelType & \fBKernel\fP ()"
+.br
+.RI "Modify the kernel\&. "
+.ti -1c
+.RI "const KernelType & \fBKernel\fP () const"
+.br
+.RI "Get the kernel\&. "
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "Set the maximum number of iterations\&. "
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const"
+.br
+.RI "Get the maximum number of iterations\&. "
+.ti -1c
+.RI "double \fBRadius\fP () const"
+.br
+.RI "Get the radius\&. "
+.ti -1c
+.RI "void \fBRadius\fP (double radius)"
+.br
+.RI "Set the radius\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<bool UseKernel = false, typename KernelType = kernel::GaussianKernel, typename MatType = arma::mat>
+.br
+class mlpack::meanshift::MeanShift< UseKernel, KernelType, MatType >"
+This class implements mean shift clustering\&. 
+
+For each point in dataset, apply mean shift algorithm until maximum iterations or convergence\&. Then remove duplicate centroids\&.
+.PP
+A simple example of how to run mean shift clustering is shown below\&.
+.PP
+.PP
+.nf
+extern arma::mat data; // Dataset we want to run mean shift on\&.
+arma::Row<size_t> assignments; // Cluster assignments\&.
+arma::mat centroids; // Cluster centroids\&.
+bool forceConvergence = true; // Flag whether to force each centroid seed
+to converge regardless of maxIterations\&.
+
+MeanShift<> meanShift();
+meanShift\&.Cluster(dataset, assignments, centroids, forceConvergence);
+.fi
+.PP
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIUseKernel\fP Use kernel or mean to calculate new centroid\&. If false, KernelType will be ignored\&. 
+.br
+\fIKernelType\fP The kernel to use\&. 
+.br
+\fIMatType\fP The type of matrix the data is stored in\&. 
+.RE
+.PP
+
+.PP
+Definition at line 51 of file mean_shift\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBMeanShift\fP (const double radius = \fC0\fP, const size_t maxIterations = \fC1000\fP, const KernelType kernel = \fCKernelType()\fP)"
+
+.PP
+Create a mean shift object and set the parameters which mean shift will be run with\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIradius\fP If distance of two centroids is less than it, one will be removed\&. If this value isn't positive, an estimation will be given when clustering\&. 
+.br
+\fImaxIterations\fP Maximum number of iterations allowed before giving up iterations will terminate\&. 
+.br
+\fIkernel\fP Optional KernelType object\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Cluster (const MatType & data, arma::Row< size_t > & assignments, arma::mat & centroids, bool forceConvergence = \fCtrue\fP, bool useSeeds = \fCtrue\fP)"
+
+.PP
+Perform mean shift clustering on the data, returning a list of cluster assignments and centroids\&. 
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIMatType\fP Type of matrix\&. 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Dataset to cluster\&. 
+.br
+\fIassignments\fP Vector to store cluster assignments in\&. 
+.br
+\fIcentroids\fP Matrix in which centroids are stored\&. 
+.br
+\fIforceConvergence\fP Flag whether to force each centroid seed to converge regardless of maxIterations\&. 
+.br
+\fIuseSeeds\fP Set true to use seeds\&. 
+.RE
+.PP
+
+.SS "double EstimateRadius (const MatType & data, const double ratio = \fC0\&.2\fP)"
+
+.PP
+Give an estimation of radius based on given dataset\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Dataset for estimation\&. 
+.br
+\fIratio\fP Percentage of dataset to use for nearest neighbor search\&. 
+.RE
+.PP
+
+.SS "KernelType& Kernel ()\fC [inline]\fP"
+
+.PP
+Modify the kernel\&. 
+.PP
+Definition at line 108 of file mean_shift\&.hpp\&.
+.SS "const KernelType& Kernel () const\fC [inline]\fP"
+
+.PP
+Get the kernel\&. 
+.PP
+Definition at line 106 of file mean_shift\&.hpp\&.
+.SS "size_t& MaxIterations ()\fC [inline]\fP"
+
+.PP
+Set the maximum number of iterations\&. 
+.PP
+Definition at line 98 of file mean_shift\&.hpp\&.
+.SS "size_t MaxIterations () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of iterations\&. 
+.PP
+Definition at line 96 of file mean_shift\&.hpp\&.
+.SS "double Radius () const\fC [inline]\fP"
+
+.PP
+Get the radius\&. 
+.PP
+Definition at line 101 of file mean_shift\&.hpp\&.
+.SS "void Radius (double radius)"
+
+.PP
+Set the radius\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

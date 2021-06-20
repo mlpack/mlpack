@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1emst_1_1UnionFind" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::emst::UnionFind</compoundname>
+    <includes refid="union__find_8hpp" local="no">union_find.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1emst_1_1UnionFind_1af81b31cb056bc265f4b7137aec1fdfbf" prot="private" static="no" mutable="no">
+        <type>arma::Col&lt; size_t &gt;</type>
+        <definition>arma::Col&lt;size_t&gt; parent</definition>
+        <argsstring></argsstring>
+        <name>parent</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" line="33" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1emst_1_1UnionFind_1ad90354ca4a1f507acf26b32561f385fa" prot="private" static="no" mutable="no">
+        <type>arma::ivec</type>
+        <definition>arma::ivec rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" line="34" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1UnionFind_1a9b34dcd36c63b66adfdf6ec2a7048c4c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>UnionFind</definition>
+        <argsstring>(const size_t size)</argsstring>
+        <name>UnionFind</name>
+        <param>
+          <type>const size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Construct the object with the given size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" line="38" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" bodystart="38" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1UnionFind_1ad03a80f5b30db459101cdb7371cb52c4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>~UnionFind</definition>
+        <argsstring>()</argsstring>
+        <name>~UnionFind</name>
+        <briefdescription>
+<para>Destroy the object (nothing to do). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" line="48" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" bodystart="48" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1UnionFind_1a16caadf3734b274989d7610aa480808d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Find</definition>
+        <argsstring>(const size_t x)</argsstring>
+        <name>Find</name>
+        <param>
+          <type>const size_t</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Returns the component containing an element. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the component to be found </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The index of the component containing x </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" line="56" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" bodystart="56" bodyend="68"/>
+        <referencedby refid="classmlpack_1_1emst_1_1UnionFind_1a26dbea2d789bab0faff47b52ab884ea0" compoundref="union__find_8hpp" startline="76" endline="98">UnionFind::Union</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1emst_1_1UnionFind_1a26dbea2d789bab0faff47b52ab884ea0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Union</definition>
+        <argsstring>(const size_t x, const size_t y)</argsstring>
+        <name>Union</name>
+        <param>
+          <type>const size_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+<para>Union the components containing x and y. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>one component </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>y</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the other component </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" line="76" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" bodystart="76" bodyend="98"/>
+        <references refid="classmlpack_1_1emst_1_1UnionFind_1a16caadf3734b274989d7610aa480808d" compoundref="union__find_8hpp" startline="56" endline="68">UnionFind::Find</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A Union-Find data structure. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>See Cormen, Rivest, &amp; Stein for details. The structure tracks the components of a graph. Each point in the graph is initially in its own component. Calling Union(x, y) unites the components indexed by x and y. Find(x) returns the index of the component containing point x. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" line="30" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/emst/union_find.hpp" bodystart="31" bodyend="99"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1emst_1_1UnionFind_1a16caadf3734b274989d7610aa480808d" prot="public" virt="non-virtual"><scope>mlpack::emst::UnionFind</scope><name>Find</name></member>
+      <member refid="classmlpack_1_1emst_1_1UnionFind_1af81b31cb056bc265f4b7137aec1fdfbf" prot="private" virt="non-virtual"><scope>mlpack::emst::UnionFind</scope><name>parent</name></member>
+      <member refid="classmlpack_1_1emst_1_1UnionFind_1ad90354ca4a1f507acf26b32561f385fa" prot="private" virt="non-virtual"><scope>mlpack::emst::UnionFind</scope><name>rank</name></member>
+      <member refid="classmlpack_1_1emst_1_1UnionFind_1a26dbea2d789bab0faff47b52ab884ea0" prot="public" virt="non-virtual"><scope>mlpack::emst::UnionFind</scope><name>Union</name></member>
+      <member refid="classmlpack_1_1emst_1_1UnionFind_1a9b34dcd36c63b66adfdf6ec2a7048c4c" prot="public" virt="non-virtual"><scope>mlpack::emst::UnionFind</scope><name>UnionFind</name></member>
+      <member refid="classmlpack_1_1emst_1_1UnionFind_1ad03a80f5b30db459101cdb7371cb52c4" prot="public" virt="non-virtual"><scope>mlpack::emst::UnionFind</scope><name>~UnionFind</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

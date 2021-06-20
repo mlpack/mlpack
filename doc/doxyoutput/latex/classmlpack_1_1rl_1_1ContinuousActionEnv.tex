@@ -1,0 +1,113 @@
+\doxysection{Continuous\+Action\+Env Class Reference}
+\label{classmlpack_1_1rl_1_1ContinuousActionEnv}\index{ContinuousActionEnv@{ContinuousActionEnv}}
+
+
+To use the dummy environment, one may start by specifying the state and action dimensions.  
+
+
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Action}
+\begin{DoxyCompactList}\small\item\em Implementation of continuous action. \end{DoxyCompactList}\item 
+class \textbf{ State}
+\begin{DoxyCompactList}\small\item\em Implementation of state of the dummy environment. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ State} \textbf{ Initial\+Sample} ()
+\begin{DoxyCompactList}\small\item\em Dummy function to mimic initial sampling in an environment. \end{DoxyCompactList}\item 
+bool \textbf{ Is\+Terminal} (const \textbf{ State} \&) const
+\begin{DoxyCompactList}\small\item\em Dummy function to find terminal state. \end{DoxyCompactList}\item 
+double \textbf{ Sample} (const \textbf{ State} \&, const \textbf{ Action} \&, \textbf{ State} \&)
+\begin{DoxyCompactList}\small\item\em Dummy function to mimic sampling in an environment. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+To use the dummy environment, one may start by specifying the state and action dimensions. 
+
+Eg\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ContinuousActionEnv::State::dimension = 3;}
+\DoxyCodeLine{ContinuousActionEnv::Action::size = 1;}
+
+\end{DoxyCode}
+
+
+Now the \doxyref{Continuous\+Action\+Env}{p.}{classmlpack_1_1rl_1_1ContinuousActionEnv} class can be used as an Environment\+Type in RL methods just as any other mlpack\textquotesingle{}s implementation of gym environments. 
+
+Definition at line 121 of file env\+\_\+type.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousActionEnv_aa9f537249fa0c1e62b38197996ab4c6a}} 
+\index{ContinuousActionEnv@{ContinuousActionEnv}!InitialSample@{InitialSample}}
+\index{InitialSample@{InitialSample}!ContinuousActionEnv@{ContinuousActionEnv}}
+\doxysubsubsection{InitialSample()}
+{\footnotesize\ttfamily \textbf{ State} Initial\+Sample (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Dummy function to mimic initial sampling in an environment. 
+
+\begin{DoxyReturn}{Returns}
+the dummy state. 
+\end{DoxyReturn}
+
+
+Definition at line 193 of file env\+\_\+type.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousActionEnv_a7061ffc3be37983a46a312973a375c0a}} 
+\index{ContinuousActionEnv@{ContinuousActionEnv}!IsTerminal@{IsTerminal}}
+\index{IsTerminal@{IsTerminal}!ContinuousActionEnv@{ContinuousActionEnv}}
+\doxysubsubsection{IsTerminal()}
+{\footnotesize\ttfamily bool Is\+Terminal (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Dummy function to find terminal state. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (state) The current state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+It\textquotesingle{}s of no use but so lets keep it false. 
+\end{DoxyReturn}
+
+
+Definition at line 200 of file env\+\_\+type.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1ContinuousActionEnv_a1e46b501bcca9ffdaab87a8cd6002d35}} 
+\index{ContinuousActionEnv@{ContinuousActionEnv}!Sample@{Sample}}
+\index{Sample@{Sample}!ContinuousActionEnv@{ContinuousActionEnv}}
+\doxysubsubsection{Sample()}
+{\footnotesize\ttfamily double Sample (\begin{DoxyParamCaption}\item[{const \textbf{ State} \&}]{,  }\item[{const \textbf{ Action} \&}]{,  }\item[{\textbf{ State} \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Dummy function to mimic sampling in an environment. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (state) The current state. \\
+\hline
+{\em $\ast$} & (action) The current action. \\
+\hline
+{\em $\ast$} & (next\+State) The next state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+It\textquotesingle{}s of no use so lets keep it 0. 
+\end{DoxyReturn}
+
+
+Definition at line 183 of file env\+\_\+type.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/environment/\textbf{ env\+\_\+type.\+hpp}\end{DoxyCompactItemize}

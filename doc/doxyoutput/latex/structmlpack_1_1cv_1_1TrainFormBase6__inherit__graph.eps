@@ -1,0 +1,561 @@
+%!PS-Adobe-3.0
+%%Creator: graphviz version 2.43.0 (0)
+%%Title: TrainFormBase6&lt; PT, WT, T1, T2, T3, T4 &gt;
+%%Pages: (atend)
+%%BoundingBox: (atend)
+%%EndComments
+save
+%%BeginProlog
+/DotDict 200 dict def
+DotDict begin
+
+/setupLatin1 {
+mark
+/EncodingVector 256 array def
+ EncodingVector 0
+
+ISOLatin1Encoding 0 255 getinterval putinterval
+EncodingVector 45 /hyphen put
+
+% Set up ISO Latin 1 character encoding
+/starnetISO {
+        dup dup findfont dup length dict begin
+        { 1 index /FID ne { def }{ pop pop } ifelse
+        } forall
+        /Encoding EncodingVector def
+        currentdict end definefont
+} def
+/Times-Roman starnetISO def
+/Times-Italic starnetISO def
+/Times-Bold starnetISO def
+/Times-BoldItalic starnetISO def
+/Helvetica starnetISO def
+/Helvetica-Oblique starnetISO def
+/Helvetica-Bold starnetISO def
+/Helvetica-BoldOblique starnetISO def
+/Courier starnetISO def
+/Courier-Oblique starnetISO def
+/Courier-Bold starnetISO def
+/Courier-BoldOblique starnetISO def
+cleartomark
+} bind def
+
+%%BeginResource: procset graphviz 0 0
+/coord-font-family /Times-Roman def
+/default-font-family /Times-Roman def
+/coordfont coord-font-family findfont 8 scalefont def
+
+/InvScaleFactor 1.0 def
+/set_scale {
+       dup 1 exch div /InvScaleFactor exch def
+       scale
+} bind def
+
+% styles
+/solid { [] 0 setdash } bind def
+/dashed { [9 InvScaleFactor mul dup ] 0 setdash } bind def
+/dotted { [1 InvScaleFactor mul 6 InvScaleFactor mul] 0 setdash } bind def
+/invis {/fill {newpath} def /stroke {newpath} def /show {pop newpath} def} bind def
+/bold { 2 setlinewidth } bind def
+/filled { } bind def
+/unfilled { } bind def
+/rounded { } bind def
+/diagonals { } bind def
+/tapered { } bind def
+
+% hooks for setting color 
+/nodecolor { sethsbcolor } bind def
+/edgecolor { sethsbcolor } bind def
+/graphcolor { sethsbcolor } bind def
+/nopcolor {pop pop pop} bind def
+
+/beginpage {	% i j npages
+	/npages exch def
+	/j exch def
+	/i exch def
+	/str 10 string def
+	npages 1 gt {
+		gsave
+			coordfont setfont
+			0 0 moveto
+			(\() show i str cvs show (,) show j str cvs show (\)) show
+		grestore
+	} if
+} bind def
+
+/set_font {
+	findfont exch
+	scalefont setfont
+} def
+
+% draw text fitted to its expected width
+/alignedtext {			% width text
+	/text exch def
+	/width exch def
+	gsave
+		width 0 gt {
+			[] 0 setdash
+			text stringwidth pop width exch sub text length div 0 text ashow
+		} if
+	grestore
+} def
+
+/boxprim {				% xcorner ycorner xsize ysize
+		4 2 roll
+		moveto
+		2 copy
+		exch 0 rlineto
+		0 exch rlineto
+		pop neg 0 rlineto
+		closepath
+} bind def
+
+/ellipse_path {
+	/ry exch def
+	/rx exch def
+	/y exch def
+	/x exch def
+	matrix currentmatrix
+	newpath
+	x y translate
+	rx ry scale
+	0 0 1 0 360 arc
+	setmatrix
+} bind def
+
+/endpage { showpage } bind def
+/showpage { } def
+
+/layercolorseq
+	[	% layer color sequence - darkest to lightest
+		[0 0 0]
+		[.2 .8 .8]
+		[.4 .8 .8]
+		[.6 .8 .8]
+		[.8 .8 .8]
+	]
+def
+
+/layerlen layercolorseq length def
+
+/setlayer {/maxlayer exch def /curlayer exch def
+	layercolorseq curlayer 1 sub layerlen mod get
+	aload pop sethsbcolor
+	/nodecolor {nopcolor} def
+	/edgecolor {nopcolor} def
+	/graphcolor {nopcolor} def
+} bind def
+
+/onlayer { curlayer ne {invis} if } def
+
+/onlayers {
+	/myupper exch def
+	/mylower exch def
+	curlayer mylower lt
+	curlayer myupper gt
+	or
+	{invis} if
+} def
+
+/curlayer 0 def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+14 default-font-family set_font
+% /arrowlength 10 def
+% /arrowwidth 5 def
+
+% make sure pdfmark is harmless for PS-interpreters other than Distiller
+/pdfmark where {pop} {userdict /pdfmark /cleartomark load put} ifelse
+% make '<<' and '>>' safe on PS Level 1 devices
+/languagelevel where {pop languagelevel}{1} ifelse
+2 lt {
+    userdict (<<) cvn ([) cvn load put
+    userdict (>>) cvn ([) cvn load put
+} if
+
+%%EndSetup
+setupLatin1
+%%Page: 1 1
+%%PageBoundingBox: 36 36 643 239
+%%PageOrientation: Portrait
+0 0 1 beginpage
+gsave
+36 36 607 203 boxprim clip newpath
+1 1 set_scale 0 rotate 40 40 translate
+% Node1
+gsave
+0 0 0.74902 nodecolor
+newpath 0 82.5 moveto
+0 112.5 lineto
+122 112.5 lineto
+122 82.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 0 82.5 moveto
+0 112.5 lineto
+122 112.5 lineto
+122 82.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+8 100.5 moveto 106 (TrainFormBase6< PT,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+9.5 89.5 moveto 103 ( WT, T1, T2, T3, T4 >) alignedtext
+grestore
+% Node2
+gsave
+[ /Rect [ 306.5 142 444.5 195 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($structmlpack_1_1cv_1_1TrainFormBase6.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 306.5 142.5 moveto
+306.5 194.5 lineto
+444.5 194.5 lineto
+444.5 142.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 306.5 142.5 moveto
+306.5 194.5 lineto
+444.5 194.5 lineto
+444.5 142.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+314.5 182.5 moveto 106 (TrainFormBase6< PT,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+314.5 171.5 moveto 112 ( WT, const MT &, const) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+314.5 160.5 moveto 122 ( PT &, const size_t, const) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+355 149.5 moveto 41 ( WT & >) alignedtext
+grestore
+% Node1->Node2
+gsave
+1 setlinewidth
+dashed
+0.10588 1 1 edgecolor
+newpath 97.6951 117.1859 moveto
+110.6782 123.5993 125.6841 130.174 140 134.5 curveto
+194.6382 151.0106 258.9351 159.6116 306.3706 164.0269 curveto
+stroke
+0.10588 1 1 edgecolor
+newpath 99.1377 113.993 moveto
+88.6376 112.579 lineto
+95.9642 120.2323 lineto
+closepath fill
+1 setlinewidth
+solid
+0.10588 1 1 edgecolor
+newpath 99.1377 113.993 moveto
+88.6376 112.579 lineto
+95.9642 120.2323 lineto
+closepath stroke
+0 0 0 edgecolor
+10 /Helvetica set_font
+159.5 186.5 moveto 99 ( < PT, WT, const MT) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+159.5 175.5 moveto 101 ( &, const PT &, const) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+159.5 164.5 moveto 105 ( size_t, const WT & >) alignedtext
+grestore
+% Node4
+gsave
+[ /Rect [ 302 71 449 124 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($structmlpack_1_1cv_1_1TrainFormBase6.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 302 71.5 moveto
+302 123.5 lineto
+449 123.5 lineto
+449 71.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 302 71.5 moveto
+302 123.5 lineto
+449 123.5 lineto
+449 71.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+310 111.5 moveto 106 (TrainFormBase6< PT,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+310 100.5 moveto 118 ( void, const MT &, const) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+310 89.5 moveto 131 ( data::DatasetInfo &, const) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+325 78.5 moveto 101 ( PT &, const size_t >) alignedtext
+grestore
+% Node1->Node4
+gsave
+1 setlinewidth
+dashed
+0.10588 1 1 edgecolor
+newpath 132.4335 97.5 moveto
+182.9388 97.5 250.7853 97.5 301.7994 97.5 curveto
+stroke
+0.10588 1 1 edgecolor
+newpath 132.2532 94.0001 moveto
+122.2531 97.5 lineto
+132.2531 101.0001 lineto
+closepath fill
+1 setlinewidth
+solid
+0.10588 1 1 edgecolor
+newpath 132.2532 94.0001 moveto
+122.2531 97.5 lineto
+132.2531 101.0001 lineto
+closepath stroke
+0 0 0 edgecolor
+10 /Helvetica set_font
+140 122.5 moveto 104 ( < PT, void, const MT) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+140 111.5 moveto 131 ( &, const data::DatasetInfo) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+140 100.5 moveto 144 ( &, const PT &, const size_t >) alignedtext
+grestore
+% Node6
+gsave
+[ /Rect [ 303.5 0 447.5 53 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($structmlpack_1_1cv_1_1TrainFormBase6.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 303.5 .5 moveto
+303.5 52.5 lineto
+447.5 52.5 lineto
+447.5 .5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 303.5 .5 moveto
+303.5 52.5 lineto
+447.5 52.5 lineto
+447.5 .5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+311.5 40.5 moveto 106 (TrainFormBase6< PT,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+311.5 29.5 moveto 112 ( WT, const MT &, const) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+311.5 18.5 moveto 102 ( data::DatasetInfo &,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+311.5 7.5 moveto 128 ( const PT &, const WT & >) alignedtext
+grestore
+% Node1->Node6
+gsave
+1 setlinewidth
+dashed
+0.10588 1 1 edgecolor
+newpath 97.6951 77.8141 moveto
+110.6782 71.4007 125.6841 64.826 140 60.5 curveto
+193.4568 44.3464 256.1592 35.764 303.2703 31.2654 curveto
+stroke
+0.10588 1 1 edgecolor
+newpath 95.9642 74.7677 moveto
+88.6376 82.421 lineto
+99.1377 81.007 lineto
+closepath fill
+1 setlinewidth
+solid
+0.10588 1 1 edgecolor
+newpath 95.9642 74.7677 moveto
+88.6376 82.421 lineto
+99.1377 81.007 lineto
+closepath stroke
+0 0 0 edgecolor
+10 /Helvetica set_font
+141 85.5 moveto 99 ( < PT, WT, const MT) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+141 74.5 moveto 131 ( &, const data::DatasetInfo) alignedtext
+0 0 0 edgecolor
+10 /Helvetica set_font
+141 63.5 moveto 142 ( &, const PT &, const WT & >) alignedtext
+grestore
+% Node3
+gsave
+[ /Rect [ 486 153 599 184 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01true_01_4.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 486 153.5 moveto
+486 183.5 lineto
+599 183.5 lineto
+599 153.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 486 153.5 moveto
+486 183.5 lineto
+599 183.5 lineto
+599 153.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+494 171.5 moveto 97 (TrainForm< MT, PT,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+499.5 160.5 moveto 86 ( WT, false, true >) alignedtext
+grestore
+% Node2->Node3
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 454.6363 168.5 moveto
+465.1955 168.5 475.8504 168.5 485.9063 168.5 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 454.5645 165.0001 moveto
+444.5644 168.5 lineto
+454.5644 172.0001 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 454.5645 165.0001 moveto
+444.5644 168.5 lineto
+454.5644 172.0001 lineto
+closepath stroke
+grestore
+% Node5
+gsave
+[ /Rect [ 486 82 599 113 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 486 82.5 moveto
+486 112.5 lineto
+599 112.5 lineto
+599 82.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 486 82.5 moveto
+486 112.5 lineto
+599 112.5 lineto
+599 82.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+494 100.5 moveto 97 (TrainForm< MT, PT,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+499 89.5 moveto 87 ( void, true, true >) alignedtext
+grestore
+% Node4->Node5
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 459.4499 97.5 moveto
+468.4114 97.5 477.3658 97.5 485.8901 97.5 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 459.3517 94.0001 moveto
+449.3517 97.5 lineto
+459.3517 101.0001 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 459.3517 94.0001 moveto
+449.3517 97.5 lineto
+459.3517 101.0001 lineto
+closepath stroke
+grestore
+% Node7
+gsave
+[ /Rect [ 486 11 599 42 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01false_01_4.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0 0 1 nodecolor
+newpath 486 11.5 moveto
+486 41.5 lineto
+599 41.5 lineto
+599 11.5 lineto
+closepath fill
+1 setlinewidth
+filled
+0 0 0 nodecolor
+newpath 486 11.5 moveto
+486 41.5 lineto
+599 41.5 lineto
+599 11.5 lineto
+closepath stroke
+0 0 0 nodecolor
+10 /Helvetica set_font
+494 29.5 moveto 97 (TrainForm< MT, PT,) alignedtext
+0 0 0 nodecolor
+10 /Helvetica set_font
+499.5 18.5 moveto 86 ( WT, true, false >) alignedtext
+grestore
+% Node6->Node7
+gsave
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 458.0974 26.5 moveto
+467.5112 26.5 476.9407 26.5 485.8955 26.5 curveto
+stroke
+0.66667 0.77647 0.43922 edgecolor
+newpath 457.9118 23.0001 moveto
+447.9118 26.5 lineto
+457.9117 30.0001 lineto
+closepath fill
+1 setlinewidth
+solid
+0.66667 0.77647 0.43922 edgecolor
+newpath 457.9118 23.0001 moveto
+447.9118 26.5 lineto
+457.9117 30.0001 lineto
+closepath stroke
+grestore
+endpage
+showpage
+grestore
+%%PageTrailer
+%%EndPage: 1
+%%Trailer
+%%Pages: 1
+%%BoundingBox: 36 36 643 239
+end
+restore
+%%EOF

@@ -1,0 +1,330 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1data_1_1DictionaryEncodingPolicy" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::data::DictionaryEncodingPolicy</compoundname>
+    <includes refid="dictionary__encoding__policy_8hpp" local="no">dictionary_encoding_policy.hpp</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1acb6d0361e38a326545cab647da91ff8e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Encode</definition>
+        <argsstring>(MatType &amp;output, const size_t value, const size_t line, const size_t index)</argsstring>
+        <name>Encode</name>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>line</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>The function performs the dictionary encoding algorithm i.e. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>it writes the encoded token to the output. The encoder writes data in the column-major order.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The output matrix type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix to store the encoded results (sp_mat or mat). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The encoded token. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>line</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The line number at which the encoding is performed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The token index in the line. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" line="77" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" bodystart="77" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1af34e0b00d7904b415af3bafa4aa12b37" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void Encode</definition>
+        <argsstring>(std::vector&lt; ElemType &gt; &amp;output, size_t value)</argsstring>
+        <name>Encode</name>
+        <param>
+          <type>std::vector&lt; ElemType &gt; &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>The function performs the dictionary encoding algorithm i.e. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>it writes the encoded token to the output. This is an overloaded function which saves the result into the given vector to avoid padding. The encoder writes data in the row-major order.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>ElemType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of the output values.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output vector to store the encoded line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The encoded token. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" line="97" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" bodystart="97" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1ab4a21307db632ad572353e4476b749b0" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void InitMatrix</definition>
+        <argsstring>(MatType &amp;output, const size_t datasetSize, const size_t maxNumTokens, const size_t)</argsstring>
+        <name>InitMatrix</name>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>datasetSize</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxNumTokens</declname>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <briefdescription>
+<para>The function initializes the output matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The encoder writes data in the column-major order.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The output matrix type.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>output</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output matrix to store the encoded results (sp_mat or mat). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>datasetSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of strings in the input dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxNumTokens</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The maximum number of tokens in the strings of the input dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(dictionarySize) The size of the dictionary (not used). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" line="56" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" bodystart="56" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1ab4395511edadd108faf95e985d1f03b2" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void PreprocessToken</definition>
+        <argsstring>(const size_t, const size_t, const size_t)</argsstring>
+        <name>PreprocessToken</name>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <briefdescription>
+<para>The function is not used by the dictionary encoding policy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(line) The line number at which the encoding is performed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(index) The token sequence number in the line. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(value) The encoded token. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" line="109" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" bodystart="109" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1a77ad624cc83a2a71aa4d5ad991d811d7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void Reset</definition>
+        <argsstring>()</argsstring>
+        <name>Reset</name>
+        <briefdescription>
+<para>Clear the necessary internal variables. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" line="38" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" bodystart="38" bodyend="41"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the class to the given archive. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" line="118" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" bodystart="118" bodyend="121"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>DicitonaryEnocdingPolicy is used as a helper class for <ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The encoder assigns a positive integer number to each unique token and treats the dataset as categorical. The numbers are assigned sequentially starting from one. The order in which the tokens are labeled is defined by the dictionary used by the <ref refid="classmlpack_1_1data_1_1StringEncoding" kindref="compound">StringEncoding</ref> class. The encoder writes data either in the column-major order or in the row-major order depending on the output data type. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" line="32" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/data/string_encoding_policies/dictionary_encoding_policy.hpp" bodystart="33" bodyend="122"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1acb6d0361e38a326545cab647da91ff8e" prot="public" virt="non-virtual"><scope>mlpack::data::DictionaryEncodingPolicy</scope><name>Encode</name></member>
+      <member refid="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1af34e0b00d7904b415af3bafa4aa12b37" prot="public" virt="non-virtual"><scope>mlpack::data::DictionaryEncodingPolicy</scope><name>Encode</name></member>
+      <member refid="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1ab4a21307db632ad572353e4476b749b0" prot="public" virt="non-virtual"><scope>mlpack::data::DictionaryEncodingPolicy</scope><name>InitMatrix</name></member>
+      <member refid="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1ab4395511edadd108faf95e985d1f03b2" prot="public" virt="non-virtual"><scope>mlpack::data::DictionaryEncodingPolicy</scope><name>PreprocessToken</name></member>
+      <member refid="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1a77ad624cc83a2a71aa4d5ad991d811d7" prot="public" virt="non-virtual"><scope>mlpack::data::DictionaryEncodingPolicy</scope><name>Reset</name></member>
+      <member refid="classmlpack_1_1data_1_1DictionaryEncodingPolicy_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" virt="non-virtual"><scope>mlpack::data::DictionaryEncodingPolicy</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

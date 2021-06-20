@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1ann_1_1NetworkInitialization" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::ann::NetworkInitialization</compoundname>
+    <includes refid="network__init_8hpp" local="no">network_init.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename InitializationRuleType</type>
+      </param>
+      <param>
+        <type>typename...</type>
+        <declname>CustomLayers</declname>
+        <defname>CustomLayers</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1NetworkInitialization_1afe2a6ce1565af9e715f04dc42338e439" prot="private" static="no" mutable="no">
+        <type>InitializationRuleType</type>
+        <definition>InitializationRuleType initializeRule</definition>
+        <argsstring></argsstring>
+        <name>initializeRule</name>
+        <briefdescription>
+<para>Instantiated InitializationRule object for initializing the network parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" line="107" column="26" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1NetworkInitialization_1af66d8a7f7a2a8b54158e3702f429ae9f" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1ResetVisitor" kindref="compound">ResetVisitor</ref></type>
+        <definition>ResetVisitor resetVisitor</definition>
+        <argsstring></argsstring>
+        <name>resetVisitor</name>
+        <briefdescription>
+<para>Locally-stored reset visitor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" line="110" column="16" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1ann_1_1NetworkInitialization_1a625937d2a4a808227ad16ea09908d8cd" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1ann_1_1WeightSizeVisitor" kindref="compound">WeightSizeVisitor</ref></type>
+        <definition>WeightSizeVisitor weightSizeVisitor</definition>
+        <argsstring></argsstring>
+        <name>weightSizeVisitor</name>
+        <briefdescription>
+<para>Locally-stored weight size visitor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" line="113" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NetworkInitialization_1aca7ed39585c544fbfa06ebb1a15a988b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>NetworkInitialization</definition>
+        <argsstring>(const InitializationRuleType &amp;initializeRule=InitializationRuleType())</argsstring>
+        <name>NetworkInitialization</name>
+        <param>
+          <type>const InitializationRuleType &amp;</type>
+          <declname>initializeRule</declname>
+          <defval>InitializationRuleType()</defval>
+        </param>
+        <briefdescription>
+<para>Use the given initialization rule to initialize the specified network. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>initializeRule</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rule to initialize the given network. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" line="41" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" bodystart="41" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1ann_1_1NetworkInitialization_1aecdd259437c6d51c512aa2948cdcdff2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename eT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(const std::vector&lt; LayerTypes&lt; CustomLayers... &gt; &gt; &amp;network, arma::Mat&lt; eT &gt; &amp;parameter, size_t parameterOffset=0)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>const std::vector&lt; <ref refid="namespacemlpack_1_1ann_1ac93be13f0d072573d93e2756ef478ab6" kindref="member">LayerTypes</ref>&lt; CustomLayers... &gt; &gt; &amp;</type>
+          <declname>network</declname>
+        </param>
+        <param>
+          <type>arma::Mat&lt; eT &gt; &amp;</type>
+          <declname>parameter</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>parameterOffset</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Initialize the specified network and store the results in the given parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>network</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Network that should be initialized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>parameter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The network parameter. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>parameterOffset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Offset for network paramater, default 0. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" line="57" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" bodystart="57" bodyend="102"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class is used to initialize the network with the given initialization rule. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" line="33" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/init_rules/network_init.hpp" bodystart="34" bodyend="114"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1ann_1_1NetworkInitialization_1aecdd259437c6d51c512aa2948cdcdff2" prot="public" virt="non-virtual"><scope>mlpack::ann::NetworkInitialization</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1ann_1_1NetworkInitialization_1afe2a6ce1565af9e715f04dc42338e439" prot="private" virt="non-virtual"><scope>mlpack::ann::NetworkInitialization</scope><name>initializeRule</name></member>
+      <member refid="classmlpack_1_1ann_1_1NetworkInitialization_1aca7ed39585c544fbfa06ebb1a15a988b" prot="public" virt="non-virtual"><scope>mlpack::ann::NetworkInitialization</scope><name>NetworkInitialization</name></member>
+      <member refid="classmlpack_1_1ann_1_1NetworkInitialization_1af66d8a7f7a2a8b54158e3702f429ae9f" prot="private" virt="non-virtual"><scope>mlpack::ann::NetworkInitialization</scope><name>resetVisitor</name></member>
+      <member refid="classmlpack_1_1ann_1_1NetworkInitialization_1a625937d2a4a808227ad16ea09908d8cd" prot="private" virt="non-virtual"><scope>mlpack::ann::NetworkInitialization</scope><name>weightSizeVisitor</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

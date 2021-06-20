@@ -1,0 +1,172 @@
+\doxysection{He\+Initialization Class Reference}
+\label{classmlpack_1_1ann_1_1HeInitialization}\index{HeInitialization@{HeInitialization}}
+
+
+This class is used to initialize weight matrix with the He initialization rule given by He et.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ He\+Initialization} ()
+\begin{DoxyCompactList}\small\item\em Initialize the \doxyref{He\+Initialization}{p.}{classmlpack_1_1ann_1_1HeInitialization} object. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Cube$<$ eT $>$ \&W)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight 3rd order tensor with He initialization rule. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Cube$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols, const size\+\_\+t slices)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the specified weight 3rd order tensor with He initialization rule. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Mat$<$ eT $>$ \&W)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the weight matrix with the He initialization rule. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Initialize} (arma\+::\+Mat$<$ eT $>$ \&W, const size\+\_\+t rows, const size\+\_\+t cols)
+\begin{DoxyCompactList}\small\item\em Initialize the elements of the weight matrix with the He initialization rule. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is used to initialize weight matrix with the He initialization rule given by He et. 
+
+al. for neural networks. The He initialization initializes weights of the neural network to better suit the rectified activation units.
+
+For more information, the following paper can be referred to\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@article\{Delving2015,}
+\DoxyCodeLine{  title   = \{Delving Deep into Rectifiers: Surpassing Human-\/Level Performance}
+\DoxyCodeLine{             on ImageNet Classification\},}
+\DoxyCodeLine{  author  = \{Kaiming He and Xiangyu Zhang and Shaoqing Ren and Jian Sun\},}
+\DoxyCodeLine{  journal = \{2015 IEEE International Conference on Computer Vision (ICCV)\},}
+\DoxyCodeLine{  year    = \{2015\},}
+\DoxyCodeLine{  pages   = \{1026-\/1034\}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+Definition at line 45 of file he\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1HeInitialization_a1e4da3c5a82b0c0aacc4f4505bcdccd0}} 
+\index{HeInitialization@{HeInitialization}!HeInitialization@{HeInitialization}}
+\index{HeInitialization@{HeInitialization}!HeInitialization@{HeInitialization}}
+\doxysubsubsection{HeInitialization()}
+{\footnotesize\ttfamily \textbf{ He\+Initialization} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the \doxyref{He\+Initialization}{p.}{classmlpack_1_1ann_1_1HeInitialization} object. 
+
+
+
+Definition at line 51 of file he\+\_\+init.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1HeInitialization_ae2f3e6d570824a160b687ff9f734f83c}} 
+\index{HeInitialization@{HeInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!HeInitialization@{HeInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Cube$<$ eT $>$ \&}]{W }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the specified weight 3rd order tensor with He initialization rule. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 131 of file he\+\_\+init.\+hpp.
+
+
+
+References Log\+::\+Fatal, and He\+Initialization\+::\+Initialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1HeInitialization_a40a2b6466bdba0f6aab4eb92b6e65934}} 
+\index{HeInitialization@{HeInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!HeInitialization@{HeInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Cube$<$ eT $>$ \&}]{W,  }\item[{const size\+\_\+t}]{rows,  }\item[{const size\+\_\+t}]{cols,  }\item[{const size\+\_\+t}]{slices }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the specified weight 3rd order tensor with He initialization rule. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+{\em slices} & Number of slices. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 112 of file he\+\_\+init.\+hpp.
+
+
+
+References He\+Initialization\+::\+Initialize().
+
+\mbox{\label{classmlpack_1_1ann_1_1HeInitialization_af2d770912321b8b9ca7b03ab98f735c0}} 
+\index{HeInitialization@{HeInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!HeInitialization@{HeInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Mat$<$ eT $>$ \&}]{W }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the weight matrix with the He initialization rule. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 87 of file he\+\_\+init.\+hpp.
+
+
+
+References Log\+::\+Fatal, and if().
+
+\mbox{\label{classmlpack_1_1ann_1_1HeInitialization_a5cfe472251a41fffd45b170bb0d3c1bd}} 
+\index{HeInitialization@{HeInitialization}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!HeInitialization@{HeInitialization}}
+\doxysubsubsection{Initialize()\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void Initialize (\begin{DoxyParamCaption}\item[{arma\+::\+Mat$<$ eT $>$ \&}]{W,  }\item[{const size\+\_\+t}]{rows,  }\item[{const size\+\_\+t}]{cols }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the elements of the weight matrix with the He initialization rule. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em W} & Weight matrix to initialize. \\
+\hline
+{\em rows} & Number of rows. \\
+\hline
+{\em cols} & Number of columns. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 65 of file he\+\_\+init.\+hpp.
+
+
+
+Referenced by He\+Initialization\+::\+Initialize().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/init\+\_\+rules/\textbf{ he\+\_\+init.\+hpp}\end{DoxyCompactItemize}

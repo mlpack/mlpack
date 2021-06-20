@@ -1,0 +1,283 @@
+\doxysection{String\+Encoding$<$ Encoding\+Policy\+Type, Dictionary\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1data_1_1StringEncoding}\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+
+
+The class translates a set of strings into numbers using various encoding algorithms.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename ... Arg\+Types$>$ }\\\textbf{ String\+Encoding} (Arg\+Types \&\&... args)
+\begin{DoxyCompactList}\small\item\em Pass the given arguments to the policy constructor and create the \doxyref{String\+Encoding}{p.}{classmlpack_1_1data_1_1StringEncoding} object using the policy. \end{DoxyCompactList}\item 
+\textbf{ String\+Encoding} (const \textbf{ String\+Encoding} \&)
+\begin{DoxyCompactList}\small\item\em Default copy-\/constructor. \end{DoxyCompactList}\item 
+\textbf{ String\+Encoding} (Encoding\+Policy\+Type encoding\+Policy)
+\begin{DoxyCompactList}\small\item\em Construct the class from the given encoding policy. \end{DoxyCompactList}\item 
+\textbf{ String\+Encoding} (\textbf{ String\+Encoding} \&\&)
+\begin{DoxyCompactList}\small\item\em Default move-\/constructor. \end{DoxyCompactList}\item 
+\textbf{ String\+Encoding} (\textbf{ String\+Encoding} \&)
+\begin{DoxyCompactList}\small\item\em A variant of the copy constructor for non-\/constant objects. \end{DoxyCompactList}\item 
+void \textbf{ Clear} ()
+\begin{DoxyCompactList}\small\item\em Clear the dictionary. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tokenizer\+Type $>$ }\\void \textbf{ Create\+Map} (const std\+::string \&input, const Tokenizer\+Type \&tokenizer)
+\begin{DoxyCompactList}\small\item\em Initialize the dictionary using the given corpus. \end{DoxyCompactList}\item 
+Dictionary\+Type \& \textbf{ Dictionary} ()
+\begin{DoxyCompactList}\small\item\em Modify the dictionary. \end{DoxyCompactList}\item 
+const Dictionary\+Type \& \textbf{ Dictionary} () const
+\begin{DoxyCompactList}\small\item\em Return the dictionary. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Output\+Type , typename Tokenizer\+Type $>$ }\\void \textbf{ Encode} (const std\+::vector$<$ std\+::string $>$ \&input, Output\+Type \&output, const Tokenizer\+Type \&tokenizer)
+\begin{DoxyCompactList}\small\item\em Encode the given text and write the result to the given output. \end{DoxyCompactList}\item 
+Encoding\+Policy\+Type \& \textbf{ Encoding\+Policy} ()
+\begin{DoxyCompactList}\small\item\em Modify the encoding policy object. \end{DoxyCompactList}\item 
+const Encoding\+Policy\+Type \& \textbf{ Encoding\+Policy} () const
+\begin{DoxyCompactList}\small\item\em Return the encoding policy object. \end{DoxyCompactList}\item 
+\textbf{ String\+Encoding} \& \textbf{ operator=} (const \textbf{ String\+Encoding} \&)=default
+\begin{DoxyCompactList}\small\item\em Default copy assignment operator. \end{DoxyCompactList}\item 
+\textbf{ String\+Encoding} \& \textbf{ operator=} (\textbf{ String\+Encoding} \&\&)=default
+\begin{DoxyCompactList}\small\item\em Default move assignment operator. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the class to the given archive. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Encoding\+Policy\+Type, typename Dictionary\+Type$>$\newline
+class mlpack\+::data\+::\+String\+Encoding$<$ Encoding\+Policy\+Type, Dictionary\+Type $>$}
+
+The class translates a set of strings into numbers using various encoding algorithms. 
+
+The encoder writes data either in the column-\/major order or in the row-\/major order depending on the output data type.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Encoding\+Policy\+Type} & Type of the encoding algorithm itself. \\
+\hline
+{\em Dictionary\+Type} & Type of the dictionary. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 35 of file string\+\_\+encoding.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a6e2ca577ba21593168e40b2a501df04b}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!StringEncoding@{StringEncoding}}
+\index{StringEncoding@{StringEncoding}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{StringEncoding()\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding} (\begin{DoxyParamCaption}\item[{Arg\+Types \&\&...}]{args }\end{DoxyParamCaption})}
+
+
+
+Pass the given arguments to the policy constructor and create the \doxyref{String\+Encoding}{p.}{classmlpack_1_1data_1_1StringEncoding} object using the policy. 
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_ae43e1effe91f99f1e92e310656f78f06}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!StringEncoding@{StringEncoding}}
+\index{StringEncoding@{StringEncoding}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{StringEncoding()\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding} (\begin{DoxyParamCaption}\item[{Encoding\+Policy\+Type}]{encoding\+Policy }\end{DoxyParamCaption})}
+
+
+
+Construct the class from the given encoding policy. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em encoding\+Policy} & The given encoding policy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a7bfda9fe4da48578f104522296e7bc5f}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!StringEncoding@{StringEncoding}}
+\index{StringEncoding@{StringEncoding}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{StringEncoding()\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding} (\begin{DoxyParamCaption}\item[{\textbf{ String\+Encoding}$<$ Encoding\+Policy\+Type, Dictionary\+Type $>$ \&}]{ }\end{DoxyParamCaption})}
+
+
+
+A variant of the copy constructor for non-\/constant objects. 
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a2092e5bc9779c37fa1c8fa1e00f16601}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!StringEncoding@{StringEncoding}}
+\index{StringEncoding@{StringEncoding}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{StringEncoding()\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding} (\begin{DoxyParamCaption}\item[{const \textbf{ String\+Encoding}$<$ Encoding\+Policy\+Type, Dictionary\+Type $>$ \&}]{ }\end{DoxyParamCaption})}
+
+
+
+Default copy-\/constructor. 
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a80b1b7c1a2c84ed87b58de55a27f0c87}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!StringEncoding@{StringEncoding}}
+\index{StringEncoding@{StringEncoding}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{StringEncoding()\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding} (\begin{DoxyParamCaption}\item[{\textbf{ String\+Encoding}$<$ Encoding\+Policy\+Type, Dictionary\+Type $>$ \&\&}]{ }\end{DoxyParamCaption})}
+
+
+
+Default move-\/constructor. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_aa71d36872f416feaa853788a7a7a7ef8}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!Clear@{Clear}}
+\index{Clear@{Clear}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{Clear()}
+{\footnotesize\ttfamily void Clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clear the dictionary. 
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a09334684a4bb6a10a48b149bbc5c35e1}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!CreateMap@{CreateMap}}
+\index{CreateMap@{CreateMap}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{CreateMap()}
+{\footnotesize\ttfamily void Create\+Map (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{input,  }\item[{const Tokenizer\+Type \&}]{tokenizer }\end{DoxyParamCaption})}
+
+
+
+Initialize the dictionary using the given corpus. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Tokenizer\+Type} & Type of the tokenizer.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Corpus of text to encode. \\
+\hline
+{\em tokenizer} & The tokenizer object.\\
+\hline
+\end{DoxyParams}
+The tokenization algorithm has to be an object with two public methods\+:
+\begin{DoxyEnumerate}
+\item operator() which accepts a reference to boost\+::string\+\_\+view, extracts the next token from the given view, removes the prefix containing the extracted token and returns the token;
+\item Is\+Token\+Empty() that accepts a token and returns true if the given token is empty. 
+\end{DoxyEnumerate}\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a7e13f2329a9be7393a4e147e200fe9f0}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!Dictionary@{Dictionary}}
+\index{Dictionary@{Dictionary}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{Dictionary()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Dictionary\+Type\& Dictionary (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the dictionary. 
+
+
+
+Definition at line 126 of file string\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_aadfe9ead3a6d93ceb91fb8b69ae75aff}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!Dictionary@{Dictionary}}
+\index{Dictionary@{Dictionary}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{Dictionary()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Dictionary\+Type\& Dictionary (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the dictionary. 
+
+
+
+Definition at line 124 of file string\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a6170e90e6359284924d3cbf2acdbf75f}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!Encode@{Encode}}
+\index{Encode@{Encode}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{Encode()}
+{\footnotesize\ttfamily void Encode (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::string $>$ \&}]{input,  }\item[{Output\+Type \&}]{output,  }\item[{const Tokenizer\+Type \&}]{tokenizer }\end{DoxyParamCaption})}
+
+
+
+Encode the given text and write the result to the given output. 
+
+The encoder writes data in the column-\/major order or in the row-\/major order depending on the output data type.
+
+If the output type is either arma\+::mat or arma\+::sp\+\_\+mat then the function writes it in the column-\/major order. If the output type is 2D std\+::vector then the function writes it in the row major order.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Output\+Type} & Type of the output container. The function supports the following types\+: arma\+::mat, arma\+::sp\+\_\+mat, std\+::vector$<$std\+::vector$<$$>$$>$. \\
+\hline
+{\em Tokenizer\+Type} & Type of the tokenizer.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Corpus of text to encode. \\
+\hline
+{\em output} & Output container to store the result. \\
+\hline
+{\em tokenizer} & The tokenizer object.\\
+\hline
+\end{DoxyParams}
+The tokenization algorithm has to be an object with two public methods\+:
+\begin{DoxyEnumerate}
+\item operator() which accepts a reference to boost\+::string\+\_\+view, extracts the next token from the given view, removes the prefix containing the extracted token and returns the token;
+\item Is\+Token\+Empty() that accepts a token and returns true if the given token is empty. 
+\end{DoxyEnumerate}\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a966fb1ddae12f03d28700d7520d9a625}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!EncodingPolicy@{EncodingPolicy}}
+\index{EncodingPolicy@{EncodingPolicy}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{EncodingPolicy()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Encoding\+Policy\+Type\& Encoding\+Policy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the encoding policy object. 
+
+
+
+Definition at line 131 of file string\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a123b735db5cf6ef4bf38b6a0b925fa3d}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!EncodingPolicy@{EncodingPolicy}}
+\index{EncodingPolicy@{EncodingPolicy}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{EncodingPolicy()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Encoding\+Policy\+Type\& Encoding\+Policy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the encoding policy object. 
+
+
+
+Definition at line 129 of file string\+\_\+encoding.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a65bb5577416cf451d1bd2e88d7bb77f4}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ String\+Encoding}$<$ Encoding\+Policy\+Type, Dictionary\+Type $>$ \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Default copy assignment operator. 
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a78607e4296ac26000b06e0c875a814a0}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ String\+Encoding}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ String\+Encoding}$<$ Encoding\+Policy\+Type, Dictionary\+Type $>$ \&\&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Default move assignment operator. 
+
+\mbox{\label{classmlpack_1_1data_1_1StringEncoding_a65cba07328997659bec80b9879b15a51}} 
+\index{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!StringEncoding$<$ EncodingPolicyType, DictionaryType $>$@{StringEncoding$<$ EncodingPolicyType, DictionaryType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the class to the given archive. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/data/\textbf{ string\+\_\+encoding.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,93 @@
+.TH "SimilarityInterpolation" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SimilarityInterpolation \- With \fBSimilarityInterpolation\fP, interpolation weights are based on similarities between query user and its neighbors\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSimilarityInterpolation\fP ()"
+.br
+.ti -1c
+.RI "\fBSimilarityInterpolation\fP (const arma::sp_mat &)"
+.br
+.RI "This constructor is needed for interface consistency\&. "
+.ti -1c
+.RI "template<typename VectorType , typename DecompositionPolicy > void \fBGetWeights\fP (VectorType &&weights, const DecompositionPolicy &, const size_t, const arma::Col< size_t > &neighbors, const arma::vec &similarities, const arma::sp_mat &)"
+.br
+.RI "Interpolation weights are computed as normalized similarities\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+With \fBSimilarityInterpolation\fP, interpolation weights are based on similarities between query user and its neighbors\&. 
+
+All interpolation weights sum up to one\&.
+.PP
+An example of how to use \fBSimilarityInterpolation\fP in CF is shown below:
+.PP
+.PP
+.nf
+extern arma::mat data; // data is a (user, item, rating) table\&.
+// Users for whom recommendations are generated\&.
+extern arma::Col<size_t> users;
+arma::Mat<size_t> recommendations; // Resulting recommendations\&.
+
+CFType<> cf(data);
+
+// Generate 10 recommendations for all users\&.
+cf\&.template GetRecommendations<
+    EuclideanSearch,
+    SimilarityInterpolation>(10, recommendations);
+.fi
+.PP
+ 
+.PP
+Definition at line 41 of file similarity_interpolation\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSimilarityInterpolation\fP ()\fC [inline]\fP"
+
+.PP
+Definition at line 45 of file similarity_interpolation\&.hpp\&.
+.SS "\fBSimilarityInterpolation\fP (const arma::sp_mat &)\fC [inline]\fP"
+
+.PP
+This constructor is needed for interface consistency\&. 
+.PP
+Definition at line 50 of file similarity_interpolation\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "void GetWeights (VectorType && weights, const DecompositionPolicy &, const size_t, const arma::Col< size_t > & neighbors, const arma::vec & similarities, const arma::sp_mat &)\fC [inline]\fP"
+
+.PP
+Interpolation weights are computed as normalized similarities\&. After getting the weights, CF algorithm multiplies each neighbor's rating by its corresponding weight and sums them to get predicted rating\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIweights\fP Resulting interpolation weights\&. The size of weights should be set to the number of neighbors before calling \fBGetWeights()\fP\&. 
+.br
+\fI*\fP (decomposition) Decomposition object\&. 
+.br
+\fI*\fP (queryUser) Queried user\&. 
+.br
+\fIneighbors\fP Neighbors of queried user\&. 
+.br
+\fIsimilarities\fP Similarities between query user and neighbors\&. 
+.br
+\fI*\fP (cleanedData) Sparse rating matrix\&. 
+.RE
+.PP
+
+.PP
+Definition at line 67 of file similarity_interpolation\&.hpp\&.
+.PP
+References Log::Fatal\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

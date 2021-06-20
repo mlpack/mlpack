@@ -1,0 +1,153 @@
+.TH "TripletMarginLoss< InputDataType, OutputDataType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+TripletMarginLoss< InputDataType, OutputDataType > \- The Triplet Margin Loss performance function measures the network's performance according to the relative distance from the anchor input of the positive (truthy) and negative (falsy) inputs\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBTripletMarginLoss\fP (const double margin=1\&.0)"
+.br
+.RI "Create the \fBTripletMarginLoss\fP object\&. "
+.ti -1c
+.RI "template<typename PredictionType , typename TargetType , typename LossType > void \fBBackward\fP (const PredictionType &prediction, const TargetType &target, LossType &loss)"
+.br
+.RI "Ordinary feed backward pass of a neural network\&. "
+.ti -1c
+.RI "template<typename PredictionType , typename TargetType > PredictionType::elem_type \fBForward\fP (const PredictionType &prediction, const TargetType &target)"
+.br
+.RI "Computes the Triplet Margin Loss function\&. "
+.ti -1c
+.RI "double & \fBMargin\fP ()"
+.br
+.RI "Modify the value of margin\&. "
+.ti -1c
+.RI "double \fBMargin\fP () const"
+.br
+.RI "Get the value of margin\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const unsigned int)"
+.br
+.RI "Serialize the layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::TripletMarginLoss< InputDataType, OutputDataType >"
+The Triplet Margin Loss performance function measures the network's performance according to the relative distance from the anchor input of the positive (truthy) and negative (falsy) inputs\&. 
+
+The distance between two samples A and B is defined as square of L2 norm of A-B\&.
+.PP
+For more information, refer the following paper\&.
+.PP
+.PP
+.nf
+@article{Schroff2015,
+  author  = {Florian Schroff, Dmitry Kalenichenko, James Philbin},
+  title   = {FaceNet: A Unified Embedding for Face Recognition and Clustering},
+  year    = {2015},
+  url     = {https://arxiv\&.org/abs/1503\&.03832},
+}
+.fi
+.PP
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 48 of file triplet_margin_loss\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBTripletMarginLoss\fP (const double margin = \fC1\&.0\fP)"
+
+.PP
+Create the \fBTripletMarginLoss\fP object\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImargin\fP The minimum value by which the distance between Anchor and Negative sample exceeds the distance between Anchor and Positive sample\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const PredictionType & prediction, const TargetType & target, LossType & loss)"
+
+.PP
+Ordinary feed backward pass of a neural network\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIprediction\fP Concatenated anchor and positive sample\&. 
+.br
+\fItarget\fP The negative sample\&. 
+.br
+\fIloss\fP The calculated error\&. 
+.RE
+.PP
+
+.SS "PredictionType::elem_type Forward (const PredictionType & prediction, const TargetType & target)"
+
+.PP
+Computes the Triplet Margin Loss function\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIprediction\fP Concatenated anchor and positive sample\&. 
+.br
+\fItarget\fP The negative sample\&. 
+.RE
+.PP
+
+.SS "double& Margin ()\fC [inline]\fP"
+
+.PP
+Modify the value of margin\&. 
+.PP
+Definition at line 89 of file triplet_margin_loss\&.hpp\&.
+.SS "double Margin () const\fC [inline]\fP"
+
+.PP
+Get the value of margin\&. 
+.PP
+Definition at line 87 of file triplet_margin_loss\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 84 of file triplet_margin_loss\&.hpp\&.
+.SS "OutputDataType& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 82 of file triplet_margin_loss\&.hpp\&.
+.SS "void serialize (Archive & ar, const unsigned int)"
+
+.PP
+Serialize the layer\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

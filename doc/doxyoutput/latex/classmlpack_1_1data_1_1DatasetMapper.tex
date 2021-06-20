@@ -1,0 +1,313 @@
+\doxysection{Dataset\+Mapper$<$ Policy\+Type, Input\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1data_1_1DatasetMapper}\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+
+
+Auxiliary information for a dataset, including mappings to/from strings (or other types) and the datatype of each dimension.  
+
+
+
+
+Inheritance diagram for Dataset\+Mapper$<$ Policy\+Type, Input\+Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=257pt]{classmlpack_1_1data_1_1DatasetMapper__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Dataset\+Mapper} (const size\+\_\+t dimensionality=0)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object with the given dimensionality. \end{DoxyCompactList}\item 
+\textbf{ Dataset\+Mapper} (Policy\+Type \&policy, const size\+\_\+t dimensionality=0)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object with the given policy and dimensionality. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Dimensionality} () const
+\begin{DoxyCompactList}\small\item\em Get the dimensionality of the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object (that is, how many dimensions it has information for). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Map\+First\+Pass} (const Input\+Type \&input, const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Preprocessing\+: during a first pass of the data, pass the input on to the Map\+Policy if they are needed. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \textbf{ Map\+String} (const Input\+Type \&input, const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Given the input and the dimension to which it belongs, return its numeric mapping. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Num\+Mappings} (const size\+\_\+t dimension) const
+\begin{DoxyCompactList}\small\item\em Get the number of mappings for a particular dimension. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\size\+\_\+t \textbf{ Num\+Unmappings} (const T value, const size\+\_\+t dimension) const
+\begin{DoxyCompactList}\small\item\em Get the number of possible unmappings for a string in a given dimension. \end{DoxyCompactList}\item 
+Policy\+Type \& \textbf{ Policy} ()
+\begin{DoxyCompactList}\small\item\em Modify the policy of the mapper (be careful!). \end{DoxyCompactList}\item 
+const Policy\+Type \& \textbf{ Policy} () const
+\begin{DoxyCompactList}\small\item\em Return the policy of the mapper. \end{DoxyCompactList}\item 
+void \textbf{ Policy} (Policy\+Type \&\&policy)
+\begin{DoxyCompactList}\small\item\em Modify (Replace) the policy of the mapper with a new policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the dataset information. \end{DoxyCompactList}\item 
+void \textbf{ Set\+Dimensionality} (const size\+\_\+t dimensionality)
+\begin{DoxyCompactList}\small\item\em Set the dimensionality of an existing \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object. \end{DoxyCompactList}\item 
+\textbf{ Datatype} \& \textbf{ Type} (const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Modify the type of a given dimension (be careful!). \end{DoxyCompactList}\item 
+\textbf{ Datatype} \textbf{ Type} (const size\+\_\+t dimension) const
+\begin{DoxyCompactList}\small\item\em Return the type of a given dimension (numeric or categorical). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\const Input\+Type \& \textbf{ Unmap\+String} (const T value, const size\+\_\+t dimension, const size\+\_\+t unmapping\+Index=0) const
+\begin{DoxyCompactList}\small\item\em Return the input that corresponds to a given value in a given dimension. \end{DoxyCompactList}\item 
+Policy\+Type\+::\+Mapped\+Type \textbf{ Unmap\+Value} (const Input\+Type \&input, const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Return the value that corresponds to a given input in a given dimension. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Policy\+Type, typename Input\+Type = std\+::string$>$\newline
+class mlpack\+::data\+::\+Dataset\+Mapper$<$ Policy\+Type, Input\+Type $>$}
+
+Auxiliary information for a dataset, including mappings to/from strings (or other types) and the datatype of each dimension. 
+
+\doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} objects are optionally produced by \doxyref{data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831}, and store the type of each dimension (Datatype\+::numeric or Datatype\+::categorical) as well as mappings from strings to unsigned integers and vice versa.
+
+\doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} objects can also map from arbitrary types; the type to map from can be specified with the Input\+Type template parameter. By default, the Input\+Type parameter is std\+::string.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Policy\+Type} & Mapping policy used to specify \doxyref{Map\+String()}{p.}{classmlpack_1_1data_1_1DatasetMapper_aa262641cb3ba3a0b2583c37e2863ab49}. \\
+\hline
+{\em Input\+Type} & Type of input to be mapped. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 41 of file dataset\+\_\+mapper.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_a1cb8ca1e3f05d484a311ac538ad6d875}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!DatasetMapper@{DatasetMapper}}
+\index{DatasetMapper@{DatasetMapper}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{DatasetMapper()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Dataset\+Mapper} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{dimensionality = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Create the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object with the given dimensionality. 
+
+Note that the dimensionality cannot be changed later; you will have to create a new \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object. \mbox{\label{classmlpack_1_1data_1_1DatasetMapper_a12082e154904a4a0e6451d7ff7df8335}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!DatasetMapper@{DatasetMapper}}
+\index{DatasetMapper@{DatasetMapper}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{DatasetMapper()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Dataset\+Mapper} (\begin{DoxyParamCaption}\item[{Policy\+Type \&}]{policy,  }\item[{const size\+\_\+t}]{dimensionality = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Create the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object with the given policy and dimensionality. 
+
+Note that the dimensionality cannot be changed later; you will have to create a new \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object. Policy can be modified by the modifier. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_a78eda6bfb9e9462afa0fc85e32abe1af}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!Dimensionality@{Dimensionality}}
+\index{Dimensionality@{Dimensionality}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{Dimensionality()}
+{\footnotesize\ttfamily size\+\_\+t Dimensionality (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the dimensionality of the \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object (that is, how many dimensions it has information for). 
+
+If this object was created by a call to \doxyref{mlpack\+::data\+::\+Load()}{p.}{namespacemlpack_1_1data_abbff2a667bf247e00b1fc09b7ca5f831}, then the dimensionality will be the same as the number of rows (dimensions) in the dataset. \mbox{\label{classmlpack_1_1data_1_1DatasetMapper_abc9d3b17fb4bc99d9dc00052658c19b1}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!MapFirstPass@{MapFirstPass}}
+\index{MapFirstPass@{MapFirstPass}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{MapFirstPass()}
+{\footnotesize\ttfamily void Map\+First\+Pass (\begin{DoxyParamCaption}\item[{const Input\+Type \&}]{input,  }\item[{const size\+\_\+t}]{dimension }\end{DoxyParamCaption})}
+
+
+
+Preprocessing\+: during a first pass of the data, pass the input on to the Map\+Policy if they are needed. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input to map. \\
+\hline
+{\em dimension} & Dimension to map for. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_aa262641cb3ba3a0b2583c37e2863ab49}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!MapString@{MapString}}
+\index{MapString@{MapString}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{MapString()}
+{\footnotesize\ttfamily T Map\+String (\begin{DoxyParamCaption}\item[{const Input\+Type \&}]{input,  }\item[{const size\+\_\+t}]{dimension }\end{DoxyParamCaption})}
+
+
+
+Given the input and the dimension to which it belongs, return its numeric mapping. 
+
+If no mapping yet exists, the input is added to the list of mappings for the given dimension. The dimension parameter refers to the index of the dimension of the string (i.\+e. the row in the dataset).
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Numeric type to map to (int/double/float/etc.). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input to find/create mapping for. \\
+\hline
+{\em dimension} & Index of the dimension of the string. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Mock\+Categorical\+Data(), and mlpack\+::util\+::\+Set\+Param\+With\+Info().
+
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_ab7507726fd159ae4c23491f8ca4fdb7e}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!NumMappings@{NumMappings}}
+\index{NumMappings@{NumMappings}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{NumMappings()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Mappings (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{dimension }\end{DoxyParamCaption}) const}
+
+
+
+Get the number of mappings for a particular dimension. 
+
+If the dimension is numeric, then this will return 0. \mbox{\label{classmlpack_1_1data_1_1DatasetMapper_a54dbddcef3e4710b4ebccaa5ae449db3}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!NumUnmappings@{NumUnmappings}}
+\index{NumUnmappings@{NumUnmappings}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{NumUnmappings()}
+{\footnotesize\ttfamily size\+\_\+t Num\+Unmappings (\begin{DoxyParamCaption}\item[{const T}]{value,  }\item[{const size\+\_\+t}]{dimension }\end{DoxyParamCaption}) const}
+
+
+
+Get the number of possible unmappings for a string in a given dimension. 
+
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_a1ef80c7b0a3fb5468b9d920fef109d36}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!Policy@{Policy}}
+\index{Policy@{Policy}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{Policy()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily Policy\+Type\& Policy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Modify the policy of the mapper (be careful!). 
+
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_a04e9dd2c0ef71ea0e2cb126233652bfa}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!Policy@{Policy}}
+\index{Policy@{Policy}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{Policy()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily const Policy\+Type\& Policy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the policy of the mapper. 
+
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_a3c99829fefb852602b7daa0bd5e32c1a}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!Policy@{Policy}}
+\index{Policy@{Policy}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{Policy()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Policy (\begin{DoxyParamCaption}\item[{Policy\+Type \&\&}]{policy }\end{DoxyParamCaption})}
+
+
+
+Modify (Replace) the policy of the mapper with a new policy. 
+
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_a65cba07328997659bec80b9879b15a51}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the dataset information. 
+
+
+
+Definition at line 154 of file dataset\+\_\+mapper.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_ae0e1d3459cf5bee5e688beaadf9a4f04}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!SetDimensionality@{SetDimensionality}}
+\index{SetDimensionality@{SetDimensionality}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{SetDimensionality()}
+{\footnotesize\ttfamily void Set\+Dimensionality (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{dimensionality }\end{DoxyParamCaption})}
+
+
+
+Set the dimensionality of an existing \doxyref{Dataset\+Mapper}{p.}{classmlpack_1_1data_1_1DatasetMapper} object. 
+
+This resets all mappings (but not the Policy\+Type).
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimensionality} & New dimensionality. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Load\+CSV\+::\+Get\+Transpose\+Matrix\+Size().
+
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_a1283ad10b330a96190ef575e7a471827}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!Type@{Type}}
+\index{Type@{Type}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{Type()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Datatype}\& Type (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{dimension }\end{DoxyParamCaption})}
+
+
+
+Modify the type of a given dimension (be careful!). 
+
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_af46c276f8b3c130454e23447bcb959e4}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!Type@{Type}}
+\index{Type@{Type}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{Type()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Datatype} Type (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{dimension }\end{DoxyParamCaption}) const}
+
+
+
+Return the type of a given dimension (numeric or categorical). 
+
+
+
+Referenced by Mock\+Categorical\+Data(), and mlpack\+::util\+::\+Set\+Param\+With\+Info().
+
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_aa7aa43366cbb80bb5c65b1114ff1191e}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!UnmapString@{UnmapString}}
+\index{UnmapString@{UnmapString}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{UnmapString()}
+{\footnotesize\ttfamily const Input\+Type\& Unmap\+String (\begin{DoxyParamCaption}\item[{const T}]{value,  }\item[{const size\+\_\+t}]{dimension,  }\item[{const size\+\_\+t}]{unmapping\+Index = {\ttfamily 0} }\end{DoxyParamCaption}) const}
+
+
+
+Return the input that corresponds to a given value in a given dimension. 
+
+If the value is not a valid mapping in the given dimension, a std\+::invalid\+\_\+argument is thrown. Note that this does not remove the mapping.
+
+If the mapping is non-\/unique (i.\+e. many strings can map to the same value), then you can pass a different value for unmapping\+Index to get a different string that maps to the given value. unmapping\+Index should be in the range from 0 to (Num\+Unmappings(value, dimension) -\/ 1).
+
+If the mapping is unique (which it is for Dataset\+Info), then the unmapping\+Index parameter can be left as the default.
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Mapped value for input. \\
+\hline
+{\em dimension} & Dimension to unmap string from. \\
+\hline
+{\em unmapping\+Index} & Index of non-\/unique unmapping (optional). \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1data_1_1DatasetMapper_a5fedd8c234794cdaf148319c28c28e2e}} 
+\index{DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}!UnmapValue@{UnmapValue}}
+\index{UnmapValue@{UnmapValue}!DatasetMapper$<$ PolicyType, InputType $>$@{DatasetMapper$<$ PolicyType, InputType $>$}}
+\doxysubsubsection{UnmapValue()}
+{\footnotesize\ttfamily Policy\+Type\+::\+Mapped\+Type Unmap\+Value (\begin{DoxyParamCaption}\item[{const Input\+Type \&}]{input,  }\item[{const size\+\_\+t}]{dimension }\end{DoxyParamCaption})}
+
+
+
+Return the value that corresponds to a given input in a given dimension. 
+
+If the value is not a valid mapping in the given dimension, a std\+::invalid\+\_\+argument is thrown. Note that this does not remove the mapping.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Mapped input for value. \\
+\hline
+{\em dimension} & Dimension to unmap input from. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/data/\textbf{ dataset\+\_\+mapper.\+hpp}\end{DoxyCompactItemize}

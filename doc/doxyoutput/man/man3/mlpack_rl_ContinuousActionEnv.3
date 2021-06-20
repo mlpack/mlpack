@@ -1,0 +1,112 @@
+.TH "ContinuousActionEnv" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ContinuousActionEnv \- To use the dummy environment, one may start by specifying the state and action dimensions\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBAction\fP"
+.br
+.RI "Implementation of continuous action\&. "
+.ti -1c
+.RI "class \fBState\fP"
+.br
+.RI "Implementation of state of the dummy environment\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBState\fP \fBInitialSample\fP ()"
+.br
+.RI "Dummy function to mimic initial sampling in an environment\&. "
+.ti -1c
+.RI "bool \fBIsTerminal\fP (const \fBState\fP &) const"
+.br
+.RI "Dummy function to find terminal state\&. "
+.ti -1c
+.RI "double \fBSample\fP (const \fBState\fP &, const \fBAction\fP &, \fBState\fP &)"
+.br
+.RI "Dummy function to mimic sampling in an environment\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+To use the dummy environment, one may start by specifying the state and action dimensions\&. 
+
+Eg: 
+.PP
+.nf
+ContinuousActionEnv::State::dimension = 3;
+ContinuousActionEnv::Action::size = 1;
+
+.fi
+.PP
+.PP
+Now the \fBContinuousActionEnv\fP class can be used as an EnvironmentType in RL methods just as any other mlpack's implementation of gym environments\&. 
+.PP
+Definition at line 121 of file env_type\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBState\fP InitialSample ()\fC [inline]\fP"
+
+.PP
+Dummy function to mimic initial sampling in an environment\&. 
+.PP
+\fBReturns\fP
+.RS 4
+the dummy state\&. 
+.RE
+.PP
+
+.PP
+Definition at line 193 of file env_type\&.hpp\&.
+.SS "bool IsTerminal (const \fBState\fP &) const\fC [inline]\fP"
+
+.PP
+Dummy function to find terminal state\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (state) The current state\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+It's of no use but so lets keep it false\&. 
+.RE
+.PP
+
+.PP
+Definition at line 200 of file env_type\&.hpp\&.
+.SS "double Sample (const \fBState\fP &, const \fBAction\fP &, \fBState\fP &)\fC [inline]\fP"
+
+.PP
+Dummy function to mimic sampling in an environment\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (state) The current state\&. 
+.br
+\fI*\fP (action) The current action\&. 
+.br
+\fI*\fP (nextState) The next state\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+It's of no use so lets keep it 0\&. 
+.RE
+.PP
+
+.PP
+Definition at line 183 of file env_type\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

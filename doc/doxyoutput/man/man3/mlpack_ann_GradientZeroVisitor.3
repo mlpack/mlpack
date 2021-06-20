@@ -1,0 +1,46 @@
+.TH "GradientZeroVisitor" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GradientZeroVisitor
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits static_visitor< void >\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGradientZeroVisitor\fP ()"
+.br
+.RI "Set the gradient to zero for the given module\&. "
+.ti -1c
+.RI "template<typename LayerType > void \fBoperator()\fP (LayerType *layer) const"
+.br
+.RI "Set the gradient to zero\&. "
+.ti -1c
+.RI "void \fBoperator()\fP (\fBMoreTypes\fP layer) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 27 of file gradient_zero_visitor\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBGradientZeroVisitor\fP ()"
+
+.PP
+Set the gradient to zero for the given module\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void operator() (LayerType * layer) const"
+
+.PP
+Set the gradient to zero\&. 
+.SS "void operator() (\fBMoreTypes\fP layer) const"
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

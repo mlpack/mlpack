@@ -1,0 +1,206 @@
+\doxysection{Randomized\+Block\+Krylov\+SVD Class Reference}
+\label{classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD}\index{RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}}
+
+
+Randomized block krylov SVD is a matrix factorization that is based on randomized matrix approximation techniques, developed in in \char`\"{}\+Randomized Block Krylov Methods for Stronger and Faster Approximate \+Singular Value Decomposition\char`\"{}.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Randomized\+Block\+Krylov\+SVD} (const arma\+::mat \&data, arma\+::mat \&u, arma\+::vec \&s, arma\+::mat \&v, const size\+\_\+t max\+Iterations=2, const size\+\_\+t rank=0, const size\+\_\+t block\+Size=0)
+\begin{DoxyCompactList}\small\item\em Create object for the randomized block krylov SVD method. \end{DoxyCompactList}\item 
+\textbf{ Randomized\+Block\+Krylov\+SVD} (const size\+\_\+t max\+Iterations=2, const size\+\_\+t block\+Size=0)
+\begin{DoxyCompactList}\small\item\em Create object for the randomized block krylov SVD method. \end{DoxyCompactList}\item 
+void \textbf{ Apply} (const arma\+::mat \&data, arma\+::mat \&u, arma\+::vec \&s, arma\+::mat \&v, const size\+\_\+t rank)
+\begin{DoxyCompactList}\small\item\em Apply Principal Component Analysis to the provided data set using the randomized block krylov SVD. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Block\+Size} ()
+\begin{DoxyCompactList}\small\item\em Modify the block size. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Block\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the block size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Max\+Iterations} ()
+\begin{DoxyCompactList}\small\item\em Modify the number of iterations for the power method. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Max\+Iterations} () const
+\begin{DoxyCompactList}\small\item\em Get the number of iterations for the power method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Randomized block krylov SVD is a matrix factorization that is based on randomized matrix approximation techniques, developed in in \char`\"{}\+Randomized Block Krylov Methods for Stronger and Faster Approximate \+Singular Value Decomposition\char`\"{}. 
+
+For more information, see the following.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@inproceedings\{Musco2015,}
+\DoxyCodeLine{  author    = \{Cameron Musco and Christopher Musco\},}
+\DoxyCodeLine{  title     = \{Randomized Block Krylov Methods \textcolor{keywordflow}{for} Stronger and Faster}
+\DoxyCodeLine{               Approximate Singular Value Decomposition\},}
+\DoxyCodeLine{  booktitle = \{Advances in Neural Information Processing Systems 28: Annual}
+\DoxyCodeLine{               Conference on Neural Information Processing Systems 2015,}
+\DoxyCodeLine{               December 7-\/12, 2015, Montreal, Quebec, Canada\},}
+\DoxyCodeLine{  pages     = \{1396-\/-\/1404\},}
+\DoxyCodeLine{  year      = \{2015\},}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+An example of how to use the interface is shown below\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{arma::mat data; \textcolor{comment}{// Rating data in the form of coordinate list.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} rank = 20; \textcolor{comment}{// Rank used for the decomposition.}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Make a RandomizedBlockKrylovSVD object.}}
+\DoxyCodeLine{RandomizedBlockKrylovSVD bSVD();}
+\DoxyCodeLine{}
+\DoxyCodeLine{arma::mat u, s, v;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Use the Apply() method to get a factorization.}}
+\DoxyCodeLine{bSVD.Apply(data, u, s, v, rank);}
+
+\end{DoxyCode}
+ 
+
+Definition at line 58 of file randomized\+\_\+block\+\_\+krylov\+\_\+svd.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_aa1fb3c7372e3ca685cf926865c214150}} 
+\index{RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}!RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}}
+\index{RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}!RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}}
+\doxysubsubsection{RandomizedBlockKrylovSVD()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Randomized\+Block\+Krylov\+SVD} (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{arma\+::mat \&}]{u,  }\item[{arma\+::vec \&}]{s,  }\item[{arma\+::mat \&}]{v,  }\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 2},  }\item[{const size\+\_\+t}]{rank = {\ttfamily 0},  }\item[{const size\+\_\+t}]{block\+Size = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Create object for the randomized block krylov SVD method. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data matrix. \\
+\hline
+{\em u} & First unitary matrix. \\
+\hline
+{\em v} & Second unitary matrix. \\
+\hline
+{\em s} & Diagonal matrix of singular values. \\
+\hline
+{\em max\+Iterations} & Number of iterations for the power method (Default\+: 2). \\
+\hline
+{\em rank} & Rank of the approximation (Default\+: number of rows.) \\
+\hline
+{\em block\+Size} & The block size, must be $>$= rank (Default\+: rank + 10). \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_aa43fe96dd8cd42e02f259c2b500232ae}} 
+\index{RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}!RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}}
+\index{RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}!RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}}
+\doxysubsubsection{RandomizedBlockKrylovSVD()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Randomized\+Block\+Krylov\+SVD} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{max\+Iterations = {\ttfamily 2},  }\item[{const size\+\_\+t}]{block\+Size = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Create object for the randomized block krylov SVD method. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Iterations} & Number of iterations for the power method (Default\+: 2). \\
+\hline
+{\em block\+Size} & The block size, must be $>$= rank (Default\+: rank + 10). \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_a880f86693b7d486206c2f69ad8d9c59a}} 
+\index{RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}!Apply@{Apply}}
+\index{Apply@{Apply}!RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}}
+\doxysubsubsection{Apply()}
+{\footnotesize\ttfamily void Apply (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{data,  }\item[{arma\+::mat \&}]{u,  }\item[{arma\+::vec \&}]{s,  }\item[{arma\+::mat \&}]{v,  }\item[{const size\+\_\+t}]{rank }\end{DoxyParamCaption})}
+
+
+
+Apply Principal Component Analysis to the provided data set using the randomized block krylov SVD. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data matrix. \\
+\hline
+{\em u} & First unitary matrix. \\
+\hline
+{\em v} & Second unitary matrix. \\
+\hline
+{\em s} & Diagonal matrix of singular values. \\
+\hline
+{\em rank} & Rank of the approximation. \\
+\hline
+\end{DoxyParams}
+
+
+Referenced by Randomized\+Block\+Krylov\+SVDPolicy\+::\+Apply().
+
+\mbox{\label{classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_a3380590a2f71ed10c3e81242b7e0faeb}} 
+\index{RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}!BlockSize@{BlockSize}}
+\index{BlockSize@{BlockSize}!RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}}
+\doxysubsubsection{BlockSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Block\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the block size. 
+
+
+
+Definition at line 115 of file randomized\+\_\+block\+\_\+krylov\+\_\+svd.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_a3abd143be875c389ea92c4d54057c591}} 
+\index{RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}!BlockSize@{BlockSize}}
+\index{BlockSize@{BlockSize}!RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}}
+\doxysubsubsection{BlockSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Block\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the block size. 
+
+
+
+Definition at line 113 of file randomized\+\_\+block\+\_\+krylov\+\_\+svd.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_acda675ab4ab86b95c92bc33bc391a61b}} 
+\index{RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}!MaxIterations@{MaxIterations}}
+\index{MaxIterations@{MaxIterations}!RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}}
+\doxysubsubsection{MaxIterations()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Max\+Iterations (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of iterations for the power method. 
+
+
+
+Definition at line 110 of file randomized\+\_\+block\+\_\+krylov\+\_\+svd.\+hpp.
+
+\mbox{\label{classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD_a420770944a5b0c7a852c4ec372c4a2d1}} 
+\index{RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}!MaxIterations@{MaxIterations}}
+\index{MaxIterations@{MaxIterations}!RandomizedBlockKrylovSVD@{RandomizedBlockKrylovSVD}}
+\doxysubsubsection{MaxIterations()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Max\+Iterations (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of iterations for the power method. 
+
+
+
+Definition at line 108 of file randomized\+\_\+block\+\_\+krylov\+\_\+svd.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/block\+\_\+krylov\+\_\+svd/\textbf{ randomized\+\_\+block\+\_\+krylov\+\_\+svd.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_ed97a359292189f6ce70548f8cfe7fb7" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core/tree/space_split</compoundname>
+    <innerfile refid="hyperplane_8hpp">hyperplane.hpp</innerfile>
+    <innerfile refid="mean__space__split_8hpp">mean_space_split.hpp</innerfile>
+    <innerfile refid="midpoint__space__split_8hpp">midpoint_space_split.hpp</innerfile>
+    <innerfile refid="projection__vector_8hpp">projection_vector.hpp</innerfile>
+    <innerfile refid="space__split_8hpp">space_split.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/space_split/"/>
+  </compounddef>
+</doxygen>

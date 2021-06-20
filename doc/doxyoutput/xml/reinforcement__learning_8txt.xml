@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="reinforcement__learning_8txt" kind="file" language="C++">
+    <compoundname>reinforcement_learning.txt</compoundname>
+    <briefdescription>
+<para>Tutorial for how to use the Reinforcement Learning module in mlpack. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Sriram S K </para>
+</simplesect>
+<simplesect kind="author"><para>Joel Joseph </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Average<sp/>return:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>averageReturn.mean()</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>Episode<sp/>return:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>episodeReturn<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(averageReturn.mean()<sp/>&gt;<sp/>35)</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(converged)</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Hooray!<sp/>Q-Learning<sp/>agent<sp/>successfully<sp/>trained&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="236"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight><highlight class="keyword">@end</highlight><highlight class="normal">code</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal">We<sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>up<sp/>a<sp/>loop<sp/>to<sp/>train<sp/>the<sp/>agent.<sp/>The<sp/>exit<sp/>condition<sp/>is<sp/>determined<sp/>by<sp/>the<sp/>average</highlight></codeline>
+<codeline lineno="240"><highlight class="normal">reward<sp/>which<sp/>can<sp/>be<sp/>computed<sp/>with<sp/>`arma::running_stat`.<sp/>It<sp/>is<sp/>used<sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>storing<sp/>running</highlight></codeline>
+<codeline lineno="241"><highlight class="normal">statistics<sp/>of<sp/>scalars,<sp/>which<sp/>in<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>is<sp/>the<sp/>reward<sp/>signal.<sp/>The<sp/>agent<sp/>can<sp/>be<sp/>said</highlight></codeline>
+<codeline lineno="242"><highlight class="normal">to<sp/>have<sp/>converged<sp/>when<sp/>the<sp/>average<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>reaches<sp/>a<sp/>predetermined<sp/>value<sp/>(i.e.<sp/>&gt;<sp/>35).</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal">Conversely,<sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>the<sp/>average<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>does<sp/>not<sp/><ref refid="methods_2nmf_2CMakeLists_8txt_1a1406f37190e825427440bc020919218a" kindref="member">go</ref><sp/>beyond<sp/>that<sp/>amount<sp/>even<sp/>after<sp/>a<sp/>thousand</highlight></codeline>
+<codeline lineno="245"><highlight class="normal">episodes,<sp/>we<sp/>can<sp/>conclude<sp/>that<sp/>the<sp/>agent<sp/>will<sp/>not<sp/>converge<sp/>and<sp/>exit<sp/>the<sp/>training<sp/>loop.</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal">@section<sp/>async_learning_rltut</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal">In<sp/>2016,<sp/>Researchers<sp/>at<sp/>Deepmind<sp/>and<sp/>University<sp/>of<sp/>Montreal<sp/>published<sp/>their<sp/>paper</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight><highlight class="stringliteral">&quot;Asynchronous<sp/>Methods<sp/>for<sp/>Deep<sp/>Reinforcement<sp/>Learning&quot;</highlight><highlight class="normal">.<sp/>In<sp/>it<sp/>they<sp/>described<sp/>asynchronous</highlight></codeline>
+<codeline lineno="251"><highlight class="normal">variants<sp/>of<sp/>four<sp/>standard<sp/>reinforcement<sp/>learning<sp/>algorithms:</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/>-<sp/>One-Step<sp/>SARSA</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/>-<sp/>One-Step<sp/>Q-Learning</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/>-<sp/>N-Step<sp/>Q-Learning</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/>-<sp/>Advantage<sp/>Actor-Critic(A3C)</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal">Online<sp/>RL<sp/>algorithms<sp/>and<sp/>Deep<sp/>Neural<sp/>Networks<sp/>make<sp/>an<sp/>unstable<sp/>combination<sp/>because<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="258"><highlight class="normal">non-stationary<sp/>and<sp/>correlated<sp/>nature<sp/>of<sp/>online<sp/>updates.<sp/>Although<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>is<sp/>solved<sp/>by<sp/>Experience<sp/>Replay,</highlight></codeline>
+<codeline lineno="259"><highlight class="normal">it<sp/>has<sp/>several<sp/>drawbacks:<sp/>it<sp/>uses<sp/>more<sp/>memory<sp/>and<sp/>computation<sp/>per<sp/>real<sp/>interaction;<sp/>and<sp/>it<sp/>requires</highlight></codeline>
+<codeline lineno="260"><highlight class="normal">off-policy<sp/>learning<sp/>algorithms.</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal">Asynchronous<sp/>methods,<sp/>instead<sp/>of<sp/>experience<sp/>replay,<sp/>asynchronously<sp/>executes<sp/>multiple<sp/>agents</highlight></codeline>
+<codeline lineno="263"><highlight class="normal">in<sp/>parallel,<sp/>on<sp/>multiple<sp/>instances<sp/>of<sp/>the<sp/>environment,<sp/>which<sp/>solves<sp/>all<sp/>the<sp/>above<sp/>problems.</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal">Here,<sp/>we<sp/>demonstrate<sp/>Asynchronous<sp/>Learning<sp/>methods<sp/>in<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>through<sp/>the<sp/>training<sp/>of<sp/>an<sp/>async</highlight></codeline>
+<codeline lineno="266"><highlight class="normal">agent.<sp/>Asynchronous<sp/>learning<sp/>involves<sp/>training<sp/>several<sp/>agents<sp/>simultaneously.<sp/>Here,<sp/>each<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="267"><highlight class="normal">agents<sp/>are<sp/>referred<sp/>to<sp/>as<sp/></highlight><highlight class="stringliteral">&quot;workers&quot;</highlight><highlight class="normal">.<sp/>Currently<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>has<sp/>One-Step<sp/>Q-Learning<sp/>worker,<sp/>N-Step</highlight></codeline>
+<codeline lineno="268"><highlight class="normal">Q-Learning<sp/>worker<sp/>and<sp/>One-Step<sp/>SARSA<sp/>worker.</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight></codeline>
+<codeline lineno="270"><highlight class="normal">Let</highlight><highlight class="stringliteral">&apos;s<sp/>examine<sp/>the<sp/>sample<sp/>code<sp/>in<sp/>chunks.</highlight></codeline>
+<codeline lineno="271"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="272"><highlight class="stringliteral">Apart<sp/>from<sp/>the<sp/>includes<sp/>used<sp/>for<sp/>the<sp/>q-learning<sp/>example,<sp/>two<sp/>more<sp/>have<sp/>to<sp/>be<sp/>included:</highlight></codeline>
+<codeline lineno="273"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="274"><highlight class="stringliteral">@code</highlight></codeline>
+<codeline lineno="275"><highlight class="stringliteral">#include<sp/>&lt;mlpack/methods/reinforcement_learning/async_learning.hpp&gt;</highlight></codeline>
+<codeline lineno="276"><highlight class="stringliteral">#include<sp/>&lt;mlpack/methods/reinforcement_learning/policy/aggregated_policy.hpp&gt;</highlight></codeline>
+<codeline lineno="277"><highlight class="stringliteral">@endcode</highlight></codeline>
+<codeline lineno="278"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="279"><highlight class="stringliteral">Here<sp/>we<sp/>don&apos;</highlight><highlight class="normal">t<sp/>use<sp/>experience<sp/>replay,<sp/>and<sp/>instead<sp/>of<sp/>a<sp/>single<sp/>policy,<sp/>we<sp/>use<sp/>three<sp/>different</highlight></codeline>
+<codeline lineno="280"><highlight class="normal">policies,<sp/>each<sp/>corresponding<sp/>to<sp/>its<sp/>worker.<sp/>Number<sp/>of<sp/>workers<sp/>created,<sp/>depends<sp/>on<sp/>the<sp/>number<sp/>of</highlight></codeline>
+<codeline lineno="281"><highlight class="normal">policies<sp/>given<sp/>in<sp/>the<sp/>Aggregated<sp/>Policy.<sp/>The<sp/>column<sp/>vector<sp/>contains<sp/>the<sp/>probability<sp/>distribution</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"></highlight><highlight class="keywordflow">for<sp/>each</highlight><highlight class="normal"><sp/>child<sp/>policy.<sp/>We<sp/>should<sp/>make<sp/>sure<sp/>its<sp/>size<sp/>is<sp/>same<sp/>as<sp/>the<sp/>number<sp/>of<sp/>policies<sp/>and<sp/>the<sp/>sum</highlight></codeline>
+<codeline lineno="283"><highlight class="normal">of<sp/>its<sp/>elements<sp/>is<sp/>equal<sp/>to<sp/>1.</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight></codeline>
+<codeline lineno="285"><highlight class="normal">@code</highlight></codeline>
+<codeline lineno="286"><highlight class="normal">AggregatedPolicy&lt;GreedyPolicy&lt;CartPole&gt;&gt;<sp/>policy({GreedyPolicy&lt;CartPole&gt;(0.7,<sp/>5000,<sp/>0.1),</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GreedyPolicy&lt;CartPole&gt;(0.7,<sp/>5000,<sp/>0.01),</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GreedyPolicy&lt;CartPole&gt;(0.7,<sp/>5000,<sp/>0.5)},</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::colvec(</highlight><highlight class="stringliteral">&quot;0.4<sp/>0.3<sp/>0.3&quot;</highlight><highlight class="normal">));</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"></highlight><highlight class="keyword">@end</highlight><highlight class="normal">code</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal">Now,<sp/>we<sp/>will<sp/>create<sp/>the<sp/></highlight><highlight class="stringliteral">&quot;OneStepQLearning&quot;</highlight><highlight class="normal"><sp/>agent.<sp/>We<sp/>could<sp/>have<sp/>used<sp/></highlight><highlight class="stringliteral">&quot;NStepQLearning&quot;</highlight><highlight class="normal"><sp/>or<sp/></highlight><highlight class="stringliteral">&quot;OneStepSarsa&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="293"><highlight class="normal">here<sp/>according<sp/>to<sp/>our<sp/>requirement.</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"></highlight></codeline>
+<codeline lineno="295"><highlight class="normal">@code</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><ref refid="namespacemlpack_1_1rl_1a3c2fb6897a13583e67422ad12286f6d1" kindref="member">OneStepQLearning</ref>&lt;CartPole,<sp/>decltype(model),<sp/>ens::AdamUpdate,<sp/>decltype(policy)&gt;</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/>agent(std::move(config),<sp/>std::move(model),<sp/>std::move(policy));</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"></highlight><highlight class="keyword">@end</highlight><highlight class="normal">code</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight></codeline>
+<codeline lineno="300"><highlight class="normal">Here,<sp/>unlike<sp/>the<sp/>Q-Learning<sp/>example,<sp/>instead<sp/>of<sp/>the<sp/>entire<sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>loop,<sp/>we<sp/>use<sp/>the<sp/>Train<sp/>method<sp/>of<sp/>the<sp/>Asynchronous</highlight></codeline>
+<codeline lineno="301"><highlight class="normal">Learning<sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">inside<sp/>a<sp/>for<sp/>loop.<sp/>100<sp/>training<sp/>episodes<sp/>will<sp/>take<sp/>around<sp/>50<sp/>seconds.</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal">@code</highlight></codeline>
+<codeline lineno="304"><highlight class="normal">for<sp/>(int<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>100;<sp/>i++)</highlight></codeline>
+<codeline lineno="305"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/>agent.Train(measure);</highlight></codeline>
+<codeline lineno="307"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight><highlight class="keyword">@end</highlight><highlight class="normal">code</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight></codeline>
+<codeline lineno="310"><highlight class="normal">What<sp/>is<sp/></highlight><highlight class="stringliteral">&quot;measure&quot;</highlight><highlight class="normal"><sp/>here?<sp/>It<sp/>is<sp/>a<sp/>lambda<sp/></highlight><highlight class="keyword">function</highlight><highlight class="normal"><sp/>which<sp/>returns<sp/>a<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>value<sp/>(indicating<sp/>the<sp/>end<sp/>of<sp/>training)</highlight></codeline>
+<codeline lineno="311"><highlight class="normal">and<sp/>accepts<sp/>the<sp/>episode<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(total<sp/>reward<sp/>of<sp/>a<sp/>deterministic<sp/>test<sp/>episode)<sp/>as<sp/>parameter.</highlight></codeline>
+<codeline lineno="312"><highlight class="normal">So,<sp/>let</highlight><highlight class="stringliteral">&apos;s<sp/>create<sp/>that.</highlight></codeline>
+<codeline lineno="313"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="314"><highlight class="stringliteral">@code</highlight></codeline>
+<codeline lineno="315"><highlight class="stringliteral">arma::vec<sp/>returns(20,<sp/>arma::fill::zeros);</highlight></codeline>
+<codeline lineno="316"><highlight class="stringliteral">size_t<sp/>position<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="317"><highlight class="stringliteral">size_t<sp/>episode<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="318"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="319"><highlight class="stringliteral">auto<sp/>measure<sp/>=<sp/>[&amp;returns,<sp/>&amp;position,<sp/>&amp;episode](double<sp/>episodeReturn)</highlight></codeline>
+<codeline lineno="320"><highlight class="stringliteral">{</highlight></codeline>
+<codeline lineno="321"><highlight class="stringliteral"><sp/><sp/>if(episode<sp/>&gt;<sp/>10000)<sp/>return<sp/>true;</highlight></codeline>
+<codeline lineno="322"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="323"><highlight class="stringliteral"><sp/><sp/>returns[position++]<sp/>=<sp/>episodeReturn;</highlight></codeline>
+<codeline lineno="324"><highlight class="stringliteral"><sp/><sp/>position<sp/>=<sp/>position<sp/>%<sp/>returns.n_elem;</highlight></codeline>
+<codeline lineno="325"><highlight class="stringliteral"><sp/><sp/>episode++;</highlight></codeline>
+<codeline lineno="326"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="327"><highlight class="stringliteral"><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Episode<sp/>No.:<sp/>&quot;<sp/>&lt;&lt;<sp/>episode</highlight></codeline>
+<codeline lineno="328"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;;<sp/>Episode<sp/>Return:<sp/>&quot;<sp/>&lt;&lt;<sp/>episodeReturn</highlight></codeline>
+<codeline lineno="329"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;;<sp/>Average<sp/>Return:<sp/>&quot;<sp/>&lt;&lt;<sp/>arma::mean(returns)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="330"><highlight class="stringliteral">};</highlight></codeline>
+<codeline lineno="331"><highlight class="stringliteral">@endcode</highlight></codeline>
+<codeline lineno="332"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="333"><highlight class="stringliteral">This<sp/>will<sp/>train<sp/>three<sp/>different<sp/>agents<sp/>on<sp/>three<sp/>CPU<sp/>threads<sp/>asynchronously<sp/>and<sp/>use<sp/>this<sp/>data<sp/>to<sp/>update<sp/>the</highlight></codeline>
+<codeline lineno="334"><highlight class="stringliteral">action<sp/>value<sp/>estimate.</highlight></codeline>
+<codeline lineno="335"><highlight class="stringliteral">Voila,<sp/>thats<sp/>all<sp/>there<sp/>is<sp/>to<sp/>it.</highlight></codeline>
+<codeline lineno="336"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="337"><highlight class="stringliteral">Here<sp/>is<sp/>the<sp/>full<sp/>code<sp/>to<sp/>try<sp/>this<sp/>right<sp/>away:</highlight></codeline>
+<codeline lineno="338"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="339"><highlight class="stringliteral">@code</highlight></codeline>
+<codeline lineno="340"><highlight class="stringliteral">#include<sp/>&lt;mlpack/core.hpp&gt;</highlight></codeline>
+<codeline lineno="341"><highlight class="stringliteral">#include<sp/>&lt;mlpack/methods/ann/ffn.hpp&gt;</highlight></codeline>
+<codeline lineno="342"><highlight class="stringliteral">#include<sp/>&lt;mlpack/methods/ann/init_rules/gaussian_init.hpp&gt;</highlight></codeline>
+<codeline lineno="343"><highlight class="stringliteral">#include<sp/>&lt;mlpack/methods/ann/layer/layer.hpp&gt;</highlight></codeline>
+<codeline lineno="344"><highlight class="stringliteral">#include<sp/>&lt;mlpack/methods/ann/loss_functions/mean_squared_error.hpp&gt;</highlight></codeline>
+<codeline lineno="345"><highlight class="stringliteral">#include<sp/>&lt;mlpack/methods/reinforcement_learning/async_learning.hpp&gt;</highlight></codeline>
+<codeline lineno="346"><highlight class="stringliteral">#include<sp/>&lt;mlpack/methods/reinforcement_learning/environment/cart_pole.hpp&gt;</highlight></codeline>
+<codeline lineno="347"><highlight class="stringliteral">#include<sp/>&lt;mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp&gt;</highlight></codeline>
+<codeline lineno="348"><highlight class="stringliteral">#include<sp/>&lt;mlpack/methods/reinforcement_learning/policy/aggregated_policy.hpp&gt;</highlight></codeline>
+<codeline lineno="349"><highlight class="stringliteral">#include<sp/>&lt;mlpack/methods/reinforcement_learning/training_config.hpp&gt;</highlight></codeline>
+<codeline lineno="350"><highlight class="stringliteral">#include<sp/>&lt;ensmallen.hpp&gt;</highlight></codeline>
+<codeline lineno="351"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="352"><highlight class="stringliteral">using<sp/>namespace<sp/>mlpack;</highlight></codeline>
+<codeline lineno="353"><highlight class="stringliteral">using<sp/>namespace<sp/>mlpack::ann;</highlight></codeline>
+<codeline lineno="354"><highlight class="stringliteral">using<sp/>namespace<sp/>mlpack::rl;</highlight></codeline>
+<codeline lineno="355"><highlight class="stringliteral">int<sp/>main()</highlight></codeline>
+<codeline lineno="356"><highlight class="stringliteral">{</highlight></codeline>
+<codeline lineno="357"><highlight class="stringliteral"><sp/><sp/>//<sp/>Set<sp/>up<sp/>the<sp/>network.</highlight></codeline>
+<codeline lineno="358"><highlight class="stringliteral"><sp/><sp/>FFN&lt;MeanSquaredError&lt;&gt;,<sp/>GaussianInitialization&gt;<sp/>model(MeanSquaredError&lt;&gt;(),<sp/>GaussianInitialization(0,<sp/>0.001));</highlight></codeline>
+<codeline lineno="359"><highlight class="stringliteral"><sp/><sp/>model.Add&lt;Linear&lt;&gt;&gt;(4,<sp/>128);</highlight></codeline>
+<codeline lineno="360"><highlight class="stringliteral"><sp/><sp/>model.Add&lt;ReLULayer&lt;&gt;&gt;();</highlight></codeline>
+<codeline lineno="361"><highlight class="stringliteral"><sp/><sp/>model.Add&lt;Linear&lt;&gt;&gt;(128,<sp/>128);</highlight></codeline>
+<codeline lineno="362"><highlight class="stringliteral"><sp/><sp/>model.Add&lt;ReLULayer&lt;&gt;&gt;();</highlight></codeline>
+<codeline lineno="363"><highlight class="stringliteral"><sp/><sp/>model.Add&lt;Linear&lt;&gt;&gt;(128,<sp/>2);</highlight></codeline>
+<codeline lineno="364"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="365"><highlight class="stringliteral"><sp/><sp/>AggregatedPolicy&lt;GreedyPolicy&lt;CartPole&gt;&gt;<sp/>policy({GreedyPolicy&lt;CartPole&gt;(0.7,<sp/>5000,<sp/>0.1),</highlight></codeline>
+<codeline lineno="366"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GreedyPolicy&lt;CartPole&gt;(0.7,<sp/>5000,<sp/>0.01),</highlight></codeline>
+<codeline lineno="367"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>GreedyPolicy&lt;CartPole&gt;(0.7,<sp/>5000,<sp/>0.5)},</highlight></codeline>
+<codeline lineno="368"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::colvec(&quot;0.4<sp/>0.3<sp/>0.3&quot;));</highlight></codeline>
+<codeline lineno="369"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="370"><highlight class="stringliteral"><sp/><sp/>TrainingConfig<sp/>config;</highlight></codeline>
+<codeline lineno="371"><highlight class="stringliteral"><sp/><sp/>config.StepSize()<sp/>=<sp/>0.01;</highlight></codeline>
+<codeline lineno="372"><highlight class="stringliteral"><sp/><sp/>config.Discount()<sp/>=<sp/>0.9;</highlight></codeline>
+<codeline lineno="373"><highlight class="stringliteral"><sp/><sp/>config.TargetNetworkSyncInterval()<sp/>=<sp/>100;</highlight></codeline>
+<codeline lineno="374"><highlight class="stringliteral"><sp/><sp/>config.ExplorationSteps()<sp/>=<sp/>100;</highlight></codeline>
+<codeline lineno="375"><highlight class="stringliteral"><sp/><sp/>config.DoubleQLearning()<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="376"><highlight class="stringliteral"><sp/><sp/>config.StepLimit()<sp/>=<sp/>200;</highlight></codeline>
+<codeline lineno="377"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="378"><highlight class="stringliteral"><sp/><sp/>OneStepQLearning&lt;CartPole,<sp/>decltype(model),<sp/>ens::VanillaUpdate,<sp/>decltype(policy)&gt;</highlight></codeline>
+<codeline lineno="379"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/>agent(std::move(config),<sp/>std::move(model),<sp/>std::move(policy));</highlight></codeline>
+<codeline lineno="380"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="381"><highlight class="stringliteral"><sp/><sp/>arma::vec<sp/>returns(20,<sp/>arma::fill::zeros);</highlight></codeline>
+<codeline lineno="382"><highlight class="stringliteral"><sp/><sp/>size_t<sp/>position<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="383"><highlight class="stringliteral"><sp/><sp/>size_t<sp/>episode<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="384"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="385"><highlight class="stringliteral"><sp/><sp/>auto<sp/>measure<sp/>=<sp/>[&amp;returns,<sp/>&amp;position,<sp/>&amp;episode](double<sp/>episodeReturn)</highlight></codeline>
+<codeline lineno="386"><highlight class="stringliteral"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="387"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>if(episode<sp/>&gt;<sp/>10000)<sp/>return<sp/>true;</highlight></codeline>
+<codeline lineno="388"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="389"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>returns[position++]<sp/>=<sp/>episodeReturn;</highlight></codeline>
+<codeline lineno="390"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>position<sp/>=<sp/>position<sp/>%<sp/>returns.n_elem;</highlight></codeline>
+<codeline lineno="391"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>episode++;</highlight></codeline>
+<codeline lineno="392"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="393"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Episode<sp/>No.:<sp/>&quot;<sp/>&lt;&lt;<sp/>episode</highlight></codeline>
+<codeline lineno="394"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;;<sp/>Episode<sp/>Return:<sp/>&quot;<sp/>&lt;&lt;<sp/>episodeReturn</highlight></codeline>
+<codeline lineno="395"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>&quot;;<sp/>Average<sp/>Return:<sp/>&quot;<sp/>&lt;&lt;<sp/>arma::mean(returns)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="396"><highlight class="stringliteral"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="397"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="398"><highlight class="stringliteral"><sp/><sp/>for<sp/>(int<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>100;<sp/>i++)</highlight></codeline>
+<codeline lineno="399"><highlight class="stringliteral"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="400"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>agent.Train(measure);</highlight></codeline>
+<codeline lineno="401"><highlight class="stringliteral"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="402"><highlight class="stringliteral">}</highlight></codeline>
+<codeline lineno="403"><highlight class="stringliteral">@endcode</highlight></codeline>
+<codeline lineno="404"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="405"><highlight class="stringliteral">@section<sp/>further_rltut<sp/>Further<sp/>documentation</highlight></codeline>
+<codeline lineno="406"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="407"><highlight class="stringliteral">For<sp/>further<sp/>documentation<sp/>on<sp/>the<sp/>rl<sp/>classes,<sp/>consult<sp/>the<sp/>\ref<sp/>mlpack::rl</highlight></codeline>
+<codeline lineno="408"><highlight class="stringliteral">&quot;complete<sp/>API<sp/>documentation&quot;.</highlight></codeline>
+<codeline lineno="409"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="410"><highlight class="stringliteral">*/</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/doc/tutorials/reinforcement_learning/reinforcement_learning.txt"/>
+  </compounddef>
+</doxygen>

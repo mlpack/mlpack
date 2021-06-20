@@ -1,0 +1,258 @@
+\doxysection{Acrobot\+::State Class Reference}
+\label{classmlpack_1_1rl_1_1Acrobot_1_1State}\index{Acrobot::State@{Acrobot::State}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ State} ()
+\begin{DoxyCompactList}\small\item\em Construct a state instance. \end{DoxyCompactList}\item 
+\textbf{ State} (const arma\+::colvec \&data)
+\begin{DoxyCompactList}\small\item\em Construct a state instance from given data. \end{DoxyCompactList}\item 
+double \& \textbf{ Angular\+Velocity1} ()
+\begin{DoxyCompactList}\small\item\em Modify the angular velocity (one). \end{DoxyCompactList}\item 
+double \textbf{ Angular\+Velocity1} () const
+\begin{DoxyCompactList}\small\item\em Get value of Angular velocity (one). \end{DoxyCompactList}\item 
+double \& \textbf{ Angular\+Velocity2} ()
+\begin{DoxyCompactList}\small\item\em Modify the angular velocity (two). \end{DoxyCompactList}\item 
+double \textbf{ Angular\+Velocity2} () const
+\begin{DoxyCompactList}\small\item\em Get value of Angular velocity (two). \end{DoxyCompactList}\item 
+arma\+::colvec \& \textbf{ Data} ()
+\begin{DoxyCompactList}\small\item\em Modify the state representation. \end{DoxyCompactList}\item 
+const arma\+::colvec \& \textbf{ Encode} () const
+\begin{DoxyCompactList}\small\item\em Encode the state to a column vector. \end{DoxyCompactList}\item 
+double \& \textbf{ Theta1} ()
+\begin{DoxyCompactList}\small\item\em Modify value of theta (one). \end{DoxyCompactList}\item 
+double \textbf{ Theta1} () const
+\begin{DoxyCompactList}\small\item\em Get value of theta (one). \end{DoxyCompactList}\item 
+double \& \textbf{ Theta2} ()
+\begin{DoxyCompactList}\small\item\em Modify value of theta (two). \end{DoxyCompactList}\item 
+double \textbf{ Theta2} () const
+\begin{DoxyCompactList}\small\item\em Get value of theta (two). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr size\+\_\+t \textbf{ dimension} = 4
+\begin{DoxyCompactList}\small\item\em Dimension of the encoded state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 35 of file acrobot.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_a790355057d12e9c1ce7643551c16fecd}} 
+\index{Acrobot::State@{Acrobot::State}!State@{State}}
+\index{State@{State}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ State} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a state instance. 
+
+
+
+Definition at line 41 of file acrobot.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_a8bc7967f6d91a3c94f9b3f502297a926}} 
+\index{Acrobot::State@{Acrobot::State}!State@{State}}
+\index{State@{State}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ State} (\begin{DoxyParamCaption}\item[{const arma\+::colvec \&}]{data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a state instance from given data. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Data for the theta and angular velocity of two links. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 48 of file acrobot.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_a153da3d994e86a76c1dca846a7e8bc65}} 
+\index{Acrobot::State@{Acrobot::State}!AngularVelocity1@{AngularVelocity1}}
+\index{AngularVelocity1@{AngularVelocity1}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{AngularVelocity1()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Angular\+Velocity1 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the angular velocity (one). 
+
+
+
+Definition at line 67 of file acrobot.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_ac10567562fe926ea105ce91a5bbc81c8}} 
+\index{Acrobot::State@{Acrobot::State}!AngularVelocity1@{AngularVelocity1}}
+\index{AngularVelocity1@{AngularVelocity1}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{AngularVelocity1()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Angular\+Velocity1 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get value of Angular velocity (one). 
+
+
+
+Definition at line 65 of file acrobot.\+hpp.
+
+
+
+Referenced by Acrobot\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_a4f4ef10ade1253d134e5415a1f372546}} 
+\index{Acrobot::State@{Acrobot::State}!AngularVelocity2@{AngularVelocity2}}
+\index{AngularVelocity2@{AngularVelocity2}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{AngularVelocity2()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Angular\+Velocity2 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the angular velocity (two). 
+
+
+
+Definition at line 72 of file acrobot.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_acab5e143bb40f694cf0a3341d457fdc8}} 
+\index{Acrobot::State@{Acrobot::State}!AngularVelocity2@{AngularVelocity2}}
+\index{AngularVelocity2@{AngularVelocity2}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{AngularVelocity2()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Angular\+Velocity2 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get value of Angular velocity (two). 
+
+
+
+Definition at line 70 of file acrobot.\+hpp.
+
+
+
+Referenced by Acrobot\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_ad6a50c7b5fced2e931d9a4b4ff989ed6}} 
+\index{Acrobot::State@{Acrobot::State}!Data@{Data}}
+\index{Data@{Data}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{Data()}
+{\footnotesize\ttfamily arma\+::colvec\& Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the state representation. 
+
+
+
+Definition at line 52 of file acrobot.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_a8c1a320788b55fad936455caf0acb62a}} 
+\index{Acrobot::State@{Acrobot::State}!Encode@{Encode}}
+\index{Encode@{Encode}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{Encode()}
+{\footnotesize\ttfamily const arma\+::colvec\& Encode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Encode the state to a column vector. 
+
+
+
+Definition at line 75 of file acrobot.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_af59cd0f9588fcdaab48215b82cb51977}} 
+\index{Acrobot::State@{Acrobot::State}!Theta1@{Theta1}}
+\index{Theta1@{Theta1}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{Theta1()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Theta1 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify value of theta (one). 
+
+
+
+Definition at line 57 of file acrobot.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_afb4243a32fb34c0111c15cb02ec78244}} 
+\index{Acrobot::State@{Acrobot::State}!Theta1@{Theta1}}
+\index{Theta1@{Theta1}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{Theta1()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Theta1 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get value of theta (one). 
+
+
+
+Definition at line 55 of file acrobot.\+hpp.
+
+
+
+Referenced by Acrobot\+::\+Is\+Terminal(), and Acrobot\+::\+Sample().
+
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_aec1a00c1e9b5bafae918889ada482db0}} 
+\index{Acrobot::State@{Acrobot::State}!Theta2@{Theta2}}
+\index{Theta2@{Theta2}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{Theta2()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Theta2 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify value of theta (two). 
+
+
+
+Definition at line 62 of file acrobot.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_a057c077512000b708c6db341e1669ee3}} 
+\index{Acrobot::State@{Acrobot::State}!Theta2@{Theta2}}
+\index{Theta2@{Theta2}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{Theta2()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Theta2 (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get value of theta (two). 
+
+
+
+Definition at line 60 of file acrobot.\+hpp.
+
+
+
+Referenced by Acrobot\+::\+Is\+Terminal(), and Acrobot\+::\+Sample().
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1Acrobot_1_1State_ae813298f34ef9d793885fc04b54dff99}} 
+\index{Acrobot::State@{Acrobot::State}!dimension@{dimension}}
+\index{dimension@{dimension}!Acrobot::State@{Acrobot::State}}
+\doxysubsubsection{dimension}
+{\footnotesize\ttfamily constexpr size\+\_\+t dimension = 4\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+Dimension of the encoded state. 
+
+
+
+Definition at line 78 of file acrobot.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/environment/\textbf{ acrobot.\+hpp}\end{DoxyCompactItemize}

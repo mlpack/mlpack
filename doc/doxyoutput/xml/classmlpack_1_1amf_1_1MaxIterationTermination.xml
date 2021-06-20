@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1amf_1_1MaxIterationTermination" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::amf::MaxIterationTermination</compoundname>
+    <includes refid="max__iteration__termination_8hpp" local="no">max_iteration_termination.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1MaxIterationTermination_1a5e82034717bd8738680b6efc7165182d" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t iteration</definition>
+        <argsstring></argsstring>
+        <name>iteration</name>
+        <briefdescription>
+<para>The number of the current iteration. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" line="79" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1MaxIterationTermination_1adb3fa2e38847b23885acf3833f28538e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t maxIterations</definition>
+        <argsstring></argsstring>
+        <name>maxIterations</name>
+        <briefdescription>
+<para>The maximum number of allowed iterations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" line="77" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1MaxIterationTermination_1a98cfff3b4dc8dcf4679050651517114b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>MaxIterationTermination</definition>
+        <argsstring>(const size_t maxIterations)</argsstring>
+        <name>MaxIterationTermination</name>
+        <param>
+          <type>const size_t</type>
+          <declname>maxIterations</declname>
+        </param>
+        <briefdescription>
+<para>Construct the termination policy with the given number of iterations allowed (default 1000). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If maxIterations is 0, then termination will never occur.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>maxIterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of allowed iterations. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" line="33" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" bodystart="33" bodyend="41"/>
+        <references refid="classmlpack_1_1Log_1af8dd463e0db2840410fe6b1165429d5b" compoundref="log_8hpp" startline="87">Log::Warn</references>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1MaxIterationTermination_1af9bd9c065fa0b8e0da8c57b0ab46b870" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Index</definition>
+        <argsstring>()</argsstring>
+        <name>Index</name>
+        <briefdescription>
+<para>Return something similar to the residue, which in this case is just the number of iterations left, since we don&apos;t have access to anything else. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" line="60" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" bodystart="60" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1MaxIterationTermination_1a24e5b85350a8b4b867486aa24334fa35" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(const MatType &amp;)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>const MatType &amp;</type>
+        </param>
+        <briefdescription>
+<para>Initialize for the given matrix V (there is nothing to do). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" line="47" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" bodystart="47" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1MaxIterationTermination_1a1541d81ce59ddf02e5a970de45e01ecf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool IsConverged</definition>
+        <argsstring>(const arma::mat &amp;, const arma::mat &amp;)</argsstring>
+        <name>IsConverged</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+        </param>
+        <briefdescription>
+<para>Check if convergence has occurred. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" line="52" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" bodystart="52" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1MaxIterationTermination_1af74970d9e7d271359c2423a3f786853b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; Iteration</definition>
+        <argsstring>()</argsstring>
+        <name>Iteration</name>
+        <briefdescription>
+<para>Modify the current iteration. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" line="68" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" bodystart="68" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1MaxIterationTermination_1a8d03065ad6cf9b1807c9deb70ed63185" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Iteration</definition>
+        <argsstring>() const</argsstring>
+        <name>Iteration</name>
+        <briefdescription>
+<para>Get the current iteration. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" line="66" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" bodystart="66" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1MaxIterationTermination_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t &amp;</type>
+        <definition>size_t&amp; MaxIterations</definition>
+        <argsstring>()</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Modify the maximum number of iterations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" line="73" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" bodystart="73" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1MaxIterationTermination_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MaxIterations</definition>
+        <argsstring>() const</argsstring>
+        <name>MaxIterations</name>
+        <briefdescription>
+<para>Get the maximum number of iterations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" line="71" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" bodystart="71" bodyend="71"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This termination policy only terminates when the maximum number of iterations has been reached. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" line="23" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/termination_policies/max_iteration_termination.hpp" bodystart="24" bodyend="80"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1amf_1_1MaxIterationTermination_1af9bd9c065fa0b8e0da8c57b0ab46b870" prot="public" virt="non-virtual"><scope>mlpack::amf::MaxIterationTermination</scope><name>Index</name></member>
+      <member refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a24e5b85350a8b4b867486aa24334fa35" prot="public" virt="non-virtual"><scope>mlpack::amf::MaxIterationTermination</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a1541d81ce59ddf02e5a970de45e01ecf" prot="public" virt="non-virtual"><scope>mlpack::amf::MaxIterationTermination</scope><name>IsConverged</name></member>
+      <member refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a5e82034717bd8738680b6efc7165182d" prot="private" virt="non-virtual"><scope>mlpack::amf::MaxIterationTermination</scope><name>iteration</name></member>
+      <member refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a8d03065ad6cf9b1807c9deb70ed63185" prot="public" virt="non-virtual"><scope>mlpack::amf::MaxIterationTermination</scope><name>Iteration</name></member>
+      <member refid="classmlpack_1_1amf_1_1MaxIterationTermination_1af74970d9e7d271359c2423a3f786853b" prot="public" virt="non-virtual"><scope>mlpack::amf::MaxIterationTermination</scope><name>Iteration</name></member>
+      <member refid="classmlpack_1_1amf_1_1MaxIterationTermination_1adb3fa2e38847b23885acf3833f28538e" prot="private" virt="non-virtual"><scope>mlpack::amf::MaxIterationTermination</scope><name>maxIterations</name></member>
+      <member refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a420770944a5b0c7a852c4ec372c4a2d1" prot="public" virt="non-virtual"><scope>mlpack::amf::MaxIterationTermination</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1amf_1_1MaxIterationTermination_1acda675ab4ab86b95c92bc33bc391a61b" prot="public" virt="non-virtual"><scope>mlpack::amf::MaxIterationTermination</scope><name>MaxIterations</name></member>
+      <member refid="classmlpack_1_1amf_1_1MaxIterationTermination_1a98cfff3b4dc8dcf4679050651517114b" prot="public" virt="non-virtual"><scope>mlpack::amf::MaxIterationTermination</scope><name>MaxIterationTermination</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

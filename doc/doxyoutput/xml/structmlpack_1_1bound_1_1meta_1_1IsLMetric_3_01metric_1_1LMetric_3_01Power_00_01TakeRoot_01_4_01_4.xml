@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1bound_1_1meta_1_1IsLMetric_3_01metric_1_1LMetric_3_01Power_00_01TakeRoot_01_4_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::bound::meta::IsLMetric&lt; metric::LMetric&lt; Power, TakeRoot &gt; &gt;</compoundname>
+    <includes refid="hrectbound_8hpp" local="no">hrectbound.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>int</type>
+        <declname>Power</declname>
+        <defname>Power</defname>
+      </param>
+      <param>
+        <type>bool</type>
+        <declname>TakeRoot</declname>
+        <defname>TakeRoot</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1bound_1_1meta_1_1IsLMetric_3_01metric_1_1LMetric_3_01Power_00_01TakeRoot_01_4_01_4_1a2cbb7037a76934614ab6ca3cc713d6ef" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool Value</definition>
+        <argsstring></argsstring>
+        <name>Value</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/hrectbound.hpp" line="39" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/hrectbound.hpp" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Specialization for <ref refid="structmlpack_1_1bound_1_1meta_1_1IsLMetric" kindref="compound">IsLMetric</ref> when the argument is of type LMetric. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/hrectbound.hpp" line="37" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/hrectbound.hpp" bodystart="38" bodyend="40"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1bound_1_1meta_1_1IsLMetric_3_01metric_1_1LMetric_3_01Power_00_01TakeRoot_01_4_01_4_1a2cbb7037a76934614ab6ca3cc713d6ef" prot="public" virt="non-virtual"><scope>mlpack::bound::meta::IsLMetric&lt; metric::LMetric&lt; Power, TakeRoot &gt; &gt;</scope><name>Value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

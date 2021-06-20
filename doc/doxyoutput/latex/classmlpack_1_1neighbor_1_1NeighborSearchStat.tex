@@ -1,0 +1,234 @@
+\doxysection{Neighbor\+Search\+Stat$<$ Sort\+Policy $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1NeighborSearchStat}\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+
+
+Extra data for each node in the tree.  
+
+
+
+
+Inheritance diagram for Neighbor\+Search\+Stat$<$ Sort\+Policy $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=270pt]{classmlpack_1_1neighbor_1_1NeighborSearchStat__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Neighbor\+Search\+Stat} ()
+\begin{DoxyCompactList}\small\item\em Initialize the statistic with the worst possible distance according to our sorting policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Tree\+Type $>$ }\\\textbf{ Neighbor\+Search\+Stat} (Tree\+Type \&)
+\begin{DoxyCompactList}\small\item\em Initialization for a fully initialized node. \end{DoxyCompactList}\item 
+double \& \textbf{ Aux\+Bound} ()
+\begin{DoxyCompactList}\small\item\em Modify the aux bound. \end{DoxyCompactList}\item 
+double \textbf{ Aux\+Bound} () const
+\begin{DoxyCompactList}\small\item\em Get the aux bound. \end{DoxyCompactList}\item 
+double \& \textbf{ First\+Bound} ()
+\begin{DoxyCompactList}\small\item\em Modify the first bound. \end{DoxyCompactList}\item 
+double \textbf{ First\+Bound} () const
+\begin{DoxyCompactList}\small\item\em Get the first bound. \end{DoxyCompactList}\item 
+double \& \textbf{ Last\+Distance} ()
+\begin{DoxyCompactList}\small\item\em Modify the last distance calculation. \end{DoxyCompactList}\item 
+double \textbf{ Last\+Distance} () const
+\begin{DoxyCompactList}\small\item\em Get the last distance calculation. \end{DoxyCompactList}\item 
+void \textbf{ Reset} ()
+\begin{DoxyCompactList}\small\item\em Reset statistic parameters to initial values. \end{DoxyCompactList}\item 
+double \& \textbf{ Second\+Bound} ()
+\begin{DoxyCompactList}\small\item\em Modify the second bound. \end{DoxyCompactList}\item 
+double \textbf{ Second\+Bound} () const
+\begin{DoxyCompactList}\small\item\em Get the second bound. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the statistic to/from an archive. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Sort\+Policy$>$\newline
+class mlpack\+::neighbor\+::\+Neighbor\+Search\+Stat$<$ Sort\+Policy $>$}
+
+Extra data for each node in the tree. 
+
+For neighbor searches, each node only needs to store a bound on neighbor distances. 
+
+Definition at line 26 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_ae911ff9386cbf7f4b2f80b49baf65587}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!NeighborSearchStat@{NeighborSearchStat}}
+\index{NeighborSearchStat@{NeighborSearchStat}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{NeighborSearchStat()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Neighbor\+Search\+Stat} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize the statistic with the worst possible distance according to our sorting policy. 
+
+
+
+Definition at line 48 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_a8d225f9b18a8723e0168142797bb8b65}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!NeighborSearchStat@{NeighborSearchStat}}
+\index{NeighborSearchStat@{NeighborSearchStat}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{NeighborSearchStat()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Neighbor\+Search\+Stat} (\begin{DoxyParamCaption}\item[{Tree\+Type \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialization for a fully initialized node. 
+
+In this case, we don\textquotesingle{}t need to worry about the node. 
+
+Definition at line 59 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_a06f9e5b8efdd5fb48920f5fe3dc79fec}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!AuxBound@{AuxBound}}
+\index{AuxBound@{AuxBound}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{AuxBound()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Aux\+Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the aux bound. 
+
+
+
+Definition at line 87 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_a212cacc0ad25f0c3b409e19bd4062474}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!AuxBound@{AuxBound}}
+\index{AuxBound@{AuxBound}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{AuxBound()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Aux\+Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the aux bound. 
+
+
+
+Definition at line 85 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_ac234f5fa604353c256d61cc97c760fa6}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!FirstBound@{FirstBound}}
+\index{FirstBound@{FirstBound}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{FirstBound()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& First\+Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the first bound. 
+
+
+
+Definition at line 79 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_a1e5556b0247e4b4ecb9a4c6870879f9d}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!FirstBound@{FirstBound}}
+\index{FirstBound@{FirstBound}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{FirstBound()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double First\+Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the first bound. 
+
+
+
+Definition at line 77 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_a73c8a7f485e9b81d86b7b7b1b75a97af}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!LastDistance@{LastDistance}}
+\index{LastDistance@{LastDistance}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{LastDistance()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Last\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the last distance calculation. 
+
+
+
+Definition at line 91 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_acf3025848cf3628a9213763886101369}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!LastDistance@{LastDistance}}
+\index{LastDistance@{LastDistance}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{LastDistance()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Last\+Distance (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the last distance calculation. 
+
+
+
+Definition at line 89 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_a372de693ad40b3f42839c8ec6ac845f4}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!Reset@{Reset}}
+\index{Reset@{Reset}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{Reset()}
+{\footnotesize\ttfamily void Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Reset statistic parameters to initial values. 
+
+
+
+Definition at line 68 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_a09a02c2295ba43118c88ace376e60892}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!SecondBound@{SecondBound}}
+\index{SecondBound@{SecondBound}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{SecondBound()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Second\+Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the second bound. 
+
+
+
+Definition at line 83 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_a66e0fa924e213b7bf07bd8bb6f8ae5d2}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!SecondBound@{SecondBound}}
+\index{SecondBound@{SecondBound}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{SecondBound()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Second\+Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the second bound. 
+
+
+
+Definition at line 81 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NeighborSearchStat_a65cba07328997659bec80b9879b15a51}} 
+\index{NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!NeighborSearchStat$<$ SortPolicy $>$@{NeighborSearchStat$<$ SortPolicy $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the statistic to/from an archive. 
+
+
+
+Definition at line 95 of file neighbor\+\_\+search\+\_\+stat.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/neighbor\+\_\+search/\textbf{ neighbor\+\_\+search\+\_\+stat.\+hpp}\end{DoxyCompactItemize}

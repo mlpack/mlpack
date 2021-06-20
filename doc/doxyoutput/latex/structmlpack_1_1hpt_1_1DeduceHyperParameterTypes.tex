@@ -1,0 +1,31 @@
+\doxysection{Deduce\+Hyper\+Parameter\+Types$<$ Args $>$ Struct Template Reference}
+\label{structmlpack_1_1hpt_1_1DeduceHyperParameterTypes}\index{DeduceHyperParameterTypes$<$ Args $>$@{DeduceHyperParameterTypes$<$ Args $>$}}
+
+
+A type function for deducing types of hyper-\/parameters from types of arguments in the Optimize method in \doxyref{Hyper\+Parameter\+Tuner}{p.}{classmlpack_1_1hpt_1_1HyperParameterTuner}.  
+
+
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ Result\+Holder}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename... Args$>$\newline
+struct mlpack\+::hpt\+::\+Deduce\+Hyper\+Parameter\+Types$<$ Args $>$}
+
+A type function for deducing types of hyper-\/parameters from types of arguments in the Optimize method in \doxyref{Hyper\+Parameter\+Tuner}{p.}{classmlpack_1_1hpt_1_1HyperParameterTuner}. 
+
+We start by putting all types of the arguments into Args, and then process each of them one by one and put results into the internal struct \doxyref{Result\+Holder}{p.}{structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_1_1ResultHolder}. By the end Args become empty, while \doxyref{Result\+Holder}{p.}{structmlpack_1_1hpt_1_1DeduceHyperParameterTypes_1_1ResultHolder} holds the tuple type of hyper-\/parameters.
+
+Here we declare and define \doxyref{Deduce\+Hyper\+Parameter\+Types}{p.}{structmlpack_1_1hpt_1_1DeduceHyperParameterTypes} for the end phase when Args are empty (all argument types have been processed). 
+
+Definition at line 34 of file deduce\+\_\+hp\+\_\+types.\+hpp.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/hpt/\textbf{ deduce\+\_\+hp\+\_\+types.\+hpp}\end{DoxyCompactItemize}

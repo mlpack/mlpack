@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structmlpack_1_1tree_1_1IsSpillTree_3_01tree_1_1SpillTree_3_01MetricType_00_01StatisticType_00_0d41f2b10e451850b8eb14d3156c51340" kind="struct" language="C++" prot="public">
+    <compoundname>mlpack::tree::IsSpillTree&lt; tree::SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</compoundname>
+    <includes refid="is__spill__tree_8hpp" local="no">is_spill_tree.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MetricType</type>
+      </param>
+      <param>
+        <type>typename StatisticType</type>
+      </param>
+      <param>
+        <type>typename MatType</type>
+      </param>
+      <param>
+        <type>template&lt; typename HyperplaneMetricType &gt; class</type>
+        <declname>HyperplaneType</declname>
+        <defname>HyperplaneType</defname>
+      </param>
+      <param>
+        <type>template&lt; typename SplitMetricType, typename SplitMatType &gt; class</type>
+        <declname>SplitType</declname>
+        <defname>SplitType</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structmlpack_1_1tree_1_1IsSpillTree_3_01tree_1_1SpillTree_3_01MetricType_00_01StatisticType_00_0d41f2b10e451850b8eb14d3156c51340_1a11ddd051208250c32dc4985abcafa86d" prot="public" static="yes" mutable="no">
+        <type>const bool</type>
+        <definition>const bool value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp" line="37" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp" line="34" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/spill_tree/is_spill_tree.hpp" bodystart="36" bodyend="38"/>
+    <listofallmembers>
+      <member refid="structmlpack_1_1tree_1_1IsSpillTree_3_01tree_1_1SpillTree_3_01MetricType_00_01StatisticType_00_0d41f2b10e451850b8eb14d3156c51340_1a11ddd051208250c32dc4985abcafa86d" prot="public" virt="non-virtual"><scope>mlpack::tree::IsSpillTree&lt; tree::SpillTree&lt; MetricType, StatisticType, MatType, HyperplaneType, SplitType &gt; &gt;</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="elem" kind="page">
+    <compoundname>elem</compoundname>
+    <title>The ElemType policy in mlpack</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<sect1 id="elem_1elem_overview">
+<title>Overview</title>
+<para><bold>mlpack</bold> algorithms should be as generic as possible. Often this means allowing arbitrary metrics or kernels to be used, but this also means allowing any type of data point to be used. This means that <bold>mlpack</bold> classes should support <computeroutput>float</computeroutput>, <computeroutput>double</computeroutput>, and other observation types. Some algorithms support this through the use of a <computeroutput>MatType</computeroutput> template parameter; others will have their own template parameter, <computeroutput>ElemType</computeroutput>.</para>
+<para>The <computeroutput>ElemType</computeroutput> template parameter can take any value that can be used by Armadillo (or, specifically, classes like <computeroutput>arma::Mat&lt;&gt;</computeroutput> and others); this encompasses the types</para>
+<para><itemizedlist>
+<listitem><para><computeroutput>double</computeroutput> </para>
+</listitem><listitem><para><computeroutput>float</computeroutput> </para>
+</listitem><listitem><para><computeroutput>int</computeroutput> </para>
+</listitem><listitem><para><computeroutput>unsigned</computeroutput> int</para>
+</listitem><listitem><para><computeroutput>std::complex&lt;double&gt;</computeroutput> </para>
+</listitem><listitem><para><computeroutput>std::complex&lt;float&gt;</computeroutput> </para>
+</listitem></itemizedlist>
+</para>
+<para>and other primitive numeric types. Note that Armadillo does not support some integer types for functionality such as matrix decompositions or other more advanced linear algebra. This means that when these integer types are used, some algorithms may fail with Armadillo error messages indicating that those types cannot be used.</para>
+</sect1>
+<sect1 id="elem_1A">
+<title>note for developers</title>
+<para>If the class has a <computeroutput>MatType</computeroutput> template parameter, <computeroutput>ElemType</computeroutput> can be easily defined as below:</para>
+<para><programlisting><codeline><highlight class="normal">typedef<sp/>typename<sp/>MatType::elem_type<sp/>ElemType;</highlight></codeline>
+</programlisting></para>
+<para>and otherwise a template parameter with the name <computeroutput>ElemType</computeroutput> can be used. It is generally a good idea to expose the element type somehow for use by other classes. </para>
+</sect1>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/doc/policies/elemtype.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,616 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1adaboost_1_1AdaBoost" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::adaboost::AdaBoost</compoundname>
+    <includes refid="adaboost_8hpp" local="no">adaboost.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename WeakLearnerType</type>
+        <defval><ref refid="classmlpack_1_1perceptron_1_1Perceptron" kindref="compound">mlpack::perceptron::Perceptron</ref>&lt;&gt;</defval>
+      </param>
+      <param>
+        <type>typename MatType</type>
+        <defval>arma::mat</defval>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1adaboost_1_1AdaBoost_1a930b209a98d9b9035d6a937fa01c2261" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt;double&gt; alpha</definition>
+        <argsstring></argsstring>
+        <name>alpha</name>
+        <briefdescription>
+<para>The weights corresponding to each weak learner. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="191" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="191" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1adaboost_1_1AdaBoost_1a4dd554142bdfbb014ddcac55577facef" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numClasses</definition>
+        <argsstring></argsstring>
+        <name>numClasses</name>
+        <briefdescription>
+<para>The number of classes in the model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="184" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1adaboost_1_1AdaBoost_1a97eab6d709b80585fe9e8a54b1e3da27" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double tolerance</definition>
+        <argsstring></argsstring>
+        <name>tolerance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="186" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1adaboost_1_1AdaBoost_1aecef2ab0d236d6998a180488852887d7" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; WeakLearnerType &gt;</type>
+        <definition>std::vector&lt;WeakLearnerType&gt; wl</definition>
+        <argsstring></argsstring>
+        <name>wl</name>
+        <briefdescription>
+<para>The vector of weak learners. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="189" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="189" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1a1417a39b49cf9b28c88add6f48daa9a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AdaBoost</definition>
+        <argsstring>(const double tolerance=1e-6)</argsstring>
+        <name>AdaBoost</name>
+        <param>
+          <type>const double</type>
+          <declname>tolerance</declname>
+          <defval>1e-6</defval>
+        </param>
+        <briefdescription>
+<para>Create the <ref refid="classmlpack_1_1adaboost_1_1AdaBoost" kindref="compound">AdaBoost</ref> object without training. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Be sure to call <ref refid="classmlpack_1_1adaboost_1_1AdaBoost_1adeb648736c63379ce1cb5f2b23d242be" kindref="member">Train()</ref> before calling <ref refid="classmlpack_1_1adaboost_1_1AdaBoost_1abc7d38690c69822bd9ec10c3760384da" kindref="member">Classify()</ref>! </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="108" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1a7a37dbe455d049cda36f4676b26eeb70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>AdaBoost</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const WeakLearnerType &amp;other, const size_t iterations=100, const double tolerance=1e-6)</argsstring>
+        <name>AdaBoost</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const WeakLearnerType &amp;</type>
+          <declname>other</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>iterations</declname>
+          <defval>100</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>tolerance</declname>
+          <defval>1e-6</defval>
+        </param>
+        <briefdescription>
+<para>Constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This runs the AdaBoost.MH algorithm to provide a trained boosting model. This constructor takes an already-initialized weak learner; all other weak learners will learn with the same parameters as the given weak learner.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Corresponding labels. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of classes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>iterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of boosting rounds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tolerance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tolerance for change in values of rt. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Weak learner that has already been initialized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="97" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1ae59910b30903367791fde226761923cf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Alpha</definition>
+        <argsstring>(const size_t i)</argsstring>
+        <name>Alpha</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Modify the weight for the given weak learner (be careful!). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="124" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="124" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1af0e29824cfcada4ec450e4d09cc9a314" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Alpha</definition>
+        <argsstring>(const size_t i) const</argsstring>
+        <name>Alpha</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Get the weights for the given weak learner. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="122" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="122" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1a407f9c281dab80fffd49251d3907838d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;test, arma::Row&lt; size_t &gt; &amp;predictedLabels)</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>test</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictedLabels</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given test points. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>test</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Testing data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictedLabels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which the predicted labels of the test set will be stored. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="173" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1abc7d38690c69822bd9ec10c3760384da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Classify</definition>
+        <argsstring>(const MatType &amp;test, arma::Row&lt; size_t &gt; &amp;predictedLabels, arma::mat &amp;probabilities)</argsstring>
+        <name>Classify</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>test</declname>
+        </param>
+        <param>
+          <type>arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>predictedLabels</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>probabilities</declname>
+        </param>
+        <briefdescription>
+<para>Classify the given test points. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>test</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Testing data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>predictedLabels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector in which the predicted labels of the test set will be stored. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>probabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>matrix to store the predicted class probabilities for each point in the test set. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="162" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1a088ebfdf3c7a9e7eea81716d0c55b5a3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t NumClasses</definition>
+        <argsstring>() const</argsstring>
+        <name>NumClasses</name>
+        <briefdescription>
+<para>Get the number of classes this model is trained on. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="116" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="116" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the <ref refid="classmlpack_1_1adaboost_1_1AdaBoost" kindref="compound">AdaBoost</ref> model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="180" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1a3d9fac84af16250f5a3689692e8f2173" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double &amp;</type>
+        <definition>double&amp; Tolerance</definition>
+        <argsstring>()</argsstring>
+        <name>Tolerance</name>
+        <briefdescription>
+<para>Modify the tolerance for stopping the optimization during training. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="113" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="113" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1a7b5af5c1a84c507cbaa7f999ea5a4fda" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double Tolerance</definition>
+        <argsstring>() const</argsstring>
+        <name>Tolerance</name>
+        <briefdescription>
+<para>Get the tolerance for stopping the optimization during training. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="111" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="111" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1adeb648736c63379ce1cb5f2b23d242be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Train</definition>
+        <argsstring>(const MatType &amp;data, const arma::Row&lt; size_t &gt; &amp;labels, const size_t numClasses, const WeakLearnerType &amp;learner, const size_t iterations=100, const double tolerance=1e-6)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Row&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const WeakLearnerType &amp;</type>
+          <declname>learner</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>iterations</declname>
+          <defval>100</defval>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>tolerance</declname>
+          <defval>1e-6</defval>
+        </param>
+        <briefdescription>
+<para>Train <ref refid="classmlpack_1_1adaboost_1_1AdaBoost" kindref="compound">AdaBoost</ref> on the given dataset. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This method takes an initialized WeakLearnerType; the parameters for this weak learner will be used to train each of the weak learners during <ref refid="classmlpack_1_1adaboost_1_1AdaBoost" kindref="compound">AdaBoost</ref> training. Note that this will completely overwrite any model that has already been trained with this object.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset to train on. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Labels for each point in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of classes. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>learner</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Learner to use for training. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>iterations</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of boosting rounds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>tolerance</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tolerance for change in values of rt. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The upper bound for training error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="146" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1a11d7a531e3de5cdd5cc8f0cc02b8ed4d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>WeakLearnerType &amp;</type>
+        <definition>WeakLearnerType&amp; WeakLearner</definition>
+        <argsstring>(const size_t i)</argsstring>
+        <name>WeakLearner</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Modify the given weak learner (be careful!). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="129" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="129" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1aa6f54b09b480fed23b0b04214e300cbf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const WeakLearnerType &amp;</type>
+        <definition>const WeakLearnerType&amp; WeakLearner</definition>
+        <argsstring>(const size_t i) const</argsstring>
+        <name>WeakLearner</name>
+        <param>
+          <type>const size_t</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+<para>Get the given weak learner. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="127" column="25" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="127" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1adaboost_1_1AdaBoost_1a5bb6ee8b31c0e16567eee13cb3719f88" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t WeakLearners</definition>
+        <argsstring>() const</argsstring>
+        <name>WeakLearners</name>
+        <briefdescription>
+<para>Get the number of weak learners in the model. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="119" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="119" bodyend="119"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1adaboost_1_1AdaBoost" kindref="compound">AdaBoost</ref> class. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><ref refid="classmlpack_1_1adaboost_1_1AdaBoost" kindref="compound">AdaBoost</ref> is a boosting algorithm, meaning that it combines an ensemble of weak learners to produce a strong learner. For more information on <ref refid="classmlpack_1_1adaboost_1_1AdaBoost" kindref="compound">AdaBoost</ref>, see the following paper:</para>
+<para><programlisting><codeline><highlight class="normal">@article{schapire1999improved,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author<sp/>=<sp/>{Schapire,<sp/>Robert<sp/>E.<sp/>and<sp/>Singer,<sp/>Yoram},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title<sp/>=<sp/>{Improved<sp/>Boosting<sp/>Algorithms<sp/>Using<sp/>Confidence-rated<sp/>Predictions},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>journal<sp/>=<sp/>{Machine<sp/>Learning},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>volume<sp/>=<sp/>{37},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>number<sp/>=<sp/>{3},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>month<sp/>=<sp/>dec,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year<sp/>=<sp/>{1999},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>issn<sp/>=<sp/>{0885-6125},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>pages<sp/>=<sp/>{297--336},</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>This class is general, and can be used with any type of weak learner, so long as the learner implements the following functions:</para>
+<para><programlisting><codeline><highlight class="normal">//<sp/>A<sp/>boosting<sp/>constructor,<sp/>which<sp/>learns<sp/>using<sp/>the<sp/>training<sp/>parameters<sp/>of<sp/>the</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>given<sp/>other<sp/>WeakLearner,<sp/>but<sp/>uses<sp/>the<sp/>given<sp/>instance<sp/>weights<sp/>for<sp/>training.</highlight></codeline>
+<codeline><highlight class="normal">WeakLearner(WeakLearner&amp;<sp/>other,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>MatType&amp;<sp/>data,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>arma::Row&lt;size_t&gt;&amp;<sp/>labels,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>arma::rowvec&amp;<sp/>weights);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Given<sp/>the<sp/>test<sp/>points,<sp/>classify<sp/>them<sp/>and<sp/>output<sp/>predictions<sp/>into</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>predictedLabels.</highlight></codeline>
+<codeline><highlight class="normal">void<sp/>Classify(const<sp/>MatType&amp;<sp/>data,<sp/>arma::Row&lt;size_t&gt;&amp;<sp/>predictedLabels);</highlight></codeline>
+</programlisting></para>
+<para>For more information on and examples of weak learners, see perceptron::Perceptron&lt;&gt; and <ref refid="namespacemlpack_1_1tree_1a27b9268c266fdfe2f4563d07052a0ecf" kindref="member">tree::ID3DecisionStump</ref>.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Data matrix type (i.e. arma::mat or arma::sp_mat). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>WeakLearnerType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of weak learner to use. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>AdaBoost&lt; mlpack::perceptron::Perceptron&lt;&gt; &gt;</label>
+        <link refid="classmlpack_1_1adaboost_1_1AdaBoost"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::perceptron::Perceptron&lt;&gt; &gt;</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>AdaBoost&lt; WeakLearnerType, MatType &gt;</label>
+        <link refid="classmlpack_1_1adaboost_1_1AdaBoost"/>
+      </node>
+      <node id="3">
+        <label>AdaBoost&lt; mlpack::tree::DecisionTree &gt;</label>
+        <link refid="classmlpack_1_1adaboost_1_1AdaBoost"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; mlpack::tree::DecisionTree &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" line="81" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/adaboost/adaboost.hpp" bodystart="82" bodyend="192"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a7a37dbe455d049cda36f4676b26eeb70" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>AdaBoost</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a1417a39b49cf9b28c88add6f48daa9a1" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>AdaBoost</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a930b209a98d9b9035d6a937fa01c2261" prot="private" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>alpha</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1af0e29824cfcada4ec450e4d09cc9a314" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>Alpha</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1ae59910b30903367791fde226761923cf" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>Alpha</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1abc7d38690c69822bd9ec10c3760384da" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a407f9c281dab80fffd49251d3907838d" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>Classify</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a4dd554142bdfbb014ddcac55577facef" prot="private" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>numClasses</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a088ebfdf3c7a9e7eea81716d0c55b5a3" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>NumClasses</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a97eab6d709b80585fe9e8a54b1e3da27" prot="private" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>tolerance</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a7b5af5c1a84c507cbaa7f999ea5a4fda" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>Tolerance</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a3d9fac84af16250f5a3689692e8f2173" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>Tolerance</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1adeb648736c63379ce1cb5f2b23d242be" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1aa6f54b09b480fed23b0b04214e300cbf" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>WeakLearner</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a11d7a531e3de5cdd5cc8f0cc02b8ed4d" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>WeakLearner</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1a5bb6ee8b31c0e16567eee13cb3719f88" prot="public" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>WeakLearners</name></member>
+      <member refid="classmlpack_1_1adaboost_1_1AdaBoost_1aecef2ab0d236d6998a180488852887d7" prot="private" virt="non-virtual"><scope>mlpack::adaboost::AdaBoost</scope><name>wl</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

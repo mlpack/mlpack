@@ -1,0 +1,100 @@
+.TH "TreeTraits< BinarySpaceTree< MetricType, StatisticType, MatType, BoundType, SplitType > >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+TreeTraits< BinarySpaceTree< MetricType, StatisticType, MatType, BoundType, SplitType > > \- This is a specialization of the \fBTreeTraits\fP class to the \fBBinarySpaceTree\fP tree type\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const bool \fBBinaryTree\fP = true"
+.br
+.RI "This is always a binary tree\&. "
+.ti -1c
+.RI "static const bool \fBFirstPointIsCentroid\fP = false"
+.br
+.RI "There is no guarantee that the first point in a node is its centroid\&. "
+.ti -1c
+.RI "static const bool \fBHasDuplicatedPoints\fP = false"
+.br
+.RI "Each binary space tree node doesn't share points with any other node\&. "
+.ti -1c
+.RI "static const bool \fBHasOverlappingChildren\fP = false"
+.br
+.RI "Each binary space tree node has two children which represent non-overlapping subsets of the space which the node represents\&. "
+.ti -1c
+.RI "static const bool \fBHasSelfChildren\fP = false"
+.br
+.RI "Points are not contained at multiple levels of the binary space tree\&. "
+.ti -1c
+.RI "static const bool \fBRearrangesDataset\fP = true"
+.br
+.RI "Points are rearranged during building of the tree\&. "
+.ti -1c
+.RI "static const bool \fBUniqueNumDescendants\fP = true"
+.br
+.RI "Binary space trees don't have duplicated points, so NumDescendants() represents the number of unique descendant points\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename StatisticType, typename MatType, template< typename BoundMetricType, typename\&.\&.\&. > class BoundType, template< typename SplitBoundType, typename SplitMatType > class SplitType>
+.br
+class mlpack::tree::TreeTraits< BinarySpaceTree< MetricType, StatisticType, MatType, BoundType, SplitType > >"
+This is a specialization of the \fBTreeTraits\fP class to the \fBBinarySpaceTree\fP tree type\&. 
+
+It defines characteristics of the binary space tree, and is used to help write tree-independent (but still optimized) tree-based algorithms\&. See \fBmlpack/core/tree/tree_traits\&.hpp\fP for more information\&. 
+.PP
+Definition at line 33 of file traits\&.hpp\&.
+.SH "Member Data Documentation"
+.PP 
+.SS "const bool BinaryTree = true\fC [static]\fP"
+
+.PP
+This is always a binary tree\&. 
+.PP
+Definition at line 67 of file traits\&.hpp\&.
+.SS "const bool FirstPointIsCentroid = false\fC [static]\fP"
+
+.PP
+There is no guarantee that the first point in a node is its centroid\&. 
+.PP
+Definition at line 52 of file traits\&.hpp\&.
+.SS "const bool HasDuplicatedPoints = false\fC [static]\fP"
+
+.PP
+Each binary space tree node doesn't share points with any other node\&. 
+.PP
+Definition at line 47 of file traits\&.hpp\&.
+.SS "const bool HasOverlappingChildren = false\fC [static]\fP"
+
+.PP
+Each binary space tree node has two children which represent non-overlapping subsets of the space which the node represents\&. Therefore, children are not overlapping\&. 
+.PP
+Definition at line 42 of file traits\&.hpp\&.
+.SS "const bool HasSelfChildren = false\fC [static]\fP"
+
+.PP
+Points are not contained at multiple levels of the binary space tree\&. 
+.PP
+Definition at line 57 of file traits\&.hpp\&.
+.SS "const bool RearrangesDataset = true\fC [static]\fP"
+
+.PP
+Points are rearranged during building of the tree\&. 
+.PP
+Definition at line 62 of file traits\&.hpp\&.
+.SS "const bool UniqueNumDescendants = true\fC [static]\fP"
+
+.PP
+Binary space trees don't have duplicated points, so NumDescendants() represents the number of unique descendant points\&. 
+.PP
+Definition at line 73 of file traits\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

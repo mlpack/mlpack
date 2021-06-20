@@ -1,0 +1,408 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1rl_1_1SumTree" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::rl::SumTree</compoundname>
+    <includes refid="sumtree_8hpp" local="no">sumtree.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1SumTree_1ad721fc6ca6a3d6ba3bc506576622aab0" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t capacity</definition>
+        <argsstring></argsstring>
+        <name>capacity</name>
+        <briefdescription>
+<para>The capacity of the data array. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="183" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1rl_1_1SumTree_1a9b487d746a62579a970d346e5caa1593" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; T &gt;</type>
+        <definition>std::vector&lt;T&gt; element</definition>
+        <argsstring></argsstring>
+        <name>element</name>
+        <briefdescription>
+<para>Double size of capacity, maintain the segment sum of data. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="186" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="186" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1SumTree_1af906043363eaf9a8b6245ee65c48879e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SumTree</definition>
+        <argsstring>()</argsstring>
+        <name>SumTree</name>
+        <briefdescription>
+<para>Default constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="38" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="38" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1SumTree_1a1320e39e7872440c0f719db04850ae60" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SumTree</definition>
+        <argsstring>(const size_t capacity)</argsstring>
+        <name>SumTree</name>
+        <param>
+          <type>const size_t</type>
+          <declname>capacity</declname>
+        </param>
+        <briefdescription>
+<para>Construct an instance of <ref refid="classmlpack_1_1rl_1_1SumTree" kindref="compound">SumTree</ref> class. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>capacity</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="46" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="46" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1SumTree_1a326fbc401980f2b071d3a0f37d51be05" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void BatchUpdate</definition>
+        <argsstring>(const arma::ucolvec &amp;indices, const arma::Col&lt; T &gt; &amp;data)</argsstring>
+        <name>BatchUpdate</name>
+        <param>
+          <type>const arma::ucolvec &amp;</type>
+          <declname>indices</declname>
+        </param>
+        <param>
+          <type>const arma::Col&lt; T &gt; &amp;</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+<para>Update the data with batch rather loop over the indices with set method. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>indices</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The indices of data to be changed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The data that array with indices to be. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="75" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="75" bodyend="86"/>
+        <referencedby refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a3b512739fae1601beafbb89d51c40a7d" compoundref="prioritized__replay_8hpp" startline="256" endline="261">PrioritizedReplay&lt; EnvironmentType &gt;::UpdatePriorities</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1SumTree_1a3cc70bfa6c4dd50a0dd99da3a60ec761" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t FindPrefixSum</definition>
+        <argsstring>(T mass)</argsstring>
+        <name>FindPrefixSum</name>
+        <param>
+          <type>T</type>
+          <declname>mass</declname>
+        </param>
+        <briefdescription>
+<para>Find the highest index <computeroutput>idx</computeroutput> in the array such that sum(arr[0] + arr[1] + ... </para>
+        </briefdescription>
+        <detaileddescription>
+<para><itemizedlist>
+<listitem><para>arr[idx]) &lt;= mass.</para>
+</listitem></itemizedlist>
+</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>mass</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The upper bound of segment array sum. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="163" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="163" bodyend="179"/>
+        <referencedby refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a1a45c1e17aad599a64fa6f941979ad10" compoundref="prioritized__replay_8hpp" startline="198" endline="209">PrioritizedReplay&lt; EnvironmentType &gt;::SampleProportional</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1SumTree_1a0f6adb7068497f76d7f01870c3fa32a0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T Get</definition>
+        <argsstring>(size_t idx)</argsstring>
+        <name>Get</name>
+        <param>
+          <type>size_t</type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+<para>Get the data array with idx. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The array idx to get data. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="93" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="93" bodyend="97"/>
+        <referencedby refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a6ecc6da2d5f83f0eefdc74be3465925a" compoundref="prioritized__replay_8hpp" startline="221" endline="248">PrioritizedReplay&lt; EnvironmentType &gt;::Sample</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1SumTree_1a60cd481b36347a9062b4e0c740c836ec" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void Set</definition>
+        <argsstring>(size_t idx, const T value)</argsstring>
+        <name>Set</name>
+        <param>
+          <type>size_t</type>
+          <declname>idx</declname>
+        </param>
+        <param>
+          <type>const T</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set the data array with idx. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>idx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The array idx to be changed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The data that array with idx to be. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="57" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="57" bodyend="67"/>
+        <referencedby refid="classmlpack_1_1rl_1_1PrioritizedReplay_1ab17ee90540cf7b26647b57acf16116d5" compoundref="prioritized__replay_8hpp" startline="122" endline="161">PrioritizedReplay&lt; EnvironmentType &gt;::Store</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1SumTree_1a1fc048090917da1f2202f4939aad1242" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T Sum</definition>
+        <argsstring>()</argsstring>
+        <name>Sum</name>
+        <briefdescription>
+<para>Shortcut for calculating the sum of whole array. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="152" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="152" bodyend="155"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1SumTree_1ae64a6b8188bfdeecb0f6cc3ff2391528" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T Sum</definition>
+        <argsstring>(const size_t start, size_t end)</argsstring>
+        <name>Sum</name>
+        <param>
+          <type>const size_t</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para>Calculate the sum of contiguous subsequence of the array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The starting position of subsequence. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The end position of subsequence. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="143" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="143" bodyend="147"/>
+        <references refid="classmlpack_1_1rl_1_1SumTree_1a5ce090154147bb27f2401d4b633d1d08" compoundref="sumtree_8hpp" startline="108" endline="135">SumTree&lt; T &gt;::SumHelper</references>
+        <referencedby refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a6ecc6da2d5f83f0eefdc74be3465925a" compoundref="prioritized__replay_8hpp" startline="221" endline="248">PrioritizedReplay&lt; EnvironmentType &gt;::Sample</referencedby>
+        <referencedby refid="classmlpack_1_1rl_1_1PrioritizedReplay_1a1a45c1e17aad599a64fa6f941979ad10" compoundref="prioritized__replay_8hpp" startline="198" endline="209">PrioritizedReplay&lt; EnvironmentType &gt;::SampleProportional</referencedby>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1rl_1_1SumTree_1a5ce090154147bb27f2401d4b633d1d08" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T SumHelper</definition>
+        <argsstring>(const size_t start, const size_t end, const size_t node, const size_t nodeStart, const size_t nodeEnd)</argsstring>
+        <name>SumHelper</name>
+        <param>
+          <type>const size_t</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>nodeStart</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>nodeEnd</declname>
+        </param>
+        <briefdescription>
+<para>Help function for the <computeroutput>sum</computeroutput> function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The starting position of subsequence. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The end position of subsequence. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference position. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>nodeStart</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Starting position of reference segment. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>nodeEnd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>End position of reference segment. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="108" column="5" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="108" bodyend="135"/>
+        <referencedby refid="classmlpack_1_1rl_1_1SumTree_1ae64a6b8188bfdeecb0f6cc3ff2391528" compoundref="sumtree_8hpp" startline="143" endline="147">SumTree&lt; T &gt;::Sum</referencedby>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Implementation of <ref refid="classmlpack_1_1rl_1_1SumTree" kindref="compound">SumTree</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Build a Segment Tree like data structure. <ulink url="https://en.wikipedia.org/wiki/Segment_tree">https://en.wikipedia.org/wiki/Segment_tree</ulink></para>
+<para>Used to maintain prefix-sum of an array.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The array&apos;s element type. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>SumTree&lt; T &gt;</label>
+        <link refid="classmlpack_1_1rl_1_1SumTree"/>
+      </node>
+      <node id="2">
+        <label>SumTree&lt; double &gt;</label>
+        <link refid="classmlpack_1_1rl_1_1SumTree"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; double &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" line="32" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/reinforcement_learning/replay/sumtree.hpp" bodystart="33" bodyend="187"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1rl_1_1SumTree_1a326fbc401980f2b071d3a0f37d51be05" prot="public" virt="non-virtual"><scope>mlpack::rl::SumTree</scope><name>BatchUpdate</name></member>
+      <member refid="classmlpack_1_1rl_1_1SumTree_1ad721fc6ca6a3d6ba3bc506576622aab0" prot="private" virt="non-virtual"><scope>mlpack::rl::SumTree</scope><name>capacity</name></member>
+      <member refid="classmlpack_1_1rl_1_1SumTree_1a9b487d746a62579a970d346e5caa1593" prot="private" virt="non-virtual"><scope>mlpack::rl::SumTree</scope><name>element</name></member>
+      <member refid="classmlpack_1_1rl_1_1SumTree_1a3cc70bfa6c4dd50a0dd99da3a60ec761" prot="public" virt="non-virtual"><scope>mlpack::rl::SumTree</scope><name>FindPrefixSum</name></member>
+      <member refid="classmlpack_1_1rl_1_1SumTree_1a0f6adb7068497f76d7f01870c3fa32a0" prot="public" virt="non-virtual"><scope>mlpack::rl::SumTree</scope><name>Get</name></member>
+      <member refid="classmlpack_1_1rl_1_1SumTree_1a60cd481b36347a9062b4e0c740c836ec" prot="public" virt="non-virtual"><scope>mlpack::rl::SumTree</scope><name>Set</name></member>
+      <member refid="classmlpack_1_1rl_1_1SumTree_1ae64a6b8188bfdeecb0f6cc3ff2391528" prot="public" virt="non-virtual"><scope>mlpack::rl::SumTree</scope><name>Sum</name></member>
+      <member refid="classmlpack_1_1rl_1_1SumTree_1a1fc048090917da1f2202f4939aad1242" prot="public" virt="non-virtual"><scope>mlpack::rl::SumTree</scope><name>Sum</name></member>
+      <member refid="classmlpack_1_1rl_1_1SumTree_1a5ce090154147bb27f2401d4b633d1d08" prot="public" virt="non-virtual"><scope>mlpack::rl::SumTree</scope><name>SumHelper</name></member>
+      <member refid="classmlpack_1_1rl_1_1SumTree_1af906043363eaf9a8b6245ee65c48879e" prot="public" virt="non-virtual"><scope>mlpack::rl::SumTree</scope><name>SumTree</name></member>
+      <member refid="classmlpack_1_1rl_1_1SumTree_1a1320e39e7872440c0f719db04850ae60" prot="public" virt="non-virtual"><scope>mlpack::rl::SumTree</scope><name>SumTree</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

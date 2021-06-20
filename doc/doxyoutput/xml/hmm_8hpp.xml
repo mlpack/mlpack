@@ -1,0 +1,647 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="hmm_8hpp" kind="file" language="C++">
+    <compoundname>hmm.hpp</compoundname>
+    <includes refid="prereqs_8hpp" local="no">mlpack/prereqs.hpp</includes>
+    <includes refid="discrete__distribution_8hpp" local="no">mlpack/core/dists/discrete_distribution.hpp</includes>
+    <includes local="yes">hmm_impl.hpp</includes>
+    <includedby refid="hmm__model_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_model.hpp</includedby>
+    <includedby refid="hmm__regression_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_regression.hpp</includedby>
+    <includedby refid="hmm__test__utils_8hpp" local="no">/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp</includedby>
+    <incdepgraph>
+      <node id="59">
+        <label>list</label>
+      </node>
+      <node id="56">
+        <label>atomic</label>
+      </node>
+      <node id="39">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="15">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="58">
+        <label>iomanip</label>
+      </node>
+      <node id="24">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>cstdint</label>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp</label>
+        <link refid="hmm_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="23">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="49">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="46">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="47">
+        <label>mlpack/core/util/log.hpp</label>
+        <link refid="log_8hpp"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="3">
+        <label>cmath</label>
+      </node>
+      <node id="22">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="11">
+        <label>stdexcept</label>
+      </node>
+      <node id="31">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>string</label>
+      </node>
+      <node id="43">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>map</label>
+      </node>
+      <node id="5">
+        <label>cfloat</label>
+      </node>
+      <node id="35">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="51">
+        <label>prefixedoutstream_impl.hpp</label>
+      </node>
+      <node id="63">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="19">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="42">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="52">
+        <label>nulloutstream.hpp</label>
+        <link refid="nulloutstream_8hpp"/>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="68">
+        <label>hmm_impl.hpp</label>
+      </node>
+      <node id="33">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="41">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="46" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>random</label>
+      </node>
+      <node id="8">
+        <label>cstdio</label>
+      </node>
+      <node id="12">
+        <label>tuple</label>
+      </node>
+      <node id="17">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="34">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>prefixedoutstream.hpp</label>
+        <link refid="prefixedoutstream_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>streambuf</label>
+      </node>
+      <node id="66">
+        <label>mlpack/core/math/random.hpp</label>
+        <link refid="random_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>utility</label>
+      </node>
+      <node id="37">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="28">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="25">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="40">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>cstdlib</label>
+      </node>
+      <node id="65">
+        <label>mlpack/core/dists/discrete_distribution.hpp</label>
+        <link refid="discrete__distribution_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>cctype</label>
+      </node>
+      <node id="53">
+        <label>iostream</label>
+      </node>
+      <node id="27">
+        <label>unordered_map</label>
+      </node>
+      <node id="6">
+        <label>climits</label>
+      </node>
+      <node id="61">
+        <label>mutex</label>
+      </node>
+      <node id="57">
+        <label>chrono</label>
+      </node>
+      <node id="64">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="62">
+        <label>thread</label>
+      </node>
+      <node id="44">
+        <label>type_traits</label>
+      </node>
+      <node id="20">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="14">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="38">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>cstring</label>
+      </node>
+      <node id="29">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="18">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_regression.hpp</label>
+        <link refid="hmm__regression_8hpp"/>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp</label>
+        <link refid="hmm_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>/home/aakash/mlpack/src/mlpack/tests/main_tests/hmm_test_utils.hpp</label>
+        <link refid="hmm__test__utils_8hpp"/>
+      </node>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/methods/hmm/hmm_model.hpp</label>
+        <link refid="hmm__model_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1hmm_1_1HMM" prot="public">mlpack::hmm::HMM</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1hmm">mlpack::hmm</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin </para>
+</simplesect>
+<simplesect kind="author"><para>Tran Quoc Long </para>
+</simplesect>
+<simplesect kind="author"><para>Michael Fox</para>
+</simplesect>
+Definition of HMM class.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_HMM_HMM_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_HMM_HMM_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="prereqs_8hpp" kindref="compound">mlpack/prereqs.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="discrete__distribution_8hpp" kindref="compound">mlpack/core/dists/discrete_distribution.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="21" refid="namespacemlpack_1_1hmm" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">hmm<sp/><sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Distribution<sp/>=<sp/>distribution::DiscreteDistribution&gt;</highlight></codeline>
+<codeline lineno="85" refid="classmlpack_1_1hmm_1_1HMM" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1hmm_1_1HMM" kindref="compound">HMM</ref></highlight></codeline>
+<codeline lineno="86"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="105" refid="classmlpack_1_1hmm_1_1HMM_1a20f7ef2bfbbbfe4b01733e1e0104e17b" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a20f7ef2bfbbbfe4b01733e1e0104e17b" kindref="member">HMM</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>states<sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Distribution<sp/>emissions<sp/>=<sp/>Distribution(),</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-5);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="classmlpack_1_1hmm_1_1HMM_1ac173a0c0e119519329525a892f8848e7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1ac173a0c0e119519329525a892f8848e7" kindref="member">HMM</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>initial,</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>transition,</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;Distribution&gt;&amp;<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1aa9f403ff2a03db91a1614d9e32c21783" kindref="member">emission</ref>,</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance<sp/>=<sp/>1e-5);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169" refid="classmlpack_1_1hmm_1_1HMM_1a0b3a1148721ee3e77bad0b987ca3973d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a0b3a1148721ee3e77bad0b987ca3973d" kindref="member">Train</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;arma::mat&gt;&amp;<sp/>dataSeq);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191" refid="classmlpack_1_1hmm_1_1HMM_1a2cacf650f3d30e9da07be7a0aa2ded81" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a2cacf650f3d30e9da07be7a0aa2ded81" kindref="member">Train</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;arma::mat&gt;&amp;<sp/>dataSeq,</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;arma::Row&lt;size_t&gt;<sp/>&gt;&amp;<sp/>stateSeq);</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212" refid="classmlpack_1_1hmm_1_1HMM_1af1f16adb7b69040e9bc7711ca1fa1fe8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1af1f16adb7b69040e9bc7711ca1fa1fe8" kindref="member">LogEstimate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataSeq,</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>stateLogProb,</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>forwardLogProb,</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>backwardLogProb,</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>logScales)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236" refid="classmlpack_1_1hmm_1_1HMM_1a73a4437336c8af18d51958a6abdd588d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a73a4437336c8af18d51958a6abdd588d" kindref="member">Estimate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataSeq,</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>stateProb,</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>forwardProb,</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>backwardProb,</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>scales)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight></codeline>
+<codeline lineno="253" refid="classmlpack_1_1hmm_1_1HMM_1aba5d63e40a43faa5a2999bd47bed6c9f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1aba5d63e40a43faa5a2999bd47bed6c9f" kindref="member">Estimate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataSeq,</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>stateProb)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight></codeline>
+<codeline lineno="267" refid="classmlpack_1_1hmm_1_1HMM_1aaada1e3c4a467d13ded6cfbb0d332898" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1aaada1e3c4a467d13ded6cfbb0d332898" kindref="member">Generate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>length,</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>dataSequence,</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>stateSequence,</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>startState<sp/>=<sp/>0)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight></codeline>
+<codeline lineno="282" refid="classmlpack_1_1hmm_1_1HMM_1a3b7ef0aafafd5d5a4300c07b110807a4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a3b7ef0aafafd5d5a4300c07b110807a4" kindref="member">Predict</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataSeq,</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Row&lt;size_t&gt;&amp;<sp/>stateSeq)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight></codeline>
+<codeline lineno="291" refid="classmlpack_1_1hmm_1_1HMM_1aa8f3f0b515cc08f9476e435bb2d13210" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1aa8f3f0b515cc08f9476e435bb2d13210" kindref="member">LogLikelihood</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataSeq)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307" refid="classmlpack_1_1hmm_1_1HMM_1aec5e2b525c29a039a482a5c4e9833a77" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1aec5e2b525c29a039a482a5c4e9833a77" kindref="member">EmissionLogScaleFactor</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>emissionLogProb,</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>forwardLogProb)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight></codeline>
+<codeline lineno="326" refid="classmlpack_1_1hmm_1_1HMM_1a2d90005d72558c5bcf7ce5f708e838da" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a2d90005d72558c5bcf7ce5f708e838da" kindref="member">EmissionLogLikelihood</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>emissionLogProb,</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>&amp;logLikelihood,</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>forwardLogProb)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"></highlight></codeline>
+<codeline lineno="345" refid="classmlpack_1_1hmm_1_1HMM_1a51246be9ab15d6af29cf3e60ed1c57c5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a51246be9ab15d6af29cf3e60ed1c57c5" kindref="member">LogScaleFactor</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec<sp/>&amp;data,</highlight></codeline>
+<codeline lineno="346"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>forwardLogProb)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"></highlight></codeline>
+<codeline lineno="363" refid="classmlpack_1_1hmm_1_1HMM_1a7c59285838016d2f540e6aad3f1d37f5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a7c59285838016d2f540e6aad3f1d37f5" kindref="member">LogLikelihood</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec<sp/>&amp;data,</highlight></codeline>
+<codeline lineno="364"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>&amp;logLikelihood,</highlight></codeline>
+<codeline lineno="365"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>forwardLogProb)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="378" refid="classmlpack_1_1hmm_1_1HMM_1ab197c1fe906f9f2c81d7c0c8f1bb430a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1ab197c1fe906f9f2c81d7c0c8f1bb430a" kindref="member">Filter</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataSeq,</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>filterSeq,</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>ahead<sp/>=<sp/>0)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"></highlight></codeline>
+<codeline lineno="393" refid="classmlpack_1_1hmm_1_1HMM_1a0139a3d883c28d6f45e15097c08bbf41" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a0139a3d883c28d6f45e15097c08bbf41" kindref="member">Smooth</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataSeq,</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>smoothSeq)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="395"><highlight class="normal"></highlight></codeline>
+<codeline lineno="397" refid="classmlpack_1_1hmm_1_1HMM_1a4c983e4a77757824d9ca4e1ada75dcf5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a4c983e4a77757824d9ca4e1ada75dcf5" kindref="member">Initial</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>initialProxy;<sp/>}</highlight></codeline>
+<codeline lineno="399" refid="classmlpack_1_1hmm_1_1HMM_1ad0b8d2c553f50a26456393e194358df8" refkind="member"><highlight class="normal"><sp/><sp/>arma::vec&amp;<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1ad0b8d2c553f50a26456393e194358df8" kindref="member">Initial</ref>()</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/><sp/><sp/>recalculateInitial<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="402"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>initialProxy;</highlight></codeline>
+<codeline lineno="403"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="404"><highlight class="normal"></highlight></codeline>
+<codeline lineno="406" refid="classmlpack_1_1hmm_1_1HMM_1a103b830306d8c8d66a753f63e84ba5de" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a103b830306d8c8d66a753f63e84ba5de" kindref="member">Transition</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a8ccc277a880972d6b9f7738f9cea5457" kindref="member">transitionProxy</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="408" refid="classmlpack_1_1hmm_1_1HMM_1a08c5d391f5ea34e09497663673c5a16a" refkind="member"><highlight class="normal"><sp/><sp/>arma::mat&amp;<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a08c5d391f5ea34e09497663673c5a16a" kindref="member">Transition</ref>()</highlight></codeline>
+<codeline lineno="409"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/><sp/><sp/>recalculateTransition<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="411"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a8ccc277a880972d6b9f7738f9cea5457" kindref="member">transitionProxy</ref>;</highlight></codeline>
+<codeline lineno="412"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="413"><highlight class="normal"></highlight></codeline>
+<codeline lineno="415" refid="classmlpack_1_1hmm_1_1HMM_1ae0939befd9369e7605f50a8f5489cebd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;Distribution&gt;&amp;<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1ae0939befd9369e7605f50a8f5489cebd" kindref="member">Emission</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1aa9f403ff2a03db91a1614d9e32c21783" kindref="member">emission</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="417" refid="classmlpack_1_1hmm_1_1HMM_1ace6dae9e34d19c372294bef69e317f27" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;Distribution&gt;&amp;<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1ace6dae9e34d19c372294bef69e317f27" kindref="member">Emission</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1aa9f403ff2a03db91a1614d9e32c21783" kindref="member">emission</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="418"><highlight class="normal"></highlight></codeline>
+<codeline lineno="420" refid="classmlpack_1_1hmm_1_1HMM_1a78eda6bfb9e9462afa0fc85e32abe1af" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a78eda6bfb9e9462afa0fc85e32abe1af" kindref="member">Dimensionality</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dimensionality;<sp/>}</highlight></codeline>
+<codeline lineno="422" refid="classmlpack_1_1hmm_1_1HMM_1a787adc650f11b9430f6bd0b937bbe6b0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a787adc650f11b9430f6bd0b937bbe6b0" kindref="member">Dimensionality</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dimensionality;<sp/>}</highlight></codeline>
+<codeline lineno="423"><highlight class="normal"></highlight></codeline>
+<codeline lineno="425" refid="classmlpack_1_1hmm_1_1HMM_1a7b5af5c1a84c507cbaa7f999ea5a4fda" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a7b5af5c1a84c507cbaa7f999ea5a4fda" kindref="member">Tolerance</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tolerance;<sp/>}</highlight></codeline>
+<codeline lineno="427" refid="classmlpack_1_1hmm_1_1HMM_1a3d9fac84af16250f5a3689692e8f2173" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a3d9fac84af16250f5a3689692e8f2173" kindref="member">Tolerance</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tolerance;<sp/>}</highlight></codeline>
+<codeline lineno="428"><highlight class="normal"></highlight></codeline>
+<codeline lineno="432"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="433" refid="classmlpack_1_1hmm_1_1HMM_1ac604f3bed03d700b41501b6ed8b5b759" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1ac604f3bed03d700b41501b6ed8b5b759" kindref="member">load</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/>version);</highlight></codeline>
+<codeline lineno="434"><highlight class="normal"></highlight></codeline>
+<codeline lineno="438"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Archive&gt;</highlight></codeline>
+<codeline lineno="439" refid="classmlpack_1_1hmm_1_1HMM_1ad17c3ded534d1294e5fac2d2e16da3ba" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1ad17c3ded534d1294e5fac2d2e16da3ba" kindref="member">save</ref>(Archive&amp;<sp/>ar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>uint32_t<sp/>version)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="440"><highlight class="normal"></highlight></codeline>
+<codeline lineno="441"><highlight class="normal"><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="449" refid="classmlpack_1_1hmm_1_1HMM_1a945acce7d1f14e9e85352e67810ad028" refkind="member"><highlight class="normal"><sp/><sp/>arma::vec<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a945acce7d1f14e9e85352e67810ad028" kindref="member">ForwardAtT0</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>emissionLogProb,</highlight></codeline>
+<codeline lineno="450"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/>logScales)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="451"><highlight class="normal"></highlight></codeline>
+<codeline lineno="460" refid="classmlpack_1_1hmm_1_1HMM_1ae75539834ab1cc313fac3cef5c411efe" refkind="member"><highlight class="normal"><sp/><sp/>arma::vec<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1ae75539834ab1cc313fac3cef5c411efe" kindref="member">ForwardAtTn</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>emissionLogProb,</highlight></codeline>
+<codeline lineno="461"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&amp;<sp/>logScales,</highlight></codeline>
+<codeline lineno="462"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>prevForwardLogProb)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="463"><highlight class="normal"></highlight></codeline>
+<codeline lineno="464"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Helper<sp/>functions.</highlight></codeline>
+<codeline lineno="475" refid="classmlpack_1_1hmm_1_1HMM_1a1ec1e2d6393bbb69840a184ac35ac2ba" refkind="member"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a1ec1e2d6393bbb69840a184ac35ac2ba" kindref="member">Forward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataSeq,</highlight></codeline>
+<codeline lineno="476"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::vec&amp;<sp/>logScales,</highlight></codeline>
+<codeline lineno="477"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>forwardLogProb,</highlight></codeline>
+<codeline lineno="478"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>logProbs)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="479"><highlight class="normal"></highlight></codeline>
+<codeline lineno="491" refid="classmlpack_1_1hmm_1_1HMM_1af0853e02f080f2c0eac23e18edafd67d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1af0853e02f080f2c0eac23e18edafd67d" kindref="member">Backward</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>dataSeq,</highlight></codeline>
+<codeline lineno="492"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::vec&amp;<sp/>logScales,</highlight></codeline>
+<codeline lineno="493"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>backwardLogProb,</highlight></codeline>
+<codeline lineno="494"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>logProbs)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="495"><highlight class="normal"></highlight></codeline>
+<codeline lineno="497" refid="classmlpack_1_1hmm_1_1HMM_1aa9f403ff2a03db91a1614d9e32c21783" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;Distribution&gt;<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1aa9f403ff2a03db91a1614d9e32c21783" kindref="member">emission</ref>;</highlight></codeline>
+<codeline lineno="498"><highlight class="normal"></highlight></codeline>
+<codeline lineno="503" refid="classmlpack_1_1hmm_1_1HMM_1a8ccc277a880972d6b9f7738f9cea5457" refkind="member"><highlight class="normal"><sp/><sp/>arma::mat<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a8ccc277a880972d6b9f7738f9cea5457" kindref="member">transitionProxy</ref>;</highlight></codeline>
+<codeline lineno="504"><highlight class="normal"></highlight></codeline>
+<codeline lineno="506" refid="classmlpack_1_1hmm_1_1HMM_1a46e0ed8f87152b5819d73057a19524fd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">mutable</highlight><highlight class="normal"><sp/>arma::mat<sp/><ref refid="classmlpack_1_1hmm_1_1HMM_1a46e0ed8f87152b5819d73057a19524fd" kindref="member">logTransition</ref>;</highlight></codeline>
+<codeline lineno="507"><highlight class="normal"></highlight></codeline>
+<codeline lineno="508"><highlight class="normal"><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="514"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ConvertToLogSpace()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="515"><highlight class="normal"></highlight></codeline>
+<codeline lineno="520"><highlight class="normal"><sp/><sp/>arma::vec<sp/>initialProxy;</highlight></codeline>
+<codeline lineno="521"><highlight class="normal"></highlight></codeline>
+<codeline lineno="523"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">mutable</highlight><highlight class="normal"><sp/>arma::vec<sp/>logInitial;</highlight></codeline>
+<codeline lineno="524"><highlight class="normal"></highlight></codeline>
+<codeline lineno="526"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>dimensionality;</highlight></codeline>
+<codeline lineno="527"><highlight class="normal"></highlight></codeline>
+<codeline lineno="529"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance;</highlight></codeline>
+<codeline lineno="530"><highlight class="normal"></highlight></codeline>
+<codeline lineno="535"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">mutable</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>recalculateInitial;</highlight></codeline>
+<codeline lineno="536"><highlight class="normal"></highlight></codeline>
+<codeline lineno="541"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">mutable</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>recalculateTransition;</highlight></codeline>
+<codeline lineno="542"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="543"><highlight class="normal"></highlight></codeline>
+<codeline lineno="544"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>hmm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="545"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="546"><highlight class="normal"></highlight></codeline>
+<codeline lineno="547"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="548"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;hmm_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="549"><highlight class="normal"></highlight></codeline>
+<codeline lineno="550"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/hmm/hmm.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,1295 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="meta__info__extractor_8hpp" kind="file" language="C++">
+    <compoundname>meta_info_extractor.hpp</compoundname>
+    <includes local="no">type_traits</includes>
+    <includes refid="core_8hpp" local="no">mlpack/core.hpp</includes>
+    <includes refid="sfinae__utility_8hpp" local="no">mlpack/core/util/sfinae_utility.hpp</includes>
+    <includedby refid="cv__base_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp</includedby>
+    <includedby refid="k__fold__cv_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp</includedby>
+    <includedby refid="simple__cv_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/cv/simple_cv.hpp</includedby>
+    <includedby refid="src_2mlpack_2core_2hpt_2hpt_8hpp" local="no">/home/aakash/mlpack/src/mlpack/core/hpt/hpt.hpp</includedby>
+    <incdepgraph>
+      <node id="60">
+        <label>list</label>
+      </node>
+      <node id="85">
+        <label>save_impl.hpp</label>
+      </node>
+      <node id="57">
+        <label>atomic</label>
+      </node>
+      <node id="77">
+        <label>dataset_mapper_impl.hpp</label>
+      </node>
+      <node id="83">
+        <label>load_image_impl.hpp</label>
+      </node>
+      <node id="41">
+        <label>cereal/types/memory.hpp</label>
+      </node>
+      <node id="17">
+        <label>mlpack/core/util/arma_traits.hpp</label>
+        <link refid="arma__traits_8hpp"/>
+      </node>
+      <node id="59">
+        <label>iomanip</label>
+      </node>
+      <node id="115">
+        <label>mlpack/core/kernels/linear_kernel.hpp</label>
+        <link refid="linear__kernel_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="110">
+        <label>mlpack/core/data/confusion_matrix.hpp</label>
+        <link refid="confusion__matrix_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="111" relation="include">
+        </childnode>
+      </node>
+      <node id="125">
+        <label>mlpack/core/kernels/laplacian_kernel.hpp</label>
+        <link refid="laplacian__kernel_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="92">
+        <label>float.h</label>
+      </node>
+      <node id="121">
+        <label>lmetric_impl.hpp</label>
+      </node>
+      <node id="26">
+        <label>mlpack/core/cereal/unordered_map.hpp</label>
+        <link refid="unordered__map_8hpp"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>cstdint</label>
+      </node>
+      <node id="123">
+        <label>epanechnikov_kernel_impl.hpp</label>
+      </node>
+      <node id="114">
+        <label>mlpack/core/kernels/kernel_traits.hpp</label>
+        <link refid="kernel__traits_8hpp"/>
+      </node>
+      <node id="18">
+        <label>cereal/archives/binary.hpp</label>
+      </node>
+      <node id="25">
+        <label>cereal/types/tuple.hpp</label>
+      </node>
+      <node id="108">
+        <label>mlpack/core/dists/gamma_distribution.hpp</label>
+        <link refid="gamma__distribution_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
+        </childnode>
+      </node>
+      <node id="72">
+        <label>mlpack/core/data/load.hpp</label>
+        <link refid="load_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="81" relation="include">
+        </childnode>
+        <childnode refid="82" relation="include">
+        </childnode>
+        <childnode refid="83" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>program_doc.hpp</label>
+        <link refid="program__doc_8hpp"/>
+      </node>
+      <node id="90">
+        <label>stdlib.h</label>
+      </node>
+      <node id="50">
+        <label>mlpack/mlpack_export.hpp</label>
+      </node>
+      <node id="47">
+        <label>arma_config.hpp</label>
+      </node>
+      <node id="48">
+        <label>mlpack/core/util/log.hpp</label>
+        <link refid="log_8hpp"/>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="129">
+        <label>mlpack/core/kernels/spherical_kernel.hpp</label>
+        <link refid="spherical__kernel_8hpp"/>
+        <childnode refid="130" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="97">
+        <label>lin_alg_impl.hpp</label>
+      </node>
+      <node id="124">
+        <label>mlpack/core/kernels/hyperbolic_tangent_kernel.hpp</label>
+        <link refid="hyperbolic__tangent__kernel_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>mlpack/core.hpp</label>
+        <link refid="core_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
+        </childnode>
+        <childnode refid="95" relation="include">
+        </childnode>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="100" relation="include">
+        </childnode>
+        <childnode refid="101" relation="include">
+        </childnode>
+        <childnode refid="102" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
+        </childnode>
+        <childnode refid="105" relation="include">
+        </childnode>
+        <childnode refid="106" relation="include">
+        </childnode>
+        <childnode refid="107" relation="include">
+        </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
+        <childnode refid="109" relation="include">
+        </childnode>
+        <childnode refid="110" relation="include">
+        </childnode>
+        <childnode refid="112" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="115" relation="include">
+        </childnode>
+        <childnode refid="116" relation="include">
+        </childnode>
+        <childnode refid="117" relation="include">
+        </childnode>
+        <childnode refid="119" relation="include">
+        </childnode>
+        <childnode refid="122" relation="include">
+        </childnode>
+        <childnode refid="124" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="129" relation="include">
+        </childnode>
+        <childnode refid="131" relation="include">
+        </childnode>
+        <childnode refid="132" relation="include">
+        </childnode>
+      </node>
+      <node id="86">
+        <label>io_impl.hpp</label>
+      </node>
+      <node id="38">
+        <label>boost/variant/variant_fwd.hpp</label>
+      </node>
+      <node id="112">
+        <label>mlpack/core/data/one_hot_encoding.hpp</label>
+        <link refid="one__hot__encoding_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="113" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>cmath</label>
+      </node>
+      <node id="24">
+        <label>cereal/types/string.hpp</label>
+      </node>
+      <node id="13">
+        <label>stdexcept</label>
+      </node>
+      <node id="33">
+        <label>mlpack/core/cereal/is_saving.hpp</label>
+        <link refid="is__saving_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="118">
+        <label>cosine_distance_impl.hpp</label>
+      </node>
+      <node id="76">
+        <label>mlpack/core/data/map_policies/datatype.hpp</label>
+        <link refid="datatype_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>string</label>
+      </node>
+      <node id="45">
+        <label>mlpack/core/util/sfinae_utility.hpp</label>
+        <link refid="sfinae__utility_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="117">
+        <label>mlpack/core/kernels/cosine_distance.hpp</label>
+        <link refid="cosine__distance_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="118" relation="include">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>map</label>
+      </node>
+      <node id="96">
+        <label>mlpack/core/math/lin_alg.hpp</label>
+        <link refid="lin__alg_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="97" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>cfloat</label>
+      </node>
+      <node id="68">
+        <label>binding_details.hpp</label>
+        <link refid="binding__details_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>boost/variant.hpp</label>
+      </node>
+      <node id="107">
+        <label>mlpack/core/dists/laplace_distribution.hpp</label>
+        <link refid="laplace__distribution_8hpp"/>
+      </node>
+      <node id="52">
+        <label>prefixedoutstream_impl.hpp</label>
+      </node>
+      <node id="64">
+        <label>mlpack/core/util/deprecated.hpp</label>
+        <link refid="deprecated_8hpp"/>
+      </node>
+      <node id="21">
+        <label>cereal/archives/xml.hpp</label>
+      </node>
+      <node id="44">
+        <label>mlpack/core/data/has_serialize.hpp</label>
+        <link refid="has__serialize_8hpp"/>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>mlpack/core/arma_extend/serialize_armadillo.hpp</label>
+      </node>
+      <node id="104">
+        <label>mlpack/core/math/make_alias.hpp</label>
+        <link refid="make__alias_8hpp"/>
+      </node>
+      <node id="122">
+        <label>mlpack/core/kernels/epanechnikov_kernel.hpp</label>
+        <link refid="epanechnikov__kernel_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>nulloutstream.hpp</label>
+        <link refid="nulloutstream_8hpp"/>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="109">
+        <label>mlpack/core/dists/diagonal_gaussian_distribution.hpp</label>
+        <link refid="diagonal__gaussian__distribution_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>mlpack/core/cereal/is_loading.hpp</label>
+        <link refid="is__loading_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>mlpack/core/cereal/array_wrapper.hpp</label>
+        <link refid="array__wrapper_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="95">
+        <label>mlpack/core/math/random_basis.hpp</label>
+        <link refid="random__basis_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="67">
+        <label>boost/any.hpp</label>
+      </node>
+      <node id="23">
+        <label>cereal/types/boost_variant.hpp</label>
+      </node>
+      <node id="43">
+        <label>pointer_vector_wrapper.hpp</label>
+        <link refid="pointer__vector__wrapper_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>mlpack/core/util/arma_config_check.hpp</label>
+        <link refid="arma__config__check_8hpp"/>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>mlpack/prereqs.hpp</label>
+        <link refid="prereqs_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="88">
+        <label>normalize_labels_impl.hpp</label>
+      </node>
+      <node id="113">
+        <label>one_hot_encoding_impl.hpp</label>
+      </node>
+      <node id="94">
+        <label>random</label>
+      </node>
+      <node id="99">
+        <label>range_impl.hpp</label>
+      </node>
+      <node id="119">
+        <label>mlpack/core/kernels/gaussian_kernel.hpp</label>
+        <link refid="gaussian__kernel_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+      </node>
+      <node id="75">
+        <label>map_policies/increment_policy.hpp</label>
+        <link refid="increment__policy_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>cstdio</label>
+      </node>
+      <node id="79">
+        <label>extension.hpp</label>
+        <link refid="extension_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>tuple</label>
+      </node>
+      <node id="19">
+        <label>cereal/archives/json.hpp</label>
+      </node>
+      <node id="36">
+        <label>mlpack/core/cereal/pointer_variant_wrapper.hpp</label>
+        <link refid="pointer__variant__wrapper_8hpp"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="51">
+        <label>prefixedoutstream.hpp</label>
+        <link refid="prefixedoutstream_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+      </node>
+      <node id="80">
+        <label>image_info_impl.hpp</label>
+      </node>
+      <node id="127">
+        <label>vector</label>
+      </node>
+      <node id="82">
+        <label>load_vec_impl.hpp</label>
+      </node>
+      <node id="70">
+        <label>version.hpp</label>
+        <link refid="src_2mlpack_2core_2util_2version_8hpp"/>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>streambuf</label>
+      </node>
+      <node id="89">
+        <label>mlpack/core/math/clamp.hpp</label>
+        <link refid="clamp_8hpp"/>
+        <childnode refid="90" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+        <childnode refid="92" relation="include">
+        </childnode>
+      </node>
+      <node id="93">
+        <label>mlpack/core/math/random.hpp</label>
+        <link refid="random_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="94" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>utility</label>
+      </node>
+      <node id="39">
+        <label>boost/variant/static_visitor.hpp</label>
+      </node>
+      <node id="81">
+        <label>load_model_impl.hpp</label>
+      </node>
+      <node id="30">
+        <label>cereal/types/utility.hpp</label>
+      </node>
+      <node id="27">
+        <label>pair_associative_container.hpp</label>
+        <link refid="pair__associative__container_8hpp"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="126">
+        <label>mlpack/core/kernels/pspectrum_string_kernel.hpp</label>
+        <link refid="pspectrum__string__kernel_8hpp"/>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="128" relation="include">
+        </childnode>
+      </node>
+      <node id="101">
+        <label>mlpack/core/math/shuffle_data.hpp</label>
+        <link refid="shuffle__data_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="87">
+        <label>mlpack/core/data/normalize_labels.hpp</label>
+        <link refid="normalize__labels_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>mlpack/core/util/timers.hpp</label>
+        <link refid="timers_8hpp"/>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>cereal/cereal.hpp</label>
+      </node>
+      <node id="42">
+        <label>mlpack/core/cereal/pointer_vector_variant_wrapper.hpp</label>
+        <link refid="pointer__vector__variant__wrapper_8hpp"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+      </node>
+      <node id="91">
+        <label>math.h</label>
+      </node>
+      <node id="71">
+        <label>param_data.hpp</label>
+        <link refid="param__data_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>cstdlib</label>
+      </node>
+      <node id="105">
+        <label>mlpack/core/dists/discrete_distribution.hpp</label>
+        <link refid="discrete__distribution_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>cctype</label>
+      </node>
+      <node id="54">
+        <label>iostream</label>
+      </node>
+      <node id="116">
+        <label>mlpack/core/kernels/polynomial_kernel.hpp</label>
+        <link refid="polynomial__kernel_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="111">
+        <label>confusion_matrix_impl.hpp</label>
+      </node>
+      <node id="29">
+        <label>unordered_map</label>
+      </node>
+      <node id="78">
+        <label>image_info.hpp</label>
+        <link refid="image__info_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="79" relation="include">
+        </childnode>
+        <childnode refid="80" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>climits</label>
+      </node>
+      <node id="74">
+        <label>dataset_mapper.hpp</label>
+        <link refid="dataset__mapper_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+      </node>
+      <node id="102">
+        <label>mlpack/core/math/ccov.hpp</label>
+        <link refid="ccov_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="103" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>mutex</label>
+      </node>
+      <node id="84">
+        <label>mlpack/core/data/save.hpp</label>
+        <link refid="save_8hpp"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+        <childnode refid="85" relation="include">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>chrono</label>
+      </node>
+      <node id="65">
+        <label>mlpack/core/util/size_checks.hpp</label>
+        <link refid="size__checks_8hpp"/>
+      </node>
+      <node id="103">
+        <label>ccov_impl.hpp</label>
+      </node>
+      <node id="130">
+        <label>boost/math/special_functions/gamma.hpp</label>
+      </node>
+      <node id="63">
+        <label>thread</label>
+      </node>
+      <node id="132">
+        <label>mlpack/core/kernels/cauchy_kernel.hpp</label>
+        <link refid="cauchy__kernel_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="114" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp</label>
+        <link refid="meta__info__extractor_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>type_traits</label>
+      </node>
+      <node id="22">
+        <label>cereal/types/array.hpp</label>
+      </node>
+      <node id="128">
+        <label>pspectrum_string_kernel_impl.hpp</label>
+      </node>
+      <node id="98">
+        <label>mlpack/core/math/range.hpp</label>
+        <link refid="range_8hpp"/>
+        <childnode refid="99" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>mlpack/core/arma_extend/arma_extend.hpp</label>
+      </node>
+      <node id="40">
+        <label>pointer_wrapper.hpp</label>
+        <link refid="pointer__wrapper_8hpp"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="100">
+        <label>mlpack/core/math/round.hpp</label>
+        <link refid="round_8hpp"/>
+      </node>
+      <node id="131">
+        <label>mlpack/core/kernels/triangular_kernel.hpp</label>
+        <link refid="triangular__kernel_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>cstring</label>
+      </node>
+      <node id="31">
+        <label>cereal/types/vector.hpp</label>
+      </node>
+      <node id="66">
+        <label>mlpack/core/util/io.hpp</label>
+        <link refid="io_8hpp"/>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="84" relation="include">
+        </childnode>
+        <childnode refid="86" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>cereal/archives/portable_binary.hpp</label>
+      </node>
+      <node id="106">
+        <label>mlpack/core/dists/gaussian_distribution.hpp</label>
+        <link refid="gaussian__distribution_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="120">
+        <label>mlpack/core/metrics/lmetric.hpp</label>
+        <link refid="lmetric_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+      </node>
+      <node id="73">
+        <label>format.hpp</label>
+        <link refid="format_8hpp"/>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="5">
+        <label>/home/aakash/mlpack/src/mlpack/core/hpt/hpt.hpp</label>
+        <link refid="src_2mlpack_2core_2hpt_2hpt_8hpp"/>
+      </node>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp</label>
+        <link refid="cv__base_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/k_fold_cv.hpp</label>
+        <link refid="k__fold__cv_8hpp"/>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp</label>
+        <link refid="meta__info__extractor_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>/home/aakash/mlpack/src/mlpack/core/cv/simple_cv.hpp</label>
+        <link refid="simple__cv_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1cv_1_1MetaInfoExtractor" prot="public">mlpack::cv::MetaInfoExtractor</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1NotFoundMethodForm" prot="public">mlpack::cv::NotFoundMethodForm</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_01_4" prot="public">mlpack::cv::SelectMethodForm&lt; MLAlgorithm &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_01_4_1_1From" prot="public">mlpack::cv::SelectMethodForm&lt; MLAlgorithm &gt;::From</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4" prot="public">mlpack::cv::SelectMethodForm&lt; MLAlgorithm, HasMethodForm, HMFs... &gt;</innerclass>
+    <innerclass refid="classmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_1_1From" prot="public">mlpack::cv::SelectMethodForm&lt; MLAlgorithm, HasMethodForm, HMFs... &gt;::From</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_1_1From_1_1Implementation" prot="private">mlpack::cv::SelectMethodForm&lt; MLAlgorithm, HasMethodForm, HMFs... &gt;::From::Implementation</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_13f5da3755212de45a9e1bfd93b3ef70f" prot="private">mlpack::cv::SelectMethodForm&lt; MLAlgorithm, HasMethodForm, HMFs... &gt;::From::Implementation&lt; Form, RemainingForms... &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01false_00_01false_01_4" prot="public">mlpack::cv::TrainForm&lt; MT, PT, void, false, false &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01false_00_01true_01_4" prot="public">mlpack::cv::TrainForm&lt; MT, PT, void, false, true &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01false_01_4" prot="public">mlpack::cv::TrainForm&lt; MT, PT, void, true, false &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4" prot="public">mlpack::cv::TrainForm&lt; MT, PT, void, true, true &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01false_01_4" prot="public">mlpack::cv::TrainForm&lt; MT, PT, WT, false, false &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01true_01_4" prot="public">mlpack::cv::TrainForm&lt; MT, PT, WT, false, true &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01false_01_4" prot="public">mlpack::cv::TrainForm&lt; MT, PT, WT, true, false &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01true_01_4" prot="public">mlpack::cv::TrainForm&lt; MT, PT, WT, true, true &gt;</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainFormBase4" prot="public">mlpack::cv::TrainFormBase4</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainFormBase5" prot="public">mlpack::cv::TrainFormBase5</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainFormBase6" prot="public">mlpack::cv::TrainFormBase6</innerclass>
+    <innerclass refid="structmlpack_1_1cv_1_1TrainFormBase7" prot="public">mlpack::cv::TrainFormBase7</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1cv">mlpack::cv</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Kirill Mishchenko</para>
+</simplesect>
+Tools for extracting meta information about machine learning algorithms.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_CORE_CV_META_INFO_EXTRACTOR_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_CORE_CV_META_INFO_EXTRACTOR_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;type_traits&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="core_8hpp" kindref="compound">mlpack/core.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="sfinae__utility_8hpp" kindref="compound">mlpack/core/util/sfinae_utility.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">cv<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatType,</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PredictionsType,</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WeightsType,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">DatasetInfo</ref>,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>NumClasses&gt;</highlight></codeline>
+<codeline lineno="39" refid="structmlpack_1_1cv_1_1TrainForm" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>_MSC_VER<sp/>&lt;=<sp/>1916</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Visual<sp/>Studio<sp/>2017<sp/>version<sp/>15.9<sp/>or<sp/>older.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Due<sp/>to<sp/>an<sp/>internal<sp/>MSVC<sp/>compiler<sp/>bug<sp/>(MSVC<sp/>)<sp/>we<sp/>can&apos;t<sp/>use<sp/>two<sp/>parameter</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="comment">//<sp/>packs.<sp/>So<sp/>we<sp/>have<sp/>to<sp/>write<sp/>multiple<sp/>TrainFormBase<sp/>forms.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T1,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T2&gt;</highlight></codeline>
+<codeline lineno="46" refid="structmlpack_1_1cv_1_1TrainFormBase4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainFormBase4" kindref="compound">TrainFormBase4</ref></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="48" refid="structmlpack_1_1cv_1_1TrainFormBase4_1a329a0bee5f08ebbfbd6c97e4f74bdb4f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase4_1a329a0bee5f08ebbfbd6c97e4f74bdb4f" kindref="member">PredictionsType</ref><sp/>=<sp/>PT;</highlight></codeline>
+<codeline lineno="49" refid="structmlpack_1_1cv_1_1TrainFormBase4_1aecfc3bfd62796ddd9feb857c898cefa8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase4_1aecfc3bfd62796ddd9feb857c898cefa8" kindref="member">WeightsType</ref><sp/>=<sp/>WT;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>A<sp/>minimum<sp/>number<sp/>of<sp/>parameters<sp/>that<sp/>should<sp/>be<sp/>inferred<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="structmlpack_1_1cv_1_1TrainFormBase4_1adacbdda6f41a542559105d6e48d1cfc2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase4_1adacbdda6f41a542559105d6e48d1cfc2" kindref="member">MinNumberOfAdditionalArgs</ref><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Class,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Ts&gt;</highlight></codeline>
+<codeline lineno="55" refid="structmlpack_1_1cv_1_1TrainFormBase4_1a61f44880a9510b9d414669ea7e7263f1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase4_1a61f44880a9510b9d414669ea7e7263f1" kindref="member">Type</ref><sp/>=<sp/>RT(Class::*)(T1,<sp/>T2,<sp/>Ts...);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T1,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T2,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T3&gt;</highlight></codeline>
+<codeline lineno="59" refid="structmlpack_1_1cv_1_1TrainFormBase5" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainFormBase5" kindref="compound">TrainFormBase5</ref></highlight></codeline>
+<codeline lineno="60"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61" refid="structmlpack_1_1cv_1_1TrainFormBase5_1a329a0bee5f08ebbfbd6c97e4f74bdb4f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase5_1a329a0bee5f08ebbfbd6c97e4f74bdb4f" kindref="member">PredictionsType</ref><sp/>=<sp/>PT;</highlight></codeline>
+<codeline lineno="62" refid="structmlpack_1_1cv_1_1TrainFormBase5_1aecfc3bfd62796ddd9feb857c898cefa8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase5_1aecfc3bfd62796ddd9feb857c898cefa8" kindref="member">WeightsType</ref><sp/>=<sp/>WT;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>A<sp/>minimum<sp/>number<sp/>of<sp/>parameters<sp/>that<sp/>should<sp/>be<sp/>inferred<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="structmlpack_1_1cv_1_1TrainFormBase5_1adacbdda6f41a542559105d6e48d1cfc2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase5_1adacbdda6f41a542559105d6e48d1cfc2" kindref="member">MinNumberOfAdditionalArgs</ref><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Class,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Ts&gt;</highlight></codeline>
+<codeline lineno="68" refid="structmlpack_1_1cv_1_1TrainFormBase5_1aafe4d92b3375aba15ef2942c225e81b0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase5_1aafe4d92b3375aba15ef2942c225e81b0" kindref="member">Type</ref><sp/>=<sp/>RT(Class::*)(T1,<sp/>T2,<sp/>T3,<sp/>Ts...);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T1,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T2,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T3,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T4&gt;</highlight></codeline>
+<codeline lineno="73" refid="structmlpack_1_1cv_1_1TrainFormBase6" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainFormBase6" kindref="compound">TrainFormBase6</ref></highlight></codeline>
+<codeline lineno="74"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="75" refid="structmlpack_1_1cv_1_1TrainFormBase6_1a329a0bee5f08ebbfbd6c97e4f74bdb4f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase6_1a329a0bee5f08ebbfbd6c97e4f74bdb4f" kindref="member">PredictionsType</ref><sp/>=<sp/>PT;</highlight></codeline>
+<codeline lineno="76" refid="structmlpack_1_1cv_1_1TrainFormBase6_1aecfc3bfd62796ddd9feb857c898cefa8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase6_1aecfc3bfd62796ddd9feb857c898cefa8" kindref="member">WeightsType</ref><sp/>=<sp/>WT;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>A<sp/>minimum<sp/>number<sp/>of<sp/>parameters<sp/>that<sp/>should<sp/>be<sp/>inferred<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="structmlpack_1_1cv_1_1TrainFormBase6_1adacbdda6f41a542559105d6e48d1cfc2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase6_1adacbdda6f41a542559105d6e48d1cfc2" kindref="member">MinNumberOfAdditionalArgs</ref><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Class,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Ts&gt;</highlight></codeline>
+<codeline lineno="82" refid="structmlpack_1_1cv_1_1TrainFormBase6_1a31d0847c2645922caef9eaddc3db89d8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase6_1a31d0847c2645922caef9eaddc3db89d8" kindref="member">Type</ref><sp/>=<sp/>RT(Class::*)(T1,<sp/>T2,<sp/>T3,<sp/>T4,<sp/>Ts...);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T1,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T2,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T3,</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T4,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T5&gt;</highlight></codeline>
+<codeline lineno="87" refid="structmlpack_1_1cv_1_1TrainFormBase7" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainFormBase7" kindref="compound">TrainFormBase7</ref></highlight></codeline>
+<codeline lineno="88"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="89" refid="structmlpack_1_1cv_1_1TrainFormBase7_1a329a0bee5f08ebbfbd6c97e4f74bdb4f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase7_1a329a0bee5f08ebbfbd6c97e4f74bdb4f" kindref="member">PredictionsType</ref><sp/>=<sp/>PT;</highlight></codeline>
+<codeline lineno="90" refid="structmlpack_1_1cv_1_1TrainFormBase7_1aecfc3bfd62796ddd9feb857c898cefa8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase7_1aecfc3bfd62796ddd9feb857c898cefa8" kindref="member">WeightsType</ref><sp/>=<sp/>WT;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>A<sp/>minimum<sp/>number<sp/>of<sp/>parameters<sp/>that<sp/>should<sp/>be<sp/>inferred<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="structmlpack_1_1cv_1_1TrainFormBase7_1adacbdda6f41a542559105d6e48d1cfc2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase7_1adacbdda6f41a542559105d6e48d1cfc2" kindref="member">MinNumberOfAdditionalArgs</ref><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Class,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Ts&gt;</highlight></codeline>
+<codeline lineno="96" refid="structmlpack_1_1cv_1_1TrainFormBase7_1aec0832f5ca5e0a962d03d3b5843bcf81" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase7_1aec0832f5ca5e0a962d03d3b5843bcf81" kindref="member">Type</ref><sp/>=<sp/>RT(Class::*)(T1,<sp/>T2,<sp/>T3,<sp/>T4,<sp/>T5,<sp/>Ts...);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT&gt;</highlight></codeline>
+<codeline lineno="100" refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01false_00_01false_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt;MT,<sp/>PT,<sp/>void,<sp/>false,<sp/>false&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase4" kindref="compound">TrainFormBase4</ref>&lt;PT,<sp/>void,</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>PT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT&gt;</highlight></codeline>
+<codeline lineno="104" refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01false_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt;MT,<sp/>PT,<sp/>void,<sp/>true,<sp/>false&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase5" kindref="compound">TrainFormBase5</ref>&lt;PT,<sp/>void,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>data::DatasetInfo&amp;,<sp/>const<sp/>PT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT&gt;</highlight></codeline>
+<codeline lineno="108" refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01false_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt;MT,<sp/>PT,<sp/>WT,<sp/>false,<sp/>false&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase5" kindref="compound">TrainFormBase5</ref>&lt;PT,<sp/>WT,</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>PT&amp;,<sp/>const<sp/>WT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT&gt;</highlight></codeline>
+<codeline lineno="112" refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01false_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt;MT,<sp/>PT,<sp/>WT,<sp/>true,<sp/>false&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase6" kindref="compound">TrainFormBase6</ref>&lt;PT,<sp/>WT,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>data::DatasetInfo&amp;,<sp/>const<sp/>PT&amp;,<sp/>const<sp/>WT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT&gt;</highlight></codeline>
+<codeline lineno="116" refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01false_00_01true_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt;MT,<sp/>PT,<sp/>void,<sp/>false,<sp/>true&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase5" kindref="compound">TrainFormBase5</ref>&lt;PT,<sp/>void,</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>PT&amp;,<sp/>const<sp/>size_t&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT&gt;</highlight></codeline>
+<codeline lineno="120" refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt;MT,<sp/>PT,<sp/>void,<sp/>true,<sp/>true&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase6" kindref="compound">TrainFormBase6</ref>&lt;PT,<sp/>void,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>data::DatasetInfo&amp;,<sp/>const<sp/>PT&amp;,<sp/>const<sp/>size_t&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT&gt;</highlight></codeline>
+<codeline lineno="124" refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01true_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt;MT,<sp/>PT,<sp/>WT,<sp/>false,<sp/>true&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase6" kindref="compound">TrainFormBase6</ref>&lt;PT,<sp/>WT,</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>PT&amp;,<sp/>const<sp/>size_t,<sp/>const<sp/>WT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT&gt;</highlight></codeline>
+<codeline lineno="128" refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01true_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm</ref>&lt;MT,<sp/>PT,<sp/>WT,<sp/>true,<sp/>true&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainFormBase7" kindref="compound">TrainFormBase7</ref>&lt;PT,<sp/>WT,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>data::DatasetInfo&amp;,<sp/>const<sp/>PT&amp;,</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>size_t,<sp/>const<sp/>WT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>SignatureParams&gt;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">TrainFormBase</highlight></codeline>
+<codeline lineno="134"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>PredictionsType<sp/>=<sp/>PT;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>WeightsType<sp/>=<sp/>WT;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>A<sp/>minimum<sp/>number<sp/>of<sp/>parameters<sp/>that<sp/>should<sp/>be<sp/>inferred<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>MinNumberOfAdditionalArgs<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Class,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>RT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Ts&gt;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>Type<sp/>=<sp/>RT(Class::*)(SignatureParams...,<sp/>Ts...);</highlight></codeline>
+<codeline lineno="143"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT&gt;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">TrainForm&lt;MT,<sp/>PT,<sp/>void,<sp/>false,<sp/>false&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>TrainFormBase&lt;PT,<sp/>void,</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>PT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT&gt;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">TrainForm&lt;MT,<sp/>PT,<sp/>void,<sp/>true,<sp/>false&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>TrainFormBase&lt;PT,<sp/>void,</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>data::DatasetInfo&amp;,<sp/>const<sp/>PT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT&gt;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">TrainForm&lt;MT,<sp/>PT,<sp/>WT,<sp/>false,<sp/>false&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>TrainFormBase&lt;PT,<sp/>WT,</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>PT&amp;,<sp/>const<sp/>WT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT&gt;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">TrainForm&lt;MT,<sp/>PT,<sp/>WT,<sp/>true,<sp/>false&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>TrainFormBase&lt;PT,<sp/>WT,</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>data::DatasetInfo&amp;,<sp/>const<sp/>PT&amp;,<sp/>const<sp/>WT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT&gt;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">TrainForm&lt;MT,<sp/>PT,<sp/>void,<sp/>false,<sp/>true&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>TrainFormBase&lt;PT,<sp/>void,</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>PT&amp;,<sp/>const<sp/>size_t&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT&gt;</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">TrainForm&lt;MT,<sp/>PT,<sp/>void,<sp/>true,<sp/>true&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>TrainFormBase&lt;PT,<sp/>void,</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>data::DatasetInfo&amp;,<sp/>const<sp/>PT&amp;,<sp/>const<sp/>size_t&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT&gt;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">TrainForm&lt;MT,<sp/>PT,<sp/>WT,<sp/>false,<sp/>true&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>TrainFormBase&lt;PT,<sp/>WT,</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>PT&amp;,<sp/>const<sp/>size_t,<sp/>const<sp/>WT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT&gt;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">TrainForm&lt;MT,<sp/>PT,<sp/>WT,<sp/>true,<sp/>true&gt;<sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>TrainFormBase&lt;PT,<sp/>WT,</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>MT&amp;,<sp/>const<sp/>data::DatasetInfo&amp;,<sp/>const<sp/>PT&amp;,</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>size_t,<sp/>const<sp/>WT&amp;&gt;<sp/>{};</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>A<sp/>struct<sp/>for<sp/>indication<sp/>that<sp/>a<sp/>right<sp/>method<sp/>form<sp/>can&apos;t<sp/>be<sp/>found<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180" refid="structmlpack_1_1cv_1_1NotFoundMethodForm" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1NotFoundMethodForm" kindref="compound">NotFoundMethodForm</ref></highlight></codeline>
+<codeline lineno="181"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="182" refid="structmlpack_1_1cv_1_1NotFoundMethodForm_1a384f9c7eec2544d51529053885f53626" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1NotFoundMethodForm_1a384f9c7eec2544d51529053885f53626" kindref="member">PredictionsType</ref><sp/>=<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*;</highlight></codeline>
+<codeline lineno="183" refid="structmlpack_1_1cv_1_1NotFoundMethodForm_1ac81205dde90dbe196554aa8c00287aad" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1NotFoundMethodForm_1ac81205dde90dbe196554aa8c00287aad" kindref="member">WeightsType</ref><sp/>=<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MLAlgorithm,</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal">...&gt;<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&gt;<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal">...<sp/>HMFs&gt;</highlight></codeline>
+<codeline lineno="198" refid="structmlpack_1_1cv_1_1SelectMethodForm" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1SelectMethodForm" kindref="compound">SelectMethodForm</ref>;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MLAlgorithm,</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">class</highlight><highlight class="normal">...&gt;<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&gt;<sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">HasMethodForm,</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>template&lt;class,<sp/>template&lt;class...&gt;<sp/>class,<sp/>size_t&gt;<sp/>class...<sp/>HMFs&gt;</highlight></codeline>
+<codeline lineno="203" refid="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4" refkind="compound"><highlight class="normal">struct<sp/><ref refid="structmlpack_1_1cv_1_1SelectMethodForm" kindref="compound">SelectMethodForm</ref>&lt;MLAlgorithm,<sp/>HasMethodForm,<sp/>HMFs...&gt;</highlight></codeline>
+<codeline lineno="204"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Forms&gt;</highlight></codeline>
+<codeline lineno="206" refid="classmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_1_1From" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">From</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Declaration<sp/>and<sp/>definition<sp/>of<sp/>Implementation<sp/>for<sp/>the<sp/>case<sp/>when</highlight></codeline>
+<codeline lineno="209"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>RemainingForms<sp/>are<sp/>empty<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>RemainingForms&gt;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">Implementation</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>NextSMF<sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1SelectMethodForm" kindref="compound">SelectMethodForm</ref>&lt;MLAlgorithm,<sp/>HMFs...&gt;;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_1_1From_1a1df7dc60b062d0a6ede4b3606b04bd04" kindref="member">Type</ref><sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>NextSMF::template<sp/>From&lt;Forms...&gt;<ref refid="classmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_1_1From_1a1df7dc60b062d0a6ede4b3606b04bd04" kindref="member">::Type</ref>;</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>The<sp/>case<sp/>when<sp/>there<sp/>is<sp/>at<sp/>least<sp/>one<sp/>remaining<sp/>form<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Form,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>RemainingForms&gt;</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">Implementation&lt;Form,<sp/>RemainingForms...&gt;</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_1_1From_1a1df7dc60b062d0a6ede4b3606b04bd04" kindref="member">Type</ref><sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::conditional&lt;</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>HasMethodForm&lt;MLAlgorithm,<sp/>Form::template<sp/><ref refid="classmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_1_1From_1a1df7dc60b062d0a6ede4b3606b04bd04" kindref="member">Type</ref>,</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Form::MinNumberOfAdditionalArgs&gt;::value,</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Form,</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Implementation&lt;RemainingForms...&gt;<ref refid="classmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_1_1From_1a1df7dc60b062d0a6ede4b3606b04bd04" kindref="member">::Type</ref>&gt;::type;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="229" refid="classmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_1_1From_1a1df7dc60b062d0a6ede4b3606b04bd04" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_1_1From_1a1df7dc60b062d0a6ede4b3606b04bd04" kindref="member">Type</ref><sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Implementation&lt;Forms...&gt;<ref refid="classmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_00_01HasMethodForm_00_01HMFs_8_8_8_01_4_1_1From_1a1df7dc60b062d0a6ede4b3606b04bd04" kindref="member">::Type</ref>;</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="231"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MLAlgorithm&gt;</highlight></codeline>
+<codeline lineno="234" refid="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_01_4" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1cv_1_1SelectMethodForm" kindref="compound">SelectMethodForm</ref>&lt;MLAlgorithm&gt;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Forms&gt;</highlight></codeline>
+<codeline lineno="237" refid="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_01_4_1_1From" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">From</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="239" refid="structmlpack_1_1cv_1_1SelectMethodForm_3_01MLAlgorithm_01_4_1_1From_1af6db8688c70dba853583ffd10dc948d7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1NotFoundMethodForm" kindref="compound">Type</ref><sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1NotFoundMethodForm" kindref="compound">NotFoundMethodForm</ref>;</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="241"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MLAlgorithm,</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MT<sp/>=<sp/>arma::mat,</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>PT<sp/>=<sp/>arma::Row&lt;size_t&gt;,</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>WT<sp/>=<sp/>arma::rowvec&gt;</highlight></codeline>
+<codeline lineno="272" refid="classmlpack_1_1cv_1_1MetaInfoExtractor" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor" kindref="compound">MetaInfoExtractor</ref></highlight></codeline>
+<codeline lineno="273"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>Defining<sp/>type<sp/>functions<sp/>that<sp/>check<sp/>presence<sp/>of<sp/>Train<sp/>methods<sp/>of<sp/>a<sp/>given</highlight></codeline>
+<codeline lineno="275"><highlight class="comment"><sp/><sp/><sp/>*<sp/>form.<sp/>Defining<sp/>such<sp/>functions<sp/>for<sp/>templated<sp/>and<sp/>non-templated<sp/>Train</highlight></codeline>
+<codeline lineno="276"><highlight class="comment"><sp/><sp/><sp/>*<sp/>methods.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/>HAS_METHOD_FORM(Train,<sp/>HasTrain);</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/>HAS_METHOD_FORM(</highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Train&lt;&gt;,<sp/>HasTTrain);</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/>HAS_METHOD_FORM(</highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Train&lt;const<sp/>MT&amp;&gt;,<sp/>HasMTrain);</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/>HAS_METHOD_FORM(<ref refid="sfinae__utility_8hpp_1afa8624400132dca5f52f93deec70706b" kindref="member">SINGLE_ARG</ref>(</highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Train&lt;const<sp/>MT&amp;,<sp/>const<sp/>PT&amp;&gt;),<sp/>HasMPTrain);</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/>HAS_METHOD_FORM(<ref refid="sfinae__utility_8hpp_1afa8624400132dca5f52f93deec70706b" kindref="member">SINGLE_ARG</ref>(</highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Train&lt;const<sp/>MT&amp;,<sp/>const<sp/>PT&amp;,<sp/>const<sp/>WT&amp;&gt;),</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>HasMPWTrain);</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>Forms<sp/>of<sp/>Train<sp/>for<sp/>regression<sp/>algorithms<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TF1</ref><sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm&lt;MT, arma::rowvec, void, false, false&gt;</ref>;</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TF2</ref><sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm&lt;MT, arma::mat, void, false, false&gt;</ref>;</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01false_00_01false_01_4" kindref="compound">TF3</ref><sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01false_00_01false_01_4" kindref="compound">TrainForm&lt;MT, PT, void, false, false&gt;</ref>;</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>Forms<sp/>of<sp/>Train<sp/>for<sp/>classification<sp/>algorithms<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01false_00_01true_01_4" kindref="compound">TF4</ref><sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01false_00_01true_01_4" kindref="compound">TrainForm&lt;MT, PT, void, false, true&gt;</ref>;</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4" kindref="compound">TF5</ref><sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01void_00_01true_00_01true_01_4" kindref="compound">TrainForm&lt;MT, PT, void, true, true&gt;</ref>;</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"></highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>Forms<sp/>of<sp/>Train<sp/>with<sp/>weights<sp/>for<sp/>regression<sp/>algorithms<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">WTF1</ref><sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm&lt;MT, arma::rowvec, WT, false, false&gt;</ref>;</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">WTF2</ref><sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1TrainForm" kindref="compound">TrainForm&lt;MT, arma::mat, WT, false, false&gt;</ref>;</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01false_01_4" kindref="compound">WTF3</ref><sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01false_01_4" kindref="compound">TrainForm&lt;MT, PT, WT, false, false&gt;</ref>;</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"></highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>Forms<sp/>of<sp/>Train<sp/>with<sp/>weights<sp/>for<sp/>classification<sp/>algorithms<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01true_01_4" kindref="compound">WTF4</ref><sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01false_00_01true_01_4" kindref="compound">TrainForm&lt;MT, PT, WT, false, true&gt;</ref>;</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01true_01_4" kindref="compound">WTF5</ref><sp/>=<sp/><ref refid="structmlpack_1_1cv_1_1TrainForm_3_01MT_00_01PT_00_01WT_00_01true_00_01true_01_4" kindref="compound">TrainForm&lt;MT, PT, WT, true, true&gt;</ref>;</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"></highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>A<sp/>short<sp/>alias<sp/>for<sp/>a<sp/>type<sp/>function<sp/>that<sp/>selects<sp/>a<sp/>right<sp/>method<sp/>form<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>MethodForms&gt;</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>Select<sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1cv_1_1SelectMethodForm" kindref="compound">SelectMethodForm</ref>&lt;MLAlgorithm,<sp/>HasTrain,<sp/>HasTTrain,</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>HasMTrain,<sp/>HasMPTrain,<sp/>HasMPWTrain&gt;::template<sp/>From&lt;MethodForms...&gt;;</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>An<sp/>indication<sp/>whether<sp/>a<sp/>method<sp/>form<sp/>is<sp/>selected<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>MFs<sp/></highlight><highlight class="comment">/*<sp/>MethodForms<sp/>*/</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>Selects<sp/>=<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>std::conditional&lt;</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::is_same&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Select&lt;MFs...&gt;::Type,<sp/><ref refid="structmlpack_1_1cv_1_1NotFoundMethodForm" kindref="compound">NotFoundMethodForm</ref>&gt;::value,</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>std::false_type,<sp/>std::true_type&gt;::type;</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="318" refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a77d035e0244a4c0b92866be6d3741596" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a77d035e0244a4c0b92866be6d3741596" kindref="member">PredictionsType</ref><sp/>=</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Select&lt;TF1,<sp/>TF2,<sp/>TF3,<sp/>TF4,<sp/>TF5&gt;::Type::PredictionsType;</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"></highlight></codeline>
+<codeline lineno="325" refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1aaeb8180f55243194b4ba4ad792cdc586" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1aaeb8180f55243194b4ba4ad792cdc586" kindref="member">WeightsType</ref><sp/>=</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Select&lt;WTF1,<sp/>WTF2,<sp/>WTF3,<sp/>WTF4,<sp/>WTF5&gt;::Type::WeightsType;</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"></highlight></codeline>
+<codeline lineno="332" refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a03f5301f82961c51fb0b6e4e3b89aae0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a03f5301f82961c51fb0b6e4e3b89aae0" kindref="member">IsSupported</ref><sp/>=<sp/>!std::is_same&lt;PredictionsType,<sp/>void*&gt;::value;</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"></highlight></codeline>
+<codeline lineno="337" refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1af9be7f6c420e961867c5945da0a3a339" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1af9be7f6c420e961867c5945da0a3a339" kindref="member">SupportsWeights</ref><sp/>=<sp/>!std::is_same&lt;WeightsType,<sp/>void*&gt;::value;</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"></highlight></codeline>
+<codeline lineno="342" refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1ae50c72f23be6bf92e820b643ae123189" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1ae50c72f23be6bf92e820b643ae123189" kindref="member">TakesDatasetInfo</ref><sp/>=<sp/>Selects&lt;TF5&gt;::value;</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"></highlight></codeline>
+<codeline lineno="347" refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a0e921a4d1000043d71e5a6fbad480315" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a0e921a4d1000043d71e5a6fbad480315" kindref="member">TakesNumClasses</ref><sp/>=<sp/>Selects&lt;TF4,<sp/>TF5&gt;::value;</highlight></codeline>
+<codeline lineno="348"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"></highlight></codeline>
+<codeline lineno="350"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>cv</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="351"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="352"><highlight class="normal"></highlight></codeline>
+<codeline lineno="353"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/meta_info_extractor.hpp"/>
+  </compounddef>
+</doxygen>

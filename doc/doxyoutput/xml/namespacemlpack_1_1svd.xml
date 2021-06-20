@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1svd" kind="namespace" language="C++">
+    <compoundname>mlpack::svd</compoundname>
+    <innerclass refid="classmlpack_1_1svd_1_1BiasSVD" prot="public">mlpack::svd::BiasSVD</innerclass>
+    <innerclass refid="classmlpack_1_1svd_1_1BiasSVDFunction" prot="public">mlpack::svd::BiasSVDFunction</innerclass>
+    <innerclass refid="classmlpack_1_1svd_1_1QUIC__SVD" prot="public">mlpack::svd::QUIC_SVD</innerclass>
+    <innerclass refid="classmlpack_1_1svd_1_1RandomizedBlockKrylovSVD" prot="public">mlpack::svd::RandomizedBlockKrylovSVD</innerclass>
+    <innerclass refid="classmlpack_1_1svd_1_1RandomizedSVD" prot="public">mlpack::svd::RandomizedSVD</innerclass>
+    <innerclass refid="classmlpack_1_1svd_1_1RegularizedSVD" prot="public">mlpack::svd::RegularizedSVD</innerclass>
+    <innerclass refid="classmlpack_1_1svd_1_1RegularizedSVDFunction" prot="public">mlpack::svd::RegularizedSVDFunction</innerclass>
+    <innerclass refid="classmlpack_1_1svd_1_1SVDPlusPlus" prot="public">mlpack::svd::SVDPlusPlus</innerclass>
+    <innerclass refid="classmlpack_1_1svd_1_1SVDPlusPlusFunction" prot="public">mlpack::svd::SVDPlusPlusFunction</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp" line="24" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,153 @@
+\doxysection{Introduction}\label{julia_quickstart_julia_quickstart_intro}
+This page describes how you can quickly get started using mlpack from Julia and gives a few examples of usage, and pointers to deeper documentation.
+
+This quickstart guide is also available for \doxyref{Python}{p.}{python_quickstart}, \doxyref{the command-\/line}{p.}{cli_quickstart}, \doxyref{Go}{p.}{go_quickstart} and \doxyref{R}{p.}{r_quickstart}.\doxysection{Installing mlpack}\label{julia_quickstart_julia_quickstart_install}
+Installing the mlpack bindings for Julia is straightforward; you can just use {\ttfamily Pkg\+:} 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{using Pkg}
+\DoxyCodeLine{Pkg.add("{}mlpack"{})}
+
+\end{DoxyCode}
+
+
+Building the Julia bindings from scratch is a little more in-\/depth, though. For information on that, follow the instructions on the \doxyref{Building mlpack From Source}{p.}{build} page, and be sure to specify {\ttfamily -\/DBUILD\+\_\+\+JULIA\+\_\+\+BINDINGS=ON} to CMake; you may need to also set the location of the Julia program with {\ttfamily -\/DJULIA\+\_\+\+EXECUTABLE=/path/to/julia}.\doxysection{Simple mlpack quickstart example}\label{julia_quickstart_julia_quickstart_example}
+As a really simple example of how to use mlpack from Julia, let\textquotesingle{}s do some simple classification on a subset of the standard machine learning {\ttfamily covertype} dataset. We\textquotesingle{}ll first split the dataset into a training set and a testing set, then we\textquotesingle{}ll train an mlpack random forest on the training data, and finally we\textquotesingle{}ll print the accuracy of the random forest on the test dataset.
+
+You can copy-\/paste this code directly into Julia to run it. You may need to add some extra packages with, e.\+g., {\ttfamily using Pkg; Pkg.\+add(\char`\"{}\+CSV\char`\"{}); Pkg.\+add(\char`\"{}\+Data\+Frames\char`\"{}); Pkg.\+add(\char`\"{}\+Libz\char`\"{})}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{using CSV}
+\DoxyCodeLine{using DataFrames}
+\DoxyCodeLine{using Libz}
+\DoxyCodeLine{using mlpack}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# Load the dataset from an online URL.  Replace with 'covertype.csv.gz' if you}
+\DoxyCodeLine{\# want to use on the full dataset.}
+\DoxyCodeLine{df = CSV.read(ZlibInflateInputStream(open(download(}
+\DoxyCodeLine{        "{}http://www.mlpack.org/datasets/covertype-\/small.csv.gz"{}))))}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# Split the labels.}
+\DoxyCodeLine{labels = df[!, :label][:]}
+\DoxyCodeLine{dataset = select!(df, Not(:label))}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# Split the dataset using mlpack.}
+\DoxyCodeLine{test, test\_labels, train, train\_labels = mlpack.preprocess\_split(}
+\DoxyCodeLine{    dataset,}
+\DoxyCodeLine{    input\_labels=labels,}
+\DoxyCodeLine{    test\_ratio=0.3)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# Train a random forest.}
+\DoxyCodeLine{rf\_model, \_, \_ = mlpack.random\_forest(training=train,}
+\DoxyCodeLine{                              labels=train\_labels,}
+\DoxyCodeLine{                              print\_training\_accuracy=true,}
+\DoxyCodeLine{                              num\_trees=10,}
+\DoxyCodeLine{                              minimum\_leaf\_size=3)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# Predict the labels of the test points.}
+\DoxyCodeLine{\_, predictions, \_ = mlpack.random\_forest(input\_model=rf\_model,}
+\DoxyCodeLine{                                         test=test)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# Now print the accuracy.  The third return value ('probabilities'), which we}
+\DoxyCodeLine{\# ignored here, could also be used to generate an ROC curve.}
+\DoxyCodeLine{correct = sum(predictions .== test\_labels)}
+\DoxyCodeLine{print("{}\$(correct) out of \$(length(test\_labels)) test points correct "{} *}
+\DoxyCodeLine{    "{}(\$(correct / length(test\_labels) * 100.0)\%).\(\backslash\)n"{})}
+
+\end{DoxyCode}
+
+
+We can see that we achieve reasonably good accuracy on the test dataset (80\%+); if we use the full {\ttfamily covertype.\+csv.\+gz}, the accuracy should increase significantly (but training will take longer).
+
+It\textquotesingle{}s easy to modify the code above to do more complex things, or to use different mlpack learners, or to interface with other machine learning toolkits.\doxysection{What else does mlpack implement?}\label{julia_quickstart_julia_quickstart_whatelse}
+The example above has only shown a little bit of the functionality of mlpack. Lots of other commands are available with different functionality. A full list of each of these commands and full documentation can be found on the following page\+:
+
+
+\begin{DoxyItemize}
+\item {\texttt{ Julia documentation}}
+\end{DoxyItemize}
+
+You can also use the Julia REPL to explore the {\ttfamily mlpack} module and its functions; every function comes with comprehensive documentation.
+
+For more information on what mlpack does, see {\texttt{ https\+://www.\+mlpack.\+org/}}. Next, let\textquotesingle{}s go through another example for providing movie recommendations with mlpack.\doxysection{Using mlpack for movie recommendations}\label{julia_quickstart_julia_quickstart_movierecs}
+In this example, we\textquotesingle{}ll train a collaborative filtering model using mlpack\textquotesingle{}s {\ttfamily {\texttt{ cf()}}} method. We\textquotesingle{}ll train this on the Movie\+Lens dataset from {\texttt{ https\+://grouplens.\+org/datasets/movielens/}}, and then we\textquotesingle{}ll use the model that we train to give recommendations.
+
+You can copy-\/paste this code directly into Julia to run it.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{using CSV}
+\DoxyCodeLine{using mlpack}
+\DoxyCodeLine{using Libz}
+\DoxyCodeLine{using DataFrames}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# Load the dataset from an online URL.  Replace with 'covertype.csv.gz' if you}
+\DoxyCodeLine{\# want to use on the full dataset.}
+\DoxyCodeLine{ratings = CSV.read(ZlibInflateInputStream(open(download(}
+\DoxyCodeLine{        "{}http://www.mlpack.org/datasets/ml-\/20m/ratings-\/only.csv.gz"{}))))}
+\DoxyCodeLine{movies = CSV.read(ZlibInflateInputStream(open(download(}
+\DoxyCodeLine{        "{}http://www.mlpack.org/datasets/ml-\/20m/movies.csv.gz"{}))))}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# Hold out 10\% of the dataset into a test set so we can evaluate performance.}
+\DoxyCodeLine{ratings\_test, \_, ratings\_train, \_ = mlpack.preprocess\_split(ratings;}
+\DoxyCodeLine{    test\_ratio=0.1, verbose=true)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# Train the model.  Change the rank to increase/decrease the complexity of the}
+\DoxyCodeLine{\# model.}
+\DoxyCodeLine{\_, cf\_model = mlpack.cf(training=ratings\_train,}
+\DoxyCodeLine{                        test=ratings\_test,}
+\DoxyCodeLine{                        rank=10,}
+\DoxyCodeLine{                        verbose=true,}
+\DoxyCodeLine{                        algorithm="{}RegSVD"{})}
+\DoxyCodeLine{}
+\DoxyCodeLine{\# Now query the 5 top movies for user 1.}
+\DoxyCodeLine{output, \_ = mlpack.cf(input\_model=cf\_model,}
+\DoxyCodeLine{                      query=[1],}
+\DoxyCodeLine{                      recommendations=10,}
+\DoxyCodeLine{                      verbose=true,}
+\DoxyCodeLine{                      max\_iterations=10)}
+\DoxyCodeLine{}
+\DoxyCodeLine{print("{}Recommendations for user 1:\(\backslash\)n"{})}
+\DoxyCodeLine{for i in 1:10}
+\DoxyCodeLine{  print("{}  \$(i): \$(movies[output[i], :][3])\(\backslash\)n"{})}
+\DoxyCodeLine{end}
+
+\end{DoxyCode}
+
+
+Here is some example output, showing that user 1 seems to have good taste in movies\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Recommendations for user 1:}
+\DoxyCodeLine{  0: Casablanca (1942)}
+\DoxyCodeLine{  1: Pan's Labyrinth (Laberinto del fauno, El) (2006)}
+\DoxyCodeLine{  2: Godfather, The (1972)}
+\DoxyCodeLine{  3: Answer This! (2010)}
+\DoxyCodeLine{  4: Life Is Beautiful (La Vita è bella) (1997)}
+\DoxyCodeLine{  5: Adventures of Tintin, The (2011)}
+\DoxyCodeLine{  6: Dark Knight, The (2008)}
+\DoxyCodeLine{  7: Out for Justice (1991)}
+\DoxyCodeLine{  8: Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)}
+\DoxyCodeLine{  9: Schindler's List (1993)}
+
+\end{DoxyCode}
+\doxysection{Next steps with mlpack}\label{julia_quickstart_julia_quickstart_nextsteps}
+Now that you have done some simple work with mlpack, you have seen how it can easily plug into a data science workflow in Julia. A great thing to do next would be to look at more documentation for the Julia mlpack bindings\+:
+
+
+\begin{DoxyItemize}
+\item {\texttt{ Julia mlpack binding documentation}}
+\end{DoxyItemize}
+
+Also, mlpack is much more flexible from C++ and allows much greater functionality. So, more complicated tasks are possible if you are willing to write C++ (or perhaps Cxx\+Wrap.\+jl). To get started learning about mlpack in C++, the following resources might be helpful\+:
+
+
+\begin{DoxyItemize}
+\item {\texttt{ mlpack C++ tutorials}}
+\item {\texttt{ mlpack build and installation guide}}
+\item {\texttt{ Simple sample C++ mlpack programs}}
+\item {\texttt{ mlpack Doxygen documentation homepage}} 
+\end{DoxyItemize}

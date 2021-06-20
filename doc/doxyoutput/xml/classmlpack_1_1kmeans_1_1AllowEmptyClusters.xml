@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1kmeans_1_1AllowEmptyClusters" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::kmeans::AllowEmptyClusters</compoundname>
+    <includes refid="allow__empty__clusters_8hpp" local="no">allow_empty_clusters.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1AllowEmptyClusters_1a855f715983fcc56fb18287097d9b7c54" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>AllowEmptyClusters</definition>
+        <argsstring>()</argsstring>
+        <name>AllowEmptyClusters</name>
+        <briefdescription>
+<para>Default constructor required by EmptyClusterPolicy policy. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/allow_empty_clusters.hpp" line="29" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/allow_empty_clusters.hpp" bodystart="29" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1AllowEmptyClusters_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the empty cluster policy (nothing to do). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/allow_empty_clusters.hpp" line="64" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/allow_empty_clusters.hpp" bodystart="64" bodyend="64"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1kmeans_1_1AllowEmptyClusters_1a310f32aa6a6aab2e4fd8e52f7224ea4d" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MetricType</type>
+          </param>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="prereqs_8hpp_1ae8c57c7218a376f10cbdf0e50f1189ee" kindref="member">force_inline</ref> void</type>
+        <definition>static force_inline void EmptyCluster</definition>
+        <argsstring>(const MatType &amp;, const size_t emptyCluster, const arma::mat &amp;oldCentroids, arma::mat &amp;newCentroids, arma::Col&lt; size_t &gt; &amp;, MetricType &amp;, const size_t)</argsstring>
+        <name>EmptyCluster</name>
+        <param>
+          <type>const MatType &amp;</type>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>emptyCluster</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>oldCentroids</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>newCentroids</declname>
+        </param>
+        <param>
+          <type>arma::Col&lt; size_t &gt; &amp;</type>
+        </param>
+        <param>
+          <type>MetricType &amp;</type>
+        </param>
+        <param>
+          <type>const</type>
+          <declname>size_t</declname>
+        </param>
+        <briefdescription>
+<para>This function allows empty clusters to persist simply by leaving the empty cluster in its last position. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of data (arma::mat or arma::spmat). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(data) Dataset on which clustering is being performed. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>emptyCluster</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of cluster which is empty. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>oldCentroids</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Centroids of each cluster (one per column) at the start of the iteration. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>newCentroids</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Centroids of each cluster (one per column) at the end of the iteration. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(clusterCounts) Number of points in each cluster. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(metric) The Metric to use. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>*</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(iteration) Number of iteration.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of points changed (0). </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/allow_empty_clusters.hpp" line="49" column="35" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/allow_empty_clusters.hpp" bodystart="49" bodyend="60"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Policy which allows K-Means to create empty clusters without any error being reported. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/allow_empty_clusters.hpp" line="25" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/allow_empty_clusters.hpp" bodystart="26" bodyend="65"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1kmeans_1_1AllowEmptyClusters_1a855f715983fcc56fb18287097d9b7c54" prot="public" virt="non-virtual"><scope>mlpack::kmeans::AllowEmptyClusters</scope><name>AllowEmptyClusters</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1AllowEmptyClusters_1a310f32aa6a6aab2e4fd8e52f7224ea4d" prot="public" virt="non-virtual"><scope>mlpack::kmeans::AllowEmptyClusters</scope><name>EmptyCluster</name></member>
+      <member refid="classmlpack_1_1kmeans_1_1AllowEmptyClusters_1aa2ccb5a0533a6ba0abe6dfc1f98fbafb" prot="public" virt="non-virtual"><scope>mlpack::kmeans::AllowEmptyClusters</scope><name>serialize</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

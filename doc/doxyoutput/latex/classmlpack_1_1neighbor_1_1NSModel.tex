@@ -1,0 +1,517 @@
+\doxysection{NSModel$<$ Sort\+Policy $>$ Class Template Reference}
+\label{classmlpack_1_1neighbor_1_1NSModel}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+
+
+The \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel} class provides an easy way to serialize a model, abstracts away the different types of trees, and also reflects the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} API.  
+
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Tree\+Types} \{ \newline
+\textbf{ KD\+\_\+\+TREE}
+, \newline
+\textbf{ COVER\+\_\+\+TREE}
+, \newline
+\textbf{ R\+\_\+\+TREE}
+, \newline
+\textbf{ R\+\_\+\+STAR\+\_\+\+TREE}
+, \newline
+\textbf{ BALL\+\_\+\+TREE}
+, \newline
+\textbf{ X\+\_\+\+TREE}
+, \newline
+\textbf{ HILBERT\+\_\+\+R\+\_\+\+TREE}
+, \newline
+\textbf{ R\+\_\+\+PLUS\+\_\+\+TREE}
+, \newline
+\textbf{ R\+\_\+\+PLUS\+\_\+\+PLUS\+\_\+\+TREE}
+, \newline
+\textbf{ VP\+\_\+\+TREE}
+, \newline
+\textbf{ RP\+\_\+\+TREE}
+, \newline
+\textbf{ MAX\+\_\+\+RP\+\_\+\+TREE}
+, \newline
+\textbf{ SPILL\+\_\+\+TREE}
+, \newline
+\textbf{ UB\+\_\+\+TREE}
+, \newline
+\textbf{ OCTREE}
+ \}
+\begin{DoxyCompactList}\small\item\em Enum type to identify each accepted tree type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ NSModel} (const \textbf{ NSModel} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel}. \end{DoxyCompactList}\item 
+\textbf{ NSModel} (\textbf{ NSModel} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel}. \end{DoxyCompactList}\item 
+\textbf{ NSModel} (\textbf{ Tree\+Types} tree\+Type=Tree\+Types\+::\+KD\+\_\+\+TREE, bool random\+Basis=false)
+\begin{DoxyCompactList}\small\item\em Initialize the \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel} with the given type and whether or not a random basis should be used. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+NSModel} ()
+\begin{DoxyCompactList}\small\item\em Clean memory, if necessary. \end{DoxyCompactList}\item 
+void \textbf{ Build\+Model} (arma\+::mat \&\&reference\+Set, const \textbf{ Neighbor\+Search\+Mode} search\+Mode, const double epsilon=0)
+\begin{DoxyCompactList}\small\item\em Build the reference tree. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Dataset} () const
+\begin{DoxyCompactList}\small\item\em Expose the dataset. \end{DoxyCompactList}\item 
+double \& \textbf{ Epsilon} ()
+\item 
+double \textbf{ Epsilon} () const
+\begin{DoxyCompactList}\small\item\em Expose Epsilon. \end{DoxyCompactList}\item 
+void \textbf{ Initialize\+Model} (const \textbf{ Neighbor\+Search\+Mode} search\+Mode, const double epsilon)
+\begin{DoxyCompactList}\small\item\em Initialize the model type. (This does not perform any training.) \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Leaf\+Size} ()
+\item 
+size\+\_\+t \textbf{ Leaf\+Size} () const
+\begin{DoxyCompactList}\small\item\em Expose Leaf\+Size. \end{DoxyCompactList}\item 
+\textbf{ NSModel} \& \textbf{ operator=} (const \textbf{ NSModel} \&other)
+\begin{DoxyCompactList}\small\item\em Copy the given \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel}. \end{DoxyCompactList}\item 
+\textbf{ NSModel} \& \textbf{ operator=} (\textbf{ NSModel} \&\&other)
+\begin{DoxyCompactList}\small\item\em Take ownership of the given \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel}. \end{DoxyCompactList}\item 
+bool \& \textbf{ Random\+Basis} ()
+\item 
+bool \textbf{ Random\+Basis} () const
+\begin{DoxyCompactList}\small\item\em Expose random\+Basis. \end{DoxyCompactList}\item 
+double \& \textbf{ Rho} ()
+\item 
+double \textbf{ Rho} () const
+\begin{DoxyCompactList}\small\item\em Expose Rho. \end{DoxyCompactList}\item 
+void \textbf{ Search} (arma\+::mat \&\&query\+Set, const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Perform neighbor search. The query set will be reordered. \end{DoxyCompactList}\item 
+void \textbf{ Search} (const size\+\_\+t k, arma\+::\+Mat$<$ size\+\_\+t $>$ \&neighbors, arma\+::mat \&distances)
+\begin{DoxyCompactList}\small\item\em Perform monochromatic neighbor search. \end{DoxyCompactList}\item 
+\textbf{ Neighbor\+Search\+Mode} \& \textbf{ Search\+Mode} ()
+\item 
+\textbf{ Neighbor\+Search\+Mode} \textbf{ Search\+Mode} () const
+\begin{DoxyCompactList}\small\item\em Expose Search\+Mode. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the neighbor search model. \end{DoxyCompactList}\item 
+double \& \textbf{ Tau} ()
+\item 
+double \textbf{ Tau} () const
+\begin{DoxyCompactList}\small\item\em Expose Tau. \end{DoxyCompactList}\item 
+std\+::string \textbf{ Tree\+Name} () const
+\begin{DoxyCompactList}\small\item\em Return a string representation of the current tree type. \end{DoxyCompactList}\item 
+\textbf{ Tree\+Types} \& \textbf{ Tree\+Type} ()
+\item 
+\textbf{ Tree\+Types} \textbf{ Tree\+Type} () const
+\begin{DoxyCompactList}\small\item\em Expose tree\+Type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Sort\+Policy$>$\newline
+class mlpack\+::neighbor\+::\+NSModel$<$ Sort\+Policy $>$}
+
+The \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel} class provides an easy way to serialize a model, abstracts away the different types of trees, and also reflects the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} API. 
+
+This class is meant to be used by the command-\/line mlpack\+\_\+knn and mlpack\+\_\+kfn programs, and thus does not have the same complete functionality and flexibility as the \doxyref{Neighbor\+Search}{p.}{classmlpack_1_1neighbor_1_1NeighborSearch} class. So if you are using it outside of mlpack\+\_\+knn and mlpack\+\_\+kfn, be aware that it is limited!
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Sort\+Policy} & The sort policy for distances; see Nearest\+Neighbor\+Sort. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 333 of file ns\+\_\+model.\+hpp.
+
+
+
+\doxysubsection{Member Enumeration Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8d}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!TreeTypes@{TreeTypes}}
+\index{TreeTypes@{TreeTypes}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{TreeTypes}
+{\footnotesize\ttfamily enum \textbf{ Tree\+Types}}
+
+
+
+Enum type to identify each accepted tree type. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{KD\_TREE@{KD\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!KD\_TREE@{KD\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8daa688e9cd1158916bc183aa517724568c}} 
+KD\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{COVER\_TREE@{COVER\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!COVER\_TREE@{COVER\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da92f172b47c8ae18ed401f8bf9f5ecad3}} 
+COVER\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\_TREE@{R\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!R\_TREE@{R\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da2a93dc779a94d5f09b72ffbdc5ac9cd9}} 
+R\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\_STAR\_TREE@{R\_STAR\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!R\_STAR\_TREE@{R\_STAR\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8dae5b37a52c347bc7ef3d23fde0941d27b}} 
+R\+\_\+\+STAR\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BALL\_TREE@{BALL\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!BALL\_TREE@{BALL\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da994ef1bcca8841d5b7d1431b99fcb10d}} 
+BALL\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{X\_TREE@{X\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!X\_TREE@{X\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da6560e35678b39452afce0f0fcc7f6059}} 
+X\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HILBERT\_R\_TREE@{HILBERT\_R\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!HILBERT\_R\_TREE@{HILBERT\_R\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da470c5bcf4135483a37e9a87f061e1c5c}} 
+HILBERT\+\_\+\+R\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\_PLUS\_TREE@{R\_PLUS\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!R\_PLUS\_TREE@{R\_PLUS\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da4e91a297c1504b34ca1a9cdcd6ba22ff}} 
+R\+\_\+\+PLUS\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\_PLUS\_PLUS\_TREE@{R\_PLUS\_PLUS\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!R\_PLUS\_PLUS\_TREE@{R\_PLUS\_PLUS\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da1208f6f2a7b337e4edbd02a8de98d3f5}} 
+R\+\_\+\+PLUS\+\_\+\+PLUS\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VP\_TREE@{VP\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!VP\_TREE@{VP\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8daa8a6aade44830d33165414079bf8dd1c}} 
+VP\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RP\_TREE@{RP\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!RP\_TREE@{RP\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8dae6815061fe1e77dc1b2ae96b07b40250}} 
+RP\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MAX\_RP\_TREE@{MAX\_RP\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!MAX\_RP\_TREE@{MAX\_RP\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8da0e4ed6912ca7a8232754df8771365c96}} 
+MAX\+\_\+\+RP\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SPILL\_TREE@{SPILL\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!SPILL\_TREE@{SPILL\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8dae380b83ef5a8ba2c32c569705a8b66fc}} 
+SPILL\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UB\_TREE@{UB\_TREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!UB\_TREE@{UB\_TREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8dae36341db74fc7194b238cf7c528a7fbc}} 
+UB\+\_\+\+TREE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OCTREE@{OCTREE}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!OCTREE@{OCTREE}}}\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6597b8539c6114170dc185d332ba4c8daabefbb1ea7a801b1b00c9b0709dcec50}} 
+OCTREE&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 337 of file ns\+\_\+model.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a79e4c6c22da7f04fc8f9a5bae9b688e1}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!NSModel@{NSModel}}
+\index{NSModel@{NSModel}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{NSModel()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ NSModel} (\begin{DoxyParamCaption}\item[{\textbf{ Tree\+Types}}]{tree\+Type = {\ttfamily TreeTypes\+:\+:KD\+\_\+TREE},  }\item[{bool}]{random\+Basis = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Initialize the \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel} with the given type and whether or not a random basis should be used. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tree\+Type} & Type of tree to use. \\
+\hline
+{\em random\+Basis} & Whether or not to project the points onto a random basis before searching. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6377c3a4b61de368dedff9fa95304359}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!NSModel@{NSModel}}
+\index{NSModel@{NSModel}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{NSModel()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ NSModel} (\begin{DoxyParamCaption}\item[{const \textbf{ NSModel}$<$ Sort\+Policy $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy the given \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Model to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a8eba8cadae0d4294becc60ec69cf158d}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!NSModel@{NSModel}}
+\index{NSModel@{NSModel}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{NSModel()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ NSModel} (\begin{DoxyParamCaption}\item[{\textbf{ NSModel}$<$ Sort\+Policy $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of the given \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Model to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a25d5032163e2f4db1c2330d689df8434}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!````~NSModel@{$\sim$NSModel}}
+\index{````~NSModel@{$\sim$NSModel}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{$\sim$NSModel()}
+{\footnotesize\ttfamily $\sim$\textbf{ NSModel} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clean memory, if necessary. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_aa5cbba6575bb949e63ace34052516eb6}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!BuildModel@{BuildModel}}
+\index{BuildModel@{BuildModel}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{BuildModel()}
+{\footnotesize\ttfamily void Build\+Model (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{reference\+Set,  }\item[{const \textbf{ Neighbor\+Search\+Mode}}]{search\+Mode,  }\item[{const double}]{epsilon = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Build the reference tree. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_aff320b9a86b77a150e630c01d5888273}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!Dataset@{Dataset}}
+\index{Dataset@{Dataset}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{Dataset()}
+{\footnotesize\ttfamily const arma\+::mat\& Dataset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Expose the dataset. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_ab6a080993b32456443eced5df2f8b9b9}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!Epsilon@{Epsilon}}
+\index{Epsilon@{Epsilon}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{Epsilon()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Epsilon (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_af6d960193bb5db37e51416e12bf720de}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!Epsilon@{Epsilon}}
+\index{Epsilon@{Epsilon}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{Epsilon()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Epsilon (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Expose Epsilon. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a407a10954f142968edc38f36c321c6b8}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!InitializeModel@{InitializeModel}}
+\index{InitializeModel@{InitializeModel}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{InitializeModel()}
+{\footnotesize\ttfamily void Initialize\+Model (\begin{DoxyParamCaption}\item[{const \textbf{ Neighbor\+Search\+Mode}}]{search\+Mode,  }\item[{const double}]{epsilon }\end{DoxyParamCaption})}
+
+
+
+Initialize the model type. (This does not perform any training.) 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a0966773f5b7ef0c324ed40b1cf4b94d1}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!LeafSize@{LeafSize}}
+\index{LeafSize@{LeafSize}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{LeafSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 430 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_ab81b93ebb200783ca4c5747f31889fa0}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!LeafSize@{LeafSize}}
+\index{LeafSize@{LeafSize}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{LeafSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Leaf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose Leaf\+Size. 
+
+
+
+Definition at line 429 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a8423369eb2979b36475f0e3fd533c274}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ NSModel}\& operator= (\begin{DoxyParamCaption}\item[{const \textbf{ NSModel}$<$ Sort\+Policy $>$ \&}]{other }\end{DoxyParamCaption})}
+
+
+
+Copy the given \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Model to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a9a971bffd9a24a23a0e2216b24a60cf3}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{operator=()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ NSModel}\& operator= (\begin{DoxyParamCaption}\item[{\textbf{ NSModel}$<$ Sort\+Policy $>$ \&\&}]{other }\end{DoxyParamCaption})}
+
+
+
+Take ownership of the given \doxyref{NSModel}{p.}{classmlpack_1_1neighbor_1_1NSModel}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & Model to take ownership of. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a8111114602e748b38c0875f82f323544}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!RandomBasis@{RandomBasis}}
+\index{RandomBasis@{RandomBasis}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{RandomBasis()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& Random\+Basis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 450 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_ae3053ad1e3b42eb1ae4105aecd060cf6}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!RandomBasis@{RandomBasis}}
+\index{RandomBasis@{RandomBasis}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{RandomBasis()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Random\+Basis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose random\+Basis. 
+
+
+
+Definition at line 449 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a10001faac75d91c05a3c0bfd711b901a}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!Rho@{Rho}}
+\index{Rho@{Rho}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{Rho()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 438 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a309719b378c0bb1962982a8162e58e84}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!Rho@{Rho}}
+\index{Rho@{Rho}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{Rho()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Rho (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose Rho. 
+
+
+
+Definition at line 437 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_af621a93ffd3ff29728b4f4d2380ccfd5}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!Search@{Search}}
+\index{Search@{Search}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{arma\+::mat \&\&}]{query\+Set,  }\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances }\end{DoxyParamCaption})}
+
+
+
+Perform neighbor search. The query set will be reordered. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a619c7d4931e628a0c199159c57b34cbd}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!Search@{Search}}
+\index{Search@{Search}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{Search()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Search (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{k,  }\item[{arma\+::\+Mat$<$ size\+\_\+t $>$ \&}]{neighbors,  }\item[{arma\+::mat \&}]{distances }\end{DoxyParamCaption})}
+
+
+
+Perform monochromatic neighbor search. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a6071cc412821cb4ce4364fbc2a0a8533}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!SearchMode@{SearchMode}}
+\index{SearchMode@{SearchMode}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{SearchMode()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Neighbor\+Search\+Mode}\& Search\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a23cdc4b734a3dc41722aaded92244fd4}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!SearchMode@{SearchMode}}
+\index{SearchMode@{SearchMode}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{SearchMode()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Neighbor\+Search\+Mode} Search\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Expose Search\+Mode. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a65cba07328997659bec80b9879b15a51}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the neighbor search model. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_ad522d61ed716a322376adea25ebdbc90}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!Tau@{Tau}}
+\index{Tau@{Tau}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{Tau()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double\& Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 434 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a4a4b0fafde4cc4c856a53025dc8c4c21}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!Tau@{Tau}}
+\index{Tau@{Tau}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{Tau()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Tau (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose Tau. 
+
+
+
+Definition at line 433 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a98cbe53c61f1681514056f78a89a57b8}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!TreeName@{TreeName}}
+\index{TreeName@{TreeName}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{TreeName()}
+{\footnotesize\ttfamily std\+::string Tree\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return a string representation of the current tree type. 
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_a56b0460c7769ea1ef9d8314026ef36c6}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!TreeType@{TreeType}}
+\index{TreeType@{TreeType}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{TreeType()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Tree\+Types}\& Tree\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 446 of file ns\+\_\+model.\+hpp.
+
+\mbox{\label{classmlpack_1_1neighbor_1_1NSModel_adb3d0b75d7754ec6741d890232576ffc}} 
+\index{NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}!TreeType@{TreeType}}
+\index{TreeType@{TreeType}!NSModel$<$ SortPolicy $>$@{NSModel$<$ SortPolicy $>$}}
+\doxysubsubsection{TreeType()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Tree\+Types} Tree\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Expose tree\+Type. 
+
+
+
+Definition at line 445 of file ns\+\_\+model.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/neighbor\+\_\+search/\textbf{ ns\+\_\+model.\+hpp}\end{DoxyCompactItemize}

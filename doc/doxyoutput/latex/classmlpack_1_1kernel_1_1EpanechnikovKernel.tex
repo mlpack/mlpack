@@ -1,0 +1,171 @@
+\doxysection{Epanechnikov\+Kernel Class Reference}
+\label{classmlpack_1_1kernel_1_1EpanechnikovKernel}\index{EpanechnikovKernel@{EpanechnikovKernel}}
+
+
+The Epanechnikov kernel, defined as.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Epanechnikov\+Kernel} (const double bandwidth=1.\+0)
+\begin{DoxyCompactList}\small\item\em Instantiate the Epanechnikov kernel with the given bandwidth (default 1.\+0). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\double \textbf{ Convolution\+Integral} (const Vec\+TypeA \&a, const Vec\+TypeB \&b)
+\begin{DoxyCompactList}\small\item\em Obtains the convolution integral [integral of K($\vert$$\vert$x-\/a$\vert$$\vert$) K($\vert$$\vert$b-\/x$\vert$$\vert$) dx] for the two vectors. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const double distance) const
+\begin{DoxyCompactList}\small\item\em Evaluate the Epanechnikov kernel given that the distance between the two input points is known. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\double \textbf{ Evaluate} (const Vec\+TypeA \&a, const Vec\+TypeB \&b) const
+\begin{DoxyCompactList}\small\item\em Evaluate the Epanechnikov kernel on the given two inputs. \end{DoxyCompactList}\item 
+double \textbf{ Gradient} (const double distance) const
+\begin{DoxyCompactList}\small\item\em Evaluate the Gradient of Epanechnikov kernel given that the distance between the two input points is known. \end{DoxyCompactList}\item 
+double \textbf{ Gradient\+For\+Squared\+Distance} (const double distance\+Squared) const
+\begin{DoxyCompactList}\small\item\em Evaluate the Gradient of Epanechnikov kernel given that the squared distance between the two input points is known. \end{DoxyCompactList}\item 
+double \textbf{ Normalizer} (const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Compute the normalizer of this Epanechnikov kernel for the given dimension. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t version)
+\begin{DoxyCompactList}\small\item\em Serialize the kernel. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The Epanechnikov kernel, defined as. 
+
+\[ K(x, y) = \max \{0, 1 - || x - y ||^2_2 / b^2 \} \]
+
+where $ b $ is the bandwidth the of the kernel (defaults to 1.\+0). 
+
+Definition at line 30 of file epanechnikov\+\_\+kernel.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kernel_1_1EpanechnikovKernel_ad3880022e464ae367ed9b7342f0cdf37}} 
+\index{EpanechnikovKernel@{EpanechnikovKernel}!EpanechnikovKernel@{EpanechnikovKernel}}
+\index{EpanechnikovKernel@{EpanechnikovKernel}!EpanechnikovKernel@{EpanechnikovKernel}}
+\doxysubsubsection{EpanechnikovKernel()}
+{\footnotesize\ttfamily \textbf{ Epanechnikov\+Kernel} (\begin{DoxyParamCaption}\item[{const double}]{bandwidth = {\ttfamily 1.0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Instantiate the Epanechnikov kernel with the given bandwidth (default 1.\+0). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bandwidth} & Bandwidth of the kernel. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 38 of file epanechnikov\+\_\+kernel.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kernel_1_1EpanechnikovKernel_af3077f924263d1932950f4f7176c93eb}} 
+\index{EpanechnikovKernel@{EpanechnikovKernel}!ConvolutionIntegral@{ConvolutionIntegral}}
+\index{ConvolutionIntegral@{ConvolutionIntegral}!EpanechnikovKernel@{EpanechnikovKernel}}
+\doxysubsubsection{ConvolutionIntegral()}
+{\footnotesize\ttfamily double Convolution\+Integral (\begin{DoxyParamCaption}\item[{const Vec\+TypeA \&}]{a,  }\item[{const Vec\+TypeB \&}]{b }\end{DoxyParamCaption})}
+
+
+
+Obtains the convolution integral [integral of K($\vert$$\vert$x-\/a$\vert$$\vert$) K($\vert$$\vert$b-\/x$\vert$$\vert$) dx] for the two vectors. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+Type} & Type of vector (arma\+::vec, arma\+::spvec should be expected). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the convolution integral value. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1kernel_1_1EpanechnikovKernel_a5602dee5d3ad98a183b9a11d9e0ed225}} 
+\index{EpanechnikovKernel@{EpanechnikovKernel}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!EpanechnikovKernel@{EpanechnikovKernel}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const double}]{distance }\end{DoxyParamCaption}) const}
+
+
+
+Evaluate the Epanechnikov kernel given that the distance between the two input points is known. 
+
+\mbox{\label{classmlpack_1_1kernel_1_1EpanechnikovKernel_a84c3aeba25ea7703bd2d4f85a54301da}} 
+\index{EpanechnikovKernel@{EpanechnikovKernel}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!EpanechnikovKernel@{EpanechnikovKernel}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const Vec\+TypeA \&}]{a,  }\item[{const Vec\+TypeB \&}]{b }\end{DoxyParamCaption}) const}
+
+
+
+Evaluate the Epanechnikov kernel on the given two inputs. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+TypeA} & Type of first vector. \\
+\hline
+{\em Vec\+TypeB} & Type of second vector. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & One input vector. \\
+\hline
+{\em b} & The other input vector. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kernel_1_1EpanechnikovKernel_ac83f017e98c3f23c603fb26b50b82cfd}} 
+\index{EpanechnikovKernel@{EpanechnikovKernel}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!EpanechnikovKernel@{EpanechnikovKernel}}
+\doxysubsubsection{Gradient()}
+{\footnotesize\ttfamily double Gradient (\begin{DoxyParamCaption}\item[{const double}]{distance }\end{DoxyParamCaption}) const}
+
+
+
+Evaluate the Gradient of Epanechnikov kernel given that the distance between the two input points is known. 
+
+\mbox{\label{classmlpack_1_1kernel_1_1EpanechnikovKernel_aa993982e3ab29e7c8a299012dbe42cc5}} 
+\index{EpanechnikovKernel@{EpanechnikovKernel}!GradientForSquaredDistance@{GradientForSquaredDistance}}
+\index{GradientForSquaredDistance@{GradientForSquaredDistance}!EpanechnikovKernel@{EpanechnikovKernel}}
+\doxysubsubsection{GradientForSquaredDistance()}
+{\footnotesize\ttfamily double Gradient\+For\+Squared\+Distance (\begin{DoxyParamCaption}\item[{const double}]{distance\+Squared }\end{DoxyParamCaption}) const}
+
+
+
+Evaluate the Gradient of Epanechnikov kernel given that the squared distance between the two input points is known. 
+
+\mbox{\label{classmlpack_1_1kernel_1_1EpanechnikovKernel_aa500736f2a5dac08fa9027543c2b05cb}} 
+\index{EpanechnikovKernel@{EpanechnikovKernel}!Normalizer@{Normalizer}}
+\index{Normalizer@{Normalizer}!EpanechnikovKernel@{EpanechnikovKernel}}
+\doxysubsubsection{Normalizer()}
+{\footnotesize\ttfamily double Normalizer (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{dimension }\end{DoxyParamCaption})}
+
+
+
+Compute the normalizer of this Epanechnikov kernel for the given dimension. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & Dimension to calculate the normalizer for. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1kernel_1_1EpanechnikovKernel_a72d63b74c8166dff8e1a9006905ad9ca}} 
+\index{EpanechnikovKernel@{EpanechnikovKernel}!serialize@{serialize}}
+\index{serialize@{serialize}!EpanechnikovKernel@{EpanechnikovKernel}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{version }\end{DoxyParamCaption})}
+
+
+
+Serialize the kernel. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/kernels/\textbf{ epanechnikov\+\_\+kernel.\+hpp}\end{DoxyCompactItemize}

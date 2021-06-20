@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="bindings_2julia_2tests_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="bindings_2julia_2tests_2CMakeLists_8txt_1ae685258df021a14510fa0ed9764a5cbc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>add_julia_binding</definition>
+        <argsstring>(test_julia_binding) add_test(NAME julia_binding_test COMMAND $</argsstring>
+        <name>add_julia_binding</name>
+        <param>
+          <type>test_julia_binding</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/tests/CMakeLists.txt" line="2" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/julia/tests/CMakeLists.txt" bodystart="2" bodyend="5"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#<sp/>Add<sp/>the<sp/>Julia<sp/>binding<sp/>test.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2" refid="bindings_2julia_2tests_2CMakeLists_8txt_1ae685258df021a14510fa0ed9764a5cbc" refkind="member"><highlight class="normal"><ref refid="bindings_2julia_2tests_2CMakeLists_8txt_1ae685258df021a14510fa0ed9764a5cbc" kindref="member">add_julia_binding</ref>(test_julia_binding)</highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal">add_test(NAME<sp/>julia_binding_test</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/>COMMAND<sp/>${JULIA_EXECUTABLE}<sp/>${CMAKE_CURRENT_SOURCE_DIR}/runtests.jl</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/>WORKING_DIRECTORY<sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/<ref refid="methods_2nmf_2CMakeLists_8txt_1a24991bea13cdec9759e0db813306fe5f" kindref="member">julia</ref>/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/)</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/tests/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

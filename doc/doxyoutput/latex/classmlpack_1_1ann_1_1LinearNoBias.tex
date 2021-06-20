@@ -1,0 +1,370 @@
+\doxysection{Linear\+No\+Bias$<$ Input\+Data\+Type, Output\+Data\+Type, Regularizer\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1LinearNoBias}\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+
+
+Implementation of the \doxyref{Linear\+No\+Bias}{p.}{classmlpack_1_1ann_1_1LinearNoBias} class.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Linear\+No\+Bias} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Linear\+No\+Bias}{p.}{classmlpack_1_1ann_1_1LinearNoBias} object. \end{DoxyCompactList}\item 
+\textbf{ Linear\+No\+Bias} (const size\+\_\+t in\+Size, const size\+\_\+t out\+Size, Regularizer\+Type regularizer=Regularizer\+Type())
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Linear\+No\+Bias}{p.}{classmlpack_1_1ann_1_1LinearNoBias} object using the specified number of units. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Gradient} () const
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&gradient)
+\item 
+Input\+Data\+Type \& \textbf{ Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type const  \& \textbf{ Input\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Shape} () const
+\begin{DoxyCompactList}\small\item\em Get the shape of the input. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the input size. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the output size. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+void \textbf{ Reset} ()
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Weight\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the size of the weights. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat, typename Regularizer\+Type = No\+Regularizer$>$\newline
+class mlpack\+::ann\+::\+Linear\+No\+Bias$<$ Input\+Data\+Type, Output\+Data\+Type, Regularizer\+Type $>$}
+
+Implementation of the \doxyref{Linear\+No\+Bias}{p.}{classmlpack_1_1ann_1_1LinearNoBias} class. 
+
+The \doxyref{Linear\+No\+Bias}{p.}{classmlpack_1_1ann_1_1LinearNoBias} class represents a single layer of a neural network.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 38 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_ae45ae9733bb674209706ab745050a3a7}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!LinearNoBias@{LinearNoBias}}
+\index{LinearNoBias@{LinearNoBias}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{LinearNoBias()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Linear\+No\+Bias} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Linear\+No\+Bias}{p.}{classmlpack_1_1ann_1_1LinearNoBias} object. 
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a346dd58c93aabc97297c21ead879277b}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!LinearNoBias@{LinearNoBias}}
+\index{LinearNoBias@{LinearNoBias}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{LinearNoBias()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Linear\+No\+Bias} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{in\+Size,  }\item[{const size\+\_\+t}]{out\+Size,  }\item[{Regularizer\+Type}]{regularizer = {\ttfamily RegularizerType()} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Linear\+No\+Bias}{p.}{classmlpack_1_1ann_1_1LinearNoBias} object using the specified number of units. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Size} & The number of input units. \\
+\hline
+{\em out\+Size} & The number of output units. \\
+\hline
+{\em regularizer} & The regularizer to use, optional. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards trough f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_ad6601342d560219ce951d554e69e5e87}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 113 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 111 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a19abce4739c3b0b658b612537e21956a}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the gradient. 
+
+
+
+Definition at line 124 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a0f1f4e6d93472d83852731a96c8c3f59}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradient. 
+
+
+
+Definition at line 122 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_aaf577db350e2130754490d8486fba215}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{gradient }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a063c3b1053c7979a7dd2e7bbd2bf1f8a}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!InputParameter@{InputParameter}}
+\index{InputParameter@{InputParameter}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{InputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 103 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_aaffd593b3ab627f8b5aae2a1f53634b0}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!InputParameter@{InputParameter}}
+\index{InputParameter@{InputParameter}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{InputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type const\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input parameter. 
+
+
+
+Definition at line 101 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a13ab93f234244a68f6ade76287284447}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!InputShape@{InputShape}}
+\index{InputShape@{InputShape}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{InputShape()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Shape (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the shape of the input. 
+
+
+
+Definition at line 133 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a5a4c4984aa897a28d516e638e7ea5308}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!InputSize@{InputSize}}
+\index{InputSize@{InputSize}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{InputSize()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input size. 
+
+
+
+Definition at line 116 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 108 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 106 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a99c1d948c984b9e76fb5e37e2145427a}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!OutputSize@{OutputSize}}
+\index{OutputSize@{OutputSize}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{OutputSize()}
+{\footnotesize\ttfamily size\+\_\+t Output\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output size. 
+
+
+
+Definition at line 119 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a9c5c5900772a689d5a6b59778ec67120}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parameters. 
+
+
+
+Definition at line 98 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_aa530552c7ef915c952fbacc77b965c90}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the parameters. 
+
+
+
+Definition at line 96 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a372de693ad40b3f42839c8ec6ac845f4}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!Reset@{Reset}}
+\index{Reset@{Reset}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{Reset()}
+{\footnotesize\ttfamily void Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a65cba07328997659bec80b9879b15a51}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+\mbox{\label{classmlpack_1_1ann_1_1LinearNoBias_a7a2704698a50d9e00dfb083f3a863579}} 
+\index{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}!WeightSize@{WeightSize}}
+\index{WeightSize@{WeightSize}!LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$@{LinearNoBias$<$ InputDataType, OutputDataType, RegularizerType $>$}}
+\doxysubsubsection{WeightSize()}
+{\footnotesize\ttfamily size\+\_\+t Weight\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the size of the weights. 
+
+
+
+Definition at line 127 of file linear\+\_\+no\+\_\+bias.\+hpp.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ layer\+\_\+types.\+hpp}\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ linear\+\_\+no\+\_\+bias.\+hpp}\end{DoxyCompactItemize}

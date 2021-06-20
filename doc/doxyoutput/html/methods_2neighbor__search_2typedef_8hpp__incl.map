@@ -1,0 +1,52 @@
+<map id="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp" name="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp">
+<area shape="rect" id="node1" title=" " alt="" coords="1709,5,1924,61"/>
+<area shape="rect" id="node2" href="$neighbor__search_8hpp.html" title=" " alt="" coords="1163,117,1321,143"/>
+<area shape="rect" id="node43" href="$nearest__neighbor__sort_8hpp.html" title=" " alt="" coords="1738,199,1895,240"/>
+<area shape="rect" id="node47" href="$lmetric_8hpp.html" title=" " alt="" coords="1855,109,2010,151"/>
+<area shape="rect" id="node49" href="$furthest__neighbor__sort_8hpp.html" title=" " alt="" coords="2061,109,2220,151"/>
+<area shape="rect" id="node3" href="$prereqs_8hpp.html" title="The core includes that mlpack expects; standard C++ includes and Armadillo." alt="" coords="1483,377,1633,404"/>
+<area shape="rect" id="node37" title=" " alt="" coords="555,206,617,233"/>
+<area shape="rect" id="node38" title=" " alt="" coords="642,206,701,233"/>
+<area shape="rect" id="node39" href="$binary__space__tree_8hpp.html" title=" " alt="" coords="1048,199,1225,240"/>
+<area shape="rect" id="node40" href="$binary__space__tree_2binary__space__tree_8hpp.html" title="Definition of generalized binary space partitioning tree (BinarySpaceTree)." alt="" coords="1043,288,1230,329"/>
+<area shape="rect" id="node41" href="$rectangle__tree_8hpp.html" title=" " alt="" coords="826,199,1023,240"/>
+<area shape="rect" id="node42" href="$neighbor__search__stat_8hpp.html" title=" " alt="" coords="1463,295,1653,322"/>
+<area shape="rect" id="node45" href="$neighbor__search__rules_8hpp.html" title=" " alt="" coords="1249,206,1445,233"/>
+<area shape="rect" id="node46" title=" " alt="" coords="1469,206,1663,233"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,467,68,493"/>
+<area shape="rect" id="node5" title=" " alt="" coords="92,467,157,493"/>
+<area shape="rect" id="node6" title=" " alt="" coords="182,467,241,493"/>
+<area shape="rect" id="node7" title=" " alt="" coords="265,467,331,493"/>
+<area shape="rect" id="node8" title=" " alt="" coords="355,467,422,493"/>
+<area shape="rect" id="node9" title=" " alt="" coords="446,467,507,493"/>
+<area shape="rect" id="node10" title=" " alt="" coords="532,467,597,493"/>
+<area shape="rect" id="node11" title=" " alt="" coords="622,467,689,493"/>
+<area shape="rect" id="node12" title=" " alt="" coords="713,467,800,493"/>
+<area shape="rect" id="node13" title=" " alt="" coords="824,467,879,493"/>
+<area shape="rect" id="node14" title=" " alt="" coords="903,467,963,493"/>
+<area shape="rect" id="node15" title=" " alt="" coords="987,459,1179,501"/>
+<area shape="rect" id="node16" href="$arma__traits_8hpp.html" title=" " alt="" coords="1203,459,1369,501"/>
+<area shape="rect" id="node17" title=" " alt="" coords="2106,742,2298,769"/>
+<area shape="rect" id="node18" title=" " alt="" coords="2391,742,2571,769"/>
+<area shape="rect" id="node19" title=" " alt="" coords="2615,735,2794,776"/>
+<area shape="rect" id="node20" title=" " alt="" coords="2833,742,3011,769"/>
+<area shape="rect" id="node21" title=" " alt="" coords="1596,467,1763,493"/>
+<area shape="rect" id="node22" title=" " alt="" coords="2300,645,2443,687"/>
+<area shape="rect" id="node23" title=" " alt="" coords="1838,467,2009,493"/>
+<area shape="rect" id="node24" title=" " alt="" coords="2033,467,2200,493"/>
+<area shape="rect" id="node25" href="$unordered__map_8hpp.html" title="This file is backported from cereal 1.3 to support the serialization of objects of type associative c..." alt="" coords="2224,459,2380,501"/>
+<area shape="rect" id="node26" title=" " alt="" coords="2405,467,2575,493"/>
+<area shape="rect" id="node27" title=" " alt="" coords="3127,653,3301,679"/>
+<area shape="rect" id="node28" href="$is__loading_8hpp.html" title=" " alt="" coords="1958,645,2105,687"/>
+<area shape="rect" id="node29" href="$is__saving_8hpp.html" title=" " alt="" coords="2129,645,2275,687"/>
+<area shape="rect" id="node30" title=" " alt="" coords="2898,459,3090,501"/>
+<area shape="rect" id="node31" href="$array__wrapper_8hpp.html" title=" " alt="" coords="2519,645,2667,687"/>
+<area shape="rect" id="node32" href="$pointer__variant__wrapper_8hpp.html" title=" " alt="" coords="2639,556,2853,597"/>
+<area shape="rect" id="node33" href="$pointer__wrapper_8hpp.html" title=" " alt="" coords="2743,653,2899,679"/>
+<area shape="rect" id="node34" href="$pointer__vector__variant__wrapper_8hpp.html" title=" " alt="" coords="2701,452,2874,508"/>
+<area shape="rect" id="node35" href="$pointer__vector__wrapper_8hpp.html" title=" " alt="" coords="2987,563,3191,590"/>
+<area shape="rect" id="node36" href="$has__serialize_8hpp.html" title=" " alt="" coords="3317,556,3479,597"/>
+<area shape="rect" id="node44" title=" " alt="" coords="1728,288,1895,329"/>
+<area shape="rect" id="node48" title=" " alt="" coords="1971,206,2103,233"/>
+<area shape="rect" id="node50" title=" " alt="" coords="2179,199,2348,240"/>
+</map>

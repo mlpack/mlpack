@@ -1,0 +1,108 @@
+\doxysection{Kill\+Empty\+Clusters Class Reference}
+\label{classmlpack_1_1kmeans_1_1KillEmptyClusters}\index{KillEmptyClusters@{KillEmptyClusters}}
+
+
+Policy which allows K-\/\+Means to \char`\"{}kill\char`\"{} empty clusters without any error being reported.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Kill\+Empty\+Clusters} ()
+\begin{DoxyCompactList}\small\item\em Default constructor required by Empty\+Cluster\+Policy policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the empty cluster policy (nothing to do). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Metric\+Type , typename Mat\+Type $>$ }\\static \textbf{ force\+\_\+inline} void \textbf{ Empty\+Cluster} (const Mat\+Type \&, const size\+\_\+t empty\+Cluster, const arma\+::mat \&, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&cluster\+Counts, Metric\+Type \&, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em This function sets an empty cluster found during k-\/means to all DBL\+\_\+\+MAX (i.\+e. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Policy which allows K-\/\+Means to \char`\"{}kill\char`\"{} empty clusters without any error being reported. 
+
+This means the centroids will be filled with DBL\+\_\+\+MAX. 
+
+Definition at line 25 of file kill\+\_\+empty\+\_\+clusters.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1KillEmptyClusters_a976b2a96b31812e9196befc20944bbde}} 
+\index{KillEmptyClusters@{KillEmptyClusters}!KillEmptyClusters@{KillEmptyClusters}}
+\index{KillEmptyClusters@{KillEmptyClusters}!KillEmptyClusters@{KillEmptyClusters}}
+\doxysubsubsection{KillEmptyClusters()}
+{\footnotesize\ttfamily \textbf{ Kill\+Empty\+Clusters} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default constructor required by Empty\+Cluster\+Policy policy. 
+
+
+
+Definition at line 29 of file kill\+\_\+empty\+\_\+clusters.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1KillEmptyClusters_a6defec50bcff52fb5d9fcc6da5d683f4}} 
+\index{KillEmptyClusters@{KillEmptyClusters}!EmptyCluster@{EmptyCluster}}
+\index{EmptyCluster@{EmptyCluster}!KillEmptyClusters@{KillEmptyClusters}}
+\doxysubsubsection{EmptyCluster()}
+{\footnotesize\ttfamily static \textbf{ force\+\_\+inline} void Empty\+Cluster (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{,  }\item[{const size\+\_\+t}]{empty\+Cluster,  }\item[{const arma\+::mat \&}]{,  }\item[{arma\+::mat \&}]{new\+Centroids,  }\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{cluster\+Counts,  }\item[{Metric\+Type \&}]{,  }\item[{const}]{size\+\_\+t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+This function sets an empty cluster found during k-\/means to all DBL\+\_\+\+MAX (i.\+e. 
+
+an invalid \char`\"{}dead\char`\"{} cluster).
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of data (arma\+::mat or arma\+::spmat). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (data) Dataset on which clustering is being performed. \\
+\hline
+{\em empty\+Cluster} & Index of cluster which is empty. \\
+\hline
+{\em $\ast$} & (old\+Centroids) Centroids of each cluster (one per column) at the start of the iteration. \\
+\hline
+{\em new\+Centroids} & Centroids of each cluster (one per column) at the end of the iteration. \\
+\hline
+{\em cluster\+Counts} & Number of points in each cluster. \\
+\hline
+{\em $\ast$} & (metric) The Metric to use. \\
+\hline
+{\em $\ast$} & (iteration) Number of iteration.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Number of points changed (0). 
+\end{DoxyReturn}
+
+
+Definition at line 49 of file kill\+\_\+empty\+\_\+clusters.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1KillEmptyClusters_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{KillEmptyClusters@{KillEmptyClusters}!serialize@{serialize}}
+\index{serialize@{serialize}!KillEmptyClusters@{KillEmptyClusters}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the empty cluster policy (nothing to do). 
+
+
+
+Definition at line 68 of file kill\+\_\+empty\+\_\+clusters.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kmeans/\textbf{ kill\+\_\+empty\+\_\+clusters.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,243 @@
+\doxysection{PCAWhitening Class Reference}
+\label{classmlpack_1_1data_1_1PCAWhitening}\index{PCAWhitening@{PCAWhitening}}
+
+
+A simple \doxyref{PCAWhitening}{p.}{classmlpack_1_1data_1_1PCAWhitening} class.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ PCAWhitening} (double eps=0.\+00005)
+\begin{DoxyCompactList}\small\item\em A constructor to set the regularization parameter. \end{DoxyCompactList}\item 
+const arma\+::vec \& \textbf{ Eigen\+Values} () const
+\begin{DoxyCompactList}\small\item\em Get the eigenvalues vector. \end{DoxyCompactList}\item 
+const arma\+::mat \& \textbf{ Eigen\+Vectors} () const
+\begin{DoxyCompactList}\small\item\em Get the eigenvector. \end{DoxyCompactList}\item 
+const double \& \textbf{ Epsilon} () const
+\begin{DoxyCompactList}\small\item\em Get the regularization parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Fit} (const Mat\+Type \&input)
+\begin{DoxyCompactList}\small\item\em Function to fit features, to find out the min max and scale. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Inverse\+Transform} (const Mat\+Type \&input, Mat\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Function to retrieve original dataset. \end{DoxyCompactList}\item 
+const arma\+::vec \& \textbf{ Item\+Mean} () const
+\begin{DoxyCompactList}\small\item\em Get the mean row vector. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\item 
+{\footnotesize template$<$typename Mat\+Type $>$ }\\void \textbf{ Transform} (const Mat\+Type \&input, Mat\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Function for PCA whitening. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A simple \doxyref{PCAWhitening}{p.}{classmlpack_1_1data_1_1PCAWhitening} class. 
+
+Whitens a matrix using the eigendecomposition of the covariance matrix. Whitening means the covariance matrix of the result is the identity matrix.
+
+For whitening related formula and more info, check the link below. {\texttt{ http\+://ufldl.\+stanford.\+edu/tutorial/unsupervised/\+PCAWhitening/}}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{arma::mat input;}
+\DoxyCodeLine{Load(\textcolor{stringliteral}{"{}train.csv"{}}, input);}
+\DoxyCodeLine{arma::mat output;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Fit the features.}}
+\DoxyCodeLine{PCAWhitening scale;}
+\DoxyCodeLine{scale.Fit(input)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Scale the features.}}
+\DoxyCodeLine{scale.Transform(input, output);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Retransform the input.}}
+\DoxyCodeLine{scale.InverseTransform(output, input);}
+
+\end{DoxyCode}
+ 
+
+Definition at line 47 of file pca\+\_\+whitening.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1data_1_1PCAWhitening_a45ec61849c4ad0dfbc18ff0ebc57d1ee}} 
+\index{PCAWhitening@{PCAWhitening}!PCAWhitening@{PCAWhitening}}
+\index{PCAWhitening@{PCAWhitening}!PCAWhitening@{PCAWhitening}}
+\doxysubsubsection{PCAWhitening()}
+{\footnotesize\ttfamily \textbf{ PCAWhitening} (\begin{DoxyParamCaption}\item[{double}]{eps = {\ttfamily 0.00005} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+A constructor to set the regularization parameter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em eps} & Regularization parameter. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 55 of file pca\+\_\+whitening.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1data_1_1PCAWhitening_a5d2e9b59773a10f622f833c406435cf4}} 
+\index{PCAWhitening@{PCAWhitening}!EigenValues@{EigenValues}}
+\index{EigenValues@{EigenValues}!PCAWhitening@{PCAWhitening}}
+\doxysubsubsection{EigenValues()}
+{\footnotesize\ttfamily const arma\+::vec\& Eigen\+Values (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the eigenvalues vector. 
+
+
+
+Definition at line 117 of file pca\+\_\+whitening.\+hpp.
+
+
+
+Referenced by ZCAWhitening\+::\+Eigen\+Values(), and ZCAWhitening\+::\+Inverse\+Transform().
+
+\mbox{\label{classmlpack_1_1data_1_1PCAWhitening_a6a2521e3588c5bb0ff6191c68d97b217}} 
+\index{PCAWhitening@{PCAWhitening}!EigenVectors@{EigenVectors}}
+\index{EigenVectors@{EigenVectors}!PCAWhitening@{PCAWhitening}}
+\doxysubsubsection{EigenVectors()}
+{\footnotesize\ttfamily const arma\+::mat\& Eigen\+Vectors (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the eigenvector. 
+
+
+
+Definition at line 119 of file pca\+\_\+whitening.\+hpp.
+
+
+
+Referenced by ZCAWhitening\+::\+Eigen\+Vectors(), ZCAWhitening\+::\+Inverse\+Transform(), and ZCAWhitening\+::\+Transform().
+
+\mbox{\label{classmlpack_1_1data_1_1PCAWhitening_a3ababd597760bb1f9782ad2c17aadb41}} 
+\index{PCAWhitening@{PCAWhitening}!Epsilon@{Epsilon}}
+\index{Epsilon@{Epsilon}!PCAWhitening@{PCAWhitening}}
+\doxysubsubsection{Epsilon()}
+{\footnotesize\ttfamily const double\& Epsilon (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the regularization parameter. 
+
+
+
+Definition at line 121 of file pca\+\_\+whitening.\+hpp.
+
+
+
+Referenced by ZCAWhitening\+::\+Epsilon().
+
+\mbox{\label{classmlpack_1_1data_1_1PCAWhitening_a0b68c1a39a21e56e10f5b9250b056244}} 
+\index{PCAWhitening@{PCAWhitening}!Fit@{Fit}}
+\index{Fit@{Fit}!PCAWhitening@{PCAWhitening}}
+\doxysubsubsection{Fit()}
+{\footnotesize\ttfamily void Fit (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Function to fit features, to find out the min max and scale. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Dataset to fit. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 71 of file pca\+\_\+whitening.\+hpp.
+
+
+
+References mlpack\+::math\+::\+Column\+Covariance().
+
+
+
+Referenced by ZCAWhitening\+::\+Fit().
+
+\mbox{\label{classmlpack_1_1data_1_1PCAWhitening_afb0e67c6fbf5a527f63469bbbf07066c}} 
+\index{PCAWhitening@{PCAWhitening}!InverseTransform@{InverseTransform}}
+\index{InverseTransform@{InverseTransform}!PCAWhitening@{PCAWhitening}}
+\doxysubsubsection{InverseTransform()}
+{\footnotesize\ttfamily void Inverse\+Transform (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input,  }\item[{Mat\+Type \&}]{output }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Function to retrieve original dataset. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Scaled dataset. \\
+\hline
+{\em output} & Output matrix with original Dataset. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 107 of file pca\+\_\+whitening.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1PCAWhitening_a95996a797e721bc9acc0c9a5d697fdcf}} 
+\index{PCAWhitening@{PCAWhitening}!ItemMean@{ItemMean}}
+\index{ItemMean@{ItemMean}!PCAWhitening@{PCAWhitening}}
+\doxysubsubsection{ItemMean()}
+{\footnotesize\ttfamily const arma\+::vec\& Item\+Mean (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the mean row vector. 
+
+
+
+Definition at line 115 of file pca\+\_\+whitening.\+hpp.
+
+
+
+Referenced by ZCAWhitening\+::\+Inverse\+Transform(), and ZCAWhitening\+::\+Item\+Mean().
+
+\mbox{\label{classmlpack_1_1data_1_1PCAWhitening_a65cba07328997659bec80b9879b15a51}} 
+\index{PCAWhitening@{PCAWhitening}!serialize@{serialize}}
+\index{serialize@{serialize}!PCAWhitening@{PCAWhitening}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 124 of file pca\+\_\+whitening.\+hpp.
+
+\mbox{\label{classmlpack_1_1data_1_1PCAWhitening_a7bc470a1e097f5b0aaf2396691432b3f}} 
+\index{PCAWhitening@{PCAWhitening}!Transform@{Transform}}
+\index{Transform@{Transform}!PCAWhitening@{PCAWhitening}}
+\doxysubsubsection{Transform()}
+{\footnotesize\ttfamily void Transform (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{input,  }\item[{Mat\+Type \&}]{output }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Function for PCA whitening. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Dataset to scale features. \\
+\hline
+{\em output} & Output matrix with whitened features. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 87 of file pca\+\_\+whitening.\+hpp.
+
+
+
+Referenced by ZCAWhitening\+::\+Transform().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/data/scaler\+\_\+methods/\textbf{ pca\+\_\+whitening.\+hpp}\end{DoxyCompactItemize}

@@ -1,0 +1,266 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1det" kind="namespace" language="C++">
+    <compoundname>mlpack::det</compoundname>
+    <innerclass refid="classmlpack_1_1det_1_1DTree" prot="public">mlpack::det::DTree</innerclass>
+    <innerclass refid="classmlpack_1_1det_1_1PathCacher" prot="public">mlpack::det::PathCacher</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1det_1a0671a10d605707a02c14efa54a2e16f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename TagType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::det::PrintLeafMembership</definition>
+        <argsstring>(DTree&lt; MatType, TagType &gt; *dtree, const MatType &amp;data, const arma::Mat&lt; size_t &gt; &amp;labels, const size_t numClasses, const std::string &amp;leafClassMembershipFile=&quot;&quot;)</argsstring>
+        <name>PrintLeafMembership</name>
+        <param>
+          <type><ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree</ref>&lt; MatType, TagType &gt; *</type>
+          <declname>dtree</declname>
+        </param>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const arma::Mat&lt; size_t &gt; &amp;</type>
+          <declname>labels</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>leafClassMembershipFile</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <briefdescription>
+<para>Print the membership of leaves of a density estimation tree given the labels and number of classes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Optionally, pass the name of a file to print this information to (otherwise stdout is used).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dtree</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Tree to print membership of. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset tree is built upon. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>labels</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Class labels of dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>leafClassMembershipFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of file to print to (optional). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="34" column="6" declfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" declline="34" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1det_1ac64804c6c73b842b3eb69d9a64fb12e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename TagType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::det::PrintVariableImportance</definition>
+        <argsstring>(const DTree&lt; MatType, TagType &gt; *dtree, const std::string viFile=&quot;&quot;)</argsstring>
+        <name>PrintVariableImportance</name>
+        <param>
+          <type>const <ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree</ref>&lt; MatType, TagType &gt; *</type>
+          <declname>dtree</declname>
+        </param>
+        <param>
+          <type>const std::string</type>
+          <declname>viFile</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <briefdescription>
+<para>Print the variable importance of each dimension of a density estimation tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Optionally, pass the name of a file to print this information to (otherwise stdout is used).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dtree</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Density tree to use. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>viFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of file to print to (optional). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="49" column="6" declfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" declline="49" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1det_1a4a84945ed0d2a629c86f8538e6e7090c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename TagType</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmlpack_1_1det_1_1DTree" kindref="compound">DTree</ref>&lt; MatType, TagType &gt; *</type>
+        <definition>DTree&lt;MatType, TagType&gt;* mlpack::det::Trainer</definition>
+        <argsstring>(MatType &amp;dataset, const size_t folds, const bool useVolumeReg=false, const size_t maxLeafSize=10, const size_t minLeafSize=5, const std::string unprunedTreeOutput=&quot;&quot;, const bool skipPruning=false)</argsstring>
+        <name>Trainer</name>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>folds</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>useVolumeReg</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>maxLeafSize</declname>
+          <defval>10</defval>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>minLeafSize</declname>
+          <defval>5</defval>
+        </param>
+        <param>
+          <type>const std::string</type>
+          <declname>unprunedTreeOutput</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>skipPruning</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Train the optimal decision tree using cross-validation with the given number of folds. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Optionally, give a filename to print the unpruned tree to. This initializes a tree on the heap, so you are responsible for deleting it.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dataset for the tree to use. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>folds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of folds to use for cross-validation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>useVolumeReg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, use volume regularization. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum number of points allowed in a leaf. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>minLeafSize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum number of points allowed in a leaf. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>unprunedTreeOutput</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filename to print unpruned tree to (optional). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>skipPruning</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set true to skip pruning. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="66" column="7" declfile="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" declline="66" declcolumn="7"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Density Estimation Trees. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/det/dt_utils.hpp" line="20" column="1"/>
+  </compounddef>
+</doxygen>

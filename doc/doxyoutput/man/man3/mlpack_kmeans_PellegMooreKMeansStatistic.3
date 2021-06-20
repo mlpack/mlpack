@@ -1,0 +1,86 @@
+.TH "PellegMooreKMeansStatistic" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PellegMooreKMeansStatistic \- A statistic for trees which holds the blacklist for Pelleg-Moore k-means clustering (which represents the clusters that cannot possibly own any points in a node)\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBPellegMooreKMeansStatistic\fP ()"
+.br
+.RI "Initialize the statistic without a node (this does nothing)\&. "
+.ti -1c
+.RI "template<typename TreeType > \fBPellegMooreKMeansStatistic\fP (TreeType &node)"
+.br
+.RI "Initialize the statistic for a node; this calculates the centroid and caches it\&. "
+.ti -1c
+.RI "arma::uvec & \fBBlacklist\fP ()"
+.br
+.RI "Modify the cluster blacklist\&. "
+.ti -1c
+.RI "const arma::uvec & \fBBlacklist\fP () const"
+.br
+.RI "Get the cluster blacklist\&. "
+.ti -1c
+.RI "arma::vec & \fBCentroid\fP ()"
+.br
+.RI "Modify the node's centroid (be careful!)\&. "
+.ti -1c
+.RI "const arma::vec & \fBCentroid\fP () const"
+.br
+.RI "Get the node's centroid\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A statistic for trees which holds the blacklist for Pelleg-Moore k-means clustering (which represents the clusters that cannot possibly own any points in a node)\&. 
+.PP
+Definition at line 24 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBPellegMooreKMeansStatistic\fP ()\fC [inline]\fP"
+
+.PP
+Initialize the statistic without a node (this does nothing)\&. 
+.PP
+Definition at line 28 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.SS "\fBPellegMooreKMeansStatistic\fP (TreeType & node)\fC [inline]\fP"
+
+.PP
+Initialize the statistic for a node; this calculates the centroid and caches it\&. 
+.PP
+Definition at line 33 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "arma::uvec& Blacklist ()\fC [inline]\fP"
+
+.PP
+Modify the cluster blacklist\&. 
+.PP
+Definition at line 59 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.SS "const arma::uvec& Blacklist () const\fC [inline]\fP"
+
+.PP
+Get the cluster blacklist\&. 
+.PP
+Definition at line 57 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.SS "arma::vec& Centroid ()\fC [inline]\fP"
+
+.PP
+Modify the node's centroid (be careful!)\&. 
+.PP
+Definition at line 64 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+.SS "const arma::vec& Centroid () const\fC [inline]\fP"
+
+.PP
+Get the node's centroid\&. 
+.PP
+Definition at line 62 of file pelleg_moore_kmeans_statistic\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

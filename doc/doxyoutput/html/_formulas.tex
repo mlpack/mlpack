@@ -1,0 +1,746 @@
+\documentclass{article}
+\usepackage{ifthen}
+\usepackage{epsfig}
+\usepackage[utf8]{inputenc}
+% Packages requested by user
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+
+\usepackage{newunicodechar}
+  \newunicodechar{⁻}{${}^{-}$}% Superscript minus
+  \newunicodechar{²}{${}^{2}$}% Superscript two
+  \newunicodechar{³}{${}^{3}$}% Superscript three
+
+\pagestyle{empty}
+\begin{document}
+$ 2 * precision * recall / (precision + recall) $
+\pagebreak
+
+$ tp / (tp + fp) $
+\pagebreak
+
+$ tp $
+\pagebreak
+
+$ fp $
+\pagebreak
+
+$ N + 1 $
+\pagebreak
+
+\[ (tp_0 + tp_1 + \ldots + tp_N) / (tp_0 + tp_1 + \ldots + tp_N + fp_0 + fp_1 + \ldots + fp_N), \]
+\pagebreak
+
+$ tp_i $
+\pagebreak
+
+$ fp_i $
+\pagebreak
+
+$ i $
+\pagebreak
+
+\[ tp_0 / (tp_0 + fp_0), tp_1 / (tp_1 + fp_1), \ldots, tp_N / (tp_N + fp_N), \]
+\pagebreak
+
+$R^2 =1.0$
+\pagebreak
+
+$ \hat{y}_i $
+\pagebreak
+
+$ y_i $
+\pagebreak
+
+\begin{eqnarray*} R^{2} \left( y, \hat{y} \right) &=& 1-\frac{\sum_{i=1}^{n} \left( y_i - \hat{y_i} \right)^2 } {\sum_{i=1}^{n} \left( y_i - \bar{y}\right)^2}\\ \end{eqnarray*}
+\pagebreak
+
+$ \bar{y} = frac{1}{y}\sum_{i=1}^{n} y_i $
+\pagebreak
+
+$ tp / (tp + fn) $
+\pagebreak
+
+$ fn $
+\pagebreak
+
+\[ (tp_0 + tp_1 + \ldots + tp_N) / (tp_0 + tp_1 + \ldots + tp_N + fn_0 + fn_1 + \ldots + fn_N), \]
+\pagebreak
+
+$ fn_i $
+\pagebreak
+
+\[ tp_0 / (tp_0 + fn_0), tp_1 / (tp_1 + fn_1), \ldots, tp_N / (tp_N + fn_N), \]
+\pagebreak
+
+$ s(i) = 1.0 $
+\pagebreak
+
+$ a(i) $
+\pagebreak
+
+$ b(i) $
+\pagebreak
+
+$ s(i) $
+\pagebreak
+
+\begin{eqnarray*} s(i) &=& \frac{b(i) - a(i)}{max\{b(i), a(i)\}} \end{eqnarray*}
+\pagebreak
+
+$ 1 + log(rawCount), $
+\pagebreak
+
+$ idf(T) = \log \frac{1 + N}{1 + df(T)} + 1, $
+\pagebreak
+
+$ N $
+\pagebreak
+
+$ T $
+\pagebreak
+
+$ df(T) $
+\pagebreak
+
+$ idf(T) = \log \frac{N}{df(T)} + 1. $
+\pagebreak
+
+\[ \frac{x^{(\alpha - 1)}}{\Gamma(\alpha) \beta^\alpha} e^{-\frac{x}{\beta}} \]
+\pagebreak
+
+\[ \log(\frac{x^{(\alpha - 1)}}{\Gamma(\alpha) \beta^\alpha} e^ {-\frac{x}{\beta}}) \]
+\pagebreak
+
+\[ f(x|\theta) = \frac{1}{2 \theta}\exp\left(-\frac{\|x - \mu\|}{\theta}\right) \]
+\pagebreak
+
+$\theta$
+\pagebreak
+
+$\mu$
+\pagebreak
+
+$ x $
+\pagebreak
+
+$ y $
+\pagebreak
+
+$ \sigma $
+\pagebreak
+
+\[ K(x, y) = \frac{1}{1 + (\frac{|| x - y ||}{\sigma})^2}. \]
+\pagebreak
+
+\[ d(a, b) = \frac{a^T b}{|| a || || b ||} \]
+\pagebreak
+
+\[ K(x, y) = \max \{0, 1 - || x - y ||^2_2 / b^2 \} \]
+\pagebreak
+
+$ b $
+\pagebreak
+
+$ K(x, y) $
+\pagebreak
+
+\[ \int \int K(x, y) g(x) g(y) dx dy \ge 0 \]
+\pagebreak
+
+$ g(x) $
+\pagebreak
+
+$ \mu $
+\pagebreak
+
+\[ K(x, y) = \exp(-\frac{|| x - y ||^2}{2 \mu^2}). \]
+\pagebreak
+
+$ \gamma = -\frac{1}{2 \mu^2} $
+\pagebreak
+
+$ s $
+\pagebreak
+
+$ t $
+\pagebreak
+
+\[ K(x, y) = \tanh(s <x, y> + t) \]
+\pagebreak
+
+\[ K(x, y) = \exp(-\frac{|| x - y ||}{\mu}). \]
+\pagebreak
+
+\[ K(x, y) = x^T y \]
+\pagebreak
+
+$ degree $
+\pagebreak
+
+$ offset $
+\pagebreak
+
+\[ K(x, y) = (x^T * y + offset) ^ {degree}. \]
+\pagebreak
+
+\[ K(x, y) = \max \{ 0, 1 - \frac{|| x - y ||_2}{b} \} \]
+\pagebreak
+
+$ W = x (x^T x)^{-0.5} $
+\pagebreak
+
+\begin{eqnarray*} \text{B} &=& bp \cdot \exp \left(\sum_{n=1}^{N} w \log p_n \right) \\ \text{where,} \\ bp &=& \text{brevity penalty} = \begin{cases} 1 & \text{if ratio} > 1 \\ \exp \left(1-\frac{1}{ratio}\right) & \text{otherwise} \end{cases} \\ p_n &=& \text{modified precision for n-gram,} \\ w &=& \frac {1}{maxOrder}, \\ ratio &=& \text{translation to reference length ratio,} \\ maxOrder &=& \text{maximum length of tokens in n-grams.} \end{eqnarray*}
+\pagebreak
+
+$ referenceCorpus = \{reference_1, reference_2, \ldots \} $
+\pagebreak
+
+$ reference_i = \{paragraph_1, paragraph_2, \ldots \} $
+\pagebreak
+
+$ paragraph_i = \{word_1, word_2, \ldots \} $
+\pagebreak
+
+$ translationCorpus = \{paragraph_1, paragraph_2, \ldots \} $
+\pagebreak
+
+\[ d(x, y) = \sqrt{ K(x, x) + K(y, y) - 2K(x, y) }. \]
+\pagebreak
+
+$ n $
+\pagebreak
+
+\[ d(x, y) = \left( \sum_{i = 1}^{n} | x_i - y_i |^p \right)^{\frac{1}{p}}. \]
+\pagebreak
+
+$ d(x, y) $
+\pagebreak
+
+\[ d(x, y) = \sum_{i = 1}^{n} | x_i - y_i |^p \]
+\pagebreak
+
+$ Q $
+\pagebreak
+
+$ d $
+\pagebreak
+
+\[ d(x, y) = \sqrt{(x - y)^T Q (x - y)} \]
+\pagebreak
+
+\[ d(x, y) = (x - y)^T Q (x - y) \]
+\pagebreak
+
+$ V \approx WH $
+\pagebreak
+
+$ \sqrt{\sum_i \sum_j(V-WH)^2} $
+\pagebreak
+
+\[ W^T = \frac{H V^T}{H H^T} \]
+\pagebreak
+
+\[ H = \frac{W^T V}{W^T W} \]
+\pagebreak
+
+\[ W_{ia} \leftarrow W_{ia} \frac{(VH^T)_{ia}}{(WHH^T)_{ia}} \]
+\pagebreak
+
+\[ H_{a\mu} \leftarrow H_{a\mu} \frac{(W^T V)_{a\mu}}{(W^T WH)_{a\mu}} \]
+\pagebreak
+
+\[ \sum_i \sum_j (V_{ij} \log\frac{V_{ij}}{(W H)_{ij}} - V_{ij} + (W H)_{ij}) \]
+\pagebreak
+
+\[ W_{ia} \leftarrow W_{ia} \frac{\sum_{\mu} H_{a\mu} V_{i\mu} / (W H)_{i\mu}} {\sum_{\nu} H_{a\nu}} \]
+\pagebreak
+
+\[ H_{a\mu} \leftarrow H_{a\mu} \frac{\sum_{i} W_{ia} V_{i\mu}/(WH)_{i\mu}} {\sum_{k} H_{ka}} \]
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \begin{cases} x / (1 + e^{-x}) & x \geq 0\\ (e^{x} - 1) / (1 + e^{-x}) & x < 0.\\ \end{cases} \\ f'(x) &=& \begin{cases} 1 / (1 + e^{-y}) + y * e^{-y} / (1 + e^{-y})^2 & x \geq 0\\ e^y - 2 / (1 + e^y) + 2 / (1 + e^y)^2 & x < 0.\\ \end{cases} \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \frac{x}{1 + |x|} \\ f'(x) &=& \frac{1}{(1 + |x|)^2} \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& e^{-1 * x^2} \\ f'(x) &=& 2 * -x * f(x) \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) = 0.5 * x * {1 + tanh[(2/pi)^(1/2) * (x + 0.044715 * x^3)]} \\ f'(x) = 0.5 * tanh(0.0356774 * x^3) + 0.797885 * x) + (0.0535161x^3 + 0.398942 * x) * sech^2(0.0356774 * x^3+0.797885 * x) + 0.5\\ \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \min(1, \max(0, 0.2 * x + 0.5)) \\ f'(x) &=& \left\{ \begin{array}{lr} 0.0 & : x={0,1} \\ 0.2 \end{array} \right. \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \begin{cases} 0 & x \leq -3\\ x & x \geq +3\\ \frac{x * (x + 3)}{6} & otherwise\\ \end{cases} \\ f'(x) &=& \begin{cases} 0 & x \leq -3\\ 1 & x \geq +3\\ \frac{2x + 3}{6} & otherwise\\ \end{cases} \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& x \\ f'(x) &=& 1 \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) = 1 / (1 + x^2) \\ f'(x) = -2 * x / (1 + x^2)^2 \\ \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) = x * tanh(x) f'(x) = tanh(x) + x * (1 - tanh^{2}(x)) \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \frac{1}{1 + e^{-x}} \\ f'(x) &=& f(x) * (1 - f(x)) \\ f^{-1}(y) &=& ln(\frac{y}{1-y}) \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) = x * tanh(ln(1+e^x)) f'(x) = tanh(ln(1+e^x)) + x * ((1 - tanh^2(ln(1+e^x))) * frac{1}{1 + e^{-x}}) \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) = \sqrt(1 + x^2) \\ f'(x) = x / f(x) \\ \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) = (x - 1) * e^-x \\ f'(x) = e^-x + (1 - x) * e^-x \\ \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) = x^2 \\ f'(x) = 2 * x \\ \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \max(0, x) \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ 0 & : x \le 0 \end{array} \right. \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& x * \frac{1}{1 + e^{-x}}\\ f'(x) &=& \frac{1}{1 + e^{-x}} * (1 + x * (1-\frac{1}{1 + e^{-x}}))\\ \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \ln(1 + e^{x}) \\ f'(x) &=& \frac{1}{1 + e^{-x}} \\ f^{-1}(y) &=& \ln(e^{y} - 1) \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \frac{x}{1 + |x|} \\ f'(x) &=& (1 - |f(x)|)^2 \\ f(x) &=& \left\{ \begin{array}{lr} -\frac{x}{1 - x} & : x \le 0 \\ \frac{x}{1 + x} & : x > 0 \end{array} \right. \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) = x^2 * log(1 + x) \\ f'(x) = 2 * x * log(1 + x) + x^2 / (1 + x)\\ \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& x \cdot \sigma(x) \\ f'(x) &=& f(x) + \sigma(x) (1 - f(x)) \\ \sigma(x) &=& frac{1}{1 + e^{-x}} \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) = x * tanh(e^x)\\ f'(x) = tanh(e^x) - x*e^x*(tanh(e^x)^2 - 1)\\ \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \frac{e^x - e^{-x}}{e^x + e^{-x}} \\ f'(x) &=& 1 - \tanh^2(x) \\ f^{-1}(x) &=& \arctan(x) \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} \mathrm{Var}[w_i] &=& \frac{2}{n_i + n_{i+1}} \\ w_i \sim \mathrm{U}[-\frac{\sqrt{6}}{\sqrt{n_i + n_{i+1}}}, \frac{\sqrt{6}}{\sqrt{n_i + n_{i+1}}}] \end{eqnarray*}
+\pagebreak
+
+$ n_{i+1} $
+\pagebreak
+
+$ n_i $
+\pagebreak
+
+\begin{eqnarray*} \overline{s} &=& f^{-1}(\overline{t}) \\ \Theta^{1}_{p} &\le& \overline{s} \sqrt{\frac{3}{I \sum_{i = 1}^{I} (x_{ip}^2)}} \\ \Theta^1 &=& min(\Theta_{p}^{1}); p=1,2,..,P \\ -\Theta^{1} \le w_{i}^{1} &\le& \Theta^{1} \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} \gamma &\le& w_i \le \gamma \\ \beta &=& 0.7H^{\frac{1}{I}} \\ n &=& \sqrt{\sum_{i=0}{I}w_{i}^{2}} \\ w_i &=& \frac{\beta w_i}{n} \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} b &=& |F^{-1}(1 - \epsilon) - f^{-1}(\epsilon)| \\ \hat{w} &=& \frac{b}{k \cdot n} \\ \gamma &\le& a_i \le \gamma \\ w_i &=& \hat{w} \cdot \sqrt{a_i + 1} \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \left\{ \begin{array}{lr} x & : x \ge 0 \\ \alpha(e^(\frac{x}{\alpha}) - 1) & : x < 0 \end{array} \right. \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x \ge 0 \\ (\frac{f(x)}{\alpha}) + 1 & : x < 0 \end{array} \right. \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \left\{ \begin{array}{lr} x & : x > 0 \\ \alpha(e^x - 1) & : x \le 0 \end{array} \right. \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ f(x) + \alpha & : x \le 0 \end{array} \right. \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \left\{ \begin{array}{lr} \lambda * x & : x > 0 \\ \lambda * \alpha(e^x - 1) & : x \le 0 \end{array} \right. \\ f'(x) &=& \left\{ \begin{array}{lr} \lambda & : x > 0 \\ f(x) + \lambda * \alpha & : x \le 0 \end{array} \right. \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray} i &=& sigmoid(W \cdot x + W \cdot h + b) \\ f &=& sigmoid(W \cdot x + W \cdot h + b) \\ z &=& tanh(W \cdot x + W \cdot h + b) \\ c &=& f \cdot c + i \cdot z \\ o &=& sigmoid(W \cdot x + W \cdot h + b) \\ h &=& o \cdot tanh(c) \end{eqnarray}
+\pagebreak
+
+\begin{eqnarray*} f'(x) &=& \left\{ \begin{array}{lr} frac{x}{1+exp(-x)} + T & : x \ge 0 \\ T & : x < 0 \end{array} \right. \\ f'(x) &=& \left\{ \begin{array}{lr} \sigma(x)(1 - f(x)) + f(x) & : x > 0 \\ 0 & : x \le 0 \end{array} \right. \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \max(0,x)+alpha \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ 0 & : x \le 0 \end{array} \right. \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \left\{ \begin{array}{lr} max & : x > maxValue \\ min & : x \le minValue \\ x & : otherwise \end{array} \right. \\ f'(x) &=& \left\{ \begin{array}{lr} 0 & : x > maxValue \\ 0 & : x \le minValue \\ 1 & : otherwise \end{array} \right. \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \begin{cases} x & : x > lambda \\ x & : x < -lambda \\ 0 & : otherwise. \end{cases} \\ f'(x) &=& \begin{cases} 1 & : x > lambda \\ 1 & : x < -lambda \\ 0 & : otherwise. \end{cases} \end{eqnarray*}
+\pagebreak
+
+$\lambda$
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \left\{ \begin{array}{lr} x & : x \ge 0 \\ x(\frac{1}{1 + \alpha x^2}) & : x < 0 \end{array} \right. \\ f'(x) &=& \left\{ \begin{array}{lr} x & : 1 \ge 0 \\ (\frac{1}{1 + \alpha x^2})^3 & : x < 0 \end{array} \right. \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \max(x, alpha*x) \\ f'(x) &=& \left\{ \begin{array}{lr} 1 & : x > 0 \\ alpha & : x \le 0 \end{array} \right. \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray} i &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\ f &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\ z &=& tanh(W \cdot x + W \cdot h + b) \\ c &=& f \odot c + i \odot z \\ o &=& sigmoid(W \cdot x + W \cdot h + W \cdot c + b) \\ h &=& o \odot tanh(c) \end{eqnarray}
+\pagebreak
+
+\begin{eqnarray*} f(x) &=& \begin{cases} x - \lambda & : x > \lambda \\ x + \lambda & : x < -\lambda \\ 0 & : otherwise. \\ \end{cases} \\ f'(x) &=& \begin{cases} 1 & : x > \lambda \\ 1 & : x < -\lambda \\ 0 & : otherwise. \end{cases} \end{eqnarray*}
+\pagebreak
+
+\begin{eqnarray*} f(x) = 1 - cos(x1, x2) , for y = 1 f(x) = max(0, cos(x1, x2) - margin) , for y = -1 \end{eqnarray*}
+\pagebreak
+
+$y_true$
+\pagebreak
+
+$y_pred$
+\pagebreak
+
+$l(y_true, y_pred)$
+\pagebreak
+
+$l(y_true, y_pred) = max(0, 1 - y_true*y_pred)$
+\pagebreak
+
+$ y - f(x) $
+\pagebreak
+
+$ |y - f(x)| = delta $
+\pagebreak
+
+$ \exp(input) - target \cdot input $
+\pagebreak
+
+$ input - target \cdot \log(input + eps) $
+\pagebreak
+
+$max(x, 0) - x * z + \log(1 + e^{-|x|})$
+\pagebreak
+
+$ -b^Tv - \sum_{i=1}^M log(1 + e^{c_j+v^TW_j}) $
+\pagebreak
+
+$ v^t$$\Delta$v - $\sum_{i=1}^N $
+\pagebreak
+
+$ \log{ \sqrt{\frac{(-2\pi)^K}{\prod_{m=1}^{K}(\alpha_i)_m}}} $
+\pagebreak
+
+$ \sum_{i=1}^N \log(1+\exp( b_i + \sum_{m=1}^k \frac{(v(w_i)_m^t)^2}{2(\alpha_i)_m}) $
+\pagebreak
+
+$ h_i*\alpha^{-1}*W_i^T*v $
+\pagebreak
+
+$ \alpha^{-1} $
+\pagebreak
+
+$ \Lambda^{-1} \sum_{i=1}^N W_i * s_i * h_i $
+\pagebreak
+
+$ sigm(v^T*W_i*\alpha_i^{-1}*W_i^T*v + b_i) $
+\pagebreak
+
+$ \omega $
+\pagebreak
+
+$ \alpha $
+\pagebreak
+
+\[ p(\omega|\alpha) = \mathcal{N}(\omega|0, \alpha^{-1}I) \]
+\pagebreak
+
+$ alpha $
+\pagebreak
+
+$ beta $
+\pagebreak
+
+$y_{i}$
+\pagebreak
+
+$ \beta $
+\pagebreak
+
+$ r_{iu} = b_i + b_u + p_i * q_u $
+\pagebreak
+
+$ r_{iu} $
+\pagebreak
+
+$ r_{iv} $
+\pagebreak
+
+$ Y_t = X_t \beta_{Q_t} + \sigma_{Q_t} \epsilon_t $
+\pagebreak
+
+\[ \min_{\beta} 0.5 || X \beta - y ||_2^2 + 0.5 \lambda_2 || \beta ||_2^2 \]
+\pagebreak
+
+$ ||\beta||_1 <= \tau $
+\pagebreak
+
+$ X $
+\pagebreak
+
+\[ \min_{\beta} 0.5 || X \beta - y ||_2^2 + \lambda_1 || \beta ||_1 + 0.5 \lambda_2 || \beta ||_2^2 \]
+\pagebreak
+
+$ \lambda_1 > 0 $
+\pagebreak
+
+$ \lambda_2 = 0 $
+\pagebreak
+
+$ \lambda_2 > 0 $
+\pagebreak
+
+$ \lambda_1 = 0 $
+\pagebreak
+
+$ \lambda_1 $
+\pagebreak
+
+\[ (1 / n) * \| y - X B \|^2_2 \]
+\pagebreak
+
+$ B $
+\pagebreak
+
+$ \epsilon(M) = \sum_{ij}\eta_{ij}|| L x_i - L x_j ||^2 + c\sum_{ijl}\eta_{ij}(1-y_{il})[1 + || L x_i - L x_j ||^2 - || L x_i - L x_l ||^2)]_{+} $
+\pagebreak
+
+$ g_{\text{clipped}} = \max(g_{\text{min}}, \min(g_{\text{min}}, g))) $
+\pagebreak
+
+$ exp(\theta_i * data_j) / sum_k(exp(\theta_k * data_j)) $
+\pagebreak
+
+\[ \min_{D,Z} 0.5 ||X - D Z||_{F}^2\ + \lambda_1 \sum_{i=1}^m ||Z_i||_1 + 0.5 \lambda_2 \sum_{i=1}^m ||Z_i||_2^2 \]
+\pagebreak
+
+$ ||D_j||_2 <= 1 $
+\pagebreak
+
+$ 1 <= j <= k $
+\pagebreak
+
+$ lambda_1 > 0 $
+\pagebreak
+
+$ lambda_2 = 0 $
+\pagebreak
+
+$(0, 1)$
+\pagebreak
+
+$(3, 1)$
+\pagebreak
+
+$(5, -5)$
+\pagebreak
+
+$k$
+\pagebreak
+
+\[ C = X^T X \]
+\pagebreak
+
+\[ C = X X^T \]
+\pagebreak
+
+$R$
+\pagebreak
+
+$Q$
+\pagebreak
+
+\[ \operatorname{k-argmax}_{p_r \in R} d(p_q, p_r). \]
+\pagebreak
+
+$n$
+\pagebreak
+
+$m$
+\pagebreak
+
+$V \in \Re^{n \times m}$
+\pagebreak
+
+$V_{ij}$
+\pagebreak
+
+$i$
+\pagebreak
+
+$j$
+\pagebreak
+
+$V$
+\pagebreak
+
+$V \approx WH$
+\pagebreak
+
+$W$
+\pagebreak
+
+$H$
+\pagebreak
+
+$\alpha$
+\pagebreak
+
+$S$
+\pagebreak
+
+$\mathbf{R}^d$
+\pagebreak
+
+$kd$
+\pagebreak
+
+$n-1 \times 3 $
+\pagebreak
+
+$\log N$
+\pagebreak
+
+$N$
+\pagebreak
+
+$O(N^2)$
+\pagebreak
+
+\[ \arg\max_{p_r \in R} K(p_q, p_r) \]
+\pagebreak
+
+$p_q \in Q$
+\pagebreak
+
+$K(\cdot, \cdot)$
+\pagebreak
+
+$ x_i $
+\pagebreak
+
+$ c_j $
+\pagebreak
+
+$ j \le k $
+\pagebreak
+
+$ k $
+\pagebreak
+
+\[ \sum_{j = 1}^{k} \sum_{x_i \in c_j} \| x_i - \mu_j \|^2 \]
+\pagebreak
+
+$\mu_j$
+\pagebreak
+
+$c_j$
+\pagebreak
+
+$x_i$
+\pagebreak
+
+$X$
+\pagebreak
+
+$O(kN)$
+\pagebreak
+
+$\mathbf{x_i}, 0 \le i < n$
+\pagebreak
+
+$d$
+\pagebreak
+
+$y_i, 0 \le i < n$
+\pagebreak
+
+$\beta_i, 0 \le i \le d$
+\pagebreak
+
+\[ y_i = \beta_0 + \displaystyle\sum_{j = 1}^{d} \beta_j x_{ij} \]
+\pagebreak
+
+$\mathbf{x_i}$
+\pagebreak
+
+$y_i$
+\pagebreak
+
+$\mathbf{X}$
+\pagebreak
+
+$\mathbf{y}$
+\pagebreak
+
+\[ \mathbf{y} = \mathbf{X} \mathbf{\beta} + \beta_0 \]
+\pagebreak
+
+$\mathbf{\beta}$
+\pagebreak
+
+$\beta_0$
+\pagebreak
+
+$\beta_1$
+\pagebreak
+
+$\beta_2$
+\pagebreak
+
+$y$
+\pagebreak
+
+$f(y)=0+1x_1$
+\pagebreak
+
+$x_1$
+\pagebreak
+
+$f(y) = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_3 + \beta_4x_4$
+\pagebreak
+
+$f(y)=14+2x_1+1x_2+3x_3+4x_4$
+\pagebreak
+
+\[ \mathbf{X}' \mathbf{X} \]
+\pagebreak
+
+\[ \mathbf{X}' \mathbf{X} + \lambda \mathbf{I} \]
+\pagebreak
+
+$\mathbf{I}$
+\pagebreak
+
+$\mathcal{K}(\cdot, \cdot)$
+\pagebreak
+
+$\mathcal{K}(a, b)$
+\pagebreak
+
+$ K(x, x) = 1 \; \forall x $
+\pagebreak
+
+$d(\cdot, \cdot)$
+\pagebreak
+
+$d(a, b)$
+\pagebreak
+
+$ S \in \mathcal{R}^{N \times d} $
+\pagebreak
+
+$\mathcal{R}^d$
+\pagebreak
+
+$c$
+\pagebreak
+
+$p$
+\pagebreak
+
+$d(p, c) - \lambda$
+\pagebreak
+
+\end{document}

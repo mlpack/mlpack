@@ -1,0 +1,409 @@
+.TH "BayesianLinearRegression" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+BayesianLinearRegression \- A Bayesian approach to the maximum likelihood estimation of the parameters $ \omega $ of the linear regression model\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBBayesianLinearRegression\fP (const bool centerData=true, const bool scaleData=false, const size_t maxIterations=50, const double tolerance=1e\-4)"
+.br
+.RI "Set the parameters of Bayesian Ridge regression object\&. "
+.ti -1c
+.RI "double \fBAlpha\fP () const"
+.br
+.RI "Get the precision (or inverse variance) of the gaussian prior\&. "
+.ti -1c
+.RI "double \fBBeta\fP () const"
+.br
+.RI "Get the precision (or inverse variance) beta of the model\&. "
+.ti -1c
+.RI "bool & \fBCenterData\fP ()"
+.br
+.RI "Modify whether the data will be centered during training\&. "
+.ti -1c
+.RI "bool \fBCenterData\fP () const"
+.br
+.RI "Get whether the data will be centered during training\&. "
+.ti -1c
+.RI "const arma::colvec & \fBDataOffset\fP () const"
+.br
+.RI "Get the mean vector computed on the features over the training points\&. "
+.ti -1c
+.RI "const arma::colvec & \fBDataScale\fP () const"
+.br
+.RI "Get the vector of standard deviations computed on the features over the training points\&. "
+.ti -1c
+.RI "size_t & \fBMaxIterations\fP ()"
+.br
+.RI "Modify the maximum number of iterations for training\&. "
+.ti -1c
+.RI "size_t \fBMaxIterations\fP () const"
+.br
+.RI "Get the maximum number of iterations for training\&. "
+.ti -1c
+.RI "const arma::colvec & \fBOmega\fP () const"
+.br
+.RI "Get the solution vector\&. "
+.ti -1c
+.RI "void \fBPredict\fP (const arma::mat &points, arma::rowvec &predictions) const"
+.br
+.RI "Predict $y_{i}$ for each data point in the given data matrix using the currently-trained Bayesian Ridge model\&. "
+.ti -1c
+.RI "void \fBPredict\fP (const arma::mat &points, arma::rowvec &predictions, arma::rowvec &std) const"
+.br
+.RI "Predict $y_{i}$ and the standard deviation of the predictive posterior distribution for each data point in the given data matrix, using the currently-trained Bayesian Ridge estimator\&. "
+.ti -1c
+.RI "double \fBResponsesOffset\fP () const"
+.br
+.RI "Get the mean value of the train responses\&. "
+.ti -1c
+.RI "double \fBRMSE\fP (const arma::mat &data, const arma::rowvec &responses) const"
+.br
+.RI "Compute the Root Mean Square Error between the predictions returned by the model and the true responses\&. "
+.ti -1c
+.RI "bool & \fBScaleData\fP ()"
+.br
+.RI "Modify whether the data will be scaled by standard deviations during training\&. "
+.ti -1c
+.RI "bool \fBScaleData\fP () const"
+.br
+.RI "Get whether the data will be scaled by standard deviations during training\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t version)"
+.br
+.RI "Serialize the \fBBayesianLinearRegression\fP model\&. "
+.ti -1c
+.RI "double & \fBTolerance\fP ()"
+.br
+.RI "Modify the tolerance for training to converge\&. "
+.ti -1c
+.RI "double \fBTolerance\fP () const"
+.br
+.RI "Get the tolerance for training to converge\&. "
+.ti -1c
+.RI "double \fBTrain\fP (const arma::mat &data, const arma::rowvec &responses)"
+.br
+.RI "Run \fBBayesianLinearRegression\fP\&. "
+.ti -1c
+.RI "double \fBVariance\fP () const"
+.br
+.RI "Get the estimated variance\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+A Bayesian approach to the maximum likelihood estimation of the parameters $ \omega $ of the linear regression model\&. 
+
+The Complexity is governed by the addition of a gaussian isotropic prior of precision $ \alpha $ over $ \omega $:
+.PP
+\[ p(\omega|\alpha) = \mathcal{N}(\omega|0, \alpha^{-1}I) \].PP
+The optimization procedure calculates the posterior distribution of $ \omega $ knowing the data by maximizing an approximation of the log marginal likelihood derived from a type II maximum likelihood approximation\&. The determination of $ alpha $ and of the noise precision $ beta $ is part of the optimization process, leading to an automatic determination of w\&. The model being entirely based on probabilty distributions, uncertainties are available and easly computed for both the parameters and the predictions\&.
+.PP
+The advantage over linear regression and ridge regression is that the regularization is determined from all the training data alone without any require to an hold out method\&.
+.PP
+The code below is an implementation of the maximization of the evidence function described in the section 3\&.5\&.2 of the C\&.Bishop book, Pattern Recognition and Machine Learning\&.
+.PP
+.PP
+.nf
+@article{MacKay91bayesianinterpolation,
+  author = {David J\&.C\&. MacKay},
+  title = {Bayesian Interpolation},
+  journal = {NEURAL COMPUTATION},
+  year = {1991},
+  volume = {4},
+  pages = {415--447}
+}
+.fi
+.PP
+.PP
+.PP
+.nf
+@book{Bishop:2006:PRM:1162264,
+  author = {Bishop, Christopher M\&.},
+  title = {Pattern Recognition and Machine Learning (Information Science
+           and Statistics)},
+  chapter = {3}
+  year = {2006},
+  isbn = {0387310738},
+  publisher = {Springer-Verlag},
+  address = {Berlin, Heidelberg},
+}
+.fi
+.PP
+.PP
+Example of use:
+.PP
+.PP
+.nf
+arma::mat xTrain; // Train data matrix\&. Column-major\&.
+arma::rowvec yTrain; // Train target values\&.
+
+// Train the model\&. Regularization strength is optimally tunned with the
+// training data alone by applying the Train method\&.
+// Instantiate the estimator with default option\&.
+BayesianLinearRegression estimator;
+estimator\&.Train(xTrain, yTrain);
+
+// Prediction on test points\&.
+arma::mat xTest; // Test data matrix\&. Column-major\&.
+arma::rowvec predictions;
+
+estimator\&.Predict(xTest, prediction);
+
+arma::rowvec yTest; // Test target values\&.
+estimator\&.RMSE(xTest, yTest); // Evaluate using the RMSE score\&.
+
+// Compute the standard deviations of the predictions\&.
+arma::rowvec stds;
+estimator\&.Predict(xTest, responses, stds)
+.fi
+.PP
+ 
+.PP
+Definition at line 99 of file bayesian_linear_regression\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBBayesianLinearRegression\fP (const bool centerData = \fCtrue\fP, const bool scaleData = \fCfalse\fP, const size_t maxIterations = \fC50\fP, const double tolerance = \fC1e\-4\fP)"
+
+.PP
+Set the parameters of Bayesian Ridge regression object\&. The regularization parameter is automatically set to its optimal value by maximization of the marginal likelihood\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIcenterData\fP Whether or not center the data according to the examples\&. 
+.br
+\fIscaleData\fP Whether or not scale the data according to the standard deviation of each feature\&. 
+.br
+\fImaxIterations\fP Maximum number of iterations for convergency\&. 
+.br
+\fItolerance\fP Level from which the solution is considered sufficientlly stable\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "double Alpha () const\fC [inline]\fP"
+
+.PP
+Get the precision (or inverse variance) of the gaussian prior\&. \fBTrain()\fP must be called before\&.
+.PP
+\fBReturns\fP
+.RS 4
+$ \alpha $ 
+.RE
+.PP
+
+.PP
+Definition at line 181 of file bayesian_linear_regression\&.hpp\&.
+.SS "double Beta () const\fC [inline]\fP"
+
+.PP
+Get the precision (or inverse variance) beta of the model\&. \fBTrain()\fP must be called before\&.
+.PP
+\fBReturns\fP
+.RS 4
+$ \beta $ 
+.RE
+.PP
+
+.PP
+Definition at line 189 of file bayesian_linear_regression\&.hpp\&.
+.PP
+Referenced by BayesianLinearRegression::Variance()\&.
+.SS "bool& CenterData ()\fC [inline]\fP"
+
+.PP
+Modify whether the data will be centered during training\&. 
+.PP
+Definition at line 223 of file bayesian_linear_regression\&.hpp\&.
+.SS "bool CenterData () const\fC [inline]\fP"
+
+.PP
+Get whether the data will be centered during training\&. 
+.PP
+Definition at line 221 of file bayesian_linear_regression\&.hpp\&.
+.SS "const arma::colvec& DataOffset () const\fC [inline]\fP"
+
+.PP
+Get the mean vector computed on the features over the training points\&. 
+.PP
+\fBReturns\fP
+.RS 4
+responsesOffset 
+.RE
+.PP
+
+.PP
+Definition at line 203 of file bayesian_linear_regression\&.hpp\&.
+.SS "const arma::colvec& DataScale () const\fC [inline]\fP"
+
+.PP
+Get the vector of standard deviations computed on the features over the training points\&. 
+.PP
+\fBReturns\fP
+.RS 4
+dataOffset 
+.RE
+.PP
+
+.PP
+Definition at line 211 of file bayesian_linear_regression\&.hpp\&.
+.SS "size_t& MaxIterations ()\fC [inline]\fP"
+
+.PP
+Modify the maximum number of iterations for training\&. 
+.PP
+Definition at line 235 of file bayesian_linear_regression\&.hpp\&.
+.SS "size_t MaxIterations () const\fC [inline]\fP"
+
+.PP
+Get the maximum number of iterations for training\&. 
+.PP
+Definition at line 233 of file bayesian_linear_regression\&.hpp\&.
+.SS "const arma::colvec& Omega () const\fC [inline]\fP"
+
+.PP
+Get the solution vector\&. 
+.PP
+\fBReturns\fP
+.RS 4
+omega Solution vector\&. 
+.RE
+.PP
+
+.PP
+Definition at line 173 of file bayesian_linear_regression\&.hpp\&.
+.SS "void Predict (const arma::mat & points, arma::rowvec & predictions) const"
+
+.PP
+Predict $y_{i}$ for each data point in the given data matrix using the currently-trained Bayesian Ridge model\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpoints\fP The data points to apply the model\&. 
+.br
+\fIpredictions\fP y, Contains the predicted values on completion\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Root mean squared error computed on the train set\&. 
+.RE
+.PP
+
+.SS "void Predict (const arma::mat & points, arma::rowvec & predictions, arma::rowvec & std) const"
+
+.PP
+Predict $y_{i}$ and the standard deviation of the predictive posterior distribution for each data point in the given data matrix, using the currently-trained Bayesian Ridge estimator\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpoints\fP The data point to apply the model\&. 
+.br
+\fIpredictions\fP Vector which will contain calculated values on completion\&. 
+.br
+\fIstd\fP Standard deviations of the predictions\&. 
+.RE
+.PP
+
+.SS "double ResponsesOffset () const\fC [inline]\fP"
+
+.PP
+Get the mean value of the train responses\&. 
+.PP
+\fBReturns\fP
+.RS 4
+responsesOffset 
+.RE
+.PP
+
+.PP
+Definition at line 218 of file bayesian_linear_regression\&.hpp\&.
+.SS "double RMSE (const arma::mat & data, const arma::rowvec & responses) const"
+
+.PP
+Compute the Root Mean Square Error between the predictions returned by the model and the true responses\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Data points to predict 
+.br
+\fIresponses\fP A vector of targets\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Root mean squared error\&. 
+.RE
+.PP
+
+.SS "bool& ScaleData ()\fC [inline]\fP"
+
+.PP
+Modify whether the data will be scaled by standard deviations during training\&. 
+.PP
+Definition at line 230 of file bayesian_linear_regression\&.hpp\&.
+.SS "bool ScaleData () const\fC [inline]\fP"
+
+.PP
+Get whether the data will be scaled by standard deviations during training\&. 
+.PP
+Definition at line 227 of file bayesian_linear_regression\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t version)"
+
+.PP
+Serialize the \fBBayesianLinearRegression\fP model\&. 
+.SS "double& Tolerance ()\fC [inline]\fP"
+
+.PP
+Modify the tolerance for training to converge\&. 
+.PP
+Definition at line 240 of file bayesian_linear_regression\&.hpp\&.
+.SS "double Tolerance () const\fC [inline]\fP"
+
+.PP
+Get the tolerance for training to converge\&. 
+.PP
+Definition at line 238 of file bayesian_linear_regression\&.hpp\&.
+.SS "double Train (const arma::mat & data, const arma::rowvec & responses)"
+
+.PP
+Run \fBBayesianLinearRegression\fP\&. The input matrix (like all mlpack matrices) should be column-major -- each column is an observation and each row is a dimension\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Column-major input data, dim(P, N)\&. 
+.br
+\fIresponses\fP A vector of targets, dim(N)\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Root mean squared error\&. 
+.RE
+.PP
+
+.SS "double Variance () const\fC [inline]\fP"
+
+.PP
+Get the estimated variance\&. \fBTrain()\fP must be called before\&.
+.PP
+\fBReturns\fP
+.RS 4
+1\&.0 / $ \beta $ 
+.RE
+.PP
+
+.PP
+Definition at line 196 of file bayesian_linear_regression\&.hpp\&.
+.PP
+References BayesianLinearRegression::Beta()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

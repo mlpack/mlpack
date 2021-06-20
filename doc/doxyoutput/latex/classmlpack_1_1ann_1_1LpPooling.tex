@@ -1,0 +1,565 @@
+\doxysection{Lp\+Pooling$<$ Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1LpPooling}\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+
+
+Implementation of the LPPooling.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Lp\+Pooling} ()
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Lp\+Pooling}{p.}{classmlpack_1_1ann_1_1LpPooling} object. \end{DoxyCompactList}\item 
+\textbf{ Lp\+Pooling} (const size\+\_\+t norm\+Type, const size\+\_\+t kernel\+Width, const size\+\_\+t kernel\+Height, const size\+\_\+t stride\+Width=1, const size\+\_\+t stride\+Height=1, const bool floor=true)
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Lp\+Pooling}{p.}{classmlpack_1_1ann_1_1LpPooling} object using the specified number of units. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+bool \& \textbf{ Floor} ()
+\begin{DoxyCompactList}\small\item\em Modify the value of the rounding operation. \end{DoxyCompactList}\item 
+bool const  \& \textbf{ Floor} () const
+\begin{DoxyCompactList}\small\item\em Get the value of the rounding operation. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Input\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the input height. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ Input\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the input height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the input size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Input\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the input width. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ Input\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the intput width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Kernel\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the kernel height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Kernel\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the kernel height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Kernel\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the kernel width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Kernel\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the kernel width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Norm\+Type} ()
+\begin{DoxyCompactList}\small\item\em Modify the norm\+Type. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Norm\+Type} () const
+\begin{DoxyCompactList}\small\item\em Get the norm\+Type. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Output\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the output height. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ Output\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the output height. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the output size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Output\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the output width. \end{DoxyCompactList}\item 
+size\+\_\+t const  \& \textbf{ Output\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the output width. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Stride\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the stride height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Stride\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the stride height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Stride\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the stride width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Stride\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the stride width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Weight\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the size of the weights. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Lp\+Pooling$<$ Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the LPPooling. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 32 of file lp\+\_\+pooling.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a6619f8729fd6af5eb5baf653fb4b595a}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!LpPooling@{LpPooling}}
+\index{LpPooling@{LpPooling}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{LpPooling()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Lp\+Pooling} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Lp\+Pooling}{p.}{classmlpack_1_1ann_1_1LpPooling} object. 
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_ad035ad444b6d260cb0428dc996a8a88e}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!LpPooling@{LpPooling}}
+\index{LpPooling@{LpPooling}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{LpPooling()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Lp\+Pooling} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{norm\+Type,  }\item[{const size\+\_\+t}]{kernel\+Width,  }\item[{const size\+\_\+t}]{kernel\+Height,  }\item[{const size\+\_\+t}]{stride\+Width = {\ttfamily 1},  }\item[{const size\+\_\+t}]{stride\+Height = {\ttfamily 1},  }\item[{const bool}]{floor = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Lp\+Pooling}{p.}{classmlpack_1_1ann_1_1LpPooling} object using the specified number of units. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em norm\+Type} & Parameter for type of norm. \\
+\hline
+{\em kernel\+Width} & Width of the pooling window. \\
+\hline
+{\em kernel\+Height} & Height of the pooling window. \\
+\hline
+{\em stride\+Width} & Width of the stride operation. \\
+\hline
+{\em stride\+Height} & Width of the stride operation. \\
+\hline
+{\em floor} & Set to true to use floor method. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, using 3rd-\/order tensors as input, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_ad6601342d560219ce951d554e69e5e87}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 87 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 85 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a8859ce7b4be2b8ffbf36bbc8ff16aecd}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!Floor@{Floor}}
+\index{Floor@{Floor}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Floor()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& Floor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value of the rounding operation. 
+
+
+
+Definition at line 143 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a787a10955ce98f589e7cc08f1c1beb75}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!Floor@{Floor}}
+\index{Floor@{Floor}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Floor()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool const\& Floor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value of the rounding operation. 
+
+
+
+Definition at line 141 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_aefbba724eec397a928d5460bb209a360}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!InputHeight@{InputHeight}}
+\index{InputHeight@{InputHeight}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Input\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input height. 
+
+
+
+Definition at line 97 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_afb3fd4ed60dd057e7852221b89206f15}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!InputHeight@{InputHeight}}
+\index{InputHeight@{InputHeight}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& Input\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input height. 
+
+
+
+Definition at line 95 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a5a4c4984aa897a28d516e638e7ea5308}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!InputSize@{InputSize}}
+\index{InputSize@{InputSize}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputSize()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input size. 
+
+
+
+Definition at line 110 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a238e9d308df611a9300a4ca6756fef4d}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!InputWidth@{InputWidth}}
+\index{InputWidth@{InputWidth}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Input\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input width. 
+
+
+
+Definition at line 92 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a29346e3064da8f9e5f10596bedae0ba8}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!InputWidth@{InputWidth}}
+\index{InputWidth@{InputWidth}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& Input\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the intput width. 
+
+
+
+Definition at line 90 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a46b2c28d89959067f549f9f45d2626c5}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!KernelHeight@{KernelHeight}}
+\index{KernelHeight@{KernelHeight}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Kernel\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the kernel height. 
+
+
+
+Definition at line 128 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a6c15e2e3416651fac44621acbbdac9e9}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!KernelHeight@{KernelHeight}}
+\index{KernelHeight@{KernelHeight}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Kernel\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the kernel height. 
+
+
+
+Definition at line 126 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a5fbae452ceda395f5566833e06ba3615}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!KernelWidth@{KernelWidth}}
+\index{KernelWidth@{KernelWidth}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Kernel\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the kernel width. 
+
+
+
+Definition at line 123 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a656302bc9b300692aa71abe2a614c7b1}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!KernelWidth@{KernelWidth}}
+\index{KernelWidth@{KernelWidth}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Kernel\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the kernel width. 
+
+
+
+Definition at line 121 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a931485333bbadf0e78fbec7e8073ef4b}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!NormType@{NormType}}
+\index{NormType@{NormType}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{NormType()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Norm\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the norm\+Type. 
+
+
+
+Definition at line 118 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a529256885c775d74f9716b7d4e31962e}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!NormType@{NormType}}
+\index{NormType@{NormType}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{NormType()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Norm\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the norm\+Type. 
+
+
+
+Definition at line 116 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_ac5112abf9f5e1face13ed965a8755b1d}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!OutputHeight@{OutputHeight}}
+\index{OutputHeight@{OutputHeight}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Output\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output height. 
+
+
+
+Definition at line 107 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a5ad7dbcaf1a622dafd897f79ab77890c}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!OutputHeight@{OutputHeight}}
+\index{OutputHeight@{OutputHeight}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& Output\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output height. 
+
+
+
+Definition at line 105 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 82 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 80 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a99c1d948c984b9e76fb5e37e2145427a}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!OutputSize@{OutputSize}}
+\index{OutputSize@{OutputSize}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputSize()}
+{\footnotesize\ttfamily size\+\_\+t Output\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output size. 
+
+
+
+Definition at line 113 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a54579ec9924e2a4a5bc0a4fb822ce80c}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!OutputWidth@{OutputWidth}}
+\index{OutputWidth@{OutputWidth}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Output\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output width. 
+
+
+
+Definition at line 102 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a32b3e3fe787456847fc3b2c39586ecb1}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!OutputWidth@{OutputWidth}}
+\index{OutputWidth@{OutputWidth}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t const\& Output\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output width. 
+
+
+
+Definition at line 100 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a65cba07328997659bec80b9879b15a51}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a0dd3de9c8a9060e927c575b57a021e8b}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!StrideHeight@{StrideHeight}}
+\index{StrideHeight@{StrideHeight}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Stride\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the stride height. 
+
+
+
+Definition at line 138 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a1894b819a7ff82a5576fc8deb8ba7457}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!StrideHeight@{StrideHeight}}
+\index{StrideHeight@{StrideHeight}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Stride\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the stride height. 
+
+
+
+Definition at line 136 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_af40557db9372b513440e06a5e42cc599}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!StrideWidth@{StrideWidth}}
+\index{StrideWidth@{StrideWidth}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Stride\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the stride width. 
+
+
+
+Definition at line 133 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_ad8fd9eb6de956c3e9d82242793fd2db1}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!StrideWidth@{StrideWidth}}
+\index{StrideWidth@{StrideWidth}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Stride\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the stride width. 
+
+
+
+Definition at line 131 of file lp\+\_\+pooling.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1LpPooling_a7a2704698a50d9e00dfb083f3a863579}} 
+\index{LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}!WeightSize@{WeightSize}}
+\index{WeightSize@{WeightSize}!LpPooling$<$ InputDataType, OutputDataType $>$@{LpPooling$<$ InputDataType, OutputDataType $>$}}
+\doxysubsubsection{WeightSize()}
+{\footnotesize\ttfamily size\+\_\+t Weight\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the size of the weights. 
+
+
+
+Definition at line 146 of file lp\+\_\+pooling.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ lp\+\_\+pooling.\+hpp}\end{DoxyCompactItemize}

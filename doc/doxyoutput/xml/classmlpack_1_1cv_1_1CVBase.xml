@@ -1,0 +1,790 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1cv_1_1CVBase" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::cv::CVBase</compoundname>
+    <includes refid="cv__base_8hpp" local="no">cv_base.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MLAlgorithm</type>
+      </param>
+      <param>
+        <type>typename MatType</type>
+      </param>
+      <param>
+        <type>typename PredictionsType</type>
+      </param>
+      <param>
+        <type>typename WeightsType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1cv_1_1CVBase_1a8136390cdbea4d1b8b3fe885c223b590" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor" kindref="compound">MetaInfoExtractor</ref>&lt; MLAlgorithm, MatType, PredictionsType, WeightsType &gt;</type>
+        <definition>using MIE =  MetaInfoExtractor&lt;MLAlgorithm, MatType, PredictionsType, WeightsType&gt;</definition>
+        <argsstring></argsstring>
+        <name>MIE</name>
+        <briefdescription>
+<para>A short alias for <ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor" kindref="compound">MetaInfoExtractor</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="43" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1CVBase_1a00317ccbae8a12222053b0bf8138efa1" prot="private" static="no" mutable="no">
+        <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref></type>
+        <definition>const data::DatasetInfo datasetInfo</definition>
+        <argsstring></argsstring>
+        <name>datasetInfo</name>
+        <briefdescription>
+<para>A variable for storing a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter if it is passed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="106" column="27" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1CVBase_1a399141f36c6cd0744ba0c2d9a2c6e22e" prot="private" static="no" mutable="no">
+        <type>const bool</type>
+        <definition>const bool isDatasetInfoPassed</definition>
+        <argsstring></argsstring>
+        <name>isDatasetInfoPassed</name>
+        <briefdescription>
+<para>An indicator whether a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter has been passed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="108" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1cv_1_1CVBase_1a4dd554142bdfbb014ddcac55577facef" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t numClasses</definition>
+        <argsstring></argsstring>
+        <name>numClasses</name>
+        <briefdescription>
+<para>A variable for storing the numClasses parameter if it is passed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="110" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1a0b26728db400bc58a826f99965b22adc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>CVBase</definition>
+        <argsstring>()</argsstring>
+        <name>CVBase</name>
+        <briefdescription>
+<para>Assert that MLAlgorithm doesn&apos;t take any additional basic parameters like numClasses. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="50" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1ad58931db3199d060bd4b5db9268197a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>CVBase</definition>
+        <argsstring>(const data::DatasetInfo &amp;datasetInfo, const size_t numClasses)</argsstring>
+        <name>CVBase</name>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> &amp;</type>
+          <declname>datasetInfo</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <briefdescription>
+<para>Assert that MLAlgorithm takes the numClasses parameter and a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter and store them. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>datasetInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type information for each dimension of the dataset. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="66" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1a0767da5bbe4ffe608d7a5887533bac41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>CVBase</definition>
+        <argsstring>(const size_t numClasses)</argsstring>
+        <name>CVBase</name>
+        <param>
+          <type>const size_t</type>
+          <declname>numClasses</declname>
+        </param>
+        <briefdescription>
+<para>Assert that MLAlgorithm takes the numClasses parameter and store it. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>numClasses</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of classes in the dataset. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="57" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1a31e9234a1f4e504d385dfa3870f71cad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+        </templateparamlist>
+        <type>MLAlgorithm</type>
+        <definition>MLAlgorithm Train</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys, const MLAlgorithmArgs &amp;... args)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Train MLAlgorithm with given data points, predictions, and hyperparameters depending on what <ref refid="classmlpack_1_1cv_1_1CVBase" kindref="compound">CVBase</ref> constructor has been called. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="87" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1ae50527d3c3f50b7a26eb239b6a3ed655" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+        </templateparamlist>
+        <type>MLAlgorithm</type>
+        <definition>MLAlgorithm Train</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys, const WeightsType &amp;weights, const MLAlgorithmArgs &amp;... args)</argsstring>
+        <name>Train</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Train MLAlgorithm with given data points, predictions, weights, and hyperparameters depending on what <ref refid="classmlpack_1_1cv_1_1CVBase" kindref="compound">CVBase</ref> constructor has been called. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="96" column="15"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1ae1e254399d702b57b117cbf834faa45a" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AssertDataConsistency</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys)</argsstring>
+        <name>AssertDataConsistency</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <briefdescription>
+<para>Assert there is the equal number of data points and predictions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="72" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1a5039acfc2b793e2dc813a07eddb457a1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AssertWeightsConsistency</definition>
+        <argsstring>(const MatType &amp;xs, const WeightsType &amp;weights)</argsstring>
+        <name>AssertWeightsConsistency</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <briefdescription>
+<para>Assert weighted learning is supported and there is the equal number of data points and weights. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="79" column="15"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1a51aa1e9653c91a91434b25e476bf5216" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AssertSizeEquality</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys)</argsstring>
+        <name>AssertSizeEquality</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <briefdescription>
+<para>Assert there is an equal number of data points and predictions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="115" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1aef2f5b39f3443a0d0ce68409f9f8de99" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>static void AssertWeightsSize</definition>
+        <argsstring>(const MatType &amp;xs, const WeightsType &amp;weights)</argsstring>
+        <name>AssertWeightsSize</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <briefdescription>
+<para>Assert the number of weights is the same as the number of data points. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="121" column="15"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1ace365949cd5869e17b72f4f9e1572dfb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>Enabled</declname>
+            <defname>Enabled</defname>
+            <defval>!<ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a0e921a4d1000043d71e5a6fbad480315" kindref="member">MIE::TakesNumClasses</ref></defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;Enabled&gt;::type</defval>
+          </param>
+        </templateparamlist>
+        <type>MLAlgorithm</type>
+        <definition>MLAlgorithm TrainModel</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys, const MLAlgorithmArgs &amp;... args)</argsstring>
+        <name>TrainModel</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Construct a trained MLAlgorithm model if MLAlgorithm doesn&apos;t take the numClasses parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="131" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1a7c84a7123b738c9a291f9f01ed949610" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>Enabled</declname>
+            <defname>Enabled</defname>
+            <defval><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a0e921a4d1000043d71e5a6fbad480315" kindref="member">MIE::TakesNumClasses</ref> &amp; !<ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1ae50c72f23be6bf92e820b643ae123189" kindref="member">MIE::TakesDatasetInfo</ref></defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;Enabled&gt;::type</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+        </templateparamlist>
+        <type>MLAlgorithm</type>
+        <definition>MLAlgorithm TrainModel</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys, const MLAlgorithmArgs &amp;... args)</argsstring>
+        <name>TrainModel</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Construct a trained MLAlgorithm model if MLAlgorithm takes the numClasses parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="143" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1a79f62e78a53471c0071f8a8bdc1a54e7" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>Enabled</declname>
+            <defname>Enabled</defname>
+            <defval><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a0e921a4d1000043d71e5a6fbad480315" kindref="member">MIE::TakesNumClasses</ref> &amp; <ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1ae50c72f23be6bf92e820b643ae123189" kindref="member">MIE::TakesDatasetInfo</ref></defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;Enabled&gt;::type</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+        </templateparamlist>
+        <type>MLAlgorithm</type>
+        <definition>MLAlgorithm TrainModel</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys, const MLAlgorithmArgs &amp;... args)</argsstring>
+        <name>TrainModel</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Construct a trained MLAlgorithm model if MLAlgorithm takes the numClasses parameter and a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="156" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1ace365949cd5869e17b72f4f9e1572dfb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>bool</type>
+            <declname>ConstructableWithoutDatasetInfo</declname>
+            <defname>ConstructableWithoutDatasetInfo</defname>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;ConstructableWithoutDatasetInfo&gt;::type</defval>
+          </param>
+        </templateparamlist>
+        <type>MLAlgorithm</type>
+        <definition>MLAlgorithm TrainModel</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys, const MLAlgorithmArgs &amp;... args)</argsstring>
+        <name>TrainModel</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>When MLAlgorithm supports a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter, training should be treated separately - there are models that can be constructed with and without a data:DatasetInfo parameter and models that can be constructed only with a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Construct a trained MLAlgorithm model when it can be constructed without a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="212" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1a7c84a7123b738c9a291f9f01ed949610" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>bool</type>
+            <declname>ConstructableWithoutDatasetInfo</declname>
+            <defname>ConstructableWithoutDatasetInfo</defname>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;!ConstructableWithoutDatasetInfo&gt;::type</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+        </templateparamlist>
+        <type>MLAlgorithm</type>
+        <definition>MLAlgorithm TrainModel</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys, const MLAlgorithmArgs &amp;... args)</argsstring>
+        <name>TrainModel</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Construct a trained MLAlgorithm model when it can&apos;t be constructed without a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="225" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1a94d793fe6db608113057a3fcfdf6899f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>Enabled</declname>
+            <defname>Enabled</defname>
+            <defval>!<ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a0e921a4d1000043d71e5a6fbad480315" kindref="member">MIE::TakesNumClasses</ref></defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;Enabled&gt;::type</defval>
+          </param>
+        </templateparamlist>
+        <type>MLAlgorithm</type>
+        <definition>MLAlgorithm TrainModel</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys, const WeightsType &amp;weights, const MLAlgorithmArgs &amp;... args)</argsstring>
+        <name>TrainModel</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Construct a trained MLAlgorithm model if MLAlgorithm doesn&apos;t take the numClasses parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="167" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1a088e97440eaffc812bf220d02a25a9cf" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>Enabled</declname>
+            <defname>Enabled</defname>
+            <defval><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a0e921a4d1000043d71e5a6fbad480315" kindref="member">MIE::TakesNumClasses</ref> &amp; !<ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1ae50c72f23be6bf92e820b643ae123189" kindref="member">MIE::TakesDatasetInfo</ref></defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;Enabled&gt;::type</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+        </templateparamlist>
+        <type>MLAlgorithm</type>
+        <definition>MLAlgorithm TrainModel</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys, const WeightsType &amp;weights, const MLAlgorithmArgs &amp;... args)</argsstring>
+        <name>TrainModel</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Construct a trained MLAlgorithm model if MLAlgorithm takes the numClasses parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="180" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1cv_1_1CVBase_1a9b0382e8121bb8c1cac10557f665c5d6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>MLAlgorithmArgs</declname>
+            <defname>MLAlgorithmArgs</defname>
+          </param>
+          <param>
+            <type>bool</type>
+            <declname>Enabled</declname>
+            <defname>Enabled</defname>
+            <defval><ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1a0e921a4d1000043d71e5a6fbad480315" kindref="member">MIE::TakesNumClasses</ref> &amp; <ref refid="classmlpack_1_1cv_1_1MetaInfoExtractor_1ae50c72f23be6bf92e820b643ae123189" kindref="member">MIE::TakesDatasetInfo</ref></defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>typename std::enable_if&lt;Enabled&gt;::type</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+          <param>
+            <type>typename</type>
+            <defval>void</defval>
+          </param>
+        </templateparamlist>
+        <type>MLAlgorithm</type>
+        <definition>MLAlgorithm TrainModel</definition>
+        <argsstring>(const MatType &amp;xs, const PredictionsType &amp;ys, const WeightsType &amp;weights, const MLAlgorithmArgs &amp;... args)</argsstring>
+        <name>TrainModel</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>xs</declname>
+        </param>
+        <param>
+          <type>const PredictionsType &amp;</type>
+          <declname>ys</declname>
+        </param>
+        <param>
+          <type>const WeightsType &amp;</type>
+          <declname>weights</declname>
+        </param>
+        <param>
+          <type>const MLAlgorithmArgs &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Construct a trained MLAlgorithm model if MLAlgorithm takes the numClasses parameter and a <ref refid="namespacemlpack_1_1data_1aa243ad7e4d29363b858bbc92b732921d" kindref="member">data::DatasetInfo</ref> parameter. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="194" column="15"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An auxiliary class for cross-validation. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>It serves to handle basic non-data constructor parameters of a machine learning algorithm (like datasetInfo or numClasses) and to assert that the machine learning algorithm and data satisfy certain conditions.</para>
+<para>This class is not meant to be used directly by users. To cross-validate rather use end-user classes like <ref refid="classmlpack_1_1cv_1_1SimpleCV" kindref="compound">SimpleCV</ref> or <ref refid="classmlpack_1_1cv_1_1KFoldCV" kindref="compound">KFoldCV</ref>.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MLAlgorithm</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A machine learning algorithm. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>MatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>PredictionsType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of predictions (labels/responses). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>WeightsType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of weights. It supposed to be void* when weights are not supported. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>CVBase&lt; MLAlgorithm, MatType, PredictionsType, WeightsType &gt;</label>
+        <link refid="classmlpack_1_1cv_1_1CVBase"/>
+      </node>
+      <node id="2">
+        <label>CVBase&lt; MLAlgorithm, arma::mat, typename MetaInfoExtractor&lt; MLAlgorithm, arma::mat &gt;::PredictionsType, typename MetaInfoExtractor&lt; MLAlgorithm, arma::mat, typename MetaInfoExtractor&lt; MLAlgorithm, arma::mat &gt;::PredictionsType &gt;::WeightsType &gt;</label>
+        <link refid="classmlpack_1_1cv_1_1CVBase"/>
+        <childnode refid="1" relation="template-instance">
+          <edgelabel>&lt; MLAlgorithm, arma::mat, typename MetaInfoExtractor&lt; MLAlgorithm, arma::mat &gt;::PredictionsType, typename MetaInfoExtractor&lt; MLAlgorithm, arma::mat, typename MetaInfoExtractor&lt; MLAlgorithm, arma::mat &gt;::PredictionsType &gt;::WeightsType &gt;</edgelabel>
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" line="39" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/cv/cv_base.hpp" bodystart="40" bodyend="228"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1ae1e254399d702b57b117cbf834faa45a" prot="public" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>AssertDataConsistency</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a51aa1e9653c91a91434b25e476bf5216" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>AssertSizeEquality</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a5039acfc2b793e2dc813a07eddb457a1" prot="public" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>AssertWeightsConsistency</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1aef2f5b39f3443a0d0ce68409f9f8de99" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>AssertWeightsSize</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a0b26728db400bc58a826f99965b22adc" prot="public" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>CVBase</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a0767da5bbe4ffe608d7a5887533bac41" prot="public" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>CVBase</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1ad58931db3199d060bd4b5db9268197a5" prot="public" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>CVBase</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a00317ccbae8a12222053b0bf8138efa1" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>datasetInfo</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a399141f36c6cd0744ba0c2d9a2c6e22e" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>isDatasetInfoPassed</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a8136390cdbea4d1b8b3fe885c223b590" prot="public" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>MIE</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a4dd554142bdfbb014ddcac55577facef" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>numClasses</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a31e9234a1f4e504d385dfa3870f71cad" prot="public" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1ae50527d3c3f50b7a26eb239b6a3ed655" prot="public" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>Train</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1ace365949cd5869e17b72f4f9e1572dfb" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>TrainModel</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a7c84a7123b738c9a291f9f01ed949610" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>TrainModel</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a79f62e78a53471c0071f8a8bdc1a54e7" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>TrainModel</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a94d793fe6db608113057a3fcfdf6899f" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>TrainModel</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a088e97440eaffc812bf220d02a25a9cf" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>TrainModel</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a9b0382e8121bb8c1cac10557f665c5d6" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>TrainModel</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1ace365949cd5869e17b72f4f9e1572dfb" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>TrainModel</name></member>
+      <member refid="classmlpack_1_1cv_1_1CVBase_1a7c84a7123b738c9a291f9f01ed949610" prot="private" virt="non-virtual"><scope>mlpack::cv::CVBase</scope><name>TrainModel</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

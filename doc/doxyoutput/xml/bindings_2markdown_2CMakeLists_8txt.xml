@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="bindings_2markdown_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="bindings_2markdown_2CMakeLists_8txt_1a2e62d44f7df125ebe7b7665fdb129a2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>macro</definition>
+        <argsstring>(add_markdown_docs name languages category) endmacro() function(post_markdown_setup) endfunction() return() endmacro() if(NOT BUILD_MARKDOWN_BINDINGS) not_found_return(&quot;Not building Markdown bindings.&quot;) endif() include(MarkdownCategories.cmake) set(MARKDOWN_CATEGORIES $</argsstring>
+        <name>macro</name>
+        <param>
+          <type>add_markdown_docs name languages</type>
+          <declname>category</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/CMakeLists.txt" line="4" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/CMakeLists.txt" bodystart="4" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="bindings_2markdown_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>macro</definition>
+        <argsstring>(not_found_return message) message(STATUS &quot;$</argsstring>
+        <name>macro</name>
+        <param>
+          <type>not_found_return</type>
+          <declname>message</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/CMakeLists.txt" line="1" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/CMakeLists.txt" bodystart="1" bodyend="2"/>
+      </memberdef>
+      <memberdef kind="function" id="bindings_2markdown_2CMakeLists_8txt_1a75d38531458e6640f5a9aa8a5d1cb9b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PARENT_SCOPE</type>
+        <definition>PARENT_SCOPE set</definition>
+        <argsstring>(SOURCES &quot;binding_info.hpp&quot; &quot;binding_info.cpp&quot; &quot;default_param.hpp&quot; &quot;get_binding_name.hpp&quot; &quot;get_binding_name.cpp&quot; &quot;get_param.hpp&quot; &quot;get_printable_param.hpp&quot; &quot;get_printable_param_name.hpp&quot; &quot;get_printable_param_name_impl.hpp&quot; &quot;get_printable_type.hpp&quot; &quot;md_option.hpp&quot; &quot;print_doc_functions.hpp&quot; &quot;print_doc_functions_impl.hpp&quot; &quot;print_docs.hpp&quot; &quot;print_docs.cpp&quot; &quot;print_type_doc.hpp&quot; &quot;program_doc_wrapper.hpp&quot;) add_custom_target(markdown_copy) add_custom_command(TARGET markdown_copy PRE_BUILD COMMAND $</argsstring>
+        <name>set</name>
+        <param>
+          <type>SOURCES &quot;binding_info.hpp&quot; &quot;binding_info.cpp&quot; &quot;default_param.hpp&quot; &quot;get_binding_name.hpp&quot; &quot;get_binding_name.cpp&quot; &quot;get_param.hpp&quot; &quot;get_printable_param.hpp&quot; &quot;get_printable_param_name.hpp&quot; &quot;get_printable_param_name_impl.hpp&quot; &quot;get_printable_type.hpp&quot; &quot;md_option.hpp&quot; &quot;print_doc_functions.hpp&quot; &quot;print_doc_functions_impl.hpp&quot; &quot;print_docs.hpp&quot; &quot;print_docs.cpp&quot; &quot;print_type_doc.hpp&quot; &quot;program_doc_wrapper.hpp&quot;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/CMakeLists.txt" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/bindings/markdown/CMakeLists.txt" bodystart="28" bodyend="51"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1" refid="bindings_2markdown_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" refkind="member"><highlight class="normal"><ref refid="bindings_2go_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" kindref="member">macro</ref><sp/>(not_found_return<sp/>message)</highlight></codeline>
+<codeline lineno="2"><highlight class="normal"><sp/><sp/>message(STATUS<sp/></highlight><highlight class="stringliteral">&quot;${message}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4" refid="bindings_2markdown_2CMakeLists_8txt_1a2e62d44f7df125ebe7b7665fdb129a2e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="bindings_2go_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" kindref="member">macro</ref><sp/>(add_markdown_docs<sp/>name<sp/>languages<sp/>category)</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>Do<sp/>nothing.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/>endmacro()</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/>function<sp/>(post_markdown_setup)</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>Do<sp/>nothing.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/>endfunction<sp/>()</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/>return<sp/>()</highlight></codeline>
+<codeline lineno="13"><highlight class="normal">endmacro<sp/>()</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><ref refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" kindref="member">if</ref><sp/>(NOT<sp/>BUILD_MARKDOWN_BINDINGS)</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/>not_found_return(&quot;Not<sp/>building<sp/>Markdown<sp/>bindings.&quot;)</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>We<sp/>don&apos;t<sp/>need<sp/>to<sp/>find<sp/>any<sp/>libraries<sp/>or<sp/>anything<sp/>to<sp/>generate<sp/>markdown</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>documentation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Get<sp/>categories.<sp/><sp/>The<sp/>list<sp/>of<sp/>allowable<sp/>categories<sp/>for<sp/>add_markdown_docs()<sp/>is</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>in<sp/>that<sp/>file.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><ref refid="bindings_2R_2CMakeLists_8txt_1a45548f086df473757b6a7c11f719387c" kindref="member">include</ref>(MarkdownCategories.cmake)</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(MARKDOWN_CATEGORIES<sp/>${MARKDOWN_CATEGORIES}<sp/>PARENT_SCOPE)</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal">#<sp/>Add<sp/>sources<sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>Markdown<sp/>bindings.</highlight></codeline>
+<codeline lineno="28" refid="bindings_2markdown_2CMakeLists_8txt_1a75d38531458e6640f5a9aa8a5d1cb9b8" refkind="member"><highlight class="normal">set(SOURCES</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;binding_info.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;binding_info.cpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;default_param.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;get_binding_name.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;get_binding_name.cpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;get_param.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;get_printable_param.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;get_printable_param_name.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;get_printable_param_name_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;get_printable_type.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;md_option.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;print_doc_functions.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;print_doc_functions_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;print_docs.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;print_docs.cpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;print_type_doc.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="stringliteral">&quot;program_doc_wrapper.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Copy<sp/>all<sp/>Markdown<sp/>sources<sp/>to<sp/>the<sp/>build<sp/>directory.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><ref refid="bindings_2python_2CMakeLists_8txt_1a5b4074bc3828c30b7aacd91ad914c7ba" kindref="member">add_custom_target</ref>(markdown_copy)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">add_custom_command(TARGET<sp/>markdown_copy<sp/>PRE_BUILD</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>make_directory</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/markdown/)</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal">(file<sp/>${SOURCES})</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>add_custom_command(TARGET<sp/>markdown_copy<sp/>PRE_BUILD</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>ARGS<sp/>-E<sp/>copy</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_CURRENT_SOURCE_DIR}/${file}</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/markdown/)</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">endforeach()</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Create<sp/>the<sp/>add_markdown_docs()<sp/>macro.<sp/><sp/>It&apos;s<sp/>meant<sp/>to<sp/>be<sp/>used<sp/>as</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>&apos;add_markdown_docs(knn,<sp/>&quot;cli;python;julia&quot;</highlight><highlight class="normal">,<sp/>&quot;classification&quot;)&apos;,<sp/>for<sp/>instance.</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>See<sp/>the<sp/>file<sp/>&apos;MarkdownCategories.cmake&apos;<sp/>for<sp/>valid<sp/>categories<sp/>that<sp/>can<sp/>be<sp/>used</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>by<sp/>the<sp/>macro.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><ref refid="bindings_2go_2CMakeLists_8txt_1a9119971a8d6df98dd1edabc89b0107f5" kindref="member">macro</ref><sp/>(add_markdown_docs<sp/>name<sp/>languages<sp/>category)</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>First,<sp/>make<sp/>sure<sp/>that<sp/>the<sp/>category<sp/>is<sp/>a<sp/>valid<sp/>category.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>list(FIND<sp/>MARKDOWN_CATEGORIES<sp/>${category}<sp/>cat_index)</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(${cat_index}<sp/>EQUAL<sp/>-1)</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal">(CONCAT<sp/>error_str<sp/></highlight><highlight class="stringliteral">&quot;add_markdown_docs():<sp/>unknown<sp/>category<sp/>${category}!&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>See<sp/>the<sp/>categories<sp/>in<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;src/mlpack/bindings/markdown/MarkdownCategories.cmake.&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>message(FATAL_ERROR<sp/></highlight><highlight class="stringliteral">&quot;${ERROR_STR}&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>Next,<sp/>we<sp/>should<sp/>use<sp/>configure_file()<sp/>to<sp/>generate<sp/>each</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#<sp/>generate_markdown.&lt;binding&gt;.cpp.<sp/><sp/>We<sp/>need<sp/>to<sp/>loop<sp/>over<sp/>all<sp/>the<sp/>languages<sp/>for</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/>#<sp/>this<sp/>binding<sp/>to<sp/>do<sp/>that.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(BINDING<sp/>${name})</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(LANGUAGES_PUSH_BACK_CODE<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(PROGRAM_MAIN_FILE<sp/></highlight><highlight class="stringliteral">&quot;${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal"><sp/>(lang<sp/>${languages})</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(LANGUAGES_PUSH_BACK_CODE</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${LANGUAGES_PUSH_BACK_CODE}\n<sp/><sp/>languages.push_back(\&quot;${lang}\&quot;);&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(MARKDOWN_ALL_LANGUAGES_LIST<sp/>${MARKDOWN_ALL_LANGUAGES_LIST}<sp/>${lang})</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>endforeach<sp/>()</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/>list(REMOVE_DUPLICATES<sp/>MARKDOWN_ALL_LANGUAGES_LIST)</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="preprocessor">#<sp/>Do<sp/>the<sp/>actual<sp/>file<sp/>configuration.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(BINDING_SOURCE_DIR<sp/>${CMAKE_SOURCE_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/markdown)</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(BINDING_BINARY_DIR<sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/markdown)</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/>configure_file(${BINDING_SOURCE_DIR}/generate_markdown.binding.hpp.in</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${BINDING_BINARY_DIR}/generate_markdown.${name}.hpp)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>configure_file(${BINDING_SOURCE_DIR}/generate_markdown.binding.cpp.in</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${BINDING_BINARY_DIR}/generate_markdown.${name}.cpp)</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/>#<sp/>Lastly,<sp/>that<sp/>generate_markdown.&lt;binding&gt;.cpp<sp/>should<sp/>be<sp/>added<sp/>to<sp/>the<sp/>list<sp/>of</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>#<sp/>files<sp/>to<sp/>be<sp/>compiled<sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>the<sp/></highlight><highlight class="stringliteral">&apos;generate_markdown&apos;</highlight><highlight class="normal"><sp/>target.<sp/><sp/>We<sp/>also<sp/>need<sp/>to</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/>#<sp/>add<sp/>information<sp/>about<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>binding<sp/>to<sp/>a<sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>of<sp/>variables<sp/>we<sp/>have<sp/>to<sp/>track.</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MARKDOWN_SRCS<sp/>${MARKDOWN_SRCS}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/markdown/generate_markdown.${name}.hpp</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/markdown/generate_markdown.${name}.cpp)</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MARKDOWN_SRCS<sp/>${MARKDOWN_SRCS}<sp/>PARENT_SCOPE)</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MARKDOWN_NAMES<sp/>${MARKDOWN_NAMES}<sp/>${name})</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MARKDOWN_NAMES<sp/>${MARKDOWN_NAMES}<sp/>PARENT_SCOPE)</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MARKDOWN_NAME_CATEGORIES<sp/>${MARKDOWN_NAME_CATEGORIES}<sp/>${category})</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MARKDOWN_NAME_CATEGORIES<sp/>${MARKDOWN_NAME_CATEGORIES}<sp/>PARENT_SCOPE)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MARKDOWN_ALL_LANGUAGES_LIST<sp/>${MARKDOWN_ALL_LANGUAGES_LIST}<sp/>PARENT_SCOPE)</highlight></codeline>
+<codeline lineno="109"><highlight class="normal">endmacro<sp/>()</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>After<sp/>all<sp/>the<sp/>methods/<sp/>directories<sp/>have<sp/>been<sp/>traversed,<sp/>we<sp/>can<sp/>add<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>&apos;generate_markdown&apos;<sp/>target.<sp/><sp/>This<sp/>function<sp/>is<sp/>run<sp/>at<sp/>the<sp/>bottom<sp/>of</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>methods/CMakeLists.txt.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="keyword">function</highlight><highlight class="normal"><sp/>(post_markdown_setup)</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/>#<sp/>We<sp/>need<sp/>to<sp/>generate<sp/>the<sp/>program<sp/>file.<sp/><sp/>This<sp/>consists<sp/>of<sp/>generating<sp/>three</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>#<sp/>things:</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/>#</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/>#<sp/>-<sp/>MARKDOWN_INCLUDES:<sp/>the<sp/>list<sp/>of<sp/>files<sp/>to<sp/>be<sp/>included.</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/>#<sp/>-<sp/>MARKDOWN_HEADER_CODE:<sp/>the<sp/>code<sp/>used<sp/>to<sp/>print<sp/>the<sp/>header/sidebar.</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/>#<sp/>-<sp/>MARKDOWN_CALL_CODE:<sp/>the<sp/>code<sp/>to<sp/>actually<sp/>call<sp/>the<sp/>functions<sp/>to<sp/>print</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>#<sp/><sp/><sp/><sp/><sp/><sp/><sp/>documentation<sp/></highlight><highlight class="keywordflow">for<sp/>each</highlight><highlight class="normal"><sp/>binding.</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/>#<sp/>Iterate<sp/>over<sp/>categories<sp/>of<sp/>binding.</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/>list(LENGTH<sp/>MARKDOWN_NAMES<sp/>NUM_MARKDOWN_BINDINGS)</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/>list(LENGTH<sp/>MARKDOWN_CATEGORIES<sp/>NUM_MARKDOWN_CATEGORIES)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>math(EXPR<sp/>cat_limit<sp/></highlight><highlight class="stringliteral">&quot;${NUM_MARKDOWN_CATEGORIES}<sp/>-<sp/>1&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal"><sp/>(i<sp/>RANGE<sp/>${cat_limit})</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>list<sp/>(GET<sp/>MARKDOWN_CATEGORIES<sp/>${i}<sp/>cat)</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>#<sp/>Put<sp/>the<sp/>things<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>category<sp/></highlight><highlight class="keywordflow">in</highlight><highlight class="normal"><sp/>a<sp/>div.</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal">(CONCAT<sp/>header_code<sp/></highlight><highlight class="stringliteral">&quot;${MARKDOWN_HEADER_CODE}<sp/><sp/>cout<sp/>&lt;&lt;<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;\&quot;&lt;div<sp/>class=\\\&quot;category\\\&quot;<sp/>markdown=\\\&quot;1\\\&quot;&gt;\&quot;<sp/>&lt;&lt;<sp/>endl;\n<sp/><sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;cout<sp/>&lt;&lt;<sp/>\&quot;&lt;h5&gt;${cat}:&lt;/h5&gt;\&quot;<sp/>&lt;&lt;<sp/>endl;\n&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(MARKDOWN_HEADER_CODE<sp/>${header_code})</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>#<sp/>Add<sp/>an<sp/>option<sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>binding.</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/>math(EXPR<sp/>range_limit<sp/></highlight><highlight class="stringliteral">&quot;${NUM_MARKDOWN_BINDINGS}<sp/>-<sp/>1&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal"><sp/>(j<sp/>RANGE<sp/>${range_limit})</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>list<sp/>(GET<sp/>MARKDOWN_NAME_CATEGORIES<sp/>${j}<sp/>category)</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(NOT<sp/>category<sp/>STREQUAL<sp/>cat)</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">continue</highlight><highlight class="normal"><sp/>()</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="bindings_2julia_2CMakeLists_8txt_1ad6d0eb7ab1ee4b4fd200da5b6970baba" kindref="member">endif</ref><sp/>()</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>list<sp/>(GET<sp/>MARKDOWN_NAMES<sp/>${j}<sp/>name)</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MARKDOWN_HEADER_CODE</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${MARKDOWN_HEADER_CODE}\n<sp/><sp/>Print${name}Headers();&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>endforeach<sp/>()</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MARKDOWN_HEADER_CODE</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;${MARKDOWN_HEADER_CODE}\n<sp/><sp/>cout<sp/>&lt;&lt;<sp/>\</highlight><highlight class="stringliteral">&quot;&lt;/div&gt;\&quot;<sp/>&lt;&lt;<sp/>endl<sp/>&lt;&lt;<sp/>endl;&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/>endforeach<sp/>()</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/>foreach<sp/>(name<sp/>${MARKDOWN_NAMES})</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MARKDOWN_INCLUDE_CODE</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${MARKDOWN_INCLUDE_CODE}\n#include<sp/>\&quot;generate_markdown.${name}.hpp\&quot;&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref><sp/>(MARKDOWN_CALL_CODE<sp/></highlight><highlight class="stringliteral">&quot;${MARKDOWN_CALL_CODE}\n<sp/><sp/>Print${name}Docs();&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/>endforeach<sp/>()</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(BINDING_SOURCE_DIR<sp/>${CMAKE_SOURCE_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/markdown)</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(BINDING_BINARY_DIR<sp/>${CMAKE_BINARY_DIR}/src/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>/bindings/markdown)</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/>configure_file(${BINDING_SOURCE_DIR}/generate_markdown.cpp.in</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${BINDING_BINARY_DIR}/generate_markdown.cpp)</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/>#<sp/>Remember<sp/>that<sp/></highlight><highlight class="keyword">this</highlight><highlight class="normal"><sp/>is<sp/>being<sp/>run<sp/>from<sp/>some<sp/>other<sp/>directory,<sp/>so<sp/>we<sp/>have<sp/>to<sp/>be</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/>#<sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/>with<sp/>the<sp/>locations<sp/>of<sp/>the<sp/>files<sp/>we<sp/>are<sp/>compiling<sp/>against.</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/>add_executable(generate_markdown</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_BINARY_DIR}/generate_markdown.cpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${MARKDOWN_SRCS}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/binding_info.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/binding_info.cpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/default_param.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/get_binding_name.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/get_binding_name.cpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/get_param.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/get_printable_param.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/get_printable_param_name.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/get_printable_param_name_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/md_option.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/print_doc_functions.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/print_doc_functions_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/print_docs.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/print_docs.cpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/program_doc_wrapper.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;${BINDING_SOURCE_DIR}/generate_markdown.cpp&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/>target_link_libraries(generate_markdown<sp/><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>${MLPACK_LIBRARIES})</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/>add_dependencies(generate_markdown<sp/>markdown_copy)</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/>set_target_properties(generate_markdown<sp/>PROPERTIES</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>COMPILE_FLAGS<sp/>-DBINDING_TYPE=<ref refid="mlpack__main_8hpp_1a607516c48a92981d0ad69a9630c5d310" kindref="member">BINDING_TYPE_MARKDOWN</ref></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>RUNTIME_OUTPUT_DIRECTORY<sp/>${BINDING_BINARY_DIR})</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><ref refid="bindings_2python_2CMakeLists_8txt_1a5b4074bc3828c30b7aacd91ad914c7ba" kindref="member">add_custom_target</ref>(markdown<sp/>ALL</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_COMMAND}<sp/>-E<sp/>make_directory</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/doc/</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-DPROGRAM=${BINDING_BINARY_DIR}/generate_markdown</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-DOUTPUT_FILE=${CMAKE_BINARY_DIR}/doc/<ref refid="namespacemlpack" kindref="compound">mlpack</ref>.md</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-P<sp/>${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>copy</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${BINDING_SOURCE_DIR}/res/change_language.js</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/doc/res/change_languages.js</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>copy</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${BINDING_SOURCE_DIR}/res/menu_bg.png</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/doc/res/menu_bg.png</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>COMMAND<sp/>${CMAKE_COMMAND}<sp/>-E<sp/>copy</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${BINDING_SOURCE_DIR}/res/formatting.css</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>${CMAKE_BINARY_DIR}/doc/res/formatting.css</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>DEPENDS<sp/>generate_markdown</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>COMMENT<sp/></highlight><highlight class="stringliteral">&quot;Generating<sp/>Markdown<sp/>documentation<sp/>for<sp/>mlpack<sp/>bindings...&quot;</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="209"><highlight class="normal">endfunction<sp/>()</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/markdown/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

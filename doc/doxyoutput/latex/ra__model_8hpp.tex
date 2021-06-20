@@ -1,0 +1,36 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/methods/rann/ra\+\_\+model.hpp File Reference}
+\label{ra__model_8hpp}\index{/home/aakash/mlpack/src/mlpack/methods/rann/ra\_model.hpp@{/home/aakash/mlpack/src/mlpack/methods/rann/ra\_model.hpp}}
+Include dependency graph for ra\+\_\+model.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{ra__model_8hpp__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ Leaf\+Size\+RAWrapper$<$ Tree\+Type $>$}
+\begin{DoxyCompactList}\small\item\em \doxyref{Leaf\+Size\+RAWrapper}{p.}{classmlpack_1_1neighbor_1_1LeafSizeRAWrapper} wraps any \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch} type that needs to be able to take the leaf size into account when building trees. \end{DoxyCompactList}\item 
+class \textbf{ RAModel}
+\begin{DoxyCompactList}\small\item\em The \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel} class provides an abstraction for the \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch} class, abstracting away the Tree\+Type parameter and allowing it to be specified at runtime in this class. \end{DoxyCompactList}\item 
+class \textbf{ RAWrapper$<$ Tree\+Type $>$}
+\begin{DoxyCompactList}\small\item\em \doxyref{RAWrapper}{p.}{classmlpack_1_1neighbor_1_1RAWrapper} is a wrapper class for most \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch} types. \end{DoxyCompactList}\item 
+class \textbf{ RAWrapper\+Base}
+\begin{DoxyCompactList}\small\item\em \doxyref{RAWrapper\+Base}{p.}{classmlpack_1_1neighbor_1_1RAWrapperBase} is a base wrapper class for holding all \doxyref{RASearch}{p.}{classmlpack_1_1neighbor_1_1RASearch} types supported by \doxyref{RAModel}{p.}{classmlpack_1_1neighbor_1_1RAModel}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::neighbor}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+This is a model for rank-\/approximate nearest neighbor search. It provides an easy way to serialize a rank-\/approximate neighbor search model by abstracting the types of trees and reflecting the RASearch API.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

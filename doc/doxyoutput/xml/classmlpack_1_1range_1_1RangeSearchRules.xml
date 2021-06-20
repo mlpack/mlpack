@@ -1,0 +1,675 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1range_1_1RangeSearchRules" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::range::RangeSearchRules</compoundname>
+    <includes refid="range__search__rules_8hpp" local="no">range_search_rules.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename MetricType</type>
+      </param>
+      <param>
+        <type>typename TreeType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classmlpack_1_1range_1_1RangeSearchRules_1ab5f079db10d0a6813eefeb1115e894cb" prot="public" static="no">
+        <type><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">tree::TraversalInfo</ref>&lt; TreeType &gt;</type>
+        <definition>typedef tree::TraversalInfo&lt;TreeType&gt; TraversalInfoType</definition>
+        <argsstring></argsstring>
+        <name>TraversalInfoType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="110" column="40" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1a06e4c7b3f942c628e2b3584e7ba02cbf" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t baseCases</definition>
+        <argsstring></argsstring>
+        <name>baseCases</name>
+        <briefdescription>
+<para>The number of base cases. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="160" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1acab4ed2b426acbc7f27a75e88d0c80e1" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; double &gt; &gt; &amp;</type>
+        <definition>std::vector&lt;std::vector&lt;double&gt; &gt;&amp; distances</definition>
+        <argsstring></argsstring>
+        <name>distances</name>
+        <briefdescription>
+<para>The vector the resultant neighbor distances should be stored in. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="138" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1a89e87b0301224505aa09b8c85738a364" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t lastQueryIndex</definition>
+        <argsstring></argsstring>
+        <name>lastQueryIndex</name>
+        <briefdescription>
+<para>The last query index. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="147" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1ad83397af4d986c7afc78e3d1f31f9276" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t lastReferenceIndex</definition>
+        <argsstring></argsstring>
+        <name>lastReferenceIndex</name>
+        <briefdescription>
+<para>The last reference index. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="149" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1abc0ef94d224e16bddfe3ded53dfb5133" prot="private" static="no" mutable="no">
+        <type>MetricType &amp;</type>
+        <definition>MetricType&amp; metric</definition>
+        <argsstring></argsstring>
+        <name>metric</name>
+        <briefdescription>
+<para>The instantiated metric. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="141" column="14" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1a8577b830d3bf555ebf13bd590529ab23" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; size_t &gt; &gt; &amp;</type>
+        <definition>std::vector&lt;std::vector&lt;size_t&gt; &gt;&amp; neighbors</definition>
+        <argsstring></argsstring>
+        <name>neighbors</name>
+        <briefdescription>
+<para>The vector the resultant neighbor indices should be stored in. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="135" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1ad585c8d02ad487ba4559c4fefdf121cc" prot="private" static="no" mutable="no">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; querySet</definition>
+        <argsstring></argsstring>
+        <name>querySet</name>
+        <briefdescription>
+<para>The query set. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="129" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1a7a9e9e021ba56e900e46727a46274fc3" prot="private" static="no" mutable="no">
+        <type>const <ref refid="namespacemlpack_1_1math_1ad17d9cabd4fd82cbed4ccd5e53b47d70" kindref="member">math::Range</ref> &amp;</type>
+        <definition>const math::Range&amp; range</definition>
+        <argsstring></argsstring>
+        <name>range</name>
+        <briefdescription>
+<para>The range of distances for which we are searching. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="132" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1a620a93f66bf649d3ac7143ee6e5af010" prot="private" static="no" mutable="no">
+        <type>const arma::mat &amp;</type>
+        <definition>const arma::mat&amp; referenceSet</definition>
+        <argsstring></argsstring>
+        <name>referenceSet</name>
+        <briefdescription>
+<para>The reference set. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="126" column="19" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1a500d895c970c9ee5d0c77ff7b8508cfc" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool sameSet</definition>
+        <argsstring></argsstring>
+        <name>sameSet</name>
+        <briefdescription>
+<para>If true, the query and reference set are taken to be the same. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="144" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1aecc3c9a30f1be1fe8b602374bde73e7b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t scores</definition>
+        <argsstring></argsstring>
+        <name>scores</name>
+        <briefdescription>
+<para>THe number of scores. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="162" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1range_1_1RangeSearchRules_1aa987143b3965542c77c85c8212abedbe" prot="private" static="no" mutable="no">
+        <type><ref refid="classmlpack_1_1range_1_1RangeSearchRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref></type>
+        <definition>TraversalInfoType traversalInfo</definition>
+        <argsstring></argsstring>
+        <name>traversalInfo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="157" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1a2397afb5262305bb6b1bb41d18f84cb2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RangeSearchRules</definition>
+        <argsstring>(const arma::mat &amp;referenceSet, const arma::mat &amp;querySet, const math::Range &amp;range, std::vector&lt; std::vector&lt; size_t &gt; &gt; &amp;neighbors, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;distances, MetricType &amp;metric, const bool sameSet=false)</argsstring>
+        <name>RangeSearchRules</name>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>referenceSet</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>querySet</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacemlpack_1_1math_1ad17d9cabd4fd82cbed4ccd5e53b47d70" kindref="member">math::Range</ref> &amp;</type>
+          <declname>range</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; size_t &gt; &gt; &amp;</type>
+          <declname>neighbors</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; double &gt; &gt; &amp;</type>
+          <declname>distances</declname>
+        </param>
+        <param>
+          <type>MetricType &amp;</type>
+          <declname>metric</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>sameSet</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Construct the <ref refid="classmlpack_1_1range_1_1RangeSearchRules" kindref="compound">RangeSearchRules</ref> object. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is usually done from within the <ref refid="classmlpack_1_1range_1_1RangeSearch" kindref="compound">RangeSearch</ref> class at search time.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>referenceSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of reference data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>querySet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of query data. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Range to search for. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>neighbors</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store resulting neighbors in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>distances</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector to store resulting distances in. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>metric</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Instantiated metric. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sameSet</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, the query and reference set are taken to be the same, and a query point will not return itself in the results. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="44" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1abac50f780bb5e1bc12dd0d16d850cacc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BaseCase</definition>
+        <argsstring>(const size_t queryIndex, const size_t referenceIndex)</argsstring>
+        <name>BaseCase</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>referenceIndex</declname>
+        </param>
+        <briefdescription>
+<para>Compute the base case between the given query point and reference point. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of query point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of reference point. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="58" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1a3f4bd5d0aa64ea090796725f7755287d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t BaseCases</definition>
+        <argsstring>() const</argsstring>
+        <name>BaseCases</name>
+        <briefdescription>
+<para>Get the number of base cases. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="116" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="116" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1a469f61784f9cce8f2574c23823405768" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t MinimumBaseCases</definition>
+        <argsstring>() const</argsstring>
+        <name>MinimumBaseCases</name>
+        <briefdescription>
+<para>Get the minimum number of base cases we need to perform to have acceptable results. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="122" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="122" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1ae0ad46f30e80aadc5bc476d46886540f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Rescore</definition>
+        <argsstring>(const size_t queryIndex, TreeType &amp;referenceNode, const double oldScore) const</argsstring>
+        <name>Rescore</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>oldScore</declname>
+        </param>
+        <briefdescription>
+<para>Re-evaluate the score for recursion order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of query point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate node to be recursed into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>oldScore</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Old score produced by <ref refid="classmlpack_1_1range_1_1RangeSearchRules_1a53d373b7aeee359b0e686f823c602b1c" kindref="member">Score()</ref> (or <ref refid="classmlpack_1_1range_1_1RangeSearchRules_1ae0ad46f30e80aadc5bc476d46886540f" kindref="member">Rescore()</ref>). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="81" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1a536e5a7cbce35b9be7443775d32e11f5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Rescore</definition>
+        <argsstring>(TreeType &amp;queryNode, TreeType &amp;referenceNode, const double oldScore) const</argsstring>
+        <name>Rescore</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>oldScore</declname>
+        </param>
+        <briefdescription>
+<para>Re-evaluate the score for recursion order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned). This is used when the score has already been calculated, but another recursion may have modified the bounds for pruning. So the old score is checked against the new pruning bound.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate query node to recurse into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate reference node to recurse into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>oldScore</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Old score produced by <ref refid="classmlpack_1_1range_1_1RangeSearchRules_1a53d373b7aeee359b0e686f823c602b1c" kindref="member">Score()</ref> (or <ref refid="classmlpack_1_1range_1_1RangeSearchRules_1ae0ad46f30e80aadc5bc476d46886540f" kindref="member">Rescore()</ref>). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="106" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1a53d373b7aeee359b0e686f823c602b1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Score</definition>
+        <argsstring>(const size_t queryIndex, TreeType &amp;referenceNode)</argsstring>
+        <name>Score</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Get the score for recursion order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of query point. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate node to be recursed into. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="68" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1a05b142945ef94221b628a75961f48b02" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double Score</definition>
+        <argsstring>(TreeType &amp;queryNode, TreeType &amp;referenceNode)</argsstring>
+        <name>Score</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>queryNode</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Get the score for recursion order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>A low score indicates priority for recursion, while DBL_MAX indicates that the node should not be recursed into at all (it should be pruned).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>queryNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate query node to recurse into. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>referenceNode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Candidate reference node to recurse into. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="93" column="10"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1a4d1e40c0bf406280a237ca1b487e3c62" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Scores</definition>
+        <argsstring>() const</argsstring>
+        <name>Scores</name>
+        <briefdescription>
+<para>Get the number of scores (that is, calls to RangeDistance()). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="118" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="118" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1a4027bb90e756a4520d55978459c7f83e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classmlpack_1_1range_1_1RangeSearchRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref> &amp;</type>
+        <definition>TraversalInfoType&amp; TraversalInfo</definition>
+        <argsstring>()</argsstring>
+        <name>TraversalInfo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="113" column="21" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="113" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="classmlpack_1_1range_1_1RangeSearchRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref> &amp;</type>
+        <definition>const TraversalInfoType&amp; TraversalInfo</definition>
+        <argsstring>() const</argsstring>
+        <name>TraversalInfo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="112" column="27" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="112" bodyend="112"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classmlpack_1_1range_1_1RangeSearchRules_1a95f85c688382c6ea5f219b598fd53505" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void AddResult</definition>
+        <argsstring>(const size_t queryIndex, TreeType &amp;referenceNode)</argsstring>
+        <name>AddResult</name>
+        <param>
+          <type>const size_t</type>
+          <declname>queryIndex</declname>
+        </param>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>referenceNode</declname>
+        </param>
+        <briefdescription>
+<para>Add all the points in the given node to the results for the given query point. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the base case has already been calculated, we make sure to not add that to the results twice. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="154" column="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>The <ref refid="classmlpack_1_1range_1_1RangeSearchRules" kindref="compound">RangeSearchRules</ref> class is a template helper class used by <ref refid="classmlpack_1_1range_1_1RangeSearch" kindref="compound">RangeSearch</ref> class when performing range searches. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>MetricType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The metric to use for computation. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>TreeType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The tree type to use; must adhere to the TreeType API. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" line="28" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/range_search/range_search_rules.hpp" bodystart="29" bodyend="163"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a95f85c688382c6ea5f219b598fd53505" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>AddResult</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1abac50f780bb5e1bc12dd0d16d850cacc" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>BaseCase</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a06e4c7b3f942c628e2b3584e7ba02cbf" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>baseCases</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a3f4bd5d0aa64ea090796725f7755287d" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>BaseCases</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1acab4ed2b426acbc7f27a75e88d0c80e1" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>distances</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a89e87b0301224505aa09b8c85738a364" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>lastQueryIndex</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1ad83397af4d986c7afc78e3d1f31f9276" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>lastReferenceIndex</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1abc0ef94d224e16bddfe3ded53dfb5133" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>metric</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a469f61784f9cce8f2574c23823405768" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>MinimumBaseCases</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a8577b830d3bf555ebf13bd590529ab23" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>neighbors</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1ad585c8d02ad487ba4559c4fefdf121cc" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>querySet</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a7a9e9e021ba56e900e46727a46274fc3" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>range</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a2397afb5262305bb6b1bb41d18f84cb2" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>RangeSearchRules</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a620a93f66bf649d3ac7143ee6e5af010" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>referenceSet</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1ae0ad46f30e80aadc5bc476d46886540f" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>Rescore</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a536e5a7cbce35b9be7443775d32e11f5" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>Rescore</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a500d895c970c9ee5d0c77ff7b8508cfc" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>sameSet</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a53d373b7aeee359b0e686f823c602b1c" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>Score</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a05b142945ef94221b628a75961f48b02" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>Score</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1aecc3c9a30f1be1fe8b602374bde73e7b" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>scores</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a4d1e40c0bf406280a237ca1b487e3c62" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>Scores</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>TraversalInfo</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1a4027bb90e756a4520d55978459c7f83e" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>TraversalInfo</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1aa987143b3965542c77c85c8212abedbe" prot="private" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>traversalInfo</name></member>
+      <member refid="classmlpack_1_1range_1_1RangeSearchRules_1ab5f079db10d0a6813eefeb1115e894cb" prot="public" virt="non-virtual"><scope>mlpack::range::RangeSearchRules</scope><name>TraversalInfoType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

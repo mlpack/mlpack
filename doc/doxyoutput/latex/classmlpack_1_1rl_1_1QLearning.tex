@@ -1,0 +1,371 @@
+\doxysection{QLearning$<$ Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type, Replay\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1rl_1_1QLearning}\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+
+
+Implementation of various Q-\/\+Learning algorithms, such as DQN, double DQN.  
+
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \textbf{ Action\+Type} = typename Environment\+Type\+::\+Action
+\begin{DoxyCompactList}\small\item\em Convenient typedef for action. \end{DoxyCompactList}\item 
+using \textbf{ State\+Type} = typename Environment\+Type\+::\+State
+\begin{DoxyCompactList}\small\item\em Convenient typedef for state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ QLearning} (\textbf{ Training\+Config} \&config, Network\+Type \&network, Policy\+Type \&policy, Replay\+Type \&replay\+Method, Updater\+Type updater=Updater\+Type(), Environment\+Type environment=Environment\+Type())
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{QLearning}{p.}{classmlpack_1_1rl_1_1QLearning} object with given settings. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+QLearning} ()
+\begin{DoxyCompactList}\small\item\em Clean memory. \end{DoxyCompactList}\item 
+const \textbf{ Action\+Type} \& \textbf{ Action} () const
+\begin{DoxyCompactList}\small\item\em Get the action of the agent. \end{DoxyCompactList}\item 
+bool \& \textbf{ Deterministic} ()
+\begin{DoxyCompactList}\small\item\em Modify the training mode / test mode indicator. \end{DoxyCompactList}\item 
+const bool \& \textbf{ Deterministic} () const
+\begin{DoxyCompactList}\small\item\em Get the indicator of training mode / test mode. \end{DoxyCompactList}\item 
+Environment\+Type \& \textbf{ Environment} ()
+\begin{DoxyCompactList}\small\item\em Modify the environment in which the agent is. \end{DoxyCompactList}\item 
+const Environment\+Type \& \textbf{ Environment} () const
+\begin{DoxyCompactList}\small\item\em Get the environment in which the agent is. \end{DoxyCompactList}\item 
+double \textbf{ Episode} ()
+\begin{DoxyCompactList}\small\item\em Execute an episode. \end{DoxyCompactList}\item 
+Network\+Type \& \textbf{ Network} ()
+\begin{DoxyCompactList}\small\item\em Modify the learning network. \end{DoxyCompactList}\item 
+const Network\+Type \& \textbf{ Network} () const
+\begin{DoxyCompactList}\small\item\em Return the learning network. \end{DoxyCompactList}\item 
+void \textbf{ Select\+Action} ()
+\begin{DoxyCompactList}\small\item\em Select an action, given an agent. \end{DoxyCompactList}\item 
+\textbf{ State\+Type} \& \textbf{ State} ()
+\begin{DoxyCompactList}\small\item\em Modify the state of the agent. \end{DoxyCompactList}\item 
+const \textbf{ State\+Type} \& \textbf{ State} () const
+\begin{DoxyCompactList}\small\item\em Get the state of the agent. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Total\+Steps} ()
+\begin{DoxyCompactList}\small\item\em Modify total steps from beginning. \end{DoxyCompactList}\item 
+const size\+\_\+t \& \textbf{ Total\+Steps} () const
+\begin{DoxyCompactList}\small\item\em Get total steps from beginning. \end{DoxyCompactList}\item 
+void \textbf{ Train\+Agent} ()
+\begin{DoxyCompactList}\small\item\em Trains the DQN agent(non-\/categorical). \end{DoxyCompactList}\item 
+void \textbf{ Train\+Categorical\+Agent} ()
+\begin{DoxyCompactList}\small\item\em Trains the DQN agent of categorical type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Environment\+Type, typename Network\+Type, typename Updater\+Type, typename Policy\+Type, typename Replay\+Type = Random\+Replay$<$\+Environment\+Type$>$$>$\newline
+class mlpack\+::rl\+::\+QLearning$<$ Environment\+Type, Network\+Type, Updater\+Type, Policy\+Type, Replay\+Type $>$}
+
+Implementation of various Q-\/\+Learning algorithms, such as DQN, double DQN. 
+
+For more details, see the following\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@article\{Mnih2013,}
+\DoxyCodeLine{ author    = \{Volodymyr Mnih and}
+\DoxyCodeLine{              Koray Kavukcuoglu and}
+\DoxyCodeLine{              David Silver and}
+\DoxyCodeLine{              Alex Graves and}
+\DoxyCodeLine{              Ioannis Antonoglou and}
+\DoxyCodeLine{              Daan Wierstra and}
+\DoxyCodeLine{              Martin A. Riedmiller\},}
+\DoxyCodeLine{ title     = \{Playing Atari with Deep Reinforcement Learning\},}
+\DoxyCodeLine{ journal   = \{CoRR\},}
+\DoxyCodeLine{ year      = \{2013\},}
+\DoxyCodeLine{ url       = \{http:\textcolor{comment}{//arxiv.org/abs/1312.5602\}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Environment\+Type} & The environment of the reinforcement learning task. \\
+\hline
+{\em Network\+Type} & The network to compute action value. \\
+\hline
+{\em Updater\+Type} & How to apply gradients when training. \\
+\hline
+{\em Policy\+Type} & Behavior policy of the agent. \\
+\hline
+{\em Replay\+Type} & Experience replay method. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 58 of file q\+\_\+learning.\+hpp.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_aaf7b2dc5d49d01961601c7c16be76777}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!ActionType@{ActionType}}
+\index{ActionType@{ActionType}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{ActionType}
+{\footnotesize\ttfamily using \textbf{ Action\+Type} =  typename Environment\+Type\+::\+Action}
+
+
+
+Convenient typedef for action. 
+
+
+
+Definition at line 65 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_ada68ef405b7c331a2bee337614f00088}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!StateType@{StateType}}
+\index{StateType@{StateType}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{StateType}
+{\footnotesize\ttfamily using \textbf{ State\+Type} =  typename Environment\+Type\+::\+State}
+
+
+
+Convenient typedef for state. 
+
+
+
+Definition at line 62 of file q\+\_\+learning.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_a227f51fcb4729eb7f88d28f07ee6c556}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!QLearning@{QLearning}}
+\index{QLearning@{QLearning}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{QLearning()}
+{\footnotesize\ttfamily \textbf{ QLearning} (\begin{DoxyParamCaption}\item[{\textbf{ Training\+Config} \&}]{config,  }\item[{Network\+Type \&}]{network,  }\item[{Policy\+Type \&}]{policy,  }\item[{Replay\+Type \&}]{replay\+Method,  }\item[{Updater\+Type}]{updater = {\ttfamily UpdaterType()},  }\item[{Environment\+Type}]{environment = {\ttfamily EnvironmentType()} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{QLearning}{p.}{classmlpack_1_1rl_1_1QLearning} object with given settings. 
+
+If you want to pass in a parameter and discard the original parameter object, be sure to use std\+::move to avoid unnecessary copy.
+
+
+\begin{DoxyParams}{Parameters}
+{\em config} & Hyper-\/parameters for training. \\
+\hline
+{\em network} & The network to compute action value. \\
+\hline
+{\em policy} & Behavior policy of the agent. \\
+\hline
+{\em replay\+Method} & Experience replay method. \\
+\hline
+{\em updater} & How to apply gradients when training. \\
+\hline
+{\em environment} & Reinforcement learning task. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_a3af4fd238d225e0d3c31b9be79b61727}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!````~QLearning@{$\sim$QLearning}}
+\index{````~QLearning@{$\sim$QLearning}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{$\sim$QLearning()}
+{\footnotesize\ttfamily $\sim$\textbf{ QLearning} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clean memory. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_a0d32caed9517e5d2014238a22f78352d}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!Action@{Action}}
+\index{Action@{Action}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{Action()}
+{\footnotesize\ttfamily const \textbf{ Action\+Type}\& Action (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the action of the agent. 
+
+
+
+Definition at line 124 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_a42d4ee3da432cff20d3a41b8b1ec801c}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{Deterministic()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool\& Deterministic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the training mode / test mode indicator. 
+
+
+
+Definition at line 132 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_a5d262f7871c5cc8b532971fb644f0abf}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!Deterministic@{Deterministic}}
+\index{Deterministic@{Deterministic}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{Deterministic()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const bool\& Deterministic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the indicator of training mode / test mode. 
+
+
+
+Definition at line 134 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_a59cc43eb892c46ea7c50e18fb78b9172}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!Environment@{Environment}}
+\index{Environment@{Environment}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{Environment()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Environment\+Type\& Environment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the environment in which the agent is. 
+
+
+
+Definition at line 127 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_adc517fd7b152925b4297e09a3bb4afe0}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!Environment@{Environment}}
+\index{Environment@{Environment}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{Environment()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Environment\+Type\& Environment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the environment in which the agent is. 
+
+
+
+Definition at line 129 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_a1fb26736f2d90010f882f9628cd26612}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!Episode@{Episode}}
+\index{Episode@{Episode}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{Episode()}
+{\footnotesize\ttfamily double Episode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Execute an episode. 
+
+\begin{DoxyReturn}{Returns}
+Return of the episode. 
+\end{DoxyReturn}
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_a3802bdee893a3f86fb9fa08cbbc8239c}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!Network@{Network}}
+\index{Network@{Network}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{Network()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Network\+Type\& Network (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the learning network. 
+
+
+
+Definition at line 139 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_a0ce8c122193c6a20fd4b397bc8525f7d}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!Network@{Network}}
+\index{Network@{Network}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{Network()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const Network\+Type\& Network (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the learning network. 
+
+
+
+Definition at line 137 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_abd126acd7f564c8326dc765232624ae4}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!SelectAction@{SelectAction}}
+\index{SelectAction@{SelectAction}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{SelectAction()}
+{\footnotesize\ttfamily void Select\+Action (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Select an action, given an agent. 
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_ad7a595de4a1a67da528603c20f80315f}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!State@{State}}
+\index{State@{State}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ State\+Type}\& State (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the state of the agent. 
+
+
+
+Definition at line 119 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_afa3e388ae5e024c8ec49fd4d1ef725ad}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!State@{State}}
+\index{State@{State}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{State()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const \textbf{ State\+Type}\& State (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the state of the agent. 
+
+
+
+Definition at line 121 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_abaf0bb243c2e643c57654b8e65058fa0}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!TotalSteps@{TotalSteps}}
+\index{TotalSteps@{TotalSteps}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{TotalSteps()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Total\+Steps (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify total steps from beginning. 
+
+
+
+Definition at line 114 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_a689af4e6e564ab01f40e6ec49638bdaf}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!TotalSteps@{TotalSteps}}
+\index{TotalSteps@{TotalSteps}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{TotalSteps()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const size\+\_\+t\& Total\+Steps (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get total steps from beginning. 
+
+
+
+Definition at line 116 of file q\+\_\+learning.\+hpp.
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_af04dfd4648a33410066287689a50ec61}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!TrainAgent@{TrainAgent}}
+\index{TrainAgent@{TrainAgent}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{TrainAgent()}
+{\footnotesize\ttfamily void Train\+Agent (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Trains the DQN agent(non-\/categorical). 
+
+\mbox{\label{classmlpack_1_1rl_1_1QLearning_a3f06484571e0a6d51976b6a93cd34705}} 
+\index{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}!TrainCategoricalAgent@{TrainCategoricalAgent}}
+\index{TrainCategoricalAgent@{TrainCategoricalAgent}!QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$@{QLearning$<$ EnvironmentType, NetworkType, UpdaterType, PolicyType, ReplayType $>$}}
+\doxysubsubsection{TrainCategoricalAgent()}
+{\footnotesize\ttfamily void Train\+Categorical\+Agent (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Trains the DQN agent of categorical type. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/reinforcement\+\_\+learning/\textbf{ q\+\_\+learning.\+hpp}\end{DoxyCompactItemize}

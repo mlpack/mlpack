@@ -1,0 +1,53 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/core/tree/binary\+\_\+space\+\_\+tree/typedef.hpp File Reference}
+\label{core_2tree_2binary__space__tree_2typedef_8hpp}\index{/home/aakash/mlpack/src/mlpack/core/tree/binary\_space\_tree/typedef.hpp@{/home/aakash/mlpack/src/mlpack/core/tree/binary\_space\_tree/typedef.hpp}}
+Include dependency graph for typedef.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{core_2tree_2binary__space__tree_2typedef_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{core_2tree_2binary__space__tree_2typedef_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::tree}
+\begin{DoxyCompactList}\small\item\em Trees and tree-\/building procedures. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using \textbf{ Ball\+Tree} = Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, bound\+::\+Ball\+Bound, Midpoint\+Split $>$
+\begin{DoxyCompactList}\small\item\em A midpoint-\/split ball tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using \textbf{ KDTree} = Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, bound\+::\+HRect\+Bound, Midpoint\+Split $>$
+\begin{DoxyCompactList}\small\item\em The standard midpoint-\/split kd-\/tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using \textbf{ Max\+RPTree} = Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, bound\+::\+HRect\+Bound, RPTree\+Max\+Split $>$
+\begin{DoxyCompactList}\small\item\em A max-\/split random projection tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using \textbf{ Mean\+Split\+Ball\+Tree} = Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, bound\+::\+Ball\+Bound, Mean\+Split $>$
+\begin{DoxyCompactList}\small\item\em A mean-\/split ball tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using \textbf{ Mean\+Split\+KDTree} = Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, bound\+::\+HRect\+Bound, Mean\+Split $>$
+\begin{DoxyCompactList}\small\item\em A mean-\/split kd-\/tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using \textbf{ RPTree} = Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, bound\+::\+HRect\+Bound, RPTree\+Mean\+Split $>$
+\begin{DoxyCompactList}\small\item\em A mean-\/split random projection tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using \textbf{ UBTree} = Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, bound\+::\+Cell\+Bound, UBTree\+Split $>$
+\begin{DoxyCompactList}\small\item\em The Universal B-\/tree. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Metric\+Type , typename Statistic\+Type , typename Mat\+Type $>$ }\\using \textbf{ VPTree} = Binary\+Space\+Tree$<$ Metric\+Type, Statistic\+Type, Mat\+Type, bound\+::\+Hollow\+Ball\+Bound, VPTree\+Split $>$
+\item 
+{\footnotesize template$<$typename Bound\+Type , typename Mat\+Type  = arma\+::mat$>$ }\\using \textbf{ VPTree\+Split} = Vantage\+Point\+Split$<$ Bound\+Type, Mat\+Type, 100 $>$
+\begin{DoxyCompactList}\small\item\em The vantage point tree (which is also called the metric tree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Template typedefs for the Binary\+Space\+Tree class that satisfy the requirements of the Tree\+Type policy class.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="julia_2print__doc__functions_8hpp" kind="file" language="C++">
+    <compoundname>print_doc_functions.hpp</compoundname>
+    <includes refid="hyphenate__string_8hpp" local="no">mlpack/core/util/hyphenate_string.hpp</includes>
+    <includes local="yes">print_doc_functions_impl.hpp</includes>
+    <incdepgraph>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp</label>
+        <link refid="julia_2print__doc__functions_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>mlpack/core/util/hyphenate_string.hpp</label>
+        <link refid="hyphenate__string_8hpp"/>
+      </node>
+      <node id="3">
+        <label>print_doc_functions_impl.hpp</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1bindings">mlpack::bindings</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1bindings_1_1julia">mlpack::bindings::julia</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para>
+</simplesect>
+This file contains functions useful for printing documentation strings related to Julia bindings.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_BINDINGS_JULIA_PRINT_DOC_FUNCTIONS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_BINDINGS_JULIA_PRINT_DOC_FUNCTIONS_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="hyphenate__string_8hpp" kindref="compound">mlpack/core/util/hyphenate_string.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">bindings<sp/>{</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="methods_2nmf_2CMakeLists_8txt_1a24991bea13cdec9759e0db813306fe5f" kindref="member">julia</ref><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="namespacemlpack_1_1bindings_1_1julia_1a8d9828ad9cbc4d7a011cbe18bd7e6f0c" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a8d9828ad9cbc4d7a011cbe18bd7e6f0c" kindref="member">GetBindingName</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>bindingName);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="namespacemlpack_1_1bindings_1_1julia_1a74c8a5085c10ab376f52f7738bd5cf35" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a74c8a5085c10ab376f52f7738bd5cf35" kindref="member">PrintImport</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>bindingName);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="namespacemlpack_1_1bindings_1_1julia_1a2db624423dfe22092c563dd12f4bbe8d" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a2db624423dfe22092c563dd12f4bbe8d" kindref="member">PrintOutputOptionInfo</ref>();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="namespacemlpack_1_1bindings_1_1julia_1ad80395807c5fed5cb3ab8a9bf2461594" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1ad80395807c5fed5cb3ab8a9bf2461594" kindref="member">PrintInputOptionInfo</ref>();</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="namespacemlpack_1_1bindings_1_1julia_1a66c87276bb72b6efb12d2b7d53202ca8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a66c87276bb72b6efb12d2b7d53202ca8" kindref="member">PrintTypeDocs</ref>();</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
+<codeline lineno="52" refid="namespacemlpack_1_1bindings_1_1julia_1afddeb0074153b920a7da3051b1046675" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1afddeb0074153b920a7da3051b1046675" kindref="member">PrintValue</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T&amp;<sp/>value,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>quotes);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Special<sp/>overload<sp/>for<sp/>booleans.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;&gt;</highlight></codeline>
+<codeline lineno="56" refid="namespacemlpack_1_1bindings_1_1julia_1ab215ccae826d137bb18e251b63f79318" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1afddeb0074153b920a7da3051b1046675" kindref="member">PrintValue</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&amp;<sp/>value,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>quotes);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="namespacemlpack_1_1bindings_1_1julia_1a6a712d2a0342de59cfd5ac5033138d6f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a6a712d2a0342de59cfd5ac5033138d6f" kindref="member">PrintDefault</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="namespacemlpack_1_1bindings_1_1julia_1ab81006e8cf130a5968777dcf9c82baa3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1ab81006e8cf130a5968777dcf9c82baa3" kindref="member">PrintDataset</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>dataset);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71" refid="namespacemlpack_1_1bindings_1_1julia_1a5cd774b4c9bb9014c222477c84dce52e" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a5cd774b4c9bb9014c222477c84dce52e" kindref="member">PrintModel</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>model);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="namespacemlpack_1_1bindings_1_1julia_1aa1491585c928e9d37190e48ae4f19db0" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1aa1491585c928e9d37190e48ae4f19db0" kindref="member">PrintType</ref>(<ref refid="structmlpack_1_1util_1_1ParamData" kindref="compound">util::ParamData</ref>&amp;<sp/>param);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Recursion<sp/>base<sp/>case.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="namespacemlpack_1_1bindings_1_1julia_1ad5a8197f925a177406f9ba8a7f54b626" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1ad5a8197f925a177406f9ba8a7f54b626" kindref="member">PrintInputOptions</ref>();</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Args&gt;</highlight></codeline>
+<codeline lineno="87" refid="namespacemlpack_1_1bindings_1_1julia_1ae8ccf211291da278631c06ce5b6f828a" refkind="member"><highlight class="normal">std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1ad5a8197f925a177406f9ba8a7f54b626" kindref="member">PrintInputOptions</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName,</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T&amp;<sp/>value,</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Args...<sp/>args);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Recursion<sp/>base<sp/>case.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="namespacemlpack_1_1bindings_1_1julia_1a458cbef16b35aa69753765e7ccdb0398" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a458cbef16b35aa69753765e7ccdb0398" kindref="member">PrintOutputOptions</ref>();</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Args&gt;</highlight></codeline>
+<codeline lineno="95" refid="namespacemlpack_1_1bindings_1_1julia_1a84456d410b020a60c7add64c3791e4d0" refkind="member"><highlight class="normal">std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a458cbef16b35aa69753765e7ccdb0398" kindref="member">PrintOutputOptions</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T&amp;<sp/>value,</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Args...<sp/>args);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal">...<sp/>Args&gt;</highlight></codeline>
+<codeline lineno="104" refid="namespacemlpack_1_1bindings_1_1julia_1ab5edf3302fabe8ebafc3ed7228b149df" refkind="member"><highlight class="normal">std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1ab5edf3302fabe8ebafc3ed7228b149df" kindref="member">ProgramCall</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a24d855d329269931b59bdf1b36706a88" kindref="member">programName</ref>,<sp/>Args...<sp/>args);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="namespacemlpack_1_1bindings_1_1julia_1a627997ec4999091e2c734c8e5369c456" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a627997ec4999091e2c734c8e5369c456" kindref="member">ParamString</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117" refid="namespacemlpack_1_1bindings_1_1julia_1a2721640ebb8e5ad4abf7e7be3d2cdac8" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a2721640ebb8e5ad4abf7e7be3d2cdac8" kindref="member">IgnoreCheck</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124" refid="namespacemlpack_1_1bindings_1_1julia_1af39b9d7b6b7d368b766fb1ef482d25b4" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a2721640ebb8e5ad4abf7e7be3d2cdac8" kindref="member">IgnoreCheck</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::string&gt;&amp;<sp/>constraints);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="namespacemlpack_1_1bindings_1_1julia_1a48bbe25414605037ae8acd32ed73bdf5" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacemlpack_1_1bindings_1_1julia_1a2721640ebb8e5ad4abf7e7be3d2cdac8" kindref="member">IgnoreCheck</ref>(</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::pair&lt;std::string,<sp/>bool&gt;&gt;&amp;<sp/>constraints,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>paramName);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>julia</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>bindings</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;print_doc_functions_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/bindings/julia/print_doc_functions.hpp"/>
+  </compounddef>
+</doxygen>

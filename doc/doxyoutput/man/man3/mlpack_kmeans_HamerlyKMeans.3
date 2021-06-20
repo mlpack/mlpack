@@ -1,0 +1,63 @@
+.TH "HamerlyKMeans< MetricType, MatType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+HamerlyKMeans< MetricType, MatType >
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHamerlyKMeans\fP (const MatType &dataset, MetricType &metric)"
+.br
+.RI "Construct the \fBHamerlyKMeans\fP object, which must store several sets of bounds\&. "
+.ti -1c
+.RI "size_t \fBDistanceCalculations\fP () const"
+.br
+.ti -1c
+.RI "double \fBIterate\fP (const arma::mat &centroids, arma::mat &newCentroids, arma::Col< size_t > &counts)"
+.br
+.RI "Run a single iteration of Hamerly's algorithm, updating the given centroids into the newCentroids matrix\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MetricType, typename MatType>
+.br
+class mlpack::kmeans::HamerlyKMeans< MetricType, MatType >"
+
+.PP
+Definition at line 19 of file hamerly_kmeans\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBHamerlyKMeans\fP (const MatType & dataset, MetricType & metric)"
+
+.PP
+Construct the \fBHamerlyKMeans\fP object, which must store several sets of bounds\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t DistanceCalculations () const\fC [inline]\fP"
+
+.PP
+Definition at line 40 of file hamerly_kmeans\&.hpp\&.
+.SS "double Iterate (const arma::mat & centroids, arma::mat & newCentroids, arma::Col< size_t > & counts)"
+
+.PP
+Run a single iteration of Hamerly's algorithm, updating the given centroids into the newCentroids matrix\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIcentroids\fP Current cluster centroids\&. 
+.br
+\fInewCentroids\fP New cluster centroids\&. 
+.br
+\fIcounts\fP Current counts, to be overwritten with new counts\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

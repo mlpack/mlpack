@@ -1,0 +1,270 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="neighbor__search__rules_8hpp" kind="file" language="C++">
+    <compoundname>neighbor_search_rules.hpp</compoundname>
+    <includes refid="traversal__info_8hpp" local="no">mlpack/core/tree/traversal_info.hpp</includes>
+    <includes local="no">queue</includes>
+    <includes local="yes">neighbor_search_rules_impl.hpp</includes>
+    <includedby refid="neighbor__search_8hpp" local="yes">/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp</includedby>
+    <incdepgraph>
+      <node id="3">
+        <label>queue</label>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_rules.hpp</label>
+        <link refid="neighbor__search__rules_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>neighbor_search_rules_impl.hpp</label>
+      </node>
+      <node id="2">
+        <label>mlpack/core/tree/traversal_info.hpp</label>
+        <link refid="traversal__info_8hpp"/>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="16">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn_function.hpp</label>
+        <link refid="lmnn__function_8hpp"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/typedef.hpp</label>
+        <link refid="methods_2neighbor__search_2typedef_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_rules.hpp</label>
+        <link refid="neighbor__search__rules_8hpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf_model.hpp</label>
+        <link refid="cf__model_8hpp"/>
+      </node>
+      <node id="8">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/regularized_svd_method.hpp</label>
+        <link refid="regularized__svd__method_8hpp"/>
+      </node>
+      <node id="5">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/bias_svd_method.hpp</label>
+        <link refid="bias__svd__method_8hpp"/>
+      </node>
+      <node id="3">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/cf.hpp</label>
+        <link refid="cf_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/cosine_search.hpp</label>
+        <link refid="cosine__search_8hpp"/>
+      </node>
+      <node id="14">
+        <label>/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp</label>
+        <link refid="dual__tree__kmeans_8hpp"/>
+      </node>
+      <node id="9">
+        <label>/home/aakash/mlpack/src/mlpack/methods/svdplusplus/svdplusplus.hpp</label>
+        <link refid="svdplusplus_8hpp"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/ns_model.hpp</label>
+        <link refid="ns__model_8hpp"/>
+      </node>
+      <node id="15">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/constraints.hpp</label>
+        <link refid="constraints_8hpp"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp</label>
+        <link refid="lmetric__search_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>/home/aakash/mlpack/src/mlpack/methods/lmnn/lmnn.hpp</label>
+        <link refid="lmnn_8hpp"/>
+      </node>
+      <node id="4">
+        <label>/home/aakash/mlpack/src/mlpack/methods/bias_svd/bias_svd.hpp</label>
+        <link refid="bias__svd_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/decomposition_policies/svdplusplus_method.hpp</label>
+        <link refid="svdplusplus__method_8hpp"/>
+      </node>
+      <node id="7">
+        <label>/home/aakash/mlpack/src/mlpack/methods/regularized_svd/regularized_svd.hpp</label>
+        <link refid="regularized__svd_8hpp"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search.hpp</label>
+        <link refid="neighbor__search_8hpp"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>/home/aakash/mlpack/src/mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp</label>
+        <link refid="pearson__search_8hpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classmlpack_1_1neighbor_1_1NeighborSearchRules" prot="public">mlpack::neighbor::NeighborSearchRules</innerclass>
+    <innerclass refid="structmlpack_1_1neighbor_1_1NeighborSearchRules_1_1CandidateCmp" prot="protected">mlpack::neighbor::NeighborSearchRules::CandidateCmp</innerclass>
+    <innernamespace refid="namespacemlpack">mlpack</innernamespace>
+    <innernamespace refid="namespacemlpack_1_1neighbor">mlpack::neighbor</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin</para>
+</simplesect>
+Defines the pruning rules and base case rules necessary to perform a tree-based search (with an arbitrary tree) for the NeighborSearch class.</para>
+<para>mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-clause BSD license. You should have received a copy of the 3-clause BSD license along with mlpack. If not, see <ulink url="http://www.opensource.org/licenses/BSD-3-Clause">http://www.opensource.org/licenses/BSD-3-Clause</ulink> for more information. </para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="traversal__info_8hpp" kindref="compound">mlpack/core/tree/traversal_info.hpp</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;queue&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref><sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">neighbor<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>SortPolicy,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MetricType,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType&gt;</highlight></codeline>
+<codeline lineno="35" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules" kindref="compound">NeighborSearchRules</ref></highlight></codeline>
+<codeline lineno="36"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="50" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a7557d10b0de13c95132f2f73697a4e17" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a7557d10b0de13c95132f2f73697a4e17" kindref="member">NeighborSearchRules</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType::Mat&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aebdb2895a33036194826de9631543c7e" kindref="member">referenceSet</ref>,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType::Mat&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a39e4662e24522711a354d019c6d27366" kindref="member">querySet</ref>,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1af004d46789d32b9155f2c0eb5b771181" kindref="member">k</ref>,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MetricType&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1abc0ef94d224e16bddfe3ded53dfb5133" kindref="member">metric</ref>,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ac29df3dcbefa1ce189e5990bde994025" kindref="member">epsilon</ref><sp/>=<sp/>0,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a500d895c970c9ee5d0c77ff7b8508cfc" kindref="member">sameSet</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1add24e5e55e4b8555dbd941b137a44491" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1add24e5e55e4b8555dbd941b137a44491" kindref="member">GetResults</ref>(arma::Mat&lt;size_t&gt;&amp;<sp/>neighbors,<sp/>arma::mat&amp;<sp/>distances);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1abac50f780bb5e1bc12dd0d16d850cacc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1abac50f780bb5e1bc12dd0d16d850cacc" kindref="member">BaseCase</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>referenceIndex);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a53d373b7aeee359b0e686f823c602b1c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a53d373b7aeee359b0e686f823c602b1c" kindref="member">Score</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a2c457831ca0a541db042ec68a235a8d5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a2c457831ca0a541db042ec68a235a8d5" kindref="member">GetBestChild</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a9e005f9b8655b905dd040604dd47fac9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a9e005f9b8655b905dd040604dd47fac9" kindref="member">GetBestChild</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>TreeType&amp;<sp/>queryNode,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ae0ad46f30e80aadc5bc476d46886540f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ae0ad46f30e80aadc5bc476d46886540f" kindref="member">Rescore</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType&amp;<sp/>referenceNode,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>oldScore)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a05b142945ef94221b628a75961f48b02" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a05b142945ef94221b628a75961f48b02" kindref="member">Score</ref>(TreeType&amp;<sp/>queryNode,<sp/>TreeType&amp;<sp/>referenceNode);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a536e5a7cbce35b9be7443775d32e11f5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a536e5a7cbce35b9be7443775d32e11f5" kindref="member">Rescore</ref>(TreeType&amp;<sp/>queryNode,</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>TreeType&amp;<sp/>referenceNode,</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>oldScore)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a3f4bd5d0aa64ea090796725f7755287d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a3f4bd5d0aa64ea090796725f7755287d" kindref="member">BaseCases</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a06e4c7b3f942c628e2b3584e7ba02cbf" kindref="member">baseCases</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="145" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ab93e60b3671ebddbe95a890f1e1b2768" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ab93e60b3671ebddbe95a890f1e1b2768" kindref="member">BaseCases</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a06e4c7b3f942c628e2b3584e7ba02cbf" kindref="member">baseCases</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a4d1e40c0bf406280a237ca1b487e3c62" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a4d1e40c0bf406280a237ca1b487e3c62" kindref="member">Scores</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aecc3c9a30f1be1fe8b602374bde73e7b" kindref="member">scores</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="150" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a8c3486626c1d3c0a10cdb27a8faa198f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal">&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a8c3486626c1d3c0a10cdb27a8faa198f" kindref="member">Scores</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aecc3c9a30f1be1fe8b602374bde73e7b" kindref="member">scores</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ab5f079db10d0a6813eefeb1115e894cb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">tree::TraversalInfo&lt;TreeType&gt;</ref><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ab5f079db10d0a6813eefeb1115e894cb" kindref="member">TraversalInfoType</ref>;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">TraversalInfoType</ref>&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ab5c6f4ae7c3b71b808403a7b7454f26f" kindref="member">TraversalInfo</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aa987143b3965542c77c85c8212abedbe" kindref="member">traversalInfo</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="158" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a4027bb90e756a4520d55978459c7f83e" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">TraversalInfoType</ref>&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a4027bb90e756a4520d55978459c7f83e" kindref="member">TraversalInfo</ref>()<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aa987143b3965542c77c85c8212abedbe" kindref="member">traversalInfo</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a469f61784f9cce8f2574c23823405768" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a469f61784f9cce8f2574c23823405768" kindref="member">MinimumBaseCases</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1af004d46789d32b9155f2c0eb5b771181" kindref="member">k</ref>;<sp/>}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="166" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aebdb2895a33036194826de9631543c7e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType::Mat&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aebdb2895a33036194826de9631543c7e" kindref="member">referenceSet</ref>;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a39e4662e24522711a354d019c6d27366" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>TreeType::Mat&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a39e4662e24522711a354d019c6d27366" kindref="member">querySet</ref>;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a25f2752ae2dd3aa1e6b36257252e9c63" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::pair&lt;double,<sp/>size_t&gt;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a25f2752ae2dd3aa1e6b36257252e9c63" kindref="member">Candidate</ref>;</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="structmlpack_1_1neighbor_1_1NeighborSearchRules_1_1CandidateCmp" refkind="compound"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structmlpack_1_1neighbor_1_1NeighborSearchRules_1_1CandidateCmp" kindref="compound">CandidateCmp</ref><sp/>{</highlight></codeline>
+<codeline lineno="176" refid="structmlpack_1_1neighbor_1_1NeighborSearchRules_1_1CandidateCmp_1a1774b25e773200aae4c9892fe8717e38" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structmlpack_1_1neighbor_1_1NeighborSearchRules_1_1CandidateCmp_1a1774b25e773200aae4c9892fe8717e38" kindref="member">operator()</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a25f2752ae2dd3aa1e6b36257252e9c63" kindref="member">Candidate</ref>&amp;<sp/>c1,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a25f2752ae2dd3aa1e6b36257252e9c63" kindref="member">Candidate</ref>&amp;<sp/>c2)</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>!SortPolicy::IsBetter(c2.first,<sp/>c1.first);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/>};</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::priority_queue&lt;Candidate,<sp/>std::vector&lt;Candidate&gt;,<sp/>CandidateCmp&gt;</highlight></codeline>
+<codeline lineno="184" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a971deda91e33f8ac7c017c8caab84593" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a971deda91e33f8ac7c017c8caab84593" kindref="member">CandidateList</ref>;</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a2fd8d0cb021bd3b0175cff2fd44a4cda" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;CandidateList&gt;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a2fd8d0cb021bd3b0175cff2fd44a4cda" kindref="member">candidates</ref>;</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1af004d46789d32b9155f2c0eb5b771181" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1af004d46789d32b9155f2c0eb5b771181" kindref="member">k</ref>;</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1abc0ef94d224e16bddfe3ded53dfb5133" refkind="member"><highlight class="normal"><sp/><sp/>MetricType&amp;<sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1abc0ef94d224e16bddfe3ded53dfb5133" kindref="member">metric</ref>;</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a500d895c970c9ee5d0c77ff7b8508cfc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a500d895c970c9ee5d0c77ff7b8508cfc" kindref="member">sameSet</ref>;</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ac29df3dcbefa1ce189e5990bde994025" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ac29df3dcbefa1ce189e5990bde994025" kindref="member">epsilon</ref>;</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a89e87b0301224505aa09b8c85738a364" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a89e87b0301224505aa09b8c85738a364" kindref="member">lastQueryIndex</ref>;</highlight></codeline>
+<codeline lineno="204" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ad83397af4d986c7afc78e3d1f31f9276" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1ad83397af4d986c7afc78e3d1f31f9276" kindref="member">lastReferenceIndex</ref>;</highlight></codeline>
+<codeline lineno="206" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a5210d29f3192b5e01426740502013a0d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a5210d29f3192b5e01426740502013a0d" kindref="member">lastBaseCase</ref>;</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a06e4c7b3f942c628e2b3584e7ba02cbf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a06e4c7b3f942c628e2b3584e7ba02cbf" kindref="member">baseCases</ref>;</highlight></codeline>
+<codeline lineno="211" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aecc3c9a30f1be1fe8b602374bde73e7b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aecc3c9a30f1be1fe8b602374bde73e7b" kindref="member">scores</ref>;</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aa987143b3965542c77c85c8212abedbe" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classmlpack_1_1tree_1_1TraversalInfo" kindref="compound">TraversalInfoType</ref><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aa987143b3965542c77c85c8212abedbe" kindref="member">traversalInfo</ref>;</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aa8ed73a529bc1e6bd8c49c30f7e93462" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1aa8ed73a529bc1e6bd8c49c30f7e93462" kindref="member">CalculateBound</ref>(TreeType&amp;<sp/>queryNode)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229" refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a64b3c9d35e4c5a3932c3b2b390c3ad04" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmlpack_1_1neighbor_1_1NeighborSearchRules_1a64b3c9d35e4c5a3932c3b2b390c3ad04" kindref="member">InsertNeighbor</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>queryIndex,</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>neighbor,</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>distance);</highlight></codeline>
+<codeline lineno="232"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>neighbor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>mlpack</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Include<sp/>implementation.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;neighbor_search_rules_impl.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>MLPACK_METHODS_NEIGHBOR_SEARCH_NEIGHBOR_SEARCH_RULES_HPP</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/neighbor_search/neighbor_search_rules.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_1416f22f5f714fbb770cd2eba58d71e0" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/ann/rbm</compoundname>
+    <innerfile refid="rbm_8hpp">rbm.hpp</innerfile>
+    <innerfile refid="rbm__policies_8hpp">rbm_policies.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/rbm/"/>
+  </compounddef>
+</doxygen>

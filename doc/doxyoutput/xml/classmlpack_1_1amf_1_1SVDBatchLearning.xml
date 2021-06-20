@@ -1,0 +1,381 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1amf_1_1SVDBatchLearning" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::amf::SVDBatchLearning</compoundname>
+    <includes refid="svd__batch__learning_8hpp" local="no">svd_batch_learning.hpp</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDBatchLearning_1a6d2402476727060562dea8f9d5f44597" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double kh</definition>
+        <argsstring></argsstring>
+        <name>kh</name>
+        <briefdescription>
+<para>Regularization parameter for matrix H. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="185" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDBatchLearning_1ae006c02ce3ccca65596953543abc1815" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double kw</definition>
+        <argsstring></argsstring>
+        <name>kw</name>
+        <briefdescription>
+<para>Regularization parameter for matrix W. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="183" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="183" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDBatchLearning_1af762fde65263edb5baea82d5af25fe35" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat mH</definition>
+        <argsstring></argsstring>
+        <name>mH</name>
+        <briefdescription>
+<para>Momentum matrix for matrix H. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="192" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="192" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDBatchLearning_1a3b49369fa0b52a3387511806f1129879" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double momentum</definition>
+        <argsstring></argsstring>
+        <name>momentum</name>
+        <briefdescription>
+<para>Momentum value (between 0 and 1). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="187" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDBatchLearning_1ae1b0f8aad0210fb1ee6c6e1624be4b0a" prot="private" static="no" mutable="no">
+        <type>arma::mat</type>
+        <definition>arma::mat mW</definition>
+        <argsstring></argsstring>
+        <name>mW</name>
+        <briefdescription>
+<para>Momentum matrix for matrix W. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="190" column="13" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classmlpack_1_1amf_1_1SVDBatchLearning_1aed08c8478a62910aab06ba708a0e5b5f" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double u</definition>
+        <argsstring></argsstring>
+        <name>u</name>
+        <briefdescription>
+<para>Step size of the algorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="181" column="10" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="181" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SVDBatchLearning_1aaec0e3862d8b79920ea8ecda25dfcfba" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SVDBatchLearning</definition>
+        <argsstring>(double u=0.0002, double kw=0, double kh=0, double momentum=0.9)</argsstring>
+        <name>SVDBatchLearning</name>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+          <defval>0.0002</defval>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>kw</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>kh</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>momentum</declname>
+          <defval>0.9</defval>
+        </param>
+        <briefdescription>
+<para>SVD Batch learning constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>u</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>step value used in batch learning </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kw</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>regularization constant for W matrix </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>kh</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>regularization constant for H matrix </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>momentum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>momentum applied to batch learning process </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="52" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="52" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SVDBatchLearning_1a3c338e327964c027a7d4172e638a5dff" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void HUpdate</definition>
+        <argsstring>(const MatType &amp;V, const arma::mat &amp;W, arma::mat &amp;H)</argsstring>
+        <name>HUpdate</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>The update rule for the encoding matrix H. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function takes in all the matrices and only changes the value of the H matrix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix to be updated. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="133" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="133" bodyend="165"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SVDBatchLearning_1a1af73fa03a54127db8d2bbc558a58c4c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Initialize</definition>
+        <argsstring>(const MatType &amp;dataset, const size_t rank)</argsstring>
+        <name>Initialize</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>dataset</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>rank</declname>
+        </param>
+        <briefdescription>
+<para>Initialize parameters before factorization. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function must be called before a new factorization. This resets the internally-held momentum.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dataset</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rank</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>rank of factorization </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="69" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="69" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SVDBatchLearning_1a65cba07328997659bec80b9879b15a51" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Archive</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void serialize</definition>
+        <argsstring>(Archive &amp;ar, const uint32_t)</argsstring>
+        <name>serialize</name>
+        <param>
+          <type>Archive &amp;</type>
+          <declname>ar</declname>
+        </param>
+        <param>
+          <type>const uint32_t</type>
+        </param>
+        <briefdescription>
+<para>Serialize the SVDBatch object. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="169" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="169" bodyend="177"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1amf_1_1SVDBatchLearning_1a2df8bfa574f8a8e43e6b1466dc0526fe" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void WUpdate</definition>
+        <argsstring>(const MatType &amp;V, arma::mat &amp;W, const arma::mat &amp;H)</argsstring>
+        <name>WUpdate</name>
+        <param>
+          <type>const MatType &amp;</type>
+          <declname>V</declname>
+        </param>
+        <param>
+          <type>arma::mat &amp;</type>
+          <declname>W</declname>
+        </param>
+        <param>
+          <type>const arma::mat &amp;</type>
+          <declname>H</declname>
+        </param>
+        <briefdescription>
+<para>The update rule for the basis matrix W. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The function takes in all the matrices and only changes the value of the W matrix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Input matrix to be factorized. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>W</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Basis matrix to be updated. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>H</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Encoding matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="88" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="88" bodyend="121"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This class implements SVD batch learning with momentum. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This procedure is described in the following paper:</para>
+<para><programlisting><codeline><highlight class="normal">@techreport{ma2008guide,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>title={A<sp/>Guide<sp/>to<sp/>Singular<sp/>Value<sp/>Decomposition<sp/>for<sp/>Collaborative</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Filtering},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>author={Ma,<sp/>Chih-Chao},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>year={2008},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>institution={Department<sp/>of<sp/>Computer<sp/>Science,<sp/>National<sp/>Taiwan<sp/>University}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>This class implements &apos;Algorithm 4&apos; as given in the paper.</para>
+<para>The factorizer decomposes the matrix V into two matrices W and H such that sum of sum of squared error between V and W * H is minimum. This optimization is performed with gradient descent. To make gradient descent faster, momentum is added. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" line="41" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/amf/update_rules/svd_batch_learning.hpp" bodystart="42" bodyend="193"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1amf_1_1SVDBatchLearning_1a3c338e327964c027a7d4172e638a5dff" prot="public" virt="non-virtual"><scope>mlpack::amf::SVDBatchLearning</scope><name>HUpdate</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDBatchLearning_1a1af73fa03a54127db8d2bbc558a58c4c" prot="public" virt="non-virtual"><scope>mlpack::amf::SVDBatchLearning</scope><name>Initialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDBatchLearning_1a6d2402476727060562dea8f9d5f44597" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDBatchLearning</scope><name>kh</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDBatchLearning_1ae006c02ce3ccca65596953543abc1815" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDBatchLearning</scope><name>kw</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDBatchLearning_1af762fde65263edb5baea82d5af25fe35" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDBatchLearning</scope><name>mH</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDBatchLearning_1a3b49369fa0b52a3387511806f1129879" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDBatchLearning</scope><name>momentum</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDBatchLearning_1ae1b0f8aad0210fb1ee6c6e1624be4b0a" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDBatchLearning</scope><name>mW</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDBatchLearning_1a65cba07328997659bec80b9879b15a51" prot="public" virt="non-virtual"><scope>mlpack::amf::SVDBatchLearning</scope><name>serialize</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDBatchLearning_1aaec0e3862d8b79920ea8ecda25dfcfba" prot="public" virt="non-virtual"><scope>mlpack::amf::SVDBatchLearning</scope><name>SVDBatchLearning</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDBatchLearning_1aed08c8478a62910aab06ba708a0e5b5f" prot="private" virt="non-virtual"><scope>mlpack::amf::SVDBatchLearning</scope><name>u</name></member>
+      <member refid="classmlpack_1_1amf_1_1SVDBatchLearning_1a2df8bfa574f8a8e43e6b1466dc0526fe" prot="public" virt="non-virtual"><scope>mlpack::amf::SVDBatchLearning</scope><name>WUpdate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

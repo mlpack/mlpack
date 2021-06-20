@@ -1,0 +1,168 @@
+.TH "SVDPlusPlus< OptimizerType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SVDPlusPlus< OptimizerType > \- SVD++ is a matrix decomposition tenique used in collaborative filtering\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSVDPlusPlus\fP (const size_t iterations=10, const double alpha=0\&.001, const double lambda=0\&.1)"
+.br
+.RI "Constructor of \fBSVDPlusPlus\fP\&. "
+.ti -1c
+.RI "void \fBApply\fP (const arma::mat &data, const arma::mat &implicitData, const size_t rank, arma::mat &u, arma::mat &v, arma::vec &p, arma::vec &q, arma::mat &y)"
+.br
+.RI "Trains the model and obtains user/item matrices, user/item bias, and item implicit matrix\&. "
+.ti -1c
+.RI "void \fBApply\fP (const arma::mat &data, const size_t rank, arma::mat &u, arma::mat &v, arma::vec &p, arma::vec &q, arma::mat &y)"
+.br
+.RI "Trains the model and obtains user/item matrices, user/item bias, and item implicit matrix\&. "
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBCleanData\fP (const arma::mat &implicitData, arma::sp_mat &cleanedData, const arma::mat &data)"
+.br
+.RI "Converts the User, Item matrix of implicit data to Item-User Table\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename OptimizerType = ens::StandardSGD>
+.br
+class mlpack::svd::SVDPlusPlus< OptimizerType >"
+SVD++ is a matrix decomposition tenique used in collaborative filtering\&. 
+
+SVD++ is similar to \fBBiasSVD\fP, but it is a more expressive model because SVD++ also models implicit feedback\&. SVD++ outputs user/item latent vectors, user/item bias, and item vectors with regard to implicit feedback\&. Parameters are optmized by Stochastic Gradient Desent(SGD)\&. The updates also penalize the learning of large feature values by means of regularization\&.
+.PP
+For more information, see the following paper:
+.PP
+.PP
+.nf
+@inproceedings{koren2008factorization,
+title={Factorization meets the neighborhood: a multifaceted collaborative
+       filtering model},
+author={Koren, Yehuda},
+booktitle={Proceedings of the 14th ACM SIGKDD international conference on
+           Knowledge discovery and data mining},
+pages={426--434},
+year={2008},
+organization={ACM}
+}
+.fi
+.PP
+.PP
+An example of how to use the interface is shown below:
+.PP
+.PP
+.nf
+arma::mat data; // Rating data in the form of coordinate list\&.
+
+// Implicit feedback data in the form of coordinate list\&.
+arma::mat implicitData;
+
+const size_t rank = 10; // Rank used for the decomposition\&.
+const size_t iterations = 10; // Number of iterations used for optimization\&.
+
+const double alpha = 0\&.001 // Learning rate for the SGD optimizer\&.
+const double lambda = 0\&.1 // Regularization parameter for the optimization\&.
+
+// Make a SVD++ object\&.
+SVDPlusPlus<> svdPP(iterations, alpha, lambda);
+
+arma::mat u, v; // Item and User matrices\&.
+arma::vec p, q; // Item and User bias\&.
+arma::mat y;    // Item matrix with respect to implicit feedback\&.
+
+// Use the Apply() method to get a factorization\&.
+svdPP\&.Apply(data, implicitData, rank, u, v, p, q, y);
+.fi
+.PP
+ 
+.PP
+Definition at line 76 of file svdplusplus\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSVDPlusPlus\fP (const size_t iterations = \fC10\fP, const double alpha = \fC0\&.001\fP, const double lambda = \fC0\&.1\fP)"
+
+.PP
+Constructor of \fBSVDPlusPlus\fP\&. By default SGD optimizer is used in \fBSVDPlusPlus\fP\&. The optimizer uses a template specialization of Optimize()\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIiterations\fP Number of optimization iterations\&. 
+.br
+\fIalpha\fP Learning rate for the SGD optimizer\&. 
+.br
+\fIlambda\fP Regularization parameter for the optimization\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Apply (const arma::mat & data, const arma::mat & implicitData, const size_t rank, arma::mat & u, arma::mat & v, arma::vec & p, arma::vec & q, arma::mat & y)"
+
+.PP
+Trains the model and obtains user/item matrices, user/item bias, and item implicit matrix\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Rating data matrix\&. 
+.br
+\fIimplicitData\fP Implicit feedback\&. 
+.br
+\fIrank\fP Rank parameter to be used for optimization\&. 
+.br
+\fIu\fP Item matrix obtained on decomposition\&. 
+.br
+\fIv\fP User matrix obtained on decomposition\&. 
+.br
+\fIp\fP Item bias\&. 
+.br
+\fIq\fP User bias\&. 
+.br
+\fIy\fP Item matrix with respect to implicit feedback\&. 
+.RE
+.PP
+
+.PP
+Referenced by SVDPlusPlusPolicy::Apply()\&.
+.SS "void Apply (const arma::mat & data, const size_t rank, arma::mat & u, arma::mat & v, arma::vec & p, arma::vec & q, arma::mat & y)"
+
+.PP
+Trains the model and obtains user/item matrices, user/item bias, and item implicit matrix\&. Whether a user rates an item is used as implicit feedback\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Rating data matrix\&. 
+.br
+\fIrank\fP Rank parameter to be used for optimization\&. 
+.br
+\fIu\fP Item matrix obtained on decomposition\&. 
+.br
+\fIv\fP User matrix obtained on decomposition\&. 
+.br
+\fIp\fP Item bias\&. 
+.br
+\fIq\fP User bias\&. 
+.br
+\fIy\fP Item matrix with respect to implicit feedback\&. Each column is a latent vector of an item with respect to implicit feedback\&. 
+.RE
+.PP
+
+.SS "static void CleanData (const arma::mat & implicitData, arma::sp_mat & cleanedData, const arma::mat & data)\fC [static]\fP"
+
+.PP
+Converts the User, Item matrix of implicit data to Item-User Table\&. 
+.PP
+Referenced by SVDPlusPlusPolicy::Apply()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

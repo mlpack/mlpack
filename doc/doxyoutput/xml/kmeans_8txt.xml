@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="kmeans_8txt" kind="file" language="C++">
+    <compoundname>kmeans.txt</compoundname>
+    <briefdescription>
+<para>Tutorial for how to use k-means in mlpack. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="author"><para>Ryan Curtin </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="normal"></highlight></codeline>
+<codeline lineno="675"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Iterate(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>arma::mat&amp;<sp/>centroids,</highlight></codeline>
+<codeline lineno="676"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::mat&amp;<sp/>newCentroids,</highlight></codeline>
+<codeline lineno="677"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>arma::Col&lt;size_t&gt;&amp;<sp/>counts);</highlight></codeline>
+<codeline lineno="678"><highlight class="normal"></highlight><highlight class="keyword">@end</highlight><highlight class="normal">code</highlight></codeline>
+<codeline lineno="679"><highlight class="normal"></highlight></codeline>
+<codeline lineno="680"><highlight class="normal"><sp/>-<sp/>a<sp/></highlight><highlight class="keyword">function</highlight><highlight class="normal"><sp/>to<sp/>get<sp/>the<sp/>number<sp/>of<sp/>distance<sp/>calculations:</highlight></codeline>
+<codeline lineno="681"><highlight class="normal"></highlight></codeline>
+<codeline lineno="682"><highlight class="normal">@code</highlight></codeline>
+<codeline lineno="683"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>DistanceCalculations()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>distanceCalculations;<sp/>}</highlight></codeline>
+<codeline lineno="684"><highlight class="normal"></highlight><highlight class="keyword">@end</highlight><highlight class="normal">code</highlight></codeline>
+<codeline lineno="685"><highlight class="normal"></highlight></codeline>
+<codeline lineno="686"><highlight class="normal">Note<sp/>that<sp/>\c<sp/>Iterate()<sp/>does<sp/>not<sp/>need<sp/>to<sp/>return<sp/>valid<sp/>centroids<sp/><ref refid="bindings_2go_2CMakeLists_8txt_1a81b53a1ab05b48531c7d8b930ed65ee9" kindref="member">if</ref><sp/>the<sp/>cluster<sp/>is</highlight></codeline>
+<codeline lineno="687"><highlight class="normal">empty.<sp/><sp/>This<sp/>is<sp/>because<sp/>\c<sp/>EmptyClusterPolicy<sp/>will<sp/>handle<sp/>the<sp/>empty<sp/>centroid.</highlight></codeline>
+<codeline lineno="688"><highlight class="normal">This<sp/>behavior<sp/>can<sp/>be<sp/>used<sp/>to<sp/>avoid<sp/>small<sp/>amounts<sp/>of<sp/>computation.</highlight></codeline>
+<codeline lineno="689"><highlight class="normal"></highlight></codeline>
+<codeline lineno="690"><highlight class="normal">For<sp/>examples,<sp/>see<sp/>the<sp/>five<sp/>aforementioned<sp/>implementations<sp/>of<sp/>classes<sp/>that</highlight></codeline>
+<codeline lineno="691"><highlight class="normal">satisfy<sp/>the<sp/>\c<sp/>LloydStepType<sp/>policy.</highlight></codeline>
+<codeline lineno="692"><highlight class="normal"></highlight></codeline>
+<codeline lineno="693"><highlight class="normal">@section<sp/>further_doc_kmtut<sp/>Further<sp/>documentation</highlight></codeline>
+<codeline lineno="694"><highlight class="normal"></highlight></codeline>
+<codeline lineno="695"><highlight class="normal">For<sp/>further<sp/>documentation<sp/>on<sp/>the<sp/>KMeans<sp/>class,<sp/>consult<sp/>the<sp/>\ref</highlight></codeline>
+<codeline lineno="696"><highlight class="normal"><ref refid="namespacemlpack" kindref="compound">mlpack</ref>::kmeans::KMeans<sp/>&quot;complete<sp/>API<sp/>documentation&quot;.</highlight></codeline>
+<codeline lineno="697"><highlight class="normal"></highlight></codeline>
+<codeline lineno="698"><highlight class="normal">*/</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/doc/tutorials/kmeans/kmeans.txt"/>
+  </compounddef>
+</doxygen>

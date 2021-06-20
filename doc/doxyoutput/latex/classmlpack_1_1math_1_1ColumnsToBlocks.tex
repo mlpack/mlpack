@@ -1,0 +1,440 @@
+\doxysection{Columns\+To\+Blocks Class Reference}
+\label{classmlpack_1_1math_1_1ColumnsToBlocks}\index{ColumnsToBlocks@{ColumnsToBlocks}}
+
+
+Transform the columns of the given matrix into a block format.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Columns\+To\+Blocks} (size\+\_\+t rows, size\+\_\+t cols, size\+\_\+t block\+Height=0, size\+\_\+t block\+Width=0)
+\begin{DoxyCompactList}\small\item\em Constructor a \doxyref{Columns\+To\+Blocks}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks} object with the given parameters. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Block\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the block height. \end{DoxyCompactList}\item 
+void \textbf{ Block\+Height} (const size\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Set the height of each block; see the constructor for more details. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Block\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the block width. \end{DoxyCompactList}\item 
+void \textbf{ Block\+Width} (size\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Set the width of each block; see the constructor for more details. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Buf\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the buffer size. \end{DoxyCompactList}\item 
+void \textbf{ Buf\+Size} (const size\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Modify the buffer size (the size of the margin around each column of the input). \end{DoxyCompactList}\item 
+double \textbf{ Buf\+Value} () const
+\begin{DoxyCompactList}\small\item\em Get the value used for buffer cells. \end{DoxyCompactList}\item 
+void \textbf{ Buf\+Value} (const double value)
+\begin{DoxyCompactList}\small\item\em Modify the value used for buffer cells; the default is -\/1. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Cols} () const
+\begin{DoxyCompactList}\small\item\em Return the number of blocks per column. \end{DoxyCompactList}\item 
+void \textbf{ Cols} (const size\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Set the number of blocks per column. \end{DoxyCompactList}\item 
+double \textbf{ Max\+Range} () const
+\begin{DoxyCompactList}\small\item\em Get the maximum of the range the input will be scaled to, if scaling is enabled (see \doxyref{Scale()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a668b1e7a0dab0c0dc31f1097f57f1c38}). \end{DoxyCompactList}\item 
+void \textbf{ Max\+Range} (const double value)
+\begin{DoxyCompactList}\small\item\em Set the maximum of the range the input will be scaled to, if scaling is enabled (see \doxyref{Scale()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a668b1e7a0dab0c0dc31f1097f57f1c38}). \end{DoxyCompactList}\item 
+double \textbf{ Min\+Range} () const
+\begin{DoxyCompactList}\small\item\em Get the minimum of the range the input will be scaled to, if scaling is enabled (see \doxyref{Scale()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a668b1e7a0dab0c0dc31f1097f57f1c38}). \end{DoxyCompactList}\item 
+void \textbf{ Min\+Range} (const double value)
+\begin{DoxyCompactList}\small\item\em Set the minimum of the range the input will be scaled to, if scaling is enabled (see \doxyref{Scale()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a668b1e7a0dab0c0dc31f1097f57f1c38}). \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Rows} () const
+\begin{DoxyCompactList}\small\item\em Modify the number of blocks per row. \end{DoxyCompactList}\item 
+void \textbf{ Rows} (const size\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Set the number of blocks per row. \end{DoxyCompactList}\item 
+bool \textbf{ Scale} () const
+\begin{DoxyCompactList}\small\item\em Get whether or not scaling is enabled (see also \doxyref{Max\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a87701466a13a6cc63643b9f46eaa2bed} and \doxyref{Min\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_abcc192d4fe9322997d9bc1b6fbd5fb40}). \end{DoxyCompactList}\item 
+void \textbf{ Scale} (const bool value)
+\begin{DoxyCompactList}\small\item\em Set whether or not scaling is enabled (see also \doxyref{Max\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a87701466a13a6cc63643b9f46eaa2bed} and \doxyref{Min\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_abcc192d4fe9322997d9bc1b6fbd5fb40}). \end{DoxyCompactList}\item 
+void \textbf{ Transform} (const arma\+::mat \&maximal\+Inputs, arma\+::mat \&output)
+\begin{DoxyCompactList}\small\item\em Transform the columns of the input matrix into blocks. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Transform the columns of the given matrix into a block format. 
+
+This could be useful with the \doxyref{mlpack\+::nn\+::\+Maximal\+Inputs()}{p.}{namespacemlpack_1_1nn_a5fcd73722265acc12d00ba8d32db6f17} function, if your training samples are images. Roughly speaking, given a matrix
+
+[[A] [B] [C] [D]]
+
+then the \doxyref{Columns\+To\+Blocks}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks} class can transform this to something like
+
+[[m m m m m] [m A m B m] [m m m m m] [m C m D m] [m m m m m]]
+
+where A through D are vectors and may themselves be reshaped by \doxyref{Columns\+To\+Blocks}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks}.
+
+An example usage of the \doxyref{Columns\+To\+Blocks}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks} class with the output of \doxyref{Maximal\+Inputs()}{p.}{namespacemlpack_1_1nn_a5fcd73722265acc12d00ba8d32db6f17} is given below; this assumes that the images are square, and will return a matrix with a one-\/element margin, with each maximal input (that is, each column of the maximal\+Input matrix) as a square block in the output matrix. 5 rows and columns of blocks will be in the output matrix.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// We assume we have a sparse autoencoder 'encoder'.}}
+\DoxyCodeLine{arma::mat maximalInput; \textcolor{comment}{// Store the features learned by sparse autoencoder}}
+\DoxyCodeLine{mlpack::nn::MaximalInputs(encoder.Parameters(), maximalInput);}
+\DoxyCodeLine{}
+\DoxyCodeLine{arma::mat outputs;}
+\DoxyCodeLine{\textcolor{keyword}{const} \textcolor{keywordtype}{bool} scale = \textcolor{keyword}{true};}
+\DoxyCodeLine{}
+\DoxyCodeLine{ColumnsToBlocks ctb(5, 5);}
+\DoxyCodeLine{arma::mat output;}
+\DoxyCodeLine{ctb.Transform(maximalInput, output);}
+\DoxyCodeLine{\textcolor{comment}{// You can save the output as a pgm, this may help you visualize the training}}
+\DoxyCodeLine{\textcolor{comment}{// results.}}
+\DoxyCodeLine{output.save(fileName, arma::pgm\_binary);}
+
+\end{DoxyCode}
+
+
+Another example of usage is given below, on a sample matrix.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// This matrix has two columns.}}
+\DoxyCodeLine{arma::mat input;}
+\DoxyCodeLine{input = \{ \{ -\/1.0000, 0.1429 \},}
+\DoxyCodeLine{          \{ -\/0.7143, 0.4286 \},}
+\DoxyCodeLine{          \{ -\/0.4286, 0.7143 \},}
+\DoxyCodeLine{          \{ -\/0.1429, 1.0000 \} \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{arma::mat output;}
+\DoxyCodeLine{ColumnsToBlocks ctb(1, 2);}
+\DoxyCodeLine{ctb.Transform(input, output);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// The columns of the input will be reshaped as a square which is}}
+\DoxyCodeLine{\textcolor{comment}{// surrounded by padding value -\/1 (this value could be changed with the}}
+\DoxyCodeLine{\textcolor{comment}{// BufValue() method):}}
+\DoxyCodeLine{\textcolor{comment}{// -\/1.0000  -\/1.0000  -\/1.0000  -\/1.0000  -\/1.0000  -\/1.0000  -\/1.0000}}
+\DoxyCodeLine{\textcolor{comment}{// -\/1.0000  -\/1.0000  -\/0.4286  -\/1.0000   0.1429   0.7143  -\/1.0000}}
+\DoxyCodeLine{\textcolor{comment}{// -\/1.0000  -\/0.7143  -\/0.1429  -\/1.0000   0.4286   1.0000  -\/1.0000}}
+\DoxyCodeLine{\textcolor{comment}{// -\/1.0000  -\/1.0000  -\/1.0000  -\/1.0000  -\/1.0000  -\/1.0000  -\/1.0000}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now, let's change some parameters; let's have each input column output not}}
+\DoxyCodeLine{\textcolor{comment}{// as a square, but as a 4x1 vector.}}
+\DoxyCodeLine{ctb.BlockWidth(1);}
+\DoxyCodeLine{ctb.BlockHeight(4);}
+\DoxyCodeLine{ctb.Transform(input, output);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// The output here will be similar, but each maximal input is 4x1:}}
+\DoxyCodeLine{\textcolor{comment}{// -\/1.0000 -\/1.0000 -\/1.0000 -\/1.0000 -\/1.0000}}
+\DoxyCodeLine{\textcolor{comment}{// -\/1.0000 -\/1.0000 -\/1.0000  0.1429 -\/1.0000}}
+\DoxyCodeLine{\textcolor{comment}{// -\/1.0000 -\/0.7143 -\/1.0000  0.4286 -\/1.0000}}
+\DoxyCodeLine{\textcolor{comment}{// -\/1.0000 -\/0.4286 -\/1.0000  0.7143 -\/1.0000}}
+\DoxyCodeLine{\textcolor{comment}{// -\/1.0000 -\/0.1429 -\/1.0000  1.0000 -\/1.0000}}
+\DoxyCodeLine{\textcolor{comment}{// -\/1.0000 -\/1.0000 -\/1.0000 -\/1.0000 -\/1.0000}}
+
+\end{DoxyCode}
+
+
+The \doxyref{Columns\+To\+Blocks}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks} class can also, depending on the parameters, scale the input to a given range (useful for exporting to PGM, for instance), and also set the buffer size and value. See the \doxyref{Scale()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a668b1e7a0dab0c0dc31f1097f57f1c38}, \doxyref{Min\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_abcc192d4fe9322997d9bc1b6fbd5fb40}, \doxyref{Max\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a87701466a13a6cc63643b9f46eaa2bed}, \doxyref{Buf\+Size()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a0ed6759ae521a7c0183187697bc048e9}, and \doxyref{Buf\+Value()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a1f975716805f8568cda0888a78e917b8} methods for more details. 
+
+Definition at line 106 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_aaf286af44a52e58e3791183cdc203deb}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!ColumnsToBlocks@{ColumnsToBlocks}}
+\index{ColumnsToBlocks@{ColumnsToBlocks}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{ColumnsToBlocks()}
+{\footnotesize\ttfamily \textbf{ Columns\+To\+Blocks} (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{rows,  }\item[{size\+\_\+t}]{cols,  }\item[{size\+\_\+t}]{block\+Height = {\ttfamily 0},  }\item[{size\+\_\+t}]{block\+Width = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Constructor a \doxyref{Columns\+To\+Blocks}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks} object with the given parameters. 
+
+The rows and cols parameters control the number of blocks per row and column of the output matrix, respectively, and the block\+Height and block\+Width parameters control the size of the individual blocks. If block\+Height and block\+Width are specified, then (block\+Height $\ast$ block\+Width) must be equal to the number of rows in the input matrix when \doxyref{Transform()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_ac8cc13952caefd0b3640d172955977a7} is called. If block\+Height and block\+Width are not specified, then the square root of the number of rows of the input matrix will be taken when \doxyref{Transform()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_ac8cc13952caefd0b3640d172955977a7} is called and that will be used as the block width and height.
+
+Note that the \doxyref{Columns\+To\+Blocks}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks} object can also scale the inputs to a given range; see \doxyref{Scale()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a668b1e7a0dab0c0dc31f1097f57f1c38}, \doxyref{Min\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_abcc192d4fe9322997d9bc1b6fbd5fb40}, and \doxyref{Max\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a87701466a13a6cc63643b9f46eaa2bed}, and the buffer (margin) size can also be set with \doxyref{Buf\+Size()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a0ed6759ae521a7c0183187697bc048e9}, and the value used for the buffer can be set with \doxyref{Buf\+Value()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a1f975716805f8568cda0888a78e917b8}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em rows} & Number of blocks in each column of the output matrix. \\
+\hline
+{\em cols} & Number of blocks in each row of the output matrix. \\
+\hline
+{\em block\+Height} & Height of each block. \\
+\hline
+{\em block\+Width} & Width of each block.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyWarning}{Warning}
+block\+Height $\ast$ block\+Width must be equal to maximal\+Inputs.\+n\+\_\+rows. 
+\end{DoxyWarning}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_af00fa96c0b3e0dacd1c0176eca472483}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!BlockHeight@{BlockHeight}}
+\index{BlockHeight@{BlockHeight}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{BlockHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Block\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the block height. 
+
+
+
+Definition at line 151 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_a7909cc5374f22c946c4a792598582419}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!BlockHeight@{BlockHeight}}
+\index{BlockHeight@{BlockHeight}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{BlockHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Block\+Height (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the height of each block; see the constructor for more details. 
+
+
+
+Definition at line 149 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_aecfe34325ed6f312ce3aeaedb994d1f7}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!BlockWidth@{BlockWidth}}
+\index{BlockWidth@{BlockWidth}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{BlockWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Block\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the block width. 
+
+
+
+Definition at line 156 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_aa9d6f51aed3fb8b76f9bdf8183a8a596}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!BlockWidth@{BlockWidth}}
+\index{BlockWidth@{BlockWidth}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{BlockWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Block\+Width (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the width of each block; see the constructor for more details. 
+
+
+
+Definition at line 154 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_a798519f6802d88a49635e44d5230020a}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!BufSize@{BufSize}}
+\index{BufSize@{BufSize}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{BufSize()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Buf\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the buffer size. 
+
+
+
+Definition at line 162 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_a0ed6759ae521a7c0183187697bc048e9}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!BufSize@{BufSize}}
+\index{BufSize@{BufSize}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{BufSize()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Buf\+Size (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the buffer size (the size of the margin around each column of the input). 
+
+The default value is 1. 
+
+Definition at line 160 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_a49f9cd43a166d9f864310e9f444698b6}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!BufValue@{BufValue}}
+\index{BufValue@{BufValue}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{BufValue()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Buf\+Value (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the value used for buffer cells. 
+
+
+
+Definition at line 167 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_a1f975716805f8568cda0888a78e917b8}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!BufValue@{BufValue}}
+\index{BufValue@{BufValue}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{BufValue()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Buf\+Value (\begin{DoxyParamCaption}\item[{const double}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the value used for buffer cells; the default is -\/1. 
+
+
+
+Definition at line 165 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_a4272c009d2f2f8572158049515044a61}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!Cols@{Cols}}
+\index{Cols@{Cols}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{Cols()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Cols (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the number of blocks per column. 
+
+
+
+Definition at line 198 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_a4baee2c2b3fe90b0921171da72b6890c}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!Cols@{Cols}}
+\index{Cols@{Cols}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{Cols()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Cols (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the number of blocks per column. 
+
+
+
+Definition at line 196 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_acafd86fdb4e4d1c32d5edee456b8ba84}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!MaxRange@{MaxRange}}
+\index{MaxRange@{MaxRange}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{MaxRange()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Max\+Range (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the maximum of the range the input will be scaled to, if scaling is enabled (see \doxyref{Scale()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a668b1e7a0dab0c0dc31f1097f57f1c38}). 
+
+
+
+Definition at line 174 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_a87701466a13a6cc63643b9f46eaa2bed}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!MaxRange@{MaxRange}}
+\index{MaxRange@{MaxRange}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{MaxRange()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Max\+Range (\begin{DoxyParamCaption}\item[{const double}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the maximum of the range the input will be scaled to, if scaling is enabled (see \doxyref{Scale()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a668b1e7a0dab0c0dc31f1097f57f1c38}). 
+
+
+
+Definition at line 171 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_a48f09a1c6bd5e08aea80485023818908}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!MinRange@{MinRange}}
+\index{MinRange@{MinRange}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{MinRange()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Min\+Range (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the minimum of the range the input will be scaled to, if scaling is enabled (see \doxyref{Scale()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a668b1e7a0dab0c0dc31f1097f57f1c38}). 
+
+
+
+Definition at line 181 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_abcc192d4fe9322997d9bc1b6fbd5fb40}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!MinRange@{MinRange}}
+\index{MinRange@{MinRange}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{MinRange()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Min\+Range (\begin{DoxyParamCaption}\item[{const double}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the minimum of the range the input will be scaled to, if scaling is enabled (see \doxyref{Scale()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a668b1e7a0dab0c0dc31f1097f57f1c38}). 
+
+
+
+Definition at line 178 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_ae4dde733be7af7e81bd4a1e89f9c4b91}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!Rows@{Rows}}
+\index{Rows@{Rows}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{Rows()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t Rows (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the number of blocks per row. 
+
+
+
+Definition at line 193 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_a8fb9290a74b4454f4f8e8484c18f1635}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!Rows@{Rows}}
+\index{Rows@{Rows}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{Rows()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Rows (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the number of blocks per row. 
+
+
+
+Definition at line 191 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_ab7ad8f9c12a950a6087504534992c270}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!Scale@{Scale}}
+\index{Scale@{Scale}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{Scale()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Scale (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get whether or not scaling is enabled (see also \doxyref{Max\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a87701466a13a6cc63643b9f46eaa2bed} and \doxyref{Min\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_abcc192d4fe9322997d9bc1b6fbd5fb40}). 
+
+
+
+Definition at line 188 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_a668b1e7a0dab0c0dc31f1097f57f1c38}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!Scale@{Scale}}
+\index{Scale@{Scale}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{Scale()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Scale (\begin{DoxyParamCaption}\item[{const bool}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set whether or not scaling is enabled (see also \doxyref{Max\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a87701466a13a6cc63643b9f46eaa2bed} and \doxyref{Min\+Range()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_abcc192d4fe9322997d9bc1b6fbd5fb40}). 
+
+
+
+Definition at line 185 of file columns\+\_\+to\+\_\+blocks.\+hpp.
+
+\mbox{\label{classmlpack_1_1math_1_1ColumnsToBlocks_ac8cc13952caefd0b3640d172955977a7}} 
+\index{ColumnsToBlocks@{ColumnsToBlocks}!Transform@{Transform}}
+\index{Transform@{Transform}!ColumnsToBlocks@{ColumnsToBlocks}}
+\doxysubsubsection{Transform()}
+{\footnotesize\ttfamily void Transform (\begin{DoxyParamCaption}\item[{const arma\+::mat \&}]{maximal\+Inputs,  }\item[{arma\+::mat \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Transform the columns of the input matrix into blocks. 
+
+If block\+Height and block\+Width were not specified in the constructor (and \doxyref{Block\+Height()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_a7909cc5374f22c946c4a792598582419} and \doxyref{Block\+Width()}{p.}{classmlpack_1_1math_1_1ColumnsToBlocks_aa9d6f51aed3fb8b76f9bdf8183a8a596} were not called), then the number of rows in the input matrix must be a perfect square.
+
+
+\begin{DoxyParams}{Parameters}
+{\em maximal\+Inputs} & Input matrix to transform. \\
+\hline
+{\em output} & Matrix to store transformed output in. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/math/\textbf{ columns\+\_\+to\+\_\+blocks.\+hpp}\end{DoxyCompactItemize}

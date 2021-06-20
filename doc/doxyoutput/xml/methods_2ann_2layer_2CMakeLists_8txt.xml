@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="methods_2ann_2layer_2CMakeLists_8txt" kind="file" language="C++">
+    <compoundname>CMakeLists.txt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="methods_2ann_2layer_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}) endforeach() set(MLPACK_SRCS $</argsstring>
+        <name>set</name>
+        <param>
+          <type>DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file}</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/CMakeLists.txt" line="134" column="3" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/CMakeLists.txt" bodystart="134" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="methods_2ann_2layer_2CMakeLists_8txt_1a053f33109918c32ca4ef2897f0e2c00e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>set</definition>
+        <argsstring>(SOURCES add.hpp add_impl.hpp add_merge.hpp add_merge_impl.hpp adaptive_max_pooling.hpp adaptive_max_pooling_impl.hpp adaptive_mean_pooling.hpp adaptive_mean_pooling_impl.hpp alpha_dropout.hpp alpha_dropout_impl.hpp atrous_convolution.hpp atrous_convolution_impl.hpp base_layer.hpp batch_norm.hpp batch_norm_impl.hpp bilinear_interpolation.hpp bilinear_interpolation_impl.hpp concat.hpp concat_impl.hpp concat_performance.hpp concat_performance_impl.hpp concatenate.hpp concatenate_impl.hpp constant.hpp constant_impl.hpp convolution.hpp convolution_impl.hpp dropconnect.hpp dropconnect_impl.hpp dropout.hpp dropout_impl.hpp elu.hpp elu_impl.hpp fast_lstm.hpp fast_lstm_impl.hpp flatten_t_swish.hpp flatten_t_swish_impl.hpp flexible_relu.hpp flexible_relu_impl.hpp glimpse.hpp glimpse_impl.hpp gru.hpp gru_impl.hpp hard_tanh.hpp hard_tanh_impl.hpp highway.hpp highway_impl.hpp isrlu.hpp isrlu_impl.hpp join.hpp join_impl.hpp layer.hpp layer_norm.hpp layer_norm_impl.hpp layer_traits.hpp layer_types.hpp leaky_relu.hpp leaky_relu_impl.hpp linear.hpp linear_impl.hpp linear_no_bias.hpp linear_no_bias_impl.hpp log_softmax.hpp log_softmax_impl.hpp lookup.hpp lookup_impl.hpp lp_pooling.hpp lp_pooling_impl.hpp lstm.hpp lstm_impl.hpp max_pooling.hpp max_pooling_impl.hpp mean_pooling.hpp mean_pooling_impl.hpp minibatch_discrimination.hpp minibatch_discrimination_impl.hpp multihead_attention_impl.hpp multihead_attention.hpp multiply_constant.hpp multiply_constant_impl.hpp multiply_merge.hpp multiply_merge_impl.hpp noisylinear.hpp noisylinear_impl.hpp parametric_relu.hpp parametric_relu_impl.hpp pixel_shuffle.hpp pixel_shuffle_impl.hpp positional_encoding.hpp positional_encoding_impl.hpp recurrent.hpp recurrent_impl.hpp recurrent_attention.hpp recurrent_attention_impl.hpp reinforce_normal.hpp reinforce_normal_impl.hpp reparametrization.hpp reparametrization_impl.hpp radial_basis_function.hpp radial_basis_function_impl.hpp select.hpp select_impl.hpp sequential.hpp sequential_impl.hpp softmax_impl.hpp softmax.hpp spatial_dropout.hpp spatial_dropout_impl.hpp subview.hpp transposed_convolution.hpp transposed_convolution_impl.hpp vr_class_reward.hpp vr_class_reward_impl.hpp c_relu.hpp c_relu_impl.hpp weight_norm.hpp weight_norm_impl.hpp hardshrink.hpp hardshrink_impl.hpp celu.hpp celu_impl.hpp softshrink.hpp softshrink_impl.hpp softmin.hpp softmin_impl.hpp) set(DIR_SRCS) foreach(file $</argsstring>
+        <name>set</name>
+        <param>
+          <type>SOURCES add.hpp add_impl.hpp add_merge.hpp add_merge_impl.hpp adaptive_max_pooling.hpp adaptive_max_pooling_impl.hpp adaptive_mean_pooling.hpp adaptive_mean_pooling_impl.hpp alpha_dropout.hpp alpha_dropout_impl.hpp atrous_convolution.hpp atrous_convolution_impl.hpp base_layer.hpp batch_norm.hpp batch_norm_impl.hpp bilinear_interpolation.hpp bilinear_interpolation_impl.hpp concat.hpp concat_impl.hpp concat_performance.hpp concat_performance_impl.hpp concatenate.hpp concatenate_impl.hpp constant.hpp constant_impl.hpp convolution.hpp convolution_impl.hpp dropconnect.hpp dropconnect_impl.hpp dropout.hpp dropout_impl.hpp elu.hpp elu_impl.hpp fast_lstm.hpp fast_lstm_impl.hpp flatten_t_swish.hpp flatten_t_swish_impl.hpp flexible_relu.hpp flexible_relu_impl.hpp glimpse.hpp glimpse_impl.hpp gru.hpp gru_impl.hpp hard_tanh.hpp hard_tanh_impl.hpp highway.hpp highway_impl.hpp isrlu.hpp isrlu_impl.hpp join.hpp join_impl.hpp layer.hpp layer_norm.hpp layer_norm_impl.hpp layer_traits.hpp layer_types.hpp leaky_relu.hpp leaky_relu_impl.hpp linear.hpp linear_impl.hpp linear_no_bias.hpp linear_no_bias_impl.hpp log_softmax.hpp log_softmax_impl.hpp lookup.hpp lookup_impl.hpp lp_pooling.hpp lp_pooling_impl.hpp lstm.hpp lstm_impl.hpp max_pooling.hpp max_pooling_impl.hpp mean_pooling.hpp mean_pooling_impl.hpp minibatch_discrimination.hpp minibatch_discrimination_impl.hpp multihead_attention_impl.hpp multihead_attention.hpp multiply_constant.hpp multiply_constant_impl.hpp multiply_merge.hpp multiply_merge_impl.hpp noisylinear.hpp noisylinear_impl.hpp parametric_relu.hpp parametric_relu_impl.hpp pixel_shuffle.hpp pixel_shuffle_impl.hpp positional_encoding.hpp positional_encoding_impl.hpp recurrent.hpp recurrent_impl.hpp recurrent_attention.hpp recurrent_attention_impl.hpp reinforce_normal.hpp reinforce_normal_impl.hpp reparametrization.hpp reparametrization_impl.hpp radial_basis_function.hpp radial_basis_function_impl.hpp select.hpp select_impl.hpp sequential.hpp sequential_impl.hpp softmax_impl.hpp softmax.hpp spatial_dropout.hpp spatial_dropout_impl.hpp subview.hpp transposed_convolution.hpp transposed_convolution_impl.hpp vr_class_reward.hpp vr_class_reward_impl.hpp c_relu.hpp c_relu_impl.hpp weight_norm.hpp weight_norm_impl.hpp hardshrink.hpp hardshrink_impl.hpp celu.hpp celu_impl.hpp softshrink.hpp softshrink_impl.hpp softmin.hpp softmin_impl.</type>
+          <declname>hpp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/CMakeLists.txt" line="3" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/ann/layer/CMakeLists.txt" bodystart="3" bodyend="133"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#<sp/>Define<sp/>the<sp/>files<sp/>we<sp/>need<sp/>to<sp/>compile</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Anything<sp/>not<sp/>in<sp/>this<sp/>list<sp/>will<sp/>not<sp/>be<sp/>compiled<sp/>into<sp/>mlpack.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3" refid="methods_2ann_2layer_2CMakeLists_8txt_1a053f33109918c32ca4ef2897f0e2c00e" refkind="member"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(SOURCES</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"><sp/><sp/>add.hpp</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/>add_impl.hpp</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/>add_merge.hpp</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/>add_merge_impl.hpp</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/>adaptive_max_pooling.hpp</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/>adaptive_max_pooling_impl.hpp</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/>adaptive_mean_pooling.hpp</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/>adaptive_mean_pooling_impl.hpp</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/>alpha_dropout.hpp</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/>alpha_dropout_impl.hpp</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/>atrous_convolution.hpp</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/>atrous_convolution_impl.hpp</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/>base_layer.hpp</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/>batch_norm.hpp</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/>batch_norm_impl.hpp</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/>bilinear_interpolation.hpp</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/>bilinear_interpolation_impl.hpp</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/>concat.hpp</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/>concat_impl.hpp</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/>concat_performance.hpp</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/>concat_performance_impl.hpp</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/>concatenate.hpp</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/>concatenate_impl.hpp</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/>constant.hpp</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/>constant_impl.hpp</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/>convolution.hpp</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/>convolution_impl.hpp</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/>dropconnect.hpp</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/>dropconnect_impl.hpp</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/>dropout.hpp</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/>dropout_impl.hpp</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/>elu.hpp</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/>elu_impl.hpp</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/>fast_lstm.hpp</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/>fast_lstm_impl.hpp</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/>flatten_t_swish.hpp</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/>flatten_t_swish_impl.hpp</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/>flexible_relu.hpp</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>flexible_relu_impl.hpp</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/>glimpse.hpp</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>glimpse_impl.hpp</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/>gru.hpp</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>gru_impl.hpp</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/>hard_tanh.hpp</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/>hard_tanh_impl.hpp</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/>highway.hpp</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>highway_impl.hpp</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/>isrlu.hpp</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/>isrlu_impl.hpp</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/>join.hpp</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/>join_impl.hpp</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/>layer.hpp</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/>layer_norm.hpp</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/>layer_norm_impl.hpp</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>layer_traits.hpp</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/>layer_types.hpp</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/>leaky_relu.hpp</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>leaky_relu_impl.hpp</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/>linear.hpp</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/>linear_impl.hpp</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/>linear_no_bias.hpp</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/>linear_no_bias_impl.hpp</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/>log_softmax.hpp</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>log_softmax_impl.hpp</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/>lookup.hpp</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/>lookup_impl.hpp</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/>lp_pooling.hpp</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>lp_pooling_impl.hpp</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/>lstm.hpp</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>lstm_impl.hpp</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/>max_pooling.hpp</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/>max_pooling_impl.hpp</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>mean_pooling.hpp</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/>mean_pooling_impl.hpp</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/>minibatch_discrimination.hpp</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>minibatch_discrimination_impl.hpp</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/>multihead_attention_impl.hpp</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/>multihead_attention.hpp</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/>multiply_constant.hpp</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/>multiply_constant_impl.hpp</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/>multiply_merge.hpp</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>multiply_merge_impl.hpp</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/>noisylinear.hpp</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/>noisylinear_impl.hpp</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>parametric_relu.hpp</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/>parametric_relu_impl.hpp</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/>pixel_shuffle.hpp</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>pixel_shuffle_impl.hpp</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/>positional_encoding.hpp</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/>positional_encoding_impl.hpp</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>recurrent.hpp</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/>recurrent_impl.hpp</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>recurrent_attention.hpp</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/>recurrent_attention_impl.hpp</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>reinforce_normal.hpp</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/>reinforce_normal_impl.hpp</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/>reparametrization.hpp</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>reparametrization_impl.hpp</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/>radial_basis_function.hpp</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/>radial_basis_function_impl.hpp</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/>select.hpp</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/>select_impl.hpp</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/>sequential.hpp</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>sequential_impl.hpp</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/>softmax_impl.hpp</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/>softmax.hpp</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/>spatial_dropout.hpp</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/>spatial_dropout_impl.hpp</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/>subview.hpp</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/>transposed_convolution.hpp</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/>transposed_convolution_impl.hpp</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/>vr_class_reward.hpp</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/>vr_class_reward_impl.hpp</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/>c_relu.hpp</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/>c_relu_impl.hpp</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/>weight_norm.hpp</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/>weight_norm_impl.hpp</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>hardshrink.hpp</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/>hardshrink_impl.hpp</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/>celu.hpp</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/>celu_impl.hpp</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/>softshrink.hpp</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>softshrink_impl.hpp</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/>softmin.hpp</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/>softmin_impl.hpp</highlight></codeline>
+<codeline lineno="129"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Add<sp/>directory<sp/>name<sp/>to<sp/>sources.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS)</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="keywordflow">foreach</highlight><highlight class="normal">(file<sp/>${SOURCES})</highlight></codeline>
+<codeline lineno="134" refid="methods_2ann_2layer_2CMakeLists_8txt_1a796c8f92615fb965a749399e82cad9b0" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(DIR_SRCS<sp/>${DIR_SRCS}<sp/>${CMAKE_CURRENT_SOURCE_DIR}/${file})</highlight></codeline>
+<codeline lineno="135"><highlight class="normal">endforeach()</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>Append<sp/>sources<sp/>(with<sp/>directory<sp/>name)<sp/>to<sp/>list<sp/>of<sp/>all<sp/>mlpack<sp/>sources<sp/>(used<sp/>at</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="preprocessor">#<sp/>the<sp/>parent<sp/>scope).</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><ref refid="bindings_2cli_2CMakeLists_8txt_1a6cb7600e385afaebaa9cd3321e336597" kindref="member">set</ref>(MLPACK_SRCS<sp/>${MLPACK_SRCS}<sp/>${DIR_SRCS}<sp/>PARENT_SCOPE)</highlight></codeline>
+    </programlisting>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/ann/layer/CMakeLists.txt"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,37 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/methods/amf/update\+\_\+rules/svd\+\_\+incomplete\+\_\+incremental\+\_\+learning.hpp File Reference}
+\label{svd__incomplete__incremental__learning_8hpp}\index{/home/aakash/mlpack/src/mlpack/methods/amf/update\_rules/svd\_incomplete\_incremental\_learning.hpp@{/home/aakash/mlpack/src/mlpack/methods/amf/update\_rules/svd\_incomplete\_incremental\_learning.hpp}}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{svd__incomplete__incremental__learning_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \textbf{ SVDIncomplete\+Incremental\+Learning}
+\begin{DoxyCompactList}\small\item\em This class computes SVD using incomplete incremental batch learning, as described in the following paper\+: \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::amf}
+\begin{DoxyCompactList}\small\item\em Alternating Matrix Factorization. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+template$<$$>$ void \textbf{ SVDIncomplete\+Incremental\+Learning\+::\+HUpdate$<$ arma\+::sp\+\_\+mat $>$} (const arma\+::sp\+\_\+mat \&V, const arma\+::mat \&W, arma\+::mat \&H)
+\item 
+template$<$$>$ void \textbf{ SVDIncomplete\+Incremental\+Learning\+::\+WUpdate$<$ arma\+::sp\+\_\+mat $>$} (const arma\+::sp\+\_\+mat \&V, arma\+::mat \&W, const arma\+::mat \&H)
+\begin{DoxyCompactList}\small\item\em TODO \+: Merge this template specialized function for sparse matrix using common row\+\_\+col\+\_\+iterator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Sumedh Ghaisas
+\end{DoxyAuthor}
+SVD factorizer used in AMF (Alternating Matrix Factorization).
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

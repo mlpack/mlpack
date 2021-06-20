@@ -1,0 +1,325 @@
+\doxysection{Weight\+Norm$<$ Input\+Data\+Type, Output\+Data\+Type, Custom\+Layers $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1WeightNorm}\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+
+
+Declaration of the \doxyref{Weight\+Norm}{p.}{classmlpack_1_1ann_1_1WeightNorm} layer class.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Weight\+Norm} (\textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ layer=\textbf{ Layer\+Types}$<$ Custom\+Layers... $>$())
+\begin{DoxyCompactList}\small\item\em Create the \doxyref{Weight\+Norm}{p.}{classmlpack_1_1ann_1_1WeightNorm} layer object. \end{DoxyCompactList}\item 
+\textbf{ $\sim$\+Weight\+Norm} ()
+\begin{DoxyCompactList}\small\item\em Destructor to release allocated memory. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Backward pass through the layer. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Forward pass of the \doxyref{Weight\+Norm}{p.}{classmlpack_1_1ann_1_1WeightNorm} layer. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Gradient} () const
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&gradient)
+\begin{DoxyCompactList}\small\item\em Calculate the gradient using the output delta, input activations and the weights of the wrapped layer. \end{DoxyCompactList}\item 
+\textbf{ Layer\+Types}$<$ Custom\+Layers... $>$ const  \& \textbf{ Layer} ()
+\begin{DoxyCompactList}\small\item\em Get the wrapped layer. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+void \textbf{ Reset} ()
+\begin{DoxyCompactList}\small\item\em Reset the layer parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat, typename... Custom\+Layers$>$\newline
+class mlpack\+::ann\+::\+Weight\+Norm$<$ Input\+Data\+Type, Output\+Data\+Type, Custom\+Layers $>$}
+
+Declaration of the \doxyref{Weight\+Norm}{p.}{classmlpack_1_1ann_1_1WeightNorm} layer class. 
+
+The layer reparameterizes the weight vectors in a neural network, decoupling the length of those weight vectors from their direction. This reparameterization does not introduce any dependencies between the examples in a mini-\/batch.
+
+This class will be a wrapper around existing layers. It will just modify the calculation and updation of weights of the layer.
+
+For more information, refer to the following paper,
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{@inproceedings\{Salimans2016WeightNorm,}
+\DoxyCodeLine{  title = \{Weight Normalization: A Simple Reparameterization to Accelerate}
+\DoxyCodeLine{           Training of Deep Neural Networks\},}
+\DoxyCodeLine{  author = \{Tim Salimans, Diederik P. Kingma\},}
+\DoxyCodeLine{  booktitle = \{Neural Information Processing Systems 2016\},}
+\DoxyCodeLine{  year = \{2016\},}
+\DoxyCodeLine{  url  = \{https:\textcolor{comment}{//arxiv.org/abs/1602.07868\},}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Custom\+Layers} & Additional custom layers that can be added. \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 61 of file weight\+\_\+norm.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a02a0e3125b71703e2bbd9f7c4a885f48}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!WeightNorm@{WeightNorm}}
+\index{WeightNorm@{WeightNorm}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{WeightNorm()}
+{\footnotesize\ttfamily \textbf{ Weight\+Norm} (\begin{DoxyParamCaption}\item[{\textbf{ Layer\+Types}$<$ Custom\+Layers... $>$}]{layer = {\ttfamily \textbf{ Layer\+Types}$<$~CustomLayers...~$>$()} }\end{DoxyParamCaption})}
+
+
+
+Create the \doxyref{Weight\+Norm}{p.}{classmlpack_1_1ann_1_1WeightNorm} layer object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em layer} & The layer whose weights are needed to be normalized. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a7a39b4b1598f10f975e148d58591af59}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!````~WeightNorm@{$\sim$WeightNorm}}
+\index{````~WeightNorm@{$\sim$WeightNorm}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{$\sim$WeightNorm()}
+{\footnotesize\ttfamily $\sim$\textbf{ Weight\+Norm} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Destructor to release allocated memory. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a78dbad83871f43db1975e45a9a69c376}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Backward pass through the layer. 
+
+This function calls the \doxyref{Backward()}{p.}{classmlpack_1_1ann_1_1WeightNorm_a78dbad83871f43db1975e45a9a69c376} function of the wrapped layer.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The input activations. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_ad6601342d560219ce951d554e69e5e87}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 120 of file weight\+\_\+norm.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 118 of file weight\+\_\+norm.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Forward pass of the \doxyref{Weight\+Norm}{p.}{classmlpack_1_1ann_1_1WeightNorm} layer. 
+
+Calculates the weights of the wrapped layer from the parameter vector v and the scalar parameter g. It then calulates the output of the wrapped layer from the calculated weights.
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data for the layer. \\
+\hline
+{\em output} & Resulting output activations. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a19abce4739c3b0b658b612537e21956a}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the gradient. 
+
+
+
+Definition at line 125 of file weight\+\_\+norm.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a0f1f4e6d93472d83852731a96c8c3f59}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradient. 
+
+
+
+Definition at line 123 of file weight\+\_\+norm.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_aaf577db350e2130754490d8486fba215}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{gradient }\end{DoxyParamCaption})}
+
+
+
+Calculate the gradient using the output delta, input activations and the weights of the wrapped layer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & The input activations. \\
+\hline
+{\em error} & The calculated error. \\
+\hline
+{\em gradient} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a9a889774509f2391dfd9b68e7c6a67aa}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!Layer@{Layer}}
+\index{Layer@{Layer}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Layer()}
+{\footnotesize\ttfamily \textbf{ Layer\+Types}$<$Custom\+Layers...$>$ const\& Layer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the wrapped layer. 
+
+
+
+Definition at line 138 of file weight\+\_\+norm.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 130 of file weight\+\_\+norm.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 128 of file weight\+\_\+norm.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a9c5c5900772a689d5a6b59778ec67120}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parameters. 
+
+
+
+Definition at line 135 of file weight\+\_\+norm.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_aa530552c7ef915c952fbacc77b965c90}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the parameters. 
+
+
+
+Definition at line 133 of file weight\+\_\+norm.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a372de693ad40b3f42839c8ec6ac845f4}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!Reset@{Reset}}
+\index{Reset@{Reset}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{Reset()}
+{\footnotesize\ttfamily void Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Reset the layer parameters. 
+
+\mbox{\label{classmlpack_1_1ann_1_1WeightNorm_a65cba07328997659bec80b9879b15a51}} 
+\index{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$@{WeightNorm$<$ InputDataType, OutputDataType, CustomLayers $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ layer\+\_\+types.\+hpp}\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ weight\+\_\+norm.\+hpp}\end{DoxyCompactItemize}

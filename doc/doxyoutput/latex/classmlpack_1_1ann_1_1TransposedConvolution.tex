@@ -1,0 +1,889 @@
+\doxysection{Transposed\+Convolution$<$ Forward\+Convolution\+Rule, Backward\+Convolution\+Rule, Gradient\+Convolution\+Rule, Input\+Data\+Type, Output\+Data\+Type $>$ Class Template Reference}
+\label{classmlpack_1_1ann_1_1TransposedConvolution}\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+
+
+Implementation of the Transposed \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} class.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Transposed\+Convolution} ()
+\begin{DoxyCompactList}\small\item\em Create the Transposed \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object. \end{DoxyCompactList}\item 
+\textbf{ Transposed\+Convolution} (const size\+\_\+t in\+Size, const size\+\_\+t out\+Size, const size\+\_\+t kernel\+Width, const size\+\_\+t kernel\+Height, const size\+\_\+t stride\+Width, const size\+\_\+t stride\+Height, const std\+::tuple$<$ size\+\_\+t, size\+\_\+t $>$ \&padW, const std\+::tuple$<$ size\+\_\+t, size\+\_\+t $>$ \&padH, const size\+\_\+t input\+Width=0, const size\+\_\+t input\+Height=0, const size\+\_\+t output\+Width=0, const size\+\_\+t output\+Height=0, const std\+::string \&padding\+Type=\char`\"{}None\char`\"{})
+\begin{DoxyCompactList}\small\item\em Create the Transposed \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object using the specified number of input maps, output maps, filter size, stride and padding parameter. \end{DoxyCompactList}\item 
+\textbf{ Transposed\+Convolution} (const size\+\_\+t in\+Size, const size\+\_\+t out\+Size, const size\+\_\+t kernel\+Width, const size\+\_\+t kernel\+Height, const size\+\_\+t stride\+Width=1, const size\+\_\+t stride\+Height=1, const size\+\_\+t padW=0, const size\+\_\+t padH=0, const size\+\_\+t input\+Width=0, const size\+\_\+t input\+Height=0, const size\+\_\+t output\+Width=0, const size\+\_\+t output\+Height=0, const std\+::string \&padding\+Type=\char`\"{}None\char`\"{})
+\begin{DoxyCompactList}\small\item\em Create the Transposed \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object using the specified number of input maps, output maps, filter size, stride and padding parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Backward} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&gy, arma\+::\+Mat$<$ eT $>$ \&g)
+\begin{DoxyCompactList}\small\item\em Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. \end{DoxyCompactList}\item 
+arma\+::mat \& \textbf{ Bias} ()
+\begin{DoxyCompactList}\small\item\em Modify the bias of the layer. \end{DoxyCompactList}\item 
+arma\+::mat const  \& \textbf{ Bias} () const
+\begin{DoxyCompactList}\small\item\em Get the bias of the layer. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Delta} ()
+\begin{DoxyCompactList}\small\item\em Modify the delta. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Delta} () const
+\begin{DoxyCompactList}\small\item\em Get the delta. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Forward} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Gradient} ()
+\begin{DoxyCompactList}\small\item\em Modify the gradient. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Gradient} () const
+\begin{DoxyCompactList}\small\item\em Get the gradient. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ Gradient} (const arma\+::\+Mat$<$ eT $>$ \&, const arma\+::\+Mat$<$ eT $>$ \&error, arma\+::\+Mat$<$ eT $>$ \&gradient)
+\item 
+size\+\_\+t \& \textbf{ Input\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the input height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the input height. \end{DoxyCompactList}\item 
+Input\+Data\+Type \& \textbf{ Input\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the input parameter. \end{DoxyCompactList}\item 
+Input\+Data\+Type const  \& \textbf{ Input\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the input parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Shape} () const
+\begin{DoxyCompactList}\small\item\em Get the shape of the input. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the input size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Input\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify input the width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Input\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the input width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Kernel\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the kernel height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Kernel\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the kernel height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Kernel\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the kernel width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Kernel\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the kernel width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Output\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the output height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the output height. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Output\+Parameter} ()
+\begin{DoxyCompactList}\small\item\em Modify the output parameter. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Output\+Parameter} () const
+\begin{DoxyCompactList}\small\item\em Get the output parameter. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the output size. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Output\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the output width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Output\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the output width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Pad\+HBottom} ()
+\begin{DoxyCompactList}\small\item\em Modify the bottom padding height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Pad\+HBottom} () const
+\begin{DoxyCompactList}\small\item\em Get the bottom padding height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Pad\+HTop} ()
+\begin{DoxyCompactList}\small\item\em Modify the top padding height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Pad\+HTop} () const
+\begin{DoxyCompactList}\small\item\em Get the top padding height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Pad\+WLeft} ()
+\begin{DoxyCompactList}\small\item\em Modify the left padding width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Pad\+WLeft} () const
+\begin{DoxyCompactList}\small\item\em Get the left padding width. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Pad\+WRight} ()
+\begin{DoxyCompactList}\small\item\em Modify the right padding width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Pad\+WRight} () const
+\begin{DoxyCompactList}\small\item\em Get the right padding width. \end{DoxyCompactList}\item 
+Output\+Data\+Type \& \textbf{ Parameters} ()
+\begin{DoxyCompactList}\small\item\em Modify the parameters. \end{DoxyCompactList}\item 
+Output\+Data\+Type const  \& \textbf{ Parameters} () const
+\begin{DoxyCompactList}\small\item\em Get the parameters. \end{DoxyCompactList}\item 
+void \textbf{ Reset} ()
+\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Stride\+Height} ()
+\begin{DoxyCompactList}\small\item\em Modify the stride height. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Stride\+Height} () const
+\begin{DoxyCompactList}\small\item\em Get the stride height. \end{DoxyCompactList}\item 
+size\+\_\+t \& \textbf{ Stride\+Width} ()
+\begin{DoxyCompactList}\small\item\em Modify the stride width. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Stride\+Width} () const
+\begin{DoxyCompactList}\small\item\em Get the stride width. \end{DoxyCompactList}\item 
+arma\+::cube \& \textbf{ Weight} ()
+\begin{DoxyCompactList}\small\item\em Modify the weight of the layer. \end{DoxyCompactList}\item 
+arma\+::cube const  \& \textbf{ Weight} () const
+\begin{DoxyCompactList}\small\item\em Get the weight of the layer. \end{DoxyCompactList}\item 
+size\+\_\+t \textbf{ Weight\+Size} () const
+\begin{DoxyCompactList}\small\item\em Get the size of the weight matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename Forward\+Convolution\+Rule = Naive\+Convolution$<$\+Valid\+Convolution$>$, typename Backward\+Convolution\+Rule = Naive\+Convolution$<$\+Valid\+Convolution$>$, typename Gradient\+Convolution\+Rule = Naive\+Convolution$<$\+Valid\+Convolution$>$, typename Input\+Data\+Type = arma\+::mat, typename Output\+Data\+Type = arma\+::mat$>$\newline
+class mlpack\+::ann\+::\+Transposed\+Convolution$<$ Forward\+Convolution\+Rule, Backward\+Convolution\+Rule, Gradient\+Convolution\+Rule, Input\+Data\+Type, Output\+Data\+Type $>$}
+
+Implementation of the Transposed \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} class. 
+
+The Transposed \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} class represents a single layer of a neural network.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Forward\+Convolution\+Rule} & \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} to perform forward process. \\
+\hline
+{\em Backward\+Convolution\+Rule} & \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} to perform backward process. \\
+\hline
+{\em Gradient\+Convolution\+Rule} & \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} to calculate gradient. \\
+\hline
+{\em Input\+Data\+Type} & Type of the input data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+{\em Output\+Data\+Type} & Type of the output data (arma\+::colvec, arma\+::mat, arma\+::sp\+\_\+mat or arma\+::cube). \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 49 of file transposed\+\_\+convolution.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a69a268c24f008adcf0b22d07eefee849}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!TransposedConvolution@{TransposedConvolution}}
+\index{TransposedConvolution@{TransposedConvolution}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{TransposedConvolution()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \textbf{ Transposed\+Convolution} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Create the Transposed \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object. 
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a3a60c5d37e8c45da06e5a09ac75680bf}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!TransposedConvolution@{TransposedConvolution}}
+\index{TransposedConvolution@{TransposedConvolution}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{TransposedConvolution()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \textbf{ Transposed\+Convolution} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{in\+Size,  }\item[{const size\+\_\+t}]{out\+Size,  }\item[{const size\+\_\+t}]{kernel\+Width,  }\item[{const size\+\_\+t}]{kernel\+Height,  }\item[{const size\+\_\+t}]{stride\+Width = {\ttfamily 1},  }\item[{const size\+\_\+t}]{stride\+Height = {\ttfamily 1},  }\item[{const size\+\_\+t}]{padW = {\ttfamily 0},  }\item[{const size\+\_\+t}]{padH = {\ttfamily 0},  }\item[{const size\+\_\+t}]{input\+Width = {\ttfamily 0},  }\item[{const size\+\_\+t}]{input\+Height = {\ttfamily 0},  }\item[{const size\+\_\+t}]{output\+Width = {\ttfamily 0},  }\item[{const size\+\_\+t}]{output\+Height = {\ttfamily 0},  }\item[{const std\+::string \&}]{padding\+Type = {\ttfamily \char`\"{}None\char`\"{}} }\end{DoxyParamCaption})}
+
+
+
+Create the Transposed \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object using the specified number of input maps, output maps, filter size, stride and padding parameter. 
+
+Note\+: The equivalent stride of a transposed convolution operation is always equal to 1. In this implementation, stride of filter represents the stride of the associated convolution operation. Note\+: \doxyref{Padding}{p.}{classmlpack_1_1ann_1_1Padding} of input represents padding of associated convolution operation.
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Size} & The number of input maps. \\
+\hline
+{\em out\+Size} & The number of output maps. \\
+\hline
+{\em kernel\+Width} & Width of the filter/kernel. \\
+\hline
+{\em kernel\+Height} & Height of the filter/kernel. \\
+\hline
+{\em stride\+Width} & Stride of filter application in the x direction. \\
+\hline
+{\em stride\+Height} & Stride of filter application in the y direction. \\
+\hline
+{\em padW} & \doxyref{Padding}{p.}{classmlpack_1_1ann_1_1Padding} width of the input. \\
+\hline
+{\em padH} & \doxyref{Padding}{p.}{classmlpack_1_1ann_1_1Padding} height of the input. \\
+\hline
+{\em input\+Width} & The width of the input data. \\
+\hline
+{\em input\+Height} & The height of the input data. \\
+\hline
+{\em output\+Width} & The width of the output data. \\
+\hline
+{\em output\+Height} & The height of the output data. \\
+\hline
+{\em padding\+Type} & The type of padding (Valid or Same). Defaults to None. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a2f27a931f4ba80e8828cee3fd2e4c183}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!TransposedConvolution@{TransposedConvolution}}
+\index{TransposedConvolution@{TransposedConvolution}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{TransposedConvolution()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \textbf{ Transposed\+Convolution} (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{in\+Size,  }\item[{const size\+\_\+t}]{out\+Size,  }\item[{const size\+\_\+t}]{kernel\+Width,  }\item[{const size\+\_\+t}]{kernel\+Height,  }\item[{const size\+\_\+t}]{stride\+Width,  }\item[{const size\+\_\+t}]{stride\+Height,  }\item[{const std\+::tuple$<$ size\+\_\+t, size\+\_\+t $>$ \&}]{padW,  }\item[{const std\+::tuple$<$ size\+\_\+t, size\+\_\+t $>$ \&}]{padH,  }\item[{const size\+\_\+t}]{input\+Width = {\ttfamily 0},  }\item[{const size\+\_\+t}]{input\+Height = {\ttfamily 0},  }\item[{const size\+\_\+t}]{output\+Width = {\ttfamily 0},  }\item[{const size\+\_\+t}]{output\+Height = {\ttfamily 0},  }\item[{const std\+::string \&}]{padding\+Type = {\ttfamily \char`\"{}None\char`\"{}} }\end{DoxyParamCaption})}
+
+
+
+Create the Transposed \doxyref{Convolution}{p.}{classmlpack_1_1ann_1_1Convolution} object using the specified number of input maps, output maps, filter size, stride and padding parameter. 
+
+Note\+: The equivalent stride of a transposed convolution operation is always equal to 1. In this implementation, stride of filter represents the stride of the associated convolution operation. Note\+: \doxyref{Padding}{p.}{classmlpack_1_1ann_1_1Padding} of input represents padding of associated convolution operation.
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+Size} & The number of input maps. \\
+\hline
+{\em out\+Size} & The number of output maps. \\
+\hline
+{\em kernel\+Width} & Width of the filter/kernel. \\
+\hline
+{\em kernel\+Height} & Height of the filter/kernel. \\
+\hline
+{\em stride\+Width} & Stride of filter application in the x direction. \\
+\hline
+{\em stride\+Height} & Stride of filter application in the y direction. \\
+\hline
+{\em padW} & A two-\/value tuple indicating padding widths of the input. First value is padding at left side. Second value is padding on right side. \\
+\hline
+{\em padH} & A two-\/value tuple indicating padding heights of the input. First value is padding at top. Second value is padding on bottom. \\
+\hline
+{\em input\+Width} & The width of the input data. \\
+\hline
+{\em input\+Height} & The height of the input data. \\
+\hline
+{\em output\+Width} & The width of the output data. \\
+\hline
+{\em output\+Height} & The height of the output data. \\
+\hline
+{\em padding\+Type} & The type of padding (Valid or Same). Defaults to None. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_ad9ad1a3bdb0f3fff5c839ed155e4bbf8}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Backward@{Backward}}
+\index{Backward@{Backward}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Backward()}
+{\footnotesize\ttfamily void Backward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{gy,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{g }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed backward pass of a neural network, calculating the function f(x) by propagating x backwards through f. 
+
+Using the results from the feed forward pass.
+
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (input) The propagated input activation. \\
+\hline
+{\em gy} & The backpropagated error. \\
+\hline
+{\em g} & The calculated gradient. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a398f0702633d5ba7afe6057d25f4b78c}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Bias@{Bias}}
+\index{Bias@{Bias}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Bias()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::mat\& Bias (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the bias of the layer. 
+
+
+
+Definition at line 189 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_ab94cce6a9d6baed0badd20f4a409e9af}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Bias@{Bias}}
+\index{Bias@{Bias}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Bias()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::mat const\& Bias (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the bias of the layer. 
+
+
+
+Definition at line 187 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_ad6601342d560219ce951d554e69e5e87}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the delta. 
+
+
+
+Definition at line 204 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a797f7edb44dd081e5e2b3cc316eef6bd}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Delta@{Delta}}
+\index{Delta@{Delta}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Delta()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Delta (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the delta. 
+
+
+
+Definition at line 202 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a461f849bc638c15bec262dc9c3a58abe}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Forward@{Forward}}
+\index{Forward@{Forward}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Forward()}
+{\footnotesize\ttfamily void Forward (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{input,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{output }\end{DoxyParamCaption})}
+
+
+
+Ordinary feed forward pass of a neural network, evaluating the function f(x) by propagating the activity forward through f. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & Input data used for evaluating the specified function. \\
+\hline
+{\em output} & Resulting output activation. \\
+\hline
+\end{DoxyParams}
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a19abce4739c3b0b658b612537e21956a}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the gradient. 
+
+
+
+Definition at line 209 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a0f1f4e6d93472d83852731a96c8c3f59}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Gradient (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the gradient. 
+
+
+
+Definition at line 207 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a9eb69a40c783e082307be5cb1ffab921}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Gradient()\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Gradient (\begin{DoxyParamCaption}\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{,  }\item[{const arma\+::\+Mat$<$ eT $>$ \&}]{error,  }\item[{arma\+::\+Mat$<$ eT $>$ \&}]{gradient }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_aefbba724eec397a928d5460bb209a360}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!InputHeight@{InputHeight}}
+\index{InputHeight@{InputHeight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Input\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input height. 
+
+
+
+Definition at line 219 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_ac34354aab4ed6f9145908b19eade6a24}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!InputHeight@{InputHeight}}
+\index{InputHeight@{InputHeight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Input\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input height. 
+
+
+
+Definition at line 217 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a063c3b1053c7979a7dd2e7bbd2bf1f8a}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!InputParameter@{InputParameter}}
+\index{InputParameter@{InputParameter}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the input parameter. 
+
+
+
+Definition at line 194 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_aaffd593b3ab627f8b5aae2a1f53634b0}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!InputParameter@{InputParameter}}
+\index{InputParameter@{InputParameter}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Input\+Data\+Type const\& Input\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input parameter. 
+
+
+
+Definition at line 192 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a13ab93f234244a68f6ade76287284447}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!InputShape@{InputShape}}
+\index{InputShape@{InputShape}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputShape()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Shape (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the shape of the input. 
+
+
+
+Definition at line 278 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a5a4c4984aa897a28d516e638e7ea5308}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!InputSize@{InputSize}}
+\index{InputSize@{InputSize}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputSize()}
+{\footnotesize\ttfamily size\+\_\+t Input\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input size. 
+
+
+
+Definition at line 232 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a238e9d308df611a9300a4ca6756fef4d}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!InputWidth@{InputWidth}}
+\index{InputWidth@{InputWidth}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Input\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify input the width. 
+
+
+
+Definition at line 214 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a432efdff77411903044ae87ec3aec70f}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!InputWidth@{InputWidth}}
+\index{InputWidth@{InputWidth}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{InputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Input\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the input width. 
+
+
+
+Definition at line 212 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a46b2c28d89959067f549f9f45d2626c5}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!KernelHeight@{KernelHeight}}
+\index{KernelHeight@{KernelHeight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Kernel\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the kernel height. 
+
+
+
+Definition at line 245 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a6c15e2e3416651fac44621acbbdac9e9}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!KernelHeight@{KernelHeight}}
+\index{KernelHeight@{KernelHeight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Kernel\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the kernel height. 
+
+
+
+Definition at line 243 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a5fbae452ceda395f5566833e06ba3615}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!KernelWidth@{KernelWidth}}
+\index{KernelWidth@{KernelWidth}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Kernel\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the kernel width. 
+
+
+
+Definition at line 240 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a656302bc9b300692aa71abe2a614c7b1}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!KernelWidth@{KernelWidth}}
+\index{KernelWidth@{KernelWidth}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{KernelWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Kernel\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the kernel width. 
+
+
+
+Definition at line 238 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_ac5112abf9f5e1face13ed965a8755b1d}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!OutputHeight@{OutputHeight}}
+\index{OutputHeight@{OutputHeight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Output\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output height. 
+
+
+
+Definition at line 229 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a96a6294ed9ca8d24be9bb5eb53db7f25}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!OutputHeight@{OutputHeight}}
+\index{OutputHeight@{OutputHeight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Output\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output height. 
+
+
+
+Definition at line 227 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a21d5f745f02c709625a4ee0907f004a5}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output parameter. 
+
+
+
+Definition at line 199 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a0ee21c2a36e5abad1e7a9d5dd00849f9}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!OutputParameter@{OutputParameter}}
+\index{OutputParameter@{OutputParameter}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputParameter()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Output\+Parameter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output parameter. 
+
+
+
+Definition at line 197 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a99c1d948c984b9e76fb5e37e2145427a}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!OutputSize@{OutputSize}}
+\index{OutputSize@{OutputSize}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputSize()}
+{\footnotesize\ttfamily size\+\_\+t Output\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output size. 
+
+
+
+Definition at line 235 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a54579ec9924e2a4a5bc0a4fb822ce80c}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!OutputWidth@{OutputWidth}}
+\index{OutputWidth@{OutputWidth}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Output\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the output width. 
+
+
+
+Definition at line 224 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_aa2b647f9e029826314b4f572fe96878d}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!OutputWidth@{OutputWidth}}
+\index{OutputWidth@{OutputWidth}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{OutputWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Output\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the output width. 
+
+
+
+Definition at line 222 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a49d01b2dacca58ba01d883045100b823}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!PadHBottom@{PadHBottom}}
+\index{PadHBottom@{PadHBottom}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{PadHBottom()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Pad\+HBottom (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the bottom padding height. 
+
+
+
+Definition at line 265 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a7772e9861fa1c1922b00428172315939}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!PadHBottom@{PadHBottom}}
+\index{PadHBottom@{PadHBottom}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{PadHBottom()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Pad\+HBottom (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the bottom padding height. 
+
+
+
+Definition at line 263 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a9ea976eb369189ecbe7be7e53e323d5e}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!PadHTop@{PadHTop}}
+\index{PadHTop@{PadHTop}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{PadHTop()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Pad\+HTop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the top padding height. 
+
+
+
+Definition at line 260 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_ae6d766575008c2909e51d00b1ef619a1}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!PadHTop@{PadHTop}}
+\index{PadHTop@{PadHTop}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{PadHTop()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Pad\+HTop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the top padding height. 
+
+
+
+Definition at line 258 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a10cf922741cd487e0904c933e6500760}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!PadWLeft@{PadWLeft}}
+\index{PadWLeft@{PadWLeft}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{PadWLeft()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Pad\+WLeft (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the left padding width. 
+
+
+
+Definition at line 270 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a353cb5238a6b33f0d740c3ab17da11b4}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!PadWLeft@{PadWLeft}}
+\index{PadWLeft@{PadWLeft}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{PadWLeft()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Pad\+WLeft (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the left padding width. 
+
+
+
+Definition at line 268 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a97efc672230a48247bd19a1bcd51624f}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!PadWRight@{PadWRight}}
+\index{PadWRight@{PadWRight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{PadWRight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Pad\+WRight (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the right padding width. 
+
+
+
+Definition at line 275 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a7f164b19d31d8d4ec4988513c139bf55}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!PadWRight@{PadWRight}}
+\index{PadWRight@{PadWRight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{PadWRight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Pad\+WRight (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the right padding width. 
+
+
+
+Definition at line 273 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a9c5c5900772a689d5a6b59778ec67120}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the parameters. 
+
+
+
+Definition at line 179 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_aa530552c7ef915c952fbacc77b965c90}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Parameters@{Parameters}}
+\index{Parameters@{Parameters}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Parameters()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Output\+Data\+Type const\& Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the parameters. 
+
+
+
+Definition at line 177 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a372de693ad40b3f42839c8ec6ac845f4}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Reset@{Reset}}
+\index{Reset@{Reset}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Reset()}
+{\footnotesize\ttfamily void Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a65cba07328997659bec80b9879b15a51}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!serialize@{serialize}}
+\index{serialize@{serialize}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+
+
+Serialize the layer. 
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a0dd3de9c8a9060e927c575b57a021e8b}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!StrideHeight@{StrideHeight}}
+\index{StrideHeight@{StrideHeight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideHeight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Stride\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the stride height. 
+
+
+
+Definition at line 255 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a1894b819a7ff82a5576fc8deb8ba7457}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!StrideHeight@{StrideHeight}}
+\index{StrideHeight@{StrideHeight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideHeight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Stride\+Height (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the stride height. 
+
+
+
+Definition at line 253 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_af40557db9372b513440e06a5e42cc599}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!StrideWidth@{StrideWidth}}
+\index{StrideWidth@{StrideWidth}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideWidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t\& Stride\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the stride width. 
+
+
+
+Definition at line 250 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_ad8fd9eb6de956c3e9d82242793fd2db1}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!StrideWidth@{StrideWidth}}
+\index{StrideWidth@{StrideWidth}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{StrideWidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t Stride\+Width (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the stride width. 
+
+
+
+Definition at line 248 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a7efcee6fad13ea8a7a431168fe0ad55a}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Weight@{Weight}}
+\index{Weight@{Weight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Weight()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily arma\+::cube\& Weight (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the weight of the layer. 
+
+
+
+Definition at line 184 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a18753fb91ac2d21cb52a432cfa0253e5}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!Weight@{Weight}}
+\index{Weight@{Weight}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{Weight()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily arma\+::cube const\& Weight (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the weight of the layer. 
+
+
+
+Definition at line 182 of file transposed\+\_\+convolution.\+hpp.
+
+\mbox{\label{classmlpack_1_1ann_1_1TransposedConvolution_a7a2704698a50d9e00dfb083f3a863579}} 
+\index{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}!WeightSize@{WeightSize}}
+\index{WeightSize@{WeightSize}!TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$@{TransposedConvolution$<$ ForwardConvolutionRule, BackwardConvolutionRule, GradientConvolutionRule, InputDataType, OutputDataType $>$}}
+\doxysubsubsection{WeightSize()}
+{\footnotesize\ttfamily size\+\_\+t Weight\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the size of the weight matrix. 
+
+
+
+Definition at line 284 of file transposed\+\_\+convolution.\+hpp.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ layer\+\_\+types.\+hpp}\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/layer/\textbf{ transposed\+\_\+convolution.\+hpp}\end{DoxyCompactItemize}

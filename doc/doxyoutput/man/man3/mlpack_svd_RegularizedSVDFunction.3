@@ -1,0 +1,213 @@
+.TH "RegularizedSVDFunction< MatType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RegularizedSVDFunction< MatType > \- The data is stored in a matrix of type MatType, so that this class can be used with both dense and sparse matrix types\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRegularizedSVDFunction\fP (const MatType &data, const size_t rank, const double lambda)"
+.br
+.RI "Constructor for \fBRegularizedSVDFunction\fP class\&. "
+.ti -1c
+.RI "const arma::mat & \fBDataset\fP () const"
+.br
+.RI "Return the dataset passed into the constructor\&. "
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &parameters) const"
+.br
+.RI "Evaluates the cost function over all examples in the data\&. "
+.ti -1c
+.RI "double \fBEvaluate\fP (const arma::mat &parameters, const size_t start, const size_t batchSize=1) const"
+.br
+.RI "Evaluates the cost function for one training example\&. "
+.ti -1c
+.RI "const arma::mat & \fBGetInitialPoint\fP () const"
+.br
+.RI "Return the initial point for the optimization\&. "
+.ti -1c
+.RI "void \fBGradient\fP (const arma::mat &parameters, arma::mat &gradient) const"
+.br
+.RI "Evaluates the full gradient of the cost function over all the training examples\&. "
+.ti -1c
+.RI "template<typename GradType > void \fBGradient\fP (const arma::mat &parameters, const size_t start, GradType &gradient, const size_t batchSize=1) const"
+.br
+.RI "Evaluates the gradient of the cost function over one training example\&. "
+.ti -1c
+.RI "double \fBLambda\fP () const"
+.br
+.RI "Return the regularization parameters\&. "
+.ti -1c
+.RI "size_t \fBNumFunctions\fP () const"
+.br
+.RI "Return the number of training examples\&. Useful for SGD optimizer\&. "
+.ti -1c
+.RI "size_t \fBNumItems\fP () const"
+.br
+.RI "Return the number of items in the data\&. "
+.ti -1c
+.RI "size_t \fBNumUsers\fP () const"
+.br
+.RI "Return the number of users in the data\&. "
+.ti -1c
+.RI "size_t \fBRank\fP () const"
+.br
+.RI "Return the rank used for the factorization\&. "
+.ti -1c
+.RI "void \fBShuffle\fP ()"
+.br
+.RI "Shuffle the points in the dataset\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename MatType = arma::mat>
+.br
+class mlpack::svd::RegularizedSVDFunction< MatType >"
+The data is stored in a matrix of type MatType, so that this class can be used with both dense and sparse matrix types\&. 
+
+
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIMatType\fP The matrix type of the dataset\&. 
+.RE
+.PP
+
+.PP
+Definition at line 29 of file regularized_svd_function\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRegularizedSVDFunction\fP (const MatType & data, const size_t rank, const double lambda)"
+
+.PP
+Constructor for \fBRegularizedSVDFunction\fP class\&. The constructor calculates the number of users and items in the passed data\&. It also randomly initializes the parameter values\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP Dataset for which SVD is calculated\&. 
+.br
+\fIrank\fP Rank used for matrix factorization\&. 
+.br
+\fIlambda\fP Regularization parameter used for optimization\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "const arma::mat& Dataset () const\fC [inline]\fP"
+
+.PP
+Return the dataset passed into the constructor\&. 
+.PP
+Definition at line 101 of file regularized_svd_function\&.hpp\&.
+.SS "double Evaluate (const arma::mat & parameters) const"
+
+.PP
+Evaluates the cost function over all examples in the data\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIparameters\fP Parameters(user/item matrices) of the decomposition\&. 
+.RE
+.PP
+
+.SS "double Evaluate (const arma::mat & parameters, const size_t start, const size_t batchSize = \fC1\fP) const"
+
+.PP
+Evaluates the cost function for one training example\&. Useful for the SGD optimizer abstraction which uses one training example at a time\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIparameters\fP Parameters(user/item matrices) of the decomposition\&. 
+.br
+\fIstart\fP First index of the training examples to be used\&. 
+.br
+\fIbatchSize\fP Size of batch to evaluate\&. 
+.RE
+.PP
+
+.SS "const arma::mat& GetInitialPoint () const\fC [inline]\fP"
+
+.PP
+Return the initial point for the optimization\&. 
+.PP
+Definition at line 98 of file regularized_svd_function\&.hpp\&.
+.SS "void Gradient (const arma::mat & parameters, arma::mat & gradient) const"
+
+.PP
+Evaluates the full gradient of the cost function over all the training examples\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIparameters\fP Parameters(user/item matrices) of the decomposition\&. 
+.br
+\fIgradient\fP Calculated gradient for the parameters\&. 
+.RE
+.PP
+
+.SS "void Gradient (const arma::mat & parameters, const size_t start, GradType & gradient, const size_t batchSize = \fC1\fP) const"
+
+.PP
+Evaluates the gradient of the cost function over one training example\&. This function is useful for optimizers like SGD\&. The type of the gradient parameter is a template argument to allow the computation of a sparse gradient\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIGradType\fP The type of the gradient out-param\&. 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIparameters\fP Parameters(user/item matrices) of the decomposition\&. 
+.br
+\fIstart\fP The first index of the training examples to use\&. 
+.br
+\fIgradient\fP Calculated gradient for the parameters\&. 
+.br
+\fIbatchSize\fP Size of batch to calculate gradient for\&. 
+.RE
+.PP
+
+.SS "double Lambda () const\fC [inline]\fP"
+
+.PP
+Return the regularization parameters\&. 
+.PP
+Definition at line 113 of file regularized_svd_function\&.hpp\&.
+.SS "size_t NumFunctions () const\fC [inline]\fP"
+
+.PP
+Return the number of training examples\&. Useful for SGD optimizer\&. 
+.PP
+Definition at line 104 of file regularized_svd_function\&.hpp\&.
+.SS "size_t NumItems () const\fC [inline]\fP"
+
+.PP
+Return the number of items in the data\&. 
+.PP
+Definition at line 110 of file regularized_svd_function\&.hpp\&.
+.SS "size_t NumUsers () const\fC [inline]\fP"
+
+.PP
+Return the number of users in the data\&. 
+.PP
+Definition at line 107 of file regularized_svd_function\&.hpp\&.
+.SS "size_t Rank () const\fC [inline]\fP"
+
+.PP
+Return the rank used for the factorization\&. 
+.PP
+Definition at line 116 of file regularized_svd_function\&.hpp\&.
+.SS "void Shuffle ()"
+
+.PP
+Shuffle the points in the dataset\&. This may be used by optimizers\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

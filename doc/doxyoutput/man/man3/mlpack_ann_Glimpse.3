@@ -1,0 +1,310 @@
+.TH "Glimpse< InputDataType, OutputDataType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Glimpse< InputDataType, OutputDataType > \- The glimpse layer returns a retina-like representation (down-scaled cropped images) of increasing scale around a given location in a given image\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGlimpse\fP (const size_t inSize=0, const size_t size=0, const size_t depth=3, const size_t scale=2, const size_t inputWidth=0, const size_t inputHeight=0)"
+.br
+.RI "Create the GlimpseLayer object using the specified ratio and rescale parameter\&. "
+.ti -1c
+.RI "template<typename eT > void \fBBackward\fP (const arma::Mat< eT > &, const arma::Mat< eT > &gy, arma::Mat< eT > &g)"
+.br
+.RI "Ordinary feed backward pass of the glimpse layer\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP ()"
+.br
+.RI "Modify the delta\&. "
+.ti -1c
+.RI "OutputDataType & \fBDelta\fP () const"
+.br
+.RI "Get the detla\&. "
+.ti -1c
+.RI "size_t const  & \fBDepth\fP () const"
+.br
+.RI "Get the number of patches to crop per glimpse\&. "
+.ti -1c
+.RI "bool & \fBDeterministic\fP ()"
+.br
+.RI "Modify the value of the deterministic parameter\&. "
+.ti -1c
+.RI "bool \fBDeterministic\fP () const"
+.br
+.RI "Get the value of the deterministic parameter\&. "
+.ti -1c
+.RI "template<typename eT > void \fBForward\fP (const arma::Mat< eT > &input, arma::Mat< eT > &output)"
+.br
+.RI "Ordinary feed forward pass of the glimpse layer\&. "
+.ti -1c
+.RI "size_t \fBGlimpseSize\fP () const"
+.br
+.RI "Get the used glimpse size (height = width)\&. "
+.ti -1c
+.RI "size_t & \fBInputHeight\fP ()"
+.br
+.RI "Modify the input height\&. "
+.ti -1c
+.RI "size_t const  & \fBInputHeight\fP () const"
+.br
+.RI "Get the input height\&. "
+.ti -1c
+.RI "size_t \fBInputShape\fP () const"
+.br
+.RI "Get the shape of the input\&. "
+.ti -1c
+.RI "size_t & \fBInputWidth\fP ()"
+.br
+.RI "Modify input the width\&. "
+.ti -1c
+.RI "size_t const  & \fBInputWidth\fP () const"
+.br
+.RI "Get the input width\&. "
+.ti -1c
+.RI "size_t \fBInSize\fP () const"
+.br
+.RI "Get the size of the input units\&. "
+.ti -1c
+.RI "void \fBLocation\fP (const arma::mat &location)"
+.br
+.RI "Set the locationthe x and y coordinate of the center of the output glimpse\&. "
+.ti -1c
+.RI "size_t & \fBOutputHeight\fP ()"
+.br
+.RI "Modify the output height\&. "
+.ti -1c
+.RI "size_t const  & \fBOutputHeight\fP () const"
+.br
+.RI "Get the output height\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP ()"
+.br
+.RI "Modify the output parameter\&. "
+.ti -1c
+.RI "OutputDataType & \fBOutputParameter\fP () const"
+.br
+.RI "Get the output parameter\&. "
+.ti -1c
+.RI "size_t & \fBOutputWidth\fP ()"
+.br
+.RI "Modify the output width\&. "
+.ti -1c
+.RI "size_t const  & \fBOutputWidth\fP () const"
+.br
+.RI "Get the output width\&. "
+.ti -1c
+.RI "size_t const  & \fBScale\fP () const"
+.br
+.RI "Get the scale fraction\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the layer\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename InputDataType = arma::mat, typename OutputDataType = arma::mat>
+.br
+class mlpack::ann::Glimpse< InputDataType, OutputDataType >"
+The glimpse layer returns a retina-like representation (down-scaled cropped images) of increasing scale around a given location in a given image\&. 
+
+
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIInputDataType\fP Type of the input data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.br
+\fIOutputDataType\fP Type of the output data (arma::colvec, arma::mat, arma::sp_mat or arma::cube)\&. 
+.RE
+.PP
+
+.PP
+Definition at line 88 of file glimpse\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBGlimpse\fP (const size_t inSize = \fC0\fP, const size_t size = \fC0\fP, const size_t depth = \fC3\fP, const size_t scale = \fC2\fP, const size_t inputWidth = \fC0\fP, const size_t inputHeight = \fC0\fP)"
+
+.PP
+Create the GlimpseLayer object using the specified ratio and rescale parameter\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinSize\fP The size of the input units\&. 
+.br
+\fIsize\fP The used glimpse size (height = width)\&. 
+.br
+\fIdepth\fP The number of patches to crop per glimpse\&. 
+.br
+\fIscale\fP The scaling factor used to create the increasing retina-like representation\&. 
+.br
+\fIinputWidth\fP The input width of the given input data\&. 
+.br
+\fIinputHeight\fP The input height of the given input data\&. 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void Backward (const arma::Mat< eT > &, const arma::Mat< eT > & gy, arma::Mat< eT > & g)"
+
+.PP
+Ordinary feed backward pass of the glimpse layer\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fI*\fP (input) The propagated input activation\&. 
+.br
+\fIgy\fP The backpropagated error\&. 
+.br
+\fIg\fP The calculated gradient\&. 
+.RE
+.PP
+
+.SS "OutputDataType& Delta ()\fC [inline]\fP"
+
+.PP
+Modify the delta\&. 
+.PP
+Definition at line 139 of file glimpse\&.hpp\&.
+.SS "OutputDataType& Delta () const\fC [inline]\fP"
+
+.PP
+Get the detla\&. 
+.PP
+Definition at line 137 of file glimpse\&.hpp\&.
+.SS "size_t const& Depth () const\fC [inline]\fP"
+
+.PP
+Get the number of patches to crop per glimpse\&. 
+.PP
+Definition at line 174 of file glimpse\&.hpp\&.
+.SS "bool& Deterministic ()\fC [inline]\fP"
+
+.PP
+Modify the value of the deterministic parameter\&. 
+.PP
+Definition at line 171 of file glimpse\&.hpp\&.
+.SS "bool Deterministic () const\fC [inline]\fP"
+
+.PP
+Get the value of the deterministic parameter\&. 
+.PP
+Definition at line 169 of file glimpse\&.hpp\&.
+.SS "void Forward (const arma::Mat< eT > & input, arma::Mat< eT > & output)"
+
+.PP
+Ordinary feed forward pass of the glimpse layer\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIinput\fP Input data used for evaluating the specified function\&. 
+.br
+\fIoutput\fP Resulting output activation\&. 
+.RE
+.PP
+
+.SS "size_t GlimpseSize () const\fC [inline]\fP"
+
+.PP
+Get the used glimpse size (height = width)\&. 
+.PP
+Definition at line 183 of file glimpse\&.hpp\&.
+.SS "size_t& InputHeight ()\fC [inline]\fP"
+
+.PP
+Modify the input height\&. 
+.PP
+Definition at line 156 of file glimpse\&.hpp\&.
+.SS "size_t const& InputHeight () const\fC [inline]\fP"
+
+.PP
+Get the input height\&. 
+.PP
+Definition at line 154 of file glimpse\&.hpp\&.
+.SS "size_t InputShape () const\fC [inline]\fP"
+
+.PP
+Get the shape of the input\&. 
+.PP
+Definition at line 186 of file glimpse\&.hpp\&.
+.SS "size_t& InputWidth ()\fC [inline]\fP"
+
+.PP
+Modify input the width\&. 
+.PP
+Definition at line 151 of file glimpse\&.hpp\&.
+.SS "size_t const& InputWidth () const\fC [inline]\fP"
+
+.PP
+Get the input width\&. 
+.PP
+Definition at line 149 of file glimpse\&.hpp\&.
+.SS "size_t InSize () const\fC [inline]\fP"
+
+.PP
+Get the size of the input units\&. 
+.PP
+Definition at line 180 of file glimpse\&.hpp\&.
+.SS "void Location (const arma::mat & location)\fC [inline]\fP"
+
+.PP
+Set the locationthe x and y coordinate of the center of the output glimpse\&. 
+.PP
+Definition at line 143 of file glimpse\&.hpp\&.
+.SS "size_t& OutputHeight ()\fC [inline]\fP"
+
+.PP
+Modify the output height\&. 
+.PP
+Definition at line 166 of file glimpse\&.hpp\&.
+.SS "size_t const& OutputHeight () const\fC [inline]\fP"
+
+.PP
+Get the output height\&. 
+.PP
+Definition at line 164 of file glimpse\&.hpp\&.
+.SS "OutputDataType& OutputParameter ()\fC [inline]\fP"
+
+.PP
+Modify the output parameter\&. 
+.PP
+Definition at line 134 of file glimpse\&.hpp\&.
+.SS "OutputDataType& OutputParameter () const\fC [inline]\fP"
+
+.PP
+Get the output parameter\&. 
+.PP
+Definition at line 132 of file glimpse\&.hpp\&.
+.SS "size_t& OutputWidth ()\fC [inline]\fP"
+
+.PP
+Modify the output width\&. 
+.PP
+Definition at line 161 of file glimpse\&.hpp\&.
+.SS "size_t const& OutputWidth () const\fC [inline]\fP"
+
+.PP
+Get the output width\&. 
+.PP
+Definition at line 159 of file glimpse\&.hpp\&.
+.SS "size_t const& Scale () const\fC [inline]\fP"
+
+.PP
+Get the scale fraction\&. 
+.PP
+Definition at line 177 of file glimpse\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the layer\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

@@ -1,0 +1,136 @@
+.TH "IPMetric< KernelType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+IPMetric< KernelType > \- The inner product metric, \fBIPMetric\fP, takes a given Mercer kernel (KernelType), and when \fBEvaluate()\fP is called, returns the distance between the two points in kernel space:  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBIPMetric\fP ()"
+.br
+.RI "Create the \fBIPMetric\fP without an instantiated kernel\&. "
+.ti -1c
+.RI "\fBIPMetric\fP (const \fBIPMetric\fP &other)"
+.br
+.RI "Copy the parameters of the given metric\&. "
+.ti -1c
+.RI "\fBIPMetric\fP (KernelType &kernel)"
+.br
+.RI "Create the \fBIPMetric\fP with an instantiated kernel\&. "
+.ti -1c
+.RI "\fB~IPMetric\fP ()"
+.br
+.RI "Destroy the \fBIPMetric\fP object\&. "
+.ti -1c
+.RI "template<typename VecTypeA , typename VecTypeB > VecTypeA::elem_type \fBEvaluate\fP (const VecTypeA &a, const VecTypeB &b)"
+.br
+.RI "Evaluate the metric\&. "
+.ti -1c
+.RI "KernelType & \fBKernel\fP ()"
+.br
+.RI "Modify the kernel\&. "
+.ti -1c
+.RI "const KernelType & \fBKernel\fP () const"
+.br
+.RI "Get the kernel\&. "
+.ti -1c
+.RI "\fBIPMetric\fP & \fBoperator=\fP (const \fBIPMetric\fP &other)"
+.br
+.RI "Assign this metric to be a copy of the given metric\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t version)"
+.br
+.RI "Serialize the metric\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename KernelType>
+.br
+class mlpack::metric::IPMetric< KernelType >"
+The inner product metric, \fBIPMetric\fP, takes a given Mercer kernel (KernelType), and when \fBEvaluate()\fP is called, returns the distance between the two points in kernel space: 
+
+\[ d(x, y) = \sqrt{ K(x, x) + K(y, y) - 2K(x, y) }. \]
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIKernelType\fP Type of Kernel to use\&. This must be a Mercer kernel (positive definite), otherwise the metric may not be valid\&. 
+.RE
+.PP
+
+.PP
+Definition at line 32 of file ip_metric\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBIPMetric\fP ()"
+
+.PP
+Create the \fBIPMetric\fP without an instantiated kernel\&. 
+.SS "\fBIPMetric\fP (KernelType & kernel)"
+
+.PP
+Create the \fBIPMetric\fP with an instantiated kernel\&. 
+.SS "~\fBIPMetric\fP ()"
+
+.PP
+Destroy the \fBIPMetric\fP object\&. 
+.SS "\fBIPMetric\fP (const \fBIPMetric\fP< KernelType > & other)"
+
+.PP
+Copy the parameters of the given metric\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "VecTypeA::elem_type Evaluate (const VecTypeA & a, const VecTypeB & b)"
+
+.PP
+Evaluate the metric\&. 
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIVecTypeA\fP Type of first vector\&. 
+.br
+\fIVecTypeB\fP Type of second vector\&. 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIa\fP First vector\&. 
+.br
+\fIb\fP Second vector\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Distance between the two points in kernel space\&. 
+.RE
+.PP
+
+.SS "KernelType& Kernel ()\fC [inline]\fP"
+
+.PP
+Modify the kernel\&. 
+.PP
+Definition at line 65 of file ip_metric\&.hpp\&.
+.SS "const KernelType& Kernel () const\fC [inline]\fP"
+
+.PP
+Get the kernel\&. 
+.PP
+Definition at line 63 of file ip_metric\&.hpp\&.
+.SS "\fBIPMetric\fP& operator= (const \fBIPMetric\fP< KernelType > & other)"
+
+.PP
+Assign this metric to be a copy of the given metric\&. 
+.SS "void serialize (Archive & ar, const uint32_t version)"
+
+.PP
+Serialize the metric\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

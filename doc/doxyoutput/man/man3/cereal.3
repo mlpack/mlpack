@@ -1,0 +1,190 @@
+.TH "cereal" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+cereal
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBArrayWrapper\fP"
+.br
+.RI "This class is used as a shim for cereal to be able to serialize a raw pointer array\&. "
+.ti -1c
+.RI "struct \fBis_cereal_archive\fP"
+.br
+.ti -1c
+.RI "struct \fBis_cereal_archive_saving\fP"
+.br
+.ti -1c
+.RI "struct \fBload_visitor\fP"
+.br
+.ti -1c
+.RI "class \fBPointerVariantWrapper\fP"
+.br
+.RI "The objective of this class is to create a wrapper for boost::variant\&. "
+.ti -1c
+.RI "class \fBPointerVectorVariantWrapper\fP"
+.br
+.RI "The objective of this class is to create a wrapper for a vector of boost::variant that holds pointer\&. "
+.ti -1c
+.RI "class \fBPointerVectorWrapper\fP"
+.br
+.RI "The objective of this class is to create a wrapper for std::vector that hold pointers by adding also the size of the vector\&. "
+.ti -1c
+.RI "class \fBPointerWrapper\fP"
+.br
+.RI "The objective of this class is to create a wrapper for raw pointer by encapsulating them in a smart pointer of type unique_ptr\&. "
+.ti -1c
+.RI "struct \fBsave_visitor\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<class Archive , template< typename\&.\&.\&. > class Map, typename\&.\&.\&. Args, typename  = typename Map<Args\&.\&.\&.>::mapped_type> void \fBCEREAL_LOAD_FUNCTION_NAME\fP (Archive &ar, Map< Args\&.\&.\&. > &map)"
+.br
+.RI "Loading for std-like pair associative containers\&. "
+.ti -1c
+.RI "template<class Archive , template< typename\&.\&.\&. > class Map, typename\&.\&.\&. Args, typename  = typename Map<Args\&.\&.\&.>::mapped_type> void \fBCEREAL_SAVE_FUNCTION_NAME\fP (Archive &ar, Map< Args\&.\&.\&. > const &map)"
+.br
+.RI "Saving for std-like pair associative containers\&. "
+.ti -1c
+.RI "template<typename Archive > bool \fBis_loading\fP (const typename std::enable_if< !\fBis_cereal_archive\fP< Archive >::value, Archive >::type *=0)"
+.br
+.ti -1c
+.RI "template<typename Archive > bool \fBis_loading\fP (const typename std::enable_if< \fBis_cereal_archive\fP< Archive >::value, Archive >::type *=0)"
+.br
+.ti -1c
+.RI "template<typename Archive > bool \fBis_saving\fP (const typename std::enable_if< !\fBis_cereal_archive_saving\fP< Archive >::value, Archive >::type *=0)"
+.br
+.ti -1c
+.RI "template<typename Archive > bool \fBis_saving\fP (const typename std::enable_if< \fBis_cereal_archive_saving\fP< Archive >::value, Archive >::type *=0)"
+.br
+.ti -1c
+.RI "template<class T , class S > \fBArrayWrapper\fP< T > \fBmake_array\fP (T *&t, S &s)"
+.br
+.RI "This function is used to serialized old c-style array\&. "
+.ti -1c
+.RI "template<class T > \fBPointerWrapper\fP< T > \fBmake_pointer\fP (T *&t)"
+.br
+.RI "Serialize raw pointer object by encapsulating the pointer into a smart pointer\&. "
+.ti -1c
+.RI "template<typename\&.\&.\&. VariantTypes> \fBPointerVariantWrapper\fP< VariantTypes\&.\&.\&. > \fBmake_pointer_variant\fP (boost::variant< VariantTypes\&.\&.\&. > &t)"
+.br
+.RI "Serialize a boost variant in which the variant it self is a raw pointer\&. "
+.ti -1c
+.RI "template<class T > \fBPointerVectorWrapper\fP< T > \fBmake_pointer_vector\fP (std::vector< T * > &t)"
+.br
+.RI "Serialize an std::vector that holds raw pointer object by encapsulating them into a smart pointer\&. "
+.ti -1c
+.RI "template<typename\&.\&.\&. VariantTypes> \fBPointerVectorVariantWrapper\fP< VariantTypes\&.\&.\&. > \fBmake_vector_pointer_variant\fP (std::vector< boost::variant< VariantTypes\&.\&.\&. >> &t)"
+.br
+.RI "Serialize a std::vector of boost variants in which the variant in each boost variant is a raw pointer\&. "
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void cereal::CEREAL_LOAD_FUNCTION_NAME (Archive & ar, Map< Args\&.\&.\&. > & map)\fC [inline]\fP"
+
+.PP
+Loading for std-like pair associative containers\&. 
+.PP
+Definition at line 59 of file pair_associative_container\&.hpp\&.
+.SS "void cereal::CEREAL_SAVE_FUNCTION_NAME (Archive & ar, Map< Args\&.\&.\&. > const & map)\fC [inline]\fP"
+
+.PP
+Saving for std-like pair associative containers\&. 
+.PP
+Definition at line 49 of file pair_associative_container\&.hpp\&.
+.SS "bool cereal::is_loading (const typename std::enable_if< !\fBis_cereal_archive\fP< Archive >::value, Archive >::type * = \fC0\fP)"
+
+.PP
+Definition at line 48 of file is_loading\&.hpp\&.
+.SS "bool cereal::is_loading (const typename std::enable_if< \fBis_cereal_archive\fP< Archive >::value, Archive >::type * = \fC0\fP)"
+
+.PP
+Definition at line 40 of file is_loading\&.hpp\&.
+.SS "bool cereal::is_saving (const typename std::enable_if< !\fBis_cereal_archive_saving\fP< Archive >::value, Archive >::type * = \fC0\fP)"
+
+.PP
+Definition at line 49 of file is_saving\&.hpp\&.
+.SS "bool cereal::is_saving (const typename std::enable_if< \fBis_cereal_archive_saving\fP< Archive >::value, Archive >::type * = \fC0\fP)"
+
+.PP
+Definition at line 41 of file is_saving\&.hpp\&.
+.SS "\fBArrayWrapper\fP<T> cereal::make_array (T *& t, S & s)\fC [inline]\fP"
+
+.PP
+This function is used to serialized old c-style array\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIt\fP C Style array\&. 
+.br
+\fIs\fP the size of the array\&. 
+.RE
+.PP
+
+.PP
+Definition at line 74 of file array_wrapper\&.hpp\&.
+.SS "\fBPointerWrapper\fP<T> cereal::make_pointer (T *& t)\fC [inline]\fP"
+
+.PP
+Serialize raw pointer object by encapsulating the pointer into a smart pointer\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIt\fP A reference to raw pointer to be serialized\&. 
+.RE
+.PP
+
+.PP
+Definition at line 83 of file pointer_wrapper\&.hpp\&.
+.SS "\fBPointerVariantWrapper\fP<VariantTypes\&.\&.\&.> cereal::make_pointer_variant (boost::variant< VariantTypes\&.\&.\&. > & t)\fC [inline]\fP"
+
+.PP
+Serialize a boost variant in which the variant it self is a raw pointer\&. This wrapper will wrap each variant independently by encapsulating each variant into the PoninterWrapper we have created already\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIt\fP A reference to boost variant that holds raw pointer\&. 
+.RE
+.PP
+
+.PP
+Definition at line 42 of file pointer_variant_wrapper\&.hpp\&.
+.PP
+Referenced by load_visitor< T >::load_impl(), and save_visitor< Archive >::operator()()\&.
+.SS "\fBPointerVectorWrapper\fP<T> cereal::make_pointer_vector (std::vector< T * > & t)\fC [inline]\fP"
+
+.PP
+Serialize an std::vector that holds raw pointer object by encapsulating them into a smart pointer\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIt\fP A reference to std::vector that holds raw pointer to be serialized\&. 
+.RE
+.PP
+
+.PP
+Definition at line 80 of file pointer_vector_wrapper\&.hpp\&.
+.SS "\fBPointerVectorVariantWrapper\fP<VariantTypes\&.\&.\&.> cereal::make_vector_pointer_variant (std::vector< boost::variant< VariantTypes\&.\&.\&. >> & t)\fC [inline]\fP"
+
+.PP
+Serialize a std::vector of boost variants in which the variant in each boost variant is a raw pointer\&. This wrapper will wrap each boost variant independently by encapsulating each boost variant into the PoninterVariantWrapper we have created already\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIt\fP A reference to a vector of boost variants that holds raw pointer\&. 
+.RE
+.PP
+
+.PP
+Definition at line 36 of file pointer_vector_variant_wrapper\&.hpp\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

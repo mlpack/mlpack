@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classmlpack_1_1tree_1_1XTreeSplit" kind="class" language="C++" prot="public">
+    <compoundname>mlpack::tree::XTreeSplit</compoundname>
+    <includes refid="x__tree__split_8hpp" local="no">x_tree_split.hpp</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1XTreeSplit_1af73652d9536a1715364bbb0e4a9ba04e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void SplitLeafNode</definition>
+        <argsstring>(TreeType *tree, std::vector&lt; bool &gt; &amp;relevels)</argsstring>
+        <name>SplitLeafNode</name>
+        <param>
+          <type>TreeType *</type>
+          <declname>tree</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>relevels</declname>
+        </param>
+        <briefdescription>
+<para>Split a leaf node using the algorithm described in "The R*-tree: An Efficient and Robust Access method for Points and Rectangles. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>" If necessary, this split will propagate upwards through the tree. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/x_tree_split.hpp" line="45" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1XTreeSplit_1a73ff1eaa94449d763847fff1f537922f" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>static bool SplitNonLeafNode</definition>
+        <argsstring>(TreeType *tree, std::vector&lt; bool &gt; &amp;relevels)</argsstring>
+        <name>SplitNonLeafNode</name>
+        <param>
+          <type>TreeType *</type>
+          <declname>tree</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; bool &gt; &amp;</type>
+          <declname>relevels</declname>
+        </param>
+        <briefdescription>
+<para>Split a non-leaf node using the &quot;default&quot; algorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If this is a root node, the tree increases in depth. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/x_tree_split.hpp" line="52" column="15"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1XTreeSplit_1ad6cd53f562619e04c67c12c67e26a199" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>static void InsertNodeIntoTree</definition>
+        <argsstring>(TreeType *destTree, TreeType *srcNode)</argsstring>
+        <name>InsertNodeIntoTree</name>
+        <param>
+          <type>TreeType *</type>
+          <declname>destTree</declname>
+        </param>
+        <param>
+          <type>TreeType *</type>
+          <declname>srcNode</declname>
+        </param>
+        <briefdescription>
+<para>Insert a node into another node. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/x_tree_split.hpp" line="59" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classmlpack_1_1tree_1_1XTreeSplit_1ac037beb16e3b1ce0f6b40b6cf0baf737" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ElemType</type>
+          </param>
+          <param>
+            <type>typename SecondType</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>static bool PairComp</definition>
+        <argsstring>(const std::pair&lt; ElemType, SecondType &gt; &amp;p1, const std::pair&lt; ElemType, SecondType &gt; &amp;p2)</argsstring>
+        <name>PairComp</name>
+        <param>
+          <type>const std::pair&lt; ElemType, SecondType &gt; &amp;</type>
+          <declname>p1</declname>
+        </param>
+        <param>
+          <type>const std::pair&lt; ElemType, SecondType &gt; &amp;</type>
+          <declname>p2</declname>
+        </param>
+        <briefdescription>
+<para>Comparator for sorting with std::pair. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This comparator works a little bit faster then the default comparator. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/x_tree_split.hpp" line="66" column="15" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/x_tree_split.hpp" bodystart="66" bodyend="70"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A Rectangle Tree has new points inserted at the bottom. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>When these nodes overflow, we split them, moving up the tree and splitting nodes as necessary. </para>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/x_tree_split.hpp" line="36" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/rectangle_tree/x_tree_split.hpp" bodystart="37" bodyend="71"/>
+    <listofallmembers>
+      <member refid="classmlpack_1_1tree_1_1XTreeSplit_1ad6cd53f562619e04c67c12c67e26a199" prot="private" virt="non-virtual"><scope>mlpack::tree::XTreeSplit</scope><name>InsertNodeIntoTree</name></member>
+      <member refid="classmlpack_1_1tree_1_1XTreeSplit_1ac037beb16e3b1ce0f6b40b6cf0baf737" prot="private" virt="non-virtual"><scope>mlpack::tree::XTreeSplit</scope><name>PairComp</name></member>
+      <member refid="classmlpack_1_1tree_1_1XTreeSplit_1af73652d9536a1715364bbb0e4a9ba04e" prot="public" virt="non-virtual"><scope>mlpack::tree::XTreeSplit</scope><name>SplitLeafNode</name></member>
+      <member refid="classmlpack_1_1tree_1_1XTreeSplit_1a73ff1eaa94449d763847fff1f537922f" prot="public" virt="non-virtual"><scope>mlpack::tree::XTreeSplit</scope><name>SplitNonLeafNode</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,47 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/bindings/cli/get\+\_\+printable\+\_\+param\+\_\+name.hpp File Reference}
+\label{cli_2get__printable__param__name_8hpp}\index{/home/aakash/mlpack/src/mlpack/bindings/cli/get\_printable\_param\_name.hpp@{/home/aakash/mlpack/src/mlpack/bindings/cli/get\_printable\_param\_name.hpp}}
+Include dependency graph for get\+\_\+printable\+\_\+param\+\_\+name.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cli_2get__printable__param__name_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=179pt]{cli_2get__printable__param__name_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::bindings}
+\item 
+ \textbf{ mlpack\+::bindings\+::cli}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ Get\+Printable\+Param\+Name} (util\+::\+Param\+Data \&d, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Get the parameter\textquotesingle{}s name as seen by the user. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param\+Name} (util\+::\+Param\+Data \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Get the parameter name for a type that has no special handling. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param\+Name} (util\+::\+Param\+Data \&data, const typename boost\+::disable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Get the parameter name for a serializable model type (where the user has to pass the file that holds the matrix). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param\+Name} (util\+::\+Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ arma\+::is\+\_\+arma\+\_\+type$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Get the parameter name for a matrix type (where the user has to pass the file that holds the matrix). \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ Get\+Printable\+Param\+Name} (util\+::\+Param\+Data \&data, const typename boost\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ T, std\+::tuple$<$ data\+::\+Dataset\+Info, arma\+::mat $>$$>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Get the parameter name for a mapped matrix type (where the user has to pass the file that holds the matrix). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Return the parameter name that the user would specify on the command line, with different behavior for different parameter types.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

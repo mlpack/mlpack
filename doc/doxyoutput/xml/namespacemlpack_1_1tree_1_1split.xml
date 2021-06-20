@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1tree_1_1split" kind="namespace" language="C++">
+    <compoundname>mlpack::tree::split</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1tree_1_1split_1ae701f1590f5c0fb8ddea4af189f3ee8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename SplitType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t mlpack::tree::split::PerformSplit</definition>
+        <argsstring>(MatType &amp;data, const size_t begin, const size_t count, const typename SplitType::SplitInfo &amp;splitInfo)</argsstring>
+        <name>PerformSplit</name>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <type>const typename SplitType::SplitInfo &amp;</type>
+          <declname>splitInfo</declname>
+        </param>
+        <briefdescription>
+<para>This function implements the default split behavior i.e. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>it rearranges points according to the split information. The SplitType::AssignToLeftNode() function is used in order to determine the child that contains any particular point.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The dataset used by the binary space tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the starting point in the dataset that belongs to this node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of points in this node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>splitInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The information about the split. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/perform_split.hpp" line="36" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/perform_split.hpp" bodystart="36" bodyend="83"/>
+        <references refid="classmlpack_1_1Log_1acf2da487d1dac6cd100996cf82eba5e8">Log::Assert</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1tree_1_1split_1a806f7a8af45201051f59a8db0b8b2feb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename MatType</type>
+          </param>
+          <param>
+            <type>typename SplitType</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t mlpack::tree::split::PerformSplit</definition>
+        <argsstring>(MatType &amp;data, const size_t begin, const size_t count, const typename SplitType::SplitInfo &amp;splitInfo, std::vector&lt; size_t &gt; &amp;oldFromNew)</argsstring>
+        <name>PerformSplit</name>
+        <param>
+          <type>MatType &amp;</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>count</declname>
+        </param>
+        <param>
+          <type>const typename SplitType::SplitInfo &amp;</type>
+          <declname>splitInfo</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; size_t &gt; &amp;</type>
+          <declname>oldFromNew</declname>
+        </param>
+        <briefdescription>
+<para>This function implements the default split behavior i.e. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>it rearranges points according to the split information. The SplitType::AssignToLeftNode() function is used in order to determine the child that contains any particular point. The function takes care of indices and returns the list of changed indices.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The dataset used by the binary space tree. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Index of the starting point in the dataset that belongs to this node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of points in this node. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>splitInfo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The information about the split. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>oldFromNew</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector which will be filled with the old positions for each new point. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/core/tree/perform_split.hpp" line="101" column="8" bodyfile="/home/aakash/mlpack/src/mlpack/core/tree/perform_split.hpp" bodystart="101" bodyend="153"/>
+        <references refid="classmlpack_1_1Log_1acf2da487d1dac6cd100996cf82eba5e8">Log::Assert</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/tree/perform_split.hpp" line="21" column="1"/>
+  </compounddef>
+</doxygen>

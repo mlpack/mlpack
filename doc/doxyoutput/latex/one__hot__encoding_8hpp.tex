@@ -1,0 +1,41 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/core/data/one\+\_\+hot\+\_\+encoding.hpp File Reference}
+\label{one__hot__encoding_8hpp}\index{/home/aakash/mlpack/src/mlpack/core/data/one\_hot\_encoding.hpp@{/home/aakash/mlpack/src/mlpack/core/data/one\_hot\_encoding.hpp}}
+Include dependency graph for one\+\_\+hot\+\_\+encoding.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{one__hot__encoding_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{one__hot__encoding_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::data}
+\begin{DoxyCompactList}\small\item\em Functions to load and save matrices and models. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ One\+Hot\+Encoding} (const arma\+::\+Mat$<$ eT $>$ \&input, arma\+::\+Mat$<$ eT $>$ \&output, const data\+::\+Dataset\+Info \&dataset\+Info)
+\begin{DoxyCompactList}\small\item\em Overloaded function for the above function, which takes a matrix as input and also a Dataset\+Info object and outputs a matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename eT $>$ }\\void \textbf{ One\+Hot\+Encoding} (const arma\+::\+Mat$<$ eT $>$ \&input, const arma\+::\+Col$<$ size\+\_\+t $>$ \&indices, arma\+::\+Mat$<$ eT $>$ \&output)
+\begin{DoxyCompactList}\small\item\em Overloaded function for the above function, which takes a matrix as input and also a vector of indices to encode and outputs a matrix. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Row\+Type , typename Mat\+Type $>$ }\\void \textbf{ One\+Hot\+Encoding} (const Row\+Type \&labels\+In, Mat\+Type \&output)
+\begin{DoxyCompactList}\small\item\em Given a set of labels of a particular datatype, convert them to binary vector. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Jeffin Sam
+\end{DoxyAuthor}
+One hot encoding functions. The purpose of this function is to convert categorical variables to binary vectors.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

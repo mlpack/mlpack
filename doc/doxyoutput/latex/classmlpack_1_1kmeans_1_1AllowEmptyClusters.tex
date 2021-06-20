@@ -1,0 +1,104 @@
+\doxysection{Allow\+Empty\+Clusters Class Reference}
+\label{classmlpack_1_1kmeans_1_1AllowEmptyClusters}\index{AllowEmptyClusters@{AllowEmptyClusters}}
+
+
+Policy which allows K-\/\+Means to create empty clusters without any error being reported.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Allow\+Empty\+Clusters} ()
+\begin{DoxyCompactList}\small\item\em Default constructor required by Empty\+Cluster\+Policy policy. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the empty cluster policy (nothing to do). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Metric\+Type , typename Mat\+Type $>$ }\\static \textbf{ force\+\_\+inline} void \textbf{ Empty\+Cluster} (const Mat\+Type \&, const size\+\_\+t empty\+Cluster, const arma\+::mat \&old\+Centroids, arma\+::mat \&new\+Centroids, arma\+::\+Col$<$ size\+\_\+t $>$ \&, Metric\+Type \&, const size\+\_\+t)
+\begin{DoxyCompactList}\small\item\em This function allows empty clusters to persist simply by leaving the empty cluster in its last position. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Policy which allows K-\/\+Means to create empty clusters without any error being reported. 
+
+Definition at line 25 of file allow\+\_\+empty\+\_\+clusters.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1AllowEmptyClusters_a855f715983fcc56fb18287097d9b7c54}} 
+\index{AllowEmptyClusters@{AllowEmptyClusters}!AllowEmptyClusters@{AllowEmptyClusters}}
+\index{AllowEmptyClusters@{AllowEmptyClusters}!AllowEmptyClusters@{AllowEmptyClusters}}
+\doxysubsubsection{AllowEmptyClusters()}
+{\footnotesize\ttfamily \textbf{ Allow\+Empty\+Clusters} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default constructor required by Empty\+Cluster\+Policy policy. 
+
+
+
+Definition at line 29 of file allow\+\_\+empty\+\_\+clusters.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kmeans_1_1AllowEmptyClusters_a310f32aa6a6aab2e4fd8e52f7224ea4d}} 
+\index{AllowEmptyClusters@{AllowEmptyClusters}!EmptyCluster@{EmptyCluster}}
+\index{EmptyCluster@{EmptyCluster}!AllowEmptyClusters@{AllowEmptyClusters}}
+\doxysubsubsection{EmptyCluster()}
+{\footnotesize\ttfamily static \textbf{ force\+\_\+inline} void Empty\+Cluster (\begin{DoxyParamCaption}\item[{const Mat\+Type \&}]{,  }\item[{const size\+\_\+t}]{empty\+Cluster,  }\item[{const arma\+::mat \&}]{old\+Centroids,  }\item[{arma\+::mat \&}]{new\+Centroids,  }\item[{arma\+::\+Col$<$ size\+\_\+t $>$ \&}]{,  }\item[{Metric\+Type \&}]{,  }\item[{const}]{size\+\_\+t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+This function allows empty clusters to persist simply by leaving the empty cluster in its last position. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Mat\+Type} & Type of data (arma\+::mat or arma\+::spmat). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em $\ast$} & (data) Dataset on which clustering is being performed. \\
+\hline
+{\em empty\+Cluster} & Index of cluster which is empty. \\
+\hline
+{\em old\+Centroids} & Centroids of each cluster (one per column) at the start of the iteration. \\
+\hline
+{\em new\+Centroids} & Centroids of each cluster (one per column) at the end of the iteration. \\
+\hline
+{\em $\ast$} & (cluster\+Counts) Number of points in each cluster. \\
+\hline
+{\em $\ast$} & (metric) The Metric to use. \\
+\hline
+{\em $\ast$} & (iteration) Number of iteration.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Number of points changed (0). 
+\end{DoxyReturn}
+
+
+Definition at line 49 of file allow\+\_\+empty\+\_\+clusters.\+hpp.
+
+\mbox{\label{classmlpack_1_1kmeans_1_1AllowEmptyClusters_aa2ccb5a0533a6ba0abe6dfc1f98fbafb}} 
+\index{AllowEmptyClusters@{AllowEmptyClusters}!serialize@{serialize}}
+\index{serialize@{serialize}!AllowEmptyClusters@{AllowEmptyClusters}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the empty cluster policy (nothing to do). 
+
+
+
+Definition at line 64 of file allow\+\_\+empty\+\_\+clusters.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/kmeans/\textbf{ allow\+\_\+empty\+\_\+clusters.\+hpp}\end{DoxyCompactItemize}

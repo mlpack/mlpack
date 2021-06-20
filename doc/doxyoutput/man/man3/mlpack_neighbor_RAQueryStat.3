@@ -1,0 +1,104 @@
+.TH "RAQueryStat< SortPolicy >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RAQueryStat< SortPolicy > \- Extra data for each node in the tree\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRAQueryStat\fP ()"
+.br
+.RI "Initialize the statistic with the worst possible distance according to our sorting policy\&. "
+.ti -1c
+.RI "template<typename TreeType > \fBRAQueryStat\fP (const TreeType &)"
+.br
+.RI "Initialization for a node\&. "
+.ti -1c
+.RI "double & \fBBound\fP ()"
+.br
+.RI "Modify the bound\&. "
+.ti -1c
+.RI "double \fBBound\fP () const"
+.br
+.RI "Get the bound\&. "
+.ti -1c
+.RI "size_t & \fBNumSamplesMade\fP ()"
+.br
+.RI "Modify the number of samples made\&. "
+.ti -1c
+.RI "size_t \fBNumSamplesMade\fP () const"
+.br
+.RI "Get the number of samples made\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the statistic\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename SortPolicy>
+.br
+class mlpack::neighbor::RAQueryStat< SortPolicy >"
+Extra data for each node in the tree\&. 
+
+For neighbor searches, each node only needs to store a bound on neighbor distances\&.
+.PP
+Every query is required to make a minimum number of samples to guarantee the desired approximation error\&. The 'numSamplesMade' keeps track of the minimum number of samples made by all queries in the node in question\&. 
+.PP
+Definition at line 35 of file ra_query_stat\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRAQueryStat\fP ()\fC [inline]\fP"
+
+.PP
+Initialize the statistic with the worst possible distance according to our sorting policy\&. 
+.PP
+Definition at line 42 of file ra_query_stat\&.hpp\&.
+.SS "\fBRAQueryStat\fP (const TreeType &)\fC [inline]\fP"
+
+.PP
+Initialization for a node\&. 
+.PP
+Definition at line 48 of file ra_query_stat\&.hpp\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "double& Bound ()\fC [inline]\fP"
+
+.PP
+Modify the bound\&. 
+.PP
+Definition at line 56 of file ra_query_stat\&.hpp\&.
+.SS "double Bound () const\fC [inline]\fP"
+
+.PP
+Get the bound\&. 
+.PP
+Definition at line 54 of file ra_query_stat\&.hpp\&.
+.SS "size_t& NumSamplesMade ()\fC [inline]\fP"
+
+.PP
+Modify the number of samples made\&. 
+.PP
+Definition at line 61 of file ra_query_stat\&.hpp\&.
+.SS "size_t NumSamplesMade () const\fC [inline]\fP"
+
+.PP
+Get the number of samples made\&. 
+.PP
+Definition at line 59 of file ra_query_stat\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)\fC [inline]\fP"
+
+.PP
+Serialize the statistic\&. 
+.PP
+Definition at line 65 of file ra_query_stat\&.hpp\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

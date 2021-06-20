@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_eecf06612edb6375565d9346b54b75c8" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/core/cv/metrics</compoundname>
+    <innerfile refid="accuracy_8hpp">accuracy.hpp</innerfile>
+    <innerfile refid="average__strategy_8hpp">average_strategy.hpp</innerfile>
+    <innerfile refid="f1_8hpp">f1.hpp</innerfile>
+    <innerfile refid="facilities_8hpp">facilities.hpp</innerfile>
+    <innerfile refid="mse_8hpp">mse.hpp</innerfile>
+    <innerfile refid="precision_8hpp">precision.hpp</innerfile>
+    <innerfile refid="r2__score_8hpp">r2_score.hpp</innerfile>
+    <innerfile refid="recall_8hpp">recall.hpp</innerfile>
+    <innerfile refid="silhouette__score_8hpp">silhouette_score.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/core/cv/metrics/"/>
+  </compounddef>
+</doxygen>

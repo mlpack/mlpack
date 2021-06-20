@@ -1,0 +1,310 @@
+\doxysection{Gaussian\+Kernel Class Reference}
+\label{classmlpack_1_1kernel_1_1GaussianKernel}\index{GaussianKernel@{GaussianKernel}}
+
+
+The standard Gaussian kernel.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Gaussian\+Kernel} ()
+\begin{DoxyCompactList}\small\item\em Default constructor; sets bandwidth to 1.\+0. \end{DoxyCompactList}\item 
+\textbf{ Gaussian\+Kernel} (const double bandwidth)
+\begin{DoxyCompactList}\small\item\em Construct the Gaussian kernel with a custom bandwidth. \end{DoxyCompactList}\item 
+double \textbf{ Bandwidth} () const
+\begin{DoxyCompactList}\small\item\em Get the bandwidth. \end{DoxyCompactList}\item 
+void \textbf{ Bandwidth} (const double bandwidth)
+\begin{DoxyCompactList}\small\item\em Modify the bandwidth. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\double \textbf{ Convolution\+Integral} (const Vec\+TypeA \&a, const Vec\+TypeB \&b)
+\begin{DoxyCompactList}\small\item\em Obtain a convolution integral of the Gaussian kernel. \end{DoxyCompactList}\item 
+double \textbf{ Evaluate} (const double t) const
+\begin{DoxyCompactList}\small\item\em Evaluation of the Gaussian kernel given the distance between two points. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Vec\+TypeA , typename Vec\+TypeB $>$ }\\double \textbf{ Evaluate} (const Vec\+TypeA \&a, const Vec\+TypeB \&b) const
+\begin{DoxyCompactList}\small\item\em Evaluation of the Gaussian kernel. \end{DoxyCompactList}\item 
+double \textbf{ Gamma} () const
+\begin{DoxyCompactList}\small\item\em Get the precalculated constant. \end{DoxyCompactList}\item 
+double \textbf{ Gradient} (const double t) const
+\begin{DoxyCompactList}\small\item\em Evaluation of the gradient of Gaussian kernel given the distance between two points. \end{DoxyCompactList}\item 
+double \textbf{ Gradient\+For\+Squared\+Distance} (const double t) const
+\begin{DoxyCompactList}\small\item\em Evaluation of the gradient of Gaussian kernel given the squared distance between two points. \end{DoxyCompactList}\item 
+double \textbf{ Normalizer} (const size\+\_\+t dimension)
+\begin{DoxyCompactList}\small\item\em Obtain the normalization constant of the Gaussian kernel. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Archive $>$ }\\void \textbf{ serialize} (Archive \&ar, const uint32\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Serialize the kernel. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The standard Gaussian kernel. 
+
+Given two vectors $ x $, $ y $, and a bandwidth $ \mu $ (set in the constructor),
+
+\[ K(x, y) = \exp(-\frac{|| x - y ||^2}{2 \mu^2}). \]
+
+The implementation is all in the header file because it is so simple. 
+
+Definition at line 34 of file gaussian\+\_\+kernel.\+hpp.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_a3e3737b271f9d6a43319dd5aedc8390e}} 
+\index{GaussianKernel@{GaussianKernel}!GaussianKernel@{GaussianKernel}}
+\index{GaussianKernel@{GaussianKernel}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{GaussianKernel()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \textbf{ Gaussian\+Kernel} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default constructor; sets bandwidth to 1.\+0. 
+
+
+
+Definition at line 40 of file gaussian\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_a863246483e645a55547661d9d470667e}} 
+\index{GaussianKernel@{GaussianKernel}!GaussianKernel@{GaussianKernel}}
+\index{GaussianKernel@{GaussianKernel}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{GaussianKernel()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \textbf{ Gaussian\+Kernel} (\begin{DoxyParamCaption}\item[{const double}]{bandwidth }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct the Gaussian kernel with a custom bandwidth. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bandwidth} & The bandwidth of the kernel ( $\mu$). \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 48 of file gaussian\+\_\+kernel.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_ae9cbd816179d6c36036139ccc8fea8c8}} 
+\index{GaussianKernel@{GaussianKernel}!Bandwidth@{Bandwidth}}
+\index{Bandwidth@{Bandwidth}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{Bandwidth()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Bandwidth (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the bandwidth. 
+
+
+
+Definition at line 135 of file gaussian\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_a73bfbbc3f9a234670309c4895a7321e1}} 
+\index{GaussianKernel@{GaussianKernel}!Bandwidth@{Bandwidth}}
+\index{Bandwidth@{Bandwidth}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{Bandwidth()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Bandwidth (\begin{DoxyParamCaption}\item[{const double}]{bandwidth }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Modify the bandwidth. 
+
+This takes an argument because we must update the precalculated constant (gamma). 
+
+Definition at line 139 of file gaussian\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_af3077f924263d1932950f4f7176c93eb}} 
+\index{GaussianKernel@{GaussianKernel}!ConvolutionIntegral@{ConvolutionIntegral}}
+\index{ConvolutionIntegral@{ConvolutionIntegral}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{ConvolutionIntegral()}
+{\footnotesize\ttfamily double Convolution\+Integral (\begin{DoxyParamCaption}\item[{const Vec\+TypeA \&}]{a,  }\item[{const Vec\+TypeB \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Obtain a convolution integral of the Gaussian kernel. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The convolution integral. 
+\end{DoxyReturn}
+
+
+Definition at line 127 of file gaussian\+\_\+kernel.\+hpp.
+
+
+
+References LMetric$<$ TPower, TTake\+Root $>$\+::\+Evaluate(), Gaussian\+Kernel\+::\+Evaluate(), and Gaussian\+Kernel\+::\+Normalizer().
+
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_a031ed73efe13c6e6bc805006bd249238}} 
+\index{GaussianKernel@{GaussianKernel}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const double}]{t }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Evaluation of the Gaussian kernel given the distance between two points. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & The distance between the two points the kernel is evaluated on. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+K(t) using the bandwidth ( $\mu$) specified in the constructor. 
+\end{DoxyReturn}
+
+
+Definition at line 78 of file gaussian\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_a84c3aeba25ea7703bd2d4f85a54301da}} 
+\index{GaussianKernel@{GaussianKernel}!Evaluate@{Evaluate}}
+\index{Evaluate@{Evaluate}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{Evaluate()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily double Evaluate (\begin{DoxyParamCaption}\item[{const Vec\+TypeA \&}]{a,  }\item[{const Vec\+TypeB \&}]{b }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Evaluation of the Gaussian kernel. 
+
+This could be generalized to use any distance metric, not the Euclidean distance, but for now, the Euclidean distance is used.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Vec\+Type} & Type of vector (likely arma\+::vec or arma\+::spvec). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First vector. \\
+\hline
+{\em b} & Second vector. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+K(a, b) using the bandwidth ( $\mu$) specified in the constructor. 
+\end{DoxyReturn}
+
+
+Definition at line 65 of file gaussian\+\_\+kernel.\+hpp.
+
+
+
+References LMetric$<$ TPower, TTake\+Root $>$\+::\+Evaluate().
+
+
+
+Referenced by Gaussian\+Kernel\+::\+Convolution\+Integral().
+
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_aebe61d5199ae22a5d9101a5cee3dfbd7}} 
+\index{GaussianKernel@{GaussianKernel}!Gamma@{Gamma}}
+\index{Gamma@{Gamma}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{Gamma()}
+{\footnotesize\ttfamily double Gamma (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the precalculated constant. 
+
+
+
+Definition at line 146 of file gaussian\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_a6abdb9c6ceb3252af988ab5fb5f13764}} 
+\index{GaussianKernel@{GaussianKernel}!Gradient@{Gradient}}
+\index{Gradient@{Gradient}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{Gradient()}
+{\footnotesize\ttfamily double Gradient (\begin{DoxyParamCaption}\item[{const double}]{t }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Evaluation of the gradient of Gaussian kernel given the distance between two points. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & The distance between the two points the kernel is evaluated on. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+K(t) using the bandwidth ( $\mu$) specified in the constructor. 
+\end{DoxyReturn}
+
+
+Definition at line 92 of file gaussian\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_a7f2c3729f3cac0b0b327ec28ccb8e1d3}} 
+\index{GaussianKernel@{GaussianKernel}!GradientForSquaredDistance@{GradientForSquaredDistance}}
+\index{GradientForSquaredDistance@{GradientForSquaredDistance}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{GradientForSquaredDistance()}
+{\footnotesize\ttfamily double Gradient\+For\+Squared\+Distance (\begin{DoxyParamCaption}\item[{const double}]{t }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Evaluation of the gradient of Gaussian kernel given the squared distance between two points. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t} & The squared distance between the two points \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+K(t) using the bandwidth ( $\mu$) specified in the constructor. 
+\end{DoxyReturn}
+
+
+Definition at line 104 of file gaussian\+\_\+kernel.\+hpp.
+
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_aa500736f2a5dac08fa9027543c2b05cb}} 
+\index{GaussianKernel@{GaussianKernel}!Normalizer@{Normalizer}}
+\index{Normalizer@{Normalizer}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{Normalizer()}
+{\footnotesize\ttfamily double Normalizer (\begin{DoxyParamCaption}\item[{const size\+\_\+t}]{dimension }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Obtain the normalization constant of the Gaussian kernel. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dimension} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the normalization constant 
+\end{DoxyReturn}
+
+
+Definition at line 114 of file gaussian\+\_\+kernel.\+hpp.
+
+
+
+References M\+\_\+\+PI.
+
+
+
+Referenced by Gaussian\+Kernel\+::\+Convolution\+Integral().
+
+\mbox{\label{classmlpack_1_1kernel_1_1GaussianKernel_a65cba07328997659bec80b9879b15a51}} 
+\index{GaussianKernel@{GaussianKernel}!serialize@{serialize}}
+\index{serialize@{serialize}!GaussianKernel@{GaussianKernel}}
+\doxysubsubsection{serialize()}
+{\footnotesize\ttfamily void serialize (\begin{DoxyParamCaption}\item[{Archive \&}]{ar,  }\item[{const uint32\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Serialize the kernel. 
+
+
+
+Definition at line 150 of file gaussian\+\_\+kernel.\+hpp.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/core/kernels/\textbf{ gaussian\+\_\+kernel.\+hpp}\end{DoxyCompactItemize}

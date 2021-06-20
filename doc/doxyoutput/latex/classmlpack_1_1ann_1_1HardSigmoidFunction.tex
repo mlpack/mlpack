@@ -1,0 +1,137 @@
+\doxysection{Hard\+Sigmoid\+Function Class Reference}
+\label{classmlpack_1_1ann_1_1HardSigmoidFunction}\index{HardSigmoidFunction@{HardSigmoidFunction}}
+
+
+The hard sigmoid function, defined by.  
+
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static double \textbf{ Deriv} (const double y)
+\begin{DoxyCompactList}\small\item\em Computes the first derivatives of hard sigmoid function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void \textbf{ Deriv} (const Input\+Vec\+Type \&y, Output\+Vec\+Type \&x)
+\begin{DoxyCompactList}\small\item\em Computes the first derivatives of the hard sigmoid function. \end{DoxyCompactList}\item 
+static double \textbf{ Fn} (const double x)
+\begin{DoxyCompactList}\small\item\em Computes the hard sigmoid function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Input\+Vec\+Type , typename Output\+Vec\+Type $>$ }\\static void \textbf{ Fn} (const Input\+Vec\+Type \&x, Output\+Vec\+Type \&y)
+\begin{DoxyCompactList}\small\item\em Computes the hard sigmoid function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The hard sigmoid function, defined by. 
+
+\begin{eqnarray*} f(x) &=& \min(1, \max(0, 0.2 * x + 0.5)) \\ f\textnormal{\textquotesingle}(x) &=& \left\{ \begin{array}{lr} 0.0 & : x={0,1} \\ 0.2 \end{array} \right. \end{eqnarray*} 
+
+Definition at line 34 of file hard\+\_\+sigmoid\+\_\+function.\+hpp.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\label{classmlpack_1_1ann_1_1HardSigmoidFunction_a163d34fd09f8edf457164f5033c635cf}} 
+\index{HardSigmoidFunction@{HardSigmoidFunction}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!HardSigmoidFunction@{HardSigmoidFunction}}
+\doxysubsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Deriv (\begin{DoxyParamCaption}\item[{const double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivatives of hard sigmoid function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f\textquotesingle{}(x) 
+\end{DoxyReturn}
+
+
+Definition at line 69 of file hard\+\_\+sigmoid\+\_\+function.\+hpp.
+
+
+
+Referenced by Hard\+Sigmoid\+Function\+::\+Deriv().
+
+\mbox{\label{classmlpack_1_1ann_1_1HardSigmoidFunction_ad442502c34b67303b74c735641dab790}} 
+\index{HardSigmoidFunction@{HardSigmoidFunction}!Deriv@{Deriv}}
+\index{Deriv@{Deriv}!HardSigmoidFunction@{HardSigmoidFunction}}
+\doxysubsubsection{Deriv()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Deriv (\begin{DoxyParamCaption}\item[{const Input\+Vec\+Type \&}]{y,  }\item[{Output\+Vec\+Type \&}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the first derivatives of the hard sigmoid function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em y} & Input data. \\
+\hline
+{\em x} & The resulting derivatives. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 85 of file hard\+\_\+sigmoid\+\_\+function.\+hpp.
+
+
+
+References Hard\+Sigmoid\+Function\+::\+Deriv().
+
+\mbox{\label{classmlpack_1_1ann_1_1HardSigmoidFunction_a11bd9a1195e6b107f9fee73643bc328b}} 
+\index{HardSigmoidFunction@{HardSigmoidFunction}!Fn@{Fn}}
+\index{Fn@{Fn}!HardSigmoidFunction@{HardSigmoidFunction}}
+\doxysubsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily static double Fn (\begin{DoxyParamCaption}\item[{const double}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the hard sigmoid function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+f(x). 
+\end{DoxyReturn}
+
+
+Definition at line 43 of file hard\+\_\+sigmoid\+\_\+function.\+hpp.
+
+
+
+Referenced by Hard\+Sigmoid\+Function\+::\+Fn().
+
+\mbox{\label{classmlpack_1_1ann_1_1HardSigmoidFunction_af6cf5da90eb6312e3e25c9b8bd9c3527}} 
+\index{HardSigmoidFunction@{HardSigmoidFunction}!Fn@{Fn}}
+\index{Fn@{Fn}!HardSigmoidFunction@{HardSigmoidFunction}}
+\doxysubsubsection{Fn()\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily static void Fn (\begin{DoxyParamCaption}\item[{const Input\+Vec\+Type \&}]{x,  }\item[{Output\+Vec\+Type \&}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Computes the hard sigmoid function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input data. \\
+\hline
+{\em y} & The resulting output activations. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 55 of file hard\+\_\+sigmoid\+\_\+function.\+hpp.
+
+
+
+References Hard\+Sigmoid\+Function\+::\+Fn().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/aakash/mlpack/src/mlpack/methods/ann/activation\+\_\+functions/\textbf{ hard\+\_\+sigmoid\+\_\+function.\+hpp}\end{DoxyCompactItemize}

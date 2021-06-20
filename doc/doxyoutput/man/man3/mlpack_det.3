@@ -1,0 +1,100 @@
+.TH "mlpack::det" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+mlpack::det \- Density Estimation Trees\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBDTree\fP"
+.br
+.RI "A density estimation tree is similar to both a decision tree and a space partitioning tree (like a kd-tree)\&. "
+.ti -1c
+.RI "class \fBPathCacher\fP"
+.br
+.RI "This class is responsible for caching the path to each node of the tree\&. "
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "template<typename MatType , typename TagType > void \fBPrintLeafMembership\fP (\fBDTree\fP< MatType, TagType > *dtree, const MatType &data, const arma::Mat< size_t > &labels, const size_t numClasses, const std::string &leafClassMembershipFile='')"
+.br
+.RI "Print the membership of leaves of a density estimation tree given the labels and number of classes\&. "
+.ti -1c
+.RI "template<typename MatType , typename TagType > void \fBPrintVariableImportance\fP (const \fBDTree\fP< MatType, TagType > *dtree, const std::string viFile='')"
+.br
+.RI "Print the variable importance of each dimension of a density estimation tree\&. "
+.ti -1c
+.RI "template<typename MatType , typename TagType > \fBDTree\fP< MatType, TagType > * \fBTrainer\fP (MatType &dataset, const size_t folds, const bool useVolumeReg=false, const size_t maxLeafSize=10, const size_t minLeafSize=5, const std::string unprunedTreeOutput='', const bool skipPruning=false)"
+.br
+.RI "Train the optimal decision tree using cross-validation with the given number of folds\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+Density Estimation Trees\&. 
+.SH "Function Documentation"
+.PP 
+.SS "void mlpack::det::PrintLeafMembership (\fBDTree\fP< MatType, TagType > * dtree, const MatType & data, const arma::Mat< size_t > & labels, const size_t numClasses, const std::string & leafClassMembershipFile = \fC''\fP)"
+
+.PP
+Print the membership of leaves of a density estimation tree given the labels and number of classes\&. Optionally, pass the name of a file to print this information to (otherwise stdout is used)\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdtree\fP Tree to print membership of\&. 
+.br
+\fIdata\fP Dataset tree is built upon\&. 
+.br
+\fIlabels\fP Class labels of dataset\&. 
+.br
+\fInumClasses\fP Number of classes in dataset\&. 
+.br
+\fIleafClassMembershipFile\fP Name of file to print to (optional)\&. 
+.RE
+.PP
+
+.SS "void mlpack::det::PrintVariableImportance (const \fBDTree\fP< MatType, TagType > * dtree, const std::string viFile = \fC''\fP)"
+
+.PP
+Print the variable importance of each dimension of a density estimation tree\&. Optionally, pass the name of a file to print this information to (otherwise stdout is used)\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdtree\fP Density tree to use\&. 
+.br
+\fIviFile\fP Name of file to print to (optional)\&. 
+.RE
+.PP
+
+.SS "\fBDTree\fP<MatType, TagType>* mlpack::det::Trainer (MatType & dataset, const size_t folds, const bool useVolumeReg = \fCfalse\fP, const size_t maxLeafSize = \fC10\fP, const size_t minLeafSize = \fC5\fP, const std::string unprunedTreeOutput = \fC''\fP, const bool skipPruning = \fCfalse\fP)"
+
+.PP
+Train the optimal decision tree using cross-validation with the given number of folds\&. Optionally, give a filename to print the unpruned tree to\&. This initializes a tree on the heap, so you are responsible for deleting it\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIdataset\fP Dataset for the tree to use\&. 
+.br
+\fIfolds\fP Number of folds to use for cross-validation\&. 
+.br
+\fIuseVolumeReg\fP If true, use volume regularization\&. 
+.br
+\fImaxLeafSize\fP Maximum number of points allowed in a leaf\&. 
+.br
+\fIminLeafSize\fP Minimum number of points allowed in a leaf\&. 
+.br
+\fIunprunedTreeOutput\fP Filename to print unpruned tree to (optional)\&. 
+.br
+\fIskipPruning\fP Set true to skip pruning\&. 
+.RE
+.PP
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.

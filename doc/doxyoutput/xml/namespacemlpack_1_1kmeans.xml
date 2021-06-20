@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacemlpack_1_1kmeans" kind="namespace" language="C++">
+    <compoundname>mlpack::kmeans</compoundname>
+    <innerclass refid="classmlpack_1_1kmeans_1_1AllowEmptyClusters" prot="public">mlpack::kmeans::AllowEmptyClusters</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1DualTreeKMeans" prot="public">mlpack::kmeans::DualTreeKMeans</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1DualTreeKMeansRules" prot="public">mlpack::kmeans::DualTreeKMeansRules</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1DualTreeKMeansStatistic" prot="public">mlpack::kmeans::DualTreeKMeansStatistic</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1ElkanKMeans" prot="public">mlpack::kmeans::ElkanKMeans</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1HamerlyKMeans" prot="public">mlpack::kmeans::HamerlyKMeans</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1KillEmptyClusters" prot="public">mlpack::kmeans::KillEmptyClusters</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1KMeans" prot="public">mlpack::kmeans::KMeans</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1MaxVarianceNewCluster" prot="public">mlpack::kmeans::MaxVarianceNewCluster</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1NaiveKMeans" prot="public">mlpack::kmeans::NaiveKMeans</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1PellegMooreKMeans" prot="public">mlpack::kmeans::PellegMooreKMeans</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1PellegMooreKMeansRules" prot="public">mlpack::kmeans::PellegMooreKMeansRules</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1PellegMooreKMeansStatistic" prot="public">mlpack::kmeans::PellegMooreKMeansStatistic</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1RandomPartition" prot="public">mlpack::kmeans::RandomPartition</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1RefinedStart" prot="public">mlpack::kmeans::RefinedStart</innerclass>
+    <innerclass refid="classmlpack_1_1kmeans_1_1SampleInitialization" prot="public">mlpack::kmeans::SampleInitialization</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacemlpack_1_1kmeans_1a050f8eba1b8d0c72e990a9ee3b7ed775" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename MetricType</type>
+          </param>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeans" kindref="compound">DualTreeKMeans</ref>&lt; MetricType, MatType, <ref refid="namespacemlpack_1_1tree_1a6ed9d585969e7837af0d41e0c3975602" kindref="member">tree::StandardCoverTree</ref> &gt;</type>
+        <definition>using CoverTreeDualTreeKMeans =  DualTreeKMeans&lt;MetricType, MatType, tree::StandardCoverTree&gt;</definition>
+        <argsstring></argsstring>
+        <name>CoverTreeDualTreeKMeans</name>
+        <briefdescription>
+<para>A template typedef for the <ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeans" kindref="compound">DualTreeKMeans</ref> algorithm with the cover tree type. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" line="169" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" bodystart="170" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacemlpack_1_1kmeans_1a3d8c82eb428be782996066d70afc122b" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>typename MetricType</type>
+          </param>
+          <param>
+            <type>typename MatType</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeans" kindref="compound">DualTreeKMeans</ref>&lt; MetricType, MatType &gt;</type>
+        <definition>using DefaultDualTreeKMeans =  DualTreeKMeans&lt;MetricType, MatType&gt;</definition>
+        <argsstring></argsstring>
+        <name>DefaultDualTreeKMeans</name>
+        <briefdescription>
+<para>A template typedef for the <ref refid="classmlpack_1_1kmeans_1_1DualTreeKMeans" kindref="compound">DualTreeKMeans</ref> algorithm with the default tree type (a kd-tree). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" line="164" column="1" bodyfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemlpack_1_1kmeans_1ae824715a9723b95291ede5396d7ec48a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::kmeans::HideChild</definition>
+        <argsstring>(TreeType &amp;node, const size_t child, const typename std::enable_if_t&lt; !tree::TreeTraits&lt; TreeType &gt;::BinaryTree &gt; *junk=0)</argsstring>
+        <name>HideChild</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>child</declname>
+        </param>
+        <param>
+          <type>const typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; !<ref refid="classmlpack_1_1tree_1_1TreeTraits" kindref="compound">tree::TreeTraits</ref>&lt; TreeType &gt;::BinaryTree &gt; *</type>
+          <declname>junk</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Utility function for hiding children. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This actually does something, and is called if the tree is not a binary tree. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" line="135" column="6" declfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" declline="135" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1kmeans_1ad50ab0e1083d84c7f78a79f2bdaec558" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::kmeans::HideChild</definition>
+        <argsstring>(TreeType &amp;node, const size_t child, const typename std::enable_if_t&lt; tree::TreeTraits&lt; TreeType &gt;::BinaryTree &gt; *junk=0)</argsstring>
+        <name>HideChild</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>child</declname>
+        </param>
+        <param>
+          <type>const typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; <ref refid="classmlpack_1_1tree_1_1TreeTraits" kindref="compound">tree::TreeTraits</ref>&lt; TreeType &gt;::BinaryTree &gt; *</type>
+          <declname>junk</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Utility function for hiding children. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is called when the tree is a binary tree, and does nothing, because we don&apos;t hide binary children in this way. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" line="144" column="6" declfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" declline="144" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1kmeans_1aef92bb2544a815fc97f3c79070e5d3c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::kmeans::RestoreChildren</definition>
+        <argsstring>(TreeType &amp;node, const typename std::enable_if_t&lt; tree::TreeTraits&lt; TreeType &gt;::BinaryTree &gt; *junk=0)</argsstring>
+        <name>RestoreChildren</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>const typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt; <ref refid="classmlpack_1_1tree_1_1TreeTraits" kindref="compound">tree::TreeTraits</ref>&lt; TreeType &gt;::BinaryTree &gt; *</type>
+          <declname>junk</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Utility function for restoring children to a binary tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" line="157" column="6" declfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" declline="157" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemlpack_1_1kmeans_1ab8a2dc63dd61b947e7b90e03d31d64c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TreeType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void mlpack::kmeans::RestoreChildren</definition>
+        <argsstring>(TreeType &amp;node, const typename std::enable_if_t&lt;!tree::TreeTraits&lt; TreeType &gt;::BinaryTree &gt; *junk=0)</argsstring>
+        <name>RestoreChildren</name>
+        <param>
+          <type>TreeType &amp;</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>const typename <ref refid="namespacestd_1a93e9cb7fadbcfaa2afb5b94058b8e34c" kindref="member">std::enable_if_t</ref>&lt;!<ref refid="classmlpack_1_1tree_1_1TreeTraits" kindref="compound">tree::TreeTraits</ref>&lt; TreeType &gt;::BinaryTree &gt; *</type>
+          <declname>junk</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+<para>Utility function for restoring children to a non-binary tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" line="151" column="6" declfile="/home/aakash/mlpack/src/mlpack/methods/kmeans/dual_tree_kmeans.hpp" declline="151" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>K-Means clustering. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/kmeans/allow_empty_clusters.hpp" line="19" column="1"/>
+  </compounddef>
+</doxygen>

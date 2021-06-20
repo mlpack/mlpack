@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_b3a7f93975f79d9d4061ae46aea4ffb8" kind="dir">
+    <compoundname>/home/aakash/mlpack/src/mlpack/methods/linear_svm</compoundname>
+    <innerfile refid="linear__svm_8hpp">linear_svm.hpp</innerfile>
+    <innerfile refid="linear__svm__function_8hpp">linear_svm_function.hpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/aakash/mlpack/src/mlpack/methods/linear_svm/"/>
+  </compounddef>
+</doxygen>

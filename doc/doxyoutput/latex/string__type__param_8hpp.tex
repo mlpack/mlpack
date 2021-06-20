@@ -1,0 +1,55 @@
+\doxysection{/home/aakash/mlpack/src/mlpack/bindings/cli/string\+\_\+type\+\_\+param.hpp File Reference}
+\label{string__type__param_8hpp}\index{/home/aakash/mlpack/src/mlpack/bindings/cli/string\_type\_param.hpp@{/home/aakash/mlpack/src/mlpack/bindings/cli/string\_type\_param.hpp}}
+Include dependency graph for string\+\_\+type\+\_\+param.\+hpp\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{string__type__param_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=190pt]{string__type__param_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \textbf{ mlpack}
+\begin{DoxyCompactList}\small\item\em Linear algebra utility functions, generally performed on matrices or vectors. \end{DoxyCompactList}\item 
+ \textbf{ mlpack\+::bindings}
+\item 
+ \textbf{ mlpack\+::bindings\+::cli}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\void \textbf{ String\+Type\+Param} (util\+::\+Param\+Data \&, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Return a string containing the type of a parameter. \end{DoxyCompactList}\item 
+template$<$$>$ void \textbf{ String\+Type\+Param$<$ bool $>$} (util\+::\+Param\+Data \&, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Return \char`\"{}bool\char`\"{}. \end{DoxyCompactList}\item 
+template$<$$>$ void \textbf{ String\+Type\+Param$<$ double $>$} (util\+::\+Param\+Data \&, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Return \char`\"{}double\char`\"{}. \end{DoxyCompactList}\item 
+template$<$$>$ void \textbf{ String\+Type\+Param$<$ int $>$} (util\+::\+Param\+Data \&, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Return \char`\"{}int\char`\"{}. \end{DoxyCompactList}\item 
+template$<$$>$ void \textbf{ String\+Type\+Param$<$ std\+::string $>$} (util\+::\+Param\+Data \&, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Return \char`\"{}string\char`\"{}. \end{DoxyCompactList}\item 
+template$<$$>$ void \textbf{ String\+Type\+Param$<$ std\+::tuple$<$ mlpack\+::data\+::\+Dataset\+Info, arma\+::mat $>$ $>$} (util\+::\+Param\+Data \&, const void $\ast$, void $\ast$output)
+\begin{DoxyCompactList}\small\item\em Return \char`\"{}string\char`\"{};. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ String\+Type\+Param\+Impl} (const typename boost\+::disable\+\_\+if$<$ util\+::\+Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0, const typename boost\+::disable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string containing the type of the parameter. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ String\+Type\+Param\+Impl} (const typename boost\+::enable\+\_\+if$<$ data\+::\+Has\+Serialize$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string containing the type of the parameter,. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\+::string \textbf{ String\+Type\+Param\+Impl} (const typename boost\+::enable\+\_\+if$<$ util\+::\+Is\+Std\+Vector$<$ T $>$$>$\+::type $\ast$=0)
+\begin{DoxyCompactList}\small\item\em Return a string containing the type of the parameter, for vector options. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Ryan Curtin
+\end{DoxyAuthor}
+Given a util\+::\+Param\+Data object, return a string containing the type of the input parameter as given on the command-\/line.
+
+mlpack is free software; you may redistribute it and/or modify it under the terms of the 3-\/clause BSD license. You should have received a copy of the 3-\/clause BSD license along with mlpack. If not, see {\texttt{ http\+://www.\+opensource.\+org/licenses/\+BSD-\/3-\/\+Clause}} for more information. 

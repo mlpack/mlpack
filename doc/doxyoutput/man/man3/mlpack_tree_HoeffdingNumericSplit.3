@@ -1,0 +1,185 @@
+.TH "HoeffdingNumericSplit< FitnessFunction, ObservationType >" 3 "Sun Jun 20 2021" "Version 3.4.2" "mlpack" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+HoeffdingNumericSplit< FitnessFunction, ObservationType > \- The \fBHoeffdingNumericSplit\fP class implements the numeric feature splitting strategy alluded to by Domingos and Hulten in the following paper:  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "typedef \fBNumericSplitInfo\fP< ObservationType > \fBSplitInfo\fP"
+.br
+.RI "The splitting information type required by the \fBHoeffdingNumericSplit\fP\&. "
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHoeffdingNumericSplit\fP (const size_t numClasses, const \fBHoeffdingNumericSplit\fP &other)"
+.br
+.RI "Create the \fBHoeffdingNumericSplit\fP class, using the parameters from the given other split object\&. "
+.ti -1c
+.RI "\fBHoeffdingNumericSplit\fP (const size_t numClasses=0, const size_t bins=10, const size_t observationsBeforeBinning=100)"
+.br
+.RI "Create the \fBHoeffdingNumericSplit\fP class, and specify some basic parameters about how the binning should take place\&. "
+.ti -1c
+.RI "size_t \fBBins\fP () const"
+.br
+.RI "Return the number of bins\&. "
+.ti -1c
+.RI "void \fBEvaluateFitnessFunction\fP (double &bestFitness, double &secondBestFitness) const"
+.br
+.RI "Evaluate the fitness function given what has been calculated so far\&. "
+.ti -1c
+.RI "size_t \fBMajorityClass\fP () const"
+.br
+.RI "Return the majority class\&. "
+.ti -1c
+.RI "double \fBMajorityProbability\fP () const"
+.br
+.RI "Return the probability of the majority class\&. "
+.ti -1c
+.RI "size_t \fBNumChildren\fP () const"
+.br
+.RI "Return the number of children if this node splits on this feature\&. "
+.ti -1c
+.RI "template<typename Archive > void \fBserialize\fP (Archive &ar, const uint32_t)"
+.br
+.RI "Serialize the object\&. "
+.ti -1c
+.RI "void \fBSplit\fP (arma::Col< size_t > &childMajorities, \fBSplitInfo\fP &splitInfo) const"
+.br
+.RI "Return the majority class of each child to be created, if a split on this dimension was performed\&. "
+.ti -1c
+.RI "void \fBTrain\fP (ObservationType value, const size_t label)"
+.br
+.RI "Train the \fBHoeffdingNumericSplit\fP on the given observed value (remember that this object only cares about the information for a single feature, not an entire point)\&. "
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename FitnessFunction, typename ObservationType = double>
+.br
+class mlpack::tree::HoeffdingNumericSplit< FitnessFunction, ObservationType >"
+The \fBHoeffdingNumericSplit\fP class implements the numeric feature splitting strategy alluded to by Domingos and Hulten in the following paper: 
+
+
+.PP
+.nf
+@inproceedings{domingos2000mining,
+  title={{Mining High-Speed Data Streams}},
+  author={Domingos, P\&. and Hulten, G\&.},
+  year={2000},
+  booktitle={Proceedings of the Sixth ACM SIGKDD International Conference on
+      Knowledge Discovery and Data Mining (KDD '00)},
+  pages={71--80}
+}
+
+.fi
+.PP
+.PP
+The strategy alluded to is very simple: we discretize the numeric features that we see\&. But in this case, we don't know how many bins we have, which makes things a little difficult\&. This class only makes binary splits, and has a maximum number of bins\&. The binning strategy is simple: the split caches the minimum and maximum value of points seen so far, and when the number of points hits a predefined threshold, the cached minimum-maximum range is equally split into bins, and splitting proceeds in the same way as with the categorical splits\&. This is a simple and stupid strategy, so don't expect it to be the best possible thing you can do\&.
+.PP
+\fBTemplate Parameters\fP
+.RS 4
+\fIFitnessFunction\fP Fitness function to use for calculating gain\&. 
+.br
+\fIObservationType\fP Type of observations in this dimension\&. 
+.RE
+.PP
+
+.PP
+Definition at line 53 of file hoeffding_numeric_split\&.hpp\&.
+.SH "Member Typedef Documentation"
+.PP 
+.SS "typedef \fBNumericSplitInfo\fP<ObservationType> \fBSplitInfo\fP"
+
+.PP
+The splitting information type required by the \fBHoeffdingNumericSplit\fP\&. 
+.PP
+Definition at line 57 of file hoeffding_numeric_split\&.hpp\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBHoeffdingNumericSplit\fP (const size_t numClasses = \fC0\fP, const size_t bins = \fC10\fP, const size_t observationsBeforeBinning = \fC100\fP)"
+
+.PP
+Create the \fBHoeffdingNumericSplit\fP class, and specify some basic parameters about how the binning should take place\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fInumClasses\fP Number of classes\&. 
+.br
+\fIbins\fP Number of bins\&. 
+.br
+\fIobservationsBeforeBinning\fP Number of points to see before binning is performed\&. 
+.RE
+.PP
+
+.SS "\fBHoeffdingNumericSplit\fP (const size_t numClasses, const \fBHoeffdingNumericSplit\fP< FitnessFunction, ObservationType > & other)"
+
+.PP
+Create the \fBHoeffdingNumericSplit\fP class, using the parameters from the given other split object\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "size_t Bins () const\fC [inline]\fP"
+
+.PP
+Return the number of bins\&. 
+.PP
+Definition at line 120 of file hoeffding_numeric_split\&.hpp\&.
+.SS "void EvaluateFitnessFunction (double & bestFitness, double & secondBestFitness) const"
+
+.PP
+Evaluate the fitness function given what has been calculated so far\&. In this case, if binning has not yet been performed, 0 will be returned (i\&.e\&., no gain)\&. Because this split can only split one possible way, secondBestFitness (the fitness function for the second best possible split) will be set to 0\&.
+.PP
+\fBParameters\fP
+.RS 4
+\fIbestFitness\fP Value of the fitness function for the best possible split\&. 
+.br
+\fIsecondBestFitness\fP Value of the fitness function for the second best possible split (always 0 for this split)\&. 
+.RE
+.PP
+
+.SS "size_t MajorityClass () const"
+
+.PP
+Return the majority class\&. 
+.SS "double MajorityProbability () const"
+
+.PP
+Return the probability of the majority class\&. 
+.SS "size_t NumChildren () const\fC [inline]\fP"
+
+.PP
+Return the number of children if this node splits on this feature\&. 
+.PP
+Definition at line 106 of file hoeffding_numeric_split\&.hpp\&.
+.SS "void serialize (Archive & ar, const uint32_t)"
+
+.PP
+Serialize the object\&. 
+.SS "void Split (arma::Col< size_t > & childMajorities, \fBSplitInfo\fP & splitInfo) const"
+
+.PP
+Return the majority class of each child to be created, if a split on this dimension was performed\&. Also create the split object\&. 
+.SS "void Train (ObservationType value, const size_t label)"
+
+.PP
+Train the \fBHoeffdingNumericSplit\fP on the given observed value (remember that this object only cares about the information for a single feature, not an entire point)\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIvalue\fP Value in the dimension that this \fBHoeffdingNumericSplit\fP refers to\&. 
+.br
+\fIlabel\fP Label of the given point\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for mlpack from the source code\&.
