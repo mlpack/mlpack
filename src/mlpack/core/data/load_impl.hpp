@@ -170,7 +170,7 @@ bool Load(const std::string& filename,
   if (loadType != file_type::HDF5Binary)
   {
     if(loadType == file_type::CSVASCII)
-      success = LoadCSVV(matrix, stream);
+      success = LoadCSVFile(matrix, stream);
     else
       success = matrix.load(stream, ToArmaFileType(loadType));
   }

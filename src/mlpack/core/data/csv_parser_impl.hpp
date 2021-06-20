@@ -168,7 +168,7 @@ namespace data
     f.clear();
     f.seekg(pos1);
 
-    x.zeros(f_n_rows, f_n_cols);
+    x.set_size(f_n_rows, f_n_cols);
 
     size_t row = 0;
 
