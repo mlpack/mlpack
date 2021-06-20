@@ -185,6 +185,7 @@ class LpPooling
         if (colEnd > input.n_cols - 1)
           colEnd = input.n_cols - 1;
 
+        val += inputPre(rowEnd, colEnd);
         if (rowidx >= 1)
         {
           if (colidx >= 1)
