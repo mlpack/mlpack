@@ -21,7 +21,7 @@ steps:
     unset BOOST_ROOT
     echo "##vso[task.setvariable variable=BOOST_ROOT]"$BOOST_ROOT
 
-    sudo apt-get install -y --allow-unauthenticated libopenblas-dev g++ libboost-all-dev libensmallen-dev xz-utils
+    sudo apt-get install -y --allow-unauthenticated libopenblas-dev g++ libboost-all-dev xz-utils
 
     if [ "$(binding)" == "python" ]; then
       export PYBIN=$(which python)
@@ -42,11 +42,28 @@ steps:
         sudo make install && \
         cd ..
 
+    # Install ensmallen.
+    wget https://ensmallen.org/files/ensmallen-latest.tar.gz
+        tar -xvzpf ensmallen-latest.tar.gz # Unpack into ensmallen-*/.
+        cd ensmallen-* && \
+        cmake . && \
+        make && \
+        sudo cp -vr include/* /usr/include/ && \
+        cd ..
+
+    # Install STB.
+    wget https://mlpack.org/files/stb.tar.gz
+        tar -xvzpf stb.tar.gz # Unpack into stb/.
+        cd stb &&\
+        sudo cp -vr include/* /usr/include/ && \
+        cd ..
+
     # Install cereal.
     wget https://github.com/USCiLab/cereal/archive/v1.3.0.tar.gz
         tar -xvzpf v1.3.0.tar.gz # Unpack into cereal-1.3.0/.
         cd cereal-1.3.0 && \
         cmake . && \
+        make && \
         sudo cp -vr include/cereal /usr/include/ && \
         cd ..
 
