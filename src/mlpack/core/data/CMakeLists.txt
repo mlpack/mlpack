@@ -36,6 +36,8 @@ set(SOURCES
   one_hot_encoding_impl.hpp
   csv_parser.hpp
   csv_parser_impl.hpp
+  types.hpp
+  types_impl.hpp
 )
 
 # add directory name to sources

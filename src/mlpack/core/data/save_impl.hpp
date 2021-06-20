@@ -55,11 +55,11 @@ bool Save(const std::string& filename,
   file_type saveType = inputSaveType;
   std::string stringType = "";
 
-  if (inputSaveType == file_type::mlp_auto_detect)
+  if (inputSaveType == file_type::AutoDetect)
   {
     // Detect the file type using only the extension.
     saveType = DetectFromExtension(filename);
-    if (saveType == file_type::mlp_file_type_unknown)
+    if (saveType == file_type::FileTypeUnknown)
     {
       if (fatal)
         Log::Fatal << "Could not detect type of file '" << filename << "' for "
@@ -105,7 +105,7 @@ bool Save(const std::string& filename,
 
 #ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
-    const bool success = (saveType == file_type::mlp_hdf5_binary) ?
+    const bool success = (saveType == file_type::HDF5Binary) ?
         tmp.quiet_save(filename, ToArmaFileType(saveType)) :
         tmp.quiet_save(stream, ToArmaFileType(saveType));
 #else
@@ -126,7 +126,7 @@ bool Save(const std::string& filename,
   {
 #ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.
-    const bool success = (saveType == file_type::mlp_hdf5_binary) ?
+    const bool success = (saveType == file_type::HDF5Binary) ?
         matrix.quiet_save(filename, ToArmaFileType(saveType)) :
         matrix.quiet_save(stream, ToArmaFileType(saveType));
 #else
@@ -200,18 +200,18 @@ bool Save(const std::string& filename,
 
   if (extension == "txt" || extension == "tsv")
   {
-    saveType = file_type::mlp_coord_ascii;
+    saveType = file_type::CoordASCII;
     stringType = "raw ASCII formatted data";
   }
   else if (extension == "bin")
   {
-    saveType = file_type::mlp_arma_binary;
+    saveType = file_type::ArmaBinary;
     stringType = "Armadillo binary formatted data";
   }
   else
   {
     unknownType = true;
-    saveType = file_type::mlp_raw_binary; // Won't be used; prevent a warning.
+    saveType = file_type::RawBinary; // Won't be used; prevent a warning.
     stringType = "";
   }
 

@@ -41,64 +41,6 @@ namespace mlpack
 {
 namespace data
 {
-  arma::file_type ToArmaFileType(file_type& type)
-  {
-    switch(type)
-    {
-      case file_type::mlp_file_type_unknown:
-        return arma::file_type_unknown;
-        break;
-  
-      case file_type::mlp_auto_detect:
-        return arma::auto_detect;
-        break;
-  
-      case file_type::mlp_raw_ascii:
-        return arma::raw_ascii;
-        break;
-  
-      case file_type::mlp_arma_ascii:
-        return arma::arma_ascii;
-        break;
-  
-      case file_type::mlp_csv_ascii:
-        return arma::csv_ascii;
-        break;
-  
-      case file_type::mlp_raw_binary:
-        return arma::raw_binary;
-        break;
-  
-      case file_type::mlp_arma_binary:
-        return arma::arma_binary;
-        break;
-  
-      case file_type::mlp_pgm_binary:
-        return arma::pgm_binary;
-        break;
-  
-      case file_type::mlp_ppm_binary:
-        return arma::ppm_binary;
-        break;
-  
-      case file_type::mlp_hdf5_binary:
-        return arma::hdf5_binary;
-        break;
-  
-      case file_type::mlp_hdf5_binary_trans:
-        return arma::hdf5_binary_trans;
-        break;
-  
-      case file_type::mlp_coord_ascii:
-        return arma::coord_ascii;
-        break;
-
-      default:
-        return arma::file_type_unknown;
-	break;
-    }
-  }
-
   /**
    * Given the address of a martix element(val)
    * sets it equal to the provided value(token)
@@ -177,8 +119,12 @@ namespace data
     return true;
   }
 
+  /**
+   * Returns a bool value showing whether data was loaded successfully or not.
+   * Parses the file and loads the data into the given matrix.
+   */
   template<typename MatType>
-  bool LoadCSVV(MatType& x, std::fstream& f)
+  bool LoadCSVFile(MatType& x, std::fstream& f)
   {
     bool load_okay = f.good();
 

@@ -35,35 +35,10 @@
 #ifndef MLPACK_CORE_DATA_CSV_PARSER_HPP
 #define MLPACK_CORE_DATA_CSV_PARSER_HPP
 
-#include <limits>
+#include "types.hpp"
 
 namespace mlpack{
 namespace data{
-
-enum struct file_type : unsigned int
-{
-  mlp_file_type_unknown,
-  mlp_auto_detect,        //!< attempt to automatically detect the file type
-  mlp_raw_ascii,          //!< raw text (ASCII), without a header
-  mlp_arma_ascii,         //!< Armadillo text format, with a header specifying matrix type and size
-  mlp_csv_ascii,          //!< comma separated values (CSV), without a header
-  mlp_raw_binary,         //!< raw binary format (machine dependent), without a header
-  mlp_arma_binary,        //!< Armadillo binary format (machine dependent), with a header specifying matrix type and size
-  mlp_pgm_binary,         //!< Portable Grey Map (greyscale image)
-  mlp_ppm_binary,         //!< Portable Pixel Map (colour image), used by the field and cube classes
-  mlp_hdf5_binary,        //!< HDF5: open binary format, not specific to Armadillo, which can store arbitrary data
-  mlp_hdf5_binary_trans,  //!< [DO NOT US deprecated] as per hdf5_binary, but save/load the data with columns transposed to rows
-  mlp_coord_ascii         //!< simple co-ordinate format for sparse matrices (indices start at zero)
-  };
-
-/**
- * WHere should I place this fucntion?
- * This fucntion is used to convert mlpack file type to respective
- * arma file type.
- *
- * @param type Mlpack's file_type which will we converted to arma's file_type
- */
-arma::file_type ToArmaFileType(file_type& type);
 
 /**
  * Convert the given string token to assigned datatype and assign
@@ -97,9 +72,11 @@ bool ConvertToken(typename MatType::elem_type& val, const std::string& token);
  * @param f File stream to access the data file
  */
 template<typename MatType>
-bool LoadCSVV(MatType& x, std::fstream& f);
+bool LoadCSVFile(MatType& x, std::fstream& f);
 
 } // namespace data
 } // namespace mlpack
+
+#include "csv_parser_impl.hpp"
 
 #endif

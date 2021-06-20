@@ -23,6 +23,7 @@
 #include "extension.hpp"
 #include "detect_file_type.hpp"
 #include "csv_parser.hpp"
+#include "types.hpp"
 
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
@@ -116,12 +117,12 @@ bool Load(const std::string& filename,
 
   file_type loadType = inputLoadType;
   std::string stringType;
-  if (inputLoadType == file_type::mlp_auto_detect)
+  if (inputLoadType == file_type::AutoDetect)
   {
     // Attempt to auto-detect the type from the given file.
     loadType = AutoDetect(stream, filename);
     // Provide error if we don't know the type.
-    if (loadType == file_type::mlp_file_type_unknown)
+    if (loadType == file_type::FileTypeUnknown)
     {
       Timer::Stop("loading_data");
       if (fatal)
@@ -138,7 +139,7 @@ bool Load(const std::string& filename,
   stringType = GetStringType(loadType);
 
 #ifndef ARMA_USE_HDF5
-  if (inputLoadType == file_type::mlp_hdf5_binary)
+  if (inputLoadType == file_type::HDF5Binary)
   {
     // Ensure that HDF5 is supported.
     Timer::Stop("loading_data");
@@ -156,7 +157,7 @@ bool Load(const std::string& filename,
 #endif
 
   // Try to load the file; but if it's raw_binary, it could be a problem.
-  if (loadType == file_type::mlp_raw_binary)
+  if (loadType == file_type::RawBinary)
     Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
         << "but this may not be the actual filetype!" << std::endl;
   else
@@ -166,9 +167,9 @@ bool Load(const std::string& filename,
   // We can't use the stream if the type is HDF5.
   bool success;
 
-  if (loadType != file_type::mlp_hdf5_binary)
+  if (loadType != file_type::HDF5Binary)
   {
-    if(loadType == file_type::mlp_csv_ascii)
+    if(loadType == file_type::CSVASCII)
       success = LoadCSVV(matrix, stream);
     else
       success = matrix.load(stream, ToArmaFileType(loadType));

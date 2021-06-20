@@ -72,7 +72,7 @@ bool Load(const std::string& filename,
           arma::Mat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true,
-          const file_type inputLoadType = file_type::mlp_auto_detect);
+          const file_type inputLoadType = file_type::AutoDetect);
 
 /**
  * Loads a sparse matrix from file, using arma::coord_ascii format.  This
