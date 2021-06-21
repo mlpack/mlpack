@@ -49,7 +49,6 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     SplitInfoType& splitInfo,
     AuxiliarySplitInfo& /* aux */)
 {
-  std::cout << "Calling All categorical split " << numCategories << std::endl;
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
   arma::Col<size_t> counts(numCategories, arma::fill::zeros);
@@ -74,29 +73,21 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
   // If each child will have the minimum number of points in it, we can split.
   // Otherwise we can't.
   if (arma::min(counts) < minimumLeafSize)
-  {
-    std::cout << counts << std::endl;
     return DBL_MAX;
-  }
 
   // Calculate the gain of the split.  First we have to calculate the labels
   // that would be assigned to each child.
   arma::uvec childPositions(numCategories, arma::fill::zeros);
   std::vector<arma::Row<typename LabelsType::elem_type>> childLabels(numCategories);
   std::vector<arma::Row<double>> childWeights(numCategories);
-  
-  std::cout << counts << std::endl;
-  std::cout << "Num categories: " << numCategories << std::endl;
+
   for (size_t i = 0; i < numCategories; ++i)
   {
-    std::cout << i;
     // Labels and weights should have same length.
     childLabels[i].zeros(counts[i]);
-    if (numCategories == 9) std::cout << "Labels initialized\n";
     if (UseWeights)
       childWeights[i].zeros(counts[i]);
   }
-  std::cout << "\n";
 
   // Extract labels for each child.
   for (size_t i = 0; i < data.n_elem; ++i)
