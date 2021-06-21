@@ -97,21 +97,24 @@ inline void LoadBostonHousingDataset(arma::mat& trainData,
 
   data::Split(dataset, responses, trainData, testData,
       trainResponses, testResponses, 0.3);
-  // info.Type(3) = data::Datatype::categorical;
-  // info.Type(8) = data::Datatype::categorical;
 
-  // info.MapString<double>("0", 3);
-  // info.MapString<double>("1", 3);
-  // info.MapString<double>("1", 8);
-  // info.MapString<double>("2", 8);
-  // info.MapString<double>("3", 8);
-  // info.MapString<double>("4", 8);
-  // info.MapString<double>("5", 8);
-  // info.MapString<double>("6", 8);
-  // info.MapString<double>("7", 8);
-  // info.MapString<double>("8", 8);
-  // info.MapString<double>("24", 8);
-  // std::cout << arma::unique(trainData.row(8));
+  // Defining categorical deimensions.
+  info.Type(3) = data::Datatype::categorical;
+  info.Type(8) = data::Datatype::categorical;
+
+  // Creating mappings for categorical dimensions.
+  info.MapString<double>("0", 3);
+  info.MapString<double>("1", 3);
+
+  info.MapString<double>("1", 8);
+  info.MapString<double>("2", 8);
+  info.MapString<double>("3", 8);
+  info.MapString<double>("4", 8);
+  info.MapString<double>("5", 8);
+  info.MapString<double>("6", 8);
+  info.MapString<double>("7", 8);
+  info.MapString<double>("8", 8);
+  info.MapString<double>("24", 8);
 }
 
 inline double RMSE(const arma::Row<double>& predictions,
