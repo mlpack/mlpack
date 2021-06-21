@@ -135,6 +135,7 @@ DecisionTreeRegressor<FitnessFunction,
   using TrueResponsesType = typename std::decay<ResponsesType>::type;
   using TrueWeightsType = typename std::decay<WeightsType>::type;
 
+  std::cout << "Data copying begin\n";
   // Copy or move data.
   TrueMatType tmpData(std::move(data));
   TrueResponsesType tmpResponses(std::move(responses));
@@ -142,6 +143,7 @@ DecisionTreeRegressor<FitnessFunction,
 
   // Set the correct dimensionality for the dimension selector.
   dimensionSelector.Dimensions() = tmpData.n_rows;
+  std::cout << "Pre training!\n";
 
   // Pass off work to the weighted Train() method.
   Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses, 0,
@@ -631,6 +633,7 @@ double DecisionTreeRegressor<FitnessFunction,
     for (size_t i = dimensionSelector.Begin(); i != end;
          i = dimensionSelector.Next())
     {
+      if (i == 8 || i == 3) std::cout << "Dimension:" << i << std::endl;
       double dimGain = -DBL_MAX;
       if (datasetInfo.Type(i) == data::Datatype::categorical)
       {

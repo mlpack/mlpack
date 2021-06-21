@@ -858,34 +858,26 @@ TEST_CASE("CategoricalInformationGainWeightedBuildTest_", "[DecisionTreeTest]")
  */
 TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
 {
-
+  std::cout << "***********************************\n";
   // Loading data.
   data::DatasetInfo info;
   arma::mat trainData, testData;
   arma::rowvec trainResponses, testResponses;
-  arma::rowvec weights = arma::ones<arma::rowvec>(355);
   LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
       info);
 
+  arma::rowvec weights(trainResponses.n_elem, arma::fill::ones);
+  std::cout << weights.n_elem << " " << trainResponses.n_elem << std::endl;
+
+  std::cout << "NumMappings: " << info.NumMappings(8) << std::endl;
+  std::cout << info.Type(8) << std::endl;
+
   // Build decision tree.
-  DecisionTreeRegressor<MSEGain> d(trainData, info, trainResponses);
+  // DecisionTreeRegressor<> d(trainData, info, trainResponses, 1);
+  std::cout << "***********************************\n";
+  DecisionTreeRegressor<> wd(trainData, info, trainResponses, weights);
 
-  // Get the predicted test responses.
-  arma::Row<double> predictions;
-  d.Predict(testData, predictions);
-
-  REQUIRE(predictions.n_elem == testData.n_cols);
-
-  // Figure out rmse.
-  double rmse = RMSE(predictions, testResponses);
-
-  // REQUIRE(rmse < 9.21);
-  // std::cout << predictions << std::endl << testResponses;
-  arma::Row<double> trainPred;
-  d.Predict(trainData, trainPred);
-  // std::cout << trainPred;
-
-  std::cout << "Train RMSE: " << RMSE(trainResponses, trainPred) << std::endl;
+  std::cout << "training done\n";
 }
 
 /**
