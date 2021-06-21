@@ -192,12 +192,14 @@ class LpPooling
             val += inputPre(rowidx - 1, colidx - 1);
           val -= inputPre(rowidx - 1, colEnd);
         }
+
         if (colidx >= 1)
           val -= inputPre(rowEnd, colidx - 1);
 
         output(i, j) = val;
       }
     }
+
     output = arma::pow(output, 1.0 / normType);
   }
 
