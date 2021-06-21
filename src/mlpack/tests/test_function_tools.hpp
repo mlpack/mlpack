@@ -90,6 +90,11 @@ inline void LoadBostonHousingDataset(arma::mat& trainData,
   arma::mat dataset;
   arma::rowvec responses;
 
+  // Defining categorical deimensions.
+  info.SetDimensionality(13);
+  info.Type(3) = data::Datatype::categorical;
+  info.Type(8) = data::Datatype::categorical;
+
   if (!data::Load("boston_housing_price.csv", dataset, info))
     FAIL("Cannot load test dataset boston_housing_price.csv!");
   if (!data::Load("boston_housing_price_responses.csv", responses))
@@ -97,24 +102,6 @@ inline void LoadBostonHousingDataset(arma::mat& trainData,
 
   data::Split(dataset, responses, trainData, testData,
       trainResponses, testResponses, 0.3);
-
-  // Defining categorical deimensions.
-  info.Type(3) = data::Datatype::categorical;
-  info.Type(8) = data::Datatype::categorical;
-
-  // Creating mappings for categorical dimensions.
-  info.MapString<double>("0", 3);
-  info.MapString<double>("1", 3);
-
-  info.MapString<double>("1", 8);
-  info.MapString<double>("2", 8);
-  info.MapString<double>("3", 8);
-  info.MapString<double>("4", 8);
-  info.MapString<double>("5", 8);
-  info.MapString<double>("6", 8);
-  info.MapString<double>("7", 8);
-  info.MapString<double>("8", 8);
-  info.MapString<double>("24", 8);
 }
 
 inline double RMSE(const arma::Row<double>& predictions,
