@@ -20,7 +20,7 @@ namespace tests {
 /**
  * Delete any unique pointers that are held by the IO object.
  */
-void CleanMemory();
+void CleanMemory(util::Params& params);
 
 } // namespace tests
 } // namespace bindings
