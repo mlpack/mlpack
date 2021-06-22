@@ -130,13 +130,13 @@ void PrintClassDefn(
   std::cout << "  def get_cpp_params(self, return_str=False):" << std::endl;
   std::cout << "    params = self._get_cpp_params()" << std::endl;
   std::cout << "    return process_params_out(self, params, "
-    << "return_str=return_str)" << std::endl;
+      << "return_str=return_str)" << std::endl;
   std::cout << std::endl;
   std::cout << "  def set_cpp_params(self, params_dic):" << std::endl;
   std::cout << "    params_str = process_params_in(self, params_dic)"
-    << std::endl;
+      << std::endl;
   std::cout << "    self._set_cpp_params(params_str.encode(\"utf-8\"))"
-    << std::endl;
+      << std::endl;
   std::cout << std::endl;
 }
 

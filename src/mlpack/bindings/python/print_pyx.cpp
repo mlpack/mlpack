@@ -81,7 +81,7 @@ void PrintPYX(const util::BindingDetails& doc,
       << "ResetTimers, EnableTimers" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
   cout << "from preprocess_json_params import process_params_out, "
-    << "process_params_in" << endl;
+      << "process_params_in" << endl;
   cout << "from serialization cimport SerializeIn, SerializeOut, "
       << "SerializeOutJSON, SerializeInJSON" << endl;
   cout << endl;
