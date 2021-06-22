@@ -52,11 +52,9 @@ PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
 #ifndef MAKING_WRAPPER
 static void mlpackMain()
 {
-
   LinearRegression* lr;
-
-  RequireAtLeastOnePassed({ "output_model", "output_predictions" }, false,
-      "no output will be saved");
+	RequireOnlyOnePassed({"input_model"}, true); // input_model must be passed.
+	RequireOnlyOnePassed({"test"}, true); // test matrix must be passed.
 
   // A model file was passed in, so load it.
   Timer::Start("load_model");
@@ -92,6 +90,5 @@ static void mlpackMain()
 
   // Save predictions.
   IO::GetParam<rowvec>("output_predictions") = std::move(predictions);
-
 }
 #endif

@@ -57,6 +57,7 @@ PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
 static void mlpackMain()
 {
   const double lambda = IO::GetParam<double>("lambda");
+  RequireOnlyOnePassed({"training"}, true); // training must be passsed.
 
   mat regressors;
   rowvec responses;
@@ -92,6 +93,9 @@ static void mlpackMain()
           "as the training set." << endl;
     }
   }
+
+  if(regressors.n_cols != responses.n_cols)
+    Log::Fatal << "Regressors and Responses must have the same number of data points!" << endl;
 
   Timer::Start("regression");
   lr = new LinearRegression(regressors, responses, lambda);
