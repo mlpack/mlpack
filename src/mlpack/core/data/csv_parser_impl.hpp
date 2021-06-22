@@ -89,12 +89,11 @@ namespace data
 
     char* endptr = nullptr;
 
-    if ((std::is_floating_point<typename MatType::elem_type>::value) ||
-        (std::is_integral<typename MatType::elem_type>::value))
+    if (std::is_floating_point<typename MatType::elem_type>::value)
     {
       val = typename MatType::elem_type(std::strtod(str, &endptr));
     }
-    else
+    else if (std::is_integral<typename MatType::elem_type>::value)
     {
       if (std::is_signed<typename MatType::elem_type>::value)
       {
