@@ -485,17 +485,17 @@ TEST_CASE("AllCategoricalSplitSimpleSplitTest", "[DecisionTreeTest]")
   arma::rowvec weights(labels.n_elem);
   weights.ones();
 
-  arma::vec classProbabilities(1);
+  arma::vec classProbabilities;
   AllCategoricalSplit<GiniGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
   const double bestGain = GiniGain::Evaluate<false>(labels, 3, weights);
   const double gain = AllCategoricalSplit<GiniGain>::SplitIfBetter<false>(
-      bestGain, values, 4, labels, 3, weights, 3, 1e-7, classProbabilities[0],
+      bestGain, values, 4, labels, 3, weights, 3, 1e-7, classProbabilities,
       aux);
   const double weightedGain =
       AllCategoricalSplit<GiniGain>::SplitIfBetter<true>(bestGain, values, 4,
-      labels, 3, weights, 3, 1e-7, classProbabilities[0], aux);
+      labels, 3, weights, 3, 1e-7, classProbabilities, aux);
 
   // Make sure that a split was made.
   REQUIRE(gain > bestGain);

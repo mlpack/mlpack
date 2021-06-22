@@ -40,6 +40,8 @@ class AllCategoricalSplit
    * aux may be modified.  For this particular split type, aux will be empty
    * and splitInfo will store the number of children of the node.
    *
+   * This overload is used only for classification.
+   *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
    * @param data The dimension of data points to check for a split in.
@@ -55,7 +57,7 @@ class AllCategoricalSplit
    *      successful split.
    */
   template<bool UseWeights, typename VecType, typename LabelsType,
-           typename WeightVecType, typename SplitInfoType>
+           typename WeightVecType>
   static double SplitIfBetter(
       const double bestGain,
       const VecType& data,
@@ -65,7 +67,42 @@ class AllCategoricalSplit
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
-      SplitInfoType& splitInfo,
+      arma::vec& splitInfo,
+      AuxiliarySplitInfo& aux);
+
+  /**
+   * Check if we can split a node.  If we can split a node in a way that
+   * improves on 'bestGain', then we return the improved gain.  Otherwise we
+   * return the value 'bestGain'.  If a split is made, then splitInfo and
+   * aux may be modified.  For this particular split type, aux will be empty
+   * and splitInfo will store the number of children of the node.
+   *
+   * This overload is used only for regression.
+   *
+   * @param bestGain Best gain seen so far (we'll only split if we find gain
+   *      better than this).
+   * @param data The dimension of data points to check for a split in.
+   * @param numCategories Number of categories in the categorical data.
+   * @param responses Responses for each point.
+   * @param weights Weights associated with responses.
+   * @param minimumLeafSize Minimum number of points in a leaf node for
+   *      splitting.
+   * @param splitInfo Stores split information on a successful split.
+   * @param minimumGainSplit Minimum  gain split.
+   * @param aux Auxiliary split information, which may be modified on a
+   *      successful split.
+   */
+  template<bool UseWeights, typename VecType, typename ResponsesType,
+           typename WeightVecType>
+  static double SplitIfBetter(
+      const double bestGain,
+      const VecType& data,
+      const size_t numCategories,
+      const ResponsesType& responses,
+      const WeightVecType& weights,
+      const size_t minimumLeafSize,
+      const double minimumGainSplit,
+      double& splitInfo,
       AuxiliarySplitInfo& aux);
 
   /**
