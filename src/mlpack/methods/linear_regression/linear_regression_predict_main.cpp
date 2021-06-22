@@ -49,7 +49,7 @@ PARAM_MATRIX_IN("test", "Matrix containing X' (test regressors).", "T");
 PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
     "matrix is where the predicted responses will be saved.", "o");
 
-#ifndef MAKING_WRAPPER
+#if(BINDING_TYPE != BINDING_TYPE_PYX_COLLECT)
 static void mlpackMain()
 {
   LinearRegression* lr;

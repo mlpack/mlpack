@@ -1,3 +1,15 @@
+/**
+ * @file bindings/python/print_py_wrapper.cpp
+ * @author Nippun Sharma
+ * 
+ * Implementation of a function to generate a .py file that
+ * contains the wrapper for a method.
+ * 
+ * mlpack is free software; you may redistribute it and/or modify it under the
+ * terms of the 3-clause BSD license.  You should have received a copy of the
+ * 3-clause BSD license along with mlpack.  If not, see
+ * http://www.opensource.org/licenses/BSD-3-Clause for more information.
+ */
 #include "print_py_wrapper.hpp"
 #include "get_methods_wrapper.hpp"
 #include "get_class_name_wrapper.hpp"
@@ -14,11 +26,13 @@ namespace python {
 
 void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
 										const std::string& groupName,
-				    			  const std::string& validMethods)
+										const std::string& validMethods)
 {
-	map<string, map<string, ParamData>> accumulate; // this to store all parameters in a group.
-	set<string> serializable; // to store list of all serializable types.
+	// this to store all parameters in a group.
+	map<string, map<string, ParamData>> accumulate;
 
+	// to store list of all serializable types.
+	set<string> serializable;
 	typedef set<string>::iterator SerialItr;
 	typedef map<string, ParamData>::iterator ParamItr;
 
@@ -33,9 +47,11 @@ void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
 		IO::RestoreSettings(groupProgramNames[i]);
 		accumulate[methods[i]] = IO::Parameters();
 		bool temp_val;
-		for(ParamItr itr=IO::Parameters().begin(); itr!=IO::Parameters().end(); ++itr)
+		for(ParamItr itr=IO::Parameters().begin(); itr!=IO::Parameters().end();
+		    ++itr)
 		{
-			IO::GetSingleton().functionMap[itr->second.tname]["IsSerializable"](itr->second, NULL, (void*)& temp_val);
+			IO::GetSingleton().functionMap[itr->second.tname]["IsSerializable"](
+			    itr->second, NULL, (void*)& temp_val);
 			if(temp_val)
 				serializable.insert(itr->second.cppType);
 		}
@@ -44,7 +60,8 @@ void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
 
 	cout << importString << endl;
 
-	string className = GetClassName(groupName); // create class name from group name
+  // create class name from group name
+	string className = GetClassName(groupName);
 
 	// print class.
 	cout << "class " << className << ":" << endl;
@@ -67,7 +84,8 @@ void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
 		for(ParamItr itr=accumulate[methods[i]].begin();
 				itr != accumulate[methods[i]].end(); ++itr)
 		{
-			if(itr->second.input && (serializable.find(itr->second.cppType) == serializable.end()))
+			if(itr->second.input &&
+			  (serializable.find(itr->second.cppType) == serializable.end()))
 			{
 				// if(itr->first == "lambda")
 				// 	cout << string(indent, ' ') << "lambda_" << "," << endl;
@@ -83,7 +101,8 @@ void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
 
 		// calling internal functions.
 		cout << "  " << "  out=" << groupName << "_" << methods[i] << "(" << endl;
-		indent = 4 + 4 /* out = */ + groupName.length() + 1 /*_*/ + methods[i].size() + 1 /*(*/;
+		indent = 4 + 4 /* out = */ + groupName.length() + 1 /*_*/ +
+		    methods[i].size() + 1 /*(*/;
 		for(ParamItr itr=accumulate[methods[i]].begin();
 				itr != accumulate[methods[i]].end(); ++itr)
 		{
@@ -92,13 +111,16 @@ void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
 				if((serializable.find(itr->second.cppType) == serializable.end()))
 				{
 					if(itr->first == "lambda")
-						cout << string(indent, ' ') << "lambda_" << "=" << "lambda_" << "," << endl;
+						cout << string(indent, ' ') << "lambda_" << "=" << "lambda_"
+						    << "," << endl;
 					else
-						cout << string(indent, ' ') << itr->first << "=" << itr->first << "," << endl;
+						cout << string(indent, ' ') << itr->first << "=" << itr->first
+						    << "," << endl;
 				}
 				else
 				{
-					cout << string(indent, ' ') << itr->first << "=" << "self." << itr->second.cppType << "," << endl;
+					cout << string(indent, ' ') << itr->first << "=" << "self."
+					    << itr->second.cppType << "," << endl;
 				}
 			}
 		}
@@ -111,7 +133,8 @@ void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
 			if(!itr->second.input)
 			{
 				if((serializable.find(itr->second.cppType) != serializable.end()))
-					cout << "    " << "self." << itr->second.cppType << "=" << "out[\"" << itr->first << "\"]" << endl;
+					cout << "    " << "self." << itr->second.cppType << "=" <<
+					    "out[\"" << itr->first << "\"]" << endl;
 				cout << "    " << "return out[\"" << itr->first << "\"]" << endl;
 				break; // only return one output parameter.
 			}
