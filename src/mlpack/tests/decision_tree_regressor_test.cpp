@@ -580,6 +580,176 @@ TEST_CASE("PerfectTrainingSetWithWeight_", "[DecisionTreeRegressorTest]")
 }
 
 /**
+ * Test that the tree is able to perfectly fit all the obvious splits present
+ * in the data.
+ *
+ *     |
+ *     |
+ *   2 |            xxxxxx
+ *     |
+ *     |
+ *   1 |      xxxxxx      xxxxxx
+ *     |
+ *     |
+ *   0 |xxxxxx                  xxxxxx
+ *     |___________________________________
+ */
+TEST_CASE("MultiSplitTest1", "[DecisionTreeRegressorTest]")
+{
+  arma::mat dataset;
+  arma::rowvec responses;
+  arma::rowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
+
+  CreateMultiSplitData(dataset, responses, 1000, values);
+
+  arma::rowvec weights(responses.n_elem);
+  weights.ones();
+
+  // Minimum leaf size of 1.
+  DecisionTreeRegressor<> d(dataset, responses, weights, 2, 0.0);
+  arma::rowvec preds;
+  d.Predict(dataset, preds);
+
+  // Ensure that the predictions are perfect.
+  for (size_t i = 0; i < responses.n_elem; ++i)
+    REQUIRE(preds[i] == responses[i]);
+
+  // Ensure that a split is made only when required and no redundant splits are
+  // made.
+  REQUIRE(d.NumLeaves() == 5);
+}
+
+/**
+ * Test that the tree is able to perfectly fit all the obvious splits present
+ * in the data. Same test as above, but with less data.
+ */
+TEST_CASE("MultiSplitTest2", "[DecisionTreeRegressorTest]")
+{
+  arma::mat dataset;
+  arma::rowvec responses;
+  arma::rowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
+
+  CreateMultiSplitData(dataset, responses, 100, values);
+
+  arma::rowvec weights(responses.n_elem);
+  weights.ones();
+
+  // Minimum leaf size of 1.
+  DecisionTreeRegressor<> d(dataset, responses, weights, 2, 0.0);
+  arma::rowvec preds;
+  d.Predict(dataset, preds);
+
+  // Ensure that the predictions are perfect.
+  for (size_t i = 0; i < responses.n_elem; ++i)
+    REQUIRE(preds[i] == responses[i]);
+
+  // Ensure that a split is made only when required and no redundant splits are
+  // made.
+  REQUIRE(d.NumLeaves() == 5);
+}
+
+/**
+ * Test that the tree is able to perfectly fit all the obvious splits present
+ * in the data.
+ *
+ *     |
+ *  20 |                        xxxxxx
+ *     |
+ *     |
+ *  15 |                  xxxxxx
+ *     |
+ *     |
+ *  10 |            xxxxxx
+ *     |
+ *     |
+ *   5 |      xxxxxx
+ *     |
+ *     |
+ *   0 |xxxxxx
+ *     |________________________________________
+ */
+TEST_CASE("MultiSplitTest3", "[DecisionTreeRegressorTest]")
+{
+  arma::mat dataset;
+  arma::Row<double> responses;
+  arma::rowvec values = {0.0, 5.0, 10.0, 15.0, 20.0};
+
+  CreateMultiSplitData(dataset, responses, 500, values);
+
+  arma::rowvec weights(responses.n_elem);
+  weights.ones();
+
+  // Minimum leaf size of 1.
+  DecisionTreeRegressor<> d(dataset, responses, weights, 2, 0.0);
+  arma::rowvec preds;
+  d.Predict(dataset, preds);
+
+  // Ensure that the predictions are perfect.
+  for (size_t i = 0; i < responses.n_elem; ++i)
+    REQUIRE(preds[i] == responses[i]);
+
+  // Ensure that a split is made only when required and no redundant splits are
+  // made.
+  REQUIRE(d.NumLeaves() == 5);
+}
+
+/**
+ * Test that the tree builds correctly on unweighted numerical dataset.
+ */
+TEST_CASE("NumericalBuildTest", "[DecisionTreeRegressorTest]")
+{
+  arma::mat X;
+  arma::rowvec Y;
+
+  if (!data::Load("lars_dependent_x.csv", X))
+    FAIL("Cannot load dataset lars_dependent_x.csv");
+  if (!data::Load("lars_dependent_y.csv", Y))
+    FAIL("Cannot load dataset lars_dependent_y.csv");
+
+  arma::mat XTrain, XTest;
+  arma::rowvec YTrain, YTest;
+  data::Split(X, Y, XTrain, XTest, YTrain, YTest, 0.3);
+
+  DecisionTreeRegressor<> tree(XTrain, YTrain, 5);
+
+  arma::rowvec predictions;
+  tree.Predict(XTest, predictions);
+
+  // Ensuring a decent performance.
+  const double rmse = RMSE(predictions, YTest);
+  REQUIRE(rmse < 1.0);
+}
+
+/**
+ * Test that the tree builds correctly on weighted numerical dataset.
+ */
+TEST_CASE("NumericalBuildTestWithWeights", "[DecisionTreeRegressorTest]")
+{
+  arma::mat X;
+  arma::rowvec Y;
+
+  if (!data::Load("lars_dependent_x.csv", X))
+    FAIL("Cannot load dataset lars_dependent_x.csv");
+  if (!data::Load("lars_dependent_y.csv", Y))
+    FAIL("Cannot load dataset lars_dependent_y.csv");
+
+  arma::mat XTrain, XTest;
+  arma::rowvec YTrain, YTest;
+  data::Split(X, Y, XTrain, XTest, YTrain, YTest, 0.3);
+
+  arma::rowvec weights = arma::ones<arma::rowvec>(XTrain.n_elem);
+
+  DecisionTreeRegressor<> tree(XTrain, YTrain, weights, 5);
+
+  arma::rowvec predictions;
+  tree.Predict(XTest, predictions);
+
+  // Ensuring a decent performance.
+  const double rmse = RMSE(predictions, YTest);
+  REQUIRE(rmse < 1.0);
+}
+
+/**
  * Test that we can build a decision tree on a simple categorical dataset.
  */
 TEST_CASE("CategoricalBuildTest_", "[DecisionTreeRegressorTest]")
@@ -644,51 +814,6 @@ TEST_CASE("CategoricalBuildTestWithWeight_", "[DecisionTreeRegressorTest]")
 }
 
 /**
- * Test that we can build a decision tree using weighted data (where the
- * low-weighted data is random noise), and that the tree still builds correctly
- * enough to get good results.
- */
-TEST_CASE("WeightedDecisionTreeTest_", "[DecisionTreeRegressorTest]")
-{
-  // Loading data.
-  data::DatasetInfo info;
-  arma::mat trainData, testData;
-  arma::rowvec trainResponses, testResponses;
-  LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
-      info);
-
-  // Add some noise.
-  arma::mat noise(trainData.n_rows, 500, arma::fill::randu);
-  arma::rowvec noiseResponses(500);
-  for (size_t i = 0; i < noiseResponses.n_elem; ++i)
-    noiseResponses[i] = 15 + math::Random(0, 10); // Random response.
-
-  // Concatenate data matrices.
-  arma::mat data = arma::join_rows(trainData, noise);
-  arma::rowvec fullResponses = arma::join_rows(trainResponses, noiseResponses);
-
-  // Now set weights.
-  arma::rowvec weights(trainData.n_cols + 500);
-  for (size_t i = 0; i < trainData.n_cols; ++i)
-    weights[i] = math::Random(0.9, 1.0);
-  for (size_t i = trainData.n_cols; i < trainData.n_cols + 500; ++i)
-    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
-
-  // Now build the decision tree.
-  DecisionTreeRegressor<> d(data, fullResponses, weights, 5);
-
-  // Now we can check that we get good performance on the test set.
-  arma::rowvec predictions;
-  d.Predict(testData, predictions);
-
-  REQUIRE(predictions.n_elem == testData.n_cols);
-
-  // Figure out the accuracy.
-  double rmse = RMSE(predictions, testResponses);
-  REQUIRE(rmse < 5.0);
-}
-
-/**
  * Test that we can build a decision tree on a simple categorical dataset using
  * weights, with low-weight noise added.
  */
@@ -744,51 +869,6 @@ TEST_CASE("CategoricalWeightedBuildTest_", "[DecisionTreeRegressorTest]")
 }
 
 /**
- * Test that we can build a decision tree using weighted data (where the
- * low-weighted data is random noise) with MAD gain, and that the tree
- * still builds correctly enough to get good results.
- */
-TEST_CASE("WeightedDecisionTreeMADGainTest", "[DecisionTreeRegressorTest]")
-{
-  // Loading data.
-  data::DatasetInfo info;
-  arma::mat trainData, testData;
-  arma::rowvec trainResponses, testResponses;
-  LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
-      info);
-
-  // Add some noise.
-  arma::mat noise(trainData.n_rows, 500, arma::fill::randu);
-  arma::rowvec noiseResponses(500);
-  for (size_t i = 0; i < noiseResponses.n_elem; ++i)
-    noiseResponses[i] = 15 + math::Random(0, 10); // Random response.
-
-  // Concatenate data matrices.
-  arma::mat data = arma::join_rows(trainData, noise);
-  arma::rowvec fullResponses = arma::join_rows(trainResponses, noiseResponses);
-
-  // Now set weights.
-  arma::rowvec weights(trainData.n_cols + 500);
-  for (size_t i = 0; i < trainData.n_cols; ++i)
-    weights[i] = math::Random(0.9, 1.0);
-  for (size_t i = trainData.n_cols; i < trainData.n_cols + 500; ++i)
-    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
-
-  // Now build the decision tree using MADGain.
-  DecisionTreeRegressor<MADGain> d(data, fullResponses, weights, 5);
-
-  // Now we can check that we get good performance on the test set.
-  arma::rowvec predictions;
-  d.Predict(testData, predictions);
-
-  REQUIRE(predictions.n_elem == testData.n_cols);
-
-  // Figure out the accuracy.
-  double rmse = RMSE(predictions, testResponses);
-  REQUIRE(rmse < 5.5);
-}
-
-/**
  * Test that we can build a decision tree using MAD gain on a simple
  * categorical dataset using weights, with low-weight noise added.
  */
@@ -829,7 +909,7 @@ TEST_CASE("CategoricalMADGainWeightedBuildTest", "[DecisionTreeRegressorTest]")
   arma::rowvec fullResponses = arma::join_rows(trainingResponses,
       randomResponses);
 
-  // Build the tree.
+  // Build the tree using MAD gain.
   DecisionTreeRegressor<MADGain> tree(fullData, di, fullResponses, weights,
       10);
 
@@ -879,7 +959,7 @@ TEST_CASE("SimpleGeneralizationTest_", "[DecisionTreeRegressorTest]")
 
   // Figure out rmse.
   rmse = RMSE(predictions, testResponses);
-  REQUIRE(rmse < 4.0);
+  REQUIRE(rmse < 1.0);
 }
 
 /**
@@ -918,166 +998,95 @@ TEST_CASE("SimpleGeneralizationFMatTest_", "[DecisionTreeRegressorTest]")
 
   // Figure out the rmse.
   double wdrmse = RMSE(predictions, testLabels);
-  REQUIRE(wdrmse < 4.0);
+  REQUIRE(wdrmse < 1.0);
 }
 
 /**
- * Test that the tree is able to perfectly fit all the obvious splits present
- * in the data.
- *
- *     |
- *     |
- *   2 |            xxxxxx
- *     |
- *     |
- *   1 |      xxxxxx      xxxxxx
- *     |
- *     |
- *   0 |xxxxxx                  xxxxxx
- *     |___________________________________
+ * Test that we can build a decision tree using weighted data (where the
+ * low-weighted data is random noise), and that the tree still builds correctly
+ * enough to get good results.
  */
-TEST_CASE("MultiSplitTest1", "[DecisionTreeRegressorTest]")
+TEST_CASE("WeightedDecisionTreeTest_", "[DecisionTreeRegressorTest]")
 {
-  arma::mat dataset;
-  arma::rowvec responses;
-  arma::rowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
+  // Loading data.
+  data::DatasetInfo info;
+  arma::mat trainData, testData;
+  arma::rowvec trainResponses, testResponses;
+  LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
+      info);
 
-  CreateMultiSplitData(dataset, responses, 1000, values);
+  // Add some noise.
+  arma::mat noise(trainData.n_rows, 200, arma::fill::randu);
+  arma::rowvec noiseResponses(200);
+  for (size_t i = 0; i < noiseResponses.n_elem; ++i)
+    noiseResponses[i] = 15 + math::Random(0, 10); // Random response.
 
-  arma::rowvec weights(responses.n_elem);
-  weights.ones();
+  // Concatenate data matrices.
+  arma::mat data = arma::join_rows(trainData, noise);
+  arma::rowvec fullResponses = arma::join_rows(trainResponses, noiseResponses);
 
-  // Minimum leaf size of 1.
-  DecisionTreeRegressor<> d(dataset, responses, weights, 2, 0.0);
-  arma::rowvec preds;
-  d.Predict(dataset, preds);
+  // Now set weights.
+  arma::rowvec weights(trainData.n_cols + 200);
+  for (size_t i = 0; i < trainData.n_cols; ++i)
+    weights[i] = math::Random(0.9, 1.0);
+  for (size_t i = trainData.n_cols; i < trainData.n_cols + 200; ++i)
+    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
 
-  for (size_t i = 0; i < responses.n_elem; ++i)
-    REQUIRE(preds[i] == responses[i]);
+  // Now build the decision tree.
+  DecisionTreeRegressor<> d(data, fullResponses, weights, 5);
 
-  REQUIRE(d.NumLeaves() == 5);
-}
-
-/**
- * Test that the tree is able to perfectly fit all the obvious splits present
- * in the data. Same test as above, but with less data.
- */
-TEST_CASE("MultiSplitTest2", "[DecisionTreeRegressorTest]")
-{
-  arma::mat dataset;
-  arma::rowvec responses;
-  arma::rowvec values = {0.0, 1.0, 2.0, 1.0, 0.0};
-
-  CreateMultiSplitData(dataset, responses, 100, values);
-
-  arma::rowvec weights(responses.n_elem);
-  weights.ones();
-
-  // Minimum leaf size of 1.
-  DecisionTreeRegressor<> d(dataset, responses, weights, 2, 0.0);
-  arma::rowvec preds;
-  d.Predict(dataset, preds);
-
-  for (size_t i = 0; i < responses.n_elem; ++i)
-    REQUIRE(preds[i] == responses[i]);
-
-  REQUIRE(d.NumLeaves() == 5);
-}
-
-/**
- * Test that the tree is able to perfectly fit all the obvious splits present
- * in the data.
- *
- *     |
- *  20 |                        xxxxxx
- *     |
- *     |
- *  15 |                  xxxxxx
- *     |
- *     |
- *  10 |            xxxxxx
- *     |
- *     |
- *   5 |      xxxxxx
- *     |
- *     |
- *   0 |xxxxxx
- *     |________________________________________
- */
-TEST_CASE("MultiSplitTest3", "[DecisionTreeRegressorTest]")
-{
-  arma::mat dataset;
-  arma::Row<double> responses;
-  arma::rowvec values = {0.0, 5.0, 10.0, 15.0, 20.0};
-
-  CreateMultiSplitData(dataset, responses, 500, values);
-
-  arma::rowvec weights(responses.n_elem);
-  weights.ones();
-
-  // Minimum leaf size of 1.
-  DecisionTreeRegressor<> d(dataset, responses, weights, 2, 0.0);
-  arma::rowvec preds;
-  d.Predict(dataset, preds);
-
-  for (size_t i = 0; i < responses.n_elem; ++i)
-    REQUIRE(preds[i] == responses[i]);
-
-  REQUIRE(d.NumLeaves() == 5);
-}
-
-/**
- * Test that the tree builds correctly on unweighted numerical dataset.
- */
-TEST_CASE("LARSDatasetTest", "[DecisionTreeRegressorTest]")
-{
-  arma::mat X;
-  arma::rowvec Y;
-
-  if (!data::Load("lars_dependent_x.csv", X))
-    FAIL("Cannot load dataset lars_dependent_x.csv");
-  if (!data::Load("lars_dependent_y.csv", Y))
-    FAIL("Cannot load dataset lars_dependent_y.csv");
-
-  arma::mat XTrain, XTest;
-  arma::rowvec YTrain, YTest;
-  data::Split(X, Y, XTrain, XTest, YTrain, YTest, 0.3);
-
-  DecisionTreeRegressor<> tree(XTrain, YTrain, 5);
-
+  // Now we can check that we get good performance on the test set.
   arma::rowvec predictions;
-  tree.Predict(XTest, predictions);
+  d.Predict(testData, predictions);
 
-  const double rmse = RMSE(predictions, YTest);
+  REQUIRE(predictions.n_elem == testData.n_cols);
 
+  // Figure out the accuracy.
+  double rmse = RMSE(predictions, testResponses);
   REQUIRE(rmse < 1.0);
 }
 
 /**
- * Test that the tree builds correctly on weighted numerical dataset.
+ * Test that we can build a decision tree using weighted data (where the
+ * low-weighted data is random noise) with MAD gain, and that the tree
+ * still builds correctly enough to get good results.
  */
-TEST_CASE("LARSDatasetWeightedTest", "[DecisionTreeRegressorTest]")
+TEST_CASE("WeightedDecisionTreeMADGainTest", "[DecisionTreeRegressorTest]")
 {
-  arma::mat X;
-  arma::rowvec Y;
+  // Loading data.
+  data::DatasetInfo info;
+  arma::mat trainData, testData;
+  arma::rowvec trainResponses, testResponses;
+  LoadBostonHousingDataset(trainData, testData, trainResponses, testResponses,
+      info);
 
-  if (!data::Load("lars_dependent_x.csv", X))
-    FAIL("Cannot load dataset lars_dependent_x.csv");
-  if (!data::Load("lars_dependent_y.csv", Y))
-    FAIL("Cannot load dataset lars_dependent_y.csv");
+  // Add some noise.
+  arma::mat noise(trainData.n_rows, 200, arma::fill::randu);
+  arma::rowvec noiseResponses(200);
+  for (size_t i = 0; i < noiseResponses.n_elem; ++i)
+    noiseResponses[i] = 15 + math::Random(0, 10); // Random response.
 
-  arma::mat XTrain, XTest;
-  arma::rowvec YTrain, YTest;
-  data::Split(X, Y, XTrain, XTest, YTrain, YTest, 0.3);
+  // Concatenate data matrices.
+  arma::mat data = arma::join_rows(trainData, noise);
+  arma::rowvec fullResponses = arma::join_rows(trainResponses, noiseResponses);
 
-  arma::rowvec weights = arma::ones<arma::rowvec>(XTrain.n_elem);
+  // Now set weights.
+  arma::rowvec weights(trainData.n_cols + 200);
+  for (size_t i = 0; i < trainData.n_cols; ++i)
+    weights[i] = math::Random(0.9, 1.0);
+  for (size_t i = trainData.n_cols; i < trainData.n_cols + 200; ++i)
+    weights[i] = math::Random(0.0, 0.01); // Low weights for false points.
 
-  DecisionTreeRegressor<> tree(XTrain, YTrain, weights, 5);
+  // Now build the decision tree using MADGain.
+  DecisionTreeRegressor<MADGain> d(data, fullResponses, weights, 5);
 
+  // Now we can check that we get good performance on the test set.
   arma::rowvec predictions;
-  tree.Predict(XTest, predictions);
+  d.Predict(testData, predictions);
 
-  const double rmse = RMSE(predictions, YTest);
+  REQUIRE(predictions.n_elem == testData.n_cols);
 
-  REQUIRE(rmse < 1.0);
+  // Figure out the accuracy.
+  double rmse = RMSE(predictions, testResponses);
+  REQUIRE(rmse < 1.5);
 }
