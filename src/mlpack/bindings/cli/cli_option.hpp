@@ -63,7 +63,8 @@ class CLIOption
    * @param input Whether or not the option is an input option.
    * @param noTranspose If the parameter is a matrix and this is true, then the
    *      matrix will not be transposed on loading.
-   * @param * (testName) Is not used and added for compatibility reasons.
+   * @param bindingName Name of the binding that this option is for.  If empty,
+   *      then it will be added to every binding.
    */
   CLIOption(const N defaultValue,
             const std::string& identifier,
@@ -73,7 +74,7 @@ class CLIOption
             const bool required = false,
             const bool input = true,
             const bool noTranspose = false,
-            const std::string& /*testName*/ = "")
+            const std::string& bindingName = "")
   {
     // Create the ParamData object to give to CLI.
     util::ParamData data;
@@ -109,58 +110,23 @@ class CLIOption
     std::string progOptId = (alias[0] != '\0') ?
         "-" + std::string(1, alias[0]) + ",--" + cliName : "--" + cliName;
 
-    // Do a check to ensure that the boost name isn't already in use.
-    const std::map<std::string, util::ParamData>& parameters =
-        IO::Parameters();
-    if (parameters.count(cliName) > 0)
-    {
-      // Create a fake Log::Fatal since it may not yet be initialized.
-      // Temporarily define color code escape sequences.
-      #ifndef _WIN32
-        #define BASH_RED "\033[0;31m"
-        #define BASH_CLEAR "\033[0m"
-      #else
-        #define BASH_RED ""
-        #define BASH_CLEAR ""
-      #endif
-
-      // Temporary outstream object for detecting duplicate identifiers.
-      util::PrefixedOutStream outstr(std::cerr,
-            BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
-
-      #undef BASH_RED
-      #undef BASH_CLEAR
-
-      outstr << "Parameter --" << cliName << " (" << data.alias << ") "
-             << "is defined multiple times with the same identifiers."
-             << std::endl;
-    }
-
-    IO::Add(std::move(data));
+    IO::AddParameter(bindingName, std::move(data));
 
     // Set some function pointers that we need.
-    IO::GetSingleton().functionMap[tname]["DefaultParam"] =
-        &DefaultParam<N>;
-    IO::GetSingleton().functionMap[tname]["OutputParam"] =
-        &OutputParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetPrintableParam"] =
-        &GetPrintableParam<N>;
-    IO::GetSingleton().functionMap[tname]["StringTypeParam"] =
-        &StringTypeParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetRawParam"] = &GetRawParam<N>;
-    IO::GetSingleton().functionMap[tname]["AddToCLI11"] = &AddToCLI11<N>;
-    IO::GetSingleton().functionMap[tname]["MapParameterName"] =
-        &MapParameterName<N>;
-    IO::GetSingleton().functionMap[tname]["GetPrintableParamName"] =
-        &GetPrintableParamName<N>;
-    IO::GetSingleton().functionMap[tname]["GetPrintableParamValue"] =
-        &GetPrintableParamValue<N>;
-    IO::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
-        &GetAllocatedMemory<N>;
-    IO::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
-        &DeleteAllocatedMemory<N>;
-    IO::GetSingleton().functionMap[tname]["InPlaceCopy"] = &InPlaceCopy<N>;
+    IO::AddFunction(tname, "DefaultParam", &DefaultParam<N>);
+    IO::AddFunction(tname, "OutputParam", &OutputParam<N>);
+    IO::AddFunction(tname, "GetPrintableParam", &GetPrintableParam<N>);
+    IO::AddFunction(tname, "StringTypeParam", &StringTypeParam<N>);
+    IO::AddFunction(tname, "GetParam", &GetParam<N>);
+    IO::AddFunction(tname, "GetRawParam", &GetRawParam<N>);
+    IO::AddFunction(tname, "AddToCLI11", &AddToCLI11<N>);
+    IO::AddFunction(tname, "MapParameterName", &MapParameterName<N>);
+    IO::AddFunction(tname, "GetPrintableParamName", &GetPrintableParamName<N>);
+    IO::AddFunction(tname, "GetPrintableParamValue",
+        &GetPrintableParamValue<N>);
+    IO::AddFunction(tname, "GetAllocatedMemory", &GetAllocatedMemory<N>);
+    IO::AddFunction(tname, "DeleteAllocatedMemory", &DeleteAllocatedMemory<N>);
+    IO::AddFunction(tname, "InPlaceCopy", &InPlaceCopy<N>);
   }
 };
 
