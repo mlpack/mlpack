@@ -61,9 +61,9 @@ namespace data /** Functions to load and save matrices. */ {
  * @param inputSaveType File type to save to (defaults to arma::auto_detect).
  * @return Boolean value indicating success or failure of save.
  */
-template<typename eT>
+template<typename MatType>
 bool Save(const std::string& filename,
-          const arma::Mat<eT>& matrix,
+          const MatType& matrix,
           const bool fatal = false,
           bool transpose = true,
           file_type inputSaveType = file_type::AutoDetect);

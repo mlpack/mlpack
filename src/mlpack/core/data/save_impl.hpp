@@ -43,9 +43,9 @@ bool Save(const std::string& filename,
   return Save(filename, rowvec, fatal, true, inputSaveType);
 }
 
-template<typename eT>
+template<typename MatType>
 bool Save(const std::string& filename,
-          const arma::Mat<eT>& matrix,
+          const MatType& matrix,
           const bool fatal,
           bool transpose,
           file_type inputSaveType)
@@ -101,7 +101,7 @@ bool Save(const std::string& filename,
   // Transpose the matrix.
   if (transpose)
   {
-    arma::Mat<eT> tmp = trans(matrix);
+    MatType tmp = trans(matrix);
 
 #ifdef ARMA_USE_HDF5
     // We can't save with streams for HDF5.

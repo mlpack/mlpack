@@ -57,17 +57,15 @@ bool ConvertToken(typename MatType::elem_type& val, const std::string& token);
 /**
  * Returns a bool value showing whether data was loaded successfully or not.
  *
- * Parses the file and loads the data into the given matrix. It will make the
- * first parse to determine the number of cols and rows in the given file.
- * Once the rows and cols are fixed we initialize a matrix of size(which we
- * calculated in the first pass) and fill it with zeros. In the second pass
- * it converts each value to required datatype and sets it equal to val.
- * 
- * Using MatType as template parameter here so that in future if mlpack
- * decides to use any other linear algebra library or want to support
- * multiple linear algebra libraries, we can make the transition easily.
- * This is to make the csv parser as generic as possible.
- * 
+ * Parses a csv file and loads the data into a given matrix. In the first pass,
+ * the function will determine the number of cols and rows in the given file.
+ * Once the rows and cols are fixed we initialize the matrix with zeros. In 
+ * the second pass, the function converts each value to required datatype
+ * and sets it equal to val. 
+ *
+ * This function uses MatType as template parameter in order to provide
+ * support for any type of matrices from any linear algebra library. 
+ *
  * @param x Matrix in which data will be loaded
  * @param f File stream to access the data file
  */

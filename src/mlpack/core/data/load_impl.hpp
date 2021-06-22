@@ -87,9 +87,9 @@ bool inline inplace_transpose(MatType& X, bool fatal)
   }
 }
 
-template<typename eT>
+template<typename MatType>
 bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
+          MatType& matrix,
           const bool fatal,
           const bool transpose,
           const file_type inputLoadType)
@@ -174,8 +174,6 @@ bool Load(const std::string& filename,
     else
       success = matrix.load(stream, ToArmaFileType(loadType));
   }
-    // success = LoadData(filename, matrix, file_type::csv_ascii);
-    // success = matrix.load(stream, loadType);
   else
     success = matrix.load(filename, ToArmaFileType(loadType));
 

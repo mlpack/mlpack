@@ -67,9 +67,9 @@ namespace data /** Functions to load and save matrices and models. */ {
  * @param inputLoadType Used to determine the type of file to load (default arma::auto_detect).
  * @return Boolean value indicating success or failure of load.
  */
-template<typename eT>
+template<typename MatType>
 bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
+          MatType& matrix,
           const bool fatal = false,
           const bool transpose = true,
           const file_type inputLoadType = file_type::AutoDetect);
@@ -108,86 +108,6 @@ bool Load(const std::string& filename,
           arma::SpMat<eT>& matrix,
           const bool fatal = false,
           const bool transpose = true);
-
-/**
- * Don't document these with doxygen; these declarations aren't helpful to
- * users.
- *
- * @cond
- */
-/*
-extern template bool Load<int>(const std::string&,
-                               arma::Mat<int>&,
-                               const bool,
-                               const bool,
-                               const file_type);
-
-// size_t and uword should be one of these three typedefs.
-extern template bool Load<unsigned int>(const std::string&,
-                                        arma::Mat<unsigned int>&,
-                                        const bool,
-                                        const bool,
-                                        const file_type);
-
-extern template bool Load<unsigned long>(const std::string&,
-                                         arma::Mat<unsigned long>&,
-                                         const bool,
-                                         const bool,
-                                         const file_type);
-
-extern template bool Load<unsigned long long>(const std::string&,
-                                              arma::Mat<unsigned long long>&,
-                                              const bool,
-                                              const bool,
-                                              const file_type);
-
-extern template bool Load<float>(const std::string&,
-                                 arma::Mat<float>&,
-                                 const bool,
-                                 const bool,
-                                 const file_type);
-
-extern template bool Load<double>(const std::string&,
-                                  arma::Mat<double>&,
-                                  const bool,
-                                  const bool,
-                                  const file_type);
-
-extern template bool Load<int>(const std::string&,
-                               arma::Mat<int>&,
-                               const bool,
-                               const bool,
-                               const file_type);
-
-extern template bool Load<unsigned int>(const std::string&,
-                                        arma::SpMat<unsigned int>&,
-                                        const bool,
-                                        const bool);
-
-extern template bool Load<unsigned long>(const std::string&,
-                                         arma::SpMat<unsigned long>&,
-                                         const bool,
-                                         const bool);
-
-extern template bool Load<unsigned long long>(const std::string&,
-                                              arma::SpMat<unsigned long long>&,
-                                              const bool,
-                                              const bool);
-
-extern template bool Load<float>(const std::string&,
-                                 arma::SpMat<float>&,
-                                 const bool,
-                                 const bool);
-
-extern template bool Load<double>(const std::string&,
-                                  arma::SpMat<double>&,
-                                  const bool,
-                                  const bool);
-
-*/
-/**
- * @endcond
- */
 
 /**
  * Load a column vector from a file, guessing the filetype from the extension.
@@ -291,53 +211,6 @@ bool Load(const std::string& filename,
           DatasetMapper<PolicyType>& info,
           const bool fatal = false,
           const bool transpose = true);
-
-/**
- * Don't document these with doxygen; they aren't helpful for users to know
- * about.
- *
- * @cond
- */
-
-/*
-extern template bool Load<int, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<int>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
-
-extern template bool Load<arma::u32, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<arma::u32>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
-
-extern template bool Load<arma::u64, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<arma::u64>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
-
-extern template bool Load<float, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<float>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
-
-extern template bool Load<double, IncrementPolicy>(
-    const std::string&,
-    arma::Mat<double>&,
-    DatasetMapper<IncrementPolicy>&,
-    const bool,
-    const bool);
-*/
-/**
- * @endcond
- */
 
 /**
  * Load a model from a file, guessing the filetype from the extension, or,
