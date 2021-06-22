@@ -81,13 +81,14 @@ inline void LogisticRegressionTestData(arma::mat& data,
   }
 }
 
-inline void LoadBostonHousingDataset(arma::mat& trainData,
-                              arma::mat& testData,
+template<typename MatType>
+void LoadBostonHousingDataset(MatType& trainData,
+                              MatType& testData,
                               arma::rowvec& trainResponses,
                               arma::rowvec& testResponses,
                               data::DatasetInfo& info)
 {
-  arma::mat dataset;
+  MatType dataset;
   arma::rowvec responses;
 
   // Defining categorical deimensions.
