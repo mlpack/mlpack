@@ -90,7 +90,6 @@ class MADGain
    */
   template<bool UseWeights, typename WeightVecType>
   static double Evaluate(const arma::rowvec& values,
-                         const size_t /* numClasses */,
                          const WeightVecType& weights)
   {
     // Corner case: if there are no elements, the impurity is zero.

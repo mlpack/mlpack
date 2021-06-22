@@ -15,6 +15,7 @@
 namespace mlpack {
 namespace tree {
 
+// Overload used for classification.
 template<typename FitnessFunction>
 template<bool UseWeights, typename VecType, typename WeightVecType>
 double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
@@ -184,6 +185,7 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   return bestFoundGain;
 }
 
+// Overload used for regression.
 template<typename FitnessFunction>
 template<bool UseWeights, typename VecType, typename WeightVecType>
 double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(

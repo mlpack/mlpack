@@ -470,7 +470,6 @@ class DecisionTreeRegressor :
    * @param count Number of points in this node.
    * @param datasetInfo Type information for each dimension.
    * @param responses Responses for each training point.
-   * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
@@ -482,7 +481,6 @@ class DecisionTreeRegressor :
                const size_t count,
                const data::DatasetInfo& datasetInfo,
                ResponsesType& responses,
-               const size_t numClasses,
                arma::rowvec& weights,
                const size_t minimumLeafSize,
                const double minimumGainSplit,
@@ -499,7 +497,6 @@ class DecisionTreeRegressor :
    *      this node.
    * @param count Number of points in this node.
    * @param responses Responses for each training point.
-   * @param numClasses Number of classes in the dataset.
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
@@ -510,7 +507,6 @@ class DecisionTreeRegressor :
                const size_t begin,
                const size_t count,
                ResponsesType& responses,
-               const size_t numClasses,
                arma::rowvec& weights,
                const size_t minimumLeafSize,
                const double minimumGainSplit,

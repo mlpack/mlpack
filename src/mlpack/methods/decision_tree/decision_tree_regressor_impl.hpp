@@ -68,7 +68,7 @@ DecisionTreeRegressor<FitnessFunction,
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
-  Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses, 0,
+  Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses,
       weights, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
 }
@@ -104,7 +104,7 @@ DecisionTreeRegressor<FitnessFunction,
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
-  Train<false>(tmpData, 0, tmpData.n_cols, tmpResponses, 0, weights,
+  Train<false>(tmpData, 0, tmpData.n_cols, tmpResponses, weights,
       minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 }
 
@@ -143,7 +143,7 @@ DecisionTreeRegressor<FitnessFunction,
   dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the weighted Train() method.
-  Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses, 0,
+  Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses,
       tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
 }
@@ -185,7 +185,7 @@ DecisionTreeRegressor<FitnessFunction,
   dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the weighted Train() method.
-  Train<true>(tmpData, 0, tmpData.n_cols, tmpResponses, 0, tmpWeights,
+  Train<true>(tmpData, 0, tmpData.n_cols, tmpResponses, tmpWeights,
       minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 }
 
@@ -223,7 +223,7 @@ DecisionTreeRegressor<FitnessFunction,
   TrueWeightsType tmpWeights(std::move(weights));
 
   // Pass off work to the weighted Train() method.
-  Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses, 0,
+  Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses,
               tmpWeights, minimumLeafSize, minimumGainSplit);
 }
 
@@ -266,7 +266,7 @@ DecisionTreeRegressor<FitnessFunction,
   dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the weighted Train() method.
-  Train<true>(tmpData, 0, tmpData.n_cols, tmpResponses, 0, tmpWeights,
+  Train<true>(tmpData, 0, tmpData.n_cols, tmpResponses, tmpWeights,
       minimumLeafSize, minimumGainSplit, maximumDepth, dimensionSelector);
 }
 
@@ -450,7 +450,7 @@ double DecisionTreeRegressor<FitnessFunction,
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
   return Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses,
-      0, weights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      weights, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
 }
 
@@ -488,7 +488,7 @@ double DecisionTreeRegressor<FitnessFunction,
 
   // Pass off work to the Train() method.
   arma::rowvec weights; // Fake weights, not used.
-  return Train<false>(tmpData, 0, tmpData.n_cols, responses, 0,
+  return Train<false>(tmpData, 0, tmpData.n_cols, tmpResponses,
       weights, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
 }
@@ -535,7 +535,7 @@ double DecisionTreeRegressor<FitnessFunction,
 
   // Pass off work to the Train() method.
   return Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses,
-      0, tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
+      tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
 }
 
@@ -579,7 +579,7 @@ double DecisionTreeRegressor<FitnessFunction,
   dimensionSelector.Dimensions() = tmpData.n_rows;
 
   // Pass off work to the Train() method.
-  return Train<true>(tmpData, 0, tmpData.n_cols, tmpResponses, 0,
+  return Train<true>(tmpData, 0, tmpData.n_cols, tmpResponses,
       tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
       dimensionSelector);
 }
@@ -601,7 +601,6 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t count,
     const data::DatasetInfo& datasetInfo,
     ResponsesType& responses,
-    const size_t numClasses,
     arma::rowvec& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
@@ -620,7 +619,6 @@ double DecisionTreeRegressor<FitnessFunction,
   // internal nodes of the tree.
   double bestGain = FitnessFunction::template Evaluate<UseWeights>(
       responses.subvec(begin, begin + count - 1),
-      numClasses,
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
   const size_t end = dimensionSelector.End();
@@ -637,7 +635,6 @@ double DecisionTreeRegressor<FitnessFunction,
             data.cols(begin, begin + count - 1).row(i),
             datasetInfo.NumMappings(i),
             responses.subvec(begin, begin + count - 1),
-            numClasses,
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
             minimumGainSplit,
@@ -735,7 +732,7 @@ double DecisionTreeRegressor<FitnessFunction,
       if (NoRecursion)
       {
         child->Train<UseWeights>(data, currentChildBegin,
-            currentCol - currentChildBegin, datasetInfo, responses, numClasses,
+            currentCol - currentChildBegin, datasetInfo, responses,
             weights, currentCol - currentChildBegin, minimumGainSplit,
             maximumDepth - 1, dimensionSelector);
       }
@@ -743,7 +740,7 @@ double DecisionTreeRegressor<FitnessFunction,
       {
         // During recursion entropy of child node may change.
         double childGain = child->Train<UseWeights>(data, currentChildBegin,
-            currentCol - currentChildBegin, datasetInfo, responses, numClasses,
+            currentCol - currentChildBegin, datasetInfo, responses,
             weights, minimumLeafSize, minimumGainSplit, maximumDepth - 1,
             dimensionSelector);
         bestGain += double(childCounts[i]) / double(count) * (-childGain);
@@ -782,7 +779,6 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t begin,
     const size_t count,
     ResponsesType& responses,
-    const size_t numClasses,
     arma::rowvec& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
@@ -803,7 +799,6 @@ double DecisionTreeRegressor<FitnessFunction,
   // splitPointOrPrediction for all internal nodes of the tree.
   double bestGain = FitnessFunction::template Evaluate<UseWeights>(
       responses.subvec(begin, begin + count - 1),
-      numClasses,
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = data.n_rows; // This means "no split".
 
@@ -889,7 +884,7 @@ double DecisionTreeRegressor<FitnessFunction,
       if (NoRecursion)
       {
         child->Train<UseWeights>(data, currentChildBegin,
-            currentCol - currentChildBegin, responses, numClasses, weights,
+            currentCol - currentChildBegin, responses, weights,
             currentCol - currentChildBegin, minimumGainSplit, maximumDepth - 1,
             dimensionSelector);
       }
@@ -897,7 +892,7 @@ double DecisionTreeRegressor<FitnessFunction,
       {
         // During recursion entropy of child node may change.
         double childGain = child->Train<UseWeights>(data, currentChildBegin,
-            currentCol - currentChildBegin, responses, numClasses, weights,
+            currentCol - currentChildBegin, responses, weights,
             minimumLeafSize, minimumGainSplit, maximumDepth - 1,
             dimensionSelector);
         bestGain += double(childCounts[i]) / double(count) * (-childGain);
