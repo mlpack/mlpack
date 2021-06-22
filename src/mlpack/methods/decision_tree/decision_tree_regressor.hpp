@@ -409,7 +409,10 @@ class DecisionTreeRegressor :
   size_t NumLeaves() const;
 
   //! Get the child of the given index.
-  const DecisionTreeRegressor& Child(const size_t i) const { return *children[i]; }
+  const DecisionTreeRegressor& Child(const size_t i) const
+  {
+    return *children[i];
+  }
   //! Modify the child of the given index (be careful!).
   DecisionTreeRegressor& Child(const size_t i) { return *children[i]; }
 

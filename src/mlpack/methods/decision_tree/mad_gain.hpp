@@ -98,7 +98,6 @@ class MADGain
 
     return Evaluate<UseWeights>(values, weights, 0, values.n_elem);
   }
-
 };
 
 } // namespace tree

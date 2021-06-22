@@ -677,7 +677,8 @@ double DecisionTreeRegressor<FitnessFunction,
     // Get the number of children we will have.
     size_t numChildren = 0;
     if (datasetInfo.Type(bestDim) == data::Datatype::categorical)
-      numChildren = CategoricalSplit::NumChildren(splitPointOrPrediction, *this);
+      numChildren = CategoricalSplit::NumChildren(splitPointOrPrediction,
+          *this);
     else
       numChildren = NumericSplit::NumChildren(splitPointOrPrediction, *this);
 
@@ -837,7 +838,8 @@ double DecisionTreeRegressor<FitnessFunction,
   if (bestDim != data.n_rows)
   {
     // We know that the split is numeric.
-    size_t numChildren = NumericSplit::NumChildren(splitPointOrPrediction, *this);
+    size_t numChildren = NumericSplit::NumChildren(splitPointOrPrediction,
+        *this);
     splitDimension = bestDim;
     dimensionType = (size_t) data::Datatype::numeric;
 
