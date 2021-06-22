@@ -43,7 +43,8 @@
  * PRINT_PARAM_STRING() returns a string that contains the correct
  * language-specific representation of a parameter's name.
  */
-#define PRINT_PARAM_STRING mlpack::bindings::cli::ParamString
+#define PRINT_PARAM_STRING(x) mlpack::bindings::cli::ParamString( \
+    STRINGIFY(BINDING_NAME), x)
 
 /**
  * PRINT_PARAM_VALUE() returns a string that contains a correct
@@ -92,26 +93,32 @@ static const std::string testName = "";
 #include <mlpack/bindings/cli/parse_command_line.hpp>
 #include <mlpack/bindings/cli/end_program.hpp>
 
-static void mlpackMain(); // This is typically defined after this include.
+#ifndef BINDING_NAME
+  #error "BINDING_NAME not defined!"
+#endif
+
+static void BINDING_NAME(mlpack::util::Params&, mlpack::util::Timers&);
 
 int main(int argc, char** argv)
 {
   // Parse the command-line options; put them into CLI.
-  mlpack::bindings::cli::ParseCommandLine(argc, argv);
-  // Enable timing.
-  mlpack::Timer::EnableTiming();
+  mlpack::util::Params params =
+      mlpack::bindings::cli::ParseCommandLine(argc, argv);
+  // Create a new timer object for this call.
+  mlpack::util::Timers timers;
+  timers.Enabled() = true;
 
   // A "total_time" timer is run by default for each mlpack program.
-  mlpack::Timer::Start("total_time");
-
-  mlpackMain();
+  timers.Start("total_time");
+  BINDING_NAME(params, timers);
+  timers.Stop("total_time");
 
   // Print output options, print verbose information, save model parameters,
   // clean up, and so forth.
-  mlpack::bindings::cli::EndProgram();
+  mlpack::bindings::cli::EndProgram(params, timers);
 }
 
-#elif(BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
+#elif (BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
 
 // Matrices are not transposed on load/save.
 #define BINDING_MATRIX_TRANSPOSED false
@@ -212,8 +219,9 @@ using Option = mlpack::bindings::python::PyOption<T>;
 static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef BINDING_NAME
-#define BINDING_NAME(NAME) static \
+// TODO: fix this...
+#undef BINDING_USER_NAME
+#define BINDING_USER_NAME(NAME) static \
     mlpack::util::ProgramName \
     io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
     namespace mlpack { \
@@ -262,8 +270,8 @@ using Option = mlpack::bindings::julia::JuliaOption<T>;
 static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef BINDING_NAME
-#define BINDING_NAME(NAME) static \
+#undef BINDING_USER_NAME
+#define BINDING_USER_NAME(NAME) static \
     mlpack::util::ProgramName \
     io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
     namespace mlpack { \
@@ -306,8 +314,8 @@ using Option = mlpack::bindings::go::GoOption<T>;
 static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef BINDING_NAME
-#define BINDING_NAME(NAME) static \
+#undef BINDING_USER_NAME
+#define BINDING_USER_NAME(NAME) static \
     mlpack::util::ProgramName \
     io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
     namespace mlpack { \
@@ -424,13 +432,13 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/bindings/markdown/program_doc_wrapper.hpp>
 
-#undef BINDING_NAME
+#undef BINDING_USER_NAME
 #undef BINDING_SHORT_DESC
 #undef BINDING_LONG_DESC
 #undef BINDING_EXAMPLE
 #undef BINDING_SEE_ALSO
 
-#define BINDING_NAME(NAME) static \
+#define BINDING_USER_NAME(NAME) static \
     mlpack::bindings::markdown::ProgramNameWrapper \
     io_programname_dummy_object = \
     mlpack::bindings::markdown::ProgramNameWrapper( \
