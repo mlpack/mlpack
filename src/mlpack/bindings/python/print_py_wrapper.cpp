@@ -87,10 +87,6 @@ void PrintWrapperPY(const std::vector<std::string>& groupProgramNames,
 			if(itr->second.input &&
 			  (serializable.find(itr->second.cppType) == serializable.end()))
 			{
-				// if(itr->first == "lambda")
-				// 	cout << string(indent, ' ') << "lambda_" << "," << endl;
-				// else
-				// 	cout << string(indent, ' ') << itr->first << "," << endl;
 				ParamData& d = accumulate[methods[i]][itr->first];
 				cout << string(indent, ' ');
 				IO::GetSingleton().functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
