@@ -238,6 +238,7 @@ double FFN<
   // Make sure to set all layers in training mode.
   for (size_t i = 0; i < network.size(); ++i)
     network[i]->Deterministic() = false;
+  deterministic = false;
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -835,6 +836,7 @@ void FFN<
   // Serialize the expected input size.
   ar(CEREAL_NVP(inputDimensions));
   ar(CEREAL_NVP(reset));
+  ar(CEREAL_NVP(deterministic));
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())
@@ -856,7 +858,6 @@ void FFN<
     layerGradients.clear();
     layerGradients.resize(network.size(), OutputType());
 
-    deterministic = true;
     layerMemoryIsSet = false;
     inputDimensionsAreSet = false;
 
