@@ -22,7 +22,7 @@ add_executable(mlpack_test
   block_krylov_svd_test.cpp
   callback_test.cpp
   cf_test.cpp
-  cli_binding_test.cpp
+#  cli_binding_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
   cosine_tree_test.cpp
@@ -47,7 +47,7 @@ add_executable(mlpack_test
   image_load_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
-  io_test.cpp
+#  io_test.cpp
   kde_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
