@@ -724,7 +724,7 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   // Test forward function for multiple batches with multiple filters.
   // Here it's 3 filters with height = 244, width = 244
   // the output should be [246 * 246 * 3, 3] with 1 padding.
-  Padding<> module2(1 ,1, 1, 1, 244, 244);
+  Padding<> module2(1, 1, 1, 1, 244, 244);
   input1 = arma::randu(244 * 244 * 3, 3);
   module2.Forward(input1, output1);
   REQUIRE(arma::accu(input1) == arma::accu(output1));
