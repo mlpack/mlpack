@@ -97,8 +97,9 @@ template<typename InputType, typename OutputType, typename RegularizerType>
 void LinearType<InputType, OutputType, RegularizerType>::SetWeights(
     typename OutputType::elem_type* weightsPtr)
 {
-  weight = OutputType( weightsPtr, outSize, inSize, false, false);
-  bias = OutputType( weightsPtr + weight.n_elem, outSize, 1, false, false);
+  weights = OutputType(weightsPtr, outSize * inSize + outSize, 1, false, false);
+  weight = OutputType(weightsPtr, outSize, inSize, false, false);
+  bias = OutputType(weightsPtr + weight.n_elem, outSize, 1, false, false);
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>

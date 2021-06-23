@@ -821,6 +821,7 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
 
   // Initialize network parameter.
   model.InitializeWeights();
+  model.SetLayerMemory();
 
   // Set all network parameter to one.
   model.Parameters().ones();
