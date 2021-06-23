@@ -47,10 +47,8 @@ class PointerVectorWrapper
   {
     size_t vecSize = pointerVector.size();
     ar(CEREAL_NVP(vecSize));
-    std::cout << " - serialize vector len " << vecSize << "\n";
     for (size_t i = 0; i < pointerVector.size(); ++i)
     {
-      std::cout << " - serialize element " << i << ", ptr " << pointerVector.at(i) << "\n";
       ar(CEREAL_POINTER(pointerVector.at(i)));
     }
   }
