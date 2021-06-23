@@ -902,4 +902,5 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
 
   REQUIRE_THROWS_AS(model.Train(trainData, trainLabels, opt), std::logic_error);
+  // TODO: check expectedMsg ?
 }

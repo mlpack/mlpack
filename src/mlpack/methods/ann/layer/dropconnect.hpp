@@ -125,6 +125,16 @@ class DropConnectType : public Layer<InputType, OutputType>
     this->outputDimensions = baseLayer->OutputDimensions();
   }
 
+  size_t WeightSize() const
+  {
+    return baseLayer->WeightSize();
+  }
+
+  void SetWeights(typename OutputType::elem_type* weightsPtr)
+  {
+    baseLayer->SetWeights(weightsPtr);
+  }
+
   /**
    * Serialize the layer.
    */

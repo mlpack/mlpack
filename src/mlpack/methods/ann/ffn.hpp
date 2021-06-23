@@ -279,7 +279,6 @@ class FFN
    *
    * @param args The layer parameter.
    */
-  //! TODO: This should invalidate cached parameters
   template <class LayerType, class... Args>
   void Add(Args... args)
   {
@@ -295,7 +294,6 @@ class FFN
    *
    * @param layer The Layer to be added to the model.
    */
-  //! TODO: this should invalidate cached parameters
   //! TODO: if weights are set in this layer, we should copy them and update our
   //cached parameters
   void Add(Layer<InputType, OutputType>* layer)
@@ -500,8 +498,13 @@ class FFN
   //! `totalInputSize` and `totalOutputSize` are valid.
   bool inputDimensionsAreSet;
 
+  //! Cached total number of input elements across all layers (for deltaMatrix
+  //! and layerDeltas).
   size_t totalInputSize;
+  //! Cached total number of output elements across all layers (for
+  //! layerOutputMatrix and layerOutputs).
   size_t totalOutputSize;
+
   //! Locally-stored output parameter object.  This holds the results of
   //! Forward() for each layer, all in one matrix.
   OutputType layerOutputMatrix;
@@ -513,11 +516,9 @@ class FFN
   OutputType deltaMatrix;
   std::vector<OutputType> layerDeltas;
 
-  //! Locally-stored gradient object.  This holds the results of Gradient() for
-  //! each layer, all in one matrix.
-  OutputType gradientMatrix;
-  //! Aliases to different parts of the gradientOutputMatrix, for convenience.
-  //! gradientOutputs[i] stores the results of Gradient() for layer i.
+  //! Aliases to different parts of the gradient, for convenience.
+  //! gradientOutputs[i] stores the results of Gradient() for layer i.  These
+  //! elements are only valid inside of Gradient().
   std::vector<OutputType> layerGradients;
 }; // class FFN
 

@@ -38,7 +38,10 @@ FFN<
     reset(false),
     numFunctions(0),
     deterministic(false),
-    inputDimensionsAreSet(false)
+    layerMemoryIsSet(false),
+    inputDimensionsAreSet(false),
+    totalInputSize(0),
+    totalOutputSize(0)
 {
   /* Nothing to do here. */
 }
@@ -62,19 +65,21 @@ FFN<
     responses(network.responses),
     numFunctions(network.numFunctions),
     error(network.error),
-    deterministic(network.deterministic)
+    deterministic(network.deterministic),
+    // These will be set correctly in the first Forward() call.
+    layerMemoryIsSet(false),
+    inputDimensionsAreSet(false),
+    totalInputSize(0),
+    totalOutputSize(0)
 {
   // Build new layers according to source network
   for (size_t i = 0; i < network.network.size(); ++i)
   {
     this->network.push_back(network.network[i]->Clone());
-    // TODO:  dig into this
-    // this will need the weights to be set right for each layer...
-    //ResetUpdate(this->network.back());
   }
 
+  // Initialize cached matrix vectors to the right size.
   layerOutputs.resize(this->network.size(), OutputType());
-  totalOutputSize = network.totalOutputSize;
   layerDeltas.resize(this->network.size(), OutputType());
   layerGradients.resize(this->network.size(), OutputType());
 };
@@ -99,15 +104,18 @@ FFN<
     responses(std::move(network.responses)),
     numFunctions(network.numFunctions),
     error(std::move(network.error)),
-    deterministic(network.deterministic),
-    layerOutputMatrix(std::move(network.layerOutputMatrix)),
-    layerOutputs(std::move(network.layerOutputs)),
-    deltaMatrix(std::move(network.deltaMatrix)),
-    layerDeltas(std::move(network.layerDeltas)),
-    gradientMatrix(std::move(network.gradientMatrix)),
-    layerGradients(std::move(network.layerGradients))
+    deterministic(std::move(network.deterministic)),
+    // Aliases will not be correct after a std::move(), so we will manually
+    // reset them.
+    layerMemoryIsSet(false),
+    inputDimensionsAreSet(std::move(network.inputDimensionsAreSet)),
+    totalInputSize(std::move(network.totalInputSize)),
+    totalOutputSize(std::move(network.totalOutputSize))
 {
-  // Nothing else to do.
+  // Initialize cached matrix parameters to the right size.
+  layerOutputs.resize(this->network.size(), OutputType());
+  layerDeltas.resize(this->network.size(), OutputType());
+  layerGradients.resize(this->network.size(), OutputType());
 };
 
 template<typename OutputLayerType,
@@ -226,6 +234,10 @@ double FFN<
   ResetData(std::move(predictors), std::move(responses));
 
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
+
+  // Make sure to set all layers in training mode.
+  for (size_t i = 0; i < network.size(); ++i)
+    network[i]->Deterministic() = false;
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -392,7 +404,8 @@ double FFN<
   // error's size will be set correctly by outputLayer.Backward().
   outputLayer.Backward(layerOutputs[network.size() - 1], targets, error);
 
-  gradients = arma::zeros<GradientsType>(parameters.n_rows, parameters.n_cols);
+  // This does nothing if the gradient's size is already set right.
+  gradients.zeros(parameters.n_rows, parameters.n_cols);
 
   Backward();
   Gradient(inputs, gradients);
@@ -411,25 +424,71 @@ void FFN<
     OutputType
 >::Predict(InputType predictors, OutputType& results, const size_t batchSize)
 {
-  // TODO: actually care about batchSize
-
-  // TODO: this may not be needed here
-  if (parameters.is_empty())
-    InitializeWeights();
-
   if (!deterministic)
   {
     deterministic = true;
     ResetDeterministic();
   }
 
+  // If there are no weights for the network at all, we need to initialize the
+  // weights.
+  if (parameters.is_empty())
+    InitializeWeights();
+
+  // If each layer's memory has not been set with SetWeights(), pass through the
+  // network and do that.
+  if (!layerMemoryIsSet)
+    SetLayerMemory();
+
+  // Now, pass the input dimensions through the network if needed.
+  if (network.front()->InputDimensions() != inputDimensions ||
+      !inputDimensionsAreSet)
+  {
+    // If the input dimensions are completely unset, then assume our input is
+    // flat.
+    if (inputDimensions.size() == 0)
+      inputDimensions = { predictors.n_rows };
+
+    totalInputSize = std::accumulate(inputDimensions.begin(),
+        inputDimensions.end(), 0);
+
+    // TODO: improve this error message...
+    Log::Assert(totalInputSize == predictors.n_rows, "FFN::Predict(): input "
+        "size does not match expected size set with InputDimensions()!");
+
+    network.front()->InputDimensions() = inputDimensions;
+    totalInputSize += network[0]->OutputSize();
+    totalOutputSize = network[0]->OutputSize();
+    for (size_t i = 1; i < network.size(); ++i)
+    {
+      network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
+      const size_t layerOutputSize = network[i]->OutputSize();
+
+      // If we are not at the last layer, then this output is the input to the
+      // next layer.
+      if (i != network.size() - 1)
+        totalInputSize += layerOutputSize;
+
+      totalOutputSize += layerOutputSize;
+    }
+
+    inputDimensionsAreSet = true;
+  }
+
+  // TODO: this is the problem!
+  // we have to make sure the dimensions are set right here.
+
   results.set_size(network.back()->OutputSize(), predictors.n_cols);
 
-  for (size_t i = 0; i < predictors.n_cols; ++i)
+  for (size_t i = 0; i < predictors.n_cols; i += batchSize)
   {
-    InputType predictorAlias(predictors.colptr(i), predictors.n_rows, 1, false,
-        true);
-    OutputType resultAlias(results.colptr(i), results.n_rows, 1, false, true);
+    const size_t effectiveBatchSize = std::min(batchSize,
+        size_t(predictors.n_cols) - i);
+
+    InputType predictorAlias(predictors.colptr(i), predictors.n_rows,
+        effectiveBatchSize, false, true);
+    OutputType resultAlias(results.colptr(i), results.n_rows,
+        effectiveBatchSize, false, true);
 
     Forward(predictorAlias, resultAlias);
   }
@@ -794,16 +853,19 @@ void FFN<
     layerDeltas.clear();
     layerDeltas.resize(network.size(), OutputType());
 
-    gradientMatrix.clear();
     layerGradients.clear();
     layerGradients.resize(network.size(), OutputType());
 
     deterministic = true;
+    layerMemoryIsSet = false;
+    inputDimensionsAreSet = false;
 
-    // Reset each layer so its weights are set right.
-    // TODO: should we just do that in serialize()?
-//    for (size_t i = 0; i < network.size(); ++i)
-//      network[i]->Reset();
+    // We'll recompute this during the first call to Forward().
+    totalInputSize = 0;
+    totalOutputSize = 0;
+
+    // The weights in parameters will be correctly set for each layer in the
+    // first call to Forward().
   }
 }
 
@@ -829,13 +891,26 @@ void FFN<
   std::swap(numFunctions, network.numFunctions);
   std::swap(error, network.error);
   std::swap(deterministic, network.deterministic);
-  std::swap(layerOutputMatrix, network.layerOutputMatrix);
+  std::swap(inputDimensionsAreSet, network.inputDimensionsAreSet);
+  std::swap(totalInputSize, network.totalInputSize);
   std::swap(totalOutputSize, network.totalOutputSize);
+  std::swap(layerOutputMatrix, network.layerOutputMatrix);
   std::swap(layerOutputs, network.layerOutputs);
   std::swap(deltaMatrix, network.deltaMatrix);
   std::swap(layerDeltas, network.layerDeltas);
-  std::swap(gradientMatrix, network.gradientMatrix);
   std::swap(layerGradients, network.layerGradients);
+
+  // std::swap() will not preserve Armadillo aliases correctly, so we will reset
+  // those.
+  layerMemoryIsSet = false;
+  layerOutputs.resize(this->network.size(), OutputType());
+  layerDeltas.resize(this->network.size(), OutputType());
+  layerGradients.resize(this->network.size(), OutputType());
+
+  network.layerMemoryIsSet = false;
+  network.layerOutputs.resize(network.network.size(), OutputType());
+  network.layerDeltas.resize(network.network.size(), OutputType());
+  network.layerGradients.resize(network.network.size(), OutputType());
 };
 
 // Initialize memory to be used for storing the outputs of each layer, if
@@ -936,6 +1011,14 @@ void FFN<
     OutputType
 >::InitializeGradientPassMemory(OutputType& gradient)
 {
+  // Sanity check: make sure the gradient has the right size.
+  size_t totalWeightSize = 0;
+  for (size_t i = 0; i < layerGradients.size(); ++i)
+    totalWeightSize += network[i]->WeightSize();
+  // TODO: cache totalWeightSize ...
+  if (gradient.n_elem != totalWeightSize)
+    gradient.set_size(totalWeightSize);
+
   // We need to initialize the aliases `layerGradients()` for each layer.
   size_t start = 0;
   for (size_t i = 0; i < layerGradients.size(); ++i)

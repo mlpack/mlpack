@@ -194,7 +194,11 @@ class Layer
   //! Get the input dimensions.
   const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
   //! Modify the input dimensions.
-  std::vector<size_t>& InputDimensions() { return inputDimensions; }
+  std::vector<size_t>& InputDimensions()
+  {
+    validOutputDimensions = false;
+    return inputDimensions;
+  }
 
   //! Get the output dimensions.
   const std::vector<size_t>& OutputDimensions()
