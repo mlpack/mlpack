@@ -46,8 +46,6 @@ steps:
     wget https://ensmallen.org/files/ensmallen-latest.tar.gz
         tar -xvzpf ensmallen-latest.tar.gz # Unpack into ensmallen-*/.
         cd ensmallen-* && \
-        cmake . && \
-        make && \
         sudo cp -vr include/* /usr/include/ && \
         cd ..
 
