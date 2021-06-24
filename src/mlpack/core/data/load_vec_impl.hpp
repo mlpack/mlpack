@@ -20,13 +20,14 @@ namespace mlpack {
 namespace data {
 
 // Load column vector.
-template<typename eT>
+template<typename MatType,
+	 typename std::enable_if<std::is_same<MatType, arma::Col>::value>::type>>
 bool Load(const std::string& filename,
-          arma::Col<eT>& vec,
+          MatType& vec,
           const bool fatal)
 {
   // First load into auxiliary matrix.
-  arma::Mat<eT> tmp;
+  arma::Mat<typename MatType::elem_type> tmp;
   bool success = Load(filename, tmp, fatal, false);
   if (!success)
   {
@@ -70,7 +71,7 @@ bool Load(const std::string& filename,
        * Now we can call the move operator, but it has to be the move operator
        * for Mat, not for Col.  This will avoid copying the data.
        */
-      *((arma::Mat<eT>*) &vec) = std::move(tmp);
+      *((arma::Mat<typename MatType::elem_type>*) &vec) = std::move(tmp);
       return true;
     }
   }
@@ -78,18 +79,19 @@ bool Load(const std::string& filename,
   {
     // It's loaded as a column vector.  We can call the move constructor
     // directly.
-    *((arma::Mat<eT>*) &vec) = std::move(tmp);
+    *((arma::Mat<typename MatType::elem_type>*) &vec) = std::move(tmp);
     return true;
   }
 }
 
 // Load row vector.
-template<typename eT>
+template<typename MatType,
+	 typename std::enable_if<std::is_same<MatType, arma::Col>::value>::type>
 bool Load(const std::string& filename,
-          arma::Row<eT>& rowvec,
+          MatType& rowvec,
           const bool fatal)
 {
-  arma::Mat<eT> tmp;
+  arma::Mat<typename MatType::elem_type> tmp;
   bool success = Load(filename, tmp, fatal, false);
   if (!success)
   {
@@ -132,14 +134,14 @@ bool Load(const std::string& filename,
        * Now we can call the move operator, but it has to be the move operator
        * for Mat, not for Col.  This will avoid copying the data.
        */
-      *((arma::Mat<eT>*) &rowvec) = std::move(tmp);
+      *((arma::Mat<typename MatType::elem_type>*) &rowvec) = std::move(tmp);
       return true;
     }
   }
   else
   {
     // It's loaded as a row vector.  We can call the move constructor directly.
-    *((arma::Mat<eT>*) &rowvec) = std::move(tmp);
+    *((arma::Mat<typename MatType::elem_type>*) &rowvec) = std::move(tmp);
     return true;
   }
 }

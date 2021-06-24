@@ -87,7 +87,8 @@ bool inline inplace_transpose(MatType& X, bool fatal)
   }
 }
 
-template<typename MatType>
+template<typename MatType,
+	 typename std::enable_if<std::is_same<MatType, arma::Mat>::value>::type>
 bool Load(const std::string& filename,
           MatType& matrix,
           const bool fatal,
@@ -301,9 +302,10 @@ bool Load(const std::string& filename,
 }
 
 // For loading data into sparse matrix
-template <typename eT>
+template <typename MatType,
+	  typename std::enable_if<std::is_same<MatType, arma::Mat>::value>::type>
 bool Load(const std::string& filename,
-          arma::SpMat<eT>& matrix,
+          MatType& matrix,
           const bool fatal,
           const bool transpose)
 {

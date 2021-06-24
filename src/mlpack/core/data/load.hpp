@@ -67,7 +67,8 @@ namespace data /** Functions to load and save matrices and models. */ {
  * @param inputLoadType Used to determine the type of file to load (default arma::auto_detect).
  * @return Boolean value indicating success or failure of load.
  */
-template<typename MatType>
+template<typename MatType,
+	 typename std::enable_if<std::is_same<MatType, arma::Mat>::value>::type>
 bool Load(const std::string& filename,
           MatType& matrix,
           const bool fatal = false,
@@ -103,9 +104,10 @@ bool Load(const std::string& filename,
  * @param transpose If true, transpose the matrix after loading (default true).
  * @return Boolean value indicating success or failure of load.
  */
-template<typename eT>
+template<typename MatType,
+	 typename std::enable_if<std::is_same<MatType, arma::Mat>::value>::type>
 bool Load(const std::string& filename,
-          arma::SpMat<eT>& matrix,
+          MatType& matrix,
           const bool fatal = false,
           const bool transpose = true);
 
@@ -136,9 +138,10 @@ bool Load(const std::string& filename,
  * @param fatal If an error should be reported as fatal (default false).
  * @return Boolean value indicating success or failure of load.
  */
-template<typename eT>
+template<typename MatType,
+	 typename std::enable_if<std::is_same<MatType, arma::Col>::value>::type>
 bool Load(const std::string& filename,
-          arma::Col<eT>& vec,
+          MatType& vec,
           const bool fatal = false);
 
 /**
@@ -168,9 +171,10 @@ bool Load(const std::string& filename,
  * @param fatal If an error should be reported as fatal (default false).
  * @return Boolean value indicating success or failure of load.
  */
-template<typename eT>
+template<typename MatType,
+	 typename std::enable_if<std::is_same<MatType, arma::Row>::value>::type>
 bool Load(const std::string& filename,
-          arma::Row<eT>& rowvec,
+          MatType& rowvec,
           const bool fatal = false);
 
 /**
@@ -287,11 +291,12 @@ bool LoadImage(const std::string& filename,
 } // namespace data
 } // namespace mlpack
 
+#include "load_impl.hpp"
 // Include implementation of model-loading Load() overload.
 #include "load_model_impl.hpp"
 // Include implementation of Load() for vectors.
 #include "load_vec_impl.hpp"
 // Include implementation of Load() for images.
 #include "load_image_impl.hpp"
-
+// Include implementation of Load() for matrix.
 #endif
