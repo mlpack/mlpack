@@ -21,7 +21,7 @@ namespace data {
 
 // Load column vector.
 template<typename MatType,
-	 typename std::enable_if<std::is_same<MatType, arma::Col>::value>::type>>
+	 typename std::enable_if<std::is_same<MatType, arma::Col<typename MatType::elem_type>>::value>::type>
 bool Load(const std::string& filename,
           MatType& vec,
           const bool fatal)
@@ -86,7 +86,7 @@ bool Load(const std::string& filename,
 
 // Load row vector.
 template<typename MatType,
-	 typename std::enable_if<std::is_same<MatType, arma::Col>::value>::type>
+	 typename std::enable_if<std::is_same<MatType, arma::Row<typename MatType::elem_type>>::value>::type>
 bool Load(const std::string& filename,
           MatType& rowvec,
           const bool fatal)

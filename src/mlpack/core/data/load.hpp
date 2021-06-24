@@ -68,7 +68,7 @@ namespace data /** Functions to load and save matrices and models. */ {
  * @return Boolean value indicating success or failure of load.
  */
 template<typename MatType,
-	 typename std::enable_if<std::is_same<MatType, arma::Mat>::value>::type>
+	 typename std::enable_if<std::is_same<MatType, arma::Mat<typename MatType::elem_type>>::value>::type>
 bool Load(const std::string& filename,
           MatType& matrix,
           const bool fatal = false,
@@ -105,7 +105,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename MatType,
-	 typename std::enable_if<std::is_same<MatType, arma::Mat>::value>::type>
+	 typename std::enable_if<std::is_same<MatType, arma::Mat<typename MatType::elem_type>>::value>::type>
 bool Load(const std::string& filename,
           MatType& matrix,
           const bool fatal = false,
@@ -139,7 +139,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename MatType,
-	 typename std::enable_if<std::is_same<MatType, arma::Col>::value>::type>
+	 typename std::enable_if<std::is_same<MatType, arma::Col<typename MatType::elem_type>>::value>::type>
 bool Load(const std::string& filename,
           MatType& vec,
           const bool fatal = false);
@@ -172,7 +172,7 @@ bool Load(const std::string& filename,
  * @return Boolean value indicating success or failure of load.
  */
 template<typename MatType,
-	 typename std::enable_if<std::is_same<MatType, arma::Row>::value>::type>
+	 typename std::enable_if<std::is_same<MatType, arma::Row<typename MatType::elem_type>>::value>::type>
 bool Load(const std::string& filename,
           MatType& rowvec,
           const bool fatal = false);
