@@ -25,6 +25,13 @@ steps:
       brew install --cask julia
     fi
 
+    # Install STB.
+    wget https://mlpack.org/files/stb.tar.gz
+        tar -xvzpf stb.tar.gz # Unpack into stb/.
+        cd stb &&\
+        sudo cp -vr include/* /usr/include/ && \
+        cd ..
+
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
   displayName: 'Install Build Dependencies'
 

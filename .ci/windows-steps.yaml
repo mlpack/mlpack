@@ -12,9 +12,8 @@ steps:
     nuget install boost -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_random-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
     nuget install boost_math_c99-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
-    nuget install OpenBLAS -o $(Agent.ToolsDirectory)
     nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory)
-    vcpkg install ensmallen:x64-windows
+    nuget install ensmallen:x64-windows -o $(Agent.ToolsDirectory)
 
     mkdir -p $(Agent.ToolsDirectory)/boost_libs
     cp $(Agent.ToolsDirectory)/boost_math_c99-vc140.1.60.0.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
@@ -63,6 +62,7 @@ steps:
     -DBOOST_INCLUDEDIR=$(Agent.ToolsDirectory)\boost.1.60.0.0\lib\native\include `
     -DBOOST_LIBRARYDIR=$(Agent.ToolsDirectory)\boost_libs `
     -DCEREAL_INCLUDE_DIR=$(Agent.ToolsDirectory)\unofficial-flayan-cereal.1.2.2\build\native\include `
+    -DENSMALLEN_INCLUDE_DIR=$(Agent.ToolsDirectory)\ensmallen.2.16.2\include`
     -DBUILD_JULIA_BINDINGS=OFF `
     -DCMAKE_BUILD_TYPE=Release ..
   displayName: 'Configure mlpack'
