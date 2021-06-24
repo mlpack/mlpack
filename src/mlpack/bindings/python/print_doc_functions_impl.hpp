@@ -107,15 +107,18 @@ inline std::string PrintValue(const bool& value, bool quotes)
 /**
  * Given a parameter name, print its corresponding default value.
  */
-inline std::string PrintDefault(const std::string& paramName)
+inline std::string PrintDefault(const std::string& bindingName,
+                                const std::string& paramName)
 {
-  if (IO::Parameters().count(paramName) == 0)
+	util::Params p = IO::Parameters(bindingName);
+
+  if (p.Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  util::ParamData& d = IO::Parameters()[paramName];
+  util::ParamData& d = p.Parameters()[paramName];
 
   std::string defaultValue;
-  IO::GetSingleton().functionMap[d.tname]["DefaultParam"](d, NULL,
+  p.functionMap[d.tname]["DefaultParam"](d, NULL,
       (void*) &defaultValue);
 
   return defaultValue;
@@ -130,15 +133,18 @@ std::string PrintInputOptions() { return ""; }
  * something like x=5.
  */
 template<typename T, typename... Args>
-std::string PrintInputOptions(const std::string& paramName,
+std::string PrintInputOptions(const std::string& bindingName,
+															const std::string& paramName,
                               const T& value,
                               Args... args)
 {
+	util::Params p = IO::Parameters(bindingName);
+
   // See if this is part of the program.
   std::string result = "";
-  if (IO::Parameters().count(paramName) > 0)
+  if (p.Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = p.Parameters()[paramName];
     if (d.input)
     {
       // Print the input option.
@@ -173,15 +179,18 @@ std::string PrintInputOptions(const std::string& paramName,
 inline std::string PrintOutputOptions() { return ""; }
 
 template<typename T, typename... Args>
-std::string PrintOutputOptions(const std::string& paramName,
+std::string PrintOutputOptions(const std::string& bindingName,
+															 const std::string& paramName,
                                const T& value,
                                Args... args)
 {
+	util::Params p = IO::Parameters(bindingName);
+
   // See if this is part of the program.
   std::string result = "";
-  if (IO::Parameters().count(paramName) > 0)
+  if (p.Parameters().count(paramName) > 0)
   {
-    util::ParamData& d = IO::Parameters()[paramName];
+    util::ParamData& d = p.Parameters()[paramName];
     if (!d.input)
     {
       // Print a new line for the output option.
@@ -244,13 +253,15 @@ std::string ProgramCall(const std::string& programName, Args... args)
  * Given the name of a binding, print a program call assuming that all options
  * are specified.  The programName should not be the output of GetBindingName().
  */
-inline std::string ProgramCall(const std::string& programName)
+inline std::string ProgramCall(const std::string& programName) // TODO: here programName is the bindingName??
 {
+	util::Params p = IO::Parameters()[programName];
+
   std::ostringstream oss;
   oss << ">>> ";
 
   // Determine if we have any output options.
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = p.Parameters();
   bool hasOutput = false;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
@@ -286,7 +297,7 @@ inline std::string ProgramCall(const std::string& programName)
       oss << it->second.name << "_=";
 
     std::string value;
-    IO::GetSingleton().functionMap[it->second.tname]["DefaultParam"](
+    p.functionMap[it->second.tname]["DefaultParam"](
         it->second, NULL, (void*) &value);
     oss << value;
   }
@@ -367,16 +378,21 @@ inline std::string ParamString(const std::string& paramName, const T& value)
   return oss.str();
 }
 
-inline bool IgnoreCheck(const std::string& paramName)
+inline bool IgnoreCheck(const std::string& bindingName,
+												const std::string& paramName)
 {
-  return !IO::Parameters()[paramName].input;
+	util::Params p = IO::Parameters(bindingName);
+  return !p.Parameters()[paramName].input;
 }
 
-inline bool IgnoreCheck(const std::vector<std::string>& constraints)
+inline bool IgnoreCheck(const std::string& bindingName,
+												const std::vector<std::string>& constraints)
 {
+	util::Params p = IO::Parameters(bindingName);
+
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i]].input)
+    if (!p.Parameters()[constraints[i]].input)
       return true;
   }
 
@@ -384,16 +400,19 @@ inline bool IgnoreCheck(const std::vector<std::string>& constraints)
 }
 
 inline bool IgnoreCheck(
+		const std::string& bindingName,
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName)
 {
+	util::Params p = IO::Parameters(bindingName);
+
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!IO::Parameters()[constraints[i].first].input)
+    if (!p.Parameters()[constraints[i].first].input)
       return true;
   }
 
-  return !IO::Parameters()[paramName].input;
+  return !p.Parameters()[paramName].input;
 }
 
 } // namespace python
