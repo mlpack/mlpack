@@ -83,7 +83,6 @@ void ChannelShuffle<InputDataType, OutputDataType>::Forward(
       }
     }
   }
-
 }
 
 template<typename InputDataType, typename OutputDataType>
