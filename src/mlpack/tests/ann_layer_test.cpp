@@ -4677,6 +4677,51 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
 }
 
 /**
+ * Simple Test for ChannelShuffle layer.
+ */
+TEST_CASE("ChannelShuffleLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input1, output1, outputExpected1, outputBackward1;
+  ChannelShuffle<> module1(2, 2, 6, 2);
+
+  input1 << 1  << 13 << arma::endr
+         << 2  << 14 << arma::endr
+         << 3  << 15 << arma::endr
+         << 4  << 16 << arma::endr
+         << 5  << 17 << arma::endr
+         << 6  << 18 << arma::endr
+         << 7  << 19 << arma::endr
+         << 8  << 20 << arma::endr
+         << 9  << 21 << arma::endr
+         << 10 << 22 << arma::endr
+         << 11 << 23 << arma::endr
+         << 12 << 24 << arma::endr;
+  input1.reshape(24, 1);
+  // Value calculated using torch.nn.ChannelShuffle().
+  outputExpected1 << 1  << 17 << arma::endr
+                  << 2  << 18 << arma::endr
+                  << 3  << 19 << arma::endr
+                  << 4  << 20 << arma::endr
+                  << 13 << 9 << arma::endr
+                  << 14 << 10 << arma::endr
+                  << 15 << 11 << arma::endr
+                  << 16 << 12 << arma::endr
+                  << 5  << 21 << arma::endr
+                  << 6  << 22 << arma::endr
+                  << 7  << 23 << arma::endr
+                  << 8  << 24 << arma::endr;
+  outputExpected1.reshape(24, 1);
+  // Check the Forward pass of the layer.
+  module1.Forward(input1, output1);
+  CheckMatrices(output1, outputExpected1);
+
+  // Check the Backward pass of the layer.
+  module1.Backward(output1, output1, outputBackward1);
+  CheckMatrices(input1, outputBackward1);
+
+}
+
+/**
  * Simple Test for PixelShuffle layer.
  */
 TEST_CASE("PixelShuffleLayerTest", "[ANNLayerTest]")
