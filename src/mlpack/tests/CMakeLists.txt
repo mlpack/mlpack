@@ -85,7 +85,7 @@ add_executable(mlpack_test
   pca_test.cpp
   perceptron_test.cpp
   prefixedoutstream_test.cpp
-  python_binding_test.cpp
+#  python_binding_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
   q_learning_test.cpp
@@ -175,7 +175,7 @@ add_executable(mlpack_test
 #  main_tests/softmax_regression_test.cpp
 #  main_tests/sparse_coding_test.cpp
 #  main_tests/range_search_test.cpp
-  main_tests/test_helper.hpp
+  main_tests/main_test_fixture.hpp
 )
 
 if(NOT BUILD_SHARED_LIBS)
