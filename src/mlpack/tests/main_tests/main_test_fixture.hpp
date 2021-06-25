@@ -25,7 +25,8 @@
  * binding.
  *
  * Before calling this macro, make sure the `BINDING_NAME` macro is defined
- * appropriately!
+ * appropriately.  This is generally done simply by including the binding's
+ * `*_main.cpp` file.
  */
 #define BINDING_TEST_FIXTURE(CLASS_NAME) \
     class CLASS_NAME : public MainTestFixture \
@@ -37,7 +38,8 @@
 
 /**
  * Run the binding.  This depends on the `BINDING_NAME` macro being defined
- * appropriately!
+ * appropriately.  This is generally done simply by including the binding's
+ * `*_main.cpp` file.
  */
 #define RUN_BINDING() BINDING_NAME(params, timers)
 

@@ -10,7 +10,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #define BINDING_TYPE BINDING_TYPE_TEST
-#define BINDING_NAME linear_regression
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
