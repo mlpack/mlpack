@@ -87,8 +87,8 @@ bool inline inplace_transpose(MatType& X, bool fatal)
   }
 }
 
-template<typename MatType,
-	 typename std::enable_if<std::is_same<MatType, arma::Mat<typename MatType::elem_type>>::value>::type>
+template<typename MatType>
+     //    typename std::enable_if<std::is_same<MatType, arma::mat>::value>::type>
 bool Load(const std::string& filename,
           MatType& matrix,
           const bool fatal,
@@ -240,8 +240,8 @@ bool Load(const std::string& filename,
     Log::Info << "Loading '" << filename << "' as CSV dataset.  " << std::flush;
     try
     {
-      LoadCSV loader(filename);
-      loader.Load(matrix, info, transpose);
+      // LoadCSV loader(filename);
+      // loader.Load(matrix, info, transpose);
     }
     catch (std::exception& e)
     {
@@ -302,10 +302,10 @@ bool Load(const std::string& filename,
 }
 
 // For loading data into sparse matrix
-template <typename MatType,
-	  typename std::enable_if<std::is_same<MatType, arma::Mat<typename MatType::elem_type>>::value>::type>
+template<typename MatType>
+   //      typename std::enable_if<std::is_same<MatType, arma::sp_mat>::value>::type>
 bool Load(const std::string& filename,
-          MatType& matrix,
+          arma::sp_mat& matrix,
           const bool fatal,
           const bool transpose)
 {

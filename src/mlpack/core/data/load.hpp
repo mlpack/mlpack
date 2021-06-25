@@ -67,13 +67,14 @@ namespace data /** Functions to load and save matrices and models. */ {
  * @param inputLoadType Used to determine the type of file to load (default arma::auto_detect).
  * @return Boolean value indicating success or failure of load.
  */
-template<typename MatType,
-	 typename std::enable_if<std::is_same<MatType, arma::Mat<typename MatType::elem_type>>::value>::type>
+template<typename MatType>
 bool Load(const std::string& filename,
           MatType& matrix,
           const bool fatal = false,
           const bool transpose = true,
-          const file_type inputLoadType = file_type::AutoDetect);
+          const file_type inputLoadType = file_type::AutoDetect,
+	  const typename std::enable_if<std::is_same<MatType, arma::Mat<double>>::value>::type* = 0,
+	  const typename std::enable_if<std::is_same<MatType, arma::Mat<long unsigned int>>::value>::type* = 0);
 
 /**
  * Loads a sparse matrix from file, using arma::coord_ascii format.  This
@@ -104,10 +105,9 @@ bool Load(const std::string& filename,
  * @param transpose If true, transpose the matrix after loading (default true).
  * @return Boolean value indicating success or failure of load.
  */
-template<typename MatType,
-	 typename std::enable_if<std::is_same<MatType, arma::Mat<typename MatType::elem_type>>::value>::type>
+template<typename MatType>
 bool Load(const std::string& filename,
-          MatType& matrix,
+          arma::sp_mat& matrix,
           const bool fatal = false,
           const bool transpose = true);
 
@@ -138,10 +138,9 @@ bool Load(const std::string& filename,
  * @param fatal If an error should be reported as fatal (default false).
  * @return Boolean value indicating success or failure of load.
  */
-template<typename MatType,
-	 typename std::enable_if<std::is_same<MatType, arma::Col<typename MatType::elem_type>>::value>::type>
+template<typename eT>
 bool Load(const std::string& filename,
-          MatType& vec,
+          arma::Col<eT>& vec,
           const bool fatal = false);
 
 /**
@@ -171,10 +170,9 @@ bool Load(const std::string& filename,
  * @param fatal If an error should be reported as fatal (default false).
  * @return Boolean value indicating success or failure of load.
  */
-template<typename MatType,
-	 typename std::enable_if<std::is_same<MatType, arma::Row<typename MatType::elem_type>>::value>::type>
+template<typename eT>
 bool Load(const std::string& filename,
-          MatType& rowvec,
+          arma::Row<eT>& rowvec,
           const bool fatal = false);
 
 /**
