@@ -27,9 +27,6 @@ namespace mlpack {
 namespace bindings {
 namespace python {
 
-// Defined in mlpack_main.hpp.
-extern std::string programName;
-
 /**
  * The Python option class.
  */
@@ -39,8 +36,7 @@ class PyOption
  public:
   /**
    * Construct a PyOption object.  When constructed, it will register itself
-   * with IO. The testName parameter is not used and added for compatibility
-   * reasons.
+   * with IO.
    */
   PyOption(const T defaultValue,
            const std::string& identifier,
@@ -80,17 +76,17 @@ class PyOption
     // pointers will be used by both the program that generates the pyx, and
     // also the binding itself.  (The binding itself will only use GetParam,
     // GetPrintableParam, and GetRawParam.)
-    IO::AddFunction(tname, "GetParam", &GetParam<T>);
-    IO::AddFunction(tname, "GetPrintableParam", &GetPrintableParam<T>);
-    IO::AddFunction(tname, "DefaultParam", &DefaultParam<T>);
+    IO::AddFunction(data.tname, "GetParam", &GetParam<T>);
+    IO::AddFunction(data.tname, "GetPrintableParam", &GetPrintableParam<T>);
+    IO::AddFunction(data.tname, "DefaultParam", &DefaultParam<T>);
 
     // These are used by the pyx generator.
-    IO::AddFunction(tname, "PrintClassDefn", &PrintClassDefn<T>);
-    IO::AddFunction(tname, "PrintDefn", &PrintDefn<T>);
-    IO::AddFunction(tname, "PrintDoc", &PrintDoc<T>);
-    IO::AddFunction(tname, "PrintOutputProcessing", &PrintOutputProcessing<T>);
-    IO::AddFunction(tname, "PrintInputProcessing", &PrintInputProcessing<T>);
-    IO::AddFunction(tname, "ImportDecl", &ImportDecl<T>);
+    IO::AddFunction(data.tname, "PrintClassDefn", &PrintClassDefn<T>);
+    IO::AddFunction(data.tname, "PrintDefn", &PrintDefn<T>);
+    IO::AddFunction(data.tname, "PrintDoc", &PrintDoc<T>);
+    IO::AddFunction(data.tname, "PrintOutputProcessing", &PrintOutputProcessing<T>);
+    IO::AddFunction(data.tname, "PrintInputProcessing", &PrintInputProcessing<T>);
+    IO::AddFunction(data.tname, "ImportDecl", &ImportDecl<T>);
 
     // Add the ParamData object to the IO class 
     // for the correct binding name.

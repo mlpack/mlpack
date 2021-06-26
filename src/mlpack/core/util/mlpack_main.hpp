@@ -172,7 +172,8 @@ using Option = mlpack::bindings::tests::TestOption<T>;
  * PRINT_PARAM_STRING() returns a string that contains the correct
  * language-specific representation of a parameter's name.
  */
-#define PRINT_PARAM_STRING mlpack::bindings::python::ParamString
+#define PRINT_PARAM_STRING(x) mlpack::bindings::python::ParamString( \
+    STRINGIFY(BINDING_NAME), x)
 
 /**
  * PRINT_PARAM_VALUE() returns a string that contains a correct
@@ -205,7 +206,8 @@ using Option = mlpack::bindings::tests::TestOption<T>;
  * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or
  * not a specific parameter check should be ignored.
  */
-#define BINDING_IGNORE_CHECK mlpack::bindings::python::IgnoreCheck
+#define BINDING_IGNORE_CHECK(x) mlpack::bindings::python::IgnoreCheck( \
+		STRINGIFY(BINDING_NAME), x)
 
 namespace mlpack {
 namespace util {
@@ -216,21 +218,14 @@ using Option = mlpack::bindings::python::PyOption<T>;
 }
 }
 
-static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-// TODO: fix this...
-#undef BINDING_USER_NAME
-#define BINDING_USER_NAME(NAME) static \
-    mlpack::util::ProgramName \
-    io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
-    namespace mlpack { \
-    namespace bindings { \
-    namespace python { \
-    std::string programName = NAME; \
-    } \
-    } \
-    }
+// These parameters should not be registered to any BINDING_NAME,
+// they are registered under "".
+#ifdef BINDING_NAME
+	#undef BINDING_NAME
+#endif
+#define BINDING_NAME
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
