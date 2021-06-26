@@ -27,11 +27,11 @@ template<typename T>
 void SetParam(
     util::ParamData& d,
     const boost::any& value,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T, bool>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T, bool>::value>::type* = 0)
 {
   // No mapping is needed.
   d.value = value;
@@ -44,7 +44,7 @@ template<typename T>
 void SetParam(
     util::ParamData& d,
     const boost::any& /* value */,
-    const typename boost::enable_if<std::is_same<T, bool>>::type* = 0)
+    const typename std::enable_if<std::is_same<T, bool>::value>::type* = 0)
 {
   // Force set to the value of whether or not this was passed.
   d.value = d.wasPassed;
@@ -60,7 +60,7 @@ void SetParam(
     const boost::any& value,
     const typename std::enable_if<arma::is_arma_type<T>::value ||
                                   std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
+        std::tuple<data::DatasetInfo, arma::mat>>::value::value>::type* = 0)
 {
   // We're setting the string filename.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
@@ -76,8 +76,8 @@ template<typename T>
 void SetParam(
     util::ParamData& d,
     const boost::any& value,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // We're setting the string filename.
   typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;

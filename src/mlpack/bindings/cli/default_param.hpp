@@ -57,7 +57,7 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename boost::enable_if_c<
+    const typename std::enable_if<
         arma::is_arma_type<T>::value ||
         std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
                                    arma::mat>>::value>::type* /* junk */ = 0);
