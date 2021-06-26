@@ -101,7 +101,7 @@ std::string GetPrintableType(
 template<typename T>
 std::string GetPrintableType(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
     const typename std::enable_if<data::HasSerialize<T>::value>::type*)
 {
   return data.cppType + " file";
