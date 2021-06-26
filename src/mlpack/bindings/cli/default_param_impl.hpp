@@ -24,12 +24,12 @@ namespace cli {
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
-    const typename boost::disable_if<std::is_same<T, std::string>>::type*,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* /* junk */,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* /* junk */,
+    const typename std::enable_if<!std::is_same<T, std::string>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
 {
   std::ostringstream oss;
   if (!std::is_same<T, bool>::value)
@@ -44,7 +44,7 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
+    const typename std::enable_if<util::IsStdVector<T>::value>::type* /* junk */)
 {
   // Print each element in an array delimited by square brackets.
   std::ostringstream oss;
@@ -88,7 +88,7 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename boost::enable_if<std::is_same<T, std::string>>::type*)
+    const typename std::enable_if<std::is_same<T, std::string>::value>::type*)
 {
   const std::string& s = *boost::any_cast<std::string>(&data.value);
   return "'" + s + "'";
@@ -115,8 +115,8 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& /* data */,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* /* junk */)
 {
   return "''";
 }
