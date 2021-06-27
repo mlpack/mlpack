@@ -30,10 +30,10 @@ void PrintOutputProcessing(
     util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -86,7 +86,7 @@ void PrintOutputProcessing(
     util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -128,8 +128,8 @@ void PrintOutputProcessing(
     util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -170,8 +170,8 @@ void PrintOutputProcessing(
     util::ParamData& d,
     const size_t indent,
     const bool onlyOutput,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Get the type names we need to use.
   std::string strippedType, printedType, defaultsType;
