@@ -110,7 +110,7 @@ inline std::string PrintValue(const bool& value, bool quotes)
 inline std::string PrintDefault(const std::string& bindingName,
                                 const std::string& paramName)
 {
-	util::Params p = IO::Parameters(bindingName);
+  util::Params p = IO::Parameters(bindingName);
 
   if (p.Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
@@ -253,7 +253,7 @@ std::string ProgramCall(const std::string& programName, Args... args)
  */
 inline std::string ProgramCall(const std::string& programName) // TODO: here programName is the bindingName??
 {
-	util::Params params = IO::Parameters(programName);
+  util::Params params = IO::Parameters(programName);
 
   std::ostringstream oss;
   oss << ">>> ";
@@ -379,14 +379,14 @@ inline std::string ParamString(const std::string& paramName, const T& value)
 inline bool IgnoreCheck(const std::string& bindingName,
 			const std::string& paramName)
 {
-	util::Params p = IO::Parameters(bindingName);
+  util::Params p = IO::Parameters(bindingName);
   return !p.Parameters()[paramName].input;
 }
 
 inline bool IgnoreCheck(const std::string& bindingName,
 		        const std::vector<std::string>& constraints)
 {
-	util::Params p = IO::Parameters(bindingName);
+  util::Params p = IO::Parameters(bindingName);
 
   for (size_t i = 0; i < constraints.size(); ++i)
   {
@@ -398,11 +398,11 @@ inline bool IgnoreCheck(const std::string& bindingName,
 }
 
 inline bool IgnoreCheck(
-		const std::string& bindingName,
+    const std::string& bindingName,
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName)
 {
-	util::Params p = IO::Parameters(bindingName);
+  util::Params p = IO::Parameters(bindingName);
 
   for (size_t i = 0; i < constraints.size(); ++i)
   {
