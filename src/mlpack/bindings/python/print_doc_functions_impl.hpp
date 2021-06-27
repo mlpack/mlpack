@@ -377,14 +377,14 @@ inline std::string ParamString(const std::string& paramName, const T& value)
 }
 
 inline bool IgnoreCheck(const std::string& bindingName,
-												const std::string& paramName)
+			const std::string& paramName)
 {
 	util::Params p = IO::Parameters(bindingName);
   return !p.Parameters()[paramName].input;
 }
 
 inline bool IgnoreCheck(const std::string& bindingName,
-												const std::vector<std::string>& constraints)
+		        const std::vector<std::string>& constraints)
 {
 	util::Params p = IO::Parameters(bindingName);
 
