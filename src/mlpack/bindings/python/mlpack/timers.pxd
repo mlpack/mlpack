@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-params.pxd: Cython functionality for mlpack::util::Params.
+params.pxd: Cython wrapper for Timers.
 
 This file imports the GetParam() function from mlpack::IO, plus a utility
 SetParam() function because Cython can't seem to support lvalue references.
@@ -11,8 +11,6 @@ terms of the 3-clause BSD license.  You should have received a copy of the
 http://www.opensource.org/licenses/BSD-3-Clause for more information.
 """
 cimport cython
-from libcpp.string cimport string
-from libcpp cimport bool
 
 cdef extern from "<mlpack/core/util/timers.hpp>" namespace "mlpack::util" nogil:
   cdef cppclass Timers:
