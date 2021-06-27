@@ -24,11 +24,11 @@ namespace r {
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::disable_if<util::IsStdVector<T>>::type*,
-    const typename boost::disable_if<data::HasSerialize<T>>::type*,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   // A flag type.
   if (std::is_same<T, bool>::value)
@@ -64,7 +64,7 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value>::type*)
+    const typename std::enable_if<util::IsStdVector<T>::value::value>::type*)
 {
   if (std::is_same<T, std::vector<int>>::value)
   {
@@ -86,7 +86,7 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
+    const typename std::enable_if<arma::is_arma_type<T>::value::value>::type*)
 {
   if (std::is_same<typename T::elem_type, double>::value)
   {
@@ -129,7 +129,7 @@ template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
     const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
+        std::tuple<data::DatasetInfo, arma::mat>>::value::value>::type*)
 {
   return "A 2-d array containing `numeric` data.  Like the regular 2-d matrices"
       ", this can be a `matrix`, or a `data.frame`. However, this type can also"
@@ -146,8 +146,8 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::enable_if<data::HasSerialize<T>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
 {
   return "An mlpack model pointer.  `<Model>` refers to the type of model that "
       "is being stored, so, e.g., for `cf()`, the type will be `CFModel`. "
