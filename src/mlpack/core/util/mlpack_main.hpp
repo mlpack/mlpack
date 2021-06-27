@@ -207,7 +207,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
  * not a specific parameter check should be ignored.
  */
 #define BINDING_IGNORE_CHECK(x) mlpack::bindings::python::IgnoreCheck( \
-		STRINGIFY(BINDING_NAME), x)
+    STRINGIFY(BINDING_NAME), x)
 
 namespace mlpack {
 namespace util {
@@ -223,7 +223,7 @@ using Option = mlpack::bindings::python::PyOption<T>;
 // These parameters should not be registered to any BINDING_NAME,
 // they are registered under "".
 #ifdef BINDING_NAME
-	#undef BINDING_NAME
+    #undef BINDING_NAME
 #endif
 #define BINDING_NAME
 
