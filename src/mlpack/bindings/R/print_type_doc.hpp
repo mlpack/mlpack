@@ -37,7 +37,7 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value::value>::type* = 0);
+    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0);
 
 /**
  * Return a string representing the command-line type of a matrix option.
@@ -45,7 +45,7 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value::value>::type* = 0);
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0);
 
 /**
  * Return a string representing the command-line type of a matrix tuple option.
@@ -54,7 +54,7 @@ template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
     const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value::value>::type* = 0);
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
  * Return a string representing the command-line type of a model.

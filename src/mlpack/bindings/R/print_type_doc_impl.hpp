@@ -64,7 +64,7 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename std::enable_if<util::IsStdVector<T>::value::value>::type*)
+    const typename std::enable_if<util::IsStdVector<T>::value>::type*)
 {
   if (std::is_same<T, std::vector<int>>::value)
   {
@@ -86,7 +86,7 @@ std::string PrintTypeDoc(
 template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& data,
-    const typename std::enable_if<arma::is_arma_type<T>::value::value>::type*)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
   if (std::is_same<typename T::elem_type, double>::value)
   {
@@ -129,7 +129,7 @@ template<typename T>
 std::string PrintTypeDoc(
     util::ParamData& /* data */,
     const typename std::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value::value>::type*)
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   return "A 2-d array containing `numeric` data.  Like the regular 2-d matrices"
       ", this can be a `matrix`, or a `data.frame`. However, this type can also"

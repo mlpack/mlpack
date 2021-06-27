@@ -60,7 +60,7 @@ void SetParam(
     const boost::any& value,
     const typename std::enable_if<arma::is_arma_type<T>::value ||
                                   std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>::value::value>::type* = 0)
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // We're setting the string filename.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
