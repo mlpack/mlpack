@@ -114,7 +114,7 @@ inline std::string ParamString(const std::string& paramName);
  * is an output parameter, this returns true.
  */
 inline bool IgnoreCheck(const std::string& bindingName,
-												const std::string& paramName);
+                          const std::string& paramName);
 
 /**
  * Print whether or not we should ignore a check on the given set of
