@@ -131,7 +131,7 @@ inline bool IgnoreCheck(const std::string& bindingName,
  * this returns true.
  */
 inline bool IgnoreCheck(
-		const std::string& bindingName,
+    const std::string& bindingName,
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName);
 
