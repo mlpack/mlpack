@@ -255,7 +255,7 @@ void PrintPYX(const util::BindingDetails& doc,
     util::ParamData& d = parameters.at(outputOptions[i]);
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
-    TupleType tWithParams= std::make_tuple(p, t);
+    TupleType tWithParams = std::make_tuple(p, t);
     p.functionMap[d.tname]["PrintOutputProcessing"](d,
         (void*) &tWithParams, NULL);
   }
