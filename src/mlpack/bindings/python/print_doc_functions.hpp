@@ -122,7 +122,7 @@ inline bool IgnoreCheck(const std::string& bindingName,
  * so if any parameter is an output parameter, this returns true.
  */
 inline bool IgnoreCheck(const std::string& bindingName,
-												const std::vector<std::string>& constraints);
+                          const std::vector<std::string>& constraints);
 
 /**
  * Print whether or not we should ignore a check on the given set of
