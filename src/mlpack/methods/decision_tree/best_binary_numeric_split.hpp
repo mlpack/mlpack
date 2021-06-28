@@ -84,11 +84,12 @@ class BestBinaryNumericSplit
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
    */
-  template<bool UseWeights, typename VecType, typename WeightVecType>
+  template<bool UseWeights, typename VecType, typename ResponsesType,
+           typename WeightVecType>
   static double SplitIfBetter(
       const double bestGain,
       const VecType& data,
-      const arma::rowvec& responses,
+      const ResponsesType& responses,
       const WeightVecType& weights,
       const size_t minimumLeafSize,
       const double minimumGainSplit,
@@ -139,11 +140,12 @@ class BestBinaryNumericSplit
 *      successful split.
 */
 template<>
-template<bool UseWeights, typename VecType, typename WeightVecType>
+template<bool UseWeights, typename VecType, typename ResponsesType,
+         typename WeightVecType>
 double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
-    const arma::rowvec& responses,
+    const ResponsesType& responses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,

@@ -40,8 +40,8 @@ class MSEGain
    * @param begin Start index.
    * @param end End index.
    */
-  template<bool UseWeights, typename WeightVecType>
-  static double Evaluate(const arma::rowvec& values,
+  template<bool UseWeights, typename VecType, typename WeightVecType>
+  static double Evaluate(const VecType& values,
                          const WeightVecType& weights,
                          const size_t begin,
                          const size_t end)
@@ -84,8 +84,8 @@ class MSEGain
    * @param values Set of values to evaluate MSE gain on.
    * @param weights Weights associated to each value.
    */
-  template<bool UseWeights, typename WeightVecType>
-  static double Evaluate(const arma::rowvec& values,
+  template<bool UseWeights, typename VecType, typename WeightVecType>
+  static double Evaluate(const VecType& values,
                          const WeightVecType& weights)
   {
     // Corner case: if there are no elements, the impurity is zero.
