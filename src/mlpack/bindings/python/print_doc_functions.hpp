@@ -53,7 +53,7 @@ inline std::string PrintValue(const bool& value, bool quotes);
  * Given a parameter name, print its corresponding default value.
  */
 inline std::string PrintDefault(const std::string& bindingName,
-																const std::string& paramName);
+                                const std::string& paramName);
 
 // Recursion base case.
 inline std::string PrintInputOptions(util::Params& params);
