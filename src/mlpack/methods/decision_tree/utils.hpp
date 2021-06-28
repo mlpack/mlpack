@@ -15,29 +15,33 @@
 /**
  * Calculates the weighted sum and total weight of labels.
  */
-inline void WeightedSum(const arma::rowvec& labels,
-                 const arma::rowvec& weights,
-                 const size_t begin,
-                 const size_t end,
-                 double& accWeights,
-                 double& weightedMean)
+template<typename VecType, typename WeightVecType>
+inline void WeightedSum(const VecType& values,
+                        const WeightVecType& weights,
+                        const size_t begin,
+                        const size_t end,
+                        double& accWeights,
+                        double& weightedMean)
 {
-  double totalWeights[4] = { 0.0, 0.0, 0.0, 0.0 };
-  double weightedSum[4] = { 0.0, 0.0, 0.0, 0.0 };
+  typedef typename VecType::elem_type VType;
+  typedef typename WeightVecType::elem_type WType;
+
+  WType totalWeights[4] = { 0.0, 0.0, 0.0, 0.0 };
+  VType weightedSum[4] = { 0.0, 0.0, 0.0, 0.0 };
 
   // SIMD loop: sums four elements simultaneously (if the compiler manages
   // to vectorize the loop).
   for (size_t i = begin + 3; i < end; i += 4)
   {
-    const double weight1 = weights[i - 3];
-    const double weight2 = weights[i - 2];
-    const double weight3 = weights[i - 1];
-    const double weight4 = weights[i];
+    const WType weight1 = weights[i - 3];
+    const WType weight2 = weights[i - 2];
+    const WType weight3 = weights[i - 1];
+    const WType weight4 = weights[i];
 
-    weightedSum[0] += weight1 * labels[i - 3];
-    weightedSum[1] += weight2 * labels[i - 2];
-    weightedSum[2] += weight3 * labels[i - 1];
-    weightedSum[3] += weight4 * labels[i];
+    weightedSum[0] += weight1 * values[i - 3];
+    weightedSum[1] += weight2 * values[i - 2];
+    weightedSum[2] += weight3 * values[i - 1];
+    weightedSum[3] += weight4 * values[i];
 
     totalWeights[0] += weight1;
     totalWeights[1] += weight2;
@@ -48,30 +52,30 @@ inline void WeightedSum(const arma::rowvec& labels,
   // Handle leftovers.
   if ((end - begin) % 4 == 1)
   {
-    const double weight1 = weights[end - 1];
-    weightedSum[0] += weight1 * labels[end - 1];
+    const WType weight1 = weights[end - 1];
+    weightedSum[0] += weight1 * values[end - 1];
     totalWeights[0] += weight1;
   }
   else if ((end - begin) % 4 == 2)
   {
-    const double weight1 = weights[end - 2];
-    const double weight2 = weights[end - 1];
+    const WType weight1 = weights[end - 2];
+    const WType weight2 = weights[end - 1];
 
-    weightedSum[0] += weight1 * labels[end - 2];
-    weightedSum[1] += weight2 * labels[end - 1];
+    weightedSum[0] += weight1 * values[end - 2];
+    weightedSum[1] += weight2 * values[end - 1];
 
     totalWeights[0] += weight1;
     totalWeights[1] += weight2;
   }
   else if ((end - begin) % 4 == 3)
   {
-    const double weight1 = weights[end - 3];
-    const double weight2 = weights[end - 2];
-    const double weight3 = weights[end - 1];
+    const WType weight1 = weights[end - 3];
+    const WType weight2 = weights[end - 2];
+    const WType weight3 = weights[end - 1];
 
-    weightedSum[0] += weight1 * labels[end - 3];
-    weightedSum[1] += weight2 * labels[end - 2];
-    weightedSum[2] += weight1 * labels[end - 1];
+    weightedSum[0] += weight1 * values[end - 3];
+    weightedSum[1] += weight2 * values[end - 2];
+    weightedSum[2] += weight1 * values[end - 1];
 
     totalWeights[0] += weight1;
     totalWeights[1] += weight2;
@@ -88,38 +92,39 @@ inline void WeightedSum(const arma::rowvec& labels,
 /**
  * Sums up the labels vector.
  */
-inline void Sum(const arma::rowvec& labels,
-        const size_t begin,
-        const size_t end,
-        double& mean)
+template<typename VecType>
+inline void Sum(const VecType& values,
+                const size_t begin,
+                const size_t end,
+                double& mean)
 {
-  double total[4] = { 0.0, 0.0, 0.0, 0.0 };
+  typename VecType::elem_type total[4] = { 0.0, 0.0, 0.0, 0.0 };
 
   // SIMD loop: add counts for four elements simultaneously (if the compiler
   // manages to vectorize the loop).
   for (size_t i = begin + 3; i < end; i += 4)
   {
-    total[0] += labels[i - 3];
-    total[1] += labels[i - 2];
-    total[2] += labels[i - 1];
-    total[3] += labels[i];
+    total[0] += values[i - 3];
+    total[1] += values[i - 2];
+    total[2] += values[i - 1];
+    total[3] += values[i];
   }
 
   // Handle leftovers.
   if ((end - begin) % 4 == 1)
   {
-    total[0] += labels[end - 1];
+    total[0] += values[end - 1];
   }
   else if ((end - begin) % 4 == 2)
   {
-    total[0] += labels[end - 2];
-    total[1] += labels[end - 1];
+    total[0] += values[end - 2];
+    total[1] += values[end - 1];
   }
   else if ((end - begin) % 4 == 3)
   {
-    total[0] += labels[end - 3];
-    total[1] += labels[end - 2];
-    total[2] += labels[end - 1];
+    total[0] += values[end - 3];
+    total[1] += values[end - 2];
+    total[2] += values[end - 1];
   }
 
   total[0] += total[1] + total[2] + total[3];

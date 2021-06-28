@@ -187,17 +187,21 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
 // Overload used for regression.
 template<typename FitnessFunction>
-template<bool UseWeights, typename VecType, typename WeightVecType>
+template<bool UseWeights, typename VecType, typename ResponsesType,
+         typename WeightVecType>
 double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
-    const arma::rowvec& responses,
+    const ResponsesType& responses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */)
 {
+  typedef typename ResponsesType::elem_type RType;
+  typedef typename WeightVecType::elem_type WType;
+
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
     return DBL_MAX;
@@ -206,8 +210,8 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
   // Next, sort the data.
   arma::uvec sortedIndices = arma::sort_index(data);
-  arma::rowvec sortedResponses(responses.n_elem);
-  arma::rowvec sortedWeights;
+  arma::Row<RType> sortedResponses(responses.n_elem);
+  arma::Row<WType> sortedWeights;
   for (size_t i = 0; i < sortedResponses.n_elem; ++i)
     sortedResponses[i] = responses[sortedIndices[i]];
 
@@ -230,9 +234,9 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   // Force a minimum leaf size of 1 (empty children don't make sense).
   const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
 
-  double totalWeight = 0.0;
-  double totalLeftWeight = 0.0;
-  double totalRightWeight = 0.0;
+  WType totalWeight = 0.0;
+  WType totalLeftWeight = 0.0;
+  WType totalRightWeight = 0.0;
 
   if (UseWeights)
   {
@@ -317,17 +321,21 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
 // Optimized version when fitness function is MSEGain.
 template<>
-template<bool UseWeights, typename VecType, typename WeightVecType>
+template<bool UseWeights, typename VecType, typename ResponsesType,
+         typename WeightVecType>
 double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
-    const arma::rowvec& responses,
+    const ResponsesType& responses,
     const WeightVecType& weights,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */)
 {
+  typedef typename ResponsesType::elem_type RType;
+  typedef typename ResponsesType::elem_type WType;
+
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
     return DBL_MAX;
@@ -336,8 +344,8 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
 
   // Next, sort the data.
   arma::uvec sortedIndices = arma::sort_index(data);
-  arma::rowvec sortedResponses(responses.n_elem);
-  arma::rowvec sortedWeights;
+  arma::Row<RType> sortedResponses(responses.n_elem);
+  arma::Row<WType> sortedWeights;
   for (size_t i = 0; i < sortedResponses.n_elem; ++i)
     sortedResponses[i] = responses[sortedIndices[i]];
 
@@ -360,20 +368,20 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
   // Force a minimum leaf size of 1 (empty children don't make sense).
   const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
 
-  double totalWeight = 0.0;
-  double leftChildWeight = 0.0;
-  double rightChildWeight = 0.0;
-  double leftWeightedMean = 0.0;
-  double rightWeightedMean = 0.0;
-  double totalWeightedSumSquares = 0.0;
-  arma::rowvec weightedSumSquares;
+  WType totalWeight = 0.0;
+  WType leftChildWeight = 0.0;
+  WType rightChildWeight = 0.0;
+  WType leftWeightedMean = 0.0;
+  WType rightWeightedMean = 0.0;
+  WType totalWeightedSumSquares = 0.0;
+  arma::Row<WType> weightedSumSquares;
 
-  double leftMean = 0.0;
-  double rightMean = 0.0;
+  RType leftMean = 0.0;
+  RType rightMean = 0.0;
   size_t leftChildSize = 0;
   size_t rightChildSize = 0;
-  double totalSumSquares = 0.0;
-  arma::rowvec sumSquares;
+  RType totalSumSquares = 0.0;
+  arma::Row<RType> sumSquares;
 
   // Precomputing prefix sum of squares and prefix weighted sum of squares.
   // This will be used by MSEGain::Evaluate to efficiently compute gain
@@ -403,8 +411,8 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
 
     for (size_t i = minimum - 1; i < data.n_elem; ++i)
     {
-      const double w = sortedWeights[i];
-      const double x = sortedResponses[i];
+      const WType w = sortedWeights[i];
+      const RType x = sortedResponses[i];
 
       // Calculating initial weighted mean of responses for the right child.
       rightChildWeight += w;
@@ -423,11 +431,11 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
 
     sumSquares.set_size(data.n_elem);
     // Stores the sum of squares till the previous index.
-    double prevSumSquares = 0.0;
+    RType prevSumSquares = 0.0;
 
     for (size_t i = 0; i < minimum - 1; ++i)
     {
-      const double x = sortedResponses[i];
+      const RType x = sortedResponses[i];
 
       // Calculating the initial mean of responses for the left child.
       ++leftChildSize;
@@ -436,11 +444,11 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
       prevSumSquares += x * x;
     }
     if (leftChildSize)
-      leftMean /= (double) leftChildSize;
+      leftMean /= (RType) leftChildSize;
 
     for (size_t i = minimum - 1; i < data.n_elem; ++i)
     {
-      const double x = sortedResponses[i];
+      const RType x = sortedResponses[i];
 
       // Calculating the initial mean of responses for the right child.
       rightChildSize++;
@@ -449,7 +457,7 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
       prevSumSquares += x * x;
     }
     if (rightChildSize)
-      rightMean /= (double) rightChildSize;
+      rightMean /= (RType) rightChildSize;
 
     totalSumSquares = prevSumSquares;
   }
@@ -460,8 +468,8 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
     if (UseWeights)
     {
       // Updating the weighted mean for both childs for each index.
-      const double w = sortedWeights[index - 1];
-      const double x = sortedResponses[index - 1];
+      const WType w = sortedWeights[index - 1];
+      const RType x = sortedResponses[index - 1];
       leftWeightedMean = (leftWeightedMean * leftChildWeight + w * x)
           / (leftChildWeight + w);
       leftChildWeight += w;
@@ -473,13 +481,13 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
     else
     {
       // Updating the mean for both childs for each index.
-      const double x = sortedResponses[index - 1];
-      leftMean = (leftMean * (double) leftChildSize + x) /
-          (double) (leftChildSize + 1);
+      const RType x = sortedResponses[index - 1];
+      leftMean = (leftMean * (RType) leftChildSize + x) /
+          (RType) (leftChildSize + 1);
       ++leftChildSize;
 
-      rightMean = (rightMean * (double) rightChildSize - x) /
-          (double) (rightChildSize - 1);
+      rightMean = (rightMean * (RType) rightChildSize - x) /
+          (RType) (rightChildSize - 1);
       --rightChildSize;
     }
 
