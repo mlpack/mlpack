@@ -142,7 +142,7 @@ void VirtualBatchNorm<InputDataType, OutputDataType>::serialize(
   if (cereal::is_loading<Archive>())
   {
     weights.set_size(size + size, 1);
-    loading = false;
+    loading = true;
   }
 
   ar(CEREAL_NVP(eps));
