@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-params.pxd: Cython wrapper for Timers.
+timers.pxd: Cython wrapper for Timers.
 
 This file imports the GetParam() function from mlpack::IO, plus a utility
 SetParam() function because Cython can't seem to support lvalue references.
