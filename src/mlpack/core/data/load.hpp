@@ -72,9 +72,7 @@ bool Load(const std::string& filename,
           MatType& matrix,
           const bool fatal = false,
           const bool transpose = true,
-          const file_type inputLoadType = file_type::AutoDetect,
-	  const typename std::enable_if<std::is_same<MatType, arma::Mat<double>>::value>::type* = 0,
-	  const typename std::enable_if<std::is_same<MatType, arma::Mat<long unsigned int>>::value>::type* = 0);
+          const file_type inputLoadType = file_type::AutoDetect);
 
 /**
  * Loads a sparse matrix from file, using arma::coord_ascii format.  This

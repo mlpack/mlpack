@@ -40,6 +40,9 @@
 namespace mlpack{
 namespace data{
 
+class Parser
+{	
+	public:
 /**
  * Convert the given string token to assigned datatype and assign
  * this value to the given address. The address here will be a
@@ -71,6 +74,8 @@ bool ConvertToken(typename MatType::elem_type& val, const std::string& token);
  */
 template<typename MatType>
 bool LoadCSVFile(MatType& x, std::fstream& f);
+
+};
 
 } // namespace data
 } // namespace mlpack

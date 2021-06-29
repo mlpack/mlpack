@@ -47,7 +47,7 @@ namespace data
    * example calling: convert_token<eT>(x.at(row, col), token)
    */
   template<typename MatType>
-  bool ConvertToken(typename MatType::elem_type& val, const std::string& token)
+  bool Parser::ConvertToken(typename MatType::elem_type& val, const std::string& token)
   {
     const size_t N = size_t(token.length());
 
@@ -123,7 +123,7 @@ namespace data
    * Parses the file and loads the data into the given matrix.
    */
   template<typename MatType>
-  bool LoadCSVFile(MatType& x, std::fstream& f)
+  bool Parser::LoadCSVFile(MatType& x, std::fstream& f)
   {
     bool load_okay = f.good();
 

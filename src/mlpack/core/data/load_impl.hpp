@@ -88,7 +88,6 @@ bool inline inplace_transpose(MatType& X, bool fatal)
 }
 
 template<typename MatType>
-     //    typename std::enable_if<std::is_same<MatType, arma::mat>::value>::type>
 bool Load(const std::string& filename,
           MatType& matrix,
           const bool fatal,
@@ -167,11 +166,12 @@ bool Load(const std::string& filename,
 
   // We can't use the stream if the type is HDF5.
   bool success;
-
+  Parser parser;
+  
   if (loadType != file_type::HDF5Binary)
   {
     if(loadType == file_type::CSVASCII)
-      success = LoadCSVFile(matrix, stream);
+      success = parser.LoadCSVFile(matrix, stream);
     else
       success = matrix.load(stream, ToArmaFileType(loadType));
   }
@@ -303,7 +303,6 @@ bool Load(const std::string& filename,
 
 // For loading data into sparse matrix
 template<typename MatType>
-   //      typename std::enable_if<std::is_same<MatType, arma::sp_mat>::value>::type>
 bool Load(const std::string& filename,
           arma::sp_mat& matrix,
           const bool fatal,
