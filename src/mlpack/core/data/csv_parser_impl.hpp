@@ -118,13 +118,9 @@ namespace data
     return true;
   }
 
-  /**
-   * Returns a bool value showing whether data was loaded successfully or not.
-   * Parses the file and loads the data into the given matrix.
-   */
-  template<typename MatType>
-  bool Parser::LoadCSVFile(MatType& x, std::fstream& f)
+  inline std::pair<int, int> Parser::GetMatSize(std::fstream& f)
   {
+    
     bool load_okay = f.good();
 
     f.clear();
@@ -167,9 +163,32 @@ namespace data
     f.clear();
     f.seekg(pos1);
 
-    x.set_size(f_n_rows, f_n_cols);
+    //x.set_size(f_n_rows, f_n_cols);
+    std::pair<int, int> mat_size(f_n_rows, f_n_cols);
+
+    return mat_size;
+  }
+
+  /**
+   * Returns a bool value showing whether data was loaded successfully or not.
+   * Parses the file and loads the data into the given matrix.
+   */
+  template<typename MatType>
+  bool Parser::LoadCSVFile(MatType& x, std::fstream& f)
+  {
+    bool load_okay = f.good();
+
+    f.clear();
+
+    std::pair<int, int> mat_size = GetMatSize(f);
+
+    x.set_size(mat_size.first, mat_size.second);
 
     size_t row = 0;
+
+    std::string line_string;
+    std::stringstream line_stream;
+    std::string token;
 
     while (f.good())
     {

@@ -75,6 +75,7 @@ bool ConvertToken(typename MatType::elem_type& val, const std::string& token);
 template<typename MatType>
 bool LoadCSVFile(MatType& x, std::fstream& f);
 
+inline std::pair<int, int> GetMatSize(std::fstream& f);
 };
 
 } // namespace data
