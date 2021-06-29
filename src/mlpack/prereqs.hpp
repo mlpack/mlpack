@@ -73,6 +73,19 @@ using enable_if_t = typename enable_if<B, T>::type;
 #endif
 #endif
 
+// Backport std::any from C+17 to C++11 to replace boost::any.
+// Use bpstd backport implementation only if compiler does not
+// support C++17.
+#if __cplusplus <=201703L
+  #include <mlpack/core/std_backport/any.hpp>
+  #define ANY bpstd::any
+  #define ANY_CAST bpstd::any_cast
+#else
+  #include <any>
+  #define ANY std::any
+  #define ANY_CAST std::any_cast
+#endif 
+
 // Increase the number of template arguments for the boost list class.
 #undef BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
 #undef BOOST_MPL_LIMIT_LIST_SIZE
