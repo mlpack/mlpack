@@ -93,7 +93,9 @@ std::string ProcessOptions(util::Params& params,
  * be.
  */
 template<typename... Args>
-std::string ProgramCall(const std::string& programName, Args... args);
+std::string ProgramCall(const std::string& bindingName,
+                        const std::string& programName,
+                        Args... args);
 
 /**
  * Given a program name, print a program call invocation assuming that all
