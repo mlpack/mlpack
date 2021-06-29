@@ -22,6 +22,8 @@
 #include "load.hpp"
 #include "extension.hpp"
 #include "detect_file_type.hpp"
+#include "csv_parser.hpp"
+#include "types.hpp"
 
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
@@ -85,12 +87,12 @@ bool inline inplace_transpose(MatType& X, bool fatal)
   }
 }
 
-template<typename eT>
+template<typename MatType>
 bool Load(const std::string& filename,
-          arma::Mat<eT>& matrix,
+          MatType& matrix,
           const bool fatal,
           const bool transpose,
-          const arma::file_type inputLoadType)
+          const file_type inputLoadType)
 {
   Timer::Start("loading_data");
 
@@ -113,14 +115,14 @@ bool Load(const std::string& filename,
     return false;
   }
 
-  arma::file_type loadType = inputLoadType;
+  file_type loadType = inputLoadType;
   std::string stringType;
-  if (inputLoadType == arma::auto_detect)
+  if (inputLoadType == file_type::AutoDetect)
   {
     // Attempt to auto-detect the type from the given file.
     loadType = AutoDetect(stream, filename);
     // Provide error if we don't know the type.
-    if (loadType == arma::file_type_unknown)
+    if (loadType == file_type::FileTypeUnknown)
     {
       Timer::Stop("loading_data");
       if (fatal)
@@ -137,7 +139,7 @@ bool Load(const std::string& filename,
   stringType = GetStringType(loadType);
 
 #ifndef ARMA_USE_HDF5
-  if (inputLoadType == arma::hdf5_binary)
+  if (inputLoadType == file_type::HDF5Binary)
   {
     // Ensure that HDF5 is supported.
     Timer::Stop("loading_data");
@@ -155,7 +157,7 @@ bool Load(const std::string& filename,
 #endif
 
   // Try to load the file; but if it's raw_binary, it could be a problem.
-  if (loadType == arma::raw_binary)
+  if (loadType == file_type::RawBinary)
     Log::Warn << "Loading '" << filename << "' as " << stringType << "; "
         << "but this may not be the actual filetype!" << std::endl;
   else
@@ -164,10 +166,17 @@ bool Load(const std::string& filename,
 
   // We can't use the stream if the type is HDF5.
   bool success;
-  if (loadType != arma::hdf5_binary)
-    success = matrix.load(stream, loadType);
+  Parser parser;
+  
+  if (loadType != file_type::HDF5Binary)
+  {
+    if(loadType == file_type::CSVASCII)
+      success = parser.LoadCSVFile(matrix, stream);
+    else
+      success = matrix.load(stream, ToArmaFileType(loadType));
+  }
   else
-    success = matrix.load(filename, loadType);
+    success = matrix.load(filename, ToArmaFileType(loadType));
 
   if (!success)
   {
@@ -231,8 +240,8 @@ bool Load(const std::string& filename,
     Log::Info << "Loading '" << filename << "' as CSV dataset.  " << std::flush;
     try
     {
-      LoadCSV loader(filename);
-      loader.Load(matrix, info, transpose);
+      // LoadCSV loader(filename);
+      // loader.Load(matrix, info, transpose);
     }
     catch (std::exception& e)
     {
@@ -293,9 +302,9 @@ bool Load(const std::string& filename,
 }
 
 // For loading data into sparse matrix
-template <typename eT>
+template<typename MatType>
 bool Load(const std::string& filename,
-          arma::SpMat<eT>& matrix,
+          arma::sp_mat& matrix,
           const bool fatal,
           const bool transpose)
 {
