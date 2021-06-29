@@ -12,7 +12,7 @@
  */
 #ifndef MLPACK_BINDINGS_PYTHON_CYTHON_IO_UTIL_HPP
 #define MLPACK_BINDINGS_PYTHON_CYTHON_IO_UTIL_HPP
-// TODO: Change this.
+
 #include <mlpack/core/util/io.hpp>
 #include <mlpack/core/data/dataset_mapper.hpp>
 
@@ -29,11 +29,11 @@ namespace util {
  * @param value Value to set parameter to.
  */
 template<typename T>
-inline void SetParam(util::Params& p,
+inline void SetParam(util::Params& params,
                      const std::string& identifier,
                      T& value)
 {
-  p.Get<T>(identifier) = std::move(value);
+  params.Get<T>(identifier) = std::move(value);
 }
 
 /**
@@ -47,19 +47,19 @@ inline void SetParam(util::Params& p,
  * @param copy Whether or not the object should be copied.
  */
 template<typename T>
-inline void SetParamPtr(util::Params& p,
+inline void SetParamPtr(util::Params& params,
                         const std::string& identifier,
                         T* value,
                         const bool copy)
 {
-  p.Get<T*>(identifier) = copy ? new T(*value) : value;
+  params.Get<T*>(identifier) = copy ? new T(*value) : value;
 }
 
 /**
  * Set the parameter (which is a matrix/DatasetInfo tuple) to the given value.
  */
 template<typename T>
-inline void SetParamWithInfo(util::Params& p,
+inline void SetParamWithInfo(util::Params& params,
                              const std::string& identifier,
                              T& matrix,
                              const bool* dims)
@@ -69,8 +69,8 @@ inline void SetParamWithInfo(util::Params& p,
 
   // The true type of the parameter is std::tuple<T, DatasetInfo>.
   const size_t dimensions = matrix.n_rows;
-  std::get<1>(p.Get<TupleType>(identifier)) = std::move(matrix);
-  data::DatasetInfo& di = std::get<0>(p.Get<TupleType>(identifier));
+  std::get<1>(params.Get<TupleType>(identifier)) = std::move(matrix);
+  data::DatasetInfo& di = std::get<0>(params.Get<TupleType>(identifier));
   di = data::DatasetInfo(dimensions);
 
   bool hasCategoricals = false;
@@ -87,7 +87,7 @@ inline void SetParamWithInfo(util::Params& p,
   if (hasCategoricals)
   {
     arma::vec maxs = arma::max(
-        std::get<1>(p.Get<TupleType>(identifier)), 1);
+        std::get<1>(params.Get<TupleType>(identifier)), 1);
 
     for (size_t i = 0; i < dimensions; ++i)
     {
@@ -110,22 +110,22 @@ inline void SetParamWithInfo(util::Params& p,
  * of support for template pointer types.
  */
 template<typename T>
-T* GetParamPtr(util::Params& p,
+T* GetParamPtr(util::Params& params,
                const std::string& paramName)
 {
-  return p.Get<T*>(paramName);
+  return params.Get<T*>(paramName);
 }
 
 /**
  * Return the matrix part of a matrix + dataset info parameter.
  */
 template<typename T>
-T& GetParamWithInfo(util::Params& p,
+T& GetParamWithInfo(util::Params& params,
                     const std::string& paramName)
 {
   // T will be the Armadillo type.
   typedef std::tuple<data::DatasetInfo, T> TupleType;
-  return std::get<1>(p.Get<TupleType>(paramName));
+  return std::get<1>(params.Get<TupleType>(paramName));
 }
 
 /**

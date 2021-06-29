@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 """
-io.pyx: Cython functionality for mlpack::IO.
+io.pyx: Cython functionality for mlpack::IO and other utilities.
 
-This file imports the GetParam() function from mlpack::IO, plus a utility
-SetParam() function because Cython can't seem to support lvalue references.
+This file imports the Parameters() function from mlpack::IO, plus other utility
+functions: SetParam(), SetParamPtr(), SetParamWithInfo(), GetParam(),
+GetParamWithInfo(), EnableVerbose(), DisableVerbose(), DisableBacktrace(),
+EnableTimers() and ResetTimers().
 
 mlpack is free software; you may redistribute it and/or modify it under the
 terms of the 3-clause BSD license.  You should have received a copy of the

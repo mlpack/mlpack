@@ -19,11 +19,6 @@
 
 #include <mlpack/core/util/mlpack_main.hpp>
 
-#ifdef BINDING_NAME
-  #undef BINDING_NAME
-#endif
-#define BINDING_NAME linear_regression
-
 #include "linear_regression.hpp"
 
 using namespace mlpack;

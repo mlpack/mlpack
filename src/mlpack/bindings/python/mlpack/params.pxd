@@ -2,8 +2,13 @@
 """
 params.pxd: Cython functionality for mlpack::util::Params.
 
-This file imports the GetParam() function from mlpack::IO, plus a utility
-SetParam() function because Cython can't seem to support lvalue references.
+This file provides the wrapper to the Params class, along with some of
+its methods that are:
+Get() - Used to "get" a reference to a parameter with the given name.
+Has() - Used to know if a parameter with a given name exists in the program.
+SetPassed() - Used to set a parameter as "passed".
+CheckInputMatrices() - Sanity check for matrics to know if a matrix has NULL
+                       or NaN values.
 
 mlpack is free software; you may redistribute it and/or modify it under the
 terms of the 3-clause BSD license.  You should have received a copy of the

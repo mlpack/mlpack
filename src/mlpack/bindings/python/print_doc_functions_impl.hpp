@@ -110,15 +110,15 @@ inline std::string PrintValue(const bool& value, bool quotes)
 inline std::string PrintDefault(const std::string& bindingName,
                                 const std::string& paramName)
 {
-  util::Params p = IO::Parameters(bindingName);
+  util::Params params = IO::Parameters(bindingName);
 
-  if (p.Parameters().count(paramName) == 0)
+  if (params.Parameters().count(paramName) == 0)
     throw std::invalid_argument("unknown parameter " + paramName + "!");
 
-  util::ParamData& d = p.Parameters()[paramName];
+  util::ParamData& d = params.Parameters()[paramName];
 
   std::string defaultValue;
-  p.functionMap[d.tname]["DefaultParam"](d, NULL,
+  params.functionMap[d.tname]["DefaultParam"](d, NULL,
       (void*) &defaultValue);
 
   return defaultValue;
@@ -214,13 +214,13 @@ std::string PrintOutputOptions(util::Params& params,
 
 /**
  * Given a name of a binding and a variable number of arguments (and their
- * contents), print the corresponding function call.  The given programName
+ * contents), print the corresponding function call.  The given bindingName
  * should not be the output of GetBindingName().
  */
 template<typename... Args>
-std::string ProgramCall(const std::string& programName, Args... args)
+std::string ProgramCall(const std::string& bindingName, Args... args)
 {
-  util::Params params = IO::Parameters(programName);
+  util::Params params = IO::Parameters(bindingName);
 
   std::ostringstream oss;
   oss << ">>> ";
@@ -230,7 +230,7 @@ std::string ProgramCall(const std::string& programName, Args... args)
   ossOutput << PrintOutputOptions(params, args...);
   if (ossOutput.str() != "")
     oss << "output = ";
-  oss << programName << "(";
+  oss << bindingName << "(";
 
   // Now process each input option.
   oss << PrintInputOptions(params, args...);
@@ -249,11 +249,11 @@ std::string ProgramCall(const std::string& programName, Args... args)
 
 /**
  * Given the name of a binding, print a program call assuming that all options
- * are specified.  The programName should not be the output of GetBindingName().
+ * are specified.  The bindingName should not be the output of GetBindingName().
  */
-inline std::string ProgramCall(const std::string& programName) // TODO: here programName is the bindingName??
+inline std::string ProgramCall(const std::string& bindingName)
 {
-  util::Params params = IO::Parameters(programName);
+  util::Params params = IO::Parameters(bindingName);
 
   std::ostringstream oss;
   oss << ">>> ";
@@ -273,7 +273,7 @@ inline std::string ProgramCall(const std::string& programName) // TODO: here pro
   if (hasOutput)
     oss << "d = ";
 
-  oss << programName << "(";
+  oss << bindingName << "(";
 
   // Now iterate over every input option.
   bool first = true;
@@ -377,20 +377,20 @@ inline std::string ParamString(const std::string& paramName, const T& value)
 }
 
 inline bool IgnoreCheck(const std::string& bindingName,
-			const std::string& paramName)
+                        const std::string& paramName)
 {
-  util::Params p = IO::Parameters(bindingName);
-  return !p.Parameters()[paramName].input;
+  util::Params params = IO::Parameters(bindingName);
+  return !params.Parameters()[paramName].input;
 }
 
 inline bool IgnoreCheck(const std::string& bindingName,
-		        const std::vector<std::string>& constraints)
+                        const std::vector<std::string>& constraints)
 {
-  util::Params p = IO::Parameters(bindingName);
+  util::Params params = IO::Parameters(bindingName);
 
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!p.Parameters()[constraints[i]].input)
+    if (!params.Parameters()[constraints[i]].input)
       return true;
   }
 
@@ -402,15 +402,15 @@ inline bool IgnoreCheck(
     const std::vector<std::pair<std::string, bool>>& constraints,
     const std::string& paramName)
 {
-  util::Params p = IO::Parameters(bindingName);
+  util::Params params = IO::Parameters(bindingName);
 
   for (size_t i = 0; i < constraints.size(); ++i)
   {
-    if (!p.Parameters()[constraints[i].first].input)
+    if (!params.Parameters()[constraints[i].first].input)
       return true;
   }
 
-  return !p.Parameters()[paramName].input;
+  return !params.Parameters()[paramName].input;
 }
 
 } // namespace python

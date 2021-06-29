@@ -37,9 +37,9 @@ void PrintPYX(const util::BindingDetails& doc,
 {
   std::string functionName = bindingName + "_py";
 
-  util::Params p = IO::Parameters(bindingName);
+  util::Params params = IO::Parameters(bindingName);
 
-  std::map<std::string, util::ParamData>& parameters = p.Parameters();
+  std::map<std::string, util::ParamData>& parameters = params.Parameters();
   typedef std::map<std::string, util::ParamData>::iterator ParamIter;
 
   // Split into input and output parameters.  Take two passes on the input
@@ -110,7 +110,7 @@ void PrintPYX(const util::BindingDetails& doc,
     if (classes.count(d.cppType) == 0)
     {
       const size_t indent = 2;
-      p.functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
+      params.functionMap[d.tname]["ImportDecl"](d, (void*) &indent,
           NULL);
 
       // Make sure we don't double-print the definition.
@@ -125,7 +125,7 @@ void PrintPYX(const util::BindingDetails& doc,
   {
     util::ParamData& d = it->second;
     if (d.input)
-      p.functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
+      params.functionMap[d.tname]["PrintClassDefn"](d, NULL, NULL);
   }
 
   // Print the definition.
@@ -137,7 +137,7 @@ void PrintPYX(const util::BindingDetails& doc,
     if (i != 0)
       cout << "," << endl << std::string(indent, ' ');
 
-    p.functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
+    params.functionMap[d.tname]["PrintDefn"](d, NULL, NULL);
   }
 
   // Print closing brace for function definition.
@@ -166,7 +166,7 @@ void PrintPYX(const util::BindingDetails& doc,
 
     cout << "  ";
     size_t indent = 4;
-    p.functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    params.functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         NULL);
     cout << endl;
   }
@@ -179,7 +179,7 @@ void PrintPYX(const util::BindingDetails& doc,
 
     cout << "  ";
     size_t indent = 4;
-    p.functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
+    params.functionMap[d.tname]["PrintDoc"](d, (void*) &indent,
         NULL);
     cout << endl;
   }
@@ -216,7 +216,7 @@ void PrintPYX(const util::BindingDetails& doc,
     util::ParamData& d = parameters.at(inputOptions[i]);
 
     size_t indent = 2;
-    p.functionMap[d.tname]["PrintInputProcessing"](d,
+    params.functionMap[d.tname]["PrintInputProcessing"](d,
         (void*) &indent, NULL);
   }
 
@@ -255,8 +255,8 @@ void PrintPYX(const util::BindingDetails& doc,
     util::ParamData& d = parameters.at(outputOptions[i]);
 
     std::tuple<size_t, bool> t = std::make_tuple(2, false);
-    TupleType tWithParams = std::make_tuple(p, t);
-    p.functionMap[d.tname]["PrintOutputProcessing"](d,
+    TupleType tWithParams = std::make_tuple(params, t);
+    params.functionMap[d.tname]["PrintOutputProcessing"](d,
         (void*) &tWithParams, NULL);
   }
   cout << endl;
