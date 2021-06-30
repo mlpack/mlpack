@@ -91,48 +91,56 @@ class LoadCSV
     cols = 0;
 
     // First, count the number of rows in the file (this is the dimensionality).
-    std::string line;
-    while (std::getline(inFile, line))
-    {
-      ++rows;
-    }
-    info = DatasetMapper<MapPolicy>(rows);
+    // std::string line;
+    // while (std::getline(inFile, line))
+    // {
+    //   ++rows;
+    // }
+
+    Parser parser;
+
+    std::pair<int, int> matSize = parser.GetMatSize(inFile);
+
+    info = DatasetMapper<MapPolicy>(matSize.first);
 
     // Now, jump back to the beginning of the file.
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
     rows = 0;
 
+    std::string line;
+   
     while (std::getline(inFile, line))
     {
       ++rows;
       // Remove whitespace from either side.
       boost::trim(line);
 
-      if (rows == 1)
+      /*if (rows == 1)
       {
         // Extract the number of columns.
         auto findColSize = [&cols](iter_type) { ++cols; };
         qi::parse(line.begin(), line.end(),
             stringRule[findColSize] % delimiterRule);
-      }
+      }*/
 
       // I guess this is technically a second pass, but that's ok... still the
       // same idea...
       if (MapPolicy::NeedsFirstPass)
       {
+	info.template MapFirstPass<T>(std::move(line), rows-1);
         // In this case we must pass everything we parse to the MapPolicy.
-        auto firstPassMap = [&](const iter_type& iter)
-        {
-          std::string str(iter.begin(), iter.end());
-          boost::trim(str);
+        // auto firstPassMap = [&](const iter_type& iter)
+        // {
+        //   std::string str(iter.begin(), iter.end());
+        //   boost::trim(str);
 
-          info.template MapFirstPass<T>(std::move(str), rows - 1);
-        };
+        //   info.template MapFirstPass<T>(std::move(str), rows - 1);
+        // };
 
-        // Now parse the line.
-        qi::parse(line.begin(), line.end(),
-            stringRule[firstPassMap] % delimiterRule);
+        // // Now parse the line.
+        // qi::parse(line.begin(), line.end(),
+        //     stringRule[firstPassMap] % delimiterRule);
       }
     }
   }

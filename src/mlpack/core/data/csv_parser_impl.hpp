@@ -118,7 +118,7 @@ namespace data
     return true;
   }
 
-  inline std::pair<int, int> Parser::GetMatSize(std::fstream& f)
+  inline std::pair<int, int> Parser::GetMatSize(std::ifstream& f)
   {
     
     bool load_okay = f.good();
@@ -174,7 +174,7 @@ namespace data
    * Parses the file and loads the data into the given matrix.
    */
   template<typename MatType>
-  bool Parser::LoadCSVFile(MatType& x, std::fstream& f)
+  bool Parser::LoadCSVFile(MatType& x, std::ifstream& f)
   {
     bool load_okay = f.good();
 
