@@ -181,9 +181,16 @@ util::Params IO::Parameters(const std::string& bindingName)
 
   std::map<char, std::string> resultAliases =
       GetSingleton().aliases[bindingName];
+  // Merge in any persistent parameters (e.g. parameters in the "" binding map).
+  std::map<char, std::string> persistentAliases = GetSingleton().aliases[""];
+  resultAliases.insert(persistentAliases.begin(), persistentAliases.end());
 
   std::map<std::string, util::ParamData> resultParams =
       GetSingleton().parameters[bindingName];
+  // Merge in any persistent parameters (e.g. parameters in the "" binding map).
+  std::map<std::string, util::ParamData> persistentParams =
+      GetSingleton().parameters[""];
+  resultParams.insert(persistentParams.begin(), persistentParams.end());
 
   return Params(resultAliases, resultParams, GetSingleton().functionMap,
       bindingName, GetSingleton().docs[bindingName]);

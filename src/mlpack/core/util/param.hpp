@@ -1246,9 +1246,9 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
     REQ, IN, TRANS, arma::Row<size_t>());
 
 /**
- * Define the PARAM(), PARAM_MODEL() macro. Don't use this function; 
+ * Define the PARAM(), PARAM_MODEL() macro. Don't use this function;
  * use the other ones above that call it.  Note that we are using the __LINE__
- * macro for naming these actual parameters when __COUNTER__ does not exist, 
+ * macro for naming these actual parameters when __COUNTER__ does not exist,
  * which is a bit of an ugly hack... but this is the preprocessor, after all.
  * We don't have much choice other than ugliness.
  *
@@ -1267,6 +1267,11 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
       JOIN(io_option_dummy_object_in_, __COUNTER__) \
       (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, STRINGIFY(BINDING_NAME));
 
+  #define PARAM_GLOBAL(T, ID, DESC,  ALIAS, NAME, REQ, IN, TRANS, DEF) \
+      static mlpack::util::Option<T> \
+      JOIN(io_option_global_dummy_object_in_, __COUNTER__) \
+      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, "");
+
   // There are no uses of required models, so that is not an option to this
   // macro (it would be easy to add).
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
@@ -1283,6 +1288,11 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
       static mlpack::util::Option<T> \
       JOIN(JOIN(io_option_dummy_object_in_, __LINE__), opt) \
       (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, STRINGIFY(BINDING_NAME));
+
+  #define PARAM_GLOBAL(T, ID, DESC,  ALIAS, NAME, REQ, IN, TRANS, DEF) \
+      static mlpack::util::Option<T> \
+      JOIN(JOIN(io_option_global_dummy_object_in_, __LINE__), opt) \
+      (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, "");
 
   #define PARAM_MODEL(TYPE, ID, DESC, ALIAS, REQ, IN) \
       static mlpack::util::Option<TYPE*> \
