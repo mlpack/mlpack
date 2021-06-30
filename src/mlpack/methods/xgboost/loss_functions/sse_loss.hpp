@@ -75,7 +75,7 @@ class SSELoss
                arma::is_Row<VecType>::value>>
   VecType Hessians(const VecType& /* observed */, const VecType& values)
   {
-    VecType h(values.n_elem, 1);
+    VecType h(values.n_elem, arma::fill::ones);
     return h;
   }
 
