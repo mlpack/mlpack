@@ -35,6 +35,11 @@ class Params
          const BindingDetails& doc);
 
   /**
+   * Empty constructor. For wrapping in bindings.
+   */
+  Params();
+
+  /**
    * Return `true` if the specified parameter was given.
    *
    * @param identifier The name of the parameter in question.

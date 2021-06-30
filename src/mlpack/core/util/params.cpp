@@ -25,6 +25,11 @@ Params::Params(const std::map<char, std::string>& aliases,
   // Nothing to do.
 }
 
+Params::Params()
+{
+  // Nothing to do.
+}
+
 /**
  * Return `true` if the specified parameter was given.
  *

@@ -439,7 +439,7 @@ inline std::string ProgramCall(const std::string& programName)
   // Now iterate over every optional input option.
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
-    if (it->second.input && !it->second.required && !it->second.persistent)
+    if (it->second.input && !it->second.required)
     {
       // Print the input option.
       ossInputs << "param." << util::CamelCase(it->second.name, false) << " = ";

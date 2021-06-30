@@ -172,7 +172,8 @@ using Option = mlpack::bindings::tests::TestOption<T>;
  * PRINT_PARAM_STRING() returns a string that contains the correct
  * language-specific representation of a parameter's name.
  */
-#define PRINT_PARAM_STRING mlpack::bindings::python::ParamString
+#define PRINT_PARAM_STRING(x) mlpack::bindings::python::ParamString( \
+    STRINGIFY(BINDING_NAME), x)
 
 /**
  * PRINT_PARAM_VALUE() returns a string that contains a correct
@@ -205,7 +206,8 @@ using Option = mlpack::bindings::tests::TestOption<T>;
  * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or
  * not a specific parameter check should be ignored.
  */
-#define BINDING_IGNORE_CHECK mlpack::bindings::python::IgnoreCheck
+#define BINDING_IGNORE_CHECK(x) mlpack::bindings::python::IgnoreCheck( \
+    STRINGIFY(BINDING_NAME), x)
 
 namespace mlpack {
 namespace util {
@@ -216,32 +218,25 @@ using Option = mlpack::bindings::python::PyOption<T>;
 }
 }
 
-static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-// TODO: fix this...
-#undef BINDING_USER_NAME
-#define BINDING_USER_NAME(NAME) static \
-    mlpack::util::ProgramName \
-    io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
-    namespace mlpack { \
-    namespace bindings { \
-    namespace python { \
-    std::string programName = NAME; \
-    } \
-    } \
-    }
+#ifndef BINDING_NAME
+  #error "BINDING_NAME not defined!"
+#endif
 
-PARAM_FLAG("verbose", "Display informational messages and the full list of "
-    "parameters and timers at the end of execution.", "v");
-PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
-    " copied before the method is run.  This is useful for debugging problems "
-    "where the input parameters are being modified by the algorithm, but can "
-    "slow down the code.", "");
-PARAM_FLAG("check_input_matrices", "If specified, the input matrix is checked "
-    "for NaN and inf values; an exception is thrown if any are found.", "");
+PARAM_GLOBAL(bool, "verbose", "Display informational messages and the full "
+    "list of parameters and timers at the end of execution.", "v", "bool",
+    false, true, false, false)
+PARAM_GLOBAL(bool, "copy_all_inputs", "If specified, all input parameters "
+    "will be deep copied before the method is run.  This is useful for "
+    "debugging problems where the input parameters are being modified "
+    "by the algorithm, but can slow down the code.", "", "bool",
+    false, true, false, false)
+PARAM_GLOBAL(bool, "check_input_matrices", "If specified, the input matrix "
+    "is checked for NaN and inf values; an exception is thrown if any are "
+    "found.", "", "bool", false, true, false, false)
 
-// Nothing else needs to be defined---the binding will use mlpackMain() as-is.
+// Nothing else needs to be defined---the binding will use BINDING_NAME() as-is.
 
 #elif(BINDING_TYPE == BINDING_TYPE_JL) // This is a Julia binding.
 

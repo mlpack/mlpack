@@ -88,7 +88,6 @@ class CLIOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    data.persistent = false; // All CLI parameters are not persistent.
     data.cppType = cppName;
 
     // Apply default value.
