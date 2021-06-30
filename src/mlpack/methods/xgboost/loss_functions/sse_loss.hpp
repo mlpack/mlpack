@@ -92,6 +92,33 @@ class SSELoss
   {
     return - Gradients(observed, f);
   }
+
+  /**
+   * Returns the output value for the leaf in the tree.
+   */
+  template<typename VecType>
+  typename VecType::elem_type
+  OutputValue(const VecType& gradients, const VecType& hessians,
+              const double lambda)
+  {
+    return - arma::accu(gradients) / (arma::accu(hessians) + lambda);
+  }
+
+  /**
+   * Calculates the similarity score for evaluating the splits.
+   */
+  template<typename VecType>
+  double SimilarityScore(const VecType& observed, const VecType& residuals,
+      const size_t begin, const size_t end, const double lambda)
+  {
+    VecType gradients = Gradients(observed.subvec(begin, end),
+        residuals.subvec(begin, end));
+    VecType hessians = Hessians(observed.subvec(begin, end),
+        residuals.subvec(begin, end));
+
+    return std::pow(arma::accu(gradients), 2) /
+        (arma::accu(hessians) + lambda);
+  }
 }
 
 } // namespace ensemble
