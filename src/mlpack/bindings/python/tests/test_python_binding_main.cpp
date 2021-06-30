@@ -15,7 +15,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME python_binding_test
+#define BINDING_NAME test_python_binding
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
