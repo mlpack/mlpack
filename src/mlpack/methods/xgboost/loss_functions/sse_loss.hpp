@@ -33,9 +33,9 @@ class SSELoss
    * Returns the initial predition for gradient boosting.
    */
   template<typename VecType>
-  VecType::elem_type InitialPrediction(const VecType& values)
+  typename VecType::elem_type InitialPrediction(const VecType& values)
   {
-    return arma::accu(values) / (VecType::elem_type) values.n_elem;
+    return arma::accu(values) / (typename VecType::elem_type) values.n_elem;
   }
 
   /**
