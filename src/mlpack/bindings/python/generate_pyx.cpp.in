@@ -27,7 +27,6 @@
 #endif
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/bindings/python/print_pyx.hpp>
 
 // This will include the ParamData options that are a part of the program.
@@ -41,6 +40,6 @@ using namespace mlpack::util;
 
 int main(int /* argc */, char** /* argv */)
 {
-  PrintPYX(IO::Parameters(STRINGIFY(BINDING_NAME)).Doc(), 
+  PrintPYX(IO::Parameters(STRINGIFY(BINDING_NAME)).Doc(),
       "${PROGRAM_MAIN_FILE}", STRINGIFY(BINDING_NAME));
 }

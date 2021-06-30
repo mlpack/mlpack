@@ -198,7 +198,7 @@ inline std::string ProgramCall(const std::string& programName)
 
   for (auto& it : parameters)
   {
-    if (!it.second.input || it.second.persistent)
+    if (!it.second.input)
       continue;
 
     // Otherwise, print the name and the default value.

@@ -245,7 +245,6 @@ inline std::string PrintTypeDocs()
   data.required = false;
   data.input = true;
   data.loaded = false;
-  data.persistent = false;
   data.value = boost::any(int(0));
 
   std::string type = GetPrintableType<int>(data);

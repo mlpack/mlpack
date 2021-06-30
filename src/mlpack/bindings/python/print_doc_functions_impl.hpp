@@ -279,8 +279,7 @@ inline std::string ProgramCall(const std::string& bindingName)
   bool first = true;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)
   {
-    if (!it->second.input || (it->second.persistent &&
-        it->second.name != "verbose"))
+    if (!it->second.input)
       continue;
 
     if (!first)

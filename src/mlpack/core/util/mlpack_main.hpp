@@ -223,13 +223,6 @@ using Option = mlpack::bindings::python::PyOption<T>;
 #ifndef BINDING_NAME
   #error "BINDING_NAME not defined!"
 #endif
-// These parameters should not be registered to any BINDING_NAME,
-// they are registered under "".
-#ifdef BINDING_NAME
-  #define OLD_BINDING_NAME BINDING_NAME
-  #undef BINDING_NAME
-#endif
-#define BINDING_NAME
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
@@ -239,13 +232,6 @@ PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
     "slow down the code.", "");
 PARAM_FLAG("check_input_matrices", "If specified, the input matrix is checked "
     "for NaN and inf values; an exception is thrown if any are found.", "");
-
-// redefining BINDING_NAME.
-#ifdef OLD_BINDING_NAME
-  #undef BINDING_NAME
-  #define BINDING_NAME OLD_BINDING_NAME
-  #undef OLD_BINDING_NAME
-#endif
 
 // Nothing else needs to be defined---the binding will use BINDING_NAME() as-is.
 

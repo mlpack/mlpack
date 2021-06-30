@@ -60,13 +60,6 @@ class PyOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    // Only "verbose", "copy_all_inputs" and "check_input_matrices"
-    // will be persistent.
-    if (identifier == "verbose" || identifier == "copy_all_inputs" ||
-        identifier == "check_input_matrices")
-      data.persistent = true;
-    else
-      data.persistent = false;
     data.cppType = cppName;
 
     // Every parameter we'll get from Python will have the correct type.
@@ -88,7 +81,7 @@ class PyOption
     IO::AddFunction(data.tname, "PrintInputProcessing", &PrintInputProcessing<T>);
     IO::AddFunction(data.tname, "ImportDecl", &ImportDecl<T>);
 
-    // Add the ParamData object to the IO class 
+    // Add the ParamData object to the IO class
     // for the correct binding name.
     IO::AddParameter(bindingName, std::move(data));
   }
