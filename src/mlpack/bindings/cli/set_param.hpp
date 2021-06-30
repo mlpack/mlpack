@@ -64,8 +64,8 @@ void SetParam(
 {
   // We're setting the string filename.
   typedef std::tuple<T, typename ParameterType<T>::type> TupleType;
-  TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
-  std::get<0>(std::get<1>(tuple)) = boost::any_cast<std::string>(value);
+  TupleType& tuple = *ANY_CAST<TupleType>(&d.value);
+  std::get<0>(std::get<1>(tuple)) = ANY_CAST<std::string>(value);
 }
 
 /**
@@ -81,8 +81,8 @@ void SetParam(
 {
   // We're setting the string filename.
   typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;
-  TupleType& tuple = *boost::any_cast<TupleType>(&d.value);
-  std::get<1>(tuple) = boost::any_cast<std::string>(value);
+  TupleType& tuple = *ANY_CAST<TupleType>(&d.value);
+  std::get<1>(tuple) = ANY_CAST<std::string>(value);
 }
 
 /**
