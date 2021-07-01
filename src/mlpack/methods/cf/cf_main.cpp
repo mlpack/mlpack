@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME cf
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
 
@@ -33,7 +39,6 @@
 #include <mlpack/methods/cf/neighbor_search_policies/lmetric_search.hpp>
 #include <mlpack/methods/cf/neighbor_search_policies/pearson_search.hpp>
 
-
 using namespace mlpack;
 using namespace mlpack::cf;
 using namespace mlpack::amf;
@@ -42,7 +47,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("Collaborative Filtering");
+BINDING_USER_NAME("Collaborative Filtering");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -194,54 +199,58 @@ PARAM_STRING_IN("interpolation", "Algorithm used for weight interpolation.",
 PARAM_STRING_IN("neighbor_search", "Algorithm used for neighbor search.",
     "S", "euclidean");
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
-  if (IO::GetParam<int>("seed") == 0)
+  if (params.Get<int>("seed") == 0)
     math::RandomSeed(std::time(NULL));
   else
-    math::RandomSeed(IO::GetParam<int>("seed"));
+    math::RandomSeed(params.Get<int>("seed"));
 
   // Validate parameters.
-  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  RequireOnlyOnePassed(params, { "training", "input_model" }, true);
 
   // Check that nothing stupid is happening.
-  if (IO::HasParam("query") || IO::HasParam("all_user_recommendations"))
-    RequireOnlyOnePassed({ "query", "all_user_recommendations" }, true);
+  if (params.Has("query") || params.Has("all_user_recommendations"))
+    RequireOnlyOnePassed(params, { "query", "all_user_recommendations" }, true);
 
-  RequireAtLeastOnePassed({ "output", "output_model" }, false,
+  RequireAtLeastOnePassed(params, { "output", "output_model" }, false,
       "no output will be saved");
-  if (!IO::HasParam("query") && !IO::HasParam("all_user_recommendations"))
-    ReportIgnoredParam("output", "no recommendations requested");
+  if (!params.Has("query") && !params.Has("all_user_recommendations"))
+    ReportIgnoredParam(params, "output", "no recommendations requested");
 
   RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
       "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
       "RandSVD", "BiasSVD", "SVDPP" }, true, "unknown algorithm");
 
-  ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
+  ReportIgnoredParam(params, {{ "iteration_only_termination", true }},
+      "min_residue");
 
-  RequireParamValue<int>("recommendations", [](int x) { return x > 0; }, true,
-        "recommendations must be positive");
+  RequireParamValue<int>(params, "recommendations",
+      [](int x) { return x > 0; }, true, "recommendations must be positive");
 
   // Either load from a model, or train a model.
   CFModel* cf;
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
     // Train a model.
     // Validate Parameters.
-    ReportIgnoredParam({{ "iteration_only_termination", true }}, "min_residue");
-    RequireParamValue<int>("rank", [](int x) { return x >= 0; }, true,
+    ReportIgnoredParam(params, {{ "iteration_only_termination", true }},
+        "min_residue");
+    RequireParamValue<int>(params, "rank", [](int x) { return x >= 0; }, true,
         "rank must be non-negative");
-    RequireParamValue<double>("min_residue", [](double x) { return x >= 0; },
-        true, "min_residue must be non-negative");
-    RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
+    RequireParamValue<double>(params, "min_residue",
+        [](double x) { return x >= 0; }, true,
+        "min_residue must be non-negative");
+    RequireParamValue<int>(params, "max_iterations",
+        [](int x) { return x >= 0; }, true,
         "max_iterations must be non-negative");
-    RequireParamValue<int>("neighborhood", [](int x) { return x > 0; }, true,
-        "neighborhood must be positive");
+    RequireParamValue<int>(params, "neighborhood",
+        [](int x) { return x > 0; }, true, "neighborhood must be positive");
 
     // Read from the input file.
-    arma::mat dataset = std::move(IO::GetParam<arma::mat>("training"));
+    arma::mat dataset = std::move(params.Get<arma::mat>("training"));
 
-    RequireParamValue<int>("neighborhood",
+    RequireParamValue<int>(params, "neighborhood",
         [&dataset](int x) { return x <= max(dataset.row(0)) + 1; }, true,
         "neighborbood must be less than or equal to the number of users");
 
@@ -249,14 +258,14 @@ static void mlpackMain()
     arma::Mat<size_t> recommendations;
 
     // Get parameters.
-    const size_t rank = (size_t) IO::GetParam<int>("rank");
+    const size_t rank = (size_t) params.Get<int>("rank");
 
     cf = new CFModel();
 
     // Perform decomposition to prepare for recommendations.
     Log::Info << "Performing CF matrix decomposition on dataset..." << endl;
 
-    const string algo = IO::GetParam<string>("algorithm");
+    const string algo = params.Get<string>("algorithm");
     if (algo == "NMF")
     {
       cf->DecompositionType() = CFModel::NMF;
@@ -275,37 +284,38 @@ static void mlpackMain()
     }
     else if (algo == "RegSVD")
     {
-      ReportIgnoredParam("min_residue", "Regularized SVD terminates only "
-          "when max_iterations is reached");
+      ReportIgnoredParam(params, "min_residue", "Regularized SVD terminates "
+          "only when max_iterations is reached");
       cf->DecompositionType() = CFModel::REG_SVD;
     }
     else if (algo == "RandSVD")
     {
-      ReportIgnoredParam("min_residue", "Randomized SVD terminates only "
-          "when max_iterations is reached");
+      ReportIgnoredParam(params, "min_residue", "Randomized SVD terminates "
+          "only when max_iterations is reached");
       cf->DecompositionType() = CFModel::RANDOMIZED_SVD;
     }
     else if (algo == "BiasSVD")
     {
-      ReportIgnoredParam("min_residue", "Bias SVD terminates only "
+      ReportIgnoredParam(params, "min_residue", "Bias SVD terminates only "
           "when max_iterations is reached");
       cf->DecompositionType() = CFModel::BIAS_SVD;
     }
     else if (algo == "SVDPP")
     {
-      ReportIgnoredParam("min_residue", "SVD++ terminates only "
+      ReportIgnoredParam(params, "min_residue", "SVD++ terminates only "
           "when max_iterations is reached");
       cf->DecompositionType() = CFModel::SVD_PLUS_PLUS;
     }
 
     // Perform the factorization and do whatever the user wanted.
-    const size_t neighborhood = (size_t) IO::GetParam<int>("neighborhood");
+    const size_t neighborhood = (size_t) params.Get<int>("neighborhood");
 
     // Make sure the normalization strategy is valid.
-    RequireParamInSet<string>("normalization", { "overall_mean", "item_mean",
-        "user_mean", "z_score", "none" }, true, "unknown normalization type");
+    RequireParamInSet<string>(params, "normalization", { "overall_mean",
+        "item_mean", "user_mean", "z_score", "none" }, true,
+        "unknown normalization type");
 
-    const string normalizationType = IO::GetParam<string>("normalization");
+    const string normalizationType = params.Get<string>("normalization");
     if (normalizationType == "none")
       cf->NormalizationType() = CFModel::NO_NORMALIZATION;
     else if (normalizationType == "item_mean")
@@ -320,56 +330,56 @@ static void mlpackMain()
     cf->Train(dataset,
               neighborhood,
               rank,
-              size_t(IO::GetParam<int>("max_iterations")),
-              IO::GetParam<double>("min_residue"),
-              IO::HasParam("iteration_only_termination"));
+              size_t(params.Get<int>("max_iterations")),
+              params.Get<double>("min_residue"),
+              params.Has("iteration_only_termination"));
   }
   else
   {
     // Load from a model after validating parameters.
-    RequireAtLeastOnePassed({ "query", "all_user_recommendations", "test" },
-        true);
+    RequireAtLeastOnePassed(params, { "query", "all_user_recommendations",
+        "test" }, true);
 
     // Load an input model.
-    cf = std::move(IO::GetParam<CFModel*>("input_model"));
+    cf = std::move(params.Get<CFModel*>("input_model"));
   }
 
   // Get the types of the neighbor search method and the interpolation.  (These
   // may or may not be used.)
   NeighborSearchTypes nsType;
-  RequireParamInSet<string>("neighbor_search", { "cosine",
+  RequireParamInSet<string>(params, "neighbor_search", { "cosine",
       "euclidean", "pearson" }, true, "unknown neighbor search algorithm");
-  if (IO::GetParam<std::string>("neighbor_search") == "cosine")
+  if (params.Get<std::string>("neighbor_search") == "cosine")
     nsType = COSINE_SEARCH;
-  else if (IO::GetParam<std::string>("neighbor_search") == "euclidean")
+  else if (params.Get<std::string>("neighbor_search") == "euclidean")
     nsType = EUCLIDEAN_SEARCH;
-  else // if (IO::GetParam<std::string>("neighbor_search") == "pearson")
+  else // if (params.Get<std::string>("neighbor_search") == "pearson")
     nsType = PEARSON_SEARCH;
 
   InterpolationTypes interpolationType;
-  RequireParamInSet<string>("interpolation", { "average",
+  RequireParamInSet<string>(params, "interpolation", { "average",
       "regression", "similarity" }, true, "unknown interpolation algorithm");
-  if (IO::GetParam<std::string>("interpolation") == "average")
+  if (params.Get<std::string>("interpolation") == "average")
     interpolationType = AVERAGE_INTERPOLATION;
-  else if (IO::GetParam<std::string>("interpolation") == "regression")
+  else if (params.Get<std::string>("interpolation") == "regression")
     interpolationType = REGRESSION_INTERPOLATION;
-  else // if (IO::GetParam<std::string>("interpolation") == "similarity")
+  else // if (params.Get<std::string>("interpolation") == "similarity")
     interpolationType = SIMILARITY_INTERPOLATION;
 
-  if (IO::HasParam("query") || IO::HasParam("all_user_recommendations"))
+  if (params.Has("query") || params.Has("all_user_recommendations"))
   {
     // Get parameters for generating recommendations.
-    const size_t numRecs = (size_t) IO::GetParam<int>("recommendations");
+    const size_t numRecs = (size_t) params.Get<int>("recommendations");
 
     // Get the recommendations.
     arma::Mat<size_t> recommendations;
 
     // Reading users.
-    if (IO::HasParam("query"))
+    if (params.Has("query"))
     {
       // User matrix.
       arma::Mat<size_t> users =
-          std::move(IO::GetParam<arma::Mat<size_t>>("query"));
+          std::move(params.Get<arma::Mat<size_t>>("query"));
       if (users.n_rows > 1)
       {
         users = users.t();
@@ -395,13 +405,13 @@ static void mlpackMain()
     }
 
     // Save the output.
-    IO::GetParam<arma::Mat<size_t>>("output") = recommendations;
+    params.Get<arma::Mat<size_t>>("output") = recommendations;
   }
 
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
     // Now, compute each test point.
-    arma::mat testData = std::move(IO::GetParam<arma::mat>("test"));
+    arma::mat testData = std::move(params.Get<arma::mat>("test"));
 
     // Assemble the combination matrix to get RMSE value.
     arma::Mat<size_t> combinations(2, testData.n_cols);
@@ -425,5 +435,5 @@ static void mlpackMain()
     Log::Info << "RMSE is " << rmse << "." << endl;
   }
 
-  IO::GetParam<CFModel*>("output_model") = cf;
+  params.Get<CFModel*>("output_model") = cf;
 }

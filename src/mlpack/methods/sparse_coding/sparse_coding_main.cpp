@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME sparse_coding
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "sparse_coding.hpp"
@@ -23,7 +29,7 @@ using namespace mlpack::sparse_coding;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_NAME("Sparse Coding");
+BINDING_USER_NAME("Sparse Coding");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -124,101 +130,104 @@ PARAM_MATRIX_OUT("codes", "Matrix to save the output sparse codes of the test "
 
 PARAM_MATRIX_IN("test", "Optional matrix to be encoded by trained model.", "T");
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
-  if (IO::GetParam<int>("seed") != 0)
-    RandomSeed((size_t) IO::GetParam<int>("seed"));
+  if (params.Get<int>("seed") != 0)
+    RandomSeed((size_t) params.Get<int>("seed"));
   else
     RandomSeed((size_t) time(NULL));
 
   // Check for parameter validity.
-  if (IO::HasParam("input_model") && IO::HasParam("initial_dictionary"))
+  if (params.Has("input_model") && params.Has("initial_dictionary"))
   {
     Log::Fatal << "Can only pass one of " << PRINT_PARAM_STRING("input_model")
         << " or " << PRINT_PARAM_STRING("initial_dictionary") << "!" << endl;
   }
 
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
-    RequireAtLeastOnePassed({ "atoms" }, true, "if training data is specified, "
-        "the number of atoms in the dictionary must also be specified");
+    RequireAtLeastOnePassed(params, { "atoms" }, true, "if training data is "
+        "specified, the number of atoms in the dictionary must also be "
+        "specified");
   }
 
-  RequireAtLeastOnePassed({ "codes", "dictionary", "output_model" }, false,
-      "no output will be saved");
+  RequireAtLeastOnePassed(params, { "codes", "dictionary", "output_model" },
+      false, "no output will be saved");
 
-  ReportIgnoredParam({{ "test", false }}, "codes");
+  ReportIgnoredParam(params, {{ "test", false }}, "codes");
 
-  ReportIgnoredParam({{ "training", false }}, "atoms");
-  ReportIgnoredParam({{ "training", false }}, "lambda1");
-  ReportIgnoredParam({{ "training", false }}, "lambda2");
-  ReportIgnoredParam({{ "training", false }}, "initial_dictionary");
-  ReportIgnoredParam({{ "training", false }}, "max_iterations");
-  ReportIgnoredParam({{ "training", false }}, "normalize");
-  ReportIgnoredParam({{ "training", false }}, "objective_tolerance");
-  ReportIgnoredParam({{ "training", false }}, "newton_tolerance");
+  ReportIgnoredParam(params, {{ "training", false }}, "atoms");
+  ReportIgnoredParam(params, {{ "training", false }}, "lambda1");
+  ReportIgnoredParam(params, {{ "training", false }}, "lambda2");
+  ReportIgnoredParam(params, {{ "training", false }}, "initial_dictionary");
+  ReportIgnoredParam(params, {{ "training", false }}, "max_iterations");
+  ReportIgnoredParam(params, {{ "training", false }}, "normalize");
+  ReportIgnoredParam(params, {{ "training", false }}, "objective_tolerance");
+  ReportIgnoredParam(params, {{ "training", false }}, "newton_tolerance");
 
-  RequireParamValue<int>("atoms", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>(params, "atoms", [](int x) { return x > 0; }, true,
       "number of atoms must be positive");
-  RequireParamValue<double>("lambda1", [](double x) { return x >= 0.0; }, true,
-      "lambda1 value must be nonnegative");
-  RequireParamValue<double>("lambda2", [](double x) { return x >= 0.0; }, true,
-      "lambda2 value must be nonnegative");
-  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
-      "maximum number of iterations must be nonnegative");
-  RequireParamValue<double>("objective_tolerance",
+  RequireParamValue<double>(params, "lambda1",
+      [](double x) { return x >= 0.0; }, true, "lambda1 value must be "
+      "nonnegative");
+  RequireParamValue<double>(params, "lambda2",
+      [](double x) { return x >= 0.0; }, true, "lambda2 value must be "
+      "nonnegative");
+  RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
+      true, "maximum number of iterations must be nonnegative");
+  RequireParamValue<double>(params, "objective_tolerance",
       [](double x) { return x >= 0.0; }, true,
       "objective function tolerance must be nonnegative");
-  RequireParamValue<double>("newton_tolerance",
+  RequireParamValue<double>(params, "newton_tolerance",
       [](double x) { return x >= 0.0; }, true,
       "Newton method tolerance must be nonnegative");
 
   // Do we have an existing model?
   SparseCoding* sc;
-  if (IO::HasParam("input_model"))
-    sc = IO::GetParam<SparseCoding*>("input_model");
+  if (params.Has("input_model"))
+    sc = params.Get<SparseCoding*>("input_model");
   else
     sc = new SparseCoding(0, 0.0);
 
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
-    mat matX = std::move(IO::GetParam<arma::mat>("training"));
+    mat matX = std::move(params.Get<arma::mat>("training"));
 
     // Normalize each point if the user asked for it.
-    if (IO::HasParam("normalize"))
+    if (params.Has("normalize"))
     {
       Log::Info << "Normalizing data before coding..." << endl;
       for (size_t i = 0; i < matX.n_cols; ++i)
         matX.col(i) /= norm(matX.col(i), 2);
     }
 
-    sc->Lambda1() = IO::GetParam<double>("lambda1");
-    sc->Lambda2() = IO::GetParam<double>("lambda2");
-    sc->MaxIterations() = (size_t) IO::GetParam<int>("max_iterations");
-    sc->Atoms() = (size_t) IO::GetParam<int>("atoms");
-    sc->ObjTolerance() = IO::GetParam<double>("objective_tolerance");
-    sc->NewtonTolerance() = IO::GetParam<double>("newton_tolerance");
+    sc->Lambda1() = params.Get<double>("lambda1");
+    sc->Lambda2() = params.Get<double>("lambda2");
+    sc->MaxIterations() = (size_t) params.Get<int>("max_iterations");
+    sc->Atoms() = (size_t) params.Get<int>("atoms");
+    sc->ObjTolerance() = params.Get<double>("objective_tolerance");
+    sc->NewtonTolerance() = params.Get<double>("newton_tolerance");
 
     // Inform the user if we are overwriting their model.
-    if (IO::HasParam("input_model"))
+    if (params.Has("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
-          << IO::GetPrintableParam<SparseCoding>("input_model")
+          << params.GetPrintable<SparseCoding>("input_model")
           << "' as initial dictionary for training." << endl;
       sc->Train<NothingInitializer>(matX);
     }
-    else if (IO::HasParam("initial_dictionary"))
+    else if (params.Has("initial_dictionary"))
     {
       // Load initial dictionary directly into sparse coding object.
       sc->Dictionary() =
-          std::move(IO::GetParam<arma::mat>("initial_dictionary"));
+          std::move(params.Get<arma::mat>("initial_dictionary"));
 
       // Validate size of initial dictionary.
       if (sc->Dictionary().n_cols != sc->Atoms())
       {
         const size_t dictAtoms = sc->Dictionary().n_cols;
         const size_t atoms = sc->Atoms();
-        if (!IO::HasParam("input_model"))
+        if (!params.Has("input_model"))
           delete sc;
         Log::Fatal << "The initial dictionary has " << dictAtoms
             << " atoms, but the number of atoms was specified to be "
@@ -228,7 +237,7 @@ static void mlpackMain()
       if (sc->Dictionary().n_rows != matX.n_rows)
       {
         const size_t dim = sc->Dictionary().n_rows;
-        if (!IO::HasParam("input_model"))
+        if (!params.Has("input_model"))
           delete sc;
         Log::Fatal << "The initial dictionary has " << dim
             << " dimensions, but the data has " << matX.n_rows << " dimensions!"
@@ -246,24 +255,24 @@ static void mlpackMain()
   }
 
   // Now, de we have any matrix to encode?
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
-    if (IO::GetParam<arma::mat>("test").n_rows != sc->Dictionary().n_rows)
+    if (params.Get<arma::mat>("test").n_rows != sc->Dictionary().n_rows)
     {
       const size_t dim = sc->Dictionary().n_rows;
-      if (!IO::HasParam("input_model"))
+      if (!params.Has("input_model"))
         delete sc;
       Log::Fatal << "Model was trained with a dimensionality of "
           << dim << ", but test data '"
-          << IO::GetPrintableParam<arma::mat>("test") << "' have a "
-          << "dimensionality of " << IO::GetParam<arma::mat>("test").n_rows
+          << params.GetPrintable<arma::mat>("test") << "' have a "
+          << "dimensionality of " << params.Get<arma::mat>("test").n_rows
           << "!" << endl;
     }
 
-    mat matY = std::move(IO::GetParam<arma::mat>("test"));
+    mat matY = std::move(params.Get<arma::mat>("test"));
 
     // Normalize each point if the user asked for it.
-    if (IO::HasParam("normalize"))
+    if (params.Has("normalize"))
     {
       Log::Info << "Normalizing test data before coding..." << endl;
       for (size_t i = 0; i < matY.n_cols; ++i)
@@ -273,13 +282,13 @@ static void mlpackMain()
     mat codes;
     sc->Encode(matY, codes);
 
-    IO::GetParam<arma::mat>("codes") = std::move(codes);
+    params.Get<arma::mat>("codes") = std::move(codes);
   }
 
   // Did the user want to save the dictionary?  Use an alias for the dictionary.
-  IO::GetParam<arma::mat>("dictionary") = arma::mat(sc->Dictionary().memptr(),
+  params.Get<arma::mat>("dictionary") = arma::mat(sc->Dictionary().memptr(),
       sc->Dictionary().n_rows, sc->Dictionary().n_cols, false, false);
 
   // Save the model.
-  IO::GetParam<SparseCoding*>("output_model") = sc;
+  params.Get<SparseCoding*>("output_model") = sc;
 }

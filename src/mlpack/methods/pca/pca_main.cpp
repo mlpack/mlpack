@@ -12,6 +12,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME pca
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "pca.hpp"
@@ -26,7 +32,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("Principal Components Analysis");
+BINDING_USER_NAME("Principal Components Analysis");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -100,9 +106,9 @@ void RunPCA(arma::mat& dataset,
   Log::Info << "Performing PCA on dataset..." << endl;
   double varRetained;
 
-  if (IO::HasParam("var_to_retain"))
+  if (params.Has("var_to_retain"))
   {
-    if (IO::HasParam("new_dimensionality"))
+    if (params.Has("new_dimensionality"))
       Log::Warn << "New dimensionality (-d) ignored because --var_to_retain "
           << "(-r) was specified." << endl;
 
@@ -117,39 +123,41 @@ void RunPCA(arma::mat& dataset,
       dataset.n_rows << " dimensions)." << endl;
 }
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
   // Load input dataset.
-  arma::mat& dataset = IO::GetParam<arma::mat>("input");
+  arma::mat& dataset = params.Get<arma::mat>("input");
 
   // Issue a warning if the user did not specify an output file.
-  RequireAtLeastOnePassed({ "output" }, false, "no output will be saved");
+  RequireAtLeastOnePassed(params, { "output" }, false,
+      "no output will be saved");
 
   // Check decomposition method validity.
-  RequireParamInSet<string>("decomposition_method", { "exact", "randomized",
-      "randomized-block-krylov", "quic" }, true,
+  RequireParamInSet<string>(params, "decomposition_method",
+      { "exact", "randomized", "randomized-block-krylov", "quic" }, true,
       "unknown decomposition method");
 
   // Find out what dimension we want.
-  RequireParamValue<int>("new_dimensionality", [](int x) { return x >= 0; },
+  RequireParamValue<int>(params, "new_dimensionality",
+      [](int x) { return x >= 0; },
       true, "new dimensionality must be non-negative");
   std::ostringstream error;
   error << "cannot be greater than existing dimensionality (" << dataset.n_rows
       << ")";
-  RequireParamValue<int>("new_dimensionality",
+  RequireParamValue<int>(params, "new_dimensionality",
       [dataset](int x) { return x <= (int) dataset.n_rows; }, true,
       error.str());
 
-  RequireParamValue<double>("var_to_retain",
+  RequireParamValue<double>(params, "var_to_retain",
       [](double x) { return x >= 0.0 && x <= 1.0; }, true,
       "variance retained must be between 0 and 1");
-  size_t newDimension = (IO::GetParam<int>("new_dimensionality") == 0) ?
-      dataset.n_rows : IO::GetParam<int>("new_dimensionality");
+  size_t newDimension = (params.Get<int>("new_dimensionality") == 0) ?
+      dataset.n_rows : params.Get<int>("new_dimensionality");
 
   // Get the options for running PCA.
-  const bool scale = IO::HasParam("scale");
-  const double varToRetain = IO::GetParam<double>("var_to_retain");
-  const string decompositionMethod = IO::GetParam<string>(
+  const bool scale = params.Has("scale");
+  const double varToRetain = params.Get<double>("var_to_retain");
+  const string decompositionMethod = params.Get<string>(
       "decomposition_method");
 
   // Perform PCA.
@@ -172,6 +180,6 @@ static void mlpackMain()
   }
 
   // Now save the results.
-  if (IO::HasParam("output"))
-    IO::GetParam<arma::mat>("output") = std::move(dataset);
+  if (params.Has("output"))
+    params.Get<arma::mat>("output") = std::move(dataset);
 }

@@ -10,9 +10,15 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/data/load_impl.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME preprocess_imputer
+
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/data/load_impl.hpp>
 #include <mlpack/core/data/imputer.hpp>
 #include <mlpack/core/data/dataset_mapper.hpp>
 #include <mlpack/core/data/map_policies/increment_policy.hpp>
@@ -23,7 +29,7 @@
 #include <mlpack/core/data/imputation_methods/listwise_deletion.hpp>
 
 // Program Name.
-BINDING_NAME("Impute Data");
+BINDING_USER_NAME("Impute Data");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -72,30 +78,36 @@ using namespace arma;
 using namespace std;
 using namespace data;
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
-  const string inputFile = IO::GetParam<string>("input_file");
-  const string outputFile = IO::GetParam<string>("output_file");
-  const string missingValue = IO::GetParam<string>("missing_value");
-  const double customValue = IO::GetParam<double>("custom_value");
-  const size_t dimension = (size_t) IO::GetParam<int>("dimension");
-  string strategy = IO::GetParam<string>("strategy");
+  const string inputFile = params.Get<string>("input_file");
+  const string outputFile = params.Get<string>("output_file");
+  const string missingValue = params.Get<string>("missing_value");
+  const double customValue = params.Get<double>("custom_value");
+  const size_t dimension = (size_t) params.Get<int>("dimension");
+  string strategy = params.Get<string>("strategy");
 
-  RequireParamInSet<string>("strategy", { "custom", "mean", "median",
+  RequireParamInSet<string>(params, "strategy", { "custom", "mean", "median",
       "listwise_deletion" }, true, "unknown imputation strategy");
-  RequireAtLeastOnePassed({ "output_file" }, false, "no output will be saved");
+  RequireAtLeastOnePassed(params, { "output_file" }, false,
+      "no output will be saved");
 
-  if (!IO::HasParam("dimension"))
+  if (!params.Has("dimension"))
   {
     Log::Warn << "--dimension is not specified; the imputation will be "
         << "applied to all dimensions."<< endl;
   }
 
   if (strategy != "custom")
-    ReportIgnoredParam("custom_value", "not using custom imputation strategy");
+  {
+    ReportIgnoredParam(params, "custom_value", "not using custom imputation "
+        "strategy");
+  }
   else
-    RequireAtLeastOnePassed({ "custom_value" }, true, "must pass custom "
-        "imputation value when using 'custom' imputation strategy");
+  {
+    RequireAtLeastOnePassed(params, { "custom_value" }, true, "must pass "
+        "custom imputation value when using 'custom' imputation strategy");
+  }
 
   arma::mat input;
   // Policy tells how the DatasetMapper should map the values.
@@ -125,7 +137,7 @@ static void mlpackMain()
     Log::Warn << "The file does not contain any user-defined missing "
         << "variables. The program did not perform any imputation." << endl;
   }
-  else if (IO::HasParam("dimension") &&
+  else if (params.Has("dimension") &&
       !(std::find(dirtyDimensions.begin(), dirtyDimensions.end(), dimension)
       != dirtyDimensions.end()))
   {
@@ -135,8 +147,8 @@ static void mlpackMain()
   }
   else
   {
-    Timer::Start("imputation");
-    if (IO::HasParam("dimension"))
+    timers.Start(("imputation");
+    if (params.Has("dimension"))
     {
       // when --dimension is specified,
       // the program will apply the changes to only the given dimension.
@@ -210,7 +222,7 @@ static void mlpackMain()
             << "exist!" << endl;
       }
     }
-    Timer::Stop("imputation");
+    timers.Stop("imputation");
 
     if (!outputFile.empty())
     {

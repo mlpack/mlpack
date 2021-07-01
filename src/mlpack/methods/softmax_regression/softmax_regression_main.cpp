@@ -10,6 +10,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME softmax_regression
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/softmax_regression/softmax_regression.hpp>
@@ -24,7 +30,7 @@ using namespace mlpack::regression;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_NAME("Softmax Regression");
+BINDING_USER_NAME("Softmax Regression");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -138,30 +144,30 @@ void TestClassifyAcc(const size_t numClasses, const Model& model);
 template<typename Model>
 Model* TrainSoftmax(const size_t maxIterations);
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
-  const int maxIterations = IO::GetParam<int>("max_iterations");
+  const int maxIterations = params.Get<int>("max_iterations");
 
   // One of inputFile and modelFile must be specified.
-  RequireOnlyOnePassed({ "input_model", "training" }, true);
-  if (IO::HasParam("training"))
+  RequireOnlyOnePassed(params, { "input_model", "training" }, true);
+  if (params.Has("training"))
   {
     RequireAtLeastOnePassed({ "labels" }, true, "if training data is specified,"
         " labels must also be specified");
   }
-  ReportIgnoredParam({{ "training", false }}, "labels");
-  ReportIgnoredParam({{ "training", false }}, "max_iterations");
-  ReportIgnoredParam({{ "training", false }}, "number_of_classes");
-  ReportIgnoredParam({{ "training", false }}, "lambda");
-  ReportIgnoredParam({{ "training", false }}, "no_intercept");
+  ReportIgnoredParam(params, {{ "training", false }}, "labels");
+  ReportIgnoredParam(params, {{ "training", false }}, "max_iterations");
+  ReportIgnoredParam(params, {{ "training", false }}, "number_of_classes");
+  ReportIgnoredParam(params, {{ "training", false }}, "lambda");
+  ReportIgnoredParam(params, {{ "training", false }}, "no_intercept");
 
-  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
-      "maximum number of iterations must be greater than or equal to 0");
-  RequireParamValue<double>("lambda", [](double x) { return x >= 0.0; }, true,
-      "lambda penalty parameter must be greater than or equal to 0");
-  RequireParamValue<int>("number_of_classes", [](int x) { return x >= 0; },
-                         true, "number of classes must be greater than or "
-                         "equal to 0 (equal to 0 in case of unspecified.)");
+  RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
+      true, "maximum number of iterations must be greater than or equal to 0");
+  RequireParamValue<double>(params, "lambda", [](double x) { return x >= 0.0; },
+      true, "lambda penalty parameter must be greater than or equal to 0");
+  RequireParamValue<int>(params, "number_of_classes",
+      [](int x) { return x >= 0; }, true, "number of classes must be greater "
+      "than or equal to 0 (equal to 0 in case of unspecified.)");
 
   // Make sure we have an output file of some sort.
   RequireAtLeastOnePassed({ "output_model", "predictions" }, false, "no results"
@@ -171,7 +177,7 @@ static void mlpackMain()
 
   TestClassifyAcc(sm->NumClasses(), *sm);
 
-  IO::GetParam<SoftmaxRegression*>("output_model") = sm;
+  params.Get<SoftmaxRegression*>("output_model") = sm;
 }
 
 size_t CalculateNumberOfClasses(const size_t numClasses,
@@ -195,25 +201,25 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
   using namespace mlpack;
 
   // If there is no test set, there is nothing to test on.
-  if (!IO::HasParam("test"))
+  if (!params.Has("test"))
   {
-    ReportIgnoredParam({{ "test", false }}, "test_labels");
-    ReportIgnoredParam({{ "test", false }}, "predictions");
+    ReportIgnoredParam(params, {{ "test", false }}, "test_labels");
+    ReportIgnoredParam(params, {{ "test", false }}, "predictions");
 
     return;
   }
 
   // Get the test dataset, and get predictions.
-  arma::mat testData = std::move(IO::GetParam<arma::mat>("test"));
+  arma::mat testData = std::move(params.Get<arma::mat>("test"));
 
   arma::Row<size_t> predictLabels;
   model.Classify(testData, predictLabels);
 
   // Calculate accuracy, if desired.
-  if (IO::HasParam("test_labels"))
+  if (params.Has("test_labels"))
   {
     arma::Row<size_t> testLabels =
-      std::move(IO::GetParam<arma::Row<size_t>>("test_labels"));
+      std::move(params.Get<arma::Row<size_t>>("test_labels"));
 
     if (testData.n_cols != testLabels.n_elem)
     {
@@ -248,8 +254,8 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
         << totalBingo << " of " << predictLabels.n_elem << ")." << endl;
   }
   // Save predictions, if desired.
-  if (IO::HasParam("predictions"))
-    IO::GetParam<arma::Row<size_t>>("predictions") = std::move(predictLabels);
+  if (params.Has("predictions"))
+    params.Get<arma::Row<size_t>>("predictions") = std::move(predictLabels);
 }
 
 template<typename Model>
@@ -258,29 +264,29 @@ Model* TrainSoftmax(const size_t maxIterations)
   using namespace mlpack;
 
   Model* sm;
-  if (IO::HasParam("input_model"))
+  if (params.Has("input_model"))
   {
-    sm = IO::GetParam<Model*>("input_model");
+    sm = params.Get<Model*>("input_model");
   }
   else
   {
-    arma::mat trainData = std::move(IO::GetParam<arma::mat>("training"));
+    arma::mat trainData = std::move(params.Get<arma::mat>("training"));
     arma::Row<size_t> trainLabels =
-        std::move(IO::GetParam<arma::Row<size_t>>("labels"));
+        std::move(params.Get<arma::Row<size_t>>("labels"));
 
     if (trainData.n_cols != trainLabels.n_elem)
       Log::Fatal << "Samples of input_data should same as the size of "
           << "input_label." << endl;
 
     const size_t numClasses = CalculateNumberOfClasses(
-        (size_t) IO::GetParam<int>("number_of_classes"), trainLabels);
+        (size_t) params.Get<int>("number_of_classes"), trainLabels);
 
-    const bool intercept = IO::HasParam("no_intercept") ? false : true;
+    const bool intercept = params.Has("no_intercept") ? false : true;
 
     const size_t numBasis = 5;
     ens::L_BFGS optimizer(numBasis, maxIterations);
     sm = new Model(trainData, trainLabels, numClasses,
-        IO::GetParam<double>("lambda"), intercept, std::move(optimizer));
+        params.Get<double>("lambda"), intercept, std::move(optimizer));
   }
   return sm;
 }

@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME nmf
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/methods/amf/amf.hpp>
@@ -28,7 +34,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("Non-negative Matrix Factorization");
+BINDING_USER_NAME("Non-negative Matrix Factorization");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -113,13 +119,13 @@ void LoadInitialWH(const bool bindingTransposed, arma::mat& w, arma::mat& h)
   // from amf.Apply() as H, and vice versa.
   if (bindingTransposed)
   {
-    w = IO::GetParam<arma::mat>("initial_h");
-    h = IO::GetParam<arma::mat>("initial_w");
+    w = params.Get<arma::mat>("initial_h");
+    h = params.Get<arma::mat>("initial_w");
   }
   else
   {
-    h = IO::GetParam<arma::mat>("initial_h");
-    w = IO::GetParam<arma::mat>("initial_w");
+    h = params.Get<arma::mat>("initial_h");
+    w = params.Get<arma::mat>("initial_w");
   }
 }
 
@@ -128,13 +134,13 @@ void SaveWH(const bool bindingTransposed, arma::mat&& w, arma::mat&& h)
   // The same transposition applies when saving.
   if (bindingTransposed)
   {
-    IO::GetParam<arma::mat>("w") = std::move(h);
-    IO::GetParam<arma::mat>("h") = std::move(w);
+    params.Get<arma::mat>("w") = std::move(h);
+    params.Get<arma::mat>("h") = std::move(w);
   }
   else
   {
-    IO::GetParam<arma::mat>("h") = std::move(h);
-    IO::GetParam<arma::mat>("w") = std::move(w);
+    params.Get<arma::mat>("h") = std::move(h);
+    params.Get<arma::mat>("w") = std::move(w);
   }
 }
 
@@ -144,8 +150,8 @@ void ApplyFactorization(const arma::mat& V,
                         arma::mat& W,
                         arma::mat& H)
 {
-  const size_t maxIterations = IO::GetParam<int>("max_iterations");
-  const double minResidue = IO::GetParam<double>("min_residue");
+  const size_t maxIterations = params.Get<int>("max_iterations");
+  const double minResidue = params.Get<double>("min_residue");
 
   SimpleResidueTermination srt(minResidue, maxIterations);
 
@@ -153,7 +159,7 @@ void ApplyFactorization(const arma::mat& V,
   // BINDING_MATRIX_TRANSPOSED macro, which will be 'true' or 'false'.
   arma::mat initialW, initialH;
   LoadInitialWH(BINDING_MATRIX_TRANSPOSED, initialW, initialH);
-  if (IO::HasParam("initial_w") && IO::HasParam("initial_h"))
+  if (params.Has("initial_w") && params.Has("initial_h"))
   {
     // Initialize W and H with given matrices
     GivenInitialization ginit = GivenInitialization(initialW, initialH);
@@ -162,7 +168,7 @@ void ApplyFactorization(const arma::mat& V,
         UpdateRuleType> amf(srt, ginit);
     amf.Apply(V, r, W, H);
   }
-  else if (IO::HasParam("initial_w"))
+  else if (params.Has("initial_w"))
   {
     // Merge GivenInitialization and RandomInitialization rules
     // to initialize W with the given matrix, and H with random noise
@@ -176,7 +182,7 @@ void ApplyFactorization(const arma::mat& V,
         UpdateRuleType> amf(srt, minit);
     amf.Apply(V, r, W, H);
   }
-  else if (IO::HasParam("initial_h"))
+  else if (params.Has("initial_h"))
   {
     // Merge GivenInitialization and RandomInitialization rules
     // to initialize H with the given matrix, and W with random noise
@@ -200,29 +206,30 @@ void ApplyFactorization(const arma::mat& V,
   }
 }
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
   // Initialize random seed.
-  if (IO::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
+  if (params.Get<int>("seed") != 0)
+    math::RandomSeed((size_t) params.Get<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
   // Gather parameters.
-  const size_t r = IO::GetParam<int>("rank");
-  const string updateRules = IO::GetParam<string>("update_rules");
+  const size_t r = params.Get<int>("rank");
+  const string updateRules = params.Get<string>("update_rules");
 
   // Validate parameters.
-  RequireParamValue<int>("rank", [](int x) { return x > 0; }, true,
+  RequireParamValue<int>(params, "rank", [](int x) { return x > 0; }, true,
       "the rank of the factorization must be greater than 0");
-  RequireParamInSet<string>("update_rules", { "multdist", "multdiv", "als" },
-      true, "unknown update rules");
-  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; },
+  RequireParamInSet<string>(params, "update_rules", { "multdist", "multdiv",
+      "als" }, true, "unknown update rules");
+  RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
       true, "max_iterations must be non-negative");
 
-  RequireAtLeastOnePassed({ "h", "w" }, false, "no output will be saved");
+  RequireAtLeastOnePassed(params, { "h", "w" }, false,
+      "no output will be saved");
 
-  arma::mat V = std::move(IO::GetParam<arma::mat>("input"));
+  arma::mat V = std::move(params.Get<arma::mat>("input"));
 
   arma::mat W;
   arma::mat H;

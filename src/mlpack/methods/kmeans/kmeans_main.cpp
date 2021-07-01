@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME kmeans
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "kmeans.hpp"
@@ -29,7 +35,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("K-Means Clustering");
+BINDING_USER_NAME("K-Means Clustering");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -175,33 +181,33 @@ template<typename InitialPartitionPolicy,
          template<class, class> class LloydStepType>
 void RunKMeans(const InitialPartitionPolicy& ipp);
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
   // Initialize random seed.
-  if (IO::GetParam<int>("seed") != 0)
-    math::RandomSeed((size_t) IO::GetParam<int>("seed"));
+  if (params.Get<int>("seed") != 0)
+    math::RandomSeed((size_t) params.Get<int>("seed"));
   else
     math::RandomSeed((size_t) std::time(NULL));
 
-  RequireOnlyOnePassed({ "refined_start", "kmeans_plus_plus" }, true,
+  RequireOnlyOnePassed(params, { "refined_start", "kmeans_plus_plus" }, true,
       "Only one initialization strategy can be specified!", true);
 
   // Now, start building the KMeans type that we'll be using.  Start with the
   // initial partition policy.  The call to FindEmptyClusterPolicy<> results in
   // a call to RunKMeans<> and the algorithm is completed.
-  if (IO::HasParam("refined_start"))
+  if (params.Has("refined_start"))
   {
-    RequireParamValue<int>("samplings", [](int x) { return x > 0; }, true,
-        "number of samplings must be positive");
-    const int samplings = IO::GetParam<int>("samplings");
-    RequireParamValue<double>("percentage",
+    RequireParamValue<int>(params, "samplings", [](int x) { return x > 0; },
+        true, "number of samplings must be positive");
+    const int samplings = params.Get<int>("samplings");
+    RequireParamValue<double>(params, "percentage",
         [](double x) { return x > 0.0 && x <= 1.0; }, true, "percentage to "
         "sample must be greater than 0.0 and less than or equal to 1.0");
-    const double percentage = IO::GetParam<double>("percentage");
+    const double percentage = params.Get<double>("percentage");
 
     FindEmptyClusterPolicy<RefinedStart>(RefinedStart(samplings, percentage));
   }
-  else if (IO::HasParam("kmeans_plus_plus"))
+  else if (params.Has("kmeans_plus_plus"))
   {
     FindEmptyClusterPolicy<KMeansPlusPlusInitialization>(
         KMeansPlusPlusInitialization());
@@ -217,14 +223,14 @@ static void mlpackMain()
 template<typename InitialPartitionPolicy>
 void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp)
 {
-  if (IO::HasParam("allow_empty_clusters") ||
-      IO::HasParam("kill_empty_clusters"))
-    RequireOnlyOnePassed({ "allow_empty_clusters", "kill_empty_clusters" },
-                         true);
+  if (params.Has("allow_empty_clusters") ||
+      params.Has("kill_empty_clusters"))
+    RequireOnlyOnePassed(params, { "allow_empty_clusters",
+        "kill_empty_clusters" }, true);
 
-  if (IO::HasParam("allow_empty_clusters"))
+  if (params.Has("allow_empty_clusters"))
     FindLloydStepType<InitialPartitionPolicy, AllowEmptyClusters>(ipp);
-  else if (IO::HasParam("kill_empty_clusters"))
+  else if (params.Has("kill_empty_clusters"))
     FindLloydStepType<InitialPartitionPolicy, KillEmptyClusters>(ipp);
   else
     FindLloydStepType<InitialPartitionPolicy, MaxVarianceNewCluster>(ipp);
@@ -235,11 +241,11 @@ void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp)
 template<typename InitialPartitionPolicy, typename EmptyClusterPolicy>
 void FindLloydStepType(const InitialPartitionPolicy& ipp)
 {
-  RequireParamInSet<string>("algorithm", { "elkan", "hamerly", "pelleg-moore",
-      "dualtree", "dualtree-covertree", "naive" }, true, "unknown k-means "
-      "algorithm");
+  RequireParamInSet<string>(params, "algorithm", { "elkan", "hamerly",
+      "pelleg-moore", "dualtree", "dualtree-covertree", "naive" }, true,
+      "unknown k-means algorithm");
 
-  const string algorithm = IO::GetParam<string>("algorithm");
+  const string algorithm = params.Get<string>("algorithm");
   if (algorithm == "elkan")
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, ElkanKMeans>(ipp);
   else if (algorithm == "hamerly")
@@ -264,18 +270,18 @@ template<typename InitialPartitionPolicy,
 void RunKMeans(const InitialPartitionPolicy& ipp)
 {
   // Now, do validation of input options.
-  if (!IO::HasParam("initial_centroids"))
+  if (!params.Has("initial_centroids"))
   {
-    RequireParamValue<int>("clusters", [](int x) { return x > 0; }, true,
-        "number of clusters must be positive");
+    RequireParamValue<int>(params, "clusters", [](int x) { return x > 0; },
+        true, "number of clusters must be positive");
   }
   else
   {
-    ReportIgnoredParam({{ "initial_centroids", true }}, "clusters");
+    ReportIgnoredParam(params, {{ "initial_centroids", true }}, "clusters");
   }
 
-  int clusters = IO::GetParam<int>("clusters");
-  if (clusters == 0 && IO::HasParam("initial_centroids"))
+  int clusters = params.Get<int>("clusters");
+  if (clusters == 0 && params.Has("initial_centroids"))
   {
     Log::Info << "Detecting number of clusters automatically from input "
         << "centroids." << endl;
@@ -283,45 +289,46 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
 
   RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
     "maximum iterations must be positive or 0 (for no limit)");
-  const int maxIterations = IO::GetParam<int>("max_iterations");
+  const int maxIterations = params.Get<int>("max_iterations");
 
   // Make sure we have an output file if we're not doing the work in-place.
-  RequireOnlyOnePassed({ "in_place", "output", "centroid" }, false,
+  RequireOnlyOnePassed(params, { "in_place", "output", "centroid" }, false,
       "no results will be saved");
 
-  arma::mat dataset = IO::GetParam<arma::mat>("input");  // Load our dataset.
+  arma::mat dataset = params.Get<arma::mat>("input");  // Load our dataset.
   arma::mat centroids;
 
-  const bool initialCentroidGuess = IO::HasParam("initial_centroids");
+  const bool initialCentroidGuess = params.Has("initial_centroids");
   // Load initial centroids if the user asked for it.
   if (initialCentroidGuess)
   {
-    centroids = std::move(IO::GetParam<arma::mat>("initial_centroids"));
+    centroids = std::move(params.Get<arma::mat>("initial_centroids"));
     if (clusters == 0)
       clusters = centroids.n_cols;
 
-    ReportIgnoredParam({{ "refined_start", true }}, "initial_centroids");
+    ReportIgnoredParam(params, {{ "refined_start", true }},
+        "initial_centroids");
 
-    if (!IO::HasParam("refined_start"))
+    if (!params.Has("refined_start"))
       Log::Info << "Using initial centroid guesses." << endl;
   }
 
-  Timer::Start("clustering");
+  timers.Start(("clustering");
   KMeans<metric::EuclideanDistance,
          InitialPartitionPolicy,
          EmptyClusterPolicy,
          LloydStepType> kmeans(maxIterations, metric::EuclideanDistance(), ipp);
 
-  if (IO::HasParam("output") || IO::HasParam("in_place"))
+  if (params.Has("output") || params.Has("in_place"))
   {
     // We need to get the assignments.
     arma::Row<size_t> assignments;
     kmeans.Cluster(dataset, clusters, assignments, centroids,
         false, initialCentroidGuess);
-    Timer::Stop("clustering");
+    timers.Stop("clustering");
 
     // Now figure out what to do with our results.
-    if (IO::HasParam("in_place"))
+    if (params.Has("in_place"))
     {
       // Add the column of assignments to the dataset; but we have to convert
       // them to type double first.
@@ -332,16 +339,16 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
       dataset.insert_rows(dataset.n_rows, converted);
 
       // Save the dataset.
-      IO::MakeInPlaceCopy("output", "input");
-      IO::GetParam<arma::mat>("output") = std::move(dataset);
+      params.MakeInPlaceCopy("output", "input");
+      params.Get<arma::mat>("output") = std::move(dataset);
     }
     else
     {
-      if (IO::HasParam("labels_only"))
+      if (params.Has("labels_only"))
       {
         // Save only the labels.  TODO: figure out how to get this to output an
         // arma::Mat<size_t> instead of an arma::mat.
-        IO::GetParam<arma::mat>("output") =
+        params.Get<arma::mat>("output") =
             arma::conv_to<arma::mat>::from(assignments);
       }
       else
@@ -354,7 +361,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
         dataset.insert_rows(dataset.n_rows, converted);
 
         // Now save, in the different file.
-        IO::GetParam<arma::mat>("output") = std::move(dataset);
+        params.Get<arma::mat>("output") = std::move(dataset);
       }
     }
   }
@@ -362,10 +369,10 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
   {
     // Just save the centroids.
     kmeans.Cluster(dataset, clusters, centroids, initialCentroidGuess);
-    Timer::Stop("clustering");
+    timers.Stop("clustering");
   }
 
   // Should we write the centroids to a file?
-  if (IO::HasParam("centroid"))
-    IO::GetParam<arma::mat>("centroid") = std::move(centroids);
+  if (params.Has("centroid"))
+    params.Get<arma::mat>("centroid") = std::move(centroids);
 }

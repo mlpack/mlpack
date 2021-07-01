@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME hmm_loglik
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include "hmm.hpp"
@@ -28,7 +34,7 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("Hidden Markov Model (HMM) Sequence Log-Likelihood");
+BINDING_USER_NAME("Hidden Markov Model (HMM) Sequence Log-Likelihood");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -75,7 +81,7 @@ struct Loglik
   static void Apply(HMMType& hmm, void* /* extraInfo */)
   {
     // Load the data sequence.
-    mat dataSeq = std::move(IO::GetParam<mat>("input"));
+    mat dataSeq = std::move(params.Get<mat>("input"));
 
     // Detect if we need to transpose the data, in the case where the input data
     // has one dimension.
@@ -95,12 +101,12 @@ struct Loglik
 
     const double loglik = hmm.LogLikelihood(dataSeq);
 
-    IO::GetParam<double>("log_likelihood") = loglik;
+    params.Get<double>("log_likelihood") = loglik;
   }
 };
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
   // Load model, and calculate the log-likelihood of the sequence.
-  IO::GetParam<HMMModel*>("input_model")->PerformAction<Loglik>((void*) NULL);
+  params.Get<HMMModel*>("input_model")->PerformAction<Loglik>((void*) NULL);
 }

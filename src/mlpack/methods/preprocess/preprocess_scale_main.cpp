@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME preprocess_scale
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
 #include <mlpack/core/math/ccov.hpp>
@@ -29,7 +35,7 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("Scale Data");
+BINDING_USER_NAME("Scale Data");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -110,37 +116,37 @@ PARAM_FLAG("inverse_scaling", "Inverse Scaling to get original dataset", "f");
 PARAM_MODEL_IN(ScalingModel, "input_model", "Input Scaling model.", "m");
 PARAM_MODEL_OUT(ScalingModel, "output_model", "Output scaling model.", "M");
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
   // Parse command line options.
-  const std::string scalerMethod = IO::GetParam<string>("scaler_method");
+  const std::string scalerMethod = params.Get<string>("scaler_method");
 
-  if (IO::GetParam<int>("seed") == 0)
+  if (params.Get<int>("seed") == 0)
     mlpack::math::RandomSeed(std::time(NULL));
   else
-    mlpack::math::RandomSeed((size_t) IO::GetParam<int>("seed"));
+    mlpack::math::RandomSeed((size_t) params.Get<int>("seed"));
 
   // Make sure the user specified output filenames.
-  RequireAtLeastOnePassed({ "output", "output_model"}, false,
+  RequireAtLeastOnePassed(params, { "output", "output_model"}, false,
       "no output will be saved");
   // Check scaler method.
-  RequireParamInSet<std::string>("scaler_method", { "min_max_scaler",
+  RequireParamInSet<std::string>(params, "scaler_method", { "min_max_scaler",
     "standard_scaler", "max_abs_scaler", "mean_normalization", "pca_whitening",
     "zca_whitening" }, true, "unknown scaler type");
 
   // Load the data.
-  arma::mat& input = IO::GetParam<arma::mat>("input");
+  arma::mat& input = params.Get<arma::mat>("input");
   arma::mat output;
   ScalingModel* m;
-  Timer::Start("feature_scaling");
-  if (IO::HasParam("input_model"))
+  timers.Start(("feature_scaling");
+  if (params.Has("input_model"))
   {
-    m = IO::GetParam<ScalingModel*>("input_model");
+    m = params.Get<ScalingModel*>("input_model");
   }
   else
   {
-    m = new ScalingModel(IO::GetParam<int>("min_value"),
-        IO::GetParam<int>("max_value"), IO::GetParam<double>("epsilon"));
+    m = new ScalingModel(params.Get<int>("min_value"),
+        params.Get<int>("max_value"), params.Get<double>("epsilon"));
 
     if (scalerMethod == "standard_scaler")
     {
@@ -180,13 +186,13 @@ static void mlpackMain()
     }
   }
 
-  if (!IO::HasParam("inverse_scaling"))
+  if (!params.Has("inverse_scaling"))
   {
     m->Transform(input, output);
   }
   else
   {
-    if (!IO::HasParam("input_model"))
+    if (!params.Has("input_model"))
     {
       delete m;
       throw std::runtime_error("Please provide a saved model.");
@@ -195,9 +201,9 @@ static void mlpackMain()
   }
 
   // Save the output.
-  if (IO::HasParam("output"))
-    IO::GetParam<arma::mat>("output") = std::move(output);
-  Timer::Stop("feature_scaling");
+  if (params.Has("output"))
+    params.Get<arma::mat>("output") = std::move(output);
+  timers.Stop("feature_scaling");
 
-  IO::GetParam<ScalingModel*>("output_model") = m;
+  params.Get<ScalingModel*>("output_model") = m;
 }

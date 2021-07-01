@@ -33,8 +33,14 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
-#include <mlpack/core/data/normalize_labels.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME adaboost
+
 #include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/core/data/normalize_labels.hpp>
 #include "adaboost.hpp"
 #include "adaboost_model.hpp"
 
@@ -47,7 +53,7 @@ using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_NAME("AdaBoost");
+BINDING_USER_NAME("AdaBoost");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -146,33 +152,33 @@ PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
 PARAM_MODEL_OUT(AdaBoostModel, "output_model", "Output trained AdaBoost model.",
     "M");
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
   // Check input parameters and issue warnings/errors as necessary.
 
   // The user cannot specify both a training file and an input model file.
-  RequireOnlyOnePassed({ "training", "input_model" });
+  RequireOnlyOnePassed(params, { "training", "input_model" });
 
   // The weak learner must make sense.
-  RequireParamInSet<std::string>("weak_learner",
+  RequireParamInSet<std::string>(params, "weak_learner",
       { "decision_stump", "perceptron" }, true, "unknown weak learner type");
 
   // --labels can't be specified without --training.
-  ReportIgnoredParam({{ "training", false }}, "labels");
+  ReportIgnoredParam(params, {{ "training", false }}, "labels");
 
   // Sanity check on iterations.
-  RequireParamValue<int>("iterations", [](int x) { return x > 0; },
+  RequireParamValue<int>(params, "iterations", [](int x) { return x > 0; },
       true, "invalid number of iterations specified");
 
   // If a weak learner is specified with a model, it will be ignored.
-  ReportIgnoredParam({{ "input_model", true }}, "weak_learner");
+  ReportIgnoredParam(params, {{ "input_model", true }}, "weak_learner");
 
   // Training parameters are ignored if no training file is given.
-  ReportIgnoredParam({{ "training", false }}, "tolerance");
-  ReportIgnoredParam({{ "training", false }}, "iterations");
+  ReportIgnoredParam(params, {{ "training", false }}, "tolerance");
+  ReportIgnoredParam(params, {{ "training", false }}, "iterations");
 
   // If we gave an input model but no test set, issue a warning.
-  if (IO::HasParam("input_model"))
+  if (params.Has("input_model"))
     RequireAtLeastOnePassed({ "test" }, false, "no task will be performed");
 
   RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
@@ -182,18 +188,18 @@ static void mlpackMain()
   ReportIgnoredParam({{ "test", false }}, "predictions");
 
   AdaBoostModel* m;
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
-    mat trainingData = std::move(IO::GetParam<arma::mat>("training"));
+    mat trainingData = std::move(params.Get<arma::mat>("training"));
     m = new AdaBoostModel();
 
     // Load labels.
     arma::Row<size_t> labelsIn;
 
-    if (IO::HasParam("labels"))
+    if (params.Has("labels"))
     {
       // Load labels.
-      labelsIn = std::move(IO::GetParam<arma::Row<size_t>>("labels"));
+      labelsIn = std::move(params.Get<arma::Row<size_t>>("labels"));
     }
     else
     {
@@ -212,9 +218,9 @@ static void mlpackMain()
     data::NormalizeLabels(labelsIn, labels, m->Mappings());
 
     // Get other training parameters.
-    const double tolerance = IO::GetParam<double>("tolerance");
-    const size_t iterations = (size_t) IO::GetParam<int>("iterations");
-    const string weakLearner = IO::GetParam<string>("weak_learner");
+    const double tolerance = params.Get<double>("tolerance");
+    const size_t iterations = (size_t) params.Get<int>("iterations");
+    const string weakLearner = params.Get<string>("weak_learner");
     if (weakLearner == "decision_stump")
       m->WeakLearnerType() = AdaBoostModel::WeakLearnerTypes::DECISION_STUMP;
     else if (weakLearner == "perceptron")
@@ -223,20 +229,20 @@ static void mlpackMain()
     const size_t numClasses = m->Mappings().n_elem;
     Log::Info << numClasses << " classes in dataset." << endl;
 
-    Timer::Start("adaboost_training");
+    timers.Start(("adaboost_training");
     m->Train(trainingData, labels, numClasses, iterations, tolerance);
-    Timer::Stop("adaboost_training");
+    timers.Stop("adaboost_training");
   }
   else
   {
     // We have a specified input model.
-    m = IO::GetParam<AdaBoostModel*>("input_model");
+    m = params.Get<AdaBoostModel*>("input_model");
   }
 
   // Perform classification, if desired.
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
-    mat testingData = std::move(IO::GetParam<arma::mat>("test"));
+    mat testingData = std::move(params.Get<arma::mat>("test"));
 
     if (testingData.n_rows != m->Dimensionality())
       Log::Fatal << "Test data dimensionality (" << testingData.n_rows << ") "
@@ -246,30 +252,30 @@ static void mlpackMain()
     Row<size_t> predictedLabels(testingData.n_cols);
     mat probabilities;
 
-    if (IO::HasParam("probabilities"))
+    if (params.Has("probabilities"))
     {
-      Timer::Start("adaboost_classification");
+      timers.Start(("adaboost_classification");
       m->Classify(testingData, predictedLabels, probabilities);
-      Timer::Stop("adaboost_classification");
+      timers.Stop("adaboost_classification");
     }
     else
     {
-      Timer::Start("adaboost_classification");
+      timers.Start(("adaboost_classification");
       m->Classify(testingData, predictedLabels);
-      Timer::Stop("adaboost_classification");
+      timers.Stop("adaboost_classification");
     }
 
     Row<size_t> results;
     data::RevertLabels(predictedLabels, m->Mappings(), results);
 
     // Save the predicted labels.
-    if (IO::HasParam("output"))
-      IO::GetParam<arma::Row<size_t>>("output") = results;
-    if (IO::HasParam("predictions"))
-      IO::GetParam<arma::Row<size_t>>("predictions") = std::move(results);
-    if (IO::HasParam("probabilities"))
-      IO::GetParam<arma::mat>("probabilities") = std::move(probabilities);
+    if (params.Has("output"))
+      params.Get<arma::Row<size_t>>("output") = results;
+    if (params.Has("predictions"))
+      params.Get<arma::Row<size_t>>("predictions") = std::move(results);
+    if (params.Has("probabilities"))
+      params.Get<arma::mat>("probabilities") = std::move(probabilities);
   }
 
-  IO::GetParam<AdaBoostModel*>("output_model") = m;
+  params.Get<AdaBoostModel*>("output_model") = m;
 }
