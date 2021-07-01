@@ -119,7 +119,7 @@ class SSELoss
     return std::pow(arma::accu(gradients), 2) /
         (arma::accu(hessians) + lambda);
   }
-}
+};
 
 } // namespace ensemble
 } // namespace mlpack
