@@ -59,7 +59,8 @@ inline std::string GetPrintableType<double>(
 template<>
 inline std::string GetPrintableType<std::string>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<std::string>::value>::type*,
+    const typename std::enable_if<
+        !util::isStdVector<std::string>::value>::type*,
     const typename std::enable_if<!data::HasSerialize<std::string>::value>::type*,
     const typename std::enable_if<!arma::is_arma_type<std::string>::value>::type*,
     const typename std::enable_if<!std::is_same<std::string,
