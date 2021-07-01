@@ -299,7 +299,6 @@ using LayerTypes = boost::variant<
     Sequential<arma::mat, arma::mat, false>*,
     Sequential<arma::mat, arma::mat, true>*,
     Softmax<arma::mat, arma::mat>*,
-
     TransposedConvolution<NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,
