@@ -18,10 +18,10 @@
 #include <mlpack/core/util/log.hpp>
 #include <string>
 
+#include "csv_parser.hpp"
 #include "format.hpp"
 #include "dataset_mapper.hpp"
 #include "image_info.hpp"
-#include "csv_parser.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {

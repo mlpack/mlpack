@@ -22,7 +22,6 @@
 #include "load.hpp"
 #include "extension.hpp"
 #include "detect_file_type.hpp"
-#include "csv_parser.hpp"
 #include "types.hpp"
 
 #include <boost/algorithm/string/trim.hpp>
