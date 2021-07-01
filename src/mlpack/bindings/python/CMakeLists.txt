@@ -336,8 +336,8 @@ macro (add_python_binding group_name)
 
   add_executable(generate_py_wrapper_${group_name}
   ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_${group_name}.cpp
-  ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_py_wrapper.hpp
-  ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_py_wrapper.cpp)
+  ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_wrapper_py.hpp
+  ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_wrapper_py.cpp)
 
   target_link_libraries(generate_py_wrapper_${group_name} mlpack ${MLPACK_LIBRARIES})
   add_custom_command(TARGET generate_py_wrapper_${group_name} POST_BUILD
