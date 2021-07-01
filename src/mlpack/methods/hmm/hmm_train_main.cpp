@@ -104,21 +104,22 @@ PARAM_DOUBLE_IN("tolerance", "Tolerance of the Baum-Welch algorithm.", "T",
 struct Init
 {
   template<typename HMMType>
-  static void Apply(HMMType& hmm, vector<mat>* trainSeq)
+  static void Apply(util::Params& params, HMMType& hmm, vector<mat>* trainSeq)
   {
     const size_t states = params.Get<int>("states");
     const double tolerance = params.Get<double>("tolerance");
 
     // Create the initialized-to-zero model.
-    Create(hmm, *trainSeq, states, tolerance);
+    Create(params, hmm, *trainSeq, states, tolerance);
 
     // Initializing the emission distribution depends on the distribution.
     // Therefore we have to use the helper functions.
-    RandomInitialize(hmm.Emission());
+    RandomInitialize(params, hmm.Emission());
   }
 
   //! Helper function to create discrete HMM.
-  static void Create(HMM<DiscreteDistribution>& hmm,
+  static void Create(util::Params& params,
+                     HMM<DiscreteDistribution>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance)
@@ -140,7 +141,8 @@ struct Init
   }
 
   //! Helper function to create Gaussian HMM.
-  static void Create(HMM<GaussianDistribution>& hmm,
+  static void Create(util::Params& params,
+                     HMM<GaussianDistribution>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance)
@@ -165,7 +167,8 @@ struct Init
   }
 
   //! Helper function to create GMM HMM.
-  static void Create(HMM<GMM>& hmm,
+  static void Create(util::Params& params,
+                     HMM<GMM>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance)
@@ -199,7 +202,8 @@ struct Init
   }
 
   //! Helper function to create Diagonal GMM HMM.
-  static void Create(HMM<DiagonalGMM>& hmm,
+  static void Create(util::Params& params,
+                     HMM<DiagonalGMM>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
                      double tolerance)
@@ -233,7 +237,8 @@ struct Init
   }
 
   //! Helper function for discrete emission distributions.
-  static void RandomInitialize(vector<DiscreteDistribution>& e)
+  static void RandomInitialize(util::Params& params,
+                               vector<DiscreteDistribution>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
@@ -243,7 +248,8 @@ struct Init
   }
 
   //! Helper function for Gaussian emission distributions.
-  static void RandomInitialize(vector<GaussianDistribution>& e)
+  static void RandomInitialize(util::Params& params,
+                               vector<GaussianDistribution>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
@@ -256,7 +262,8 @@ struct Init
   }
 
   //! Helper function for GMM emission distributions.
-  static void RandomInitialize(vector<GMM>& e)
+  static void RandomInitialize(util::Params& params,
+                               vector<GMM>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
@@ -279,7 +286,8 @@ struct Init
   }
 
   //! Helper function for Diagonal GMM emission distributions.
-  static void RandomInitialize(vector<DiagonalGMM>& e)
+  static void RandomInitialize(util::Params& params,
+                               vector<DiagonalGMM>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
     {
@@ -306,7 +314,9 @@ struct Init
 struct Train
 {
   template<typename HMMType>
-  static void Apply(HMMType& hmm, vector<mat>* trainSeqPtr)
+  static void Apply(util::Params& params,
+                    HMMType& hmm,
+                    vector<mat>* trainSeqPtr)
   {
     const bool batch = params.Has("batch");
     const double tolerance = params.Get<double>("tolerance");
@@ -533,7 +543,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   {
     hmm = params.Get<HMMModel*>("input_model");
 
-    hmm->PerformAction<Train, vector<mat>>(&trainSeq);
+    hmm->PerformAction<Train, vector<mat>>(params, &trainSeq);
   }
   else
   {
@@ -543,8 +553,8 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
     // Catch any exceptions so that we can clean the model if needed.
     try
     {
-      hmm->PerformAction<Init, vector<mat>>(&trainSeq);
-      hmm->PerformAction<Train, vector<mat>>(&trainSeq);
+      hmm->PerformAction<Init, vector<mat>>(params, &trainSeq);
+      hmm->PerformAction<Train, vector<mat>>(params, &trainSeq);
     }
     catch (std::exception& e)
     {

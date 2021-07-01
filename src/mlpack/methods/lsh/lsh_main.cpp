@@ -134,7 +134,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   size_t secondHashSize = params.Get<int>("second_hash_size");
   size_t bucketSize = params.Get<int>("bucket_size");
 
-  RequireOnlyOnePassed({ "input_model", "reference" }, true);
+  RequireOnlyOnePassed(params, { "input_model", "reference" }, true);
   RequireAtLeastOnePassed(params, { "neighbors", "distances", "output_model" },
       false, "no results will be saved");
 

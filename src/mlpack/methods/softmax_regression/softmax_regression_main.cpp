@@ -138,11 +138,13 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 
 // Test the accuracy of the model.
 template<typename Model>
-void TestClassifyAcc(const size_t numClasses, const Model& model);
+void TestClassifyAcc(util::Params& params,
+                     const size_t numClasses,
+                     const Model& model);
 
 // Build the softmax model given the parameters.
 template<typename Model>
-Model* TrainSoftmax(const size_t maxIterations);
+Model* TrainSoftmax(util::Params& params, const size_t maxIterations);
 
 void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
@@ -152,8 +154,8 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   RequireOnlyOnePassed(params, { "input_model", "training" }, true);
   if (params.Has("training"))
   {
-    RequireAtLeastOnePassed({ "labels" }, true, "if training data is specified,"
-        " labels must also be specified");
+    RequireAtLeastOnePassed(params, { "labels" }, true, "if training data is "
+        "specified, labels must also be specified");
   }
   ReportIgnoredParam(params, {{ "training", false }}, "labels");
   ReportIgnoredParam(params, {{ "training", false }}, "max_iterations");
@@ -170,12 +172,13 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
       "than or equal to 0 (equal to 0 in case of unspecified.)");
 
   // Make sure we have an output file of some sort.
-  RequireAtLeastOnePassed({ "output_model", "predictions" }, false, "no results"
-      " will be saved");
+  RequireAtLeastOnePassed(params, { "output_model", "predictions" }, false,
+      "no results will be saved");
 
-  SoftmaxRegression* sm = TrainSoftmax<SoftmaxRegression>(maxIterations);
+  SoftmaxRegression* sm = TrainSoftmax<SoftmaxRegression>(params,
+      maxIterations);
 
-  TestClassifyAcc(sm->NumClasses(), *sm);
+  TestClassifyAcc(params, sm->NumClasses(), *sm);
 
   params.Get<SoftmaxRegression*>("output_model") = sm;
 }
@@ -196,7 +199,9 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 }
 
 template<typename Model>
-void TestClassifyAcc(size_t numClasses, const Model& model)
+void TestClassifyAcc(util::Params& params,
+                     const size_t numClasses,
+                     const Model& model)
 {
   using namespace mlpack;
 
@@ -259,7 +264,7 @@ void TestClassifyAcc(size_t numClasses, const Model& model)
 }
 
 template<typename Model>
-Model* TrainSoftmax(const size_t maxIterations)
+Model* TrainSoftmax(util::Params& params, const size_t maxIterations)
 {
   using namespace mlpack;
 

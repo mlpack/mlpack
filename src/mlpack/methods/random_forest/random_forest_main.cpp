@@ -232,7 +232,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
 
   if (params.Has("training"))
   {
-    timers.Start(("rf_training");
+    timers.Start("rf_training");
 
     // Train the model on the given input data.
     arma::mat data = std::move(params.Get<arma::mat>("training"));
@@ -268,7 +268,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
     // Did we want training accuracy?
     if (params.Has("print_training_accuracy"))
     {
-      timers.Start(("rf_prediction");
+      timers.Start("rf_prediction");
       arma::Row<size_t> predictions;
       rfModel->rf.Classify(data, predictions);
 
@@ -284,7 +284,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   if (params.Has("test"))
   {
     arma::mat testData = std::move(params.Get<arma::mat>("test"));
-    timers.Start(("rf_prediction");
+    timers.Start("rf_prediction");
 
     // Get predictions and probabilities.
     arma::Row<size_t> predictions;

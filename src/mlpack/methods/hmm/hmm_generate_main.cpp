@@ -91,7 +91,7 @@ PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 struct Generate
 {
   template<typename HMMType>
-  static void Apply(HMMType& hmm, void* /* extraInfo */)
+  static void Apply(util::Params& params, HMMType& hmm, void* /* extraInfo */)
   {
     mat observations;
     Row<size_t> sequence;
@@ -139,5 +139,5 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   // Load model, and perform the generation.
   HMMModel* hmm;
   hmm = std::move(params.Get<HMMModel*>("model"));
-  hmm->PerformAction<Generate, void>(NULL); // No extra data required.
+  hmm->PerformAction<Generate, void>(params, NULL); // No extra data required.
 }

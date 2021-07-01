@@ -201,7 +201,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
     numberFormat += widthPrecision + "f";
   }
 
-  timers.Start(("statistics");
+  timers.Start("statistics");
   // Print the headers.
   Log::Info << boost::format(stringFormat)
       % "dim" % "var" % "mean" % "std" % "median" % "min" % "max"

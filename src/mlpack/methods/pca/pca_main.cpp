@@ -96,7 +96,8 @@ PARAM_STRING_IN("decomposition_method", "Method used for the principal "
 
 //! Run RunPCA on the specified dataset with the given decomposition method.
 template<typename DecompositionPolicy>
-void RunPCA(arma::mat& dataset,
+void RunPCA(util::Params& params,
+            arma::mat& dataset,
             const size_t newDimension,
             const bool scale,
             const double varToRetain)
@@ -163,20 +164,21 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   // Perform PCA.
   if (decompositionMethod == "exact")
   {
-    RunPCA<ExactSVDPolicy>(dataset, newDimension, scale, varToRetain);
+    RunPCA<ExactSVDPolicy>(params, dataset, newDimension, scale, varToRetain);
   }
   else if (decompositionMethod == "randomized")
   {
-    RunPCA<RandomizedSVDPolicy>(dataset, newDimension, scale, varToRetain);
+    RunPCA<RandomizedSVDPolicy>(params, dataset, newDimension, scale,
+        varToRetain);
   }
   else if (decompositionMethod == "randomized-block-krylov")
   {
-    RunPCA<RandomizedBlockKrylovSVDPolicy>(dataset, newDimension, scale,
+    RunPCA<RandomizedBlockKrylovSVDPolicy>(params, dataset, newDimension, scale,
         varToRetain);
   }
   else if (decompositionMethod == "quic")
   {
-    RunPCA<QUICSVDPolicy>(dataset, newDimension, scale, varToRetain);
+    RunPCA<QUICSVDPolicy>(params, dataset, newDimension, scale, varToRetain);
   }
 
   // Now save the results.

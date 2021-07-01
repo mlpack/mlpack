@@ -78,7 +78,7 @@ PARAM_DOUBLE_OUT("log_likelihood", "Log-likelihood of the sequence.");
 struct Loglik
 {
   template<typename HMMType>
-  static void Apply(HMMType& hmm, void* /* extraInfo */)
+  static void Apply(util::Params& params, HMMType& hmm, void* /* extraInfo */)
   {
     // Load the data sequence.
     mat dataSeq = std::move(params.Get<mat>("input"));
@@ -108,5 +108,6 @@ struct Loglik
 void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
   // Load model, and calculate the log-likelihood of the sequence.
-  params.Get<HMMModel*>("input_model")->PerformAction<Loglik>((void*) NULL);
+  params.Get<HMMModel*>("input_model")->PerformAction<Loglik>(
+      params, (void*) NULL);
 }

@@ -158,7 +158,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
         params.Get<arma::Mat<size_t>>("input_labels");
     arma::Row<size_t> labelsRow = labels.row(0);
 
-    timers.Start(("splitting_data");
+    timers.Start("splitting_data");
     const auto value =
         data::Split(data, labelsRow, testRatio, !shuffleData, stratifyData);
     timers.Stop("splitting_data");
@@ -181,7 +181,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   }
   else // We have no labels, so just split the dataset.
   {
-    timers.Start(("splitting_data");
+    timers.Start("splitting_data");
     const auto value = data::Split(data, testRatio, !shuffleData);
     timers.Stop("splitting_data");
 

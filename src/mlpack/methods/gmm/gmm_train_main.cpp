@@ -185,7 +185,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   // Do we need to add noise to the dataset?
   if (params.Has("noise"))
   {
-    timers.Start(("noise_addition");
+    timers.Start("noise_addition");
     const double noise = params.Get<double>("noise");
     dataPoints += noise * arma::randn(dataPoints.n_rows, dataPoints.n_cols);
     Log::Info << "Added zero-mean Gaussian noise with variance " << noise
@@ -254,7 +254,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
       dgmm.Weights() = gmm->Weights();
 
       // Compute the parameters of the model using the EM algorithm.
-      timers.Start(("em");
+      timers.Start("em");
       EMFit<KMeansType, PositiveDefiniteConstraint,
           distribution::DiagonalGaussianDistribution> em(maxIterations,
           tolerance, k);
@@ -275,7 +275,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
     else if (forcePositive)
     {
       // Compute the parameters of the model using the EM algorithm.
-      timers.Start(("em");
+      timers.Start("em");
       EMFit<KMeansType> em(maxIterations, tolerance, k);
       likelihood = gmm->Train(dataPoints, params.Get<int>("trials"), false,
           em);
@@ -284,7 +284,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
     else
     {
       // Compute the parameters of the model using the EM algorithm.
-      timers.Start(("em");
+      timers.Start("em");
       EMFit<KMeansType, NoConstraint> em(maxIterations, tolerance, k);
       likelihood = gmm->Train(dataPoints, params.Get<int>("trials"), false,
           em);
@@ -312,7 +312,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
       dgmm.Weights() = gmm->Weights();
 
       // Compute the parameters of the model using the EM algorithm.
-      timers.Start(("em");
+      timers.Start("em");
       EMFit<KMeans<>, PositiveDefiniteConstraint,
           distribution::DiagonalGaussianDistribution> em(maxIterations,
           tolerance, KMeans<>(kmeansMaxIterations));
@@ -333,7 +333,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
     else if (forcePositive)
     {
       // Compute the parameters of the model using the EM algorithm.
-      timers.Start(("em");
+      timers.Start("em");
       EMFit<> em(maxIterations, tolerance, KMeans<>(kmeansMaxIterations));
       likelihood = gmm->Train(dataPoints, params.Get<int>("trials"), false,
           em);
@@ -342,7 +342,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
     else
     {
       // Compute the parameters of the model using the EM algorithm.
-      timers.Start(("em");
+      timers.Start("em");
       KMeans<> k(kmeansMaxIterations);
       EMFit<KMeans<>, NoConstraint> em(maxIterations, tolerance, k);
       likelihood = gmm->Train(dataPoints, params.Get<int>("trials"), false,

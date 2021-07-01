@@ -168,18 +168,24 @@ PARAM_STRING_IN("algorithm", "Algorithm to use for the Lloyd iteration "
 // Given the type of initial partition policy, figure out the empty cluster
 // policy and run k-means.
 template<typename InitialPartitionPolicy>
-void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp);
+void FindEmptyClusterPolicy(util::Params& params,
+                            util::Timers& timers,
+                            const InitialPartitionPolicy& ipp);
 
 // Given the initial partitionining policy and empty cluster policy, figure out
 // the Lloyd iteration step type and run k-means.
 template<typename InitialPartitionPolicy, typename EmptyClusterPolicy>
-void FindLloydStepType(const InitialPartitionPolicy& ipp);
+void FindLloydStepType(util::Params& params,
+                       util::Timers& timers,
+                       const InitialPartitionPolicy& ipp);
 
 // Given the template parameters, sanitize/load input and run k-means.
 template<typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType>
-void RunKMeans(const InitialPartitionPolicy& ipp);
+void RunKMeans(util::Params& params,
+               util::Timers& timers,
+               const InitialPartitionPolicy& ipp);
 
 void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
@@ -205,41 +211,58 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
         "sample must be greater than 0.0 and less than or equal to 1.0");
     const double percentage = params.Get<double>("percentage");
 
-    FindEmptyClusterPolicy<RefinedStart>(RefinedStart(samplings, percentage));
+    FindEmptyClusterPolicy<RefinedStart>(params, timers,
+        RefinedStart(samplings, percentage));
   }
   else if (params.Has("kmeans_plus_plus"))
   {
-    FindEmptyClusterPolicy<KMeansPlusPlusInitialization>(
+    FindEmptyClusterPolicy<KMeansPlusPlusInitialization>(params, timers,
         KMeansPlusPlusInitialization());
   }
   else
   {
-    FindEmptyClusterPolicy<SampleInitialization>(SampleInitialization());
+    FindEmptyClusterPolicy<SampleInitialization>(params, timers,
+        SampleInitialization());
   }
 }
 
 // Given the type of initial partition policy, figure out the empty cluster
 // policy and run k-means.
 template<typename InitialPartitionPolicy>
-void FindEmptyClusterPolicy(const InitialPartitionPolicy& ipp)
+void FindEmptyClusterPolicy(util::Params& params,
+                            util::Timers& timers,
+                            const InitialPartitionPolicy& ipp)
 {
   if (params.Has("allow_empty_clusters") ||
       params.Has("kill_empty_clusters"))
+  {
     RequireOnlyOnePassed(params, { "allow_empty_clusters",
         "kill_empty_clusters" }, true);
+  }
 
   if (params.Has("allow_empty_clusters"))
-    FindLloydStepType<InitialPartitionPolicy, AllowEmptyClusters>(ipp);
+  {
+    FindLloydStepType<InitialPartitionPolicy, AllowEmptyClusters>(params,
+        timers, ipp);
+  }
   else if (params.Has("kill_empty_clusters"))
-    FindLloydStepType<InitialPartitionPolicy, KillEmptyClusters>(ipp);
+  {
+    FindLloydStepType<InitialPartitionPolicy, KillEmptyClusters>(params, timers,
+        ipp);
+  }
   else
-    FindLloydStepType<InitialPartitionPolicy, MaxVarianceNewCluster>(ipp);
+  {
+    FindLloydStepType<InitialPartitionPolicy, MaxVarianceNewCluster>(params,
+        timers, ipp);
+  }
 }
 
 // Given the initial partitionining policy and empty cluster policy, figure out
 // the Lloyd iteration step type and run k-means.
 template<typename InitialPartitionPolicy, typename EmptyClusterPolicy>
-void FindLloydStepType(const InitialPartitionPolicy& ipp)
+void FindLloydStepType(util::Params& params,
+                       util::Timers& timers,
+                       const InitialPartitionPolicy& ipp)
 {
   RequireParamInSet<string>(params, "algorithm", { "elkan", "hamerly",
       "pelleg-moore", "dualtree", "dualtree-covertree", "naive" }, true,
@@ -247,27 +270,44 @@ void FindLloydStepType(const InitialPartitionPolicy& ipp)
 
   const string algorithm = params.Get<string>("algorithm");
   if (algorithm == "elkan")
-    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, ElkanKMeans>(ipp);
+  {
+    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, ElkanKMeans>(params,
+        timers, ipp);
+  }
   else if (algorithm == "hamerly")
-    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, HamerlyKMeans>(ipp);
+  {
+    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, HamerlyKMeans>(
+        params, timers, ipp);
+  }
   else if (algorithm == "pelleg-moore")
+  {
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
-        PellegMooreKMeans>(ipp);
+        PellegMooreKMeans>(params, timers, ipp);
+  }
   else if (algorithm == "dualtree")
+  {
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
-        DefaultDualTreeKMeans>(ipp);
+        DefaultDualTreeKMeans>(params, timers, ipp);
+  }
   else if (algorithm == "dualtree-covertree")
+  {
     RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy,
-        CoverTreeDualTreeKMeans>(ipp);
+        CoverTreeDualTreeKMeans>(params, timers, ipp);
+  }
   else if (algorithm == "naive")
-    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, NaiveKMeans>(ipp);
+  {
+    RunKMeans<InitialPartitionPolicy, EmptyClusterPolicy, NaiveKMeans>(params,
+        timers, ipp);
+  }
 }
 
 // Given the template parameters, sanitize/load input and run k-means.
 template<typename InitialPartitionPolicy,
          typename EmptyClusterPolicy,
          template<class, class> class LloydStepType>
-void RunKMeans(const InitialPartitionPolicy& ipp)
+void RunKMeans(util::Params& params,
+               util::Timers& timers,
+               const InitialPartitionPolicy& ipp)
 {
   // Now, do validation of input options.
   if (!params.Has("initial_centroids"))
@@ -287,8 +327,8 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
         << "centroids." << endl;
   }
 
-  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
-    "maximum iterations must be positive or 0 (for no limit)");
+  RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
+      true, "maximum iterations must be positive or 0 (for no limit)");
   const int maxIterations = params.Get<int>("max_iterations");
 
   // Make sure we have an output file if we're not doing the work in-place.
@@ -313,7 +353,7 @@ void RunKMeans(const InitialPartitionPolicy& ipp)
       Log::Info << "Using initial centroid guesses." << endl;
   }
 
-  timers.Start(("clustering");
+  timers.Start("clustering");
   KMeans<metric::EuclideanDistance,
          InitialPartitionPolicy,
          EmptyClusterPolicy,

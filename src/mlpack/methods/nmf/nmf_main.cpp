@@ -109,7 +109,10 @@ PARAM_STRING_IN("update_rules", "Update rules for each iteration; ( multdist | "
 PARAM_MATRIX_IN("initial_w", "Initial W matrix.", "p");
 PARAM_MATRIX_IN("initial_h", "Initial H matrix.", "q");
 
-void LoadInitialWH(const bool bindingTransposed, arma::mat& w, arma::mat& h)
+void LoadInitialWH(util::Params& params,
+                   const bool bindingTransposed,
+                   arma::mat& w,
+                   arma::mat& h)
 {
   // Note that these datasets will typically be transposed on load, since we are
   // likely receiving it from a row-major language, but we get it in a
@@ -129,7 +132,10 @@ void LoadInitialWH(const bool bindingTransposed, arma::mat& w, arma::mat& h)
   }
 }
 
-void SaveWH(const bool bindingTransposed, arma::mat&& w, arma::mat&& h)
+void SaveWH(util::Params& params,
+            const bool bindingTransposed,
+            arma::mat&& w,
+            arma::mat&& h)
 {
   // The same transposition applies when saving.
   if (bindingTransposed)
@@ -145,7 +151,8 @@ void SaveWH(const bool bindingTransposed, arma::mat&& w, arma::mat&& h)
 }
 
 template<typename UpdateRuleType>
-void ApplyFactorization(const arma::mat& V,
+void ApplyFactorization(util::Params& params,
+                        const arma::mat& V,
                         const size_t r,
                         arma::mat& W,
                         arma::mat& H)
@@ -158,7 +165,7 @@ void ApplyFactorization(const arma::mat& V,
   // Load input dataset.  We know if the data is transposed based on the
   // BINDING_MATRIX_TRANSPOSED macro, which will be 'true' or 'false'.
   arma::mat initialW, initialH;
-  LoadInitialWH(BINDING_MATRIX_TRANSPOSED, initialW, initialH);
+  LoadInitialWH(params, BINDING_MATRIX_TRANSPOSED, initialW, initialH);
   if (params.Has("initial_w") && params.Has("initial_h"))
   {
     // Initialize W and H with given matrices
@@ -239,22 +246,22 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   {
     Log::Info << "Performing NMF with multiplicative distance-based update "
         << "rules." << std::endl;
-    ApplyFactorization<NMFMultiplicativeDistanceUpdate>(V, r, W, H);
+    ApplyFactorization<NMFMultiplicativeDistanceUpdate>(params, V, r, W, H);
   }
   else if (updateRules == "multdiv")
   {
     Log::Info << "Performing NMF with multiplicative divergence-based update "
         << "rules." << std::endl;
-    ApplyFactorization<NMFMultiplicativeDivergenceUpdate>(V, r, W, H);
+    ApplyFactorization<NMFMultiplicativeDivergenceUpdate>(params, V, r, W, H);
   }
   else if (updateRules == "als")
   {
     Log::Info << "Performing NMF with alternating least squared update rules."
         << std::endl;
-    ApplyFactorization<NMFALSUpdate>(V, r, W, H);
+    ApplyFactorization<NMFALSUpdate>(params, V, r, W, H);
   }
 
   // Save results.  Remember from our discussion in the comments earlier that we
   // may need to switch the names of the outputs.
-  SaveWH(BINDING_MATRIX_TRANSPOSED, std::move(W), std::move(H));
+  SaveWH(params, BINDING_MATRIX_TRANSPOSED, std::move(W), std::move(H));
 }

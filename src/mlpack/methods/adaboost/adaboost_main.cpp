@@ -179,13 +179,16 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
 
   // If we gave an input model but no test set, issue a warning.
   if (params.Has("input_model"))
-    RequireAtLeastOnePassed({ "test" }, false, "no task will be performed");
+  {
+    RequireAtLeastOnePassed(params, { "test" }, false,
+        "no task will be performed");
+  }
 
-  RequireAtLeastOnePassed({ "output_model", "output", "predictions" }, false,
-      "no results will be saved");
+  RequireAtLeastOnePassed(params, { "output_model", "output", "predictions" },
+      false, "no results will be saved");
 
   // "output" will be removed in mlpack 4.0.0.
-  ReportIgnoredParam({{ "test", false }}, "predictions");
+  ReportIgnoredParam(params, {{ "test", false }}, "predictions");
 
   AdaBoostModel* m;
   if (params.Has("training"))
@@ -229,7 +232,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
     const size_t numClasses = m->Mappings().n_elem;
     Log::Info << numClasses << " classes in dataset." << endl;
 
-    timers.Start(("adaboost_training");
+    timers.Start("adaboost_training");
     m->Train(trainingData, labels, numClasses, iterations, tolerance);
     timers.Stop("adaboost_training");
   }
@@ -254,13 +257,13 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
 
     if (params.Has("probabilities"))
     {
-      timers.Start(("adaboost_classification");
+      timers.Start("adaboost_classification");
       m->Classify(testingData, predictedLabels, probabilities);
       timers.Stop("adaboost_classification");
     }
     else
     {
-      timers.Start(("adaboost_classification");
+      timers.Start("adaboost_classification");
       m->Classify(testingData, predictedLabels);
       timers.Stop("adaboost_classification");
     }

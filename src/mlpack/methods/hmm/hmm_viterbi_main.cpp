@@ -81,7 +81,7 @@ PARAM_UMATRIX_OUT("output", "File to save predicted state sequence to.", "o");
 struct Viterbi
 {
   template<typename HMMType>
-  static void Apply(HMMType& hmm, void* /* extraInfo */)
+  static void Apply(util::Params& params, HMMType& hmm, void* /* extraInfo */)
   {
     // Load observations.
     mat dataSeq = std::move(params.Get<arma::mat>("input"));
@@ -115,5 +115,6 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   RequireAtLeastOnePassed(params, { "output" }, false,
       "no results will be saved");
 
-  params.Get<HMMModel*>("input_model")->PerformAction<Viterbi>((void*) NULL);
+  params.Get<HMMModel*>("input_model")->PerformAction<Viterbi>(
+      params, (void*) NULL);
 }

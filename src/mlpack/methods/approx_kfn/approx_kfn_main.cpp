@@ -220,7 +220,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
 
   if (params.Has("calculate_error"))
   {
-    RequireAtLeastOnePassed({ "exact_distances", "reference" }, true,
+    RequireAtLeastOnePassed(params, { "exact_distances", "reference" }, true,
         "if error is to be calculated, either precalculated exact distances or "
         "the reference set must be passed");
   }
@@ -250,7 +250,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
 
     if (algorithm == "ds")
     {
-      timers.Start(("drusilla_select_construct");
+      timers.Start("drusilla_select_construct");
       Log::Info << "Building DrusillaSelect model..." << endl;
       m->type = 0;
       m->ds = DrusillaSelect<>(referenceSet, numTables, numProjections);
@@ -258,7 +258,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
     }
     else
     {
-      timers.Start(("qdafn_construct");
+      timers.Start("qdafn_construct");
       Log::Info << "Building QDAFN model..." << endl;
       m->type = 1;
       m->qdafn = QDAFN<>(referenceSet, numTables, numProjections);
@@ -287,7 +287,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
 
     if (m->type == 0)
     {
-      timers.Start(("drusilla_select_search");
+      timers.Start("drusilla_select_search");
       Log::Info << "Searching for " << k << " furthest neighbors with "
           << "DrusillaSelect..." << endl;
       m->ds.Search(set, k, neighbors, distances);
@@ -295,7 +295,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
     }
     else
     {
-      timers.Start(("qdafn_search");
+      timers.Start("qdafn_search");
       Log::Info << "Searching for " << k << " furthest neighbors with "
           << "QDAFN..." << endl;
       m->qdafn.Search(set, k, neighbors, distances);

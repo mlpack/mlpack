@@ -112,7 +112,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   RequireParamValue<int>(params, "dimension",
       [input](int x) { return size_t(x) < input.n_rows; }, true, error.str());
 
-  timers.Start(("binarize");
+  timers.Start("binarize");
   if (params.Has("dimension"))
   {
     data::Binarize<double>(input, output, threshold, dimension);

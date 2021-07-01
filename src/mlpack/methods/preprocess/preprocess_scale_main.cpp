@@ -138,7 +138,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   arma::mat& input = params.Get<arma::mat>("input");
   arma::mat output;
   ScalingModel* m;
-  timers.Start(("feature_scaling");
+  timers.Start("feature_scaling");
   if (params.Has("input_model"))
   {
     m = params.Get<ScalingModel*>("input_model");

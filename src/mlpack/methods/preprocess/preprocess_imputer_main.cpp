@@ -147,7 +147,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   }
   else
   {
-    timers.Start(("imputation");
+    timers.Start("imputation");
     if (params.Has("dimension"))
     {
       // when --dimension is specified,

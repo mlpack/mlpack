@@ -107,7 +107,8 @@ PARAM_FLAG("naive", "If set, brute-force range search (not tree-based) "
 
 // Actually run the clustering, and process the output.
 template<typename RangeSearchType, typename PointSelectionPolicy>
-void RunDBSCAN(RangeSearchType rs,
+void RunDBSCAN(util::Params& params,
+               RangeSearchType rs,
                PointSelectionPolicy pointSelector = PointSelectionPolicy())
 {
   if (params.Has("single_mode"))
@@ -142,14 +143,15 @@ void RunDBSCAN(RangeSearchType rs,
 
 // Choose the point selection policy.
 template<typename RangeSearchType>
-void ChoosePointSelectionPolicy(RangeSearchType rs = RangeSearchType())
+void ChoosePointSelectionPolicy(util::Params& params,
+                                RangeSearchType rs = RangeSearchType())
 {
   const string selectionType = params.Get<string>("selection_type");
 
   if (selectionType == "ordered")
-    RunDBSCAN<RangeSearchType, OrderedPointSelection>(rs);
+    RunDBSCAN<RangeSearchType, OrderedPointSelection>(params, rs);
   else if (selectionType == "random")
-    RunDBSCAN<RangeSearchType, RandomPointSelection>(rs);
+    RunDBSCAN<RangeSearchType, RandomPointSelection>(params, rs);
 }
 
 void BINDING_NAME(util::Params& params, util::Timers& timers)
@@ -175,54 +177,54 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   if (params.Has("naive"))
   {
     RangeSearch<> rs(true);
-    ChoosePointSelectionPolicy(rs);
+    ChoosePointSelectionPolicy(params, rs);
   }
   else
   {
     const string treeType = params.Get<string>("tree_type");
     if (treeType == "kd")
     {
-      ChoosePointSelectionPolicy<RangeSearch<>>();
+      ChoosePointSelectionPolicy<RangeSearch<>>(params);
     }
     else if (treeType == "cover")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          StandardCoverTree>>();
+          StandardCoverTree>>(params);
     }
     else if (treeType == "r")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          RTree>>();
+          RTree>>(params);
     }
     else if (treeType == "r-star")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          RStarTree>>();
+          RStarTree>>(params);
     }
     else if (treeType == "x")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          XTree>>();
+          XTree>>(params);
     }
     else if (treeType == "hilbert-r")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          HilbertRTree>>();
+          HilbertRTree>>(params);
     }
     else if (treeType == "r-plus")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          RPlusTree>>();
+          RPlusTree>>(params);
     }
     else if (treeType == "r-plus-plus")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          RPlusPlusTree>>();
+          RPlusPlusTree>>(params);
     }
     else if (treeType == "ball")
     {
       ChoosePointSelectionPolicy<RangeSearch<EuclideanDistance, arma::mat,
-          BallTree>>();
+          BallTree>>(params);
     }
   }
 }

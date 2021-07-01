@@ -140,7 +140,7 @@ PARAM_INT_IN("observations_before_binning", "If the 'domingos' split strategy "
 // Convenience typedef.
 typedef tuple<DatasetInfo, arma::mat> TupleType;
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
   // Check input parameters for validity.
   const string numericSplitStrategy =
@@ -228,7 +228,7 @@ static void mlpackMain()
     // appropriate type of instantiated numeric split type.  This is a little
     // bit ugly.  Maybe there is a nicer way to get this numeric split
     // information to the trees, but this is ok for now.
-    timers.Start(("tree_training");
+    timers.Start("tree_training");
 
     // Do we need to initialize a model?
     if (!params.Has("input_model"))
@@ -288,7 +288,7 @@ static void mlpackMain()
     arma::Row<size_t> predictions;
     arma::rowvec probabilities;
 
-    timers.Start(("tree_testing");
+    timers.Start("tree_testing");
     model->Classify(testSet, predictions, probabilities);
     timers.Stop("tree_testing");
 

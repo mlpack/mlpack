@@ -218,7 +218,7 @@ void BINDING_NAME(util::Params& params, util::Timers& timers)
   if (!params.Has("query") && !params.Has("all_user_recommendations"))
     ReportIgnoredParam(params, "output", "no recommendations requested");
 
-  RequireParamInSet<string>("algorithm", { "NMF", "BatchSVD",
+  RequireParamInSet<string>(params, "algorithm", { "NMF", "BatchSVD",
       "SVDIncompleteIncremental", "SVDCompleteIncremental", "RegSVD",
       "RandSVD", "BiasSVD", "SVDPP" }, true, "unknown algorithm");
 
