@@ -2,7 +2,6 @@
 set(DIRS
   # mvu # Note: this implementation of MVU does not work.  See #189.
   adaboost
-<<<<<<< HEAD
   # amf
   # ann
   # approx_kfn
@@ -22,55 +21,34 @@ set(DIRS
   # kernel_pca
   # kmeans
   # lars
-=======
-  amf
-  ann
-  approx_kfn
-  bias_svd
-  bayesian_linear_regression
-  block_krylov_svd
-  cf
-  dbscan
-  decision_tree
-  det
-  emst
-  fastmks
-  gmm
-  hmm
-  hoeffding_trees
-  kde
-  kernel_pca
-  kmeans
-  lars
->>>>>>> 4d4bb895a734beb60d987fe97aeb938f5b8452e6
   linear_regression
-  linear_svm
-  lmnn
-  local_coordinate_coding
-  logistic_regression
-  lsh
-  matrix_completion
-  mean_shift
-  naive_bayes
-  nca
-  neighbor_search
-  nmf
-  nystroem_method
-  pca
-  perceptron
-  preprocess
-  quic_svd
-  radical
-  random_forest
-  randomized_svd
-  range_search
-  rann
-  regularized_svd
-  reinforcement_learning
-  softmax_regression
-  sparse_autoencoder
-  sparse_coding
-  svdplusplus
+  # linear_svm
+  # lmnn
+  # local_coordinate_coding
+  # logistic_regression
+  # lsh
+  # matrix_completion
+  # mean_shift
+  # naive_bayes
+  # nca
+  # neighbor_search
+  # nmf
+  # nystroem_method
+  # pca
+  # perceptron
+  # preprocess
+  # quic_svd
+  # radical
+  # random_forest
+  # randomized_svd
+  # range_search
+  # rann
+  # regularized_svd
+  # reinforcement_learning
+  # softmax_regression
+  # sparse_autoencoder
+  # sparse_coding
+  # svdplusplus
 )
 
 foreach(dir ${DIRS})
