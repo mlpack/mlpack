@@ -334,7 +334,9 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
     AuxiliarySplitInfo& /* aux */)
 {
   typedef typename ResponsesType::elem_type RType;
-  typedef typename ResponsesType::elem_type WType;
+  typedef typename WeightVecType::elem_type WType;
+
+  MSEGain fitnessFunction;
 
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
@@ -371,141 +373,48 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
   WType totalWeight = 0.0;
   WType leftChildWeight = 0.0;
   WType rightChildWeight = 0.0;
-  WType leftWeightedMean = 0.0;
-  WType rightWeightedMean = 0.0;
-  WType totalWeightedSumSquares = 0.0;
-  arma::Row<WType> weightedSumSquares;
 
-  RType leftMean = 0.0;
-  RType rightMean = 0.0;
-  size_t leftChildSize = 0;
-  size_t rightChildSize = 0;
-  RType totalSumSquares = 0.0;
-  arma::Row<RType> sumSquares;
-
-  // Precomputing prefix sum of squares and prefix weighted sum of squares.
-  // This will be used by MSEGain::Evaluate to efficiently compute gain
-  // values for all possible splits.
   if (UseWeights)
   {
     totalWeight = arma::accu(sortedWeights);
     bestFoundGain *= totalWeight;
 
-    weightedSumSquares.set_size(data.n_elem);
-    // Stores the weighted sum of squares till the previous index.
-    double prevWeightedSumSquares = 0.0;
-
     for (size_t i = 0; i < minimum - 1; ++i)
-    {
-      const double w = sortedWeights[i];
-      const double x = sortedResponses[i];
-
-      // Calculating initial weighted mean of responses for the left child.
-      leftChildWeight += w;
-      leftWeightedMean += w * x;
-      weightedSumSquares[i] = prevWeightedSumSquares + w * x * x;
-      prevWeightedSumSquares += w * x * x;
-    }
-    if (leftChildWeight > 1e-9)
-      leftWeightedMean /= leftChildWeight;
+      leftChildWeight += sortedWeights[i];
 
     for (size_t i = minimum - 1; i < data.n_elem; ++i)
-    {
-      const WType w = sortedWeights[i];
-      const RType x = sortedResponses[i];
-
-      // Calculating initial weighted mean of responses for the right child.
-      rightChildWeight += w;
-      rightWeightedMean += w * x;
-      weightedSumSquares[i] = prevWeightedSumSquares + w * x * x;
-      prevWeightedSumSquares += w * x * x;
-    }
-    if (rightChildWeight > 1e-9)
-      rightWeightedMean /= rightChildWeight;
-
-    totalWeightedSumSquares = prevWeightedSumSquares;
+      rightChildWeight += sortedWeights[i];
   }
   else
   {
     bestFoundGain *= data.n_elem;
-
-    sumSquares.set_size(data.n_elem);
-    // Stores the sum of squares till the previous index.
-    RType prevSumSquares = 0.0;
-
-    for (size_t i = 0; i < minimum - 1; ++i)
-    {
-      const RType x = sortedResponses[i];
-
-      // Calculating the initial mean of responses for the left child.
-      ++leftChildSize;
-      leftMean += x;
-      sumSquares[i] = prevSumSquares + x * x;
-      prevSumSquares += x * x;
-    }
-    if (leftChildSize)
-      leftMean /= (RType) leftChildSize;
-
-    for (size_t i = minimum - 1; i < data.n_elem; ++i)
-    {
-      const RType x = sortedResponses[i];
-
-      // Calculating the initial mean of responses for the right child.
-      rightChildSize++;
-      rightMean += x;
-      sumSquares[i] = prevSumSquares + x * x;
-      prevSumSquares += x * x;
-    }
-    if (rightChildSize)
-      rightMean /= (RType) rightChildSize;
-
-    totalSumSquares = prevSumSquares;
   }
+
+  // Precomputing various statistics to efficiently compute gain values for
+  // all possible splits.
+  fitnessFunction.CalculateStatistics<UseWeights>(sortedResponses,
+      sortedWeights, minimum);
 
   // Loop through all possible split points, choosing the best one.
   for (size_t index = minimum; index < data.n_elem - minimum + 1; ++index)
   {
     if (UseWeights)
     {
-      // Updating the weighted mean for both childs for each index.
-      const WType w = sortedWeights[index - 1];
-      const RType x = sortedResponses[index - 1];
-      leftWeightedMean = (leftWeightedMean * leftChildWeight + w * x)
-          / (leftChildWeight + w);
-      leftChildWeight += w;
-
-      rightWeightedMean = (rightWeightedMean * rightChildWeight - w * x)
-          / (rightChildWeight - w);
-      rightChildWeight -= w;
+      leftChildWeight += sortedWeights[index - 1];
+      rightChildWeight -= sortedWeights[index - 1];
     }
-    else
-    {
-      // Updating the mean for both childs for each index.
-      const RType x = sortedResponses[index - 1];
-      leftMean = (leftMean * (RType) leftChildSize + x) /
-          (RType) (leftChildSize + 1);
-      ++leftChildSize;
 
-      rightMean = (rightMean * (RType) rightChildSize - x) /
-          (RType) (rightChildSize - 1);
-      --rightChildSize;
-    }
+    // Update statistics for the current index.
+    fitnessFunction.UpdateStatistics<UseWeights>(sortedResponses,
+        sortedWeights, index - 1);
 
     // Make sure that the value has changed.
     if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
       continue;
 
     // Calculate the gain for the left and right child.
-    const double leftGain = UseWeights ?
-        MSEGain::Evaluate(weightedSumSquares[index - 1],
-            leftWeightedMean, leftChildWeight) :
-        MSEGain::Evaluate(sumSquares[index - 1], leftMean, leftChildSize);
-    const double rightGain = UseWeights ?
-        MSEGain::Evaluate(
-            totalWeightedSumSquares - weightedSumSquares[index - 1],
-            rightWeightedMean, rightChildWeight) :
-        MSEGain::Evaluate(totalSumSquares - sumSquares[index - 1],
-            rightMean, rightChildSize);
+    const double leftGain = fitnessFunction.Evaluate(index - 1, 0);
+    const double rightGain = fitnessFunction.Evaluate(index - 1, 1);
 
     double gain;
     if (UseWeights)
@@ -515,8 +424,8 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
     else
     {
       // Calculate the gain at this split point.
-      gain = double(leftChildSize) * leftGain +
-          double(rightChildSize) * rightGain;
+      gain = double(index) * leftGain +
+          double(sortedResponses.n_elem - index) * rightGain;
     }
 
     // Corner case: is this the best possible split?
@@ -530,7 +439,7 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
 
       return gain;
     }
-     if (gain > bestFoundGain)
+    if (gain > bestFoundGain)
     {
       // We still have a better split.
       bestFoundGain = gain;
