@@ -28,7 +28,7 @@ std::string DefaultParamImpl(
     const typename std::enable_if<!util::IsStdVector<T>::value>::type* /* junk */,
     const typename std::enable_if<!data::HasSerialize<T>::value>::type* /* junk */,
     const typename std::enable_if<!std::is_same<T,
-        !std::string>::value>::type*,
+        std::string>::value>::type*,
     const typename std::enable_if<!std::is_same<T,
         std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
 {
