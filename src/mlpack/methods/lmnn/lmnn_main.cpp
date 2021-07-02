@@ -135,7 +135,7 @@ BINDING_EXAMPLE(
     "An another program call making use of range & regularization parameter "
     "with dataset having labels as last column can be made as: "
     "\n\n" +
-    PRINT_CALL("mlpack_lmnn", "input", "letter_recognition", "k", 5,
+    PRINT_CALL("lmnn", "input", "letter_recognition", "k", 5,
     "range", 10, "regularization", 0.4, "output", "output"));
 
 // See also...
