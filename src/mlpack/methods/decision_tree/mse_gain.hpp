@@ -96,35 +96,7 @@ class MSEGain
   }
 
   /**
-   * Calculates the weighted mean squared error gain given the sum of squares
-   * and mean.
-   *
-   * X = array of values of size n.
-   * W = array of weights of size n.
-   *
-   * @f{eqnarray*}{
-   *    MSE = \sum\limits_{i=1}^n {W_i * {X_i}^2} -
-   *        {\dfrac{\sum\limits_{j=1}^n W_j * X_j}
-   *        {\sum\limits_{j=1}^n W_i}}^2
-   * @f}
-   *
-   * @param weightedSumSquares Precomputed weighted sum of square
-   *    (sum(Wi * Xi^2)) of values.
-   * @param weightedMean Precomputed weighted mean (sum(Wi * Xi) / sum(Wi)) of
-   *    values.
-   * @param totalChildWeight Total weight of all the samples in that child.
-   */
-  static double Evaluate(const double weightedSumSquares,
-                         const double weightedMean,
-                         const double totalChildWeight)
-  {
-    double mse = weightedSumSquares / totalChildWeight -
-        weightedMean * weightedMean;
-    return -mse;
-  }
-
-  /**
-   * Calculates the  mean squared error gain given the sum of squares and mean.
+   * Calculates the  mean squared error gain for the given child and index.
    *
    * X = array of values of size n.
    *
@@ -133,17 +105,170 @@ class MSEGain
    *       {\dfrac{\sum\limits_{j=1}^n X_j}{n}}^2
    * @f}
    *
-   * @param sumSquares Precomputed sum of square (sum(Xi^2)) of values.
-   * @param mean Precomputed mean (sum(Xi) / n) of values.
-   * @param childSize The total number of samples in that child.
+   * @param index The current index to calculate gain.
+   * @param child The child to calculate gain.
+   *    0 -> Left child,   1 -> Right child
    */
-  static double Evaluate(const double sumSquares,
-                         const double mean,
-                         const size_t childSize)
+  double Evaluate(const size_t index, const size_t child)
   {
-    double mse = sumSquares / (double) childSize - mean * mean;
+    double mse;
+    // Left child.
+    if (child == 0)
+      mse = sumSquares[index] / leftSize - leftMean * leftMean;
+    // Right child.
+    else
+      mse = (totalSumSquares - sumSquares[index]) / rightSize
+          - rightMean * rightMean;
     return -mse;
   }
+
+  /**
+   * Caches the prefix sum of squares to efficiently compute gain value for
+   * each split. It also computes the initial mean for left and right child.
+   *
+   * @param responses The set of responses on which statistics are computed.
+   * @param weights The set of weights associated to each response.
+   * @param minimum The minimum number of elements in a leaf.
+   */
+  template<bool UseWeights, typename ResponsesType, typename WeightVecType>
+  void CalculateStatistics(const ResponsesType& responses,
+                           const WeightVecType& weights,
+                           const size_t minimum)
+  {
+    typedef typename ResponsesType::elem_type RType;
+    typedef typename WeightVecType::elem_type WType;
+
+    // Initializing data members to cache statistics.
+    leftMean = 0.0;
+    rightMean = 0.0;
+    leftSize = 0.0;
+    rightSize = 0.0;
+    totalSumSquares = 0.0;
+    sumSquares.set_size(responses.n_elem);
+
+    if (UseWeights)
+    {
+      // Stores the weighted sum of squares till the previous index.
+      double prevWeightedSumSquares = 0.0;
+
+      for (size_t i = 0; i < minimum - 1; ++i)
+      {
+        const WType w = weights[i];
+        const RType x = responses[i];
+
+        // Calculating initial weighted mean of responses for the left child.
+        leftSize += w;
+        leftMean += w * x;
+        sumSquares[i] = prevWeightedSumSquares + w * x * x;
+        prevWeightedSumSquares += w * x * x;
+      }
+      if (leftSize > 1e-9)
+        leftMean /= leftSize;
+
+      for(size_t i = minimum - 1; i < responses.n_elem; ++i)
+      {
+        const WType w = weights[i];
+        const RType x = responses[i];
+
+        // Calculating initial weighted mean of responses for the right child.
+        rightSize += w;
+        rightMean += w * x;
+        sumSquares[i] = prevWeightedSumSquares + w * x * x;
+        prevWeightedSumSquares += w * x * x;
+      }
+      if (rightSize > 1e-9)
+        rightMean /= rightSize;
+
+      totalSumSquares = prevWeightedSumSquares;
+    }
+    else
+    {
+      // Stores the sum of squares till the previous index.
+      double prevSumSquares = 0.0;
+
+      for (size_t i = 0; i < minimum - 1; ++i)
+      {
+        const RType x = responses[i];
+
+        // Calculating the initial mean of responses for the left child.
+        ++leftSize;
+        leftMean += x;
+        sumSquares[i] = prevSumSquares + x * x;
+        prevSumSquares += x * x;
+      }
+      if (leftSize > 1e-9)
+        leftMean /= leftSize;
+
+      for(size_t i = minimum - 1; i < responses.n_elem; ++i)
+      {
+        const RType x = responses[i];
+
+        // Calculating the initial mean of responses for the right child.
+        ++rightSize;
+        rightMean += x;
+        sumSquares[i] = prevSumSquares + x * x;
+        prevSumSquares += x * x;
+      }
+      if (rightSize > 1e-9)
+        rightMean /= rightSize;
+
+      totalSumSquares = prevSumSquares;
+    }
+  }
+
+  /**
+   * Updates the statistics for the given index.
+   *
+   * @param responses The set of responses on which statistics are computed.
+   * @param weights The set of weights associated to each response.
+   * @param index The current index.
+   */
+  template<bool UseWeights, typename ResponsesType, typename WeightVecType>
+  void UpdateStatistics(const ResponsesType& responses,
+                        const WeightVecType& weights,
+                        const size_t index)
+  {
+    typedef typename ResponsesType::elem_type RType;
+    typedef typename WeightVecType::elem_type WType;
+
+    if (UseWeights)
+    {
+      const WType w = weights[index];
+      const RType x = responses[index];
+      leftMean = (leftMean * leftSize + w * x) / (leftSize + w);
+      leftSize += w;
+
+      rightMean = (rightMean * rightSize - w * x) / (rightSize - w);
+      rightSize -= w;
+    }
+    else
+    {
+      const RType x = responses[index];
+      leftMean = (leftMean * leftSize + x) / (leftSize + 1);
+      ++leftSize;
+
+      rightMean = (rightMean * rightSize - x) / (rightSize - 1);
+      --rightSize;
+    }
+  }
+
+ private:
+  /**
+   * The following data members cache statistics for weighted data when
+   * `UseWeights` is true, else it will calculate unweighted statistics.
+   */
+  // Stores the sum of squares / weighted sum of squares.
+  arma::rowvec sumSquares;
+  // For unweighted data, stores the number of elements in each child.
+  // For weighted data, stores the sum of weights of elements in each
+  // child.
+  double leftSize;
+  double rightSize;
+  // Stores the mean / weighted mean.
+  double leftMean;
+  double rightMean;
+  // Stores the total sum of squares / total weighted sum of squares.
+  double totalSumSquares;
 };
 
 } // namespace tree
