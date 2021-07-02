@@ -15,7 +15,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME linear_regression_fit
+#define BINDING_NAME mlpack_linear_regression_fit
 
 #include <mlpack/core/util/mlpack_main.hpp>
 

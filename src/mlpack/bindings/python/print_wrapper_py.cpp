@@ -27,7 +27,7 @@ namespace python {
 void PrintWrapperPY(const std::string& groupName,
                     const std::string& validMethods)
 {
-  cout << validMethods << endl;
+  cout << "print(\"Hello World\")" << endl;
 }
 
 } // python

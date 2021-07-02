@@ -16,9 +16,23 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_cli_executable(adaboost)
+group_bindings(adaboost "fit;predict;predict_proba")
 add_python_binding(adaboost)
-add_julia_binding(adaboost)
-add_go_binding(adaboost)
-add_r_binding(adaboost)
-add_markdown_docs(adaboost "cli;python;julia;go;r" "classification")
+
+add_cli_executable(adaboost_fit)
+add_julia_binding(adaboost_fit)
+add_go_binding(adaboost_fit)
+add_r_binding(adaboost_fit)
+add_markdown_docs(adaboost_fit "cli;python;julia;go;r" "classification")
+
+add_cli_executable(adaboost_predict)
+add_julia_binding(adaboost_predict)
+add_go_binding(adaboost_predict)
+add_r_binding(adaboost_predict)
+add_markdown_docs(adaboost_predict "cli;python;julia;go;r" "classification")
+
+add_cli_executable(adaboost_predict_proba)
+add_julia_binding(adaboost_predict_proba)
+add_go_binding(adaboost_predict_proba)
+add_r_binding(adaboost_predict_proba)
+add_markdown_docs(adaboost_predict_proba "cli;python;julia;go;r" "classification")

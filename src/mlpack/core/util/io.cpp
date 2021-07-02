@@ -59,13 +59,14 @@ void IO::AddParameter(const std::string& bindingName, ParamData&& data)
 
   // If found in current map, print fatal error and terminate the program, but
   // only if the parameter is not consistent.
-  if (bindingParams.count(data.name))
+  if (bindingParams.count(data.name) && bindingName != "")
   {
     outstr << "Parameter '" << data.name << "' ('" << data.alias << "') "
            << "is defined multiple times with the same identifiers."
            << std::endl;
   }
-  if (data.alias != '\0' && bindingAliases.count(data.alias))
+  if (data.alias != '\0' && bindingAliases.count(data.alias) &&
+      bindingName != "")
   {
     outstr << "Parameter '" << data.name << " ('" << data.alias << "') "
            << "is defined multiple times with the same alias." << std::endl;
