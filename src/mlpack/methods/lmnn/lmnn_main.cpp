@@ -129,8 +129,8 @@ BINDING_EXAMPLE(
     "number of targets as 3 using BigBatch_SGD optimizer. A simple call for "
     "the same will look like: "
     "\n\n" +
-    PRINT_CALL("mlpack_lmnn", "input", "iris", "labels", "iris_labels",
-    "k", 3, "optimizer", "bbsgd", "output", "output") +
+    PRINT_CALL("lmnn", "input", "iris", "labels", "iris_labels", "k", 3,
+    "optimizer", "bbsgd", "output", "output") +
     "\n\n"
     "An another program call making use of range & regularization parameter "
     "with dataset having labels as last column can be made as: "
