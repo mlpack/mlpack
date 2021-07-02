@@ -68,7 +68,8 @@ inline std::string GetType<std::string>(
         !util::isStdVector<std::string>::value>::type*,
     const typename std::enable_if<
         !data::HasSerialize<std::string>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<std::string>::value>::type*)
+    const typename std::enable_if<
+        !arma::is_arma_type<std::string>::value>::type*)
 {
   return "String";
 }
