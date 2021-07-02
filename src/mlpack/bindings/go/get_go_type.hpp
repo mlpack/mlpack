@@ -74,7 +74,7 @@ template<>
 inline std::string GetGoType<std::string>(
     util::ParamData& /* d */,
     const typename std::enable_if<
-        !util::isStdVector<std::string>::value>::type*,
+        !util::IsStdVector<std::string>::value>::type*,
     const typename std::enable_if<
         !data::HasSerialize<std::string>::value>::type*,
     const typename std::enable_if<
