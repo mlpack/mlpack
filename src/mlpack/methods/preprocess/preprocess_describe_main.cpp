@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME preprocess_describe
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <boost/format.hpp>
@@ -23,7 +29,7 @@ using namespace std;
 using namespace boost;
 
 // Program Name.
-BINDING_NAME("Descriptive Statistics");
+BINDING_USER_NAME("Descriptive Statistics");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -170,16 +176,16 @@ double StandardError(const size_t size, const double& fStd)
   return fStd / sqrt(size);
 }
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
-  const size_t dimension = static_cast<size_t>(IO::GetParam<int>("dimension"));
-  const size_t precision = static_cast<size_t>(IO::GetParam<int>("precision"));
-  const size_t width = static_cast<size_t>(IO::GetParam<int>("width"));
-  const bool population = IO::HasParam("population");
-  const bool rowMajor = IO::HasParam("row_major");
+  const size_t dimension = static_cast<size_t>(params.Get<int>("dimension"));
+  const size_t precision = static_cast<size_t>(params.Get<int>("precision"));
+  const size_t width = static_cast<size_t>(params.Get<int>("width"));
+  const bool population = params.Has("population");
+  const bool rowMajor = params.Has("row_major");
 
   // Load the data.
-  arma::mat& data = IO::GetParam<arma::mat>("input");
+  arma::mat& data = params.Get<arma::mat>("input");
 
   // Generate boost format recipe.
   const string widthPrecision("%-" + to_string(width) + "." +
@@ -195,7 +201,7 @@ static void mlpackMain()
     numberFormat += widthPrecision + "f";
   }
 
-  Timer::Start("statistics");
+  timers.Start("statistics");
   // Print the headers.
   Log::Info << boost::format(stringFormat)
       % "dim" % "var" % "mean" % "std" % "median" % "min" % "max"
@@ -234,7 +240,7 @@ static void mlpackMain()
 
   // If the user specified dimension, describe statistics of the given
   // dimension. If a dimension is not specified, describe all dimensions.
-  if (IO::HasParam("dimension"))
+  if (params.Has("dimension"))
   {
     PrintStatResults(dimension, rowMajor);
   }
@@ -246,5 +252,5 @@ static void mlpackMain()
       PrintStatResults(i, rowMajor);
     }
   }
-  Timer::Stop("statistics");
+  timers.Stop("statistics");
 }

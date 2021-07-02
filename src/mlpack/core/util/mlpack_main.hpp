@@ -250,8 +250,10 @@ PARAM_GLOBAL(bool, "check_input_matrices", "If specified, the input matrix "
 #define PRINT_PARAM_VALUE mlpack::bindings::julia::PrintValue
 #define PRINT_DATASET mlpack::bindings::julia::PrintDataset
 #define PRINT_MODEL mlpack::bindings::julia::PrintModel
-#define PRINT_CALL mlpack::bindings::julia::ProgramCall
-#define BINDING_IGNORE_CHECK mlpack::bindings::julia::IgnoreCheck
+#define PRINT_CALL(...) mlpack::bindings::julia::ProgramCall( \
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+#define BINDING_IGNORE_CHECK(...) mlpack::bindings::julia::IgnoreCheck( \
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
 
 namespace mlpack {
 namespace util {
@@ -262,23 +264,24 @@ using Option = mlpack::bindings::julia::JuliaOption<T>;
 }
 }
 
-static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef BINDING_USER_NAME
-#define BINDING_USER_NAME(NAME) static \
-    mlpack::util::ProgramName \
-    io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
-    namespace mlpack { \
-    namespace bindings { \
-    namespace julia { \
-    std::string programName = NAME; \
-    } \
-    } \
-    }
+#ifdef BINDING_NAME
+  #define OLD_BINDING_NAME BINDING_NAME
+#undef BINDING_NAME
+#endif
+#define BINDING_NAME
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
+
+#ifdef OLD_BINDING_NAME
+  #undef BINDING_NAME
+  #define BINDING_NAME OLD_BINDING_NAME
+  #undef OLD_BINDING_NAME
+#else
+  #undef BINDING_NAME
+#endif
 
 // Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 

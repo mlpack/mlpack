@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME mean_shift
+
 #include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/core/kernels/gaussian_kernel.hpp>
@@ -23,7 +29,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("Mean Shift Clustering");
+BINDING_USER_NAME("Mean Shift Clustering");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -92,22 +98,22 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
     "the given radius, one will be removed.  A radius of 0 or less means an "
     "estimate will be calculated and used for the radius.", "r", 0);
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
-  const double radius = IO::GetParam<double>("radius");
-  const int maxIterations = IO::GetParam<int>("max_iterations");
+  const double radius = params.Get<double>("radius");
+  const int maxIterations = params.Get<int>("max_iterations");
 
-  RequireParamValue<int>("max_iterations", [](int x) { return x >= 0; }, true,
-      "maximum iterations must be greater than or equal to 0");
+  RequireParamValue<int>(params, "max_iterations", [](int x) { return x >= 0; },
+      true, "maximum iterations must be greater than or equal to 0");
 
   // Make sure we have an output file if we're not doing the work in-place.
-  RequireAtLeastOnePassed({ "in_place", "output", "centroid" }, false,
+  RequireAtLeastOnePassed(params, { "in_place", "output", "centroid" }, false,
       "no results will be saved");
-  ReportIgnoredParam({{ "output", false }}, "labels_only");
-  ReportIgnoredParam({{ "in_place", true }}, "output");
-  ReportIgnoredParam({{ "in_place", true }}, "labels_only");
+  ReportIgnoredParam(params, {{ "output", false }}, "labels_only");
+  ReportIgnoredParam(params, {{ "in_place", true }}, "output");
+  ReportIgnoredParam(params, {{ "in_place", true }}, "labels_only");
 
-  arma::mat dataset = std::move(IO::GetParam<arma::mat>("input"));
+  arma::mat dataset = std::move(params.Get<arma::mat>("input"));
   arma::mat centroids;
   arma::Row<size_t> assignments;
 
@@ -116,14 +122,14 @@ static void mlpackMain()
   Timer::Start("clustering");
   Log::Info << "Performing mean shift clustering..." << endl;
   meanShift.Cluster(dataset, assignments, centroids,
-    IO::HasParam("force_convergence"));
+      params.Has("force_convergence"));
   Timer::Stop("clustering");
 
   Log::Info << "Found " << centroids.n_cols << " centroids." << endl;
   if (radius <= 0.0)
     Log::Info << "Estimated radius was " << meanShift.Radius() << ".\n";
 
-  if (IO::HasParam("in_place"))
+  if (params.Has("in_place"))
   {
     // Add the column of assignments to the dataset; but we have to convert them
     // to type double first.
@@ -134,12 +140,12 @@ static void mlpackMain()
     dataset.insert_rows(dataset.n_rows, trans(converted));
 
     // Save the dataset.
-    IO::MakeInPlaceCopy("output", "input");
-    IO::GetParam<arma::mat>("output") = std::move(dataset);
+    params.MakeInPlaceCopy("output", "input");
+    params.Get<arma::mat>("output") = std::move(dataset);
   }
-  else if (IO::HasParam("output"))
+  else if (params.Has("output"))
   {
-    if (!IO::HasParam("labels_only"))
+    if (!params.Has("labels_only"))
     {
       // Convert the assignments to doubles.
       arma::vec converted(assignments.n_elem);
@@ -149,18 +155,18 @@ static void mlpackMain()
       dataset.insert_rows(dataset.n_rows, trans(converted));
 
       // Now save, in the different file.
-      IO::GetParam<arma::mat>("output") = std::move(dataset);
+      params.Get<arma::mat>("output") = std::move(dataset);
     }
     else
     {
       // TODO: figure out how to output as an arma::Mat<size_t> so that files
       // aren't way larger than needed.
-      IO::GetParam<arma::mat>("output") =
+      params.Get<arma::mat>("output") =
           arma::conv_to<arma::mat>::from(assignments);
     }
   }
 
   // Should we write the centroids to a file?
-  if (IO::HasParam("centroid"))
-    IO::GetParam<arma::mat>("centroid") = std::move(centroids);
+  if (params.Has("centroid"))
+    params.Get<arma::mat>("centroid") = std::move(centroids);
 }

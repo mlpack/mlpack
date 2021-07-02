@@ -11,12 +11,18 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME preprocess_one_hot_encoding
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core.hpp>
 #include <mlpack/core/data/one_hot_encoding.hpp>
 
 // Program Name.
-BINDING_NAME("One Hot Encoding");
+BINDING_USER_NAME("One Hot Encoding");
 
 // Short description.
 BINDING_SHORT_DESC("A utility to do one-hot encoding on features of dataset.");
@@ -59,13 +65,14 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
   // Load the data.
-  const arma::mat& data = IO::GetParam<arma::mat>("input");
-  vector<int>& indices = IO::GetParam<vector<int> >("dimensions");
+  const arma::mat& data = params.Get<arma::mat>("input");
+  vector<int>& indices = params.Get<vector<int> >("dimensions");
   vector<size_t> copyIndices(indices.size());
-  RequireParamValue<std::vector<int>>("dimensions", [data](std::vector<int> x)
+  RequireParamValue<std::vector<int>>(params, "dimensions",
+      [data](std::vector<int> x)
       {
         for (int dim : x)
         {
@@ -75,14 +82,15 @@ static void mlpackMain()
           }
         }
         return true;
-      }, true, "dimensions must be greater than 0 "
-      "and less than the number of dimensions");
+      }, true, "dimensions must be greater than 0 and less than the number of "
+      "dimensions");
+
   for (size_t i = 0; i < indices.size(); ++i)
   {
     copyIndices[i] = (size_t)indices[i];
   }
   arma::mat output;
   data::OneHotEncoding(data, (arma::Col<size_t>)(copyIndices), output);
-  if (IO::HasParam("output"))
-    IO::GetParam<arma::mat>("output") = std::move(output);
+  if (params.Has("output"))
+    params.Get<arma::mat>("output") = std::move(output);
 }

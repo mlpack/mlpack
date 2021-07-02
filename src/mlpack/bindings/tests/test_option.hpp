@@ -66,7 +66,7 @@ class TestOption
              const bool required = false,
              const bool input = true,
              const bool noTranspose = false,
-             const std::string& testName = "")
+             const std::string& bindingName = "")
   {
     // Create the ParamData object to give to IO.
     util::ParamData data;
@@ -75,7 +75,8 @@ class TestOption
     data.name = identifier;
     data.tname = TYPENAME(N);
     data.alias = alias[0];
-    data.wasPassed = false;
+    // If this is an output option, set it as passed.
+    data.wasPassed = !input;
     data.noTranspose = noTranspose;
     data.required = required;
     data.input = input;
@@ -85,25 +86,13 @@ class TestOption
 
     const std::string tname = data.tname;
 
-    IO::RestoreSettings(testName, false);
-
     // Set some function pointers that we need.
-    IO::GetSingleton().functionMap[tname]["GetPrintableParam"] =
-        &GetPrintableParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetParam"] = &GetParam<N>;
-    IO::GetSingleton().functionMap[tname]["GetAllocatedMemory"] =
-        &GetAllocatedMemory<N>;
-    IO::GetSingleton().functionMap[tname]["DeleteAllocatedMemory"] =
-        &DeleteAllocatedMemory<N>;
+    IO::AddFunction(tname, "GetPrintableParam", &GetPrintableParam<N>);
+    IO::AddFunction(tname, "GetParam", &GetParam<N>);
+    IO::AddFunction(tname, "GetAllocatedMemory", &GetAllocatedMemory<N>);
+    IO::AddFunction(tname, "DeleteAllocatedMemory", &DeleteAllocatedMemory<N>);
 
-    IO::Add(std::move(data));
-
-    // If this is an output option, set it as passed.
-    if (!input)
-      IO::SetPassed(identifier);
-
-    IO::StoreSettings(testName);
-    IO::ClearSettings();
+    IO::AddParameter(bindingName, std::move(data));
   }
 };
 

@@ -2,50 +2,26 @@
  * @file tests/main_tests/linear_regression_test.cpp
  * @author Eugene Freyman
  *
- * Test mlpackMain() of linear_regression_main.cpp.
+ * Test RUN_BINDING() of linear_regression_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "LinearRegression";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/linear_regression/linear_regression_main.cpp>
+#include "main_test_fixture.hpp"
 
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
 
-struct LRTestFixture
-{
- public:
-  LRTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~LRTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
-void ResetSettings()
-{
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
-}
+BINDING_TEST_FIXTURE(LRTestFixture);
 
 /**
  * Training a model with different regularization parameter and ensuring that
@@ -67,10 +43,9 @@ TEST_CASE_METHOD(LRTestFixture, "LRDifferentLambdas",
   SetInputParam("lambda", 0.1);
 
   // The first solution.
-  mlpackMain();
-  const double testY1 = IO::GetParam<arma::rowvec>("output_predictions")(0);
+  RUN_BINDING();
+  const double testY1 = params.Get<arma::rowvec>("output_predictions")(0);
 
-  bindings::tests::CleanMemory();
   ResetSettings();
 
   SetInputParam("training", std::move(trainX));
@@ -79,8 +54,8 @@ TEST_CASE_METHOD(LRTestFixture, "LRDifferentLambdas",
   SetInputParam("lambda", 1.0);
 
   // The second solution.
-  mlpackMain();
-  const double testY2 = IO::GetParam<arma::rowvec>("output_predictions")(0);
+  RUN_BINDING();
+  const double testY2 = params.Get<arma::rowvec>("output_predictions")(0);
 
   // Second solution has stronger regularization,
   // so the predicted value should be smaller.
@@ -103,10 +78,10 @@ TEST_CASE_METHOD(LRTestFixture, "LRResponsesRepresentation",
   SetInputParam("test", testX);
 
   // The first solution.
-  mlpackMain();
-  const double testY1 = IO::GetParam<arma::rowvec>("output_predictions")(0);
+  RUN_BINDING();
+  const double testY1 = params.Get<arma::rowvec>("output_predictions")(0);
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
   ResetSettings();
 
   arma::mat trainX2({1.0, 2.0, 3.0});
@@ -116,8 +91,8 @@ TEST_CASE_METHOD(LRTestFixture, "LRResponsesRepresentation",
   SetInputParam("test", std::move(testX));
 
   // The second solution.
-  mlpackMain();
-  const double testY2 = IO::GetParam<arma::rowvec>("output_predictions")(0);
+  RUN_BINDING();
+  const double testY2 = params.Get<arma::rowvec>("output_predictions")(0);
 
   REQUIRE(fabs(testY1 - testY2) < delta);
 }
@@ -141,19 +116,19 @@ TEST_CASE_METHOD(LRTestFixture, "LRModelReload",
   SetInputParam("training_responses", std::move(trainY));
   SetInputParam("test", testX);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  LinearRegression* model = IO::GetParam<LinearRegression*>("output_model");
-  const arma::rowvec testY1 = IO::GetParam<arma::rowvec>("output_predictions");
+  LinearRegression* model = params.Get<LinearRegression*>("output_model");
+  const arma::rowvec testY1 = params.Get<arma::rowvec>("output_predictions");
 
   ResetSettings();
 
   SetInputParam("input_model", model);
   SetInputParam("test", std::move(testX));
 
-  mlpackMain();
+  RUN_BINDING();
 
-  const arma::rowvec testY2 = IO::GetParam<arma::rowvec>("output_predictions");
+  const arma::rowvec testY2 = params.Get<arma::rowvec>("output_predictions");
 
   double norm = arma::norm(testY1 - testY2, 2);
   REQUIRE(norm < delta);
@@ -175,7 +150,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRWrongResponseSizeTest",
   SetInputParam("training_responses", std::move(trainY));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -198,7 +173,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest1t",
   SetInputParam("test", std::move(testX));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -218,9 +193,9 @@ TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest2",
   SetInputParam("training", std::move(trainX));
   SetInputParam("training_responses", std::move(trainY));
 
-  mlpackMain();
+  RUN_BINDING();
 
-  LinearRegression* model = IO::GetParam<LinearRegression*>("output_model");
+  LinearRegression* model = params.Get<LinearRegression*>("output_model");
 
   ResetSettings();
 
@@ -229,7 +204,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRWrongDimOfDataTest2",
   SetInputParam("test", std::move(testX));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -251,9 +226,9 @@ TEST_CASE_METHOD(LRTestFixture, "LRPredictionSizeCheck",
   SetInputParam("training_responses", std::move(trainY));
   SetInputParam("test", std::move(testX));
 
-  mlpackMain();
+  RUN_BINDING();
 
-  const arma::rowvec testY = IO::GetParam<arma::rowvec>("output_predictions");
+  const arma::rowvec testY = params.Get<arma::rowvec>("output_predictions");
 
   REQUIRE(testY.n_rows == 1);
   REQUIRE(testY.n_cols == M);
@@ -272,7 +247,7 @@ TEST_CASE_METHOD(LRTestFixture, "LRNoResponses",
   SetInputParam("training", std::move(trainX));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -288,6 +263,6 @@ TEST_CASE_METHOD(LRTestFixture, "LRNoTrainingData",
   SetInputParam("training_responses", std::move(trainY));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }

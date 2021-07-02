@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME image_converter
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core.hpp>
 
@@ -21,7 +27,7 @@ using namespace std;
 using namespace mlpack::data;
 
 // Program Name.
-BINDING_NAME("Image Converter");
+BINDING_USER_NAME("Image Converter");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -80,45 +86,48 @@ PARAM_INT_IN("height", "Height of the images.", "H", 0);
 PARAM_FLAG("save", "Save a dataset as images.", "s");
 PARAM_MATRIX_IN("dataset", "Input matrix to save as images.", "I");
 
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
-  Timer::Start("Loading/Saving Image");
   // Parse command line options.
-  const vector<string> fileNames = IO::GetParam<vector<string> >("input");
+  const vector<string> fileNames = params.Get<vector<string> >("input");
   arma::mat out;
 
-  if (!IO::HasParam("save"))
+  if (!params.Has("save"))
   {
-    ReportIgnoredParam("width", "Width of image is determined from file.");
-    ReportIgnoredParam("height", "Height of image is determined from file.");
-    ReportIgnoredParam("channels", "Number of channels determined from file.");
+    ReportIgnoredParam(params, "width", "Width of image is determined from "
+        "file.");
+    ReportIgnoredParam(params, "height", "Height of image is determined from "
+        "file.");
+    ReportIgnoredParam(params, "channels", "Number of channels determined from "
+        "file.");
     data::ImageInfo info;
     Load(fileNames, out, info, true);
-    if (IO::HasParam("output"))
-      IO::GetParam<arma::mat>("output") = std::move(out);
+    if (params.Has("output"))
+      params.Get<arma::mat>("output") = std::move(out);
   }
   else
   {
-    RequireNoneOrAllPassed({ "save", "width", "height", "channels", "dataset" }
-        , true, "Image size information is needed when 'save' is specified!");
+    RequireNoneOrAllPassed(params, { "save", "width", "height", "channels",
+        "dataset" } , true, "Image size information is needed when 'save' is "
+        "specified!");
     // Positive value for width.
-    RequireParamValue<int>("width", [](int x) { return x >= 0;}, true,
+    RequireParamValue<int>(params, "width", [](int x) { return x >= 0;}, true,
         "width must be positive");
     // Positive value for height.
-    RequireParamValue<int>("height", [](int x) { return x >= 0;}, true,
+    RequireParamValue<int>(params, "height", [](int x) { return x >= 0;}, true,
         "height must be positive");
     // Positive value for channel.
-    RequireParamValue<int>("channels", [](int x) { return x >= 0;}, true,
-        "channels must be positive");
+    RequireParamValue<int>(params, "channels", [](int x) { return x >= 0;},
+        true, "channels must be positive");
     // Positive value for quality.
-    RequireParamValue<int>("quality", [](int x) { return x >= 0;}, true,
+    RequireParamValue<int>(params, "quality", [](int x) { return x >= 0;}, true,
         "quality must be positive");
 
-    const size_t height = IO::GetParam<int>("height");
-    const size_t width = IO::GetParam<int>("width");
-    const size_t channels = IO::GetParam<int>("channels");
-    const size_t quality = IO::GetParam<int>("quality");
+    const size_t height = params.Get<int>("height");
+    const size_t width = params.Get<int>("width");
+    const size_t channels = params.Get<int>("channels");
+    const size_t quality = params.Get<int>("quality");
     data::ImageInfo info(width, height, channels, quality);
-    Save(fileNames, IO::GetParam<arma::mat>("dataset"), info, true);
+    Save(fileNames, params.Get<arma::mat>("dataset"), info, true);
   }
 }

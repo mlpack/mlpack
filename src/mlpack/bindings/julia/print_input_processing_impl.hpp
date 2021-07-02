@@ -41,8 +41,8 @@ void PrintInputProcessing(
   {
     // This gives us code like the following:
     //
-    // IOSetParam("<param_name>", <paramName>)
-    std::cout << "  IOSetParam(\"" << d.name << "\", " << juliaName << ")"
+    // SetParam(p, "<param_name>", <paramName>)
+    std::cout << "  SetParam(p, \"" << d.name << "\", " << juliaName << ")"
         << std::endl;
   }
   else
@@ -50,10 +50,10 @@ void PrintInputProcessing(
     // This gives us code like the following:
     //
     // if !ismissing(<param_name>)
-    //   IOSetParam("<param_name>", convert(<type>, <param_name>))
+    //   SetParam(p, "<param_name>", convert(<type>, <param_name>))
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
-    std::cout << "    IOSetParam(\"" << d.name << "\", convert("
+    std::cout << "    SetParam(p, \"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "))" << std::endl;
     std::cout << "  end" << std::endl;
   }
@@ -103,7 +103,7 @@ void PrintInputProcessing(
   }
 
   // Now print the IOSetParam call.
-  std::cout << indent << "IOSetParam" << uChar << matTypeModifier << "(\""
+  std::cout << indent << "SetParam" << uChar << matTypeModifier << "(p, \""
       << d.name << "\", " << juliaName << extra << ")" << std::endl;
 
   if (!d.required)
@@ -178,8 +178,8 @@ void PrintInputProcessing(
   {
     // This gives us code like the following:
     //
-    // IOSetParam("<param_name>", convert(<type>, <paramName>))
-    std::cout << "  IOSetParam(\"" << d.name << "\", convert("
+    // IOSetParam(p, "<param_name>", convert(<type>, <paramName>))
+    std::cout << "  SetParam(p, \"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
         << std::endl;
   }
@@ -188,10 +188,10 @@ void PrintInputProcessing(
     // This gives us code like the following:
     //
     // if !ismissing(<param_name>)
-    //   IOSetParam("<param_name>", convert(<type>, <param_name>))
+    //   SetParam(p, "<param_name>", convert(<type>, <param_name>))
     // end
     std::cout << "  if !ismissing(" << juliaName << ")" << std::endl;
-    std::cout << "    IOSetParam(\"" << d.name << "\", convert("
+    std::cout << "    SetParam(p, \"" << d.name << "\", convert("
         << GetJuliaType<T>(d) << ", " << juliaName << "), points_are_rows)"
         << std::endl;
     std::cout << "  end" << std::endl;

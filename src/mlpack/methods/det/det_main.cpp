@@ -11,6 +11,12 @@
  */
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/util/io.hpp>
+
+#ifdef BINDING_NAME
+  #undef BINDING_NAME
+#endif
+#define BINDING_NAME det
+
 #include <mlpack/core/util/mlpack_main.hpp>
 #include "dt_utils.hpp"
 
@@ -20,7 +26,7 @@ using namespace mlpack::util;
 using namespace std;
 
 // Program Name.
-BINDING_NAME("Density Estimation With Density Estimation Trees");
+BINDING_USER_NAME("Density Estimation With Density Estimation Trees");
 
 // Short description.
 BINDING_SHORT_DESC(
@@ -119,50 +125,50 @@ PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
     "penalize low volume leaves.", "R");
 */
 
-
-static void mlpackMain()
+void BINDING_NAME(util::Params& params, util::Timers& timers)
 {
   // Validate input parameters.
-  RequireOnlyOnePassed({ "training", "input_model" }, true);
+  RequireOnlyOnePassed(params, { "training", "input_model" }, true);
 
-  ReportIgnoredParam({{ "training", false }}, "training_set_estimates");
-  ReportIgnoredParam({{ "training", false }}, "folds");
-  ReportIgnoredParam({{ "training", false }}, "min_leaf_size");
-  ReportIgnoredParam({{ "training", false }}, "max_leaf_size");
+  ReportIgnoredParam(params, {{ "training", false }}, "training_set_estimates");
+  ReportIgnoredParam(params, {{ "training", false }}, "folds");
+  ReportIgnoredParam(params, {{ "training", false }}, "min_leaf_size");
+  ReportIgnoredParam(params, {{ "training", false }}, "max_leaf_size");
 
-  if (IO::HasParam("tag_file"))
-    RequireAtLeastOnePassed({ "training", "test" }, true);
+  if (params.Has("tag_file"))
+    RequireAtLeastOnePassed(params, { "training", "test" }, true);
 
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
-    RequireAtLeastOnePassed({ "output_model", "training_set_estimates", "vi",
-        "tag_file", "tag_counters_file" }, false, "no output will be saved");
+    RequireAtLeastOnePassed(params, { "output_model", "training_set_estimates",
+        "vi", "tag_file", "tag_counters_file" }, false,
+        "no output will be saved");
   }
 
-  ReportIgnoredParam({{ "test", false }}, "test_set_estimates");
+  ReportIgnoredParam(params, {{ "test", false }}, "test_set_estimates");
 
-  RequireParamValue<int>("folds", [](int x) { return x >= 0; }, true,
+  RequireParamValue<int>(params, "folds", [](int x) { return x >= 0; }, true,
       "folds must be non-negative");
-  RequireParamValue<int>("max_leaf_size", [](int x) { return x > 0; }, true,
-      "maximum leaf size must be positive");
-  RequireParamValue<int>("min_leaf_size", [](int x) { return x > 0; }, true,
-      "minimum leaf size must be positive");
+  RequireParamValue<int>(params, "max_leaf_size", [](int x) { return x > 0; },
+      true, "maximum leaf size must be positive");
+  RequireParamValue<int>(params, "min_leaf_size", [](int x) { return x > 0; },
+      true, "minimum leaf size must be positive");
 
   // Are we training a DET or loading from file?
   DTree<arma::mat, int>* tree;
   arma::mat trainingData;
   arma::mat testData;
 
-  if (IO::HasParam("training"))
+  if (params.Has("training"))
   {
-    trainingData = std::move(IO::GetParam<arma::mat>("training"));
+    trainingData = std::move(params.Get<arma::mat>("training"));
 
     const bool regularization = false;
-//    const bool regularization = IO::HasParam("volume_regularization");
-    const int maxLeafSize = IO::GetParam<int>("max_leaf_size");
-    const int minLeafSize = IO::GetParam<int>("min_leaf_size");
-    const bool skipPruning = IO::HasParam("skip_pruning");
-    size_t folds = IO::GetParam<int>("folds");
+//    const bool regularization = params.Has("volume_regularization");
+    const int maxLeafSize = params.Get<int>("max_leaf_size");
+    const int minLeafSize = params.Get<int>("min_leaf_size");
+    const bool skipPruning = params.Has("skip_pruning");
+    size_t folds = params.Get<int>("folds");
 
     if (folds == 0)
       folds = trainingData.n_cols;
@@ -175,7 +181,7 @@ static void mlpackMain()
     Timer::Stop("det_training");
 
     // Compute training set estimates, if desired.
-    if (IO::HasParam("training_set_estimates"))
+    if (params.Has("training_set_estimates"))
     {
       // Compute density estimates for each point in the training set.
       arma::rowvec trainingDensities(trainingData.n_cols);
@@ -184,21 +190,21 @@ static void mlpackMain()
         trainingDensities[i] = tree->ComputeValue(trainingData.unsafe_col(i));
       Timer::Stop("det_estimation_time");
 
-      IO::GetParam<arma::mat>("training_set_estimates") =
+      params.Get<arma::mat>("training_set_estimates") =
           std::move(trainingDensities);
     }
   }
   else
   {
-    tree = IO::GetParam<DTree<arma::mat>*>("input_model");
+    tree = params.Get<DTree<arma::mat>*>("input_model");
   }
 
   // Compute the density at the provided test points and output the density in
   // the given file.
-  if (IO::HasParam("test"))
+  if (params.Has("test"))
   {
-    testData = std::move(IO::GetParam<arma::mat>("test"));
-    if (IO::HasParam("test_set_estimates"))
+    testData = std::move(params.Get<arma::mat>("test"));
+    if (params.Has("test_set_estimates"))
     {
       // Compute test set densities.
       Timer::Start("det_test_set_estimation");
@@ -209,23 +215,23 @@ static void mlpackMain()
 
       Timer::Stop("det_test_set_estimation");
 
-      IO::GetParam<arma::mat>("test_set_estimates") = std::move(testDensities);
+      params.Get<arma::mat>("test_set_estimates") = std::move(testDensities);
     }
 
     // Print variable importance.
-    if (IO::HasParam("vi"))
+    if (params.Has("vi"))
     {
       arma::vec importances;
       tree->ComputeVariableImportance(importances);
-      IO::GetParam<arma::mat>("vi") = importances.t();
+      params.Get<arma::mat>("vi") = importances.t();
     }
   }
 
-  if (IO::HasParam("tag_file"))
+  if (params.Has("tag_file"))
   {
     const arma::mat& estimationData =
-        IO::HasParam("test") ? testData : trainingData;
-    const string tagFile = IO::GetParam<string>("tag_file");
+        params.Has("test") ? testData : trainingData;
+    const string tagFile = params.Get<string>("tag_file");
     std::ofstream ofs;
     ofs.open(tagFile, std::ofstream::out);
 
@@ -237,10 +243,10 @@ static void mlpackMain()
       Log::Warn << "Unable to open file '" << tagFile
           << "' to save tag membership info." << std::endl;
     }
-    else if (IO::HasParam("path_format"))
+    else if (params.Has("path_format"))
     {
-      const bool reqCounters = IO::HasParam("tag_counters_file");
-      const string pathFormat = IO::GetParam<string>("path_format");
+      const bool reqCounters = params.Has("tag_counters_file");
+      const string pathFormat = params.Get<string>("path_format");
 
       PathCacher::PathFormat theFormat;
       if (pathFormat == "lr" || pathFormat == "LR")
@@ -272,7 +278,7 @@ static void mlpackMain()
 
       if (reqCounters)
       {
-        ofs.open(IO::GetParam<string>("tag_counters_file"),
+        ofs.open(params.Get<string>("tag_counters_file"),
                  std::ofstream::out);
 
         for (size_t j = 0; j < counters.n_elem; ++j)
@@ -296,8 +302,8 @@ static void mlpackMain()
         counters(tag) += 1;
       }
 
-      if (IO::HasParam("tag_counters_file"))
-        data::Save(IO::GetParam<string>("tag_counters_file"), counters);
+      if (params.Has("tag_counters_file"))
+        data::Save(params.Get<string>("tag_counters_file"), counters);
     }
 
     Timer::Stop("det_test_set_tagging");
@@ -305,5 +311,5 @@ static void mlpackMain()
   }
 
   // Save the model, if desired.
-  IO::GetParam<DTree<arma::mat>*>("output_model") = tree;
+  params.Get<DTree<arma::mat>*>("output_model") = tree;
 }

@@ -1,8 +1,8 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
-  #clean_memory.hpp
-#  clean_memory.cpp
+  clean_memory.hpp
+  clean_memory.cpp
   test_option.hpp
   ignore_check.hpp
   delete_allocated_memory.hpp
