@@ -17,6 +17,11 @@ using namespace boost::spirit;
 namespace mlpack {
 namespace data {
 
+LoadCSV::LoadCSV()
+{
+  // Nothing to do here.
+}
+
 LoadCSV::LoadCSV(const std::string& file) :
   extension(Extension(file)),
   filename(file),

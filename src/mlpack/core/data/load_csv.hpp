@@ -1,8 +1,32 @@
 /**
  * @file core/data/load_csv.hpp
  * @author ThamNgapWei
+ * @author Conrad Sanderson
+ * @author Gopi M. Tatiraju
  *
- * This is a csv parsers which use to parse the csv file format
+ * This csv parser is designed by taking reference from armadillo's csv parser.
+ * In this mlpack's version, all the arma dependencies were removed or replaced
+ * accordingly, making the parser totally independent of armadillo.
+ *
+ * This parser will be totally independent to any linear algebra library.
+ * This can be used to load data into any matrix, i.e. arma and bandicoot
+ * in future.
+ *
+ * https://gitlab.com/conradsnicta/armadillo-code/-/blob/10.5.x/include/armadillo_bits/diskio_meat.hpp
+ * Copyright 2008-2016 Conrad Sanderson (http://conradsanderson.id.au)
+ * Copyright 2008-2016 National ICT Australia (NICTA)
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------------------
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -15,7 +39,6 @@
 #include <boost/spirit/include/qi.hpp>
 #include <boost/algorithm/string/trim.hpp>
 
-#include <mlpack/core.hpp>
 #include <mlpack/core/util/log.hpp>
 
 #include <set>
@@ -24,23 +47,59 @@
 #include "extension.hpp"
 #include "format.hpp"
 #include "dataset_mapper.hpp"
+#include "types.hpp"
 
 namespace mlpack {
 namespace data {
 
 /**
- *Load the csv file.This class use boost::spirit
- *to implement the parser, please refer to following link
- *http://theboostcpplibraries.com/boost.spirit for quick review.
+ * Load the csv file.This class use boost::spirit
+ * to implement the parser, please refer to following link
+ * http://theboostcpplibraries.com/boost.spirit for quick review.
  */
 class LoadCSV
 {
  public:
+
+  // Do nothing, just a place holder, to be removed later.
+  LoadCSV(); 
   /**
    * Construct the LoadCSV object on the given file.  This will construct the
    * rules necessary for loading and attempt to open the file.
    */
   LoadCSV(const std::string& file);
+
+  /**
+   * Convert the given string token to assigned datatype and assign
+   * this value to the given address. The address here will be a
+   * matrix location.
+   * 
+   * Token is always read as a string, if the given token is +/-INF or NAN
+   * it converts them to infinity and NAN using numeric_limits.
+   *
+   * @param val Token's value will be assigned to this address
+   * @param token Value which should be assigned
+   */
+  template<typename MatType>
+  bool ConvertToken(typename MatType::elem_type& val, const std::string& token);
+
+  /**
+   * Returns a bool value showing whether data was loaded successfully or not.
+   *
+   * Parses a csv file and loads the data into a given matrix. In the first pass,
+   * the function will determine the number of cols and rows in the given file.
+   * Once the rows and cols are fixed we initialize the matrix with zeros. In 
+   * the second pass, the function converts each value to required datatype
+   * and sets it equal to val. 
+   *
+   * This function uses MatType as template parameter in order to provide
+   * support for any type of matrices from any linear algebra library. 
+   *
+   * @param x Matrix in which data will be loaded
+   * @param f File stream to access the data file
+   */
+  template<typename MatType>
+  bool LoadCSVFile(MatType& x, std::ifstream& f);
 
   /**
    * Load the file into the given matrix with the given DatasetMapper object.
@@ -97,11 +156,11 @@ class LoadCSV
     //   ++rows;
     // }
 
-    Parser parser;
+    // Parser parser;
 
-    std::pair<int, int> matSize = parser.GetMatSize(inFile);
+    // std::pair<int, int> matSize = parser.GetMatSize(inFile);
 
-    info = DatasetMapper<MapPolicy>(matSize.first);
+  //  info = DatasetMapper<MapPolicy>(matSize.first);
 
     // Now, jump back to the beginning of the file.
     inFile.clear();
@@ -128,7 +187,7 @@ class LoadCSV
       // same idea...
       if (MapPolicy::NeedsFirstPass)
       {
-	info.template MapFirstPass<T>(std::move(line), rows-1);
+        // info.template MapFirstPass<T>(std::move(line), rows-1);
         // In this case we must pass everything we parse to the MapPolicy.
         // auto firstPassMap = [&](const iter_type& iter)
         // {
@@ -365,6 +424,8 @@ class LoadCSV
     }
   }
 
+  inline std::pair<int, int> GetMatSize(std::ifstream& f);
+
   //! Spirit rule for parsing.
   boost::spirit::qi::rule<std::string::iterator, iter_type()> stringRule;
   //! Spirit rule for delimiters (i.e. ',' for CSVs).
@@ -380,5 +441,7 @@ class LoadCSV
 
 } // namespace data
 } // namespace mlpack
+
+#include "load_csv_impl.hpp"
 
 #endif
