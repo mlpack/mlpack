@@ -48,6 +48,7 @@
 #include <mlpack/methods/ann/layer/positional_encoding.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
+#include <mlpack/methods/ann/layer/separable_convolution.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
 #include <mlpack/methods/ann/layer/spatial_dropout.hpp>
@@ -221,6 +222,15 @@ template <typename InputDataType,
 >
 class AdaptiveMeanPooling;
 
+template<
+    typename ForwardConvolutionRule,
+    typename BackwardConvolutionRule,
+    typename GradientConvolutionRule,
+    typename InputDataType,
+    typename OutputDataType
+>
+class SeparableConvolution;
+
 using MoreTypes = boost::variant<
         FlexibleReLU<arma::mat, arma::mat>*,
         Linear3D<arma::mat, arma::mat, NoRegularizer>*,
@@ -234,6 +244,10 @@ using MoreTypes = boost::variant<
         RecurrentAttention<arma::mat, arma::mat>*,
         ReinforceNormal<arma::mat, arma::mat>*,
         Reparametrization<arma::mat, arma::mat>*,
+        SeparableConvolution<NaiveConvolution<ValidConvolution>,
+                             NaiveConvolution<FullConvolution>,
+                             NaiveConvolution<ValidConvolution>,
+                             arma::mat, arma::mat>*,
         Select<arma::mat, arma::mat>*,
         SpatialDropout<arma::mat, arma::mat>*,
         Subview<arma::mat, arma::mat>*,

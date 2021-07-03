@@ -183,6 +183,11 @@ class SeparableConvolution
   //! Modify the gradient.
   OutputDataType& Gradient() { return gradient; }
 
+  //! Get the bias of the layer.
+  arma::mat const& Bias() const { return bias; }
+  //! Modify the bias of the layer.
+  arma::mat& Bias() { return bias; }
+
   //! Get the input width.
   size_t InputWidth() const { return inputWidth; }
   //! Modify input the width.
@@ -254,14 +259,11 @@ class SeparableConvolution
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
 
-  //! Modify the bias weights of the layer.
-  arma::mat& Bias() { return bias; }
-
   /**
    * Serialize the layer.
    */
   template <typename Archive>
-  void serialize(Archive& ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
   /*
@@ -407,28 +409,6 @@ class SeparableConvolution
 
 } // namespace ann
 } // namespace mlpack
-
-//! Set the serialization version of the Separable Convolution class.
-namespace boost {
-namespace serialization {
-
-template <
-    typename ForwardConvolutionRule,
-    typename BackwardConvolutionRule,
-    typename GradientConvolutionRule,
-    typename InputDataType,
-    typename OutputDataType
->
-struct version<
-    mlpack::ann::SeparableConvolution<ForwardConvolutionRule,
-        BackwardConvolutionRule, GradientConvolutionRule, InputDataType,
-        OutputDataType>>
-{
-  BOOST_STATIC_CONSTANT(int, value = 1);
-};
-
-} // namespace serialization
-} // namespace boost
 
 // Include implementation.
 #include "separable_convolution_impl.hpp"
