@@ -172,8 +172,7 @@ using Option = mlpack::bindings::tests::TestOption<T>;
  * PRINT_PARAM_STRING() returns a string that contains the correct
  * language-specific representation of a parameter's name.
  */
-#define PRINT_PARAM_STRING(x) mlpack::bindings::python::ParamString( \
-    STRINGIFY(BINDING_NAME), x)
+#define PRINT_PARAM_STRING mlpack::bindings::python::ParamString
 
 /**
  * PRINT_PARAM_VALUE() returns a string that contains a correct
