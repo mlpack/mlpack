@@ -96,7 +96,8 @@ class MSEGain
   }
 
   /**
-   * Calculates the  mean squared error gain for the given child and index.
+   * Calculates the  mean squared error gain for the left and right children
+   * for the current index.
    *
    * X = array of values of size n.
    *
@@ -104,22 +105,14 @@ class MSEGain
    *   MSE = \sum\limits_{i=1}^n {X_i}^2 -
    *       {\dfrac{\sum\limits_{j=1}^n X_j}{n}}^2
    * @f}
-   *
-   * @param index The current index to calculate gain.
-   * @param child The child to calculate gain.
-   *    0 -> Left child,   1 -> Right child
    */
-  double Evaluate(const size_t index, const size_t child)
+  std::tuple<double, double> Evaluate()
   {
-    double mse;
-    // Left child.
-    if (child == 0)
-      mse = leftSumSquares / leftSize - leftMean * leftMean;
-    // Right child.
-    else
-      mse = (totalSumSquares - leftSumSquares) / rightSize
+    double mseLeft = leftSumSquares / leftSize - leftMean * leftMean;
+    double mseRight = (totalSumSquares - leftSumSquares) / rightSize
           - rightMean * rightMean;
-    return -mse;
+
+    return {-mseLeft, -mseRight};
   }
 
   /**
