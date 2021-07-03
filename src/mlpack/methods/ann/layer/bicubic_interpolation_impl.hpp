@@ -53,6 +53,7 @@ BilinearInterpolation(
     weights.set_size(WeightSize(), 1);
     temp = arma::mat(weights.memptr(), inRowSize + 4, inColSize + 4, false, false);
   }
+
 template<typename eT>
   void GetKernalWeight(eT delta, arma::mat& coeffs)
   {
@@ -206,8 +207,7 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
         temp(inRowSize + 1, inColSize + 1) += arma::accu(temp(span(inRowSize + 2, inRowSize + 3), span(inColSize + 2, inColSize + 3)));
         temp(inRowSize + 1, 2) += arma::accu(temp(span(inRowSize + 2, inRowSize + 3), span(0, 1)));
         temp(2, inColSize + 1) += arma::accu(temp(span(0, 1), span(inColSize + 2, inColSize + 3)));
-
-            
+ 
         outputAsCube.slice(k) += temp(arma::span(2, inRowSize + 1), arma::span(2, inColSize + 1));
       }
     }
