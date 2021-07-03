@@ -1,6 +1,7 @@
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
+  loss_functions/sse_loss.hpp
 )
 
 # Add directory name to sources.
