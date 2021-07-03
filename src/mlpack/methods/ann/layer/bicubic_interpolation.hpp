@@ -87,7 +87,7 @@ class BicubicInterpolation
   size_t WeightSize() const { return (inRowSize + 5) * (inColSize + 4); }
 
   template<typename eT>
-  arma::Mat<eT> GetKernalWeight(double a, eT delta);
+  void GetKernalWeight(eT delta, arma::mat& coeffs);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
