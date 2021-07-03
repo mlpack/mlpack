@@ -125,7 +125,7 @@ PARAM_FLAG("volume_regularization", "This flag gives the used the option to use"
     "penalize low volume leaves.", "R");
 */
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Validate input parameters.
   RequireOnlyOnePassed(params, { "training", "input_model" }, true);

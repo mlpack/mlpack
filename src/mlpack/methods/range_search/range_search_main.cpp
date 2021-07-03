@@ -120,7 +120,7 @@ PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "S");
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
     math::RandomSeed((size_t) params.Get<int>("seed"));

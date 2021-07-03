@@ -161,7 +161,7 @@ PARAM_MODEL_OUT(DecisionTreeModel, "output_model", "Output for trained decision"
 // Convenience typedef.
 typedef tuple<DatasetInfo, arma::mat> TupleType;
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Check parameters.
   RequireOnlyOnePassed(params, { "training", "input_model" }, true);

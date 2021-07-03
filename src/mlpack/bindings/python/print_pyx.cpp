@@ -83,8 +83,10 @@ void PrintPYX(const util::BindingDetails& doc,
   cout << "from io cimport EnableVerbose, DisableVerbose, DisableBacktrace, "
       << "ResetTimers, EnableTimers" << endl;
   cout << "from matrix_utils import to_matrix, to_matrix_with_info" << endl;
-  cout << "from preprocess_json_params import process_params_out, process_params_in" << endl;
-  cout << "from serialization cimport SerializeIn, SerializeOut, SerializeOutJSON, SerializeInJSON" << endl;
+  cout << "from preprocess_json_params import process_params_out, "
+      << "process_params_in" << endl;
+  cout << "from serialization cimport SerializeIn, SerializeOut, "
+      << "SerializeOutJSON, SerializeInJSON" << endl;
   cout << endl;
   cout << "import numpy as np" << endl;
   cout << "cimport numpy as np" << endl;
@@ -100,7 +102,8 @@ void PrintPYX(const util::BindingDetails& doc,
 
   // Import the program we will be using.
   cout << "cdef extern from \"<" << mainFilename << ">\" nogil:" << endl;
-  cout << "  cdef void " << bindingName << "(Params, Timers)" << " nogil except +RuntimeError" << endl;
+  cout << "  cdef void mlpack_" << bindingName << "(Params, Timers)"
+      << " nogil except +RuntimeError" << endl;
   cout << "  " << endl;
   // Print any class definitions we need to have.
   std::set<std::string> classes;
@@ -241,7 +244,7 @@ void PrintPYX(const util::BindingDetails& doc,
 
   // Call the method.
   cout << "  # Call the mlpack program." << endl;
-  cout << "  " << bindingName << "(p, t)" << endl;
+  cout << "  mlpack_" << bindingName << "(p, t)" << endl;
 
   // Do any output processing and return.
   cout << "  # Initialize result dictionary." << endl;

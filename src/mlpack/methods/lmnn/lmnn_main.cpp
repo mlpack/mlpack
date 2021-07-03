@@ -235,7 +235,7 @@ double KNNAccuracy(const arma::mat& dataset,
   return ((double) count / dataset.n_cols) * 100;
 }
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
     math::RandomSeed((size_t) params.Get<int>("seed"));

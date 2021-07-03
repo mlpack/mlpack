@@ -437,7 +437,7 @@ struct Train
   }
 };
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Set random seed.
   if (params.Get<int>("seed") != 0)

@@ -98,7 +98,7 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
     "the given radius, one will be removed.  A radius of 0 or less means an "
     "estimate will be calculated and used for the radius.", "r", 0);
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   const double radius = params.Get<double>("radius");
   const int maxIterations = params.Get<int>("max_iterations");

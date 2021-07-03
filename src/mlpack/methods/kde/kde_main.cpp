@@ -198,7 +198,7 @@ PARAM_COL_OUT("predictions", "Vector to store density predictions.",
 
 // Maybe, in the future, it could be interesting to implement different metrics.
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Get some parameters.
   const double bandwidth = params.Get<double>("bandwidth");

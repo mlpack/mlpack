@@ -152,7 +152,7 @@ PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
 PARAM_MODEL_OUT(AdaBoostModel, "output_model", "Output trained AdaBoost model.",
     "M");
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Check input parameters and issue warnings/errors as necessary.
 

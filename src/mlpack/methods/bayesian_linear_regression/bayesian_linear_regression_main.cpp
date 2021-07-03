@@ -133,7 +133,7 @@ PARAM_FLAG("center", "Center the data and fit the intercept if enabled.", "c");
 PARAM_FLAG("scale", "Scale each feature by their standard deviations if "
            "enabled.", "s");
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   bool center = params.Get<bool>("center");
   bool scale = params.Get<bool>("scale");

@@ -155,7 +155,7 @@ PARAM_UROW_OUT("output", "The matrix in which the predicted labels for the"
 PARAM_UROW_OUT("predictions", "The matrix in which the predicted labels for the"
     " test set will be written.", "P");
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // First, get all parameters and validate them.
   const size_t maxIterations = (size_t) params.Get<int>("max_iterations");

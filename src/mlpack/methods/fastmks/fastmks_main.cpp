@@ -111,7 +111,7 @@ PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
 PARAM_MATRIX_OUT("kernels", "Output matrix of kernels.", "p");
 PARAM_UMATRIX_OUT("indices", "Output matrix of indices.", "i");
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Validate command-line parameters.
   RequireOnlyOnePassed(params, { "reference", "input_model" }, true);

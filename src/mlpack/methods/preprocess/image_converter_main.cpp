@@ -86,7 +86,7 @@ PARAM_INT_IN("height", "Height of the images.", "H", 0);
 PARAM_FLAG("save", "Save a dataset as images.", "s");
 PARAM_MATRIX_IN("dataset", "Input matrix to save as images.", "I");
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Parse command line options.
   const vector<string> fileNames = params.Get<vector<string> >("input");

@@ -177,7 +177,7 @@ PARAM_MODEL_IN(ApproxKFNModel, "input_model", "File containing input model.",
 PARAM_MODEL_OUT(ApproxKFNModel, "output_model", "File to save output model to.",
     "M");
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // We have to pass either a reference set or an input model.
   RequireOnlyOnePassed(params, { "reference", "input_model" });

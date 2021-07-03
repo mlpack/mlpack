@@ -124,7 +124,7 @@ void RunPCA(util::Params& params,
       dataset.n_rows << " dimensions)." << endl;
 }
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Load input dataset.
   arma::mat& dataset = params.Get<arma::mat>("input");

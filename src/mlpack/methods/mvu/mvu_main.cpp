@@ -46,7 +46,7 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-void BINDING_NAME(util::Params& params, util::Timers& timers);
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers);
 {
   const string inputFile = params.Get<string>("input_file");
   const string outputFile = params.Get<string>("output_file");

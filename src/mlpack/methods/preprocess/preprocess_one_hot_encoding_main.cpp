@@ -65,7 +65,7 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Load the data.
   const arma::mat& data = params.Get<arma::mat>("input");

@@ -129,7 +129,7 @@ PARAM_STRING_IN("algorithm", "Type of neighbor search: 'naive', 'single_tree', "
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
     "search with given relative error.", "e", 0);
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
     math::RandomSeed((size_t) params.Get<int>("seed"));

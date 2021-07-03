@@ -105,7 +105,7 @@ struct Loglik
   }
 };
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Load model, and calculate the log-likelihood of the sequence.
   params.Get<HMMModel*>("input_model")->PerformAction<Loglik>(
