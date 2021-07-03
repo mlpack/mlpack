@@ -114,10 +114,10 @@ class MSEGain
     double mse;
     // Left child.
     if (child == 0)
-      mse = sumSquares[index] / leftSize - leftMean * leftMean;
+      mse = leftSumSquares / leftSize - leftMean * leftMean;
     // Right child.
     else
-      mse = (totalSumSquares - sumSquares[index]) / rightSize
+      mse = (totalSumSquares - leftSumSquares) / rightSize
           - rightMean * rightMean;
     return -mse;
   }
@@ -143,14 +143,15 @@ class MSEGain
     rightMean = 0.0;
     leftSize = 0.0;
     rightSize = 0.0;
+    leftSumSquares = 0.0;
     totalSumSquares = 0.0;
-    sumSquares.set_size(responses.n_elem);
 
     if (UseWeights)
     {
-      // Stores the weighted sum of squares till the previous index.
-      double prevWeightedSumSquares = 0.0;
-
+      // Do I need to document that the % symbol does the elementwise multiplication?
+      // It might be misleading to general developers who might confuse it with modulo
+      // operator.
+      totalSumSquares = arma::accu(weights % arma::square(responses));
       for (size_t i = 0; i < minimum - 1; ++i)
       {
         const WType w = weights[i];
@@ -159,8 +160,7 @@ class MSEGain
         // Calculating initial weighted mean of responses for the left child.
         leftSize += w;
         leftMean += w * x;
-        sumSquares[i] = prevWeightedSumSquares + w * x * x;
-        prevWeightedSumSquares += w * x * x;
+        leftSumSquares += w * x * x;
       }
       if (leftSize > 1e-9)
         leftMean /= leftSize;
@@ -173,19 +173,13 @@ class MSEGain
         // Calculating initial weighted mean of responses for the right child.
         rightSize += w;
         rightMean += w * x;
-        sumSquares[i] = prevWeightedSumSquares + w * x * x;
-        prevWeightedSumSquares += w * x * x;
       }
       if (rightSize > 1e-9)
         rightMean /= rightSize;
-
-      totalSumSquares = prevWeightedSumSquares;
     }
     else
     {
-      // Stores the sum of squares till the previous index.
-      double prevSumSquares = 0.0;
-
+      totalSumSquares = arma::accu(arma::square(responses));
       for (size_t i = 0; i < minimum - 1; ++i)
       {
         const RType x = responses[i];
@@ -193,8 +187,7 @@ class MSEGain
         // Calculating the initial mean of responses for the left child.
         ++leftSize;
         leftMean += x;
-        sumSquares[i] = prevSumSquares + x * x;
-        prevSumSquares += x * x;
+        leftSumSquares += x * x;
       }
       if (leftSize > 1e-9)
         leftMean /= leftSize;
@@ -206,13 +199,9 @@ class MSEGain
         // Calculating the initial mean of responses for the right child.
         ++rightSize;
         rightMean += x;
-        sumSquares[i] = prevSumSquares + x * x;
-        prevSumSquares += x * x;
       }
       if (rightSize > 1e-9)
         rightMean /= rightSize;
-
-      totalSumSquares = prevSumSquares;
     }
   }
 
@@ -235,6 +224,11 @@ class MSEGain
     {
       const WType w = weights[index];
       const RType x = responses[index];
+
+      // Update weighted sum of squares for left child.
+      leftSumSquares += w * x * x;
+
+      // Update weighted mean for both childs.
       leftMean = (leftMean * leftSize + w * x) / (leftSize + w);
       leftSize += w;
 
@@ -244,6 +238,11 @@ class MSEGain
     else
     {
       const RType x = responses[index];
+
+      // Update sum of squares for left child.
+      leftSumSquares += x * x;
+
+      // Update mean for both childs.
       leftMean = (leftMean * leftSize + x) / (leftSize + 1);
       ++leftSize;
 
@@ -257,8 +256,8 @@ class MSEGain
    * The following data members cache statistics for weighted data when
    * `UseWeights` is true, else it will calculate unweighted statistics.
    */
-  // Stores the sum of squares / weighted sum of squares.
-  arma::rowvec sumSquares;
+  // Stores the sum of squares / weighted sum of squares for the left child.
+  double leftSumSquares;
   // For unweighted data, stores the number of elements in each child.
   // For weighted data, stores the sum of weights of elements in each
   // child.
