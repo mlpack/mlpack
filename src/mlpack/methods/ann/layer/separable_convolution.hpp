@@ -130,7 +130,7 @@ class SeparableConvolution
    * @param output Resulting output activation.
    */
   template <typename eT>
-  void Forward(const arma::Mat<eT> &&input, arma::Mat<eT> &&output);
+  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -142,9 +142,9 @@ class SeparableConvolution
    * @param g The calculated gradient.
    */
   template <typename eT>
-  void Backward(const arma::Mat<eT> && /* input */,
-                arma::Mat<eT> &&gy,
-                arma::Mat<eT> &&g);
+  void Backward(const arma::Mat<eT>& /* input */,
+                arma::Mat<eT>& gy,
+                arma::Mat<eT>& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -154,114 +154,114 @@ class SeparableConvolution
    * @param gradient The calculated gradient.
    */
   template <typename eT>
-  void Gradient(const arma::Mat<eT> && /* input */,
-                arma::Mat<eT> &&error,
-                arma::Mat<eT> &&gradient);
+  void Gradient(const arma::Mat<eT>& /* input */,
+                arma::Mat<eT>& error,
+                arma::Mat<eT>& gradient);
 
   //! Get the input parameter.
-  const InputDataType& InputParameter() const { return inputParameter; }
+  InputDataType const& InputParameter() const { return inputParameter; }
   //! Modify the input parameter.
   InputDataType& InputParameter() { return inputParameter; }
 
   //! Get the output parameter.
-  const OutputDataType& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
   //! Get the parameters.
-  const OutputDataType &Parameters() const { return weights; }
+  OutputDataType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType &Parameters() { return weights; }
+  OutputDataType& Parameters() { return weights; }
 
   //! Get the delta.
-  const OutputDataType &Delta() const { return delta; }
+  OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
-  OutputDataType &Delta() { return delta; }
+  OutputDataType& Delta() { return delta; }
 
   //! Get the gradient.
-  const OutputDataType &Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return gradient; }
   //! Modify the gradient.
-  OutputDataType &Gradient() { return gradient; }
+  OutputDataType& Gradient() { return gradient; }
 
   //! Get the input width.
-  const size_t &InputWidth() const { return inputWidth; }
+  size_t InputWidth() const { return inputWidth; }
   //! Modify input the width.
-  size_t &InputWidth() { return inputWidth; }
+  size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  const size_t &InputHeight() const { return inputHeight; }
+  size_t InputHeight() const { return inputHeight; }
   //! Modify the input height.
-  size_t &InputHeight() { return inputHeight; }
+  size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  const size_t &OutputWidth() const { return outputWidth; }
+  size_t OutputWidth() const { return outputWidth; }
   //! Modify the output width.
-  size_t &OutputWidth() { return outputWidth; }
+  size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  const size_t &OutputHeight() const { return outputHeight; }
+  size_t OutputHeight() const { return outputHeight; }
   //! Modify the output height.
-  size_t &OutputHeight() { return outputHeight; }
+  size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size.
+  //! Get the number of input maps.
   size_t InputSize() const { return inSize; }
 
-  //! Get the output size.
+  //! Get the number of output maps.
   size_t OutputSize() const { return outSize; }
 
   //! Get the kernel width.
   size_t KernelWidth() const { return kernelWidth; }
   //! Modify the kernel width.
-  size_t &KernelWidth() { return kernelWidth; }
+  size_t& KernelWidth() { return kernelWidth; }
 
   //! Get the kernel height.
   size_t KernelHeight() const { return kernelHeight; }
   //! Modify the kernel height.
-  size_t &KernelHeight() { return kernelHeight; }
+  size_t& KernelHeight() { return kernelHeight; }
 
   //! Get the stride width.
   size_t StrideWidth() const { return strideWidth; }
   //! Modify the stride width.
-  size_t &StrideWidth() { return strideWidth; }
+  size_t& StrideWidth() { return strideWidth; }
 
   //! Get the stride height.
   size_t StrideHeight() const { return strideHeight; }
   //! Modify the stride height.
-  size_t &StrideHeight() { return strideHeight; }
+  size_t& StrideHeight() { return strideHeight; }
 
   //! Get number of Groups for Grouped Convolution.
   size_t NumGroups() const { return numGroups; }
   //! Modify the number of Groups.
-  size_t &NumGroups() { return numGroups; }
+  size_t& NumGroups() { return numGroups; }
 
   //! Get the top padding height.
   size_t PadHTop() const { return padHTop; }
   //! Modify the top padding height.
-  size_t &PadHTop() { return padHTop; }
+  size_t& PadHTop() { return padHTop; }
 
   //! Get the bottom padding height.
   size_t PadHBottom() const { return padHBottom; }
   //! Modify the bottom padding height.
-  size_t &PadHBottom() { return padHBottom; }
+  size_t& PadHBottom() { return padHBottom; }
 
   //! Get the left padding width.
   size_t PadWLeft() const { return padWLeft; }
   //! Modify the left padding width.
-  size_t &PadWLeft() { return padWLeft; }
+  size_t& PadWLeft() { return padWLeft; }
 
   //! Get the right padding width.
   size_t PadWRight() const { return padWRight; }
   //! Modify the right padding width.
-  size_t &PadWRight() { return padWRight; }
+  size_t& PadWRight() { return padWRight; }
 
   //! Modify the bias weights of the layer.
-  arma::mat &Bias() { return bias; }
+  arma::mat& Bias() { return bias; }
 
   /**
    * Serialize the layer.
    */
   template <typename Archive>
-  void serialize(Archive &ar, const unsigned int /* version */);
+  void serialize(Archive& ar, const unsigned int /* version */);
 
  private:
   /*
@@ -295,7 +295,7 @@ class SeparableConvolution
    * @param output The rotated output.
    */
   template <typename eT>
-  void Rotate180(const arma::Cube<eT> &input, arma::Cube<eT> &output)
+  void Rotate180(const arma::Cube<eT>& input, arma::Cube<eT>& output)
   {
     output = arma::Cube<eT>(input.n_rows, input.n_cols, input.n_slices);
 
@@ -311,7 +311,7 @@ class SeparableConvolution
    * @param output The rotated output.
    */
   template <typename eT>
-  void Rotate180(const arma::Mat<eT> &input, arma::Mat<eT> &output)
+  void Rotate180(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
     // * left-right flip, up-down flip */
     output = arma::fliplr(arma::flipud(input));
