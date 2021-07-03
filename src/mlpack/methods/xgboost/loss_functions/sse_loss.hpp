@@ -71,8 +71,7 @@ class SSELoss
    * values. This is used only for vectors.
    */
   template<typename VecType,
-           class = std::enable_if_t<arma::is_Col<VecType>::value ||
-               arma::is_Row<VecType>::value>>
+           class = std::enable_if_t<VecType::is_col || VecType::is_row>>
   VecType Hessians(const VecType& /* observed */, const VecType& values)
   {
     VecType h(values.n_elem, arma::fill::ones);
