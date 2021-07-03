@@ -413,8 +413,9 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
       continue;
 
     // Calculate the gain for the left and right child.
-    const double leftGain = fitnessFunction.Evaluate(index - 1, 0);
-    const double rightGain = fitnessFunction.Evaluate(index - 1, 1);
+    auto value = fitnessFunction.Evaluate();
+    const double leftGain = std::get<0>(value);
+    const double rightGain = std::get<1>(value);
 
     double gain;
     if (UseWeights)
