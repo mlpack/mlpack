@@ -1,5 +1,6 @@
 /** 
- * @file core/data/csv_parser_impl.hpp
+ * @file core/data/load_csv_impl.hpp
+ * 
  * @author Conrad Sanderson
  * @author Gopi M. Tatiraju
  *
@@ -35,7 +36,7 @@
 #ifndef MLPACK_CORE_DATA_CSV_PARSER_IMPL_HPP
 #define MLPACK_CORE_DATA_CSV_PARSER_IMPL_HPP
 
-#include "csv_parser.hpp"
+#include "load_csv.hpp"
 
 namespace mlpack
 {
@@ -47,7 +48,7 @@ namespace data
    * example calling: convert_token<eT>(x.at(row, col), token)
    */
   template<typename MatType>
-  bool Parser::ConvertToken(typename MatType::elem_type& val, const std::string& token)
+  bool LoadCSV::ConvertToken(typename MatType::elem_type& val, const std::string& token)
   {
     const size_t N = size_t(token.length());
 
@@ -72,15 +73,15 @@ namespace data
 
       if (((sig_a == 'i') || (sig_a == 'I')) &&
           ((sig_b == 'n') || (sig_b == 'N')) &&
-	  ((sig_c == 'f') || (sig_c == 'F')))
+          ((sig_c == 'f') || (sig_c == 'F')))
       {
         val = neg ? -(std::numeric_limits<typename MatType::elem_type>::infinity()) :
-	            std::numeric_limits<typename MatType::elem_type>::infinity();
+            std::numeric_limits<typename MatType::elem_type>::infinity();
         return true;
       }
       else if (((sig_a == 'n') || (sig_a == 'N')) &&
-	       ((sig_b == 'a') || (sig_b == 'A')) &&
-	       ((sig_c == 'n') || (sig_c == 'N')))
+         ((sig_b == 'a') || (sig_b == 'A')) &&
+         ((sig_c == 'n') || (sig_c == 'N')))
       {
         val = std::numeric_limits<typename MatType::elem_type>::quiet_NaN();
         return true;
@@ -118,7 +119,7 @@ namespace data
     return true;
   }
 
-  inline std::pair<int, int> Parser::GetMatSize(std::ifstream& f)
+  inline std::pair<int, int> LoadCSV::GetMatSize(std::ifstream& f)
   {
     
     bool load_okay = f.good();
@@ -174,7 +175,7 @@ namespace data
    * Parses the file and loads the data into the given matrix.
    */
   template<typename MatType>
-  bool Parser::LoadCSVFile(MatType& x, std::ifstream& f)
+  bool LoadCSV::LoadCSVFile(MatType& x, std::ifstream& f)
   {
     bool load_okay = f.good();
 
