@@ -125,7 +125,7 @@ struct Generate
   }
 };
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   RequireAtLeastOnePassed(params, { "output", "state" }, false,
       "no output will be saved");

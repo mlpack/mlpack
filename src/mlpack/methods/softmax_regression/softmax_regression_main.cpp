@@ -146,7 +146,7 @@ void TestClassifyAcc(util::Params& params,
 template<typename Model>
 Model* TrainSoftmax(util::Params& params, const size_t maxIterations);
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   const int maxIterations = params.Get<int>("max_iterations");
 

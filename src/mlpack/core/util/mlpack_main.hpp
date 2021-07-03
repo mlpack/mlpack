@@ -220,6 +220,12 @@ using Option = mlpack::bindings::python::PyOption<T>;
 
 #include <mlpack/core/util/param.hpp>
 
+// In Python, we want to call the binding function mlpack_<BINDING_NAME>()
+// instead of just <BINDING_NAME>(), so we change the definition of
+// BINDING_FUNCTION().
+#undef BINDING_FUNCTION
+#define BINDING_FUNCTION(...) JOIN(mlpack_, BINDING_NAME)(__VA_ARGS__)
+
 #ifndef BINDING_NAME
   #error "BINDING_NAME not defined!"
 #endif

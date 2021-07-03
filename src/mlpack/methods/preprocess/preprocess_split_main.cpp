@@ -111,7 +111,7 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Parse command line options.
   const double testRatio = params.Get<double>("test_ratio");

@@ -78,7 +78,7 @@ using namespace mlpack::util;
 using namespace arma;
 using namespace std;
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   const size_t dimension = (size_t) params.Get<int>("dimension");
   const double threshold = params.Get<double>("threshold");

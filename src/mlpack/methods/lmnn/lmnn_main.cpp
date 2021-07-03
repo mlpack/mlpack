@@ -129,13 +129,13 @@ BINDING_EXAMPLE(
     "number of targets as 3 using BigBatch_SGD optimizer. A simple call for "
     "the same will look like: "
     "\n\n" +
-    PRINT_CALL("mlpack_lmnn", "input", "iris", "labels", "iris_labels",
-    "k", 3, "optimizer", "bbsgd", "output", "output") +
+    PRINT_CALL("lmnn", "input", "iris", "labels", "iris_labels", "k", 3,
+    "optimizer", "bbsgd", "output", "output") +
     "\n\n"
     "An another program call making use of range & regularization parameter "
     "with dataset having labels as last column can be made as: "
     "\n\n" +
-    PRINT_CALL("mlpack_lmnn", "input", "letter_recognition", "k", 5,
+    PRINT_CALL("lmnn", "input", "letter_recognition", "k", 5,
     "range", 10, "regularization", 0.4, "output", "output"));
 
 // See also...
@@ -235,7 +235,7 @@ double KNNAccuracy(const arma::mat& dataset,
   return ((double) count / dataset.n_cols) * 100;
 }
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
     math::RandomSeed((size_t) params.Get<int>("seed"));

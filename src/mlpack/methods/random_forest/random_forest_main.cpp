@@ -167,7 +167,7 @@ PARAM_MODEL_IN(RandomForestModel, "input_model", "Pre-trained random forest to "
 PARAM_MODEL_OUT(RandomForestModel, "output_model", "Model to save trained "
     "random forest to.", "M");
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Initialize random seed if needed.
   if (params.Get<int>("seed") != 0)

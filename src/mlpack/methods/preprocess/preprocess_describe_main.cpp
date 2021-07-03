@@ -176,7 +176,7 @@ double StandardError(const size_t size, const double& fStd)
   return fStd / sqrt(size);
 }
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   const size_t dimension = static_cast<size_t>(params.Get<int>("dimension"));
   const size_t precision = static_cast<size_t>(params.Get<int>("precision"));

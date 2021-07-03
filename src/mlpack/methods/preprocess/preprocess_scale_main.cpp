@@ -116,7 +116,7 @@ PARAM_FLAG("inverse_scaling", "Inverse Scaling to get original dataset", "f");
 PARAM_MODEL_IN(ScalingModel, "input_model", "Input Scaling model.", "m");
 PARAM_MODEL_OUT(ScalingModel, "output_model", "Output scaling model.", "M");
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Parse command line options.
   const std::string scalerMethod = params.Get<string>("scaler_method");

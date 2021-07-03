@@ -44,6 +44,12 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
 /** @endcond */
 
 /**
+ * Define the function to be called for a given binding.  BINDING_NAME should be
+ * set before calling this.
+ */
+#define BINDING_FUNCTION(...) BINDING_NAME(__VA_ARGS__)
+
+/**
  * Specify the user-friendly name of a binding.  Only one instance of this macro
  * should be present per binding.  BINDING_NAME should be set before calling
  * this.
