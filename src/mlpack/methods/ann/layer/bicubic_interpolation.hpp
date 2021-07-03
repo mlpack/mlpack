@@ -1,15 +1,14 @@
 /**
- * @file methods/ann/layer/bilinear_interpolation.hpp
- * @author Kris Singh
- * @author Shikhar Jaiswal
+ * @file methods/ann/layer/bicubic_interpolation.hpp
+ * @author Abhinav Anand
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license. You should have received a copy of the
  * 3-clause BSD license along with mlpack. If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_BILINEAR_INTERPOLATION_HPP
-#define MLPACK_METHODS_ANN_LAYER_BILINEAR_INTERPOLATION_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_BICUBIC_INTERPOLATION_HPP
+#define MLPACK_METHODS_ANN_LAYER_BICUBIC_INTERPOLATION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -17,12 +16,12 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Definition and Implementation of the Bilinear Interpolation Layer.
+ * Definition and Implementation of the Bicubic Interpolation Layer.
  *
- * Bilinear Interpolation is an mathematical technique, primarily used for
- * scaling purposes. It is an extension of linear interpolation, for
+ * Bicubic Interpolation is an mathematical technique, primarily used for
+ * scaling purposes. It is an extension of cubic interpolation, for
  * interpolating functions of two variables on a rectangular grid. The key
- * idea is to perform linear interpolation first in one direction (e.g., along
+ * idea is to perform cubic interpolation first in one direction (e.g., along
  * x-axis), and then again in the other direction (i.e., y-axis), on four
  * different known points in the grid. This way, we represent any arbitrary
  * point, present within the grid, as a function of those four points.
@@ -36,14 +35,14 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class BilinearInterpolation
+class BicubicInterpolation
 {
  public:
-  //! Create the Bilinear Interpolation object.
-  BilinearInterpolation();
+  //! Create the Bicubic Interpolation object.
+  BicubicInterpolation();
 
   /**
-   * The constructor for the Bilinear Interpolation.
+   * The constructor for the Bicubic Interpolation.
    *
    * @param inRowSize Number of input rows.
    * @param inColSize Number of input columns.
@@ -51,15 +50,16 @@ class BilinearInterpolation
    * @param outColSize Number of output columns.
    * @param depth Number of input slices.
    */
-  BilinearInterpolation(const size_t inRowSize,
+  BicubicInterpolation(const size_t inRowSize,
                         const size_t inColSize,
                         const size_t outRowSize,
                         const size_t outColSize,
-                        const size_t depth);
+                        const size_t depth,
+                        const double alpha);
 
   /**
    * Forward pass through the layer. The layer interpolates
-   * the matrix using the given Bilinear Interpolation method.
+   * the matrix using the given Bicubic Interpolation method.
    *
    * @param input The input matrix.
    * @param output The resulting interpolated output matrix.
@@ -83,6 +83,12 @@ class BilinearInterpolation
                 const arma::Mat<eT>& gradient,
                 arma::Mat<eT>& output);
 
+  //! Get the size of the weights.
+  size_t WeightSize() const { return (inRowSize + 5) * (inColSize + 4); }
+
+  template<typename eT>
+  arma::Mat<eT> GetKernalWeight(double a, eT delta);
+
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -92,6 +98,11 @@ class BilinearInterpolation
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
+
+  //! Get the parameters.
+  OutputDataType const& Parameters() const { return weights; }
+  //! Modify the parameters.
+  OutputDataType& Parameters() { return weights; }
 
   //! Get the row size of the input.
   size_t const& InRowSize() const { return inRowSize; }
@@ -118,6 +129,11 @@ class BilinearInterpolation
   //! Modify the depth of the input.
   size_t& InDepth() { return depth; }
 
+  //! Get the constant value to generate weight.
+  size_t const& Alpha() const { return alpha; }
+  //! Modify the constant value to generate weight.
+  size_t& Alpha() { return alpha; }
+
   //! Get the shape of the input.
   size_t InputShape() const
   {
@@ -131,6 +147,9 @@ class BilinearInterpolation
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Element Type of the input.
+  typedef typename OutputDataType::elem_type ElemType;
+
   //! Locally stored row size of the input.
   size_t inRowSize;
   //! Locally stored column size of the input.
@@ -141,18 +160,25 @@ class BilinearInterpolation
   size_t outColSize;
   //! Locally stored depth of the input.
   size_t depth;
+  //! Locally stored constant value to generate weight.
+  double alpha;
   //! Locally stored number of input points.
   size_t batchSize;
   //! Locally-stored delta object.
   OutputDataType delta;
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-}; // class BilinearInterpolation
+  //! Locally-stored weights parameter.
+  OutputDataType weights;
+
+  // Locally-stored temp for padded output matrix.
+  arma::Mat<ElemType> temp;
+}; // class BicubicInterpolation
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "bilinear_interpolation_impl.hpp"
+#include "bicubic_interpolation_impl.hpp"
 
 #endif
