@@ -27,6 +27,7 @@
 #include "catch.hpp"
 #include "ann_test_tools.hpp"
 #include "serialization.hpp"
+#include "../methods/ann/layer/separable_convolution.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -4292,6 +4293,35 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   module4.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 2.25);
 }
+
+/**
+ * Simple Separable Convolution layer test.
+ */
+// BOOST_AUTO_TEST_CASE(SimpleSeparableConvolutionLayerTest)
+// {
+//   arma::mat output, input, delta;
+//   Convolution<> module1(1, 4, 2, 2, 1, 1, 0, 0, 3, 3, "valid");
+
+//   // Test the forward function.
+//   input = arma::linspace<arma::colvec>(0, 8, 9);
+//   input.zeros();
+//   input(0) = 1.0;
+//   input(3) = 3.0;
+//   input(4) = 4.0;
+//   input(5) = 5.0;
+//   input(7) = 1.0;
+//   module1.Parameters() = arma::mat(20, 1, arma::fill::zeros);
+//   module1.Parameters()(1) = 1.0;
+//   module1.Parameters()(2) = 1.0;
+//   module1.Parameters()(5) = 2.0;
+//   module1.Parameters()(7) = 2.0;
+//   module1.Parameters()(8) = 3.0;
+//   module1.Parameters()(14) = 4.0;
+//   module1.Reset();
+//   module1.Forward(std::move(input), std::move(output));
+
+//   BOOST_REQUIRE_EQUAL(arma::accu(output), 111);
+// }
 
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
 {
