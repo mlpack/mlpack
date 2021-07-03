@@ -25,8 +25,8 @@ namespace python {
 template<typename T>
 void PrintClassDefn(
     util::ParamData& /* d */,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
 {
   // Do nothing.
 }
@@ -37,7 +37,7 @@ void PrintClassDefn(
 template<typename T>
 void PrintClassDefn(
     util::ParamData& /* d */,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   // Do nothing.
 }
@@ -48,8 +48,8 @@ void PrintClassDefn(
 template<typename T>
 void PrintClassDefn(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // First, we have to parse the type.  If we have something like, e.g.,
   // 'LogisticRegression<>', we must convert this to 'LogisticRegression[].'

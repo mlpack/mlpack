@@ -25,7 +25,7 @@ namespace markdown {
  */
 template<typename T>
 bool IsSerializable(
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0)
 {
   return false;
 }
@@ -35,8 +35,8 @@ bool IsSerializable(
  */
 template<typename T>
 bool IsSerializable(
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0)
 {
   return true;
 }

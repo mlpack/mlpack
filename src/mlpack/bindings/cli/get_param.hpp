@@ -28,10 +28,10 @@ namespace cli {
 template<typename T>
 T& GetParam(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // No mapping is needed, so just cast it directly.
   return *boost::any_cast<T>(&d.value);
@@ -45,7 +45,7 @@ T& GetParam(
 template<typename T>
 T& GetParam(
     util::ParamData& d,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   // If the matrix is an input matrix, we have to load the matrix.  'value'
   // contains the filename.  It's possible we could load empty matrices many
@@ -80,8 +80,8 @@ T& GetParam(
 template<typename T>
 T& GetParam(
     util::ParamData& d,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // If this is an input parameter, we need to load both the matrix and the
   // dataset info.
@@ -110,8 +110,8 @@ T& GetParam(
 template<typename T>
 T*& GetParam(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // If the model is an input model, we have to load it from file.  'value'
   // contains the filename.
