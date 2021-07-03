@@ -15,7 +15,6 @@
 // In case it hasn't already been included.
 #include "save.hpp"
 #include "extension.hpp"
-#include "detect_file_type.hpp"
 
 #include <cereal/archives/xml.hpp>
 #include <cereal/archives/json.hpp>

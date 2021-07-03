@@ -13,13 +13,12 @@
 #define MLPACK_CORE_DATA_LOAD_IMPL_HPP
 
 // In case it hasn't already been included.
+#include "load.hpp"
 
 #include <exception>
 #include <algorithm>
 #include <mlpack/core/util/timers.hpp>
 
-#include "load_csv.hpp"
-#include "load.hpp"
 #include "extension.hpp"
 #include "detect_file_type.hpp"
 #include "types.hpp"
@@ -27,8 +26,6 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
-
-#include "load_arff.hpp"
 
 namespace mlpack {
 namespace data {
@@ -167,12 +164,12 @@ bool Load(const std::string& filename,
 
   // We can't use the stream if the type is HDF5.
   bool success;
-  Parser parser;
+  LoadCSV load;
   
   if (loadType != file_type::HDF5Binary)
   {
     if(loadType == file_type::CSVASCII)
-      success = parser.LoadCSVFile(matrix, istream);
+      success = load.LoadCSVFile(matrix, istream);
     else
       success = matrix.load(stream, ToArmaFileType(loadType));
   }

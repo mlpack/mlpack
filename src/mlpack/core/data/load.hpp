@@ -18,10 +18,12 @@
 #include <mlpack/core/util/log.hpp>
 #include <string>
 
-#include "csv_parser.hpp"
 #include "format.hpp"
 #include "dataset_mapper.hpp"
 #include "image_info.hpp"
+#include "load_csv.hpp"
+#include "load_arff.hpp"
+#include "detect_file_type.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices and models. */ {
@@ -287,6 +289,7 @@ bool LoadImage(const std::string& filename,
 } // namespace data
 } // namespace mlpack
 
+// Include implementation of Load() for matrix.
 #include "load_impl.hpp"
 // Include implementation of model-loading Load() overload.
 #include "load_model_impl.hpp"
@@ -294,5 +297,5 @@ bool LoadImage(const std::string& filename,
 #include "load_vec_impl.hpp"
 // Include implementation of Load() for images.
 #include "load_image_impl.hpp"
-// Include implementation of Load() for matrix.
+
 #endif

@@ -20,8 +20,7 @@
 
 #include "format.hpp"
 #include "image_info.hpp"
-#include "csv_parser.hpp"
-#include "types.hpp"
+#include "detect_file_type.hpp"
 
 namespace mlpack {
 namespace data /** Functions to load and save matrices. */ {
