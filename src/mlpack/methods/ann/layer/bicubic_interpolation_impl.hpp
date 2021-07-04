@@ -175,13 +175,10 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
           double rOrigin = (i + 0.5) * scaleRow;
           for (size_t j = 0; j < outColSize; ++j)
           {
-            arma::mat kernal = arma::mat(4, 4);
             double cOrigin = (j + 0.5) * scaleCol;
             // Bottom right corner of the kernal
             const size_t cEnd = (size_t) std::floor(cOrigin + 1.5) + 2;
             const size_t rEnd = (size_t) std::floor(rOrigin + 1.5) + 2;
-            kernal = grid(arma::span(rEnd - 3, rEnd),
-              arma::span(cEnd - 3, cEnd));
 
             double fc = cOrigin - 0.5;
             fc = fc - std::floor(fc);
