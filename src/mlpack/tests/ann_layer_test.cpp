@@ -2168,6 +2168,36 @@ TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
   REQUIRE(layer1.InDepth() == layer2.InDepth());
 }
 
+/*
+ * Simple test for the BicubicInterpolation layer
+ */
+TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
+{
+  // Tested output against  torch.nn.Upsample(mode="nearest")
+  arma::mat input, output, unzoomedOutput, expectedOutput;
+  size_t inRowSize = 2;
+  size_t inColSize = 2;
+  size_t outRowSize = 5;
+  size_t outColSize = 7;
+  size_t depth = 1;
+  input.zeros(inRowSize * inColSize * depth, 1);
+  input[0] = 10.0;
+  input[1] = 20.0;
+  input[2] = 30.0;
+  input[3] = 40.0;
+  BicubicInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize,
+      depth);
+
+  expectedOutput << 6.6880  <<  7.3331  <<   9.6973 <<  12.7950 <<  15.8927 <<  18.2569 << 18.9020 << arma::endr
+                 << 10.5330 <<  11.1781 <<  13.5423 <<  16.6400 <<  19.7377 <<  22.1019 << 22.7470 << arma::endr
+                 << 18.8930 <<  19.5381 <<  21.9023 <<  25.0000 <<  28.0977 <<  30.4619 << 31.1070 << arma::endr
+                 << 27.2530 <<  27.8981 <<  30.2623 <<  33.3600 <<  36.4577 <<  38.8219 << 39.4670 << arma::endr
+                 << 31.0980 <<  31.7431 <<  34.1073 <<  37.2050 <<  40.3027 <<  42.6669 << 43.3120 << arma::endr;
+  expectedOutput.reshape(35, 1);
+  layer.Forward(input, output);
+  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-4);
+}
+
 /**
  * Tests the BatchNorm Layer, compares the layers parameters with
  * the values from another implementation.
