@@ -724,7 +724,7 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   // Test forward function for multiple batches with multiple filters.
   // Here it's 3 filters with height = 244, width = 244
   // the output should be [246 * 246 * 3, 3] with 1 padding.
-  Padding<> module2(1 ,1, 1, 1, 244, 244);
+  Padding<> module2(1, 1, 1, 1, 244, 244);
   input1 = arma::randu(244 * 244 * 3, 3);
   module2.Forward(input1, output1);
   REQUIRE(arma::accu(input1) == arma::accu(output1));
@@ -4674,6 +4674,51 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
   REQUIRE(module.Bias().n_cols == 1);
   REQUIRE(module.Parameters().n_rows
       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Simple Test for ChannelShuffle layer.
+ */
+TEST_CASE("ChannelShuffleLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input1, output1, outputExpected1, outputBackward1;
+  ChannelShuffle<> module1(2, 2, 6, 2);
+
+  input1 << 1  << 13 << arma::endr
+         << 2  << 14 << arma::endr
+         << 3  << 15 << arma::endr
+         << 4  << 16 << arma::endr
+         << 5  << 17 << arma::endr
+         << 6  << 18 << arma::endr
+         << 7  << 19 << arma::endr
+         << 8  << 20 << arma::endr
+         << 9  << 21 << arma::endr
+         << 10 << 22 << arma::endr
+         << 11 << 23 << arma::endr
+         << 12 << 24 << arma::endr;
+  input1.reshape(24, 1);
+  // Value calculated using torch.nn.ChannelShuffle().
+  outputExpected1 << 1  << 17 << arma::endr
+                  << 2  << 18 << arma::endr
+                  << 3  << 19 << arma::endr
+                  << 4  << 20 << arma::endr
+                  << 13 << 9 << arma::endr
+                  << 14 << 10 << arma::endr
+                  << 15 << 11 << arma::endr
+                  << 16 << 12 << arma::endr
+                  << 5  << 21 << arma::endr
+                  << 6  << 22 << arma::endr
+                  << 7  << 23 << arma::endr
+                  << 8  << 24 << arma::endr;
+  outputExpected1.reshape(24, 1);
+  // Check the Forward pass of the layer.
+  module1.Forward(input1, output1);
+  CheckMatrices(output1, outputExpected1);
+
+  // Check the Backward pass of the layer.
+  module1.Backward(output1, output1, outputBackward1);
+  CheckMatrices(input1, outputBackward1);
+
 }
 
 /**

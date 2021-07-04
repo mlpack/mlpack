@@ -53,9 +53,12 @@ inline std::string GetCythonType<double>(
 template<>
 inline std::string GetCythonType<std::string>(
     util::ParamData& /* d */,
-    const typename std::enable_if<!util::IsStdVector<std::string>::value>::type*,
-    const typename std::enable_if<!data::HasSerialize<std::string>::value>::type*,
-    const typename std::enable_if<!arma::is_arma_type<std::string>::value>::type*)
+    const typename std::enable_if<
+        !util::IsStdVector<std::string>::value>::type*,
+    const typename std::enable_if<
+        !data::HasSerialize<std::string>::value>::type*,
+    const typename std::enable_if<
+        !arma::is_arma_type<std::string>::value>::type*)
 {
   return "string";
 }
