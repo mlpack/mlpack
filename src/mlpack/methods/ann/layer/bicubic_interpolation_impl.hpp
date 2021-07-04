@@ -13,7 +13,7 @@
 #define MLPACK_METHODS_ANN_LAYER_BICUBIC_INTERPOLATION_IMPL_HPP
 
 // In case it hasn't yet been included.
-#include "Bicubic_interpolation.hpp"
+#include "bicubic_interpolation.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
