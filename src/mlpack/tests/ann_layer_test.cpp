@@ -2173,7 +2173,7 @@ TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 {
-  // Tested output against  torch.nn.Upsample(mode="nearest")
+  // Tested output against  torch.nn.Upsample(mode="bicubic")
   arma::mat input, output, unzoomedOutput, expectedOutput;
   size_t inRowSize = 2;
   size_t inColSize = 2;
