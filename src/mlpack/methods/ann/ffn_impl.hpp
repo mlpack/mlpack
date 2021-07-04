@@ -285,8 +285,8 @@ template<typename OutputLayerType,
          typename InputType,
          typename OutputType>
 template<typename PredictorsType, typename ResponsesType>
-void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType>::
-Forward(const PredictorsType& inputs, ResponsesType& results)
+void FFN<OutputLayerType, InitializationRuleType, InputType, OutputType
+>::Forward(const PredictorsType& inputs, ResponsesType& results)
 {
   Forward(inputs, results, 0, network.size() - 1);
 }
@@ -379,6 +379,16 @@ void FFN<
   else
   {
     network[end]->Forward(inputs, results);
+  }
+
+  // If we computed the pass through all layers, and `results` is not the same
+  // matrix as `layerOutputs.back()`, we must ensure that we cache a copy of it,
+  // since Backward() may be called later.
+  // TODO: clarify this in documentation...
+  if (end == (layerOutputs.size() - 1) &&
+      results.memptr() != layerOutputs.back().memptr())
+  {
+    layerOutputs.back() = results;
   }
 }
 

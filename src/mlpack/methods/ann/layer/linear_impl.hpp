@@ -127,6 +127,7 @@ void LinearType<InputType, OutputType, RegularizerType>::Gradient(
       error * input.t());
   gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) =
       arma::sum(error, 1);
+
   regularizer.Evaluate(weights, gradient);
 }
 
