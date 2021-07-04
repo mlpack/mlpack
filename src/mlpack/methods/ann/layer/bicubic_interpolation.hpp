@@ -130,9 +130,9 @@ class BicubicInterpolation
   size_t& InDepth() { return depth; }
 
   //! Get the constant value to generate weight.
-  size_t const& Alpha() const { return alpha; }
+  double const& Alpha() const { return alpha; }
   //! Modify the constant value to generate weight.
-  size_t& Alpha() { return alpha; }
+  double& Alpha() { return alpha; }
 
   //! Get the shape of the input.
   size_t InputShape() const
