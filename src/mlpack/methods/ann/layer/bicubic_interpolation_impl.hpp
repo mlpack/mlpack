@@ -34,8 +34,8 @@ BicubicInterpolation():
   }
 
 template<typename InputDataType, typename OutputDataType>
-BilinearInterpolation<InputDataType, OutputDataType>::
-BilinearInterpolation(
+BicubicInterpolation<InputDataType, OutputDataType>::
+BicubicInterpolation(
     const size_t inRowSize,
     const size_t inColSize,
     const size_t outRowSize,
@@ -131,7 +131,7 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Forward(
           GetKernalWeight(fr, weightR);
           GetKernalWeight(fc, weightC);
 
-          arma::mat val = weightR * kernal * weightC
+          arma::mat val = weightR * kernal * weightC;
           outputAsCube(i, j, k) = val(0);
         }
       }
@@ -160,6 +160,9 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
       outColSize, depth * batchSize, false, false);
     arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
       depth * batchSize, false, true);
+
+    const double scaleRow = (double) inRowSize / (double) outRowSize;
+    const double scaleCol = (double) inColSize / (double) outColSize;
 
     if (gradient.n_elem == output.n_elem)
     {
@@ -202,7 +205,7 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
         temp.col(2) += temp.col(1);
         temp.col(inColSize + 1) += temp.col(inColSize + 2);
         temp.col(inColSize + 1) += temp.col(inColSize + 3);
-        temp(2, 2) += arma:accu(temp(arma::span(0, 1), arma::span(0, 1)));
+        temp(2, 2) += arma::accu(temp(arma::span(0, 1), arma::span(0, 1)));
         temp(inRowSize + 1, inColSize + 1) += arma::accu(temp(arma::span(inRowSize + 2, inRowSize + 3), arma::span(inColSize + 2, inColSize + 3)));
         temp(inRowSize + 1, 2) += arma::accu(temp(arma::span(inRowSize + 2, inRowSize + 3), arma::span(0, 1)));
         temp(2, inColSize + 1) += arma::accu(temp(arma::span(0, 1), arma::span(inColSize + 2, inColSize + 3)));
