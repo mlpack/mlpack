@@ -102,10 +102,10 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Forward(
       grid(1, arma::span(2, inColSize + 1)) = grid(2, arma::span(2, inColSize + 1));
       grid(inRowSize + 2, arma::span(2, inColSize + 1)) = grid(inRowSize + 1, arma::span(2, inColSize + 1));
       grid(inRowSize + 3, arma::span(2, inColSize + 1)) = grid(inRowSize + 1, arma::span(2, inColSize + 1));
-      grid(span(0, 1), span(0, 1)) += grid(2, 2);
-      grid(span(inRowSize + 2, inRowSize + 3), span(inColSize + 2, inColSize + 3)) += grid(inRowSize + 1, inColSize + 1);
-      grid(span(inRowSize + 2, inRowSize + 3), span(0, 1)) += grid(inRowSize + 1, 2);
-      grid(span(0, 1), span(inColSize + 2, inColSize + 3)) += grid(2, inColSize + 1);
+      grid(arma::span(0, 1), arma::span(0, 1)) += grid(2, 2);
+      grid(arma::span(inRowSize + 2, inRowSize + 3), arma::span(inColSize + 2, inColSize + 3)) += grid(inRowSize + 1, inColSize + 1);
+      grid(arma::span(inRowSize + 2, inRowSize + 3), arma::span(0, 1)) += grid(inRowSize + 1, 2);
+      grid(arma::span(0, 1), arma::span(inColSize + 2, inColSize + 3)) += grid(2, inColSize + 1);
 
       for (size_t i = 0; i < outRowSize; ++i)
       {
@@ -203,12 +203,12 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
         temp.col(2) += temp.col(1);
         temp.col(inColSize + 1) += temp.col(inColSize + 2);
         temp.col(inColSize + 1) += temp.col(inColSize + 3);
-        temp(2, ,2) += armma:accu(temp(span(0, 1), span(0, 1)));
-        temp(inRowSize + 1, inColSize + 1) += arma::accu(temp(span(inRowSize + 2, inRowSize + 3), span(inColSize + 2, inColSize + 3)));
-        temp(inRowSize + 1, 2) += arma::accu(temp(span(inRowSize + 2, inRowSize + 3), span(0, 1)));
-        temp(2, inColSize + 1) += arma::accu(temp(span(0, 1), span(inColSize + 2, inColSize + 3)));
+        temp(2, ,2) += armma:accu(temp(arma::span(0, 1), span(0, 1)));
+        temp(inRowSize + 1, inColSize + 1) += arma::accu(temp(arma::span(inRowSize + 2, inRowSize + 3), arma::span(inColSize + 2, inColSize + 3)));
+        temp(inRowSize + 1, 2) += arma::accu(temp(arma::span(inRowSize + 2, inRowSize + 3), arma::span(0, 1)));
+        temp(2, inColSize + 1) += arma::accu(temp(arma::span(0, 1), arma::span(inColSize + 2, inColSize + 3)));
  
-        outputAsCube.slice(k) += temp(arma::span(2, inRowSize + 1), arma::span(2, inColSize + 1));
+        outputAsCube.slice(k) += temp(arma::arma::span(2, inRowSize + 1), arma::arma::span(2, inColSize + 1));
       }
     }
   }
