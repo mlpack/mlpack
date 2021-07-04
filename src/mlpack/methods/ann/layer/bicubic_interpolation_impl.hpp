@@ -54,8 +54,9 @@ BilinearInterpolation(
     temp = arma::mat(weights.memptr(), inRowSize + 4, inColSize + 4, false, false);
   }
 
+template<typename InputDataType, typename OutputDataType>
 template<typename eT>
-  void GetKernalWeight(eT delta, arma::mat& coeffs)
+void BicubicInterpolation<InputDataType, OutputDataType>::GetKernalWeight(eT delta, arma::mat& coeffs)
   {
     coeffs(0) = ((alpha * (delta + 1) - 5 * alpha) * (delta + 1) + 8 * alpha) * (delta + 1) - 4 * alpha;
     coeffs(1) = ((alpha + 2) * delta - (alpha + 3)) * delta * delta + 1;
@@ -121,7 +122,7 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Forward(
             arma::span(cEnd - 3, cEnd));
 
           double fc = cOrigin - 0.5;
-          fc = fc - std::floor(fx);
+          fc = fc - std::floor(fc);
           double fr = rOrigin - 0.5;
           fr = fr - std::floor(fr);
 
@@ -130,7 +131,8 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Forward(
           GetKernalWeight(fr, weightR);
           GetKernalWeight(fc, weightC);
 
-          outputAsCube(i, j, k) = (weightR * kernal * weightC)(0);
+          arma::mat val = weightR * kernal * weightC
+          outputAsCube(i, j, k) = val(0);
         }
       }
     }
@@ -182,7 +184,7 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
               arma::span(cEnd - 3, cEnd));
 
             double fc = cOrigin - 0.5;
-            fc = fc - std::floor(fx);
+            fc = fc - std::floor(fc);
             double fr = rOrigin - 0.5;
             fr = fr - std::floor(fr);
 
@@ -203,12 +205,12 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
         temp.col(2) += temp.col(1);
         temp.col(inColSize + 1) += temp.col(inColSize + 2);
         temp.col(inColSize + 1) += temp.col(inColSize + 3);
-        temp(2, ,2) += armma:accu(temp(arma::span(0, 1), span(0, 1)));
+        temp(2, 2) += arma:accu(temp(arma::span(0, 1), arma::span(0, 1)));
         temp(inRowSize + 1, inColSize + 1) += arma::accu(temp(arma::span(inRowSize + 2, inRowSize + 3), arma::span(inColSize + 2, inColSize + 3)));
         temp(inRowSize + 1, 2) += arma::accu(temp(arma::span(inRowSize + 2, inRowSize + 3), arma::span(0, 1)));
         temp(2, inColSize + 1) += arma::accu(temp(arma::span(0, 1), arma::span(inColSize + 2, inColSize + 3)));
  
-        outputAsCube.slice(k) += temp(arma::arma::span(2, inRowSize + 1), arma::arma::span(2, inColSize + 1));
+        outputAsCube.slice(k) += temp(arma::span(2, inRowSize + 1), arma::span(2, inColSize + 1));
       }
     }
   }
