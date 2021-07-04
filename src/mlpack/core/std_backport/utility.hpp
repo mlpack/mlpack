@@ -1,382 +1,167 @@
-////////////////////////////////////////////////////////////////////////////////
-/// \file utility.hpp
-///
-/// \brief This header provides definitions from the C++ header <utility>
-////////////////////////////////////////////////////////////////////////////////
+#ifndef CORE_UTILITY_HPP
+#define CORE_UTILITY_HPP
 
-/*
-  The MIT License (MIT)
+#include <functional>
 
-  Copyright (c) 2020 Matthew Rodusek All rights reserved.
+#include <cstddef>
 
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to deal
-  in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
+#include "type_traits.hpp"
 
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
+namespace core {
+inline namespace v2 {
 
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  SOFTWARE.
-*/
-#ifndef BPSTD_UTILITY_HPP
-#define BPSTD_UTILITY_HPP
+template <class T>
+constexpr T&& forward (remove_reference_t<T>& t) noexcept {
+  return static_cast<T&&>(t);
+}
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
-# pragma once
-#endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+template <class T>
+constexpr T&& forward (remove_reference_t<T>&& t) noexcept {
+  return static_cast<T&&>(t);
+}
 
-#include "detail/config.hpp"
-#include "detail/move.hpp" // IWYU pragma: export
-#include "type_traits.hpp" // add_const_t
+template <class T>
+constexpr auto move (T&& t) noexcept -> decltype(
+  static_cast<remove_reference_t<T>&&>(t)
+) { return static_cast<remove_reference_t<T>&&>(t); }
 
-#include <utility> // to proxy the API
-#include <cstddef> // std::size_t
 
-BPSTD_COMPILER_DIAGNOSTIC_PREAMBLE
+template <class T, T... I>
+using integer_sequence = meta::integer_sequence<T, I...>;
 
-namespace bpstd {
+template <::std::size_t... I>
+using index_sequence = integer_sequence<::std::size_t, I...>;
 
-  //============================================================================
-  // struct : in_place_t
-  //============================================================================
+template <class T, T N>
+using make_integer_sequence = typename meta::iota<T, N, N>::type;
 
-  /// \brief This function is a special disambiguation tag for variadic
-  ///        functions, used in any and optional
-  ///
-  /// \note Calling this function results in undefined behaviour.
-  struct in_place_t
-  {
-    explicit in_place_t() = default;
+template <::std::size_t N>
+using make_index_sequence = make_integer_sequence<::std::size_t, N>;
+
+template <class... Ts>
+using index_sequence_for = make_index_sequence<sizeof...(Ts)>;
+
+template <::std::size_t N, class T, class... Ts>
+constexpr auto value_at (T&& value, Ts&&...) -> enable_if_t<
+  N == 0 and N < (sizeof...(Ts) + 1),
+  decltype(::core::forward<T>(value))
+> { return ::core::forward<T>(value); }
+
+template <::std::size_t N, class T, class... Ts>
+constexpr auto value_at (T&&, Ts&&... values) -> enable_if_t<
+  N != 0 and N < (sizeof...(Ts) + 1),
+  meta::get<meta::list<T, Ts...>, N>
+> { return value_at<N - 1, Ts...>(::core::forward<Ts>(values)...); }
+
+template <class Callable>
+struct scope_guard final {
+
+  static_assert(
+    ::std::is_nothrow_move_constructible<Callable>::value,
+    "Given type must be nothrow move constructible"
+  );
+
+  explicit scope_guard (Callable callable) noexcept :
+    callable { ::core::move(callable) },
+    dismissed { false }
+  { }
+
+  scope_guard (scope_guard const&) = delete;
+  scope_guard (scope_guard&&) = default;
+  scope_guard () = delete;
+  ~scope_guard () noexcept { if (not this->dismissed) { callable(); } }
+
+  scope_guard& operator = (scope_guard const&) = delete;
+  scope_guard& operator = (scope_guard&&) = default;
+
+  void dismiss () noexcept { this->dismissed = true; }
+
+private:
+  Callable callable;
+  bool dismissed;
+};
+
+template <class Callable>
+auto make_scope_guard(Callable&& callable) -> scope_guard<decay_t<Callable>> {
+  return scope_guard<decay_t<Callable>> {
+    ::core::forward<Callable>(callable)
   };
-  BPSTD_CPP17_INLINE constexpr in_place_t in_place{};
-
-  //============================================================================
-  // in_place_type_t
-  //============================================================================
-
-  /// \brief This function is a special disambiguation tag for variadic
-  ///        functions, used in any and optional
-  ///
-  /// \note Calling this function results in undefined behaviour.
-  template<typename T>
-  struct in_place_type_t
-  {
-    explicit in_place_type_t() = default;
-  };
-
-#if BPSTD_HAS_TEMPLATE_VARIABLES
-  template<typename T>
-  BPSTD_CPP17_INLINE constexpr in_place_type_t<T> in_place_type{};
-#endif
-
-  //============================================================================
-  // in_place_index_t
-  //============================================================================
-
-  /// \brief This function is a special disambiguation tag for variadic
-  ///        functions, used in any and optional
-  ///
-  /// \note Calling this function results in undefined behaviour.
-  template<std::size_t I> struct in_place_index_t
-  {
-    explicit in_place_index_t() = default;
-  };
-
-#if BPSTD_HAS_TEMPLATE_VARIABLES
-  template<std::size_t I>
-  BPSTD_CPP17_INLINE constexpr in_place_index_t<I> in_place_index{};
-#endif
-
-  //============================================================================
-  // non-member functions
-  //============================================================================
-
-  //----------------------------------------------------------------------------
-  // Utilities
-  //----------------------------------------------------------------------------
-
-  /// \brief Moves a type \p x if it move-construction is non-throwing
-  ///
-  /// \param x the parameter to move
-  /// \return an rvalue reference if nothrow moveable, const reference otherwise
-  template <typename T>
-  constexpr typename bpstd::conditional<
-    !bpstd::is_nothrow_move_constructible<T>::value && bpstd::is_copy_constructible<T>::value,
-    const T&,
-    T&&
-  >::type move_if_noexcept(T& x) noexcept;
-
-  /// \brief Forms an lvalue reference to const type of t
-  ///
-  /// \param t the type to form an lvalue reference to
-  /// \return the reference to const T
-  template <typename T>
-  constexpr add_const_t<T>& as_const(T& t) noexcept;
-  template <typename T>
-  void as_const(const T&&) = delete;
-
-  /// \brief Replaces the value of obj with new_value and returns the old value
-  ///        of obj.
-  ///
-  /// \pre \p T must meet the requirements of MoveConstructible.
-  ///
-  /// \pre It must be possible to move-assign objects of type \p U to objects of
-  ///      type \p T
-  ///
-  /// \param obj object whose value to replace
-  /// \param new_value the value to assign to obj
-  template <typename T, typename U = T>
-  BPSTD_CPP14_CONSTEXPR T exchange(T& obj, U&& new_value);
-
-  //============================================================================
-  // class : pair
-  //============================================================================
-
-  template <typename T, typename U>
-  using pair = std::pair<T,U>;
-
-  //============================================================================
-  // non-member functions : class : pair
-  //============================================================================
-
-  //----------------------------------------------------------------------------
-  // Utilities
-  //----------------------------------------------------------------------------
-
-  // C++11 does not implement const pair&&
-  template <std::size_t N, typename T, typename U>
-  constexpr conditional_t<N==0,T,U>& get(pair<T, U>& p) noexcept;
-  template <std::size_t N, typename T, typename U>
-  constexpr conditional_t<N==0,T,U>&& get(pair<T, U>&& p) noexcept;
-  template <std::size_t N, typename T, typename U>
-  constexpr const conditional_t<N==0,T,U>& get(const pair<T, U>& p) noexcept;
-  template <std::size_t N, typename T, typename U>
-  constexpr const conditional_t<N==0,T,U>&& get(const pair<T, U>&& p) noexcept;
-
-  template <typename T, typename U>
-  constexpr T& get(pair<T, U>& p) noexcept;
-  template <typename T, typename U>
-  constexpr T&& get(pair<T, U>&& p) noexcept;
-  template <typename T, typename U>
-  constexpr const T& get(const pair<T, U>& p) noexcept;
-  template <typename T, typename U>
-  constexpr const T&& get(const pair<T, U>&& p) noexcept;
-
-  template <typename T, typename U>
-  constexpr T& get(pair<U, T>& p) noexcept;
-  template <typename T, typename U>
-  constexpr const T& get(const pair<U, T>& p) noexcept;
-  template <typename T, typename U>
-  constexpr T&& get(pair<U, T>&& p) noexcept;
-  template <typename T, typename U>
-  constexpr const T&& get(const pair<U, T>&& p) noexcept;
-
-  //============================================================================
-  // struct : integer_sequence
-  //============================================================================
-
-  template <typename T, T... Ints>
-  struct integer_sequence
-  {
-    using value_type = T;
-
-    static constexpr std::size_t size() noexcept { return sizeof...(Ints); }
-  };
-
-  template <std::size_t... Ints>
-  using index_sequence = integer_sequence<std::size_t, Ints...>;
-
-  namespace detail {
-    template <typename T, bool End, T N, T...Tails>
-    struct make_integer_sequence_impl
-      : make_integer_sequence_impl<T,((N-1) == T(0)), N-1, N-1, Tails...>{};
-
-    template <typename T, T N, T...Tails>
-    struct make_integer_sequence_impl<T, true, N, Tails...>
-      : type_identity<integer_sequence<T, Tails...>>{};
-
-  } // namespace detail
-
-  template <typename T, T N>
-  using make_integer_sequence
-    = typename detail::make_integer_sequence_impl<T, (N==T(0)), N>::type;
-
-  template<std::size_t N>
-  using make_index_sequence = make_integer_sequence<std::size_t, N>;
-
-  template<typename... T>
-  using index_sequence_for = make_index_sequence<sizeof...(T)>;
-
-} // namespace bpstd
-
-//==============================================================================
-// non-member functions
-//==============================================================================
-
-//------------------------------------------------------------------------------
-// Utilities
-//------------------------------------------------------------------------------
-
-template <typename T>
-inline BPSTD_INLINE_VISIBILITY constexpr
-typename bpstd::conditional<
-  !bpstd::is_nothrow_move_constructible<T>::value && bpstd::is_copy_constructible<T>::value,
-  const T&,
-  T&&
->::type bpstd::move_if_noexcept(T& x)
-  noexcept
-{
-  using result_type = conditional_t<
-    !is_nothrow_move_constructible<T>::value && is_copy_constructible<T>::value,
-    const T&,
-    T&&
-  >;
-
-  return static_cast<result_type>(x);
 }
 
-template <typename T>
-inline BPSTD_INLINE_VISIBILITY constexpr
-bpstd::add_const_t<T>& bpstd::as_const(T& t)
-  noexcept
-{
-  return t;
+template <class T, class U=T>
+T exchange (T& obj, U&& value) noexcept(
+  meta::all<
+    ::std::is_nothrow_move_constructible<T>,
+    ::std::is_nothrow_assignable<add_lvalue_reference_t<T>, U>
+  >()
+) {
+  T old = ::core::move(obj);
+  obj = ::core::forward<U>(value);
+  return old;
 }
 
-template <typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY BPSTD_CPP14_CONSTEXPR
-T bpstd::exchange(T& obj, U&& new_value)
-{
-  auto old_value = bpstd::move(obj);
-  obj = bpstd::forward<U>(new_value);
-  return old_value;
+inline ::std::uintptr_t as_int (void const* ptr) noexcept {
+  return reinterpret_cast<::std::uintptr_t>(ptr);
 }
 
-//==============================================================================
-// definitions : non-member functions : class : pair
-//==============================================================================
+template <class T>
+void const* as_void (T const* ptr) { return static_cast<void const*>(ptr); }
 
-//------------------------------------------------------------------------------
-// Utilities
-//------------------------------------------------------------------------------
+template <class T>
+void* as_void (T* ptr) { return static_cast<void*>(ptr); }
 
-template <std::size_t N, typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-bpstd::conditional_t<N==0,T,U>&
-  bpstd::get(pair<T, U>& p)
-  noexcept
-{
-  static_assert(N<=1, "N must be either 0 or 1 for get<N>(pair<T,U>)");
+template <class T>
+void const* as_void (T const& ref) { return as_void(::std::addressof(ref)); }
 
-  return std::get<N>(p);
+template <class T>
+void* as_void (T& ref) { return as_void(::std::addressof(ref)); }
+
+template <class E>
+constexpr auto as_under(E e) noexcept -> meta::when<
+  std::is_enum<E>::value,
+  underlying_type_t<E>
+> { return static_cast<underlying_type_t<E>>(e); }
+
+template <class T>
+struct capture final {
+  static_assert(::std::is_move_constructible<T>::value, "T must be movable");
+  using value_type = T;
+  using reference = add_lvalue_reference_t<value_type>;
+  using pointer = add_pointer_t<value_type>;
+
+  capture (T&& data) : data { core::move(data) } { }
+
+  capture (capture&&) = default;
+  capture (capture& that) : data { core::move(that.data) } { }
+  capture () = delete;
+
+  capture& operator = (capture const&) = delete;
+  capture& operator = (capture&&) = delete;
+
+  operator reference () const noexcept { return this->get(); }
+  reference operator * () const noexcept { return this->get(); }
+  pointer operator -> () const noexcept {
+    return ::std::addressof(this->get());
+  }
+
+  reference get () const noexcept { return this->data; }
+
+private:
+  value_type data;
+};
+
+template <class T>
+auto make_capture (remove_reference_t<T>& ref) -> capture<T> {
+  return capture<T> { core::move(ref) };
 }
 
-template <std::size_t N, typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-bpstd::conditional_t<N==0,T,U>&&
-  bpstd::get(pair<T, U>&& p)
-  noexcept
-{
-  static_assert(N<=1, "N must be either 0 or 1 for get<N>(pair<T,U>)");
-
-  return move(std::get<N>(p));
+template <class T>
+auto make_capture (remove_reference_t<T>&& ref) -> capture<T> {
+  return capture<T> { core::move(ref) };
 }
 
-template <std::size_t N, typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-const bpstd::conditional_t<N==0,T,U>&
-  bpstd::get(const pair<T, U>& p)
-  noexcept
-{
-  static_assert(N<=1, "N must be either 0 or 1 for get<N>(pair<T,U>)");
+struct erased_type { };
 
-  return std::get<N>(p);
-}
+}} /* namespace core::v2 */
 
-template <std::size_t N, typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-const bpstd::conditional_t<N==0,T,U>&&
-  bpstd::get(const pair<T, U>&& p)
-  noexcept
-{
-  static_assert(N<=1, "N must be either 0 or 1 for get<N>(pair<T,U>)");
-
-  return move(std::get<N>(p));
-}
-
-template <typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-T& bpstd::get(pair<T, U>& p)
-  noexcept
-{
-  return p.first;
-}
-
-template <typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-const T& bpstd::get(const pair<T, U>& p)
-  noexcept
-{
-  return p.first;
-}
-
-template <typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-T&& bpstd::get(pair<T, U>&& p)
-  noexcept
-{
-  return move(p.first);
-}
-
-template <typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-const T&& bpstd::get(const pair<T, U>&& p)
-  noexcept
-{
-  return move(p.first);
-}
-
-template <typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-T& bpstd::get(pair<U, T>& p)
-  noexcept
-{
-  return p.second;
-}
-
-template <typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-const T& bpstd::get(const pair<U, T>& p)
-  noexcept
-{
-  return p.second;
-}
-
-template <typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-T&& bpstd::get(pair<U, T>&& p)
-  noexcept
-{
-  return move(p.second);
-}
-
-template <typename T, typename U>
-inline BPSTD_INLINE_VISIBILITY constexpr
-const T&& bpstd::get(const pair<U, T>&& p)
-  noexcept
-{
-  return move(p.second);
-}
-
-BPSTD_COMPILER_DIAGNOSTIC_POSTAMBLE
-
-#endif /* BPSTD_UTILITY_HPP */
+#endif /* CORE_UTILITY_HPP */
