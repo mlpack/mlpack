@@ -280,10 +280,13 @@ void mlpackToArmaMatWithInfo(const char* identifier,
                              const size_t cols)
 {
   data::DatasetInfo d(rows);
+  bool hasCategoricals = false;
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
     d.Type(i) = (dimensions[i]) ? data::Datatype::categorical :
         data::Datatype::numeric;
+    if (dimensions[i])
+      hasCategoricals = true;
   }
 
   arma::mat m(memptr, rows, cols, false, true);
