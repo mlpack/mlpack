@@ -16,8 +16,6 @@
 #include "ffn.hpp"
 
 #include "util/gradient_update.hpp"
-#include "util/output_width_update.hpp"
-#include "util/output_height_update.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
@@ -544,7 +542,7 @@ double FFN<
 {
   double res = 0;
   for (size_t i = 0; i < predictors.n_cols; ++i)
-    res += Evaluate(parameters, i, 1, true);
+    res += Evaluate(parameters, i, 1, false);
 
   return res;
 }
@@ -593,7 +591,7 @@ double FFN<
             const size_t begin,
             const size_t batchSize)
 {
-  return Evaluate(parameters, begin, batchSize, true);
+  return Evaluate(parameters, begin, batchSize, false);
 }
 
 template<typename OutputLayerType,
@@ -630,7 +628,7 @@ double FFN<
 {
   // TODO: can this just be a call to Forward() then Backward()?
 
-  double res = Evaluate(parameters, begin, batchSize, false);
+  double res = Evaluate(parameters, begin, batchSize, true);
 
   for (size_t i = 0; i < network.size(); ++i)
     res += network[i]->Loss();
@@ -687,9 +685,8 @@ void FFN<
     OutputType
 >::InitializeWeights()
 {
-  // Set the network to training mode.
-  // TODO: is this necessary here?
-  SetNetworkMode(true);
+  // Set the network to testing mode.
+  SetNetworkMode(false);
 
   // Reset the network parameters with the given initialization rule.
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
