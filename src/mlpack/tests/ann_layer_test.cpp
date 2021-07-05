@@ -27,7 +27,6 @@
 #include "catch.hpp"
 #include "ann_test_tools.hpp"
 #include "serialization.hpp"
-#include "../methods/ann/layer/separable_convolution.hpp"
 
 using namespace mlpack;
 using namespace mlpack::ann;
@@ -1701,7 +1700,7 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
   size_t kW = 3, kH = 3;
   size_t batch = 1;
 
-  // Using Convolution<> layer as inout to Concat<> layer.
+  // Using Convolution<> layer as input to Concat<> layer.
   // Compute the output shape of convolution layer.
   outputWidth  = (inputWidth - kW) + 1;
   outputHeight = (inputHeight - kH) + 1;
