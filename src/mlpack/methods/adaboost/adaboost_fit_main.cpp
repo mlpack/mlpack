@@ -1,5 +1,5 @@
 /**
- * @file methods/adaboost/adaboost_main.cpp
+ * @file methods/adaboost/adaboost_fit_main.cpp
  * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.
@@ -37,7 +37,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME mlpack_adaboost_fit
+#define BINDING_NAME adaboost_fit
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
@@ -53,14 +53,13 @@ using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_USER_NAME("AdaBoost");
+BINDING_USER_NAME("AdaBoost Training");
 
 // Short description.
 BINDING_SHORT_DESC(
     "An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for "
     "classification.  This can be used to train an AdaBoost model on labeled "
-    "data or use an existing AdaBoost model to predict the classes of new "
-    "points.");
+    "data");
 
 // Long description.
 BINDING_LONG_DESC(
@@ -103,7 +102,7 @@ PARAM_STRING_IN("weak_learner", "The type of weak learner to use: "
 PARAM_MODEL_OUT(AdaBoostModel, "output_model", "Output trained AdaBoost model.",
     "M");
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Check input parameters and issue warnings/errors as necessary.
   RequireOnlyOnePassed(params, {"training"});

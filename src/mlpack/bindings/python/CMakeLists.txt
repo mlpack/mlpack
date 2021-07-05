@@ -307,7 +307,7 @@ macro (add_python_binding group_name)
     # Add the convenience import to __init__.py.  Note that this happens during
     # configuration.
     file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
-    "from .${name} import mlpack_${name}_py\n")
+    "from .${name} import ${name}\n")
     endif()
   endforeach()
 

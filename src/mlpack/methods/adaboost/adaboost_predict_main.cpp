@@ -1,5 +1,5 @@
 /**
- * @file methods/adaboost/adaboost_main.cpp
+ * @file methods/adaboost/adaboost_predict_main.cpp
  * @author Udit Saxena
  *
  * Implementation of the AdaBoost main program.
@@ -37,7 +37,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME mlpack_adaboost_predict
+#define BINDING_NAME adaboost_predict
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/data/normalize_labels.hpp>
@@ -53,14 +53,12 @@ using namespace mlpack::perceptron;
 using namespace mlpack::util;
 
 // Program Name.
-BINDING_USER_NAME("AdaBoost");
+BINDING_USER_NAME("AdaBoost Prediction");
 
 // Short description.
 BINDING_SHORT_DESC(
     "An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for "
-    "classification.  This can be used to train an AdaBoost model on labeled "
-    "data or use an existing AdaBoost model to predict the classes of new "
-    "points.");
+    "classification.  This can be used predict the classes of new points.");
 
 // Long description.
 BINDING_LONG_DESC(
@@ -94,7 +92,7 @@ PARAM_UROW_OUT("predictions", "Predicted labels for the test set.", "P");
 // Loading/saving of a model.
 PARAM_MODEL_IN(AdaBoostModel, "input_model", "Input AdaBoost model.", "m");
 
-void BINDING_NAME(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Check input parameters and issue warnings/errors as necessary.
 

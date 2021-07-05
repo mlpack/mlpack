@@ -1,7 +1,7 @@
 # Recurse into each method mlpack provides.
 set(DIRS
   # mvu # Note: this implementation of MVU does not work.  See #189.
-  adaboost
+  # adaboost
   # amf
   # ann
   # approx_kfn

@@ -15,7 +15,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME mlpack_linear_regression_fit
+#define BINDING_NAME linear_regression_fit
 
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -28,19 +28,41 @@ using namespace arma;
 using namespace std;
 
 // Program Name.
-BINDING_USER_NAME("Linear Regression Fit");
+BINDING_USER_NAME("Simple Linear Regression Training");
 
 // Short description.
 BINDING_SHORT_DESC(
-    "An implementation of simple linear regression and ridge regression using.");
+  "An implementation of simple linear regression and ridge regression using "
+  "ordinary least squares.  Given a dataset and responses, a model can be "
+  "trained and saved for later use.");
 
 // Long description.
 BINDING_LONG_DESC(
-    "An implementation of simple linear regression and simple ridge regression.");
+  "An implementation of simple linear regression and simple ridge regression "
+  "using ordinary least squares. This solves the problem"
+  "\n\n"
+  "  y = X * b + e"
+  "\n\n"
+  "where X (specified by " + PRINT_PARAM_STRING("training") + ") and y "
+  "(specified either as the last column of the input matrix " +
+  PRINT_PARAM_STRING("training") + " or via the " +
+  PRINT_PARAM_STRING("training_responses") + " parameter) are known and b is"
+  " the desired variable.  If the covariance matrix (X'X) is not invertible, "
+  "or if the solution is overdetermined, then specify a Tikhonov "
+  "regularization constant (with " + PRINT_PARAM_STRING("lambda") + ") "
+  "greater than 0, which will regularize the covariance matrix to make it "
+  "invertible. The calculated value of b can be used to predict through the "
+  "predict program of linear regression.");
 
 // Example.
 BINDING_EXAMPLE(
-    "For example, to run a linear regression.");
+  "For example, to fit a linear regression on the dataset " +
+  PRINT_DATASET("X") + " with responses " + PRINT_DATASET("y") + ", saving "
+  "the trained model to " + PRINT_MODEL("lr_model") + ", the following "
+  "command could be used:"
+  "\n\n" +
+  PRINT_CALL("linear_regression_fit", "training", "X", "training_responses",
+  "y", "output_model", "lr_model"));
 
 // See also...
 BINDING_SEE_ALSO("Linear/ridge regression tutorial",
@@ -58,7 +80,7 @@ PARAM_MODEL_OUT(LinearRegression, "output_model", "Output LinearRegression "
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
     " the method reduces to linear regression.", "l", 0.0);
 
-static void BINDING_NAME(util::Params& params, util::Timers& timer)
+static void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
 {
   const double lambda = params.Get<double>("lambda");
   RequireOnlyOnePassed(params, {"training"}, true); // training must be passsed.

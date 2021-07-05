@@ -1,5 +1,5 @@
 /**
- * @file methods/linear_regression/linear_regression_main.cpp
+ * @file methods/linear_regression/linear_regression_predict_main.cpp
  * @author James Cline
  *
  * Main function for least-squares linear regression.
@@ -15,7 +15,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME mlpack_linear_regression_predict
+#define BINDING_NAME linear_regression_predict
 
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -32,15 +32,31 @@ BINDING_USER_NAME("Linear Regression Predict");
 
 // Short description.
 BINDING_SHORT_DESC(
-    "An implementation of simple linear regression and ridge regression using.");
+  "A pre-trained model obtained from the fit program can be used to "
+  "output regression predictions for a test set.");
 
 // Long description.
 BINDING_LONG_DESC(
-    "An implementation of simple linear regression and simple ridge regression.");
+  "The value of b calculated from the fit program of linear regression "
+  "is used to predict the responses for another matrix X' (specified by the " +
+  PRINT_PARAM_STRING("test") + " parameter):" +
+  "\n\n"
+  "   y' = X' * b"
+  "\n\n"
+  "and the predicted responses y' may be saved with the " +
+  PRINT_PARAM_STRING("output_predictions") + " output parameter. This type "
+  "of regression is related to least-angle regression, which mlpack implements "
+  "as the 'lars' program.");
 
 // Example.
 BINDING_EXAMPLE(
-    "For example, to run a linear regression on the dataset.");
+  "To use a trained " + PRINT_MODEL("lr_model") + " to predict responses for a "
+  "test set " + PRINT_DATASET("X_test") + ", saving the predictions to " +
+  PRINT_DATASET("X_test_responses") + ", the following command could be "
+  "used:"
+  "\n\n" +
+  PRINT_CALL("linear_regression_predict", "input_model", "lr_model", "test",
+  "X_test", "output_predictions", "X_test_responses"));
 
 // See also...
 BINDING_SEE_ALSO("Linear/ridge regression tutorial",
@@ -55,7 +71,7 @@ PARAM_MATRIX_IN("test", "Matrix containing X' (test regressors).", "T");
 PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
     "matrix is where the predicted responses will be saved.", "o");
 
-static void BINDING_NAME(util::Params& params, util::Timers& timer)
+static void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
 {
   LinearRegression* lr;
 	RequireOnlyOnePassed(params, {"input_model"}, true); // input_model must be passed.
