@@ -186,7 +186,7 @@ class MaxPoolingType : public Layer<InputType, OutputType>
         const size_t idx = pooling.Pooling(subInput);
         output(i, j) = subInput(idx);
 
-        if (!this->deterministic)
+        if (this->training)
         {
           arma::Mat<size_t> subIndices = indices(arma::span(rowidx,
               rowidx + kernelWidth - 1 - offset),

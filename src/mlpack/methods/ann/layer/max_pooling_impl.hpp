@@ -59,7 +59,7 @@ void MaxPoolingType<InputType, OutputType>::Forward(
       outputDimensions[0], outputDimensions[1], batchSize * channels, false,
       true);
 
-  if (!this->deterministic)
+  if (this->training)
   {
     poolingIndices.push_back(outputTemp);
   }
@@ -78,7 +78,7 @@ void MaxPoolingType<InputType, OutputType>::Forward(
 
   for (size_t s = 0; s < inputTemp.n_slices; s++)
   {
-    if (!this->deterministic)
+    if (this->training)
     {
       PoolingOperation(inputTemp.slice(s), outputTemp.slice(s),
           poolingIndices.back().slice(s));

@@ -77,9 +77,8 @@ void DropoutType<InputType, OutputType>::Forward(
     const InputType& input,
     OutputType& output)
 {
-  // The dropout mask will not be multiplied in the this->deterministic mode
-  // (during testing).
-  if (this->deterministic)
+  // The dropout mask will not be multiplied in testing mode.
+  if (!this->training)
   {
     output = input;
   }

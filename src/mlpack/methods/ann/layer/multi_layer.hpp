@@ -36,9 +36,9 @@ class MultiLayer : public Layer<InputType, OutputType>
 
   virtual void Forward(const InputType& input, OutputType& output)
   {
-    // Make sure deterministic is set right in each layer.
+    // Make sure training/testing mode is set right in each layer.
     for (size_t i = 0; i < network.size(); ++i)
-      network[i]->Deterministic() = this->deterministic;
+      network[i]->Training() = this->training;
 
     InitializeForwardPassMemory(input.n_cols);
 

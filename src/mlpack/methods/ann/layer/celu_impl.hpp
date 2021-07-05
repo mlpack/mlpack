@@ -40,7 +40,7 @@ void CELUType<InputType, OutputType>::Forward(
         (std::exp(input(i) / alpha) - 1);
   }
 
-  if (!this->deterministic)
+  if (this->training)
   {
     derivative.set_size(arma::size(input));
     for (size_t i = 0; i < input.n_elem; ++i)

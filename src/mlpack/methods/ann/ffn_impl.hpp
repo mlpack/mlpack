@@ -16,7 +16,6 @@
 #include "ffn.hpp"
 
 #include "util/gradient_update.hpp"
-#include "util/deterministic_update.hpp"
 #include "util/output_width_update.hpp"
 #include "util/output_height_update.hpp"
 
@@ -37,7 +36,7 @@ FFN<
     initializeRule(std::move(initializeRule)),
     reset(false),
     numFunctions(0),
-    deterministic(false),
+    training(false),
     layerMemoryIsSet(false),
     inputDimensionsAreSet(false),
     totalInputSize(0),
@@ -65,7 +64,7 @@ FFN<
     responses(network.responses),
     numFunctions(network.numFunctions),
     error(network.error),
-    deterministic(network.deterministic),
+    training(network.training),
     // These will be set correctly in the first Forward() call.
     layerMemoryIsSet(false),
     inputDimensionsAreSet(false),
@@ -104,7 +103,7 @@ FFN<
     responses(std::move(network.responses)),
     numFunctions(network.numFunctions),
     error(std::move(network.error)),
-    deterministic(std::move(network.deterministic)),
+    training(std::move(network.training)),
     // Aliases will not be correct after a std::move(), so we will manually
     // reset them.
     layerMemoryIsSet(false),
@@ -162,8 +161,9 @@ void FFN<
   numFunctions = responses.n_cols;
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
-  this->deterministic = false;
-  ResetDeterministic();
+
+  // Set the network to training mode.
+  SetNetworkMode(true);
 
   if (!reset)
     InitializeWeights();
@@ -237,8 +237,8 @@ double FFN<
 
   // Make sure to set all layers in training mode.
   for (size_t i = 0; i < network.size(); ++i)
-    network[i]->Deterministic() = false;
-  deterministic = false;
+    network[i]->Training() = true;
+  training = true;
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -435,11 +435,8 @@ void FFN<
     OutputType
 >::Predict(InputType predictors, OutputType& results, const size_t batchSize)
 {
-  if (!deterministic)
-  {
-    deterministic = true;
-    ResetDeterministic();
-  }
+  // When predicting, we must be in prediction mode.
+  SetNetworkMode(false);
 
   // If there are no weights for the network at all, we need to initialize the
   // weights.
@@ -520,11 +517,8 @@ double FFN<
   if (parameters.is_empty())
     InitializeWeights();
 
-  if (!deterministic)
-  {
-    deterministic = true;
-    ResetDeterministic();
-  }
+  // Make sure the layers of the network are set correctly.
+  SetNetworkMode(training);
 
   // Note that layerOutputs may not yet be initialized correctly, but if it
   // isn't, this will be handled by Forward().
@@ -567,16 +561,13 @@ double FFN<
 >::Evaluate(const OutputType& /* parameters */,
             const size_t begin,
             const size_t batchSize,
-            const bool deterministic)
+            const bool training)
 {
   if (parameters.is_empty())
     InitializeWeights();
 
-  if (deterministic != this->deterministic)
-  {
-    this->deterministic = deterministic;
-    ResetDeterministic();
-  }
+  // Set the layers of the network to the mode that was requested.
+  SetNetworkMode(training);
 
   Forward(predictors.cols(begin, begin + batchSize - 1), layerOutputs.back());
 
@@ -696,7 +687,9 @@ void FFN<
     OutputType
 >::InitializeWeights()
 {
-  ResetDeterministic();
+  // Set the network to training mode.
+  // TODO: is this necessary here?
+  SetNetworkMode(true);
 
   // Reset the network parameters with the given initialization rule.
   NetworkInitialization<InitializationRuleType> networkInit(initializeRule);
@@ -745,11 +738,11 @@ void FFN<
     InitializationRuleType,
     InputType,
     OutputType
->::ResetDeterministic()
+>::SetNetworkMode(const bool training)
 {
-  // TODO: change the name of this...
+  this->training = training;
   for (size_t i = 0; i < network.size(); ++i)
-    network[i]->Deterministic() = true;
+    network[i]->Training() = this->training;
 }
 
 template<typename OutputLayerType,
@@ -846,7 +839,7 @@ void FFN<
   // Serialize the expected input size.
   ar(CEREAL_NVP(inputDimensions));
   ar(CEREAL_NVP(reset));
-  ar(CEREAL_NVP(deterministic));
+  ar(CEREAL_NVP(training));
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())
@@ -901,7 +894,7 @@ void FFN<
   std::swap(responses, network.responses);
   std::swap(numFunctions, network.numFunctions);
   std::swap(error, network.error);
-  std::swap(deterministic, network.deterministic);
+  std::swap(training, network.training);
   std::swap(inputDimensionsAreSet, network.inputDimensionsAreSet);
   std::swap(totalInputSize, network.totalInputSize);
   std::swap(totalOutputSize, network.totalOutputSize);

@@ -27,8 +27,7 @@ AlphaDropout<InputType, OutputType>::AlphaDropout(
     const double ratio,
     const double alphaDash) :
     ratio(ratio),
-    alphaDash(alphaDash),
-    deterministic(false)
+    alphaDash(alphaDash)
 {
   Ratio(ratio);
 }
@@ -37,9 +36,8 @@ template<typename InputType, typename OutputType>
 void AlphaDropout<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  // The dropout mask will not be multiplied in the deterministic mode
-  // (during testing).
-  if (deterministic)
+  // The dropout mask will not be multiplied during testing.
+  if (!this->training)
   {
     output = input;
   }

@@ -132,7 +132,7 @@ void Recurrent<InputType, OutputType>::Forward(
   output = transferModule->OutputParameter();
 
   // Save the feedback output parameter when training the module.
-  if (!deterministic)
+  if (this->training)
   {
     feedbackOutputParameter.push_back(output);
   }

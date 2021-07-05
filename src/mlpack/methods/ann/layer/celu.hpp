@@ -48,7 +48,7 @@ namespace ann /** Artificial Neural Network. */ {
  * \right.
  * @f}
  *
- * In the deterministic mode, there is no computation of the derivative.
+ * When not in training mode, there is no computation of the derivative.
  *
  * @tparam InputType The type of the layer's inputs. The layer automatically
  *     cast inputs to this type (Default: arma::mat).

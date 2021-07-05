@@ -54,9 +54,8 @@ void DropConnectType<InputType, OutputType>::Forward(
     const InputType& input,
     OutputType& output)
 {
-  // The DropConnect mask will not be multiplied in the deterministic mode
-  // (during testing).
-  if (this->deterministic)
+  // The DropConnect mask will not be multiplied in testing mode.
+  if (!this->training)
   {
     baseLayer->Forward(input, output);
   }

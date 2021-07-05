@@ -25,14 +25,9 @@ namespace ann /** Artificial Neural Network. */ {
  * The DropConnect layer is a regularizer that randomly with probability
  * ratio sets the connection values to zero and scales the remaining
  * elements by factor 1 /(1 - ratio). The output is scaled with 1 / (1 - p)
- * when deterministic is false. In the deterministic mode(during testing),
- * the layer just computes the output. The output is computed according
- * to the input layer. If no input layer is given, it will take a linear layer
- * as default.
- *
- * Note:
- * During training you should set deterministic to false and during testing
- * you should set deterministic to true.
+ * when in training mode.  During testing, the layer just computes the output.
+ * The output is computed according to the input layer. If no input layer is
+ * given, it will take a linear layer as default.
  *
  * For more information, see the following.
  *

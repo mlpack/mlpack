@@ -142,7 +142,7 @@ void GRU<InputType, OutputType>::Forward(
   if (forwardStep == rho)
   {
     forwardStep = 0;
-    if (!deterministic)
+    if (this->training)
     {
       outParameter.emplace_back(allZeros.memptr(),
           allZeros.n_rows, allZeros.n_cols, false, true);
@@ -154,7 +154,7 @@ void GRU<InputType, OutputType>::Forward(
           allZeros.n_rows, allZeros.n_cols, false, true);
     }
   }
-  else if (!deterministic)
+  else if (this->training)
   {
     outParameter.push_back(output);
     prevOutput = --outParameter.end();

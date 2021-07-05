@@ -118,9 +118,6 @@ class AlphaDropout : public Layer<InputType, OutputType>
   //! The low variance value of SELU activation function.
   double alphaDash;
 
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
-
   //! Value of alpha for normalized inputs (taken from SELU).
   static constexpr double alpha = 1.6732632423543772848170429916717;
 

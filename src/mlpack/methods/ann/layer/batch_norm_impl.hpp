@@ -68,7 +68,6 @@ void BatchNorm<InputType, OutputType>::SetWeights(
     beta.fill(0.0);
   }
 
-  this->deterministic = false;
   loading = false;
 }
 
@@ -87,7 +86,7 @@ void BatchNorm<InputType, OutputType>::Forward(
   output.set_size(arma::size(input));
 
   // We will calculate minibatch norm on each channel / feature map.
-  if (!this->deterministic)
+  if (this->training)
   {
     // Check only during training, batch-size can be one during inference.
     if (batchSize == 1 && inputSize == 1)

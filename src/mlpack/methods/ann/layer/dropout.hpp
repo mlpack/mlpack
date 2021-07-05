@@ -24,10 +24,7 @@ namespace ann /** Artificial Neural Network. */ {
  * The dropout layer is a regularizer that randomly with probability 'ratio'
  * sets input values to zero and scales the remaining elements by factor 1 /
  * (1 - ratio) rather than during test time so as to keep the expected sum same.
- * In the deterministic mode (during testing), there is no change in the input.
- *
- * Note: During training you should set deterministic to false and during
- * testing you should set deterministic to true.
+ * When the layer is in testing mode, there is no change in the input.
  *
  * For more information, see the following.
  *

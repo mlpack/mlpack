@@ -419,10 +419,11 @@ class FFN
   void Gradient(const InputType& input, OutputType& gradient);
 
   /**
-   * Reset the module status by setting the current deterministic parameter
-   * for all modules that implement the Deterministic function.
+   * Set all the layers in the network to training mode, if `training` is
+   * `true`, or set all the layers in the network to testing mode, if `training`
+   * is `false`.
    */
-  void ResetDeterministic();
+  void SetNetworkMode(const bool training);
 
   /**
    * Reset the gradient for all modules that implement the Gradient function.
@@ -488,7 +489,7 @@ class FFN
   OutputType error;
 
   //! The current evaluation mode (training or testing).
-  bool deterministic;
+  bool training;
 
   //! If true, each layer has its memory properly set for a forward/backward
   //! pass.

@@ -170,20 +170,24 @@ class Layer
   virtual void ResetCell(const size_t /* size */) {}
 
   /**
-   * Get the deterministic parameter.
+   * Get whether the layer is currently in training mode.
    *
-   * @note During training you should set the deterministic parameter for each
-   * layer to false and during testing you should set deterministic to true.
+   * @note During network training, this should be set to `true` for each layer
+   * in the network, and when predicting/testing the network, this should be set
+   * to `false`.  (This is handled automatically by the `FFN` class and other
+   * related classes.)
    */
-  virtual bool const& Deterministic() const { return deterministic; }
+  virtual bool const& Training() const { return training; }
 
   /**
-   * Modify the deterministic parameter.
+   * Modify whether the layer is currently in training mode.
    *
-   * @note During training you should set the deterministic parameter for each
-   * layer to false and during testing you should set deterministic to true.
+   * @note During network training, this should be set to `true` for each layer
+   * in the network, and when predicting/testing the network, this should be set
+   * to `false`.  (This is handled automatically by the `FFN` class and other
+   * related classes.)
    */
-  virtual bool& Deterministic() { return deterministic; }
+  virtual bool& Training() { return training; }
 
   //! Get the layer loss.  Overload this if the layer should add any extra loss
   //! to the loss function when computing the objective.  (TODO: better comment)
@@ -251,7 +255,7 @@ class Layer
   void serialize(Archive& ar, const uint32_t /* version */)
   {
     ar(inputDimensions);
-    ar(deterministic);
+    ar(training);
 
     // Note that layer weights are serialized by the FFN!
   }
@@ -264,8 +268,8 @@ class Layer
   std::vector<size_t> outputDimensions;
   bool validOutputDimensions;
 
-  //! If true testing mode otherwise training mode.
-  bool deterministic;
+  //! If true, the layer is in training mode; otherwise, it is in testing mode.
+  bool training;
 };
 
 } // namespace ann

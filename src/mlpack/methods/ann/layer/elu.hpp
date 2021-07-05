@@ -93,10 +93,8 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * In the deterministic mode, there is no computation of the derivative.
+ * In testing mode, there is no computation of the derivative.
  *
- * @note During training deterministic should be set to false and during
- *       testing/inference deterministic should be set to true.
  * @note Make sure to use SELU activation function with normalized inputs and
  *       weights initialized with Lecun Normal Initialization.
  *
