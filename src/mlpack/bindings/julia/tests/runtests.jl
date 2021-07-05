@@ -303,7 +303,7 @@ end
                          matrix_and_info_in=(dims, z),
                          points_are_rows=false)
 
-  @test size(matrix_and_info_out, 1) == 10
+  @test size(matrix_and_info_out, 1) == 6
   @test size(matrix_and_info_out, 2) == 100
 
   for i in 1:100
@@ -333,7 +333,7 @@ end
                          points_are_rows=true)
 
   @test size(matrix_and_info_out, 1) == 100
-  @test size(matrix_and_info_out, 2) == 10
+  @test size(matrix_and_info_out, 2) == 6
 
   for i in 1:100
     for j in [1, 3, 6]
