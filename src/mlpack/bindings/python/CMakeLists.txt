@@ -102,8 +102,8 @@ set(BINDING_SOURCES
   get_param.hpp
   get_printable_param.hpp
   get_python_type.hpp
-  get_class_name.hpp
-  get_methods.hpp
+  get_class_name_wrapper.hpp
+  get_methods_wrapper.hpp
   get_program_name.hpp
   import_decl.hpp
   is_serializable.hpp
