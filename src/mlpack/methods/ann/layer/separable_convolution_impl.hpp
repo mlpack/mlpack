@@ -294,8 +294,9 @@ void SeparableConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::Backward(
-    const arma::Mat<eT>& /* input */, arma::Mat<eT>& gy, arma::Mat<eT>& g)
+>::Backward(const arma::Mat<eT>& /* input */,
+            const arma::Mat<eT>& gy,
+            arma::Mat<eT>& g)
 {
   arma::cube mappedError(gy.memptr(), outputWidth, outputHeight,
       outSize * batchSize, false, false);
@@ -353,10 +354,9 @@ void SeparableConvolution<
     GradientConvolutionRule,
     InputDataType,
     OutputDataType
->::Gradient(
-    const arma::Mat<eT>& /* input */,
-    arma::Mat<eT>& error,
-    arma::Mat<eT>& gradient)
+>::Gradient(const arma::Mat<eT>& /* input */,
+            const arma::Mat<eT>& error,
+            arma::Mat<eT>& gradient)
 {
   arma::cube mappedError(error.memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
@@ -456,8 +456,8 @@ void SeparableConvolution<
 
   if (cereal::is_loading<Archive>())
   {
-    weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-        1);
+    weights.set_size((outSize * (inSize / numGroups) * kernelWidth *
+        kernelHeight) + outSize, 1);
   }
 }
 template<

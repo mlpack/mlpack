@@ -143,7 +143,7 @@ class SeparableConvolution
    */
   template <typename eT>
   void Backward(const arma::Mat<eT>& /* input */,
-                arma::Mat<eT>& gy,
+                const arma::Mat<eT>& gy,
                 arma::Mat<eT>& g);
 
   /*
@@ -155,7 +155,7 @@ class SeparableConvolution
    */
   template <typename eT>
   void Gradient(const arma::Mat<eT>& /* input */,
-                arma::Mat<eT>& error,
+                const arma::Mat<eT>& error,
                 arma::Mat<eT>& gradient);
 
   //! Get the input parameter.
