@@ -426,11 +426,6 @@ class FFN
   void SetNetworkMode(const bool training);
 
   /**
-   * Reset the gradient for all modules that implement the Gradient function.
-   */
-  void ResetGradients(OutputType& gradient);
-
-  /**
    * Initialize memory to be used for storing the outputs of each layer, if
    * necessary.
    */

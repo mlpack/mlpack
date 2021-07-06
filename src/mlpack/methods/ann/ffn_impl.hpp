@@ -15,8 +15,6 @@
 // In case it hasn't been included yet.
 #include "ffn.hpp"
 
-#include "util/gradient_update.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
@@ -740,22 +738,6 @@ void FFN<
   this->training = training;
   for (size_t i = 0; i < network.size(); ++i)
     network[i]->Training() = this->training;
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-void FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::ResetGradients(OutputType& gradient)
-{
-  size_t offset = 0;
-  for (size_t i = 0; i < network.size(); ++i)
-    offset += GradientUpdate(network[i], gradient, offset);
 }
 
 template<typename OutputLayerType,
