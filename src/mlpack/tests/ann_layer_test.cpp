@@ -4302,13 +4302,13 @@ BOOST_AUTO_TEST_CASE(SimpleSeparableConvolutionLayerTest)
   SeparableConvolution<> module1(3, 21, 3, 3, 1, 1, 0, 0, 224, 224, 3);
 
   // Test the forward function.
-  input.fill(2.0);
+  input.fill(2);
   module1.Parameters().fill(1);
   module1.Reset()
   module1.Forward(input, output);
 
   // Comparison value taken from PyTorch conv layer with the same config
-  REQUIRE(arma::accu(output), 1.96643e+07);
+  REQUIRE(arma::accu(output), 19664316);
 }
 
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")

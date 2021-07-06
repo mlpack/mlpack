@@ -259,8 +259,6 @@ class SeparableConvolution
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
 
-  arma::cube& Weight() {return weight;}
-
   /**
    * Serialize the layer.
    */
