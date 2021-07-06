@@ -84,8 +84,9 @@ SeparableConvolution<
         << "the number of groups. Input maps / output maps must be "
         << " divisible by number of groups." << std::endl;
   }
-  weights.set_size((inSize * outSize * kernelWidth * kernelHeight) / numGroups +
-    outSize, 1);
+
+  weights.set_size((outSize * (inSize / numGroups) * kernelWidth *
+      kernelHeight) + outSize, 1);
 
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
@@ -156,8 +157,8 @@ SeparableConvolution<
         << " divisible by number of groups." << std::endl;
   }
 
-  weights.set_size((inSize * outSize * kernelWidth * kernelHeight) / numGroups +
-    outSize, 1);
+  weights.set_size((outSize * (inSize / numGroups) * kernelWidth *
+      kernelHeight) + outSize, 1);
 
   // Transform paddingType to lowercase.
   std::string paddingTypeLow = paddingType;
@@ -195,7 +196,7 @@ void SeparableConvolution<
 >::Reset()
 {
   weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
-        outSize * inSize, false, false);
+        outSize * (inSize / numGroups), false, false);
   bias = arma::mat(weights.memptr() + weight.n_elem,
         outSize, 1, false, false);
 }
