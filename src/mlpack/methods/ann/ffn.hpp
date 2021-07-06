@@ -336,9 +336,11 @@ class FFN
   //! Modify the matrix of data points (predictors).
   InputType& Predictors() { return predictors; }
 
-  //! Reset the module infomration (weights/parameters).
+  //! Use the InitializationPolicy to initialize all the weights in the network.
   void InitializeWeights();
 
+  //! Make the memory of each layer point to the right place, by calling
+  //! SetWeightPtr() on each layer.
   void SetLayerMemory();
 
   //! Serialize the model.
@@ -393,6 +395,18 @@ class FFN
   double Backward(const PredictorsType& inputs,
                   const TargetsType& targets,
                   GradientsType& gradients);
+
+  /**
+   * Set the logical dimensions of the input.
+   *
+   * TODO: better comment.  You would call this when you want to, e.g., pass an
+   * n-dimensional tensor, so that you can specify each of those n dimensions.
+   */
+  // Note: we don't need to invalidate any caches, because any forward pass will
+  // already check if the input dimensions have changed.
+  std::vector<size_t>& InputDimensions() { return inputDimensions; }
+  //! Get the logical dimensions of the input.
+  const std::vector<size_t>& InputDimensions() { return inputDimensions; }
 
  private:
   // Helper functions.
