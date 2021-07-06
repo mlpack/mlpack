@@ -67,7 +67,7 @@ TEST_CASE("GetParamDoubleTest", "[CLIOptionTest]")
 {
   util::ParamData d;
   double x = 5.0;
-  d.value = boost::any(x);
+  d.value = ANY(x);
 
   double* output = NULL;
   GetParam<double>((util::ParamData&) d, (const void*) NULL,
@@ -85,7 +85,7 @@ TEST_CASE("GetParamLoadedMatTest", "[CLIOptionTest]")
   typedef std::tuple<string, size_t, size_t> TupleType;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> tuple = make_tuple(m, testTuple);
-  d.value = boost::any(tuple);
+  d.value = ANY(tuple);
   // Mark it as already loaded.
   d.input = true;
   d.loaded = true;
@@ -111,7 +111,7 @@ TEST_CASE("GetParamUnloadedMatTest", "[CLIOptionTest]")
   typedef tuple<string, size_t, size_t> TupleType;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> tuple = make_tuple(m, testTuple);
-  d.value = boost::any(tuple);
+  d.value = ANY(tuple);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -139,7 +139,7 @@ TEST_CASE("GetParamUmatTest", "[CLIOptionTest]")
   typedef tuple<string, size_t, size_t> TupleType;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::Mat<size_t>, TupleType> tuple = make_tuple(m, testTuple);
-  d.value = boost::any(tuple);
+  d.value = ANY(tuple);
   // Mark it as already loaded.
   d.input = true;
   d.loaded = true;
@@ -166,7 +166,7 @@ TEST_CASE("GetParamUnloadedUmatTest", "[CLIOptionTest]")
   typedef tuple<string, size_t, size_t> TupleType;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::Mat<size_t>, TupleType> tuple = make_tuple(m, testTuple);
-  d.value = boost::any(tuple);
+  d.value = ANY(tuple);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -212,7 +212,7 @@ TEST_CASE("GetParamDatasetInfoMatTest", "[CLIOptionTest]")
   tuple<data::DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
   tuple<decltype(tuple1), TupleType> tuple2 = make_tuple(tuple1, testTuple);
 
-  d.value = boost::any(tuple2);
+  d.value = ANY(tuple2);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -248,7 +248,7 @@ TEST_CASE("GetParamModelTest", "[CLIOptionTest]")
   // Create tuple.
   tuple<GaussianKernel*, string> t = make_tuple((GaussianKernel*) NULL,
       filename);
-  d.value = boost::any(t);
+  d.value = ANY(t);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -268,7 +268,7 @@ TEST_CASE("RawParamDoubleTest", "[CLIOptionTest]")
   // This should function the same as GetParam for doubles.
   util::ParamData d;
   double x = 5.0;
-  d.value = boost::any(x);
+  d.value = ANY(x);
 
   double* output = NULL;
   GetParam<double>((util::ParamData&) d, (const void*) NULL,
@@ -287,7 +287,7 @@ TEST_CASE("RawParamMatTest", "[CLIOptionTest]")
   typedef tuple<string, size_t, size_t> TupleType;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> tuple = make_tuple(m, testTuple);
-  d.value = boost::any(tuple);
+  d.value = ANY(tuple);
   d.input = true;
   d.loaded = false;
   d.noTranspose = false;
@@ -312,7 +312,7 @@ TEST_CASE("GetRawParamModelTest", "[CLIOptionTest]")
 
   // Create tuple.
   tuple<GaussianKernel*, string> t = make_tuple(&gk, filename);
-  d.value = boost::any(t);
+  d.value = ANY(t);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -339,7 +339,7 @@ TEST_CASE("GetRawParamDatasetInfoTest", "[CLIOptionTest]")
   tuple<data::DatasetInfo, arma::mat> tuple1 = make_tuple(dd, m);
   tuple<decltype(tuple1), TupleType> tuple2 = make_tuple(tuple1, testTuple);
 
-  d.value = boost::any(tuple2);
+  d.value = ANY(tuple2);
   // Make sure it is not loaded yet.
   d.input = true;
   d.loaded = false;
@@ -367,7 +367,7 @@ TEST_CASE("OutputParamMatTest", "[CLIOptionTest]")
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> t = make_tuple(m, testTuple);
 
-  d.value = boost::any(t);
+  d.value = ANY(t);
   d.input = false;
   d.noTranspose = false;
 
@@ -395,7 +395,7 @@ TEST_CASE("OutputParamUmatTest", "[CLIOptionTest]")
   TupleType testTuple{filename, 0, 0};
   tuple<arma::Mat<size_t>, TupleType> t = make_tuple(m, testTuple);
 
-  d.value = boost::any(t);
+  d.value = ANY(t);
   d.input = false;
   d.noTranspose = false;
 
@@ -421,7 +421,7 @@ TEST_CASE("OutputParamModelTest", "[CLIOptionTest]")
   GaussianKernel gk(5.0);
   tuple<GaussianKernel*, string> t = make_tuple(&gk, filename);
 
-  d.value = boost::any(t);
+  d.value = ANY(t);
   d.input = false;
 
   // Now save it.
@@ -443,7 +443,7 @@ TEST_CASE("SetParamDoubleTest", "[CLIOptionTest]")
 
   // Create initial value.
   double dd = 5.0;
-  d.value = boost::any(dd);
+  d.value = ANY(dd);
 
   // Now create second value.
   double dd2 = 1.0;
@@ -465,7 +465,7 @@ TEST_CASE("SetParamBoolTest", "[CLIOptionTest]")
 
   // Create initial value.
   bool b = false;
-  d.value = boost::any(b);
+  d.value = ANY(b);
   d.wasPassed = true;
 
   // Now create second value.
@@ -473,7 +473,7 @@ TEST_CASE("SetParamBoolTest", "[CLIOptionTest]")
   boost::any a(b2);
   SetParam<bool>((util::ParamData&) d, (const void*) &a, (void*) NULL);
 
-  REQUIRE(boost::any_cast<bool>(d.value) == true);
+  REQUIRE(ANY_CAST<bool>(d.value) == true);
 }
 
 // Test that calling SetParam on a matrix sets the string correctly.
@@ -486,7 +486,7 @@ TEST_CASE("SetParamMatrixTest", "[CLIOptionTest]")
   arma::mat m(5, 5, arma::fill::randu);
   typedef tuple<string, size_t, size_t> TupleType;
   TupleType testTuple{filename, 0, 0};
-  d.value = boost::any(make_tuple(m, testTuple));
+  d.value = ANY(make_tuple(m, testTuple));
 
   // Get a new string.
   string newFilename = "new.csv";
@@ -497,7 +497,7 @@ TEST_CASE("SetParamMatrixTest", "[CLIOptionTest]")
 
   // Make sure the change went through.
   tuple<arma::mat, TupleType>& t =
-      *boost::any_cast<tuple<arma::mat, TupleType>>(&d.value);
+      *ANY_CAST<tuple<arma::mat, TupleType>>(&d.value);
   REQUIRE(get<0>(get<1>(t)) == "new.csv");
 }
 
@@ -509,7 +509,7 @@ TEST_CASE("SetParamModelTest", "[CLIOptionTest]")
   // Create initial value.
   string filename = "kernel.bin";
   GaussianKernel gk(2.0);
-  d.value = boost::any(make_tuple(&gk, filename));
+  d.value = ANY(make_tuple(&gk, filename));
 
   // Get a new string.
   string newFilename = "new_kernel.bin";
@@ -520,7 +520,7 @@ TEST_CASE("SetParamModelTest", "[CLIOptionTest]")
 
   // Make sure the change went through.
   tuple<GaussianKernel*, string>& t =
-      *boost::any_cast<tuple<GaussianKernel*, string>>(&d.value);
+      *ANY_CAST<tuple<GaussianKernel*, string>>(&d.value);
 
   REQUIRE(get<1>(t) == "new_kernel.bin");
 }
@@ -541,7 +541,7 @@ TEST_CASE("SetParamDatasetInfoMatTest", "[CLIOptionTest]")
   tuple<DatasetInfo, arma::mat> t1 = make_tuple(di, m);
   tuple<tuple<DatasetInfo, arma::mat>, TupleType> t2 = make_tuple(t1,
       testTuple);
-  d.value = boost::any(t2);
+  d.value = ANY(t2);
   d.noTranspose = false;
 
   // Now get new filename.
@@ -553,7 +553,7 @@ TEST_CASE("SetParamDatasetInfoMatTest", "[CLIOptionTest]")
 
   // Check that the name is right.
   tuple<tuple<DatasetInfo, arma::mat>, TupleType>& t3 =
-      *boost::any_cast<tuple<tuple<DatasetInfo, arma::mat>, TupleType>>(
+      *ANY_CAST<tuple<tuple<DatasetInfo, arma::mat>, TupleType>>(
       &d.value);
 
   REQUIRE(get<0>(get<1>(t3)) == "new_filename.csv");
@@ -566,7 +566,7 @@ TEST_CASE("GetAllocatedMemoryNonModelTest", "[CLIOptionTest]")
   util::ParamData d;
 
   bool b = true;
-  d.value = boost::any(b);
+  d.value = ANY(b);
   d.input = true;
 
   void* result = (void*) 1; // Invalid pointer, should be overwritten.
@@ -582,7 +582,7 @@ TEST_CASE("GetAllocatedMemoryNonModelTest", "[CLIOptionTest]")
   typedef tuple<string, size_t, size_t> TupleType;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> t = make_tuple(test, testTuple);
-  d.value = boost::any(t);
+  d.value = ANY(t);
 
   result = (void*) 1;
 
@@ -601,7 +601,7 @@ TEST_CASE("GetAllocatedMemoryModelTest", "[CLIOptionTest]")
   GaussianKernel g(2.0);
   string filename = "hello.bin";
   tuple<GaussianKernel*, string> t = make_tuple(&g, filename);
-  d.value = boost::any(t);
+  d.value = ANY(t);
   d.input = true;
 
   void* result = NULL;
@@ -619,7 +619,7 @@ TEST_CASE("DeleteAllocatedMemoryNonModelTest", "[CLIOptionTest]")
   util::ParamData d;
 
   bool b = true;
-  d.value = boost::any(b);
+  d.value = ANY(b);
   d.input = true;
 
   DeleteAllocatedMemory<bool>((util::ParamData&) d,
@@ -630,7 +630,7 @@ TEST_CASE("DeleteAllocatedMemoryNonModelTest", "[CLIOptionTest]")
   typedef tuple<string, size_t, size_t> TupleType;
   TupleType testTuple{filename, 0, 0};
   tuple<arma::mat, TupleType> t = make_tuple(test, testTuple);
-  d.value = boost::any(t);
+  d.value = ANY(t);
 
   DeleteAllocatedMemory<arma::mat>((util::ParamData&) d,
       (const void*) NULL, (void*) NULL);
@@ -649,7 +649,7 @@ TEST_CASE("DeleteAllocatedMemoryModelTest", "[CLIOptionTest]")
   string filename = "hello.bin";
   tuple<GaussianKernel*, string> t = make_tuple(g, filename);
 
-  d.value = boost::any(t);
+  d.value = ANY(t);
   d.input = false;
 
   DeleteAllocatedMemory<GaussianKernel*>((util::ParamData&) d,
