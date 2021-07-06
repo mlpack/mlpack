@@ -15,9 +15,11 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/core/boost_backport/boost_backport_string_view.hpp>
-#include <unordered_map>
-#include <deque>
+
 #include <array>
+#include <deque>
+#include <functional>
+#include <unordered_map>
 
 namespace mlpack {
 namespace data {
@@ -115,7 +117,7 @@ class StringEncodingDictionary<STRING_VIEW>
   using MapType = std::unordered_map<
       STRING_VIEW,
       size_t,
-      boost::hash<STRING_VIEW>>;
+      std::hash<STRING_VIEW>>;
 
   //! The type of the token that the dictionary stores.
   using TokenType = STRING_VIEW;
