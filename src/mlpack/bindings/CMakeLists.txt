@@ -33,3 +33,7 @@ macro(group_bindings name methods)
     endif()
   endforeach()
 endmacro()
+
+macro(add_type name category)
+  set(${name}_category ${category})
+endmacro()

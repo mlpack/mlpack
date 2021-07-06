@@ -15,6 +15,7 @@ endforeach()
 # the parent scope)
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_type(linear_regression "regression")
 group_bindings(linear_regression "fit;predict")
 add_python_binding(linear_regression)
 

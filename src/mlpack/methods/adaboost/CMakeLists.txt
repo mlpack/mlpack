@@ -16,6 +16,7 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+add_type(adaboost "classification")
 group_bindings(adaboost "fit;predict;predict_proba")
 add_python_binding(adaboost)
 

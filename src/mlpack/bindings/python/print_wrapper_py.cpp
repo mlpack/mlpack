@@ -24,7 +24,9 @@ namespace mlpack {
 namespace bindings {
 namespace python {
 
-void PrintWrapperPY(const std::string& groupName,
+void PrintWrapperPY(const bool hasScikit,
+                    const std::string& category,
+                    const std::string& groupName,
                     const std::string& validMethods)
 {
   map<string, Params> params;
@@ -44,6 +46,14 @@ void PrintWrapperPY(const std::string& groupName,
   {
     importString += "from mlpack." + groupName + "_" + i + " ";
 		importString += "import " + groupName + "_" + i + "\n";
+  }
+  // If hasScikit is true, then add scikit base class imports.
+  if(hasScikit)
+  {
+    if(category == "regression")
+      importString += "from sklearn.base import BaseEstimator\n";
+    else if(category == "classification")
+      importString += "from sklearn.base import BaseEstimator, ClassifierMixin\n";
   }
   cout << importString << endl;
 
@@ -75,7 +85,21 @@ void PrintWrapperPY(const std::string& groupName,
   string className = GetClassName(groupName);
 
   // print class.
-	cout << "class " << className << ":" << endl;
+  if(hasScikit)
+  {
+    if(category == "regression")
+      cout << "class " << className << "(BaseEstimator)" << ":" << endl;
+    else if(category == "classification")
+    {
+      cout << "class " << className << "(BaseEstimator, ClassifierMixin)" <<
+          ":" << endl;
+    }
+    else
+      cout << "class " << className << ":" << endl;
+  }
+  else
+    cout << "class " << className << ":" << endl;
+
   indent += 2;
 	cout << string(indent, ' ') << "def __init__(self," << endl;
   for(auto itr=hyperParams.begin(); itr!=hyperParams.end(); itr++)
@@ -118,6 +142,15 @@ void PrintWrapperPY(const std::string& groupName,
     cout << string(indent, ' ') << "def " << methodName << "(self," << endl;
     int addIndent = 4 + methodName.size() + 1;
     map<string, ParamData> methodParams = params[methodName].Parameters();
+    map<string, string> mapToScikitNames;
+
+    for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
+    {
+      if(hasScikit)
+      {
+        
+      }
+    }
     // print input parameters.
     for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
     {
