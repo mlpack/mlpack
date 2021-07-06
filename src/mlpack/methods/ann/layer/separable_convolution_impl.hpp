@@ -298,7 +298,7 @@ void SeparableConvolution<
             const arma::Mat<eT>& gy,
             arma::Mat<eT>& g)
 {
-  arma::cube mappedError(gy.memptr(), outputWidth, outputHeight,
+  arma::cube mappedError(const_cast<arma::Mat<eT>&>(gy).memptr(), outputWidth, outputHeight,
       outSize * batchSize, false, false);
 
   g.set_size(inputTemp.n_rows * inputTemp.n_cols * inSize, batchSize);
@@ -358,7 +358,7 @@ void SeparableConvolution<
             const arma::Mat<eT>& error,
             arma::Mat<eT>& gradient)
 {
-  arma::cube mappedError(error.memptr(), outputWidth,
+  arma::cube mappedError(const_cast<arma::Mat<eT>&>(error).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
