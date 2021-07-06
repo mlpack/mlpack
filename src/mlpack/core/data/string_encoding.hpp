@@ -14,7 +14,6 @@
 #define MLPACK_CORE_DATA_STRING_ENCODING_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/boost_backport/boost_backport_string_view.hpp>
 #include <mlpack/core/data/string_encoding_dictionary.hpp>
 #include <mlpack/core/data/string_encoding_policies/policy_traits.hpp>
 #include <vector>

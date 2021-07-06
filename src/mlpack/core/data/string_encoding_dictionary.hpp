@@ -14,7 +14,6 @@
 #define MLPACK_CORE_DATA_STRING_ENCODING_DICTIONARY_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <mlpack/core/boost_backport/boost_backport_string_view.hpp>
 
 #include <array>
 #include <deque>

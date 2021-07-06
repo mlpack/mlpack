@@ -11,7 +11,6 @@
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
 #include <mlpack/core.hpp>
-#include <mlpack/core/boost_backport/boost_backport_string_view.hpp>
 #include <mlpack/core/data/tokenizers/split_by_any_of.hpp>
 #include <mlpack/core/data/tokenizers/char_extract.hpp>
 #include <mlpack/core/data/string_encoding.hpp>
