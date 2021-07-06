@@ -4296,31 +4296,20 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
 /**
  * Simple Separable Convolution layer test.
  */
-// BOOST_AUTO_TEST_CASE(SimpleSeparableConvolutionLayerTest)
-// {
-//   arma::mat output, input, delta;
-//   Convolution<> module1(1, 4, 2, 2, 1, 1, 0, 0, 3, 3, "valid");
+BOOST_AUTO_TEST_CASE(SimpleSeparableConvolutionLayerTest)
+{
+  arma::mat input(224 * 224 * 3, 1), output;
+  SeparableConvolution<> module1(3, 21, 3, 3, 1, 1, 0, 0, 224, 224, 3);
 
-//   // Test the forward function.
-//   input = arma::linspace<arma::colvec>(0, 8, 9);
-//   input.zeros();
-//   input(0) = 1.0;
-//   input(3) = 3.0;
-//   input(4) = 4.0;
-//   input(5) = 5.0;
-//   input(7) = 1.0;
-//   module1.Parameters() = arma::mat(20, 1, arma::fill::zeros);
-//   module1.Parameters()(1) = 1.0;
-//   module1.Parameters()(2) = 1.0;
-//   module1.Parameters()(5) = 2.0;
-//   module1.Parameters()(7) = 2.0;
-//   module1.Parameters()(8) = 3.0;
-//   module1.Parameters()(14) = 4.0;
-//   module1.Reset();
-//   module1.Forward(std::move(input), std::move(output));
+  // Test the forward function.
+  input.fill(2.0);
+  module1.Parameters().fill(1);
+  module1.Reset()
+  module1.Forward(input, output);
 
-//   BOOST_REQUIRE_EQUAL(arma::accu(output), 111);
-// }
+  // Comparison value taken from PyTorch conv layer with the same config
+  REQUIRE(arma::accu(output), 1.96643e+07);
+}
 
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
 {
