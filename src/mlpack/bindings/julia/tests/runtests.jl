@@ -400,6 +400,27 @@ end
                          model_in=newModel)
 end
 
+# Test that we can serialize a model as part of a larger tuple.
+@testset "TestStreamTupleSerialization" begin
+  _, _, _, _, _, _, modelOut, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         build_model=true)
+
+  stream = IOBuffer()
+  serialize(stream, (modelOut, 3, 4, 5))
+
+  newStream = IOBuffer(copy(stream.data))
+  (newModel, a, b, c) = deserialize(newStream)
+
+  _, _, _, _, _, bwOut, _, _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         model_in=newModel)
+
+  @test a == 3
+  @test b == 4
+  @test c == 5
+end
+
 @testset "TestFileSerialization" begin
   _, _, _, _, _, _, modelOut, _, _, _, _, _, _, _ =
       test_julia_binding(4.0, 12, "hello",

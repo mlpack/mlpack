@@ -59,6 +59,10 @@
   * Fixes to `HoeffdingTree`: ensure that training still works when empty
     constructor is used (#2964).
 
+  * Fix Julia model serialization bug (#2970).
+
+  * Fix `LoadCSV()` to use pre-populated `DatasetInfo` objects (#2980).
+
   * Fix Julia, Python, R, and Go handling of categorical data for
     `decision_tree()` and `hoeffding_tree()` (#2971).
 
