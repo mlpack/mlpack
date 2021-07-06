@@ -75,7 +75,7 @@ class StringEncoding
    * @param tokenizer The tokenizer object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * 1. operator() which accepts a reference to STRING_VIEW, extracts
    * the next token from the given view, removes the prefix containing
    * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
@@ -109,7 +109,7 @@ class StringEncoding
    * @param tokenizer The tokenizer object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * 1. operator() which accepts a reference to STRING_VIEW, extracts
    * the next token from the given view, removes the prefix containing
    * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
@@ -159,7 +159,7 @@ class StringEncoding
    * @param policy The policy object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * 1. operator() which accepts a reference to STRING_VIEW, extracts
    * the next token from the given view, removes the prefix containing
    * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given
@@ -188,7 +188,7 @@ class StringEncoding
    * @param policy The policy object.
    *
    * The tokenization algorithm has to be an object with two public methods:
-   * 1. operator() which accepts a reference to boost::string_view, extracts
+   * 1. operator() which accepts a reference to STRING_VIEW, extracts
    * the next token from the given view, removes the prefix containing
    * the extracted token and returns the token;
    * 2. IsTokenEmpty() that accepts a token and returns true if the given

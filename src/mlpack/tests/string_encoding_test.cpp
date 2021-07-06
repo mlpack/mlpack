@@ -78,7 +78,7 @@ void CheckVectors(const vector<vector<ValueType>>& a,
  */
 TEST_CASE("DictionaryEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
 
   arma::mat output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
@@ -115,7 +115,7 @@ TEST_CASE("DictionaryEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("UnicodeDictionaryEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
 
   arma::mat output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoder;
@@ -149,7 +149,7 @@ TEST_CASE("UnicodeDictionaryEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("OnePassDictionaryEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
 
   vector<vector<size_t>> output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoder(
@@ -186,10 +186,10 @@ TEST_CASE("OnePassDictionaryEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("SplitByAnyOfTokenizerTest", "[StringEncodingTest]")
 {
-  std::vector<boost::string_view> tokens;
-  boost::string_view line(stringEncodingInput[0]);
+  std::vector<STRING_VIEW> tokens;
+  STRING_VIEW line(stringEncodingInput[0]);
   SplitByAnyOf tokenizer(" ,.");
-  boost::string_view token = tokenizer(line);
+  STRING_VIEW token = tokenizer(line);
 
   while (!token.empty())
   {
@@ -223,10 +223,10 @@ TEST_CASE("SplitByAnyOfTokenizerUnicodeTest", "[StringEncodingTest]")
     "\xE2\x93\x82\xE2\x93\x81\xE2\x93\x85\xE2\x92\xB6\xE2\x92\xB8\xE2\x93\x80"
   };
 
-  std::vector<boost::string_view> tokens;
-  boost::string_view line(stringEncodingUtf8Input[2]);
+  std::vector<STRING_VIEW> tokens;
+  STRING_VIEW line(stringEncodingUtf8Input[2]);
   SplitByAnyOf tokenizer(" ,.");
-  boost::string_view token = tokenizer(line);
+  STRING_VIEW token = tokenizer(line);
 
   while (!token.empty())
   {
@@ -296,7 +296,7 @@ TEST_CASE("OnePassDictionaryEncodingIndividualCharactersTest",
  */
 TEST_CASE("StringEncodingCopyTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
   arma::sp_mat output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoderCopy;
   SplitByAnyOf tokenizer(" ,.");
@@ -332,7 +332,7 @@ TEST_CASE("StringEncodingCopyTest", "[StringEncodingTest]")
  */
 TEST_CASE("StringEncodingMoveTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
   arma::sp_mat output;
   DictionaryEncoding<SplitByAnyOf::TokenType> encoderCopy;
   SplitByAnyOf tokenizer(" ,.");
@@ -391,21 +391,21 @@ void CheckDictionaries(const StringEncodingDictionary<TokenType>& expected,
 
 /**
  * This is a specialization of the CheckDictionaries() function for
- * the boost::string_view token type.
+ * the STRING_VIEW token type.
  */
 template<>
 void CheckDictionaries(
-    const StringEncodingDictionary<boost::string_view>& expected,
-    const StringEncodingDictionary<boost::string_view>& obtained)
+    const StringEncodingDictionary<STRING_VIEW>& expected,
+    const StringEncodingDictionary<STRING_VIEW>& obtained)
 {
   /* MapType is equal to
    *
-   * std::unordered_map<boost::string_view,
+   * std::unordered_map<STRING_VIEW,
    *                    size_t,
-   *                    boost::hash<boost::string_view>>.
+   *                    boost::hash<STRING_VIEW>>.
    */
   using MapType =
-      typename StringEncodingDictionary<boost::string_view>::MapType;
+      typename StringEncodingDictionary<STRING_VIEW>::MapType;
 
   const std::deque<std::string>& expectedTokens = expected.Tokens();
   const std::deque<std::string>& tokens = obtained.Tokens();
@@ -458,9 +458,9 @@ TEST_CASE("StringEncodingDictionarySerialization", "[StringEncodingTest]")
 
   for (const string& line : stringEncodingInput)
   {
-    boost::string_view lineView(line);
+    STRING_VIEW lineView(line);
 
-    boost::string_view token = tokenizer(lineView);
+    STRING_VIEW token = tokenizer(lineView);
 
     while (!tokenizer.IsTokenEmpty(token))
     {
@@ -545,7 +545,7 @@ TEST_CASE("CharExtractDictionaryEncodingSerialization", "[StringEncodingTest]")
  */
 TEST_CASE("BagOfWordsEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
 
   arma::mat output;
   BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder;
@@ -620,7 +620,7 @@ TEST_CASE("BagOfWordsEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("VectorBagOfWordsEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
 
   vector<vector<size_t>> output;
   BagOfWordsEncoding<SplitByAnyOf::TokenType> encoder(
@@ -714,7 +714,7 @@ TEST_CASE("VectorBagOfWordsEncodingIndividualCharactersTest",
  */
 TEST_CASE("RawCountSmoothIdfEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
 
   arma::mat output;
   TfIdfEncoding<SplitByAnyOf::TokenType> encoder;
@@ -816,7 +816,7 @@ TEST_CASE("RawCountSmoothIdfEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("VectorRawCountSmoothIdfEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
 
   vector<vector<double>> output;
   TfIdfEncoding<SplitByAnyOf::TokenType> encoder(
@@ -975,7 +975,7 @@ TEST_CASE("VectorRawCountSmoothIdfEncodingIndividualCharactersTest",
  */
 TEST_CASE("TfIdfRawCountEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
 
   arma::mat output;
   TfIdfEncoding<SplitByAnyOf::TokenType> encoder(
@@ -1025,7 +1025,7 @@ TEST_CASE("TfIdfRawCountEncodingTest", "[StringEncodingTest]")
  */
 TEST_CASE("VectorTfIdfRawCountEncodingTest", "[StringEncodingTest]")
 {
-  using DictionaryType = StringEncodingDictionary<boost::string_view>;
+  using DictionaryType = StringEncodingDictionary<STRING_VIEW>;
 
   vector<vector<double>> output;
   TfIdfEncoding<SplitByAnyOf::TokenType>
