@@ -86,7 +86,7 @@ class GoOption
       data.persistent = false;
     data.cppType = cppName;
 
-    data.value = boost::any(defaultValue);
+    data.value = ANY(defaultValue);
 
     // Restore the parameters for this program.
     if (identifier != "verbose" /*&& identifier != "copy_all_inputs"*/)

@@ -67,22 +67,22 @@ void PrintInputProcessing(
     // Print out default value.
     if (d.cppType == "std::string")
     {
-      std::string value = boost::any_cast<std::string>(d.value);
+      std::string value = ANY_CAST<std::string>(d.value);
       std::cout << "\"" << value << "\"";
     }
     else if (d.cppType == "double")
     {
-      double value = boost::any_cast<double>(d.value);
+      double value = ANY_CAST<double>(d.value);
       std::cout << value;
     }
     else if (d.cppType == "int")
     {
-      int value = boost::any_cast<int>(d.value);
+      int value = ANY_CAST<int>(d.value);
       std::cout << value;
     }
     else if (d.cppType == "bool")
     {
-      bool value = boost::any_cast<bool>(d.value);
+      bool value = ANY_CAST<bool>(d.value);
       if (value == 0)
       std::cout << "false";
       else

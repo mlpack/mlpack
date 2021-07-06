@@ -74,7 +74,7 @@ class PyOption
     data.cppType = cppName;
 
     // Every parameter we'll get from Python will have the correct type.
-    data.value = boost::any(defaultValue);
+    data.value = ANY(defaultValue);
 
     // Restore the parameters for this program.
     if (identifier != "verbose" && identifier != "copy_all_inputs")
