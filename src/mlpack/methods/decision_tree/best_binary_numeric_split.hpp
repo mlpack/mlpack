@@ -15,8 +15,19 @@
 #include <mlpack/prereqs.hpp>
 #include "mse_gain.hpp"
 
+#include <mlpack/core/util/sfinae_utility.hpp>
+
 namespace mlpack {
 namespace tree {
+
+// This gives us a HasBinaryScanInitialize<T, U> type (where U is a function
+// pointer) we can use with SFINAE to catch when a type has a
+// BinaryScanInitialize(...) function.
+HAS_MEM_FUNC(BinaryScanInitialize, HasBinaryScanInitialize);
+
+// This gives us a HasBinaryStep<T, U> type (where U is a function pointer)
+// we can use with SFINAE to catch when a type has a BinaryStep(...) function.
+HAS_MEM_FUNC(BinaryStep, HasBinaryStep);
 
 /**
  * The BestBinaryNumericSplit is a splitting function for decision trees that
@@ -97,6 +108,44 @@ class BestBinaryNumericSplit
       AuxiliarySplitInfo& aux);
 
   /**
+  * Check if we can split a node.  If we can split a node in a way that
+  * improves on 'bestGain', then we return the improved gain.  Otherwise we
+  * return the value 'bestGain'.  If a split is made, then splitInfo and aux
+  * may be modified.
+  *
+  * This overload is specialized only for MSEGain fitness function.
+  *
+  * @param bestGain Best gain seen so far (we'll only split if we find gain
+  *      better than this).
+  * @param data The dimension of data points to check for a split in.
+  * @param responses Responses for each point.
+  * @param weights Weights associated with responses.
+  * @param minimumLeafSize Minimum number of points in a leaf node for
+  *      splitting.
+  * @param minimumGainSplit Minimum gain split.
+  * @param splitInfo Stores split information on a successful split.
+  * @param aux Auxiliary split information, which may be modified on a
+  *      successful split.
+  */
+  template<bool UseWeights, typename VecType, typename ResponsesType,
+          typename WeightVecType>
+  typename std::enable_if<
+      HasBinaryScanInitialize<FitnessFunction, void(FitnessFunction::*)
+          (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
+      HasBinaryStep<FitnessFunction, void(FitnessFunction::*)
+          (const ResponsesType&, const WeightVecType&, const size_t)>::value,
+      double>::type
+  SplitIfBetter(
+      const double bestGain,
+      const VecType& data,
+      const ResponsesType& responses,
+      const WeightVecType& weights,
+      const size_t minimumLeafSize,
+      const double minimumGainSplit,
+      double& splitInfo,
+      AuxiliarySplitInfo& /* aux */);
+
+  /**
    * Returns 2, since the binary split always has two children.
    */
   static size_t NumChildren(const double& /* splitInfo */,
@@ -118,39 +167,6 @@ class BestBinaryNumericSplit
       const double& splitInfo,
       const AuxiliarySplitInfo& /* aux */);
 };
-
-/**
-* Check if we can split a node.  If we can split a node in a way that
-* improves on 'bestGain', then we return the improved gain.  Otherwise we
-* return the value 'bestGain'.  If a split is made, then splitInfo and aux
-* may be modified.
-*
-* This overload is specialized only for MSEGain fitness function.
-*
-* @param bestGain Best gain seen so far (we'll only split if we find gain
-*      better than this).
-* @param data The dimension of data points to check for a split in.
-* @param responses Responses for each point.
-* @param weights Weights associated with responses.
-* @param minimumLeafSize Minimum number of points in a leaf node for
-*      splitting.
-* @param minimumGainSplit Minimum gain split.
-* @param splitInfo Stores split information on a successful split.
-* @param aux Auxiliary split information, which may be modified on a
-*      successful split.
-*/
-template<>
-template<bool UseWeights, typename VecType, typename ResponsesType,
-         typename WeightVecType>
-double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
-    const double bestGain,
-    const VecType& data,
-    const ResponsesType& responses,
-    const WeightVecType& weights,
-    const size_t minimumLeafSize,
-    const double minimumGainSplit,
-    double& splitInfo,
-    AuxiliarySplitInfo& /* aux */);
 
 } // namespace tree
 } // namespace mlpack
