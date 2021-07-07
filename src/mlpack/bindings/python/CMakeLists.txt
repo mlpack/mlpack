@@ -320,7 +320,7 @@ macro (add_python_binding group_name)
     "#include <${loc}>\n")
   endforeach()
 
-  # if this is "regression" then generate scikit compatible wrappers also.
+  # if this is "regression" or "classification" then generate scikit compatible wrappers also.
   if("${${group_name}_category}" STREQUAL "regression" OR
   "${${group_name}_category}" STREQUAL "classification")
     file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
@@ -382,7 +382,6 @@ macro (add_python_binding group_name)
           -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${group_name}.py
           -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake)
   endif()
-
 endmacro ()
 
 # Add a test.
