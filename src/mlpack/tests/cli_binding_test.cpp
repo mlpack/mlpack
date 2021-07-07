@@ -447,7 +447,7 @@ TEST_CASE("SetParamDoubleTest", "[CLIOptionTest]")
 
   // Now create second value.
   double dd2 = 1.0;
-  boost::any a(dd2);
+  ANY a(dd2);
   SetParam<double>((util::ParamData&) d, (const void*) &a, (void*) NULL);
 
   // Make sure it's the right thing.
@@ -470,7 +470,7 @@ TEST_CASE("SetParamBoolTest", "[CLIOptionTest]")
 
   // Now create second value.
   bool b2 = true;
-  boost::any a(b2);
+  ANY a(b2);
   SetParam<bool>((util::ParamData&) d, (const void*) &a, (void*) NULL);
 
   REQUIRE(ANY_CAST<bool>(d.value) == true);
@@ -490,7 +490,7 @@ TEST_CASE("SetParamMatrixTest", "[CLIOptionTest]")
 
   // Get a new string.
   string newFilename = "new.csv";
-  boost::any a2(newFilename);
+  ANY a2(newFilename);
 
   SetParam<arma::mat>((util::ParamData&) d, (const void*) &a2,
       (void*) NULL);
@@ -513,7 +513,7 @@ TEST_CASE("SetParamModelTest", "[CLIOptionTest]")
 
   // Get a new string.
   string newFilename = "new_kernel.bin";
-  boost::any a2(newFilename);
+  ANY a2(newFilename);
 
   SetParam<GaussianKernel>((util::ParamData&) d, (const void*) &a2,
       (void*) NULL);
@@ -546,7 +546,7 @@ TEST_CASE("SetParamDatasetInfoMatTest", "[CLIOptionTest]")
 
   // Now get new filename.
   string newFilename = "new_filename.csv";
-  boost::any a2(newFilename);
+  ANY a2(newFilename);
 
   SetParam<tuple<DatasetInfo, arma::mat>>((util::ParamData&) d,
       (const void*) &a2, (void*) NULL);
