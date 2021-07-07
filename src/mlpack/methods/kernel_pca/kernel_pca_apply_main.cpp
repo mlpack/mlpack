@@ -15,7 +15,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME kernel_pca
+#define BINDING_NAME kernel_pca_apply
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
@@ -110,7 +110,7 @@ BINDING_EXAMPLE(
     PRINT_DATASET("input") + " using the Gaussian kernel, and saving the "
     "transformed data to " + PRINT_DATASET("transformed") + ": "
     "\n\n" +
-    PRINT_CALL("kernel_pca", "input", "input", "kernel", "gaussian", "output",
+    PRINT_CALL("kernel_pca_apply", "input", "input", "kernel", "gaussian", "output",
         "transformed"));
 
 // See also...

@@ -116,6 +116,9 @@ void PrintWrapperPY(const bool hasScikit,
 
   indent += 2;
   cout << string(indent, ' ') << "# serializable attributes." << endl;
+  if(serializable.size() == 0)
+    cout << string(indent, ' ') << "# None" << endl;
+
   for(auto itr=serializable.begin(); itr!=serializable.end(); itr++)
   {
     cout << string(indent, ' ');
@@ -142,26 +145,65 @@ void PrintWrapperPY(const bool hasScikit,
     cout << string(indent, ' ') << "def " << methodName << "(self," << endl;
     int addIndent = 4 + methodName.size() + 1;
     map<string, ParamData> methodParams = params[methodName].Parameters();
-    map<string, string> mapToScikitNames;
+    vector<string> inputParamNames;
+    map<string, string> mapToScikitNames; // "X" = ..., "y" = ...
+    map<string, string> invMapToScikitNames; // "train" = ..., "labels" = ...
 
-    for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
+    if(hasScikit)
     {
-      if(hasScikit)
+      for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
       {
-        
+        if(itr->second.input)
+        {
+          if(itr->second.cppType == "arma::mat" ||
+             itr->second.cppType ==
+             "std::tuple<mlpack::data::DatasetInfo, arma::mat>" ||
+             itr->second.cppType == "arma::Mat<size_t>")
+          {
+            mapToScikitNames[itr->first] = "X";
+            invMapToScikitNames["X"] = itr->first;
+          }
+          else if(itr->second.cppType == "arma::vec" ||
+                  itr->second.cppType == "arma::rowvec" ||
+                  itr->second.cppType == "arma::Row<size_t>" ||
+                  itr->second.cppType == "arma::Col<size_t>")
+          {
+            mapToScikitNames[itr->first] = "y";
+            invMapToScikitNames["y"] = itr->first;
+          }
+        }
       }
     }
-    // print input parameters.
-    for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
+
+    if(hasScikit)
     {
-      string validName = (itr->first == "lambda") ? "lambda_" : itr->first;
-      if(itr->second.input && serializable.find(itr->second.cppType) ==
-          serializable.end() && !hyperParams[itr->first])
+      // print X, y in order.
+      if(invMapToScikitNames.find("X") != invMapToScikitNames.end())
       {
         cout << string(indent + addIndent, ' ');
-        cout << validName << " = None," << endl;
+        cout << "X = None," << endl;
+      }
+      if(invMapToScikitNames.find("y") != invMapToScikitNames.end())
+      {
+        cout << string(indent + addIndent, ' ');
+        cout << "y = None," << endl;
       }
     }
+    else
+    {
+      // print input parameters.
+      for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
+      {
+        string validName = (itr->first == "lambda") ? "lambda_" : itr->first;
+        if(itr->second.input && serializable.find(itr->second.cppType) ==
+            serializable.end() && !hyperParams[itr->first])
+        {
+          cout << string(indent + addIndent, ' ');
+          cout << validName << " = None," << endl;
+        }
+      }
+    }
+
     cout << string(indent + addIndent - 1, ' ');
     cout << "):" << endl;
     cout << endl;
@@ -171,12 +213,13 @@ void PrintWrapperPY(const bool hasScikit,
     cout << string(indent, ' ') << "out = " << groupName + "_" + methodName +
         "(";
     addIndent = 6 + groupName.size() + 1 + methodName.size() + 1;
+    int count = 0; // just for reference.
     for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
     {
-      string validName = (itr->first == "lambda") ? "lambda_" : itr->first;
       if(itr->second.input)
       {
-        if(itr != methodParams.begin())
+        string validName = (itr->first == "lambda") ? "lambda_" : itr->first;
+        if(count != 0)
           cout << string(indent + addIndent, ' ');
         cout << validName << " = ";
 
@@ -185,7 +228,13 @@ void PrintWrapperPY(const bool hasScikit,
         else if(hyperParams[itr->first])
           cout << "self." << validName << "," << endl;
         else
-          cout << validName << "," << endl;
+        {
+          if(hasScikit)
+            cout << mapToScikitNames[itr->first] << "," << endl;
+          else
+            cout << validName << "," << endl;
+        }
+        count++;
       }
     }
     cout << string(indent + addIndent - 1, ' ');

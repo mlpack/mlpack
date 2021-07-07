@@ -16,9 +16,12 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_cli_executable(dbscan)
+add_type(dbscan "clustering")
+group_bindings(dbscan "cluster")
 add_python_binding(dbscan)
-add_julia_binding(dbscan)
-add_go_binding(dbscan)
-add_r_binding(dbscan)
-add_markdown_docs(dbscan "cli;python;julia;go;r" "clustering")
+
+add_cli_executable(dbscan_cluster)
+add_julia_binding(dbscan_cluster)
+add_go_binding(dbscan_cluster)
+add_r_binding(dbscan_cluster)
+add_markdown_docs(dbscan_cluster "cli;python;julia;go;r" "clustering")
