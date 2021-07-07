@@ -290,10 +290,10 @@ end
 # Test that we can pass a matrix with categorical features.
 @testset "TestMatrixAndInfoCategorical" begin
   x = collect(hcat(rand(100),
-                   rand(0:2, 100),
+                   rand(1:2, 100),
                    rand(100),
-                   rand(0:4, 100),
-                   rand(0:6, 100),
+                   rand(1:4, 100),
+                   rand(1:6, 100),
                    rand(100))')
   dims = [false, true, false, true, true, false]
   z = x
@@ -319,10 +319,10 @@ end
 # Test that we can pass a matrix with categorical features.
 @testset "TestMatrixAndInfoCategoricalRowMajor" begin
   x = hcat(rand(100),
-           rand(0:2, 100),
+           rand(1:2, 100),
            rand(100),
-           rand(0:4, 100),
-           rand(0:6, 100),
+           rand(1:4, 100),
+           rand(1:6, 100),
            rand(100))
   dims = [false, true, false, true, true, false]
   z = x
