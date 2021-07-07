@@ -613,9 +613,7 @@ func TestGonumMatrixWithInfoCategorical(t *testing.T) {
           t.Errorf("Error. Value at [%v,%v] : %v. Expected value : %v",
                    i, j, val, expected)
         }
-      }
-      else
-      {
+      } else {
         if x.Data.At(i, j) != MatrixAndInfoOut.At(i, j) {
           val := MatrixAndInfoOut.At(i, j)
           expected := x.Data.At(i, j)
