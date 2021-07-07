@@ -390,9 +390,9 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
     bestFoundGain *= data.n_elem;
   }
 
-  // Precomputing various statistics to efficiently compute gain values for
-  // all possible splits.
-  fitnessFunction.CalculateStatistics<UseWeights>(sortedResponses,
+  // Initialize and precompute various statistics to efficiently compute gain
+  // values for all possible splits.
+  fitnessFunction.BinaryScanInitialize<UseWeights>(sortedResponses,
       sortedWeights, minimum);
 
   // Loop through all possible split points, choosing the best one.
@@ -404,8 +404,8 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
       rightChildWeight -= sortedWeights[index - 1];
     }
 
-    // Update statistics for the current index.
-    fitnessFunction.UpdateStatistics<UseWeights>(sortedResponses,
+    // Steps through the current index and updates the cached data.
+    fitnessFunction.BinaryStep<UseWeights>(sortedResponses,
         sortedWeights, index - 1);
 
     // Make sure that the value has changed.
@@ -413,9 +413,9 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
       continue;
 
     // Calculate the gain for the left and right child.
-    auto value = fitnessFunction.Evaluate();
-    const double leftGain = std::get<0>(value);
-    const double rightGain = std::get<1>(value);
+    auto binaryGains = fitnessFunction.BinaryGains();
+    const double leftGain = std::get<0>(binaryGains);
+    const double rightGain = std::get<1>(binaryGains);
 
     double gain;
     if (UseWeights)

@@ -106,7 +106,7 @@ class MSEGain
    *       {\dfrac{\sum\limits_{j=1}^n X_j}{n}}^2
    * @f}
    */
-  std::tuple<double, double> Evaluate()
+  std::tuple<double, double> BinaryGains()
   {
     double mseLeft = leftSumSquares / leftSize - leftMean * leftMean;
     double mseRight = (totalSumSquares - leftSumSquares) / rightSize
@@ -124,9 +124,9 @@ class MSEGain
    * @param minimum The minimum number of elements in a leaf.
    */
   template<bool UseWeights, typename ResponsesType, typename WeightVecType>
-  void CalculateStatistics(const ResponsesType& responses,
-                           const WeightVecType& weights,
-                           const size_t minimum)
+  void BinaryScanInitialize(const ResponsesType& responses,
+                            const WeightVecType& weights,
+                            const size_t minimum)
   {
     typedef typename ResponsesType::elem_type RType;
     typedef typename WeightVecType::elem_type WType;
@@ -141,9 +141,6 @@ class MSEGain
 
     if (UseWeights)
     {
-      // Do I need to document that the % symbol does the elementwise multiplication?
-      // It might be misleading to general developers who might confuse it with modulo
-      // operator.
       totalSumSquares = arma::accu(weights % arma::square(responses));
       for (size_t i = 0; i < minimum - 1; ++i)
       {
@@ -206,9 +203,9 @@ class MSEGain
    * @param index The current index.
    */
   template<bool UseWeights, typename ResponsesType, typename WeightVecType>
-  void UpdateStatistics(const ResponsesType& responses,
-                        const WeightVecType& weights,
-                        const size_t index)
+  void BinaryStep(const ResponsesType& responses,
+                  const WeightVecType& weights,
+                  const size_t index)
   {
     typedef typename ResponsesType::elem_type RType;
     typedef typename WeightVecType::elem_type WType;
