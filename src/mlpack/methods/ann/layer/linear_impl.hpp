@@ -40,60 +40,6 @@ LinearType<InputType, OutputType, RegularizerType>::LinearType(
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>::LinearType(
-    const LinearType& layer) :
-    inSize(layer.inSize),
-    outSize(layer.outSize),
-    weights(layer.weights),
-    regularizer(layer.regularizer)
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>::LinearType(
-    LinearType&& layer) :
-    inSize(0),
-    outSize(0),
-    weights(std::move(layer.weights)),
-    regularizer(std::move(layer.regularizer))
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>&
-LinearType<InputType, OutputType, RegularizerType>::operator=(
-    const LinearType& layer)
-{
-  if (this != &layer)
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights = layer.weights;
-    regularizer = layer.regularizer;
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>&
-LinearType<InputType, OutputType, RegularizerType>::operator=(
-    LinearType&& layer)
-{
-  if (this != &layer)
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights = std::move(layer.weights);
-    regularizer = std::move(layer.regularizer);
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
 void LinearType<InputType, OutputType, RegularizerType>::SetWeights(
     typename OutputType::elem_type* weightsPtr)
 {

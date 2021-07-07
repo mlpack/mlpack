@@ -61,18 +61,6 @@ class LinearType: public Layer<InputType, OutputType>
              const size_t outSize,
              RegularizerType regularizer = RegularizerType());
 
-  //! Copy constructor.
-  LinearType(const LinearType& layer);
-
-  //! Move constructor.
-  LinearType(LinearType&&);
-
-  //! Copy assignment operator.
-  LinearType& operator=(const LinearType& layer);
-
-  //! Move assignment operator.
-  LinearType& operator=(LinearType&& layer);
-
   //! Clone the LinearType object. This handles polymorphism correctly.
   LinearType* Clone() const { return new LinearType(*this); }
 
