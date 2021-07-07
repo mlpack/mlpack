@@ -320,10 +320,16 @@ double BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 }
 
 // Optimized version when fitness function is MSEGain.
-template<>
+template<typename FitnessFunction>
 template<bool UseWeights, typename VecType, typename ResponsesType,
          typename WeightVecType>
-double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
+typename std::enable_if<
+    HasBinaryScanInitialize<FitnessFunction, void(FitnessFunction::*)
+        (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
+    HasBinaryStep<FitnessFunction, void(FitnessFunction::*)
+        (const ResponsesType&, const WeightVecType&, const size_t)>::value,
+    double>::type
+BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
     const VecType& data,
     const ResponsesType& responses,
@@ -336,7 +342,7 @@ double BestBinaryNumericSplit<MSEGain>::SplitIfBetter(
   typedef typename ResponsesType::elem_type RType;
   typedef typename WeightVecType::elem_type WType;
 
-  MSEGain fitnessFunction;
+  FitnessFunction fitnessFunction;
 
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
