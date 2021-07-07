@@ -255,6 +255,7 @@ class Layer
   void serialize(Archive& ar, const uint32_t /* version */)
   {
     ar(inputDimensions);
+    ar(outputDimensions);
     ar(training);
 
     // Note that layer weights are serialized by the FFN!
