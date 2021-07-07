@@ -12,6 +12,5 @@ using namespace mlpack::util;
 
 int main(int /* argc */, char** /* argv */)
 {
-  PrintWrapperPY(${HAS_SCIKIT}, "${CATEGORY}",
-      "${GROUP_NAME}","${GROUP_VALID_METHODS}");
+  PrintWrapperPY("${CATEGORY}","${GROUP_NAME}","${GROUP_VALID_METHODS}");
 }

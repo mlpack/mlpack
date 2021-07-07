@@ -105,6 +105,7 @@ set(BINDING_SOURCES
   get_class_name_wrapper.hpp
   get_methods_wrapper.hpp
   get_program_name.hpp
+  get_valid_name.hpp
   import_decl.hpp
   is_serializable.hpp
   print_class_defn.hpp
@@ -320,39 +321,6 @@ macro (add_python_binding group_name)
     "#include <${loc}>\n")
   endforeach()
 
-  # if this is "regression" or "classification" then generate scikit compatible wrappers also.
-  if("${${group_name}_category}" STREQUAL "regression" OR
-  "${${group_name}_category}" STREQUAL "classification")
-    file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
-    "try:\n  from .${group_name}_scikit import *\nexcept:\n  warnings.warn(
-     \"scikit-learn is not present, models will not support scikit utilities!\",
-     category=ImportWarning)\n  from .${group_name} import *\n\n")
-
-    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_scikit_${group_name}.cpp
-    COMMAND ${CMAKE_COMMAND}
-        -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_py_wrapper.cpp.in
-        -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_scikit_${group_name}.cpp
-        -DGROUP_NAME=${group_name}
-        -DGROUP_VALID_METHODS="${${group_name}_valid_methods}"
-        -DHAS_SCIKIT="true"
-        -DCATEGORY="${${group_name}_category}"
-        -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
-    DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_py_wrapper.cpp.in
-            ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
-
-    add_executable(generate_py_wrapper_scikit_${group_name}
-    ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_scikit_${group_name}.cpp
-    ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_wrapper_py.hpp
-    ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_wrapper_py.cpp)
-
-    target_link_libraries(generate_py_wrapper_scikit_${group_name} mlpack ${MLPACK_LIBRARIES})
-
-    add_custom_command(TARGET generate_py_wrapper_scikit_${group_name} POST_BUILD
-        COMMAND ${CMAKE_COMMAND}
-            -DPROGRAM=$<TARGET_FILE:generate_py_wrapper_scikit_${group_name}>
-            -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${group_name}_scikit.py
-            -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake)
-  else()
   file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
   "from .${group_name} import *\n")
 
@@ -363,8 +331,7 @@ macro (add_python_binding group_name)
       -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_py_wrapper_${group_name}.cpp
       -DGROUP_NAME=${group_name}
       -DGROUP_VALID_METHODS="${${group_name}_valid_methods}"
-      -DHAS_SCIKIT="false"
-      -DCATEGORY=""
+      -DCATEGORY="${${group_name}_category}"
       -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
   DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_py_wrapper.cpp.in
           ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
@@ -381,7 +348,7 @@ macro (add_python_binding group_name)
           -DPROGRAM=$<TARGET_FILE:generate_py_wrapper_${group_name}>
           -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${group_name}.py
           -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake)
-  endif()
+
 endmacro ()
 
 # Add a test.

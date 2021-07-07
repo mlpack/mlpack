@@ -15,6 +15,7 @@
 #include "get_class_name_wrapper.hpp"
 #include "get_program_name.hpp"
 #include "get_arma_type.hpp"
+#include "get_valid_name.hpp"
 #include <mlpack/core/util/io.hpp>
 
 using namespace mlpack::util;
@@ -24,8 +25,7 @@ namespace mlpack {
 namespace bindings {
 namespace python {
 
-void PrintWrapperPY(const bool hasScikit,
-                    const std::string& category,
+void PrintWrapperPY(const std::string& category,
                     const std::string& groupName,
                     const std::string& validMethods)
 {
@@ -41,20 +41,37 @@ void PrintWrapperPY(const bool hasScikit,
     params[i] = IO::Parameters(groupName + "_" + i);
   }
 
+  if(category == "regression")
+    cout << "class BaseEstimator:\n  pass\n\n";
+  else if(category == "classification")
+    cout << "class BaseEstimator:\n  pass\n\nclass ClassifierMixin:\n  pass\n\n";
+
   string importString = "";
+
   for(auto i: methods)
   {
     importString += "from mlpack." + groupName + "_" + i + " ";
 		importString += "import " + groupName + "_" + i + "\n";
   }
-  // If hasScikit is true, then add scikit base class imports.
-  if(hasScikit)
+
+  if(category == "regression")
   {
-    if(category == "regression")
-      importString += "from sklearn.base import BaseEstimator\n";
-    else if(category == "classification")
-      importString += "from sklearn.base import BaseEstimator, ClassifierMixin\n";
+    importString += "import warnings\nwarnings.filterwarnings(\"default\"";
+    importString += ", category=ImportWarning)\n";
+    importString += "try:\n  from sklearn.base import BaseEstimator\nexcept:\n";
+    importString += "  warnings.warn(\"scikit learn not present\", category";
+    importString += "=ImportWarning)\n\n";
   }
+  else if(category == "classification")
+  {
+    importString += "import warnings\nwarnings.filterwarnings(\"default\"";
+    importString += ", category=ImportWarning)\n";
+    importString += "try:\n  from sklearn.base import BaseEstimator, ";
+    importString += "ClassifierMixin\nexcept:\n";
+    importString += "  warnings.warn(\"scikit learn not present\", category";
+    importString += "=ImportWarning)\n\n";
+  }
+
   cout << importString << endl;
 
   for(auto i=params.begin(); i!=params.end(); i++)
@@ -85,17 +102,12 @@ void PrintWrapperPY(const bool hasScikit,
   string className = GetClassName(groupName);
 
   // print class.
-  if(hasScikit)
+  if(category == "regression")
+    cout << "class " << className << "(BaseEstimator)" << ":" << endl;
+  else if(category == "classification")
   {
-    if(category == "regression")
-      cout << "class " << className << "(BaseEstimator)" << ":" << endl;
-    else if(category == "classification")
-    {
-      cout << "class " << className << "(BaseEstimator, ClassifierMixin)" <<
-          ":" << endl;
-    }
-    else
-      cout << "class " << className << ":" << endl;
+    cout << "class " << className << "(BaseEstimator, ClassifierMixin)" <<
+        ":" << endl;
   }
   else
     cout << "class " << className << ":" << endl;
@@ -105,11 +117,16 @@ void PrintWrapperPY(const bool hasScikit,
   for(auto itr=hyperParams.begin(); itr!=hyperParams.end(); itr++)
   {
     // indent + 13, here 13 -> def __init__(
-    string validName = (itr->first == "lambda") ? "lambda_" : itr->first;
     if(itr->second && isBool[itr->first])
-      cout << string(indent+13, ' ') << validName << " = False," << endl;
+    {
+      cout << string(indent+13, ' ') << GetValidName(itr->first)
+          << " = False," << endl;
+    }
     else if(itr->second && !isBool[itr->first])
-      cout << string(indent+13, ' ') << validName << " = None," << endl;
+    {
+      cout << string(indent+13, ' ') << GetValidName(itr->first)
+          << " = None," << endl;
+    }
   }
   cout << string(indent+12, ' ') << "):" << endl;
   cout << endl;
@@ -130,7 +147,7 @@ void PrintWrapperPY(const bool hasScikit,
   {
     if(itr->second)
     {
-      string validName = (itr->first == "lambda") ? "lambda_" : itr->first;
+      string validName = GetValidName(itr->first);
       cout << string(indent, ' ');
       cout << "self." << validName << " = " << validName << endl;
     }
@@ -146,13 +163,22 @@ void PrintWrapperPY(const bool hasScikit,
     int addIndent = 4 + methodName.size() + 1;
     map<string, ParamData> methodParams = params[methodName].Parameters();
     vector<string> inputParamNames;
-    map<string, string> mapToScikitNames; // "X" = ..., "y" = ...
-    map<string, string> invMapToScikitNames; // "train" = ..., "labels" = ...
+    map<string, string> mapToScikitNames; // "train" = ..., "labels" = ...
+    map<string, string> invMapToScikitNames; // "X" = ..., "y" = ...
+    int numMatrixInputs = 0;
+    int numVectorInputs = 0;
 
-    if(hasScikit)
+    if(category == "regression" || category == "classification")
     {
       for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
       {
+        if(numMatrixInputs > 1)
+          Log::Fatal << "More than one matrix input parameters for " <<
+              methodName << " method!" << endl;
+        if(numVectorInputs > 1)
+          Log::Fatal << "More than one vector input parameters for " <<
+              methodName << " method!" << endl;
+
         if(itr->second.input)
         {
           if(itr->second.cppType == "arma::mat" ||
@@ -160,6 +186,7 @@ void PrintWrapperPY(const bool hasScikit,
              "std::tuple<mlpack::data::DatasetInfo, arma::mat>" ||
              itr->second.cppType == "arma::Mat<size_t>")
           {
+            numMatrixInputs++;
             mapToScikitNames[itr->first] = "X";
             invMapToScikitNames["X"] = itr->first;
           }
@@ -168,6 +195,7 @@ void PrintWrapperPY(const bool hasScikit,
                   itr->second.cppType == "arma::Row<size_t>" ||
                   itr->second.cppType == "arma::Col<size_t>")
           {
+            numVectorInputs++;
             mapToScikitNames[itr->first] = "y";
             invMapToScikitNames["y"] = itr->first;
           }
@@ -175,26 +203,83 @@ void PrintWrapperPY(const bool hasScikit,
       }
     }
 
-    if(hasScikit)
+    if(category == "classification" || category == "regression")
     {
+      bool hasX = false;
+      bool hasy = false;
       // print X, y in order.
       if(invMapToScikitNames.find("X") != invMapToScikitNames.end())
       {
         cout << string(indent + addIndent, ' ');
         cout << "X = None," << endl;
+        hasX = true;
       }
       if(invMapToScikitNames.find("y") != invMapToScikitNames.end())
       {
         cout << string(indent + addIndent, ' ');
         cout << "y = None," << endl;
+        hasy = true;
       }
+      if(hasX)
+      {
+        cout << string(indent + addIndent, ' ');
+        cout << GetValidName(invMapToScikitNames["X"]) << " = None," << endl;
+      }
+      if(hasy)
+      {
+        cout << string(indent + addIndent, ' ');
+        cout << GetValidName(invMapToScikitNames["y"]) << " = None," << endl;
+      }
+
+      cout << string(indent + addIndent - 1, ' ');
+      cout << "):" << endl;
+      cout << endl;
+
+      // implement a basic logic here to transfer values of X and y
+      // to original names that can be used later on.
+      string logicString = "";
+      indent += 2;
+
+      if(hasX)
+      {
+        string realName = GetValidName(invMapToScikitNames["X"]);
+        logicString +=
+        string(indent, ' ') + "if X is not None and " + realName +
+            " is None:\n";
+        logicString +=
+        string(indent, ' ') + "  " + realName + " = X\n";
+        logicString +=
+        string(indent, ' ') + "elif X is not None and " + realName +
+            " is not None:\n";
+        logicString +=
+        string(indent, ' ') + "  raise ValueError(\"" + realName +
+            " and X both cannot be not None!!\")\n\n";
+      }
+
+      if(hasy)
+      {
+        string realName = GetValidName(invMapToScikitNames["y"]);
+        logicString +=
+        string(indent, ' ') + "if y is not None and " + realName +
+            " is None:\n";
+        logicString +=
+        string(indent, ' ') + "  " + realName + " = y\n";
+        logicString +=
+        string(indent, ' ') + "elif y is not None and " + realName +
+            " is not None:\n";
+        logicString +=
+        string(indent, ' ') + "  raise ValueError(\"" + realName +
+            " and y both cannot be not None!!\")\n\n";
+      }
+      cout << logicString << endl;
     }
     else
     {
       // print input parameters.
       for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
       {
-        string validName = (itr->first == "lambda") ? "lambda_" : itr->first;
+        string validName = GetValidName(itr->first);
+
         if(itr->second.input && serializable.find(itr->second.cppType) ==
             serializable.end() && !hyperParams[itr->first])
         {
@@ -202,14 +287,13 @@ void PrintWrapperPY(const bool hasScikit,
           cout << validName << " = None," << endl;
         }
       }
+      cout << string(indent + addIndent - 1, ' ');
+      cout << "):" << endl;
+      cout << endl;
+      indent += 2;
     }
 
-    cout << string(indent + addIndent - 1, ' ');
-    cout << "):" << endl;
-    cout << endl;
-
     // print definition.
-    indent += 2;
     cout << string(indent, ' ') << "out = " << groupName + "_" + methodName +
         "(";
     addIndent = 6 + groupName.size() + 1 + methodName.size() + 1;
@@ -218,7 +302,8 @@ void PrintWrapperPY(const bool hasScikit,
     {
       if(itr->second.input)
       {
-        string validName = (itr->first == "lambda") ? "lambda_" : itr->first;
+        string validName = GetValidName(itr->first);
+
         if(count != 0)
           cout << string(indent + addIndent, ' ');
         cout << validName << " = ";
@@ -228,12 +313,8 @@ void PrintWrapperPY(const bool hasScikit,
         else if(hyperParams[itr->first])
           cout << "self." << validName << "," << endl;
         else
-        {
-          if(hasScikit)
-            cout << mapToScikitNames[itr->first] << "," << endl;
-          else
-            cout << validName << "," << endl;
-        }
+          cout << validName << "," << endl;
+
         count++;
       }
     }
