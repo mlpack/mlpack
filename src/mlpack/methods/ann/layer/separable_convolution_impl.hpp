@@ -196,9 +196,9 @@ void SeparableConvolution<
 >::Reset()
 {
   weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
-        outSize * (inSize / numGroups), false, false);
+      outSize * (inSize / numGroups), false, false);
   bias = arma::mat(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
+      outSize, 1, false, false);
 }
 
 template<

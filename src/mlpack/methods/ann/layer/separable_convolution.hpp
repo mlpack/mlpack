@@ -1,6 +1,18 @@
 /**
  * @file separable_convolution.hpp
  * @author Kartik Dutt
+ * @author Aakash Kaushik
+ * 
+ * For more information, kindly refer to the following paper.
+ *
+ * @code
+ * @article{
+ *  author = {Laurent SIfre, Stéphane Mallat},
+ *  title = {Rigid-Motion Scattering for Texture Classification},
+ *  year = {2014},
+ *  url = {https://arxiv.org/pdf/1403.1687}
+ * }
+ * @endcode
  * 
  * Definition of the Separable Convolution module class.
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -12,11 +24,7 @@
 #define MLPACK_METHODS_ANN_LAYER_SEPARABLE_CONVOLUTION_HPP
 
 #include <mlpack/prereqs.hpp>
-
-#include <mlpack/methods/ann/convolution_rules/border_modes.hpp>
 #include <mlpack/methods/ann/convolution_rules/naive_convolution.hpp>
-#include <mlpack/methods/ann/convolution_rules/fft_convolution.hpp>
-#include <mlpack/methods/ann/convolution_rules/svd_convolution.hpp>
 
 #include "layer_types.hpp"
 #include "padding.hpp"
@@ -79,7 +87,7 @@ class SeparableConvolution
                        const size_t inputWidth = 0,
                        const size_t inputHeight = 0,
                        const size_t numGroups = 1,
-                       const std::string &paddingType = "None");
+                       const std::string& paddingType = "None");
 
   /**
    * Create the Separable Convolution object using the specified number of input maps,
@@ -115,7 +123,7 @@ class SeparableConvolution
                        const size_t inputWidth = 0,
                        const size_t inputHeight = 0,
                        const size_t numGroups = 1,
-                       const std::string &paddingType = "None");
+                       const std::string& paddingType = "None");
 
   /*
    * Set the weight and bias term.
@@ -315,7 +323,7 @@ class SeparableConvolution
   template <typename eT>
   void Rotate180(const arma::Mat<eT>& input, arma::Mat<eT>& output)
   {
-    // * left-right flip, up-down flip */
+    /* left-right flip, up-down flip */
     output = arma::fliplr(arma::flipud(input));
   }
 
