@@ -158,8 +158,9 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
 
 /**
  * Check whether copying and moving network with Reparametrization is working or not.
- *
-TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTest]")
+ */
+TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
+          "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
   arma::mat trainData;
@@ -172,12 +173,12 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest", "[FeedForwardNetworkTes
   // followed by a linear layer and then a reparametrization layer.
   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
   model->Add<Linear>(trainData.n_rows, 8);
-  model->Add<Reparametrization>(4, false, true, 1);
+  model->Add<Reparametrization>(false, true, 1);
   model->Add<LogSoftMax>();
 
   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
   model1->Add<Linear>(trainData.n_rows, 8);
-  model1->Add<Reparametrization>(4, false, true, 1);
+  model1->Add<Reparametrization>(false, true, 1);
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
