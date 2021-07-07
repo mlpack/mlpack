@@ -155,7 +155,7 @@ class MSEGain
       if (leftSize > 1e-9)
         leftMean /= leftSize;
 
-      for(size_t i = minimum - 1; i < responses.n_elem; ++i)
+      for (size_t i = minimum - 1; i < responses.n_elem; ++i)
       {
         const WType w = weights[i];
         const RType x = responses[i];
@@ -182,7 +182,7 @@ class MSEGain
       if (leftSize > 1e-9)
         leftMean /= leftSize;
 
-      for(size_t i = minimum - 1; i < responses.n_elem; ++i)
+      for (size_t i = minimum - 1; i < responses.n_elem; ++i)
       {
         const RType x = responses[i];
 
