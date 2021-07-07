@@ -406,7 +406,7 @@ class FFN
   // already check if the input dimensions have changed.
   std::vector<size_t>& InputDimensions() { return inputDimensions; }
   //! Get the logical dimensions of the input.
-  const std::vector<size_t>& InputDimensions() { return inputDimensions; }
+  const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
 
  private:
   // Helper functions.
