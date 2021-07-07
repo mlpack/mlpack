@@ -58,18 +58,6 @@ class DropoutType : public Layer<InputType, OutputType>
    */
   DropoutType(const double ratio = 0.5);
 
-  //! Copy Constructor.
-  DropoutType(const DropoutType& layer);
-
-  //! Move Constructor.
-  DropoutType(const DropoutType&&);
-
-  //! Copy assignment operator.
-  DropoutType& operator=(const DropoutType& layer);
-
-  //! Move assignment operator.
-  DropoutType& operator=(DropoutType&& layer);
-
   //! Clone the DropoutType object. This handles polymorphism correctly.
   DropoutType* Clone() const { return new DropoutType(*this); }
 

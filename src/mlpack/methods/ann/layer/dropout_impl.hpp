@@ -29,50 +29,6 @@ DropoutType<InputType, OutputType>::DropoutType(
 }
 
 template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>::DropoutType(
-    const DropoutType& layer) :
-    ratio(layer.ratio),
-    scale(layer.scale)
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>::DropoutType(
-    const DropoutType&& layer) :
-    ratio(std::move(layer.ratio)),
-    scale(std::move(scale))
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>& DropoutType<InputType, OutputType>::
-operator=(const DropoutType& layer)
-{
-  if (this != &layer)
-  {
-    ratio = layer.ratio;
-    scale = layer.scale;
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>& DropoutType<InputType, OutputType>::
-operator=(DropoutType&& layer)
-{
-  if (this != &layer)
-  {
-    ratio = std::move(layer.ratio);
-    scale = std::move(layer.scale);
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType>
 void DropoutType<InputType, OutputType>::Forward(
     const InputType& input,
     OutputType& output)
