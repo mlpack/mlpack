@@ -41,7 +41,7 @@
  * appropriately.  This is generally done simply by including the binding's
  * `*_main.cpp` file.
  */
-#define RUN_BINDING() BINDING_NAME(params, timers)
+#define RUN_BINDING() BINDING_FUNCTION(params, timers)
 
 /**
  * MainTestFixture is a base class for Catch fixtures for mlpack binding tests.
