@@ -110,7 +110,7 @@ int main(int argc, char** argv)
 
   // A "total_time" timer is run by default for each mlpack program.
   timers.Start("total_time");
-  BINDING_NAME(params, timers);
+  BINDING_FUNCTION(params, timers);
   timers.Stop("total_time");
 
   // Print output options, print verbose information, save model parameters,
@@ -157,8 +157,14 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 }
 }
 
-// testName symbol should be defined in each binding test file
 #include <mlpack/core/util/param.hpp>
+
+// For the tests, we want to call the binding function
+// mlpack_test_<BINDING_NAME>() instead of just <BINDING_NAME>(), so we change
+// the definition of BINDING_FUNCTION().  This is to avoid namespace/function
+// ambiguities.
+#undef BINDING_FUNCTION
+#define BINDING_FUNCTION(...) JOIN(mlpack_test_, BINDING_NAME)(__VA_ARGS__)
 
 #elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
