@@ -37,7 +37,7 @@ void TestNetwork(ModelType& model,
                  const size_t maxEpochs,
                  const double classificationErrorThreshold)
 {
-  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, 10001, -100);
+  ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols * maxEpochs, -100);
   model.Train(trainData, trainLabels, opt);
 
   MatType predictionTemp;
