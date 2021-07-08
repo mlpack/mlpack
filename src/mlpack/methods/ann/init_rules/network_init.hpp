@@ -60,7 +60,6 @@ class NetworkInitialization
       for (size_t i = 0; i < network.size(); ++i)
         weights += network[i]->WeightSize();
 
-      std::cout << "set parameters to size " << weights << "\n";
       parameters.set_size(weights, 1);
     }
 
