@@ -583,12 +583,13 @@ func TestGonumMatrixWithInfoCategorical(t *testing.T) {
     false, false, true, true, false,
   }
 
-  x.Data = mat.NewDense(3, 5, []float64{
+  x.Data = mat.NewDense(6, 5, []float64{
        0.1,  0.2, 3, 2, 0.3,
        0.5, -0.3, 1, 1, 0.5,
        -3,   0.1, 0, 0, 0.6,
        0.7,  0.0, 2, 4, 0.4,
        0.8,  0.1, 2, 3, 0.1,
+       0.3,  0.0, 1, 1, 0.6,
   })
 
   param := mlpack.TestGoBindingOptions()
@@ -601,7 +602,7 @@ func TestGonumMatrixWithInfoCategorical(t *testing.T) {
 
   rows, cols := MatrixAndInfoOut.Dims()
 
-  if rows != 3 || cols != 5 {
+  if rows != 6 || cols != 5 {
     t.Errorf("Error. Wrong shape. %v, %v", rows, cols)
   }
   for i := 0; i < rows; i++ {
