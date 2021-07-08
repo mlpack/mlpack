@@ -1,6 +1,7 @@
 /**
  * @file separable_convolution_impl.hpp
  * @author Kartik Dutt
+ * @author Aakash Kaushik
  *
  * Implementation of the Separable Convolution module class.
  *
