@@ -4311,6 +4311,49 @@ TEST_CASE("SimpleSeparableConvolutionLayerTest", "[ANNLayerTest]")
   REQUIRE(arma::accu(output) == 19664316);
 }
 
+/**
+ * Separable Convolution layer numerical gradient test.
+ */
+TEST_CASE("GradientSeparableConvolutionLayerTest", "[ANNLayerTest]")
+{
+  // Linear function gradient instantiation.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::randu(10, 1)),
+        target(arma::mat("0"))
+    {
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<IdentityLayer<>>();
+      model->Add<SeparableConvolution<>>(2, 4, 3, 3, 1, 1, 0, 0, 20, 20, 2);
+      model->Add<BatchNorm<>>(4);
+      model->Add<Linear<>>(18 * 18 * 4, 4);
+      model->Add<LogSoftMax<>>();
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 1e-4);
+}
+
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
 {
   Sequential<>* decoder = new Sequential<>();
