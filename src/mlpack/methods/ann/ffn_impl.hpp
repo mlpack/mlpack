@@ -30,8 +30,6 @@ FFN<
 >::FFN(OutputLayerType outputLayer, InitializationRuleType initializeRule) :
     outputLayer(std::move(outputLayer)),
     initializeRule(std::move(initializeRule)),
-    reset(false),
-    numFunctions(0),
     training(false),
     layerMemoryIsSet(false),
     inputDimensionsAreSet(false),
@@ -53,12 +51,10 @@ FFN<
 >::FFN(const FFN& network):
     outputLayer(network.outputLayer),
     initializeRule(network.initializeRule),
-    reset(network.reset),
     parameters(network.parameters),
     inputDimensions(network.inputDimensions),
     predictors(network.predictors),
     responses(network.responses),
-    numFunctions(network.numFunctions),
     error(network.error),
     training(network.training),
     // These will be set correctly in the first Forward() call.
@@ -91,13 +87,11 @@ FFN<
 >::FFN(FFN&& network):
     outputLayer(std::move(network.outputLayer)),
     initializeRule(std::move(network.initializeRule)),
-    reset(network.reset),
     network(std::move(network.network)),
     parameters(std::move(network.parameters)),
     inputDimensions(std::move(network.inputDimensions)),
     predictors(std::move(network.predictors)),
     responses(std::move(network.responses)),
-    numFunctions(network.numFunctions),
     error(std::move(network.error)),
     training(std::move(network.training)),
     // Aliases will not be correct after a std::move(), so we will manually
@@ -154,15 +148,11 @@ void FFN<
     OutputType
 >::ResetData(InputType predictors, InputType responses)
 {
-  numFunctions = responses.n_cols;
   this->predictors = std::move(predictors);
   this->responses = std::move(responses);
 
   // Set the network to training mode.
   SetNetworkMode(true);
-
-  if (!reset)
-    InitializeWeights();
 }
 
 template<typename OutputLayerType,
@@ -231,10 +221,8 @@ double FFN<
 
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
 
-  // Make sure to set all layers in training mode.
-  for (size_t i = 0; i < network.size(); ++i)
-    network[i]->Training() = true;
-  training = true;
+  // Ensure that the network can be used.
+  CheckNetwork("FFN::Train()", this->predictors.n_rows, true, true);
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -265,6 +253,9 @@ double FFN<
   OptimizerType optimizer;
 
   WarnMessageMaxIterations<OptimizerType>(optimizer, this->predictors.n_cols);
+
+  // Ensure that the network can be used.
+  CheckNetwork("FFN::Train()", this->predictors.n_rows, true, true);
 
   // Train the model.
   Timer::Start("ffn_optimization");
@@ -306,53 +297,8 @@ void FFN<
   if (end < begin)
     return;
 
-  // This is the function that actually runs the data through the network.  It
-  // is here that we need to check that the network is initialized correctly.
-
-  // If there are no weights for the network at all, we need to initialize the
-  // weights.
-  if (parameters.is_empty())
-    InitializeWeights();
-
-  // If each layer's memory has not been set with SetWeights(), pass through the
-  // network and do that.
-  if (!layerMemoryIsSet)
-    SetLayerMemory();
-
-  // Now, pass the input dimensions through the network if needed.
-  if (network.front()->InputDimensions() != inputDimensions ||
-      !inputDimensionsAreSet)
-  {
-    // If the input dimensions are completely unset, then assume our input is
-    // flat.
-    if (inputDimensions.size() == 0)
-      inputDimensions = { inputs.n_rows };
-
-    totalInputSize = std::accumulate(inputDimensions.begin(),
-        inputDimensions.end(), 0);
-
-    // TODO: improve this error message...
-    Log::Assert(totalInputSize == inputs.n_rows, "FFN::Forward(): input size "
-        "does not match expected size set with InputDimensions()!");
-
-    network.front()->InputDimensions() = inputDimensions;
-    totalInputSize += network[0]->OutputSize();
-    totalOutputSize = network[0]->OutputSize();
-    for (size_t i = 1; i < network.size(); ++i)
-    {
-      network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
-      const size_t layerOutputSize = network[i]->OutputSize();
-
-      // If we are not at the last layer, then this output is the input to the
-      // next layer.
-      if (i != network.size() - 1)
-        totalInputSize += layerOutputSize;
-
-      totalOutputSize += layerOutputSize;
-    }
-
-    inputDimensionsAreSet = true;
-  }
+  // Ensure the network is valid.
+  CheckNetwork("FFN::Forward()", inputs.n_rows);
 
   // Next we need to ensure that space for layerOutputs is allocated correctly.
   InitializeForwardPassMemory(inputs.n_cols);
@@ -431,56 +377,8 @@ void FFN<
     OutputType
 >::Predict(InputType predictors, OutputType& results, const size_t batchSize)
 {
-  // When predicting, we must be in prediction mode.
-  SetNetworkMode(false);
-
-  // If there are no weights for the network at all, we need to initialize the
-  // weights.
-  if (parameters.is_empty())
-    InitializeWeights();
-
-  // If each layer's memory has not been set with SetWeights(), pass through the
-  // network and do that.
-  if (!layerMemoryIsSet)
-    SetLayerMemory();
-
-  // Now, pass the input dimensions through the network if needed.
-  if (network.front()->InputDimensions() != inputDimensions ||
-      !inputDimensionsAreSet)
-  {
-    // If the input dimensions are completely unset, then assume our input is
-    // flat.
-    if (inputDimensions.size() == 0)
-      inputDimensions = { predictors.n_rows };
-
-    totalInputSize = std::accumulate(inputDimensions.begin(),
-        inputDimensions.end(), 0);
-
-    // TODO: improve this error message...
-    Log::Assert(totalInputSize == predictors.n_rows, "FFN::Predict(): input "
-        "size does not match expected size set with InputDimensions()!");
-
-    network.front()->InputDimensions() = inputDimensions;
-    totalInputSize += network[0]->OutputSize();
-    totalOutputSize = network[0]->OutputSize();
-    for (size_t i = 1; i < network.size(); ++i)
-    {
-      network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
-      const size_t layerOutputSize = network[i]->OutputSize();
-
-      // If we are not at the last layer, then this output is the input to the
-      // next layer.
-      if (i != network.size() - 1)
-        totalInputSize += layerOutputSize;
-
-      totalOutputSize += layerOutputSize;
-    }
-
-    inputDimensionsAreSet = true;
-  }
-
-  // TODO: this is the problem!
-  // we have to make sure the dimensions are set right here.
+  // Ensure that the network is configured correctly.
+  CheckNetwork("FFN::Predict()", predictors.n_rows, true, false);
 
   results.set_size(network.back()->OutputSize(), predictors.n_cols);
 
@@ -510,11 +408,8 @@ double FFN<
     OutputType
 >::Evaluate(const PredictorsType& predictors, const ResponsesType& responses)
 {
-  if (parameters.is_empty())
-    InitializeWeights();
-
-  // Make sure the layers of the network are set correctly.
-  SetNetworkMode(training);
+  // Sanity check: ensure network is valid.
+  CheckNetwork("FFN::Evaluate()", predictors.n_rows);
 
   // Note that layerOutputs may not yet be initialized correctly, but if it
   // isn't, this will be handled by Forward().
@@ -538,9 +433,11 @@ double FFN<
     OutputType
 >::Evaluate(const OutputType& parameters)
 {
+  CheckNetwork("FFN::Evaluate()", predictors.n_rows, true, false);
+
   double res = 0;
   for (size_t i = 0; i < predictors.n_cols; ++i)
-    res += Evaluate(parameters, i, 1, false);
+    res += Evaluate(parameters, i, 1);
 
   return res;
 }
@@ -556,15 +453,8 @@ double FFN<
     OutputType
 >::Evaluate(const OutputType& /* parameters */,
             const size_t begin,
-            const size_t batchSize,
-            const bool training)
+            const size_t batchSize)
 {
-  if (parameters.is_empty())
-    InitializeWeights();
-
-  // Set the layers of the network to the mode that was requested.
-  SetNetworkMode(training);
-
   Forward(predictors.cols(begin, begin + batchSize - 1), layerOutputs.back());
 
   double res = outputLayer.Forward(layerOutputs.back(),
@@ -574,22 +464,6 @@ double FFN<
     res += network[i]->Loss();
 
   return res;
-}
-
-template<typename OutputLayerType,
-         typename InitializationRuleType,
-         typename InputType,
-         typename OutputType>
-double FFN<
-    OutputLayerType,
-    InitializationRuleType,
-    InputType,
-    OutputType
->::Evaluate(const OutputType& parameters,
-            const size_t begin,
-            const size_t batchSize)
-{
-  return Evaluate(parameters, begin, batchSize, false);
 }
 
 template<typename OutputLayerType,
@@ -624,9 +498,7 @@ double FFN<
                         OutputType& gradient,
                         const size_t batchSize)
 {
-  // TODO: can this just be a call to Forward() then Backward()?
-
-  double res = Evaluate(parameters, begin, batchSize, true);
+  double res = Evaluate(parameters, begin, batchSize);
 
   for (size_t i = 0; i < network.size(); ++i)
     res += network[i]->Loss();
@@ -681,6 +553,31 @@ void FFN<
     InitializationRuleType,
     InputType,
     OutputType
+>::Reset(const size_t inputDimensionality)
+{
+  parameters.clear();
+
+  if (inputDimensionality != 0)
+  {
+    CheckNetwork("FFN::Reset()", inputDimensionality, true, false);
+  }
+  else
+  {
+    const size_t inputDims = std::accumulate(inputDimensions.begin(),
+        inputDimensions.end(), 0);
+    CheckNetwork("FFN::Reset()", inputDims, true, false);
+  }
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+void FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
 >::InitializeWeights()
 {
   // Set the network to testing mode.
@@ -722,6 +619,99 @@ void FFN<
       "size!");
 
   layerMemoryIsSet = true;
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+void FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>::CheckNetwork(const std::string& functionName,
+                const size_t inputDimensionality,
+                const bool setMode,
+                const bool training)
+{
+  // If the network is empty, we can't do anything.
+  if (network.size() == 0)
+  {
+    throw std::invalid_argument(functionName + ": cannot use network with no "
+        "layers!");
+  }
+
+  // Next, check that the input dimensions for each layer are correct.  Note
+  // that this will throw an exception if the user has passed data that does not
+  // match this->inputDimensions.
+  if (!inputDimensionsAreSet)
+    UpdateDimensions(functionName, inputDimensionality);
+
+  // We may need to initialize the `parameters` matrix if it is empty.
+  if (parameters.is_empty())
+    InitializeWeights();
+
+  // Make sure each layer is pointing at the right memory.
+  if (!layerMemoryIsSet)
+    SetLayerMemory();
+
+  // Finally, set the layers of the network to the right mode if the user
+  // requested it.
+  if (setMode)
+    SetNetworkMode(training);
+}
+
+template<typename OutputLayerType,
+         typename InitializationRuleType,
+         typename InputType,
+         typename OutputType>
+void FFN<
+    OutputLayerType,
+    InitializationRuleType,
+    InputType,
+    OutputType
+>::UpdateDimensions(const std::string& functionName,
+                    const size_t inputDimensionality)
+{
+  // If the input dimensions are completely unset, then assume our input is
+  // flat.
+  if (inputDimensions.size() == 0)
+    inputDimensions = { inputDimensionality };
+
+  totalInputSize = std::accumulate(inputDimensions.begin(),
+      inputDimensions.end(), 0);
+
+  // TODO: improve this error message...
+  Log::Assert(totalInputSize == inputDimensionality, functionName + ": input "
+      "size does not match expected size set with InputDimensions()!");
+
+  // If the input dimensions have not changed from what has been computed
+  // before, we can terminate early---the network already has its dimensions
+  // set.
+  if (inputDimensions == network.front()->InputDimensions())
+  {
+    inputDimensionsAreSet = true;
+    return;
+  }
+
+  network.front()->InputDimensions() = inputDimensions;
+  totalInputSize += network[0]->OutputSize();
+  totalOutputSize = network[0]->OutputSize();
+  for (size_t i = 1; i < network.size(); ++i)
+  {
+    network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
+    const size_t layerOutputSize = network[i]->OutputSize();
+
+    // If we are not at the last layer, then this output is the input to the
+    // next layer.
+    if (i != network.size() - 1)
+      totalInputSize += layerOutputSize;
+
+    totalOutputSize += layerOutputSize;
+  }
+
+  inputDimensionsAreSet = true;
 }
 
 template<typename OutputLayerType,
@@ -817,8 +807,10 @@ void FFN<
 
   // Serialize the expected input size.
   ar(CEREAL_NVP(inputDimensions));
-  ar(CEREAL_NVP(reset));
   ar(CEREAL_NVP(training));
+
+  ar(CEREAL_NVP(totalInputSize));
+  ar(CEREAL_NVP(totalOutputSize));
 
   // If we are loading, we need to initialize the weights.
   if (cereal::is_loading<Archive>())
@@ -827,7 +819,6 @@ void FFN<
     // middle of training and resume.
     predictors.clear();
     responses.clear();
-    numFunctions = 0;
 
     layerOutputMatrix.clear();
     layerOutputs.clear();
@@ -842,10 +833,6 @@ void FFN<
 
     layerMemoryIsSet = false;
     inputDimensionsAreSet = false;
-
-    // We'll recompute this during the first call to Forward().
-    totalInputSize = 0;
-    totalOutputSize = 0;
 
     // The weights in parameters will be correctly set for each layer in the
     // first call to Forward().
@@ -865,13 +852,11 @@ void FFN<
 {
   std::swap(outputLayer, network.outputLayer);
   std::swap(initializeRule, network.initializeRule);
-  std::swap(reset, network.reset);
   std::swap(this->network, network.network);
   std::swap(parameters, network.parameters);
   std::swap(inputDimensions, network.inputDimensions);
   std::swap(predictors, network.predictors);
   std::swap(responses, network.responses);
-  std::swap(numFunctions, network.numFunctions);
   std::swap(error, network.error);
   std::swap(training, network.training);
   std::swap(inputDimensionsAreSet, network.inputDimensionsAreSet);

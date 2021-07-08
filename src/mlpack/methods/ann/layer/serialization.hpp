@@ -121,6 +121,7 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::LinearNoBiasType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::LogSoftMaxType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::ReparametrizationType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::Linear3DType<__VA_ARGS__>); \
 
 // TODO: continue...
 

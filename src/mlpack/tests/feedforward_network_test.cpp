@@ -138,15 +138,15 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
    */
 
   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
-  model->Add<Linear>(trainData.n_rows, 8);
+  model->Add<Linear>(8);
   model->Add<Sigmoid>();
-  model->Add<Linear>(8, 3);
+  model->Add<Linear>(3);
   model->Add<LogSoftMax>();
 
   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
-  model1->Add<Linear>(trainData.n_rows, 8);
+  model1->Add<Linear>(8);
   model1->Add<Sigmoid>();
-  model1->Add<Linear>(8, 3);
+  model1->Add<Linear>(3);
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
@@ -172,12 +172,12 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
   // Construct a feed forward network with trainData.n_rows input nodes,
   // followed by a linear layer and then a reparametrization layer.
   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
-  model->Add<Linear>(trainData.n_rows, 8);
+  model->Add<Linear>(8);
   model->Add<Reparametrization>(false, true, 1);
   model->Add<LogSoftMax>();
 
   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
-  model1->Add<Linear>(trainData.n_rows, 8);
+  model1->Add<Linear>(8);
   model1->Add<Reparametrization>(false, true, 1);
   model1->Add<LogSoftMax>();
 
@@ -190,7 +190,7 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
 
 /**
  * Check whether copying and moving network with linear3d is working or not.
- *
+ */
 TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
@@ -203,15 +203,15 @@ TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
   // Construct a feed forward network with trainData.n_rows input nodes,
   // followed by a linear layer and then a Linear3D layer.
   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
-  model->Add<Linear>(trainData.n_rows, 8);
+  model->Add<Linear>(8);
   model->Add<Sigmoid>();
-  model->Add<Linear3D>(8, 3);
+  model->Add<Linear3D>(3);
   model->Add<LogSoftMax>();
 
   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
-  model1->Add<Linear>(trainData.n_rows, 8);
+  model1->Add<Linear>(8);
   model1->Add<Sigmoid>();
-  model1->Add<Linear3D>(8, 3);
+  model1->Add<Linear3D>(3);
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
@@ -380,9 +380,9 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
    */
 
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear>(trainData.n_rows, 8);
+  model.Add<Linear>(8);
   model.Add<Sigmoid>();
-  model.Add<Linear>(8, 3);
+  model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
   // Vanilla neural net with logistic activation function.
@@ -402,9 +402,9 @@ TEST_CASE("FFVanillaNetworkTest", "[FeedForwardNetworkTest]")
   labels += 1;
 
   FFN<NegativeLogLikelihood<> > model1;
-  model1.Add<Linear>(dataset.n_rows, 10);
+  model1.Add<Linear>(10);
   model1.Add<Sigmoid>();
-  model1.Add<Linear>(10, 2);
+  model1.Add<Linear>(2);
   model1.Add<LogSoftMax>();
   // Vanilla neural net with logistic activation function.
   TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
@@ -424,13 +424,12 @@ TEST_CASE("ForwardBackwardTest", "[FeedForwardNetworkTest]")
   labels += 1;
 
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear>(dataset.n_rows, 50);
+  model.Add<Linear>(50);
   model.Add<Sigmoid>();
-  model.Add<Linear>(50, 10);
+  model.Add<Linear>(10);
   model.Add<LogSoftMax>();
 
   ens::VanillaUpdate opt;
-  model.InitializeWeights();
   #if ENS_VERSION_MAJOR == 1
   opt.Initialize(model.Parameters().n_rows, model.Parameters().n_cols);
   #else
@@ -527,10 +526,10 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
    */
 
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear>(trainData.n_rows, 8);
+  model.Add<Linear>(8);
   model.Add<Sigmoid>();
   model.Add<Dropout>();
-  model.Add<Linear>(8, 3);
+  model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
   // Vanilla neural net with logistic activation function.
@@ -551,10 +550,10 @@ TEST_CASE("DropoutNetworkTest", "[FeedForwardNetworkTest]")
   labels += 1;
 
   FFN<NegativeLogLikelihood<> > model1;
-  model1.Add<Linear>(dataset.n_rows, 10);
+  model1.Add<Linear>(10);
   model1.Add<Sigmoid>();
   model.Add<Dropout>();
-  model1.Add<Linear>(10, 2);
+  model1.Add<Linear>(2);
   model1.Add<LogSoftMax>();
   // Vanilla neural net with logistic activation function.
   TestNetwork(model1, dataset, labels, dataset, labels, 10, 0.2);
@@ -577,12 +576,12 @@ TEST_CASE("HighwayNetworkTest", "[FeedForwardNetworkTest]")
   labels += 1;
 
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear>(dataset.n_rows, 10);
+  model.Add<Linear>(10);
   Highway* highway = new Highway(10, true);
-  highway->Add<Linear>(10, 10);
+  highway->Add<Linear>(10);
   highway->Add<Sigmoid>();
   model.Add(highway); // This takes ownership of the memory.
-  model.Add<Linear>(10, 2);
+  model.Add<Linear>(2);
   model.Add<LogSoftMax>();
   TestNetwork(model, dataset, labels, dataset, labels, 10, 0.2);
 }
@@ -630,9 +629,9 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   */
 
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear>(trainData.n_rows, 8);
+  model.Add<Linear>(8);
   model.Add<Sigmoid>();
-  model.Add<DropConnect>(8, 3);
+  model.Add<DropConnect>(3);
   model.Add<LogSoftMax>();
 
   // Vanilla neural net with logistic activation function.
@@ -652,9 +651,9 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
   labels += 1;
 
   FFN<NegativeLogLikelihood<> > model1;
-  model1.Add<Linear>(dataset.n_rows, 10);
+  model1.Add<Linear>(10);
   model1.Add<Sigmoid>();
-  model1.Add<DropConnect>(10, 2);
+  model1.Add<DropConnect>(2);
   model1.Add<LogSoftMax>();
 
   // Vanilla neural net with logistic activation function.
@@ -668,7 +667,7 @@ TEST_CASE("DropConnectNetworkTest", "[FeedForwardNetworkTest]")
 TEST_CASE("FFNMiscTest", "[FeedForwardNetworkTest]")
 {
   FFN<MeanSquaredError<>> model;
-  model.Add<Linear>(2, 3);
+  model.Add<Linear>(3);
   model.Add<ReLU>();
 
   auto copiedModel(model);
@@ -699,10 +698,10 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significant better than 92%.
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear>(trainData.n_rows, 8);
+  model.Add<Linear>(8);
   model.Add<Sigmoid>();
   model.Add<Dropout>();
-  model.Add<Linear>(8, 3);
+  model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
@@ -710,7 +709,7 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
   model.Train(trainData, trainLabels, opt);
 
   FFN<NegativeLogLikelihood<>> xmlModel, jsonModel, binaryModel;
-  xmlModel.Add<Linear>(10, 10); // Layer that will get removed.
+  xmlModel.Add<Linear>(10); // Layer that will get removed.
 
   // Serialize into other models.
   SerializeObjectAll(model, xmlModel, jsonModel, binaryModel);
@@ -731,18 +730,17 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 {
   FFN<NegativeLogLikelihood<>, RandomInitialization> model;
-  model.Add<Linear>(5, 10);
+  model.Add<Linear>(10);
 
   // Add a new Add<> module which adds a constant term to the input.
   Add* addModule = new Add(10);
   model.Add(addModule);
 
-  LinearNoBias* linearNoBiasModule = new LinearNoBias(10, 10);
+  LinearNoBias* linearNoBiasModule = new LinearNoBias(10);
   model.Add(linearNoBiasModule);
 
-  model.Add<Linear>(10, 10);
+  model.Add<Linear>(10);
 
-  model.InitializeWeights();
   // Set the parameters of the Add<> module to a matrix of ones.
   addModule->Parameters() = arma::ones(10, 1);
   // Set the parameters of the LinearNoBias<> module to a matrix of ones.
@@ -795,10 +793,10 @@ TEST_CASE("FFNTrainReturnObjective", "[FeedForwardNetworkTest]")
   // Because 92% of the patients are not hyperthyroid the neural
   // network must be significantly better than 92%.
   FFN<NegativeLogLikelihood<> > model;
-  model.Add<Linear>(trainData.n_rows, 8);
+  model.Add<Linear>(8);
   model.Add<Sigmoid>();
   model.Add<Dropout>();
-  model.Add<Linear>(8, 3);
+  model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols /* 1 epoch */, -1);
@@ -815,14 +813,13 @@ TEST_CASE("FFNReturnModel", "[FeedForwardNetworkTest]")
 {
   // Create dummy network.
   FFN<NegativeLogLikelihood<> > model;
-  Linear* linearA = new Linear(3, 3);
+  Linear* linearA = new Linear(3);
   model.Add(linearA);
-  Linear* linearB = new Linear(3, 4);
+  Linear* linearB = new Linear(4);
   model.Add(linearB);
 
-  // Initialize network parameter.
-  model.InitializeWeights();
-  model.SetLayerMemory();
+  // Initialize network parameters, with a new input size of 3.
+  model.Reset(3);
 
   // Set all network parameter to one.
   model.Parameters().ones();
@@ -862,18 +859,19 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   testData.shed_row(testData.n_rows - 1);
 
   FFN<NegativeLogLikelihood<>, RandomInitialization> model;
-  model.Add<Linear>(trainData.n_rows, 8);
-  model.Add<Linear>(8, 3);
+  model.Add<Linear>(8);
+  model.Add<Linear>(3);
   model.Add<LogSoftMax>();
 
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
   model.Train(trainData, trainLabels, opt);
 }
 
+// TODO: this is no longer possible for the Linear layer, at least.
 /**
  * Test to see if an exception is thrown when input with
  * wrong shape is provided to a FFN.
- */
+ *
 TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
@@ -906,3 +904,4 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   REQUIRE_THROWS_AS(model.Train(trainData, trainLabels, opt), std::logic_error);
   // TODO: check expectedMsg ?
 }
+*/

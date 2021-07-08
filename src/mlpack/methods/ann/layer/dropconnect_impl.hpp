@@ -24,21 +24,22 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 DropConnectType<InputType, OutputType>::DropConnectType() :
+    Layer<InputType, OutputType>(),
     ratio(0.5),
     scale(2.0),
-    baseLayer(new LinearType<InputType, OutputType>(0, 0))
+    baseLayer(new LinearType<InputType, OutputType>(0))
 {
   // Nothing to do here.
 }
 
 template<typename InputType, typename OutputType>
 DropConnectType<InputType, OutputType>::DropConnectType(
-    const size_t inSize,
     const size_t outSize,
     const double ratio) :
+    Layer<InputType, OutputType>(),
     ratio(ratio),
     scale(1.0 / (1 - ratio)),
-    baseLayer(new LinearType<InputType, OutputType>(inSize, outSize))
+    baseLayer(new LinearType<InputType, OutputType>(outSize))
 {
   // Nothing to do.
 }

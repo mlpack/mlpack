@@ -57,21 +57,19 @@ class DropConnectType : public Layer<InputType, OutputType>
   DropConnectType();
 
   /**
-   * Creates the DropConnect Layer as a Linear Object that takes input size,
-   * output size and ratio as parameter.
+   * Creates the DropConnect Layer as a Linear Object that takes the number of
+   * output units and a ratio as parameter.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param ratio The probability of setting a value to zero.
    */
-  DropConnectType(const size_t inSize,
-                  const size_t outSize,
+  DropConnectType(const size_t outSize,
                   const double ratio = 0.5);
 
   //! Clone the DropConnectType object. This handles polymorphism correctly.
   DropConnectType* Clone() const { return new DropConnectType(*this); }
 
-  // TODO: copy and move constructors and operators
+  // TODO: copy constructor, move constructor, operators
 
   ~DropConnectType();
 

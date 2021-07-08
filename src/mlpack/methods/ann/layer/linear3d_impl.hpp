@@ -20,6 +20,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType, typename RegularizerType>
 Linear3DType<InputType, OutputType, RegularizerType>::Linear3DType() :
+    Layer<InputType, OutputType>(),
     inSize(0),
     outSize(0)
 {
@@ -28,10 +29,10 @@ Linear3DType<InputType, OutputType, RegularizerType>::Linear3DType() :
 
 template<typename InputType, typename OutputType, typename RegularizerType>
 Linear3DType<InputType, OutputType, RegularizerType>::Linear3DType(
-    const size_t inSize,
     const size_t outSize,
     RegularizerType regularizer) :
-    inSize(inSize),
+    Layer<InputType, OutputType>(),
+    inSize(0),
     outSize(outSize),
     regularizer(regularizer)
 {
@@ -39,61 +40,10 @@ Linear3DType<InputType, OutputType, RegularizerType>::Linear3DType(
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
-Linear3DType<InputType, OutputType, RegularizerType>::Linear3DType(
-    const Linear3DType& layer) :
-    inSize(layer.inSize),
-    outSize(layer.outSize),
-    weights(layer.weights),
-    regularizer(layer.regularizer)
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
-Linear3DType<InputType, OutputType, RegularizerType>::Linear3DType(
-    Linear3DType&& layer) :
-    inSize(0),
-    outSize(0),
-    weights(std::move(layer.weights)),
-    regularizer(std::move(layer.regularizer))
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
-Linear3DType<InputType, OutputType, RegularizerType>&
-Linear3DType<InputType, OutputType, RegularizerType>::
-operator=(const Linear3DType& layer)
-{
-  if (this != &layer)
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights = layer.weights;
-    regularizer = layer.regularizer;
-  }
-  return *this;
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
-Linear3DType<InputType, OutputType, RegularizerType>&
-Linear3DType<InputType, OutputType, RegularizerType>::
-operator=(Linear3DType&& layer)
-{
-  if (this != &layer)
-  {
-    inSize = 0;
-    outSize = 0;
-    weights = std::move(layer.weights);
-    regularizer = std::move(layer.regularizer);
-  }
-  return *this;
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
 void Linear3DType<InputType, OutputType, RegularizerType>::SetWeights(
     typename OutputType::elem_type* weightsPtr)
 {
+  weights = OutputType(weightsPtr, outSize * inSize + outSize, 1, false, false);
   weight = OutputType(weightsPtr, outSize, inSize, false, false);
   bias = OutputType(weightsPtr + weight.n_elem, outSize, 1, false, false);
 }
@@ -103,13 +53,6 @@ void Linear3DType<InputType, OutputType, RegularizerType>::Forward(
     const InputType& input, OutputType& output)
 {
   typedef typename arma::Cube<typename InputType::elem_type> CubeType;
-
-  // TODO: we can probably ensure that this check isn't needed
-  if (input.n_rows % inSize != 0)
-  {
-    Log::Fatal << "Number of features in the input must be divisible by inSize."
-               << std::endl;
-  }
 
   const size_t nPoints = input.n_rows / inSize;
   const size_t batchSize = input.n_cols;

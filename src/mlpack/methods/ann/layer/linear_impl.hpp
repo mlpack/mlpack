@@ -21,6 +21,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType, typename RegularizerType>
 LinearType<InputType, OutputType, RegularizerType>::LinearType() :
+    Layer<InputType, OutputType>(),
     inSize(0),
     outSize(0)
 {
@@ -29,10 +30,10 @@ LinearType<InputType, OutputType, RegularizerType>::LinearType() :
 
 template<typename InputType, typename OutputType, typename RegularizerType>
 LinearType<InputType, OutputType, RegularizerType>::LinearType(
-    const size_t inSize,
     const size_t outSize,
     RegularizerType regularizer) :
-    inSize(inSize),
+    Layer<InputType, OutputType>(),
+    inSize(0), // This will be computed in ComputeOutputDimensions().
     outSize(outSize),
     regularizer(regularizer)
 {
@@ -86,6 +87,7 @@ void LinearType<InputType, OutputType, RegularizerType>::serialize(
 
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(regularizer));
 }
 
 } // namespace ann

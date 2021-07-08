@@ -194,24 +194,8 @@ class FFN
    * a number of data points. This is useful for optimizers such as SGD, which
    * require a separable objective function.
    *
-   * @param parameters Matrix model parameters.
-   * @param begin Index of the starting point to use for objective function
-   *        evaluation.
-   * @param batchSize Number of points to be passed at a time to use for
-   *        objective function evaluation.
-   * @param deterministic Whether or not to train or test the model. Note some
-   *        layer act differently in training or testing mode.
-   */
-  double Evaluate(const OutputType& parameters,
-                  const size_t begin,
-                  const size_t batchSize,
-                  const bool deterministic);
-
-   /**
-   * Evaluate the feedforward network with the given parameters, but using only
-   * a number of data points. This is useful for optimizers such as SGD, which
-   * require a separable objective function. This just calls the overload of
-   * Evaluate() with deterministic = true.
+   * Note that the network may return different results depending on the mode it
+   * is in (see `SetNetworkMode()`).
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -319,7 +303,7 @@ class FFN
   std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
 
   //! Return the number of separable functions (the number of predictor points).
-  size_t NumFunctions() const { return numFunctions; }
+  size_t NumFunctions() const { return responses.n_cols; }
 
   //! Return the initial point for the optimization.
   const OutputType& Parameters() const { return parameters; }
@@ -336,12 +320,23 @@ class FFN
   //! Modify the matrix of data points (predictors).
   InputType& Predictors() { return predictors; }
 
-  //! Use the InitializationPolicy to initialize all the weights in the network.
-  void InitializeWeights();
+  /**
+   * Reset the stored data of the network entirely.  This resets all weights of
+   * each layer, and prepares the network to accept an input size of
+   * `inputDimensionality` (if passed), or whatever input size has been set
+   * with `InputDimensions()`.
+   *
+   * This also resets the mode of the network to prediction mode (not training
+   * mode).  See `SetNetworkMode()` for more information.
+   */
+  void Reset(const size_t inputDimensionality = 0);
 
-  //! Make the memory of each layer point to the right place, by calling
-  //! SetWeightPtr() on each layer.
-  void SetLayerMemory();
+  /**
+   * Set all the layers in the network to training mode, if `training` is
+   * `true`, or set all the layers in the network to testing mode, if `training`
+   * is `false`.
+   */
+  void SetNetworkMode(const bool training);
 
   //! Serialize the model.
   template<typename Archive>
@@ -406,7 +401,13 @@ class FFN
   // already check if the input dimensions have changed.
   std::vector<size_t>& InputDimensions() { return inputDimensions; }
   //! Get the logical dimensions of the input.
-  const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
+  const std::vector<size_t>& InputDimensions() const
+  {
+    // The user may change the input dimensions, so we will have to propagate
+    // these changes to the network.
+    inputDimensionsAreSet = false;
+    return inputDimensions;
+  }
 
  private:
   // Helper functions.
@@ -419,6 +420,13 @@ class FFN
    * @param responses Outputs results from input data variables.
    */
   void ResetData(InputType predictors, InputType responses);
+
+  //! Use the InitializationPolicy to initialize all the weights in the network.
+  void InitializeWeights();
+
+  //! Make the memory of each layer point to the right place, by calling
+  //! SetWeightPtr() on each layer.
+  void SetLayerMemory();
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
@@ -433,11 +441,30 @@ class FFN
   void Gradient(const InputType& input, OutputType& gradient);
 
   /**
-   * Set all the layers in the network to training mode, if `training` is
-   * `true`, or set all the layers in the network to testing mode, if `training`
-   * is `false`.
+   * Ensure that all the locally-cached information about the network is valid,
+   * all parameter memory is initialized, and we can make forward and backward
+   * passes.
+   *
+   * @param functionName Name of function to use if an exception is thrown.
+   * @param inputDimensionality Given dimensionality of the input data.
+   * @param setMode If true, the mode of the network will be set to the
+   *     parameter given in `training`.  Otherwise the mode of the network is
+   *     left unmodified.
+   * @param training Mode to set the network to; `true` indicates the network
+   *     should be set to training mode; `false` indicates testing mode.
    */
-  void SetNetworkMode(const bool training);
+  void CheckNetwork(const std::string& functionName,
+                    const size_t inputDimensionality,
+                    const bool setMode = false,
+                    const bool training = false);
+
+  /**
+   * Set the input and output dimensions of each layer in the network correctly.
+   * The size of the input is taken, in case `inputDimensions` has not been set
+   * otherwise (e.g. via `InputDimensions()`).
+   */
+  void UpdateDimensions(const std::string& functionName,
+                        const size_t inputDimensionality);
 
   /**
    * Initialize memory to be used for storing the outputs of each layer, if
@@ -460,9 +487,6 @@ class FFN
   //! Instantiated InitializationRule object for initializing the network
   //! parameter.
   InitializationRuleType initializeRule;
-
-  //! Indicator if we already trained the model.
-  bool reset;
 
   //! Locally-stored model modules.
   std::vector<Layer<InputType, OutputType>*> network;
@@ -490,9 +514,6 @@ class FFN
   //! The matrix of responses to the input data points.  This member is empty,
   //! except during training.
   InputType responses;
-
-  //! The number of separable functions (the number of predictor points).
-  size_t numFunctions;
 
   //! The current error for the backward pass.
   OutputType error;

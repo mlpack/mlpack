@@ -50,15 +50,14 @@ class LinearType: public Layer<InputType, OutputType>
   LinearType();
 
   /**
-   * Create the Linear layer object using the specified input dimension.
+   * Create the Linear layer object with the specified number of output
+   * dimensions.
    *
-   * @param inSize The input dimension.
    * @param outSize The output dimension.
    * @param regularizer The regularizer to use, optional (default: no
    *     regularizer).
    */
-  LinearType(const size_t inSize,
-             const size_t outSize,
+  LinearType(const size_t outSize,
              RegularizerType regularizer = RegularizerType());
 
   //! Clone the LinearType object. This handles polymorphism correctly.
@@ -113,12 +112,6 @@ class LinearType: public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the input size.
-  size_t InputSize() const { return inSize; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
-
   //! Get the weight of the layer.
   OutputType const& Weight() const { return weight; }
   //! Modify the weight of the layer.
@@ -137,6 +130,8 @@ class LinearType: public Layer<InputType, OutputType>
 
   void ComputeOutputDimensions()
   {
+    inSize = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
     this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
         1);
 

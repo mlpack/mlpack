@@ -44,7 +44,7 @@ class LRegularizer
   template<typename MatType>
   void Evaluate(const MatType& weight, MatType& gradient);
 
-  //! Serialize the regularizer (nothing to do).
+  //! Serialize the regularizer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 

@@ -47,12 +47,10 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
   /**
    * Create the LinearNoBias object using the specified number of units.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param regularizer The regularizer to use, optional.
    */
-  LinearNoBiasType(const size_t inSize,
-                   const size_t outSize,
+  LinearNoBiasType(const size_t outSize,
                    RegularizerType regularizer = RegularizerType());
 
   //! Clone the LinearNoBiasType object. This handles polymorphism correctly.
@@ -99,16 +97,12 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the input size.
-  size_t InputSize() const { return inSize; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
-
   size_t WeightSize() const { return inSize * outSize; }
 
   void ComputeOutputDimensions()
   {
+    inSize = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
     this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
         1);
 

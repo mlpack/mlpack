@@ -45,27 +45,14 @@ class Linear3DType : public Layer<InputType, OutputType>
   Linear3DType();
 
   /**
-   * Create the Linear3D layer object using the specified number of units.
+   * Create the Linear3D layer object using the specified number of output
+   * units.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param regularizer The regularizer to use, optional.
    */
-  Linear3DType(const size_t inSize,
-               const size_t outSize,
+  Linear3DType(const size_t outSize,
                RegularizerType regularizer = RegularizerType());
-
-  //! Copy constructor.
-  Linear3DType(const Linear3DType& layer);
-
-  //! Move constructor.
-  Linear3DType(Linear3DType&&);
-
-  //! Copy assignment operator.
-  Linear3DType& operator=(const Linear3DType& layer);
-
-  //! Move assignment operator.
-  Linear3DType& operator=(Linear3DType&& layer);
 
   //! Clone the Linear3DType object. This handles polymorphism correctly.
   Linear3DType* Clone() const { return new Linear3DType(*this); }
@@ -113,12 +100,6 @@ class Linear3DType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the input size.
-  size_t InputSize() const { return inSize; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
-
   //! Get the weight of the layer.
   OutputType const& Weight() const { return weight; }
   //! Modify the weight of the layer.
@@ -129,16 +110,17 @@ class Linear3DType : public Layer<InputType, OutputType>
   //! Modify the bias weights of the layer.
   OutputType& Bias() { return bias; }
 
-  const size_t WeightSize() const { return outSize * (inSize + 1); }
+  size_t WeightSize() const { return outSize * (inSize + 1); }
 
-  const std::vector<size_t>& OutputDimension() const
+  void ComputeOutputDimensions()
   {
     // The Linear3D layer shares weights for each row of the input, and
     // duplicates it across the columns.  Thus, we only change the number of
     // rows.
-    std::vector<size_t> result(inputDimensions);
-    result[0] = outSize;
-    return result;
+    inSize = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
+    this->outputDimensions = this->inputDimensions;
+    this->outputDimensions[0] = outSize;
   }
 
   /**

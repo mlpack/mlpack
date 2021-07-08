@@ -141,10 +141,8 @@ class ReparametrizationType : public Layer<InputType, OutputType>
 
   void ComputeOutputDimensions()
   {
-    std::cout << "computing output dimensions!\n";
     const size_t inputElem = std::accumulate(this->inputDimensions.begin(),
         this->inputDimensions.end(), 0);
-    std::cout << "inputElem: " << inputElem << "\n";
     if (inputElem % 2 != 0)
     {
       std::ostringstream oss;
@@ -158,10 +156,6 @@ class ReparametrizationType : public Layer<InputType, OutputType>
         this->inputDimensions.size(), 1);
     // This flattens the input, and removes half the elements.
     this->outputDimensions[0] = inputElem / 2;
-    std::cout << "output dimensions: ";
-    for (size_t i = 0; i < this->outputDimensions.size(); ++i)
-      std::cout << this->outputDimensions[i] << " ";
-    std::cout << "\n";
   }
 
   /**

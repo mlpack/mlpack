@@ -425,7 +425,7 @@ TEST_CASE("GradientMeanSquaredErrorTest", "[LossFunctionsTest]")
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<>>();
-      model->Add<LinearType<>>(10, 2);
+      model->Add<LinearType<>>(2);
       model->Add<SigmoidLayer<>>();
     }
 
@@ -468,7 +468,7 @@ TEST_CASE("GradientReconstructionLossTest", "[LossFunctionsTest]")
       model->Predictors() = input;
       model->Responses() = target;
       model->Add<IdentityLayer<>>();
-      model->Add<LinearType<>>(10, 2);
+      model->Add<LinearType<>>(2);
       model->Add<SigmoidLayer<>>();
     }
 
