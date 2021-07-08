@@ -705,6 +705,52 @@ void CheckFlattenTSwishDerivateCorrect(const arma::colvec input,
 }
 
 /**
+ * Implementation of the ReLU6 activation function derivative test. The function
+ * is implemented as ReLU6 layer in the file relu6.hpp.
+ *
+ * @param input Input data used for evaluating the ReLU6 activation function.
+ * @param target Target data used to evaluate the ReLU6 activation.
+ */
+void CheckReLU6Correct(const arma::colvec input,
+                       const arma::colvec ActivationTarget
+                       const arma::colvec DerivativeTarget)
+{
+  // Initialize ReLU6 object.
+  ReLU6<> relu6;
+
+  // Test the calculation of the derivatives using the entire vector as input.
+  arma::colvec derivatives, activations;
+
+  // This error vector will be set to 1 to get the derivatives.
+  arma::colvec error = arma::ones<arma::colvec>(input.n_elem);
+  relu6.Forward(input, activations);
+  for (size_t i = 0; i < activations.n_elem; ++i)
+  {
+    REQUIRE(activations.at(i) == Approx(ActivationTarget.at(i)).epsilon(1e-5));
+  }
+  relu6.Backward(activations, error, derivatives);
+  for (size_t i = 0; i < derivatives.n_elem; ++i)
+  {
+    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
+  }
+}
+
+/**
+ * Basic test of the ReLU6 function.
+ */
+TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
+{
+  const arma::colvec activationData("-2.0 3.0 0.0 6.0 24.0");
+
+  const arma::colvec desiredActivations("0.0 3.0 0.0 6.0 6.0");
+
+  const arma::colvec desiredDerivatives("0.0 1.0 0.0 0.0 0.0");
+
+  CheckReLU6Correct(activationData, desiredActivations, desiredDerivatives);
+
+}
+
+/**
  * Basic test of the tanh function.
  */
 TEST_CASE("TanhFunctionTest", "[ActivationFunctionsTest]")

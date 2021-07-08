@@ -30,31 +30,41 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-ReLu6<InputDataType, OutputDataType>::ReLu6()
+ReLU6<InputDataType, OutputDataType>::ReLu6()
 {
   // Nothing to do here.
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
-void ReLu6<InputDataType, OutputDataType>::Forward(
+void ReLU6<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
-{
-  output.zeros();
-  output = arma::min(arma::max(output, input), 6.0);
+{ 
+  OutputType outputTemp(arma::size(input));
+  outputTemp.fill(6.0);
+  output = arma::zeros<OutputType>(arma::size(input));
+  output = arma::min(arma::max(output, input), outputTemp);
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename DataType>
-void ReLu6<InputDataType, OutputDataType>::Backward(
+void ReLU6<InputDataType, OutputDataType>::Backward(
     const DataType& input, const DataType& gy, DataType& g)
 {
+  DataType derivative(arma::size(gy));
+  derivative.fill(0.0);
+  for (size_t i=0; i < input.n_elem; ++i)
+  {
+    if (input(i) < 6 && input(i) > 0)
+      derivative(i) = 1.0;
+  }
 
+  g = gy % derivative;
 }
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
-void ReLu6<InputDataType, OutputDataType>::serialize(
+void ReLU6<InputDataType, OutputDataType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {

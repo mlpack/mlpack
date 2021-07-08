@@ -35,15 +35,15 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template<typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat>
-class ReLU6()
+         typename OutputDataType = arma::mat>
+class ReLU6
 {
  public:
 
  /**
   * Create the ReLU6 object.
   */
-  ReLu6()
+  ReLu6();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
