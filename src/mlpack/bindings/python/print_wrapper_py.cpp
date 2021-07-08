@@ -298,9 +298,29 @@ void PrintWrapperPY(const std::string& category,
         "(";
     addIndent = 6 + groupName.size() + 1 + methodName.size() + 1;
     int count = 0; // just for reference.
+    // first pass through the parameters and print all required parameters.
     for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
     {
-      if(itr->second.input)
+      if(itr->second.input && itr->second.required)
+      {
+        string validName = GetValidName(itr->first);
+        if(count != 0)
+          cout << string(indent + addIndent, ' ');
+        cout << validName << " = ";
+
+        if(serializable.find(itr->second.cppType) != serializable.end())
+          cout << "self._" << itr->second.cppType << "," << endl;
+        else if(hyperParams[itr->first])
+          cout << "self." << validName << "," << endl;
+        else
+          cout << validName << "," << endl;
+
+        count++;
+      }
+    }
+    for(auto itr=methodParams.begin(); itr!=methodParams.end(); itr++)
+    {
+      if(itr->second.input && !itr->second.required)
       {
         string validName = GetValidName(itr->first);
 

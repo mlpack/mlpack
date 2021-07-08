@@ -8,11 +8,15 @@ namespace mlpack {
 namespace bindings {
 namespace python {
 
-string GetValidName(const string& paramName)
+inline string GetValidName(const string& paramName)
 {
-  if(paramName == "lambda") return "lambda_";
-  else if(paramName == "input") return "input_";
-  else return paramName;
+  string correctParamName = paramName;
+
+  if(paramName == "lambda") correctParamName = "lambda_";
+  else if(paramName == "input") correctParamName = "input_";
+  else correctParamName = paramName;
+
+  return correctParamName;
 }
 
 } // python
