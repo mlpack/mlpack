@@ -60,8 +60,7 @@ void TestNetwork(ModelType& model,
 template<typename MatType = arma::mat, typename ModelType>
 void CheckCopyFunction(ModelType* network1,
                        MatType& trainData,
-                       MatType& trainLabels,
-                       const size_t maxEpochs)
+                       MatType& trainLabels)
 {
   ens::RMSProp opt(0.01, 32, 0.88, 1e-8, trainData.n_cols, -1);
   network1->Train(trainData, trainLabels, opt);
@@ -150,7 +149,7 @@ TEST_CASE("CheckCopyMovingVanillaNetworkTest", "[FeedForwardNetworkTest]")
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model, trainData, trainLabels, 1);
+  CheckCopyFunction(model, trainData, trainLabels);
 
   // Check whether move constructor is working or not.
   CheckMoveFunction(model1, trainData, trainLabels, 1);
@@ -182,7 +181,7 @@ TEST_CASE("CheckCopyMovingReparametrizationNetworkTest",
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model, trainData, trainLabels, 1);
+  CheckCopyFunction(model, trainData, trainLabels);
 
   // Check whether move constructor is working or not.
   CheckMoveFunction(model1, trainData, trainLabels, 1);
@@ -215,7 +214,7 @@ TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model, trainData, trainLabels, 1);
+  CheckCopyFunction(model, trainData, trainLabels);
 
   // Check whether move constructor is working or not.
   CheckMoveFunction(model1, trainData, trainLabels, 1);
@@ -241,7 +240,7 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model1, input, output, 1);
+  CheckCopyFunction(model1, input, output);
 
   // Check moving constructor.
   FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
@@ -284,7 +283,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model1, input, output, 1);
+  CheckCopyFunction(model1, input, output);
 
   // Check moving constructor.
   FFN<NegativeLogLikelihood<>> *model2 = new FFN<NegativeLogLikelihood<>>();
@@ -333,7 +332,7 @@ TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
-  CheckCopyFunction(model, trainData, trainLabels, 1);
+  CheckCopyFunction(model, trainData, trainLabels);
 
   // Check whether move constructor is working or not.
   CheckMoveFunction(model1, trainData, trainLabels, 1);
