@@ -14,7 +14,7 @@ steps:
     set -e
     sudo xcode-select --switch /Applications/Xcode_12.2.app/Contents/Developer
     unset BOOST_ROOT
-    brew install libomp openblas armadillo boost cereal
+    brew install libomp openblas armadillo boost cereal ensmallen
 
     if [ "$(binding)" == "python" ]; then
       pip install --upgrade pip
@@ -24,6 +24,13 @@ steps:
     if [ "a$(julia.version)" != "a" ]; then
       brew install --cask julia
     fi
+
+    # Install STB.
+    wget https://mlpack.org/files/stb.tar.gz
+        tar -xvzpf stb.tar.gz # Unpack into stb/.
+        cd stb &&\
+        sudo cp -vr include/* /usr/include/ && \
+        cd ..
 
     git clone --depth 1 https://github.com/mlpack/jenkins-conf.git conf
   displayName: 'Install Build Dependencies'
