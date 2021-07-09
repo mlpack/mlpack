@@ -135,24 +135,24 @@ add_executable(mlpack_test
   main_tests/dbscan_test.cpp
   main_tests/decision_tree_test.cpp
   main_tests/det_test.cpp
-#  main_tests/emst_test.cpp
-#  main_tests/fastmks_test.cpp
-#  main_tests/gmm_generate_test.cpp
-#  main_tests/gmm_probability_test.cpp
-#  main_tests/gmm_train_test.cpp
-#  main_tests/hmm_generate_test.cpp
-#  main_tests/hmm_loglik_test.cpp
-#  main_tests/hmm_test_utils.hpp
-#  main_tests/hmm_train_test.cpp
-#  main_tests/hmm_viterbi_test.cpp
-#  main_tests/hoeffding_tree_test.cpp
-#  main_tests/image_converter_test.cpp
-#  main_tests/kde_test.cpp
-#  main_tests/kernel_pca_test.cpp
-#  main_tests/kfn_test.cpp
-#  main_tests/kmeans_test.cpp
-#  main_tests/knn_test.cpp
-#  main_tests/krann_test.cpp
+  main_tests/emst_test.cpp
+  main_tests/fastmks_test.cpp
+  main_tests/gmm_generate_test.cpp
+  main_tests/gmm_probability_test.cpp
+  main_tests/gmm_train_test.cpp
+  main_tests/hmm_generate_test.cpp
+  main_tests/hmm_loglik_test.cpp
+  main_tests/hmm_test_utils.hpp
+  main_tests/hmm_train_test.cpp
+  main_tests/hmm_viterbi_test.cpp
+  main_tests/hoeffding_tree_test.cpp
+  main_tests/image_converter_test.cpp
+  main_tests/kde_test.cpp
+  main_tests/kernel_pca_test.cpp
+  main_tests/kfn_test.cpp
+  main_tests/kmeans_test.cpp
+  main_tests/knn_test.cpp
+  main_tests/krann_test.cpp
   main_tests/linear_regression_test.cpp
 #  main_tests/lmnn_test.cpp
 #  main_tests/linear_svm_test.cpp

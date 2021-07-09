@@ -118,7 +118,7 @@ struct Init
   }
 
   //! Helper function to create discrete HMM.
-  static void Create(util::Params& params,
+  static void Create(util::Params& /* params */,
                      HMM<DiscreteDistribution>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
@@ -141,7 +141,7 @@ struct Init
   }
 
   //! Helper function to create Gaussian HMM.
-  static void Create(util::Params& params,
+  static void Create(util::Params& /* params */,
                      HMM<GaussianDistribution>& hmm,
                      vector<mat>& trainSeq,
                      size_t states,
@@ -237,7 +237,7 @@ struct Init
   }
 
   //! Helper function for discrete emission distributions.
-  static void RandomInitialize(util::Params& params,
+  static void RandomInitialize(util::Params& /* params */,
                                vector<DiscreteDistribution>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
@@ -248,7 +248,7 @@ struct Init
   }
 
   //! Helper function for Gaussian emission distributions.
-  static void RandomInitialize(util::Params& params,
+  static void RandomInitialize(util::Params& /* params */,
                                vector<GaussianDistribution>& e)
   {
     for (size_t i = 0; i < e.size(); ++i)
@@ -437,7 +437,7 @@ struct Train
   }
 };
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   // Set random seed.
   if (params.Get<int>("seed") != 0)

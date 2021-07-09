@@ -2,22 +2,19 @@
  * @file tests/main_tests/emst_test.cpp
  * @author Manish Kumar
  *
- * Test mlpackMain() of emst_main.cpp.
+ * Test RUN_BINDING() of emst_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "EMST";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/emst/emst_main.cpp>
-#include "test_helper.hpp"
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 
@@ -25,22 +22,7 @@ static const std::string testName = "EMST";
 
 using namespace mlpack;
 
-struct EMSTTestFixture
-{
- public:
-  EMSTTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~EMSTTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(EMSTTestFixture);
 
 /**
  * Make sure that Output has 3 Dimensions and
@@ -57,12 +39,12 @@ TEST_CASE_METHOD(EMSTTestFixture, "EMSTOutputDimensionTest",
   SetInputParam("input", std::move(x));
   SetInputParam("leaf_size", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Now check that the output has 3 dimensions.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 3);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == 3);
   // Check number of output points.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 999);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == 999);
 }
 
 /**
@@ -80,12 +62,12 @@ TEST_CASE_METHOD(EMSTTestFixture, "EMSTNaiveOutputDimensionTest",
   SetInputParam("input", std::move(x));
   SetInputParam("naive", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Now check that the output has 3 dimensions.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 3);
+  REQUIRE(params.Get<arma::mat>("output").n_rows == 3);
   // Check number of output points.
-  REQUIRE(IO::GetParam<arma::mat>("output").n_cols == 999);
+  REQUIRE(params.Get<arma::mat>("output").n_cols == 999);
 }
 
 /**
@@ -103,7 +85,7 @@ TEST_CASE_METHOD(EMSTTestFixture, "EMSTInvalidLeafSizeTest",
   SetInputParam("leaf_size", (int) -1); // Invalid leaf size.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -121,13 +103,13 @@ TEST_CASE_METHOD(EMSTTestFixture, "EMSTFirstTwoOutputRowsIntegerTest",
   SetInputParam("input", std::move(x));
   SetInputParam("leaf_size", (int) 2);
 
-  for (size_t i = 0; i < IO::GetParam<arma::mat>("output").n_cols; ++i)
+  for (size_t i = 0; i < params.Get<arma::mat>("output").n_cols; ++i)
   {
-    REQUIRE(IO::GetParam<arma::mat>("output")(0, i) ==
-        Approx(boost::math::iround(IO::GetParam<arma::mat>("output")(0, i))).
+    REQUIRE(params.Get<arma::mat>("output")(0, i) ==
+        Approx(boost::math::iround(params.Get<arma::mat>("output")(0, i))).
         epsilon(1e-7));
-    REQUIRE(IO::GetParam<arma::mat>("output")(1, i) ==
-        Approx(boost::math::iround(IO::GetParam<arma::mat>("output")(1, i))).
+    REQUIRE(params.Get<arma::mat>("output")(1, i) ==
+        Approx(boost::math::iround(params.Get<arma::mat>("output")(1, i))).
         epsilon(1e-7));
   }
 }
