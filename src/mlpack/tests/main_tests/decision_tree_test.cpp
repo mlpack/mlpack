@@ -2,7 +2,7 @@
  * @file tests/main_tests/decision_tree_test.cpp
  * @author Manish Kumar
  *
- * Test mlpackMain() of decision_tree_main.cpp.
+ * Test RUN_BINDING() of decision_tree_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,11 +12,9 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-static const std::string testName = "DecisionTree";
-
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/decision_tree/decision_tree_main.cpp>
-#include "test_helper.hpp"
+#include "main_test_fixture.hpp"
 
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
@@ -24,28 +22,7 @@ static const std::string testName = "DecisionTree";
 using namespace mlpack;
 using namespace data;
 
-struct DecisionTreeTestFixture
-{
- public:
-  DecisionTreeTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~DecisionTreeTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
-void ResetDTSettings()
-{
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
-}
+BINDING_TEST_FIXTURE(DecisionTreeTestFixture);
 
 /**
  * Check that number of output points and
@@ -80,16 +57,16 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeOutputDimensionTest",
   // Input test data.
   SetInputParam("test", std::make_tuple(info, testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 3);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_rows == 3);
 }
 
 /**
@@ -126,16 +103,16 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
   // Input test data.
   SetInputParam("test", std::make_tuple(info, testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 6);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_rows == 6);
 }
 
 /**
@@ -164,7 +141,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMinimumLeafSizeTest",
   SetInputParam("minimum_leaf_size", (int) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -195,7 +172,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture,
   SetInputParam("maximum_depth", (int) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -225,7 +202,7 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionMinimumGainSplitTest",
   SetInputParam("minimum_gain_split", 1.5); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -257,10 +234,10 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionRegularisationTest",
   // Input test data.
   SetInputParam("test", std::make_tuple(info, inputData));
   arma::Row<size_t> pred;
-  mlpackMain();
-  pred = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+  RUN_BINDING();
+  pred = std::move(params.Get<arma::Row<size_t>>("predictions"));
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -272,8 +249,8 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionRegularisationTest",
   // Input test data.
   SetInputParam("test", std::make_tuple(info, inputData));
   arma::Row<size_t> predRegularised;
-  mlpackMain();
-  predRegularised = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+  RUN_BINDING();
+  predRegularised = std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   size_t count = 0;
   REQUIRE(pred.n_elem == predRegularised.n_elem);
@@ -318,38 +295,34 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelReuseTest",
   // Input test data.
   SetInputParam("test", std::make_tuple(info, testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
-  probabilities = std::move(IO::GetParam<arma::mat>("probabilities"));
+  predictions = std::move(params.Get<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(params.Get<arma::mat>("probabilities"));
+  DecisionTreeModel* m = params.Get<DecisionTreeModel*>("output_model");
 
-  // Reset passed parameters.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
-  IO::GetSingleton().Parameters()["weights"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  ResetSettings();
 
   // Input trained model.
   SetInputParam("test", std::make_tuple(info, testData));
-  SetInputParam("input_model",
-      std::move(IO::GetParam<DecisionTreeModel*>("output_model")));
+  SetInputParam("input_model", m);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predicitions.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 3);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_rows == 3);
 
   // Check that initial predictions and predictions using saved model are same.
-  CheckMatrices(predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
-  CheckMatrices(probabilities, IO::GetParam<arma::mat>("probabilities"));
+  CheckMatrices(predictions, params.Get<arma::Row<size_t>>("predictions"));
+  CheckMatrices(probabilities, params.Get<arma::mat>("probabilities"));
 }
 
 /**
@@ -375,18 +348,18 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeTrainingVerTest",
   SetInputParam("labels", std::move(labels));
   SetInputParam("weights", std::move(weights));
 
-  mlpackMain();
+  RUN_BINDING();
 
-  DecisionTreeModel* model = IO::GetParam<DecisionTreeModel*>("output_model");
-  IO::GetParam<DecisionTreeModel*>("output_model") = NULL;
+  DecisionTreeModel* model = params.Get<DecisionTreeModel*>("output_model");
+  params.Get<DecisionTreeModel*>("output_model") = NULL;
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
 
   // Input pre-trained model.
   SetInputParam("input_model", model);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -422,42 +395,37 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionModelCategoricalReuseTest",
   // Input test data.
   SetInputParam("test", std::make_tuple(info, testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
-  probabilities = std::move(IO::GetParam<arma::mat>("probabilities"));
+  predictions = std::move(params.Get<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(params.Get<arma::mat>("probabilities"));
 
-  DecisionTreeModel* model = IO::GetParam<DecisionTreeModel*>("output_model");
-  IO::GetParam<DecisionTreeModel*>("output_model") = NULL;
+  DecisionTreeModel* model = params.Get<DecisionTreeModel*>("output_model");
+  params.Get<DecisionTreeModel*>("output_model") = NULL;
 
-  bindings::tests::CleanMemory();
-
-  // Reset passed parameters.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
-  IO::GetSingleton().Parameters()["weights"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Input trained model.
   SetInputParam("test", std::make_tuple(info, testData));
   SetInputParam("input_model", model);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predicitions.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 6);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_rows == 6);
 
   // Check that initial predictions and predictions using saved model are same.
-  CheckMatrices(predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
-  CheckMatrices(probabilities, IO::GetParam<arma::mat>("probabilities"));
+  CheckMatrices(predictions, params.Get<arma::Row<size_t>>("predictions"));
+  CheckMatrices(probabilities, params.Get<arma::mat>("probabilities"));
 }
 
 /**
@@ -491,13 +459,13 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMaximumDepthTest",
   // Input test data.
   SetInputParam("test", std::make_tuple(info, testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
   arma::Row<size_t> predictions;
-  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
+  predictions = std::move(params.Get<arma::Row<size_t>>("predictions"));
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
 
   // Input training data.
   SetInputParam("training", std::make_tuple(info, inputData));
@@ -508,8 +476,8 @@ TEST_CASE_METHOD(DecisionTreeTestFixture, "DecisionTreeMaximumDepthTest",
   // Input test data.
   SetInputParam("test", std::make_tuple(info, testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   CheckMatricesNotEqual(predictions,
-                        IO::GetParam<arma::Row<size_t>>("predictions"));
+                        params.Get<arma::Row<size_t>>("predictions"));
 }
