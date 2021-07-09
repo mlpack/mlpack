@@ -742,8 +742,10 @@ TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
 {
   const arma::colvec activationData("-2.0 3.0 0.0 6.0 24.0");
 
+  // desiredActivations taken from PyTorch.
   const arma::colvec desiredActivations("0.0 3.0 0.0 6.0 6.0");
 
+  // desiredDerivatives taken from PyTorch.
   const arma::colvec desiredDerivatives("0.0 1.0 0.0 0.0 0.0");
 
   CheckReLU6Correct(activationData, desiredActivations, desiredDerivatives);
