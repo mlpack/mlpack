@@ -4362,7 +4362,7 @@ TEST_CASE("GradientSeparableConvolutionLayerTest", "[ANNLayerTest]")
   // Value of 324 has been from PyTorch's convolution gradient under same
   // parametric conditions.
   for (size_t i = 0; i < gradient.n_elem; ++i)
-    REQUIRE(gradient(i) == 324)
+    REQUIRE(gradient(i) == 324);
 }
 
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
