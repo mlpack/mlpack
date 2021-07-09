@@ -4316,6 +4316,7 @@ TEST_CASE("SimpleSeparableConvolutionLayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("GradientSeparableConvolutionLayerTest", "[ANNLayerTest]")
 {
+  // There are two gradient tests in this test case.
   struct GradientFunction
   {
     GradientFunction() :
@@ -4347,10 +4348,21 @@ TEST_CASE("GradientSeparableConvolutionLayerTest", "[ANNLayerTest]")
     arma::mat input, target;
   } function;
 
-  // I understand that this is quite a bit more but wasn't really sure
-  // on how to write the test in the first place so if something is wrong
-  // with that do let me know.
   REQUIRE(CheckGradient(function) <= 0.4);
+
+  SeparableConvolution<> module(2, 4, 3, 3, 1, 1, 0, 0, 20, 20, 2);
+  arma::mat error(20 * 20 * 2, 1), input(20 * 20 * 2, 1), gradient, output;
+  error.fill(1.0);
+  input.fill(1.0);
+  module.Parameters().fill(1);
+  module.Reset();
+  module.Forward(input, output);
+  module.Gradient(output, error, gradient);
+
+  // Value of 324 has been from PyTorch's convolution gradient under same
+  // parametric conditions.
+  for (size_t i = 0; i < gradient.n_elem; ++i)
+    REQUIRE(gradient(i) == 324)
 }
 
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
