@@ -43,7 +43,7 @@ class ReLU6
  /**
   * Create the ReLU6 object.
   */
-  ReLu6();
+  ReLU6();
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -72,6 +72,11 @@ class ReLU6
   //! Modify the output parameter.
   OutputDataType& OutputParameter() { return outputParameter; }
 
+  //! Get the delta.
+  OutputDataType const& Delta() const { return delta; }
+  //! Modify the delta.
+  OutputDataType& Delta() { return delta; }
+
   //! Get size of weights.
   size_t WeightSize() const { return 0; }
 
@@ -85,6 +90,8 @@ class ReLU6
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
+  //! Locally-stored delta object.
+  OutputDataType delta;
 }; // class ReLU6
 
 } // namespace ann

@@ -30,7 +30,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
-ReLU6<InputDataType, OutputDataType>::ReLu6()
+ReLU6<InputDataType, OutputDataType>::ReLU6()
 {
   // Nothing to do here.
 }
@@ -53,7 +53,7 @@ void ReLU6<InputDataType, OutputDataType>::Backward(
 {
   DataType derivative(arma::size(gy));
   derivative.fill(0.0);
-  for (size_t i=0; i < input.n_elem; ++i)
+  for (size_t i = 0; i < input.n_elem; ++i)
   {
     if (input(i) < 6 && input(i) > 0)
       derivative(i) = 1.0;

@@ -712,7 +712,7 @@ void CheckFlattenTSwishDerivateCorrect(const arma::colvec input,
  * @param target Target data used to evaluate the ReLU6 activation.
  */
 void CheckReLU6Correct(const arma::colvec input,
-                       const arma::colvec ActivationTarget
+                       const arma::colvec ActivationTarget,
                        const arma::colvec DerivativeTarget)
 {
   // Initialize ReLU6 object.
@@ -731,7 +731,7 @@ void CheckReLU6Correct(const arma::colvec input,
   relu6.Backward(activations, error, derivatives);
   for (size_t i = 0; i < derivatives.n_elem; ++i)
   {
-    REQUIRE(derivatives.at(i) == Approx(target.at(i)).epsilon(1e-5));
+    REQUIRE(derivatives.at(i) == Approx(DerivativeTarget.at(i)).epsilon(1e-5));
   }
 }
 
@@ -747,7 +747,6 @@ TEST_CASE("ReLU6FunctionTest", "[ActivationFunctionsTest]")
   const arma::colvec desiredDerivatives("0.0 1.0 0.0 0.0 0.0");
 
   CheckReLU6Correct(activationData, desiredActivations, desiredDerivatives);
-
 }
 
 /**
