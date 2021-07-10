@@ -429,7 +429,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
       continue;
 
     // Calculate the gain for the left and right child.
-    auto binaryGains = fitnessFunction.BinaryGains();
+    std::tuple<double, double> binaryGains = fitnessFunction.BinaryGains();
     const double leftGain = std::get<0>(binaryGains);
     const double rightGain = std::get<1>(binaryGains);
 
