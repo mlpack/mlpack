@@ -113,7 +113,8 @@ class BestBinaryNumericSplit
    * return the value 'bestGain'.  If a split is made, then splitInfo and aux
    * may be modified.
    *
-   * This overload is specialized only for MSEGain fitness function.
+   * This overload is specialized for any fitness function that implements
+   * BinaryScanInitialize(), BinaryStep() and BinaryGains() functions.
    *
    * @param bestGain Best gain seen so far (we'll only split if we find gain
    *      better than this).
