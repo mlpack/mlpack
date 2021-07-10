@@ -327,7 +327,9 @@ typename std::enable_if<
     HasBinaryScanInitialize<FitnessFunction, void(FitnessFunction::*)
         (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
     HasBinaryStep<FitnessFunction, void(FitnessFunction::*)
-        (const ResponsesType&, const WeightVecType&, const size_t)>::value,
+        (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
+    HasBinaryGains<FitnessFunction,
+        std::tuple<double, double>(FitnessFunction::*)()>::value,
     double>::type
 BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
