@@ -29,6 +29,10 @@ HAS_MEM_FUNC(BinaryScanInitialize, HasBinaryScanInitialize);
 // we can use with SFINAE to catch when a type has a BinaryStep(...) function.
 HAS_MEM_FUNC(BinaryStep, HasBinaryStep);
 
+// This gives us a HasBinaryGains<T, U> type (where U is a function pointer)
+// we can use with SFINAE to catch when a type has a BinaryGains(...) function.
+HAS_MEM_FUNC(BinaryGains, HasBinaryGains);
+
 /**
  * The BestBinaryNumericSplit is a splitting function for decision trees that
  * will exhaustively search a numeric dimension for the best binary split.
@@ -134,7 +138,9 @@ class BestBinaryNumericSplit
       HasBinaryScanInitialize<FitnessFunction, void(FitnessFunction::*)
           (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
       HasBinaryStep<FitnessFunction, void(FitnessFunction::*)
-          (const ResponsesType&, const WeightVecType&, const size_t)>::value,
+          (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
+      HasBinaryGains<FitnessFunction,
+          std::tuple<double, double>(FitnessFunction::*)()>::value,
       double>::type
   SplitIfBetter(
       const double bestGain,
