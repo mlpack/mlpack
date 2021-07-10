@@ -2,6 +2,7 @@
 ###### ????-??-??
   * Added Decision Tree Regressor (#2905). It can be used using the class
     `mlpack::tree::DecisionTreeRegressor`. It is accessible only though C++.
+    
   * Added dict-style inspection of mlpack models in python bindings (#2868).
 
   * Added Extra Trees Algorithm (#2883). Currently, it can be used using the
