@@ -191,10 +191,10 @@ DecisionTreeRegressor<FitnessFunction,
 
 //! Take ownership of another tree and train with weights.
 template<typename FitnessFunction,
-        template<typename> class NumericSplitType,
-        template<typename> class CategoricalSplitType,
-        typename DimensionSelectionType,
-        bool NoRecursion>
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion>
 template<typename MatType, typename ResponsesType, typename WeightsType>
 DecisionTreeRegressor<FitnessFunction,
                       NumericSplitType,
@@ -229,10 +229,10 @@ DecisionTreeRegressor<FitnessFunction,
 
 //! Take ownership of another tree and train with weights.
 template<typename FitnessFunction,
-        template<typename> class NumericSplitType,
-        template<typename> class CategoricalSplitType,
-        typename DimensionSelectionType,
-        bool NoRecursion>
+         template<typename> class NumericSplitType,
+         template<typename> class CategoricalSplitType,
+         typename DimensionSelectionType,
+         bool NoRecursion>
 template<typename MatType, typename ResponsesType, typename WeightsType>
 DecisionTreeRegressor<FitnessFunction,
                       NumericSplitType,
