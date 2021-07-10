@@ -101,7 +101,15 @@ class BestBinaryNumericSplit
    */
   template<bool UseWeights, typename VecType, typename ResponsesType,
            typename WeightVecType>
-  static double SplitIfBetter(
+  static typename std::enable_if<
+      !HasBinaryScanInitialize<FitnessFunction, void(FitnessFunction::*)
+          (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
+      !HasBinaryStep<FitnessFunction, void(FitnessFunction::*)
+          (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
+      !HasBinaryGains<FitnessFunction,
+          std::tuple<double, double>(FitnessFunction::*)(void)>::value,
+      double>::type
+  SplitIfBetter(
       const double bestGain,
       const VecType& data,
       const ResponsesType& responses,
@@ -134,13 +142,13 @@ class BestBinaryNumericSplit
    */
   template<bool UseWeights, typename VecType, typename ResponsesType,
           typename WeightVecType>
-  typename std::enable_if<
+  static typename std::enable_if<
       HasBinaryScanInitialize<FitnessFunction, void(FitnessFunction::*)
           (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
       HasBinaryStep<FitnessFunction, void(FitnessFunction::*)
           (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
       HasBinaryGains<FitnessFunction,
-          std::tuple<double, double>(FitnessFunction::*)()>::value,
+          std::tuple<double, double>(FitnessFunction::*)(void)>::value,
       double>::type
   SplitIfBetter(
       const double bestGain,
