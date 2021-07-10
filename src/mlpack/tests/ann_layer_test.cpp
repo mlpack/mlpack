@@ -4351,18 +4351,18 @@ TEST_CASE("GradientSeparableConvolutionLayerTest", "[ANNLayerTest]")
   REQUIRE(CheckGradient(function) <= 0.4);
 
   SeparableConvolution<> module(2, 4, 3, 3, 1, 1, 0, 0, 20, 20, 2);
-  arma::mat error(20 * 20 * 2, 1), input(20 * 20 * 2, 1), gradient, output;
+  arma::mat error(20 * 20 * 2, 1), input1(20 * 20 * 2, 1), gradient1, output;
   error.fill(1.0);
-  input.fill(1.0);
+  input1.fill(1.0);
   module.Parameters().fill(1);
   module.Reset();
-  module.Forward(input, output);
-  module.Gradient(output, error, gradient);
+  module.Forward(input1, output);
+  module.Gradient(output, error, gradient1);
 
   // Value of 324 has been from PyTorch's convolution gradient under same
   // parametric conditions.
-  for (size_t i = 0; i < gradient.n_elem; ++i)
-    REQUIRE(gradient(i) == 324);
+  for (size_t i = 0; i < gradient1.n_elem; ++i)
+    REQUIRE(gradient1(i) == 324);
 }
 
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
