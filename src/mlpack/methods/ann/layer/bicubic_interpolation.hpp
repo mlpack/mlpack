@@ -55,7 +55,7 @@ class BicubicInterpolation
                         const size_t outRowSize,
                         const size_t outColSize,
                         const size_t depth,
-                        const double alpha);
+                        const double alpha = -0.75);
 
   /**
    * Forward pass through the layer. The layer interpolates
