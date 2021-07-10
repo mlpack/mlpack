@@ -2,53 +2,27 @@
   * @file nmf_test.cpp
   * @author Wenhao Huang
   *
-  * Test mlpackMain() of nmf_main.cpp
+  * Test RUN_BINDING() of nmf_main.cpp
   *
   * mlpack is free software; you may redistribute it and/or modify it under the
   * terms of the 3-clause BSD license.  You should have received a copy of the
   * 3-clause BSD license along with mlpack.  If not, see
   * http://www.opensource.org/licenses/BSD-3-Clause for more information.
   */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
 
-static const std::string testName = "NonNegativeMatrixFactorization";
-
 #include <mlpack/core.hpp>
-#include <mlpack/methods/nmf/nmf_main.cpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
+#include <mlpack/methods/nmf/nmf_main.cpp>
+
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 
 using namespace mlpack;
 using namespace arma;
 
-
-struct NMFTestFixture
-{
- public:
-  NMFTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~NMFTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
-static void ResetSettings()
-{
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
-}
+BINDING_TEST_FIXTURE(NMFTestFixture);
 
 /**
  * Ensure the resulting matrices W, H have expected shape.
@@ -65,11 +39,11 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFMultdistShapeTest",
   SetInputParam("rank", r);
 
   // Perform NMF.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get resulting matrices.
-  const mat& w = IO::GetParam<mat>("w");
-  const mat& h = IO::GetParam<mat>("h");
+  const mat& w = params.Get<mat>("w");
+  const mat& h = params.Get<mat>("h");
 
   // Check the shapes of W and H.
   REQUIRE(w.n_rows == 8);
@@ -93,11 +67,11 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFMultdivShapeTest",
   SetInputParam("rank", r);
 
   // Perform NMF.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get resulting matrices.
-  const mat& w = IO::GetParam<mat>("w");
-  const mat& h = IO::GetParam<mat>("h");
+  const mat& w = params.Get<mat>("w");
+  const mat& h = params.Get<mat>("h");
 
   // Check the shapes of W and H.
   REQUIRE(w.n_rows == 8);
@@ -121,11 +95,11 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFAlsShapeTest",
   SetInputParam("rank", r);
 
   // Perform NMF.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get resulting matrices.
-  const mat& w = IO::GetParam<mat>("w");
-  const mat& h = IO::GetParam<mat>("h");
+  const mat& w = params.Get<mat>("w");
+  const mat& h = params.Get<mat>("h");
 
   // Check the shapes of W and H.
   REQUIRE(w.n_rows == 8);
@@ -149,7 +123,7 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFRankBoundTest",
   SetInputParam("rank", r);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Rank should not be 0.
@@ -157,7 +131,7 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFRankBoundTest",
   SetInputParam("rank", r);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -176,7 +150,7 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFMaxIterartionBoundTest",
   SetInputParam("rank", r);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -196,7 +170,7 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFUpdateRuleTest",
   SetInputParam("rank", r);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -219,11 +193,12 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFMinResidueTest",
   SetInputParam("initial_w", initialW);
   SetInputParam("initial_h", initialH);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  const mat w1 = IO::GetParam<mat>("w");
-  const mat h1 = IO::GetParam<mat>("h");
+  const mat w1 = params.Get<mat>("w");
+  const mat h1 = params.Get<mat>("h");
 
+  CleanMemory();
   ResetSettings();
 
   // Set a smaller min_residue.
@@ -233,10 +208,10 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFMinResidueTest",
   SetInputParam("initial_w", initialW);
   SetInputParam("initial_h", initialH);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  const mat w2 = IO::GetParam<mat>("w");
-  const mat h2 = IO::GetParam<mat>("h");
+  const mat w2 = params.Get<mat>("w");
+  const mat h2 = params.Get<mat>("h");
 
   // The resulting matrices should be different.
   REQUIRE(arma::norm(w1 - w2) > 1e-5);
@@ -264,11 +239,12 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFMaxIterationTest",
   SetInputParam("initial_w", initialW);
   SetInputParam("initial_h", initialH);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  const mat w1 = IO::GetParam<mat>("w");
-  const mat h1 = IO::GetParam<mat>("h");
+  const mat w1 = params.Get<mat>("w");
+  const mat h1 = params.Get<mat>("h");
 
+  CleanMemory();
   ResetSettings();
 
   // Set a smaller max_iterations.
@@ -280,10 +256,10 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFMaxIterationTest",
   SetInputParam("initial_w", initialW);
   SetInputParam("initial_h", initialH);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  const mat w2 = IO::GetParam<mat>("w");
-  const mat h2 = IO::GetParam<mat>("h");
+  const mat w2 = params.Get<mat>("w");
+  const mat h2 = params.Get<mat>("h");
 
   // The resulting matrices should be different.
   REQUIRE(arma::norm(w1 - w2) > 1e-5);
@@ -306,10 +282,10 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFWHGivenInitTest",
   SetInputParam("initial_w", initialW);
   SetInputParam("initial_h", initialH);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  const mat w = IO::GetParam<mat>("w");
-  const mat h = IO::GetParam<mat>("h");
+  const mat w = params.Get<mat>("w");
+  const mat h = params.Get<mat>("h");
 
   // Check the shapes of W and H.
   REQUIRE(w.n_rows == 10);
@@ -332,10 +308,10 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFWGivenInitTest",
   SetInputParam("rank", r);
   SetInputParam("initial_w", initialW);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  const mat w = IO::GetParam<mat>("w");
-  const mat h = IO::GetParam<mat>("h");
+  const mat w = params.Get<mat>("w");
+  const mat h = params.Get<mat>("h");
 
   // Check the shapes of W and H.
   REQUIRE(w.n_rows == 10);
@@ -358,10 +334,10 @@ TEST_CASE_METHOD(NMFTestFixture, "NMFHGivenInitTest",
   SetInputParam("rank", r);
   SetInputParam("initial_h", initialH);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  const mat w = IO::GetParam<mat>("w");
-  const mat h = IO::GetParam<mat>("h");
+  const mat w = params.Get<mat>("w");
+  const mat h = params.Get<mat>("h");
 
   // Check the shapes of W and H.
   REQUIRE(w.n_rows == 10);

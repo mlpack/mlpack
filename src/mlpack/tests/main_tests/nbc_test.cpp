@@ -2,7 +2,7 @@
  * @file tests/main_tests/nbc_test.cpp
  * @author Manish Kumar
  *
- * Test mlpackMain() of nbc_main.cpp.
+ * Test RUN_BINDING() of nbc_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,33 +12,17 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-static const std::string testName = "NBC";
-
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/naive_bayes/nbc_main.cpp>
-#include "test_helper.hpp"
+
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct NBCTestFixture
-{
- public:
-  NBCTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~NBCTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(NBCTestFixture);
 
 /**
  * Ensure that we get desired dimensions when both training
@@ -75,15 +59,15 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCOutputDimensionTest",
   // Input test data.
   SetInputParam("test", std::move(testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_rows == 2);
 }
 
 /**
@@ -119,27 +103,25 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCLabelsLessDimensionTest",
   // Input test data.
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
-
-  // Reset data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_rows == 2);
 
   // Store outputs.
   arma::Row<size_t> output;
   arma::mat output_probs;
-  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
-  output_probs = std::move(IO::GetParam<arma::mat>("output_probs"));
+  output = std::move(params.Get<arma::Row<size_t>>("output"));
+  output_probs = std::move(params.Get<arma::mat>("output_probs"));
 
-  bindings::tests::CleanMemory();
+  // Reset data passed.
+  CleanMemory();
+  ResetSettings();
 
   // Now train NBC with labels provided.
 
@@ -151,20 +133,20 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCLabelsLessDimensionTest",
   // Pass Labels.
   SetInputParam("labels", std::move(labels));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_rows == 2);
 
   // Check that initial output and final output matrix
   // from two models are same.
-  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
-  CheckMatrices(output_probs, IO::GetParam<arma::mat>("output_probs"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
+  CheckMatrices(output_probs, params.Get<arma::mat>("output_probs"));
 }
 
 /**
@@ -192,36 +174,37 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCModelReuseTest",
   // Input test data.
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> output;
   arma::mat output_probs;
-  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
-  output_probs = std::move(IO::GetParam<arma::mat>("output_probs"));
+  output = std::move(params.Get<arma::Row<size_t>>("output"));
+  output_probs = std::move(params.Get<arma::mat>("output_probs"));
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  NBCModel* m = params.Get<NBCModel*>("output_model");
+  params.Get<NBCModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
-  SetInputParam("input_model",
-                std::move(IO::GetParam<NBCModel*>("output_model")));
+  SetInputParam("input_model", m);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_rows == 2);
 
   // Check that initial output and final output
   // matrix using saved model are same.
-  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
-  CheckMatrices(output_probs, IO::GetParam<arma::mat>("output_probs"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
+  CheckMatrices(output_probs, params.Get<arma::mat>("output_probs"));
 }
 
 /**
@@ -237,14 +220,14 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCTrainingVerTest",
   // Input training data.
   SetInputParam("training", std::move(inputData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                std::move(IO::GetParam<NBCModel*>("output_model")));
+                std::move(params.Get<NBCModel*>("output_model")));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -276,28 +259,24 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCIncrementalVarianceTest",
   SetInputParam("test", testData);
   SetInputParam("incremental_variance", (bool) true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
-
-  bindings::tests::CleanMemory();
-
-  // Reset data passed.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["incremental_variance"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_rows == 2);
 
   // Store outputs.
   arma::Row<size_t> output;
   arma::mat output_probs;
-  output = std::move(IO::GetParam<arma::Row<size_t>>("output"));
-  output_probs = std::move(IO::GetParam<arma::mat>("output_probs"));
+  output = std::move(params.Get<arma::Row<size_t>>("output"));
+  output_probs = std::move(params.Get<arma::mat>("output_probs"));
+
+  CleanMemory();
+  ResetSettings();
 
   // Now train NBC without incremental_variance.
 
@@ -306,20 +285,20 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCIncrementalVarianceTest",
   SetInputParam("test", std::move(testData));
   SetInputParam("incremental_variance", (bool) false);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_cols == testSize);
 
   // Check output have only single row.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("output").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("output_probs").n_rows == 2);
+  REQUIRE(params.Get<arma::Row<size_t>>("output").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("output_probs").n_rows == 2);
 
   // Check that initial output and final output matrix
   // from two models are same.
-  CheckMatrices(output, IO::GetParam<arma::Row<size_t>>("output"));
-  CheckMatrices(output_probs, IO::GetParam<arma::mat>("output_probs"));
+  CheckMatrices(output, params.Get<arma::Row<size_t>>("output"));
+  CheckMatrices(output_probs, params.Get<arma::mat>("output_probs"));
 }
 
 /**
@@ -356,15 +335,15 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCOptionConsistencyTest",
   // Input test data.
   SetInputParam("test", std::move(testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output from the 'output' parameter.
   const arma::Row<size_t> testY1 =
-      std::move(IO::GetParam<arma::Row<size_t>>("output"));
+      std::move(params.Get<arma::Row<size_t>>("output"));
 
   // Get output from 'predictions' parameter.
   const arma::Row<size_t> testY2 =
-      IO::GetParam<arma::Row<size_t>>("predictions");
+      params.Get<arma::Row<size_t>>("predictions");
 
   // Both solutions must be equal.
   CheckMatrices(testY1, testY2);
@@ -405,15 +384,15 @@ TEST_CASE_METHOD(NBCTestFixture, "NBCOptionConsistencyTest2",
   // Input test data.
   SetInputParam("test", std::move(testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the output probabilites which is a deprecated parameter.
   const arma::mat testY1 =
-      std::move(IO::GetParam<arma::mat>("output_probs"));
+      std::move(params.Get<arma::mat>("output_probs"));
 
   // Get probabilities from 'predictions' parameter.
   const arma::mat testY2 =
-      IO::GetParam<arma::mat>("probabilities");
+      params.Get<arma::mat>("probabilities");
 
   // Both solutions must be equal.
   CheckMatrices(testY1, testY2);
