@@ -28,10 +28,17 @@ set(SOURCES
   split_data.hpp
   imputer.hpp
   binarize.hpp
+  feature_selection.hpp
+  feature_selection_impl.hpp
+  chi2_feature_selection.hpp
+  chi2_feature_selection_impl.hpp
+  correlation_feature_selection_impl.hpp
+  correlation_feature_selection.hpp
   string_encoding.hpp
   string_encoding_dictionary.hpp
   string_encoding_impl.hpp
   confusion_matrix.hpp
+  confusion_matrix_impl.hpp
   one_hot_encoding.hpp
   one_hot_encoding_impl.hpp
 )

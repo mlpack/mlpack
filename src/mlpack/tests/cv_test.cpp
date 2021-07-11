@@ -14,6 +14,9 @@
 #include <mlpack/core/cv/meta_info_extractor.hpp>
 #include <mlpack/core/cv/metrics/accuracy.hpp>
 #include <mlpack/core/cv/metrics/f1.hpp>
+#include <mlpack/core/data/feature_selection.hpp>
+#include <mlpack/core/data/chi2_feature_selection.hpp>
+#include <mlpack/core/data/correlation_feature_selection.hpp>
 #include <mlpack/core/cv/metrics/mse.hpp>
 #include <mlpack/core/cv/metrics/precision.hpp>
 #include <mlpack/core/cv/metrics/recall.hpp>
@@ -613,6 +616,73 @@ TEST_CASE("KFoldCVWithDTTest", "[CVTest]")
     double accuracy = Accuracy::Evaluate(cv.Model(), data, predictedLabels);
     REQUIRE(accuracy == Approx(1.0).epsilon(1e-7));
   }
+}
+
+/**
+ * Test for feature selection based on Variance.
+ */
+TEST_CASE("VarianceFeatureSelectionTest", "[CVTest]")
+{
+  // Dataset with 4 features.
+  arma::mat matrix;
+  matrix = "3 4 1 2;"
+           "0 0 0 0;" // this row will be deleted since less variance
+           "2 5 7 9;"
+           "1 1 1 1;"; // this row will be deleted since less variance
+
+  // Output matirx with less features.
+  arma::mat output;
+  data::fs::VarianceSelection(matrix, 0.009, output);
+  REQUIRE(output.n_rows == 2);
+  REQUIRE(output.n_cols == 4);
+  for (size_t i = 0; i < output.n_cols; i++)
+  {
+    REQUIRE(output(0, i) == matrix(0, i));
+    REQUIRE(output(1, i) == matrix(2, i));
+  }
+}
+
+/**
+ * Test for feature selection based on Correlation.
+ */
+TEST_CASE("CorrelationFeatureSelectionTest", "[CVTest]")
+{
+  // Dataset with 4 features.
+  arma::mat matrix;
+  matrix = "3 4 1 2;"
+           "0 0 0 0;" // this row will be deleted since less variance
+           "2 5 7 9;"
+           "1 1 1 1;"; // this row will be deleted since less variance
+
+  arma::rowvec temp =  "23 22 20 7";
+  // Output matirx with less features.
+  arma::mat output;
+  data::fs::CorrelationSelection(matrix, temp, output, 1);
+  REQUIRE(output.n_rows == 1);
+  REQUIRE(output.n_cols == 4);
+  for (size_t i = 0; i < output.n_cols; i++)
+    REQUIRE(output(0, i) == matrix(0, i));
+}
+
+/**
+ * Test for feature selection based on ch12.
+ */
+TEST_CASE("Chi2FeatureSelectionTest", "[CVTest]")
+{
+  // Dataset with 2 features.
+  arma::mat matrix;
+  // Second row will be deleted 
+  matrix = "0 0 1 2 2 2 1 0 0 2 0 1 1 2;"
+           "0 1 0 0 0 1 1 0 0 0 1 1 0 1;";
+ 
+  // Output matirx with less features.
+  arma::mat output;
+  arma::rowvec temp =  "0 0 1 1 1 0 1 0 1 1 1 1 1 0;";
+  data::fs::Chi2Selection(matrix, temp, output, 1);
+  REQUIRE(output.n_rows == 1);
+  REQUIRE(output.n_cols == 14);
+  for (size_t i = 0; i < output.n_cols; i++)
+    REQUIRE(output(0, i) == matrix(0, i));
 }
 
 /**
