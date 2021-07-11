@@ -190,10 +190,6 @@ template<typename FitnessFunction>
 template<bool UseWeights, typename VecType, typename ResponsesType,
          typename WeightVecType>
 typename std::enable_if<
-    !HasBinaryScanInitialize<FitnessFunction, void(FitnessFunction::*)
-        (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
-    !HasBinaryStep<FitnessFunction, void(FitnessFunction::*)
-        (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
     !HasBinaryGains<FitnessFunction,
         std::tuple<double, double>(FitnessFunction::*)(void)>::value,
     double>::type
@@ -332,10 +328,6 @@ template<typename FitnessFunction>
 template<bool UseWeights, typename VecType, typename ResponsesType,
          typename WeightVecType>
 typename std::enable_if<
-    HasBinaryScanInitialize<FitnessFunction, void(FitnessFunction::*)
-        (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
-    HasBinaryStep<FitnessFunction, void(FitnessFunction::*)
-        (const ResponsesType&, const WeightVecType&, const size_t)>::value &&
     HasBinaryGains<FitnessFunction,
         std::tuple<double, double>(FitnessFunction::*)(void)>::value,
     double>::type
@@ -349,6 +341,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */)
 {
+  std::cout << "Optimized\n";
   typedef typename ResponsesType::elem_type RType;
   typedef typename WeightVecType::elem_type WType;
 
