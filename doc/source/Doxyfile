@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 PROJECT_NAME           = mlpack
 PROJECT_NUMBER         = 3.4.2
-OUTPUT_DIRECTORY       = ./doc
+OUTPUT_DIRECTORY       = ../doxyoutput
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
@@ -85,10 +85,10 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ./src/mlpack \
-                         ./doc/guide \
-                         ./doc/tutorials \
-                         ./doc/policies
+INPUT                  = ../../src/mlpack \
+                         ../guide \
+                         ../tutorials \
+                         ../policies
 FILE_PATTERNS          = *.hpp \
                          *.cpp \
                          *.txt
@@ -140,9 +140,9 @@ GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            =
-HTML_FOOTER            = ./doc/doxygen/footer.html
+HTML_FOOTER            = ../doxygen/footer.html
 HTML_STYLESHEET        =
-HTML_EXTRA_STYLESHEET  = ./doc/doxygen/extra-stylesheet.css
+HTML_EXTRA_STYLESHEET  = ../doxygen/extra-stylesheet.css
 HTML_ALIGN_MEMBERS     = YES
 GENERATE_HTMLHELP      = NO
 CHM_FILE               =
@@ -192,7 +192,7 @@ MAN_LINKS              = NO
 #---------------------------------------------------------------------------
 # configuration options related to the XML output
 #---------------------------------------------------------------------------
-GENERATE_XML           = NO
+GENERATE_XML           = YES
 XML_OUTPUT             = xml
 XML_SCHEMA             =
 XML_DTD                =
