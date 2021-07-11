@@ -2195,7 +2195,7 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
                  << 31.0980 <<  31.7431 <<  34.1073 <<  37.2050 <<  40.3027 <<  42.6669 << 43.3120 << arma::endr;
   expectedOutput.reshape(35, 1);
   layer.Forward(input, output);
-  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-4);
+  CheckMatrices(output, expectedOutput, 1e-4);
 }
 
 /**
