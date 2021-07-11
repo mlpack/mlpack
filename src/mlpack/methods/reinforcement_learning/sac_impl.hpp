@@ -45,13 +45,9 @@ SAC<
   policyNetwork(policyNetwork),
   replayMethod(replayMethod),
   qNetworkUpdater(std::move(qNetworkUpdater)),
-  #if ENS_VERSION_MAJOR >= 2
   qNetworkUpdatePolicy(NULL),
-  #endif
   policyNetworkUpdater(std::move(policyNetworkUpdater)),
-  #if ENS_VERSION_MAJOR >= 2
   policyNetworkUpdatePolicy(NULL),
-  #endif
   environment(std::move(environment)),
   totalSteps(0),
   deterministic(false)
@@ -75,25 +71,73 @@ SAC<
   targetQ1Network.ResetParameters();
   targetQ2Network.ResetParameters();
 
-  #if ENS_VERSION_MAJOR == 1
-  this->qNetworkUpdater.Initialize(learningQ1Network.Parameters().n_rows,
-                                   learningQ1Network.Parameters().n_cols);
-  #else
   this->qNetworkUpdatePolicy = new typename UpdaterType::template
       Policy<arma::mat, arma::mat>(this->qNetworkUpdater,
                                    learningQ1Network.Parameters().n_rows,
                                    learningQ1Network.Parameters().n_cols);
-  #endif
-
-  #if ENS_VERSION_MAJOR == 1
-  this->policyNetworkUpdater.Initialize(policyNetwork.Parameters().n_rows,
-                                        policyNetwork.Parameters().n_cols);
-  #else
   this->policyNetworkUpdatePolicy = new typename UpdaterType::template
       Policy<arma::mat, arma::mat>(this->policyNetworkUpdater,
                                    policyNetwork.Parameters().n_rows,
                                    policyNetwork.Parameters().n_cols);
-  #endif
+
+  // Copy over the learning networks to their respective target networks.
+  targetQ1Network.Parameters() = learningQ1Network.Parameters();
+  targetQ2Network.Parameters() = learningQ2Network.Parameters();
+}
+
+template <
+  typename EnvironmentType,
+  typename QNetworkType,
+  typename PolicyNetworkType,
+  typename UpdaterType,
+  typename ReplayType
+>
+SAC<
+  EnvironmentType,
+  QNetworkType,
+  PolicyNetworkType,
+  UpdaterType,
+  ReplayType
+>::SAC(const SAC& other):
+  config(other.config),
+  learningQ1Network(other.learningQ1Network),
+  policyNetwork(other.policyNetwork),
+  replayMethod(other.replayMethod),
+  qNetworkUpdater(std::move(other.qNetworkUpdater)),
+  qNetworkUpdatePolicy(NULL),
+  policyNetworkUpdater(std::move(other.policyNetworkUpdater)),
+  policyNetworkUpdatePolicy(NULL),
+  environment(std::move(other.environment)),
+  totalSteps(0),
+  deterministic(false)
+{
+  // Set up q-learning and policy networks.
+  targetQ1Network = learningQ1Network;
+  learningQ2Network = learningQ1Network;
+  targetQ2Network = learningQ2Network;
+
+  // Reset all the networks.
+  // Note: the q and policy networks have an if condition before reset.
+  // This is because we don't want to reset a loaded(possibly pretrained) model
+  // passed using this constructor.
+  if (learningQ1Network.Parameters().is_empty())
+  {
+    learningQ1Network.ResetParameters();
+    learningQ2Network.ResetParameters();
+  }
+  if (policyNetwork.Parameters().is_empty())
+    policyNetwork.ResetParameters();
+  targetQ1Network.ResetParameters();
+  targetQ2Network.ResetParameters();
+
+  this->qNetworkUpdatePolicy = new typename UpdaterType::template
+      Policy<arma::mat, arma::mat>(this->qNetworkUpdater,
+                                   learningQ1Network.Parameters().n_rows,
+                                   learningQ1Network.Parameters().n_cols);
+  this->policyNetworkUpdatePolicy = new typename UpdaterType::template
+      Policy<arma::mat, arma::mat>(this->policyNetworkUpdater,
+                                   policyNetwork.Parameters().n_rows,
+                                   policyNetwork.Parameters().n_cols);
 
   // Copy over the learning networks to their respective target networks.
   targetQ1Network.Parameters() = learningQ1Network.Parameters();
@@ -115,10 +159,8 @@ SAC<
   ReplayType
 >::~SAC()
 {
-  #if ENS_VERSION_MAJOR >= 2
   delete qNetworkUpdatePolicy;
   delete policyNetworkUpdatePolicy;
-  #endif
 }
 
 template <
@@ -197,24 +239,13 @@ void SAC<
   // Update the critic networks.
   arma::mat gradientQ1, gradientQ2;
   learningQ1Network.Backward(learningQInput, gradQ1Loss, gradientQ1);
-  #if ENS_VERSION_MAJOR == 1
-  qNetworkUpdater.Update(learningQ1Network.Parameters(), config.StepSize(),
-      gradientQ1);
-  #else
   qNetworkUpdatePolicy->Update(learningQ1Network.Parameters(),
       config.StepSize(), gradientQ1);
-  #endif
   learningQ2Network.Backward(learningQInput, gradQ2Loss, gradientQ2);
-  #if ENS_VERSION_MAJOR == 1
-  qNetworkUpdater.Update(learningQ2Network.Parameters(), config.StepSize(),
-      gradientQ2);
-  #else
   qNetworkUpdatePolicy->Update(learningQ2Network.Parameters(),
       config.StepSize(), gradientQ2);
-  #endif
 
   // Actor network update.
-
   arma::mat pi;
   policyNetwork.Predict(sampledStates, pi);
 
@@ -264,12 +295,8 @@ void SAC<
   }
   gradient /= sampledStates.n_cols;
 
-  #if ENS_VERSION_MAJOR == 1
-  policyUpdater.Update(policyNetwork.Parameters(), config.StepSize(), gradient);
-  #else
   policyNetworkUpdatePolicy->Update(policyNetwork.Parameters(),
       config.StepSize(), gradient);
-  #endif
 
   // Update target network
   if (totalSteps % config.TargetNetworkSyncInterval() == 0)

@@ -95,6 +95,17 @@ class SAC
       EnvironmentType environment = EnvironmentType());
 
   /**
+   * Copy the SAC object with given settings.
+   *
+   * If you want to pass in a parameter and discard the original parameter
+   * object, you can directly pass the parameter, as the constructor takes
+   * a reference. This avoids unnecessary copy.
+   *
+   * @param other SAC object to copy.
+   */
+  SAC(const SAC& other);
+
+  /**
     * Clean memory.
     */
   ~SAC();
@@ -162,17 +173,13 @@ class SAC
 
   //! Locally-stored updater.
   UpdaterType qNetworkUpdater;
-  #if ENS_VERSION_MAJOR >= 2
   typename UpdaterType::template Policy<arma::mat, arma::mat>*
       qNetworkUpdatePolicy;
-  #endif
 
   //! Locally-stored updater.
   UpdaterType policyNetworkUpdater;
-  #if ENS_VERSION_MAJOR >= 2
   typename UpdaterType::template Policy<arma::mat, arma::mat>*
       policyNetworkUpdatePolicy;
-  #endif
 
   //! Locally-stored reinforcement learning task.
   EnvironmentType environment;
