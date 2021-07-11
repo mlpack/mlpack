@@ -22,13 +22,26 @@
 #include "print_input_processing.hpp"
 #include "print_output_processing.hpp"
 #include "import_decl.hpp"
+#include "is_serializable.hpp"
 
 namespace mlpack {
 namespace bindings {
 namespace python {
 
 // Defined in mlpack_main.hpp.
-extern std::string programName;
+std::string programName = "init";
+
+std::vector<std::string> groupProgramNames;
+
+class ChangeProgramName
+{
+  public:
+  ChangeProgramName(const std::string& newName)
+  {
+    programName = newName;
+    groupProgramNames.push_back(newName);
+  }
+};
 
 /**
  * The Python option class.
@@ -64,6 +77,7 @@ class PyOption
     data.required = required;
     data.input = input;
     data.loaded = false;
+
     // Only "verbose", "copy_all_inputs" and "check_input_matrices"
     // will be persistent.
     if (identifier == "verbose" || identifier == "copy_all_inputs" ||
@@ -101,6 +115,7 @@ class PyOption
     IO::GetSingleton().functionMap[data.tname]["PrintInputProcessing"] =
         &PrintInputProcessing<T>;
     IO::GetSingleton().functionMap[data.tname]["ImportDecl"] = &ImportDecl<T>;
+    IO::GetSingleton().functionMap[data.tname]["IsSerializable"] = &IsSerializable<T>;
 
     // Add the ParamData object, then store.  This is necessary because we may
     // import more than one .so that uses IO, so we have to keep the options

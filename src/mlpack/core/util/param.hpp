@@ -54,9 +54,19 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *
  * @param NAME Short string representing the name of the program.
  */
-#define BINDING_NAME(NAME) static \
-    mlpack::util::ProgramName \
-    io_programname_dummy_object = mlpack::util::ProgramName(NAME);
+#ifdef __COUNTER__
+  #define BINDING_NAME(NAME) static \
+      mlpack::util::ProgramName \
+      JOIN(io_programname_dummy_object_, __COUNTER__) = \
+      mlpack::util::ProgramName( \
+      NAME);
+#else
+  #define BINDING_NAME(NAME) static \
+      mlpack::util::ProgramName \
+      JOIN(JOIN(io_programname_dummy_object_, __LINE__), opt) = \
+      mlpack::util::ProgramName( \
+      NAME);
+#endif
 
 /**
  * Specify the short description of a binding.  Only one instance of this macro
@@ -73,10 +83,19 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *     describe what the program implements and does, and a quick overview of
  *     how it can be used and what it should be used for.
  */
-#define BINDING_SHORT_DESC(SHORT_DESC) static \
-    mlpack::util::ShortDescription \
-    io_programshort_desc_dummy_object = mlpack::util::ShortDescription( \
-    SHORT_DESC);
+#ifdef __COUNTER__
+  #define BINDING_SHORT_DESC(SHORT_DESC) static \
+      mlpack::util::ShortDescription \
+      JOIN(io_programshortdesc_dummy_object_, __COUNTER__) = \
+      mlpack::util::ShortDescription( \
+      SHORT_DESC);
+#else
+  #define BINDING_SHORT_DESC(SHORT_DESC) static \
+      mlpack::util::ShortDescription \
+      JOIN(JOIN(io_programshortdesc_dummy_object_, __LINE__), opt) = \
+      mlpack::util::ShortDescription( \
+      SHORT_DESC);
+#endif
 
 /**
  * Specify the long description of a binding.  Only one instance of this macro
@@ -95,10 +114,19 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
  *     also use printing macros like PRINT_PARAM_STRING(), PRINT_DATASET(),
  *     and others.
  */
-#define BINDING_LONG_DESC(LONG_DESC) static \
-    mlpack::util::LongDescription \
-    io_programlong_desc_dummy_object = mlpack::util::LongDescription( \
-    []() { return std::string(LONG_DESC); });
+#ifdef __COUNTER__
+  #define BINDING_LONG_DESC(LONG_DESC) static \
+      mlpack::util::LongDescription \
+      JOIN(io_programlongdesc_dummy_object_, __COUNTER__) = \
+      mlpack::util::LongDescription( \
+      []() { return(std::string(LONG_DESC)); });
+#else
+  #define BINDING_LONG_DESC(LONG_DESC) static \
+      mlpack::util::LongDescription \
+      JOIN(JOIN(io_programlongdesc_dummy_object_, __LINE__), opt) = \
+      mlpack::util::LongDescription( \
+      []() { return(std::string(LONG_DESC)); });
+#endif
 
 /**
  * Specify the example of a binding.  Mutiple instance of this macro can be
