@@ -3,6 +3,8 @@
 set(SOURCES
 scaling_model.hpp
 scaling_model_impl.hpp
+preprocess_string_util.hpp
+preprocess_string_util.cpp
 )
 
 # Add directory name to sources.
@@ -60,6 +62,12 @@ add_julia_binding(preprocess_one_hot_encoding)
 add_r_binding(preprocess_one_hot_encoding)
 add_markdown_docs(preprocess_one_hot_encoding "cli;python;julia;go;r"
     "preprocessing")
+
+add_cli_executable(preprocess_string_encoding)
+add_python_binding(preprocess_string_encoding)
+add_julia_binding(preprocess_string_encoding)
+add_go_binding(preprocess_string_encoding)
+add_markdown_docs(preprocess_string_encoding "cli;python;julia;go" "preprocessing")
 
 if (STB_AVAILABLE)
   add_cli_executable(image_converter)

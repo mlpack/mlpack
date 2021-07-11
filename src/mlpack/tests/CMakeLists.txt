@@ -175,6 +175,7 @@ add_executable(mlpack_test
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
   main_tests/range_search_test.cpp
+  main_tests/preprocess_encoding_string_test.cpp
   main_tests/test_helper.hpp
 )
 
