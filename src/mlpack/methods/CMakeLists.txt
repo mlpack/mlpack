@@ -49,6 +49,7 @@ set(DIRS
   sparse_autoencoder
   sparse_coding
   svdplusplus
+  time_series_models
 )
 
 foreach(dir ${DIRS})
