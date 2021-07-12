@@ -172,13 +172,15 @@ TEST_CASE_METHOD(LinearSVMTestFixture, "LinearSVMModelReuseTest",
   RUN_BINDING();
 
   // Get the output model obtained from training.
-  LinearSVMModel* model =
-      params.Get<LinearSVMModel*>("output_model");
+  LinearSVMModel* model = params.Get<LinearSVMModel*>("output_model");
+  params.Get<LinearSVMModel*>("output_model") = NULL;
+
   // Get the output.
-  const arma::Row<size_t>& testLabels1 =
+  arma::Row<size_t> testLabels1 =
       std::move(params.Get<arma::Row<size_t>>("predictions"));
 
   // Reset the data passed.
+  CleanMemory();
   ResetSettings();
 
   SetInputParam("input_model", model);
