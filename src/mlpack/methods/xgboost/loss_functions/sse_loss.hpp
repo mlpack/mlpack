@@ -53,7 +53,7 @@ class SSELoss
   template<typename T>
   T Gradients(const T& observed, const T& values)
   {
-    return - (observed - values);
+    return values - observed;
   }
 
   /**
@@ -79,7 +79,7 @@ class SSELoss
   template<typename VecType>
   VecType Residuals(const VecType& observed, const VecType& f)
   {
-    return - Gradients(observed, f);
+    return observed - f;
   }
 
   /**
