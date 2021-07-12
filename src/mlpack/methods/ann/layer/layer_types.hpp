@@ -47,6 +47,7 @@
 #include <mlpack/methods/ann/layer/pixel_shuffle.hpp>
 #include <mlpack/methods/ann/layer/positional_encoding.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
+#include <mlpack/methods/ann/layer/relu6.hpp>
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/separable_convolution.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
@@ -84,6 +85,7 @@ template<typename InputDataType, typename OutputDataType> class FastLSTM;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
 template<typename InputDataType, typename OutputDataType> class Concatenate;
 template<typename InputDataType, typename OutputDataType> class Padding;
+template<typename InputDataType, typename OutputDataType> class ReLU6;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -243,6 +245,7 @@ using MoreTypes = boost::variant<
         Recurrent<arma::mat, arma::mat>*,
         RecurrentAttention<arma::mat, arma::mat>*,
         ReinforceNormal<arma::mat, arma::mat>*,
+        ReLU6<arma::mat, arma::mat>*,
         Reparametrization<arma::mat, arma::mat>*,
         Select<arma::mat, arma::mat>*,
         SeparableConvolution<NaiveConvolution<ValidConvolution>,
