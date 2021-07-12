@@ -19,6 +19,7 @@
 #include <string>
 
 using namespace mlpack;
+using namespace mlpack::util;
 using namespace std;
 using namespace chrono;
 
@@ -27,7 +28,7 @@ using namespace chrono;
  */
 void Timer::Start(const string& name)
 {
-  IO::GetSingleton().timer.StartTimer(name, this_thread::get_id());
+  IO::GetSingleton().timer.Start(name, this_thread::get_id());
 }
 
 /**
@@ -35,7 +36,7 @@ void Timer::Start(const string& name)
  */
 void Timer::Stop(const string& name)
 {
-  IO::GetSingleton().timer.StopTimer(name, this_thread::get_id());
+  IO::GetSingleton().timer.Stop(name, this_thread::get_id());
 }
 
 /**
@@ -43,7 +44,7 @@ void Timer::Stop(const string& name)
  */
 microseconds Timer::Get(const string& name)
 {
-  return IO::GetSingleton().timer.GetTimer(name);
+  return IO::GetSingleton().timer.Get(name);
 }
 
 // Enable timing.
@@ -64,6 +65,11 @@ void Timer::ResetAll()
   IO::GetSingleton().timer.Reset();
 }
 
+std::map<std::string, std::chrono::microseconds> Timer::GetAllTimers()
+{
+  return IO::GetSingleton().timer.GetAllTimers();
+}
+
 // Reset a Timers object.
 void Timers::Reset()
 {
@@ -79,7 +85,7 @@ map<string, microseconds> Timers::GetAllTimers()
   return timers;
 }
 
-microseconds Timers::GetTimer(const string& timerName)
+microseconds Timers::Get(const string& timerName)
 {
   if (!enabled)
     return microseconds(0);
@@ -88,23 +94,15 @@ microseconds Timers::GetTimer(const string& timerName)
   return timers[timerName];
 }
 
-bool Timers::GetState(const string& timerName,
-                      const thread::id& threadId)
-{
-  lock_guard<mutex> lock(timersMutex);
-  if (timerStartTime.count(threadId) == 0)
-    return 0;
-  return (timerStartTime[threadId].count(timerName) > 0);
-}
-
-void Timers::PrintTimer(const string& timerName)
+std::string Timers::Print(const microseconds& totalDuration)
 {
   // Convert microseconds to seconds.
-  microseconds totalDuration = GetTimer(timerName);
   seconds totalDurationSec = duration_cast<seconds>(totalDuration);
   microseconds totalDurationMicroSec =
       duration_cast<microseconds>(totalDuration % seconds(1));
-  Log::Info << totalDurationSec.count() << "." << setw(6)
+
+  std::ostringstream oss;
+  oss << totalDurationSec.count() << "." << setw(6)
       << setfill('0') << totalDurationMicroSec.count() << "s";
 
   // Also output convenient day/hr/min/sec.
@@ -118,43 +116,44 @@ void Timers::PrintTimer(const string& timerName)
   if (!(d.count() == 0 && h.count() == 0 && m.count() == 0))
   {
     bool output = false; // Denotes if we have output anything yet.
-    Log::Info << " (";
+    oss << " (";
 
     // Only output units if they have nonzero values (yes, a bit tedious).
     if (d.count() > 0)
     {
-      Log::Info << d.count() << " days";
+      oss << d.count() << " days";
       output = true;
     }
 
     if (h.count() > 0)
     {
       if (output)
-        Log::Info << ", ";
-      Log::Info << h.count() << " hrs";
+        oss << ", ";
+      oss << h.count() << " hrs";
       output = true;
     }
 
     if (m.count() > 0)
     {
       if (output)
-        Log::Info << ", ";
-      Log::Info << m.count() << " mins";
+        oss << ", ";
+      oss << m.count() << " mins";
       output = true;
     }
 
     if (s.count() > 0)
     {
       if (output)
-        Log::Info << ", ";
-      Log::Info << s.count() << "." << setw(1)
+        oss << ", ";
+      oss << s.count() << "." << setw(1)
           << (totalDurationMicroSec.count() / 100000) << " secs";
     }
 
-    Log::Info << ")";
+    oss << ")";
   }
 
-  Log::Info << endl;
+  oss << endl;
+  return oss.str();
 }
 
 void Timers::StopAllTimers()
@@ -172,8 +171,8 @@ void Timers::StopAllTimers()
   timerStartTime.clear();
 }
 
-void Timers::StartTimer(const string& timerName,
-                        const thread::id& threadId)
+void Timers::Start(const string& timerName,
+                   const thread::id& threadId)
 {
   // Don't do anything if we aren't timing.
   if (!enabled)
@@ -201,8 +200,8 @@ void Timers::StartTimer(const string& timerName,
   timerStartTime[threadId][timerName] = currTime;
 }
 
-void Timers::StopTimer(const string& timerName,
-                       const thread::id& threadId)
+void Timers::Stop(const string& timerName,
+                  const thread::id& threadId)
 {
   // Don't do anything if we aren't timing.
   if (!enabled)

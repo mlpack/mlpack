@@ -2,44 +2,27 @@
  * @file tests/main_tests/lsh_test.cpp
  * @author Manish Kumar
  *
- * Test mlpackMain() of lsh_main.cpp.
+ * Test RUN_BINDING() of lsh_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "LSH";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/lsh/lsh_main.cpp>
+
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct LSHTestFixture
-{
- public:
-  LSHTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~LSHTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(LSHTestFixture);
 
 /**
  * Check that output neighbors and distances have valid dimensions.
@@ -52,15 +35,15 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHOutputDimensionTest",
   SetInputParam("reference", std::move(reference));
   SetInputParam("k", (int) 6);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check the neighbors matrix has 6 points for each of the 100 input points.
-  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows == 6);
-  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols == 100);
+  REQUIRE(params.Get<arma::Mat<size_t>>("neighbors").n_rows == 6);
+  REQUIRE(params.Get<arma::Mat<size_t>>("neighbors").n_cols == 100);
 
   // Check the distances matrix has 6 points for each of the 100 input points.
-  REQUIRE(IO::GetParam<arma::mat>("distances").n_rows == 6);
-  REQUIRE(IO::GetParam<arma::mat>("distances").n_cols == 100);
+  REQUIRE(params.Get<arma::mat>("distances").n_rows == 6);
+  REQUIRE(params.Get<arma::mat>("distances").n_cols == 100);
 }
 
 /**
@@ -79,10 +62,11 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHParamValidityTest",
   SetInputParam("bucket_size", (int) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Test for second_hash_size.
 
@@ -91,10 +75,11 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHParamValidityTest",
   SetInputParam("second_hash_size", (int) -1.0);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Test for number of nearest neighbors.
 
@@ -102,7 +87,7 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHParamValidityTest",
   SetInputParam("k", (int) -2);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -117,12 +102,12 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHModelValidityTest",
   SetInputParam("reference", std::move(reference));
   SetInputParam("k", (int) 6);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  SetInputParam("input_model", IO::GetParam<LSHSearch<>*>("output_model"));
+  SetInputParam("input_model", params.Get<LSHSearch<>*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -138,12 +123,13 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffTablesTest",
   SetInputParam("k", (int) 6);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = params.Get<arma::mat>("distances");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Train model using tables equals to 40.
 
@@ -152,14 +138,14 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffTablesTest",
   SetInputParam("tables", (int) 40);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial outputs and final outputs using two models are
   // different.
   REQUIRE(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+      params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
+      params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
@@ -174,12 +160,13 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffProjectionsTest",
   SetInputParam("k", (int) 6);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = params.Get<arma::mat>("distances");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Train model using projections equals to 30.
 
@@ -188,14 +175,14 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffProjectionsTest",
   SetInputParam("projections", (int) 30);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial outputs and final outputs using two models are
   // different.
   REQUIRE(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+      params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
+      params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
@@ -210,12 +197,13 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffHashWidthTest",
   SetInputParam("k", (int) 6);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = params.Get<arma::mat>("distances");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Train model using hash_width equals to 0.5.
 
@@ -224,14 +212,14 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffHashWidthTest",
   SetInputParam("hash_width", (double) 0.5);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial outputs and final outputs using two models are
   // different.
   REQUIRE(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+      params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
+      params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
@@ -247,27 +235,31 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffNumProbesTest",
   SetInputParam("query", query);
   SetInputParam("k", (int) 6);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = params.Get<arma::mat>("distances");
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  LSHSearch<>* m = params.Get<LSHSearch<>*>("output_model");
+  params.Get<LSHSearch<>*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Train model using num_probes equals to 5.
 
-  SetInputParam("input_model", IO::GetParam<LSHSearch<>*>("output_model"));
+  SetInputParam("input_model", m);
   SetInputParam("query", std::move(query));
   SetInputParam("num_probes", (int) 5);
+  SetInputParam("k", (int) 6);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial outputs and final outputs using two models are
   // different.
   REQUIRE(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+      params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
+      params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
@@ -282,12 +274,13 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffSecondHashSizeTest",
   SetInputParam("k", (int) 6);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = params.Get<arma::mat>("distances");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Train model using second_hash_size equals to 5000.
 
@@ -296,14 +289,14 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffSecondHashSizeTest",
   SetInputParam("second_hash_size", (int) 5000);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial outputs and final outputs using two models are
   // different.
   REQUIRE(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+      params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
+      params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
@@ -318,12 +311,13 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffBucketSizeTest",
   SetInputParam("k", (int) 6);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = params.Get<arma::mat>("distances");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Train model using bucket_size equals to 1000.
 
@@ -332,14 +326,14 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHDiffBucketSizeTest",
   SetInputParam("bucket_size", (int) 1);
 
   mlpack::math::FixedRandomSeed();
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial outputs and final outputs using the two models are
   // different.
   REQUIRE(arma::accu(neighbors ==
-      IO::GetParam<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
+      params.Get<arma::Mat<size_t>>("neighbors")) < neighbors.n_elem);
   REQUIRE(arma::accu(distances ==
-      IO::GetParam<arma::mat>("distances")) < distances.n_elem);
+      params.Get<arma::mat>("distances")) < distances.n_elem);
 }
 
 /**
@@ -355,22 +349,27 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHModelReuseTest",
   SetInputParam("query", query);
   SetInputParam("k", (int) 6);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  arma::Mat<size_t> neighbors = IO::GetParam<arma::Mat<size_t>>("neighbors");
-  arma::mat distances = IO::GetParam<arma::mat>("distances");
+  arma::Mat<size_t> neighbors = params.Get<arma::Mat<size_t>>("neighbors");
+  arma::mat distances = params.Get<arma::mat>("distances");
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  LSHSearch<>* m = params.Get<LSHSearch<>*>("output_model");
+  params.Get<LSHSearch<>*>("output_model") = NULL;
 
-  SetInputParam("input_model", IO::GetParam<LSHSearch<>*>("output_model"));
+  CleanMemory();
+  ResetSettings();
+
+  SetInputParam("input_model", m);
   SetInputParam("query", std::move(query));
+  SetInputParam("k", (int) 6);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial query outputs and final outputs using saved model are
   // same.
-  CheckMatrices(neighbors, IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances, IO::GetParam<arma::mat>("distances"));
+  CheckMatrices(neighbors, params.Get<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, params.Get<arma::mat>("distances"));
 }
 
 /**
@@ -389,6 +388,6 @@ TEST_CASE_METHOD(LSHTestFixture, "LSHModelTrueNighborsDimTest",
   SetInputParam("k", (int) 6);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }

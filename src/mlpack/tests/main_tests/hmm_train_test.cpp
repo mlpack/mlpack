@@ -2,46 +2,28 @@
  * @file tests/main_tests/hmm_train_test.cpp
  * @author Daivik Nema
  *
- * Test mlpackMain() of hmm_train_main.cpp.
+ * Test RUN_BINDING() of hmm_train_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-#include <fstream>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "HMMTrain";
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
-#include <mlpack/methods/hmm/hmm_train_main.cpp>
 #include <mlpack/methods/hmm/hmm_model.hpp>
+#include <mlpack/methods/hmm/hmm_train_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct HMMTrainMainTestFixture
-{
- public:
-  HMMTrainMainTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~HMMTrainMainTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(HMMTrainMainTestFixture);
 
 inline void FileExists(std::string fileName)
 {
@@ -210,7 +192,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainStatesTest",
   SetInputParam("type", std::move(hmmType));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -230,7 +212,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainToleranceNonNegative",
   SetInputParam("tolerance", tol);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -249,7 +231,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainTypeTest",
   SetInputParam("type", std::move(hmmType));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -269,7 +251,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainGaussianTest",
   SetInputParam("gaussians", gaussians);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -289,7 +271,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainDiagonalGaussianTest",
   SetInputParam("gaussians", gaussians);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -311,23 +293,28 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainReuseDiscreteModelTest",
   data::Load(inputLabFileName, trainLab);
   REQUIRE(trainObs.n_rows == trainLab.n_rows);
 
-  SetInputParam("input_file", std::move(inputObsFileName));
-  SetInputParam("labels_file", std::move(inputLabFileName));
-  SetInputParam("type", std::move(hmmType));
+  SetInputParam("input_file", inputObsFileName);
+  SetInputParam("labels_file", inputLabFileName);
+  SetInputParam("type", hmmType);
   SetInputParam("states", states);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(params.Get<HMMModel*>("output_model"));
+  params.Get<HMMModel*>("output_model") = NULL;
 
-  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
+  CleanMemory();
+  ResetSettings();
 
-  IO::GetSingleton().Parameters()["type"].wasPassed = false;
-  IO::GetSingleton().Parameters()["states"].wasPassed = false;
+  SetInputParam("input_model", &h1);
+  SetInputParam("input_file", std::move(inputObsFileName));
+  SetInputParam("labels_file", std::move(inputLabFileName));
 
-  mlpackMain();
+  RUN_BINDING();
 
-  HMMModel h2 = *(IO::GetParam<HMMModel*>("output_model"));
+  HMMModel h2 = *(params.Get<HMMModel*>("output_model"));
+
+  ResetSettings();
 
   ApproximatelyEqual(h1, h2);
 }
@@ -346,23 +333,25 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainReuseGaussianModelTest",
   arma::mat trainObs;
   data::Load(inputObsFileName, trainObs);
 
-  SetInputParam("input_file", std::move(inputObsFileName));
+  SetInputParam("input_file", inputObsFileName);
   SetInputParam("type", std::move(hmmType));
   SetInputParam("states", states);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(params.Get<HMMModel*>("output_model"));
 
-  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
+  ResetSettings();
+
+  SetInputParam("input_model", &h1);
+  SetInputParam("input_file", std::move(inputObsFileName));
   SetInputParam("tolerance", 1e10);
 
-  IO::GetSingleton().Parameters()["type"].wasPassed = false;
-  IO::GetSingleton().Parameters()["states"].wasPassed = false;
+  RUN_BINDING();
 
-  mlpackMain();
+  HMMModel h2 = *(params.Get<HMMModel*>("output_model"));
 
-  HMMModel h2 = *(IO::GetParam<HMMModel*>("output_model"));
+  ResetSettings();
 
   ApproximatelyEqual(h1, h2);
 }
@@ -376,25 +365,27 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainNoLabelsReuseModelTest",
   int seed = 0;
 
   FileExists(inputObsFileName);
-  SetInputParam("input_file", std::move(inputObsFileName));
+  SetInputParam("input_file", inputObsFileName);
   SetInputParam("states", states);
   SetInputParam("type", std::move(hmmType));
   SetInputParam("seed", seed);
 
   // This call will train HMM using Baum-Welch training
-  mlpackMain();
+  RUN_BINDING();
 
-  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(params.Get<HMMModel*>("output_model"));
 
-  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
+  ResetSettings();
 
-  IO::GetSingleton().Parameters()["type"].wasPassed = false;
-  IO::GetSingleton().Parameters()["states"].wasPassed = false;
+  SetInputParam("input_model", &h1);
+  SetInputParam("input_file", std::move(inputObsFileName));
 
   // Train again using Baum Welch
-  mlpackMain();
+  RUN_BINDING();
 
-  HMMModel h2 = *(IO::GetParam<HMMModel*>("output_model"));
+  HMMModel h2 = *(params.Get<HMMModel*>("output_model"));
+
+  ResetSettings();
 
   ApproximatelyEqual(h1, h2);
 }
@@ -412,21 +403,21 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainBatchModeTest",
   SetInputParam("labels_file", std::move(labelsFileName));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   SetInputParam("states", states);
   SetInputParam("type", std::move(hmmType));
   SetInputParam("batch", (bool) true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Now pass an observations file with extra non-existent filenames
   observationsFileName = "corrupt-observations-1.txt";
   SetInputParam("input_file", std::move(observationsFileName));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   // Now a mismatch between #observation files and #label files
@@ -434,7 +425,7 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainBatchModeTest",
   SetInputParam("input_file", std::move(observationsFileName));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -452,28 +443,28 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainRetrainTest1",
   SetInputParam("states", states);
   SetInputParam("seed", seed);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(params.Get<HMMModel*>("output_model"));
+  arma::mat h1Transition = h1.DiscreteHMM()->Transition();
 
   std::string inputObsFile2 = "obs4.csv";
-
-  IO::GetSingleton().Parameters()["input_file"].wasPassed = false;
-  IO::GetSingleton().Parameters()["type"].wasPassed = false;
-  IO::GetSingleton().Parameters()["states"].wasPassed = false;
-
   FileExists(inputObsFile2);
+
+  ResetSettings();
+
   SetInputParam("input_file", std::move(inputObsFile2));
-  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
+  SetInputParam("input_model", &h1);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  HMMModel h2 = *(IO::GetParam<HMMModel*>("output_model"));
+  HMMModel h2 = *(params.Get<HMMModel*>("output_model"));
+
+  ResetSettings();
 
   REQUIRE(h1.Type() == h2.Type());
   // Since we know that type of HMMs is discrete
-  CheckMatricesDiffer(h1.DiscreteHMM()->Transition(),
-      h2.DiscreteHMM()->Transition(), 1e-50);
+  CheckMatricesDiffer(h1Transition, h2.DiscreteHMM()->Transition(), 1e-50);
 }
 
 // Attempt to retrain but increase states the second time round
@@ -489,23 +480,24 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainRetrainTest2",
   SetInputParam("type", std::move(type));
   SetInputParam("states", states);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(params.Get<HMMModel*>("output_model"));
 
   std::string inputObsFile2 = "obs3.csv";
   std::string inputLabFile2 = "lab1_corrupt.csv";
 
+  ResetSettings();
+
   SetInputParam("input_file", std::move(inputObsFile2));
   // Provide a labels file with more states than initially specified
   SetInputParam("labels_file", std::move(inputLabFile2));
-  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
+  SetInputParam("input_model", &h1);
 
-  IO::GetSingleton().Parameters()["type"].wasPassed = false;
-  IO::GetSingleton().Parameters()["states"].wasPassed = false;
+  ResetSettings();
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -522,26 +514,28 @@ TEST_CASE_METHOD(HMMTrainMainTestFixture, "HMMTrainRetrainTest3",
   SetInputParam("type", std::move(type));
   SetInputParam("states", states);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  HMMModel h1 = *(IO::GetParam<HMMModel*>("output_model"));
+  HMMModel h1 = *(params.Get<HMMModel*>("output_model"));
 
   std::string inputObsFile2 = "obs2.csv";
   std::string inputLabFile2 = "lab2.csv";
   type = "gaussian";
 
+  ResetSettings();
+
   SetInputParam("input_file", std::move(inputObsFile2));
   SetInputParam("labels_file", std::move(inputLabFile2));
   SetInputParam("type", std::move(type));
-  SetInputParam("input_model", IO::GetParam<HMMModel*>("output_model"));
+  SetInputParam("input_model", &h1);
 
-  IO::GetSingleton().Parameters()["states"].wasPassed = false;
-
-  mlpackMain();
+  RUN_BINDING();
   // Note that when emission type is changed -- like in this test, a warning
   // is printed stating that the new type is being ignored (no error is raised)
 
-  HMMModel h2 = *(IO::GetParam<HMMModel*>("output_model"));
+  HMMModel h2 = *(params.Get<HMMModel*>("output_model"));
+
+  ResetSettings();
 
   REQUIRE(h1.Type() == DiscreteHMM);
   REQUIRE(h2.Type() == DiscreteHMM);

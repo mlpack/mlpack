@@ -43,7 +43,8 @@
  * PRINT_PARAM_STRING() returns a string that contains the correct
  * language-specific representation of a parameter's name.
  */
-#define PRINT_PARAM_STRING mlpack::bindings::cli::ParamString
+#define PRINT_PARAM_STRING(x) mlpack::bindings::cli::ParamString( \
+    STRINGIFY(BINDING_NAME), x)
 
 /**
  * PRINT_PARAM_VALUE() returns a string that contains a correct
@@ -92,26 +93,32 @@ static const std::string testName = "";
 #include <mlpack/bindings/cli/parse_command_line.hpp>
 #include <mlpack/bindings/cli/end_program.hpp>
 
-static void mlpackMain(); // This is typically defined after this include.
+#ifndef BINDING_NAME
+  #error "BINDING_NAME not defined!"
+#endif
+
+static void BINDING_NAME(mlpack::util::Params&, mlpack::util::Timers&);
 
 int main(int argc, char** argv)
 {
   // Parse the command-line options; put them into CLI.
-  mlpack::bindings::cli::ParseCommandLine(argc, argv);
-  // Enable timing.
-  mlpack::Timer::EnableTiming();
+  mlpack::util::Params params =
+      mlpack::bindings::cli::ParseCommandLine(argc, argv);
+  // Create a new timer object for this call.
+  mlpack::util::Timers timers;
+  timers.Enabled() = true;
 
   // A "total_time" timer is run by default for each mlpack program.
-  mlpack::Timer::Start("total_time");
-
-  mlpackMain();
+  timers.Start("total_time");
+  BINDING_FUNCTION(params, timers);
+  timers.Stop("total_time");
 
   // Print output options, print verbose information, save model parameters,
   // clean up, and so forth.
-  mlpack::bindings::cli::EndProgram();
+  mlpack::bindings::cli::EndProgram(params, timers);
 }
 
-#elif(BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
+#elif (BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
 
 // Matrices are not transposed on load/save.
 #define BINDING_MATRIX_TRANSPOSED false
@@ -150,8 +157,14 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 }
 }
 
-// testName symbol should be defined in each binding test file
 #include <mlpack/core/util/param.hpp>
+
+// For the tests, we want to call the binding function
+// mlpack_test_<BINDING_NAME>() instead of just <BINDING_NAME>(), so we change
+// the definition of BINDING_FUNCTION().  This is to avoid namespace/function
+// ambiguities.
+#undef BINDING_FUNCTION
+#define BINDING_FUNCTION(...) JOIN(mlpack_test_, BINDING_NAME)(__VA_ARGS__)
 
 #elif(BINDING_TYPE == BINDING_TYPE_PYX) // This is a Python binding.
 
@@ -198,7 +211,8 @@ using Option = mlpack::bindings::tests::TestOption<T>;
  * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or
  * not a specific parameter check should be ignored.
  */
-#define BINDING_IGNORE_CHECK mlpack::bindings::python::IgnoreCheck
+#define BINDING_IGNORE_CHECK(x) mlpack::bindings::python::IgnoreCheck( \
+    STRINGIFY(BINDING_NAME), x)
 
 namespace mlpack {
 namespace util {
@@ -209,31 +223,31 @@ using Option = mlpack::bindings::python::PyOption<T>;
 }
 }
 
-static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef BINDING_NAME
-#define BINDING_NAME(NAME) static \
-    mlpack::util::ProgramName \
-    io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
-    namespace mlpack { \
-    namespace bindings { \
-    namespace python { \
-    std::string programName = NAME; \
-    } \
-    } \
-    }
+// In Python, we want to call the binding function mlpack_<BINDING_NAME>()
+// instead of just <BINDING_NAME>(), so we change the definition of
+// BINDING_FUNCTION().
+#undef BINDING_FUNCTION
+#define BINDING_FUNCTION(...) JOIN(mlpack_, BINDING_NAME)(__VA_ARGS__)
 
-PARAM_FLAG("verbose", "Display informational messages and the full list of "
-    "parameters and timers at the end of execution.", "v");
-PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
-    " copied before the method is run.  This is useful for debugging problems "
-    "where the input parameters are being modified by the algorithm, but can "
-    "slow down the code.", "");
-PARAM_FLAG("check_input_matrices", "If specified, the input matrix is checked "
-    "for NaN and inf values; an exception is thrown if any are found.", "");
+#ifndef BINDING_NAME
+  #error "BINDING_NAME not defined!"
+#endif
 
-// Nothing else needs to be defined---the binding will use mlpackMain() as-is.
+PARAM_GLOBAL(bool, "verbose", "Display informational messages and the full "
+    "list of parameters and timers at the end of execution.", "v", "bool",
+    false, true, false, false)
+PARAM_GLOBAL(bool, "copy_all_inputs", "If specified, all input parameters "
+    "will be deep copied before the method is run.  This is useful for "
+    "debugging problems where the input parameters are being modified "
+    "by the algorithm, but can slow down the code.", "", "bool",
+    false, true, false, false)
+PARAM_GLOBAL(bool, "check_input_matrices", "If specified, the input matrix "
+    "is checked for NaN and inf values; an exception is thrown if any are "
+    "found.", "", "bool", false, true, false, false)
+
+// Nothing else needs to be defined---the binding will use BINDING_NAME() as-is.
 
 #elif(BINDING_TYPE == BINDING_TYPE_JL) // This is a Julia binding.
 
@@ -247,8 +261,10 @@ PARAM_FLAG("check_input_matrices", "If specified, the input matrix is checked "
 #define PRINT_PARAM_VALUE mlpack::bindings::julia::PrintValue
 #define PRINT_DATASET mlpack::bindings::julia::PrintDataset
 #define PRINT_MODEL mlpack::bindings::julia::PrintModel
-#define PRINT_CALL mlpack::bindings::julia::ProgramCall
-#define BINDING_IGNORE_CHECK mlpack::bindings::julia::IgnoreCheck
+#define PRINT_CALL(...) mlpack::bindings::julia::ProgramCall( \
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+#define BINDING_IGNORE_CHECK(...) mlpack::bindings::julia::IgnoreCheck( \
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
 
 namespace mlpack {
 namespace util {
@@ -259,23 +275,24 @@ using Option = mlpack::bindings::julia::JuliaOption<T>;
 }
 }
 
-static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
+#ifdef BINDING_NAME
+  #define OLD_BINDING_NAME BINDING_NAME
 #undef BINDING_NAME
-#define BINDING_NAME(NAME) static \
-    mlpack::util::ProgramName \
-    io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
-    namespace mlpack { \
-    namespace bindings { \
-    namespace julia { \
-    std::string programName = NAME; \
-    } \
-    } \
-    }
+#endif
+#define BINDING_NAME
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
+
+#ifdef OLD_BINDING_NAME
+  #undef BINDING_NAME
+  #define BINDING_NAME OLD_BINDING_NAME
+  #undef OLD_BINDING_NAME
+#else
+  #undef BINDING_NAME
+#endif
 
 // Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 
@@ -306,8 +323,8 @@ using Option = mlpack::bindings::go::GoOption<T>;
 static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef BINDING_NAME
-#define BINDING_NAME(NAME) static \
+#undef BINDING_USER_NAME
+#define BINDING_USER_NAME(NAME) static \
     mlpack::util::ProgramName \
     io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
     namespace mlpack { \
@@ -424,13 +441,13 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/bindings/markdown/program_doc_wrapper.hpp>
 
-#undef BINDING_NAME
+#undef BINDING_USER_NAME
 #undef BINDING_SHORT_DESC
 #undef BINDING_LONG_DESC
 #undef BINDING_EXAMPLE
 #undef BINDING_SEE_ALSO
 
-#define BINDING_NAME(NAME) static \
+#define BINDING_USER_NAME(NAME) static \
     mlpack::bindings::markdown::ProgramNameWrapper \
     io_programname_dummy_object = \
     mlpack::bindings::markdown::ProgramNameWrapper( \

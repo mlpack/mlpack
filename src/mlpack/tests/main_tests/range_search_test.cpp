@@ -2,42 +2,26 @@
  * @file tests/main_tests/range_search_test.cpp
  * @author Niteya Shah
  *
- * Test mlpackMain() of range_search_main.cpp.
+ * Test RUN_BINDING() of range_search_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "RangeSearchMain";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/range_search/range_search_main.cpp>
+
 #include "range_search_utils.hpp"
+#include "main_test_fixture.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
 
-struct RangeSearchTestFixture
-{
- public:
-  RangeSearchTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-  ~RangeSearchTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(RangeSearchTestFixture);
 
 /**
  * Check that we have to specify a reference set or input model.
@@ -46,7 +30,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchNoReference",
                  "[RangeSearchMainTest][BindingTests]")
 {
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -83,13 +67,21 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchInputModelNoQuery",
   SetInputParam("distances_file", distanceFile);
   SetInputParam("neighbors_file", neighborsFile);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  SetInputParam("input_model", move(IO::GetParam<RSModel*>("output_model")));
+  RSModel* m = params.Get<RSModel*>("output_model");
+  params.Get<RSModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
+
+  SetInputParam("input_model", m);
+  SetInputParam("min", minVal);
+  SetInputParam("max", maxVal);
+  SetInputParam("distances_file", distanceFile);
+  SetInputParam("neighbors_file", neighborsFile);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   remove(neighborsFile.c_str());
@@ -118,7 +110,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchDifferentTree",
   SetInputParam("tree_type", wrongTreeType);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   remove(neighborsFile.c_str());
@@ -148,13 +140,13 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchBothReferenceAndModel",
   SetInputParam("neighbors_file", neighborsFile);
   SetInputParam("query", queryData);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  SetInputParam("input_model", move(IO::GetParam<RSModel*>("output_model")));
+  SetInputParam("input_model", move(params.Get<RSModel*>("output_model")));
   SetInputParam("query", move(queryData));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
   remove(neighborsFile.c_str());
@@ -198,7 +190,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSearchTest",
   SetInputParam("distances_file", distanceFile);
   SetInputParam("neighbors_file", neighborsFile);
 
-  mlpackMain();
+  RUN_BINDING();
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
@@ -243,7 +235,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RangeSeachTestwithQuery",
   SetInputParam("distances_file", distanceFile);
   SetInputParam("neighbors_file", neighborsFile);
 
-  mlpackMain();
+  RUN_BINDING();
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
@@ -281,18 +273,21 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "ModelCheck",
   SetInputParam("neighbors_file", neighborsFile);
   SetInputParam("query", queryData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
 
-  RSModel* outputModel = IO::GetParam<RSModel*>("output_model");
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
+  RSModel* outputModel = params.Get<RSModel*>("output_model");
+  params.Get<RSModel*>("output_model") = NULL;
+
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("input_model", outputModel);
   SetInputParam("query", move(queryData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   neighborsTemp = ReadData<size_t>(neighborsFile);
   distancetemp = ReadData<double>(distanceFile);
@@ -301,7 +296,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "ModelCheck",
   CheckMatrices(distances, distancetemp);
 
   REQUIRE(ModelToString(outputModel) ==
-          ModelToString(IO::GetParam<RSModel*>("output_model")));
+          ModelToString(params.Get<RSModel*>("output_model")));
 
   remove(neighborsFile.c_str());
   remove(distanceFile.c_str());
@@ -335,9 +330,9 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "LeafValueTesting",
   SetInputParam("leaf_size", leafSizes[0]);
   // The default leaf size is 20.
 
-  mlpackMain();
+  RUN_BINDING();
 
-  RSModel* outputModel1 = IO::GetParam<RSModel*>("output_model");
+  RSModel* outputModel1 = params.Get<RSModel*>("output_model");
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
 
@@ -350,7 +345,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "LeafValueTesting",
     SetInputParam("distances_file", distanceFile);
     SetInputParam("neighbors_file", neighborsFile);
 
-    mlpackMain();
+    RUN_BINDING();
 
     neighborsTemp = ReadData<size_t>(neighborsFile);
     distancestemp = ReadData<double>(distanceFile);
@@ -359,10 +354,10 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "LeafValueTesting",
     CheckMatrices(distances, distancestemp);
 
     REQUIRE(ModelToString(outputModel1) !=
-            ModelToString(IO::GetParam<RSModel*>("output_model")));
+            ModelToString(params.Get<RSModel*>("output_model")));
 
     if (i != leafSizes.size() - 1)
-      delete IO::GetParam<RSModel*>("output_model");
+      delete params.Get<RSModel*>("output_model");
   }
 
   delete outputModel1;
@@ -404,11 +399,11 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "TreeTypeTesting",
   SetInputParam("reference", inputData);
   SetInputParam("query", queryData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
-  RSModel* outputModel1 = IO::GetParam<RSModel*>("output_model");
+  RSModel* outputModel1 = params.Get<RSModel*>("output_model");
 
   for (size_t i = 1; i < trees.size(); ++i)
   {
@@ -425,7 +420,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "TreeTypeTesting",
     SetInputParam("reference", inputData);
     SetInputParam("tree_type", trees[i]);
 
-    mlpackMain();
+    RUN_BINDING();
 
     neighborsTemp = ReadData<size_t>(neighborsFile);
     distancestemp = ReadData<double>(distanceFile);
@@ -433,10 +428,10 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "TreeTypeTesting",
     CheckMatrices(neighbors, neighborsTemp);
     CheckMatrices(distances, distancestemp);
     REQUIRE(ModelToString(outputModel1) !=
-            ModelToString(IO::GetParam<RSModel*>("output_model")));
+            ModelToString(params.Get<RSModel*>("output_model")));
 
     if (i != trees.size() - 1)
-      delete IO::GetParam<RSModel*>("output_model");
+      delete params.Get<RSModel*>("output_model");
   }
 
   delete outputModel1;
@@ -468,9 +463,9 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RandomBasisTesting",
   SetInputParam("neighbors_file", neighborsFile);
   SetInputParam("reference", inputData);
 
-  mlpackMain();
+  RUN_BINDING();
 
-  RSModel* outputModel = move(IO::GetParam<RSModel*>("output_model"));
+  RSModel* outputModel = move(params.Get<RSModel*>("output_model"));
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -479,10 +474,10 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "RandomBasisTesting",
   SetInputParam("reference", inputData);
   SetInputParam("random_basis", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   REQUIRE(ModelToString(outputModel) !=
-          ModelToString(IO::GetParam<RSModel*>("output_model")));
+          ModelToString(params.Get<RSModel*>("output_model")));
 
   delete outputModel;
 
@@ -515,11 +510,11 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "NaiveModeTest",
   SetInputParam("neighbors_file", neighborsFile);
   SetInputParam("reference", inputData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
-  RSModel* outputModel = move(IO::GetParam<RSModel*>("output_model"));
+  RSModel* outputModel = move(params.Get<RSModel*>("output_model"));
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -528,7 +523,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "NaiveModeTest",
   SetInputParam("reference", inputData);
   SetInputParam("naive", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   neighborsTemp = ReadData<size_t>(neighborsFile);
   distancestemp = ReadData<double>(distanceFile);
@@ -537,7 +532,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "NaiveModeTest",
   CheckMatrices(distances, distancestemp);
 
   REQUIRE(ModelToString(outputModel) !=
-          ModelToString(IO::GetParam<RSModel*>("output_model")));
+          ModelToString(params.Get<RSModel*>("output_model")));
 
   delete outputModel;
 
@@ -570,11 +565,11 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "SingleModeTest",
   SetInputParam("neighbors_file", neighborsFile);
   SetInputParam("reference", inputData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   neighbors = ReadData<size_t>(neighborsFile);
   distances = ReadData<double>(distanceFile);
-  RSModel* outputModel = move(IO::GetParam<RSModel*>("output_model"));
+  RSModel* outputModel = move(params.Get<RSModel*>("output_model"));
 
   SetInputParam("min", minVal);
   SetInputParam("max", maxVal);
@@ -583,7 +578,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "SingleModeTest",
   SetInputParam("reference", inputData);
   SetInputParam("single_mode", true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   neighborsTemp = ReadData<size_t>(neighborsFile);
   distancestemp = ReadData<double>(distanceFile);
@@ -591,7 +586,7 @@ TEST_CASE_METHOD(RangeSearchTestFixture, "SingleModeTest",
   CheckMatrices(neighbors, neighborsTemp);
   CheckMatrices(distances, distancestemp);
   REQUIRE(ModelToString(outputModel) !=
-          ModelToString(IO::GetParam<RSModel*>("output_model")));
+          ModelToString(params.Get<RSModel*>("output_model")));
 
   delete outputModel;
 

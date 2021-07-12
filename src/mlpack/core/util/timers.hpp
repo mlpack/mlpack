@@ -93,7 +93,14 @@ class Timer
    * existing timers.
    */
   static void ResetAll();
+
+  /**
+   * Returns a copy of all the timers used via this interface.
+   */
+  static std::map<std::string, std::chrono::microseconds> GetAllTimers();
 };
+
+namespace util {
 
 class Timers
 {
@@ -118,15 +125,15 @@ class Timers
    *
    * @param timerName The name of the timer in question.
    */
-  std::chrono::microseconds GetTimer(const std::string& timerName);
+  std::chrono::microseconds Get(const std::string& timerName);
 
   /**
    * Prints the specified timer.  If it took longer than a minute to complete
    * the timer will be displayed in days, hours, and minutes as well.
    *
-   * @param timerName The name of the timer in question.
+   * @param timerName The number of microseconds to print.
    */
-  void PrintTimer(const std::string& timerName);
+  static std::string Print(const std::chrono::microseconds& totalDuration);
 
   /**
    * Initializes a timer, available like a normal value specified on
@@ -137,8 +144,8 @@ class Timers
    * @param timerName The name of the timer in question.
    * @param threadId Id of the thread accessing the timer.
    */
-  void StartTimer(const std::string& timerName,
-                  const std::thread::id& threadId = std::thread::id());
+  void Start(const std::string& timerName,
+             const std::thread::id& threadId = std::thread::id());
 
   /**
    * Halts the timer, and replaces its value with the delta time from its start.
@@ -146,17 +153,8 @@ class Timers
    * @param timerName The name of the timer in question.
    * @param threadId Id of the thread accessing the timer.
    */
-  void StopTimer(const std::string& timerName,
-                 const std::thread::id& threadId = std::thread::id());
-
-  /**
-   * Returns state of the given timer.
-   *
-   * @param timerName The name of the timer in question.
-   * @param threadId Id of the thread accessing the timer.
-   */
-  bool GetState(const std::string& timerName,
-                const std::thread::id& threadId = std::thread::id());
+  void Stop(const std::string& timerName,
+            const std::thread::id& threadId = std::thread::id());
 
   /**
    * Stop all timers.
@@ -181,6 +179,7 @@ class Timers
   std::atomic<bool> enabled;
 };
 
+} // namespace util
 } // namespace mlpack
 
 #endif // MLPACK_CORE_UTILITIES_TIMERS_HPP

@@ -21,6 +21,9 @@ set(SOURCES
   param_checks.hpp
   param_checks_impl.hpp
   param_data.hpp
+  params.hpp
+  params_impl.hpp
+  params.cpp
   prefixedoutstream.hpp
   prefixedoutstream.cpp
   prefixedoutstream_impl.hpp

@@ -60,12 +60,6 @@ class MDOption
     data.required = required;
     data.input = input;
     data.loaded = false;
-    // Several options from Python and CLI bindings are persistent.
-    if (identifier == "verbose" || identifier == "copy_all_inputs" ||
-        identifier == "help" || identifier == "info" || identifier == "version")
-      data.persistent = true;
-    else
-      data.persistent = false;
     data.cppType = cppName;
 
     // Every parameter we'll get from Markdown will have the correct type.

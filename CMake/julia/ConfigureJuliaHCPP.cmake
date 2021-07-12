@@ -26,9 +26,11 @@ if (${NUM_MODEL_TYPES} GREATER 0)
     # Generate the definition.
     set(MODEL_PTR_DEFNS "${MODEL_PTR_DEFNS}
 // Get the pointer to a ${MODEL_TYPE} parameter.
-void* IO_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName);
+void* GetParam${MODEL_SAFE_TYPE}Ptr(void* params, const char* paramName);
 // Set the pointer to a ${MODEL_TYPE} parameter.
-void IO_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr);
+void SetParam${MODEL_SAFE_TYPE}Ptr(void* params,
+                                   const char* paramName,
+                                   void* ptr);
 // Delete a ${MODEL_TYPE} pointer.
 void Delete${MODEL_SAFE_TYPE}Ptr(void* ptr);
 // Serialize a ${MODEL_TYPE} pointer.
@@ -40,16 +42,20 @@ void* Deserialize${MODEL_SAFE_TYPE}Ptr(const char* buffer, const size_t length);
     # Generate the implementation.
     set(MODEL_PTR_IMPLS "${MODEL_PTR_IMPLS}
 // Get the pointer to a ${MODEL_TYPE} parameter.
-void* IO_GetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName)
+void* GetParam${MODEL_SAFE_TYPE}Ptr(void* params, const char* paramName)
 {
-  return (void*) IO::GetParam<${MODEL_TYPE}*>(paramName);
+  util::Params* p = (util::Params*) params;
+  return (void*) p->Get<${MODEL_TYPE}*>(paramName);
 }
 
 // Set the pointer to a ${MODEL_TYPE} parameter.
-void IO_SetParam${MODEL_SAFE_TYPE}Ptr(const char* paramName, void* ptr)
+void SetParam${MODEL_SAFE_TYPE}Ptr(void* params,
+                                   const char* paramName,
+                                   void* ptr)
 {
-  IO::GetParam<${MODEL_TYPE}*>(paramName) = (${MODEL_TYPE}*) ptr;
-  IO::SetPassed(paramName);
+  util::Params* p = (util::Params*) params;
+  p->Get<${MODEL_TYPE}*>(paramName) = (${MODEL_TYPE}*) ptr;
+  p->SetPassed(paramName);
 }
 
 // Delete a ${MODEL_TYPE} pointer.

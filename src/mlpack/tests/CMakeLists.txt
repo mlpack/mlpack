@@ -22,7 +22,7 @@ add_executable(mlpack_test
   block_krylov_svd_test.cpp
   callback_test.cpp
   cf_test.cpp
-  cli_binding_test.cpp
+#  cli_binding_test.cpp
   convolutional_network_test.cpp
   convolution_test.cpp
   cosine_tree_test.cpp
@@ -47,7 +47,7 @@ add_executable(mlpack_test
   image_load_test.cpp
   imputation_test.cpp
   init_rules_test.cpp
-  io_test.cpp
+#  io_test.cpp
   kde_test.cpp
   kernel_pca_test.cpp
   kernel_test.cpp
@@ -85,7 +85,7 @@ add_executable(mlpack_test
   pca_test.cpp
   perceptron_test.cpp
   prefixedoutstream_test.cpp
-  python_binding_test.cpp
+#  python_binding_test.cpp
   qdafn_test.cpp
   quic_svd_test.cpp
   q_learning_test.cpp
@@ -154,8 +154,8 @@ add_executable(mlpack_test
   main_tests/knn_test.cpp
   main_tests/krann_test.cpp
   main_tests/linear_regression_test.cpp
-  main_tests/lmnn_test.cpp
   main_tests/linear_svm_test.cpp
+  main_tests/lmnn_test.cpp
   main_tests/local_coordinate_coding_test.cpp
   main_tests/logistic_regression_test.cpp
   main_tests/lsh_test.cpp
@@ -172,10 +172,10 @@ add_executable(mlpack_test
   main_tests/preprocess_split_test.cpp
   main_tests/radical_test.cpp
   main_tests/random_forest_test.cpp
+  main_tests/range_search_test.cpp
   main_tests/softmax_regression_test.cpp
   main_tests/sparse_coding_test.cpp
-  main_tests/range_search_test.cpp
-  main_tests/test_helper.hpp
+  main_tests/main_test_fixture.hpp
 )
 
 if(NOT BUILD_SHARED_LIBS)

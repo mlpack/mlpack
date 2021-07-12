@@ -132,7 +132,9 @@ set(CYTHON_SOURCES
   mlpack/matrix_utils.py
   mlpack/serialization.hpp
   mlpack/serialization.pxd
+  mlpack/params.pxd
   mlpack/preprocess_json_params.py
+  mlpack/timers.pxd
 )
 
 set(TEST_SOURCES

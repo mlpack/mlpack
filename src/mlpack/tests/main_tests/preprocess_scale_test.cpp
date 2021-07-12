@@ -2,7 +2,7 @@
  * @file tests/main_tests/preprocess_scale_test.cpp
  * @author Jeffin Sam
  *
- * Test mlpackMain() of preprocess_scale_main.cpp.
+ * Test RUN_BINDING() of preprocess_scale_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,37 +12,20 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-static const std::string testName = "PreprocessScale";
-
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/preprocess/preprocess_scale_main.cpp>
 
-#include "test_helper.hpp"
+#include "main_test_fixture.hpp"
+
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
 
-struct PreprocessScaleTestFixture
-{
- public:
-  static arma::mat dataset;
-  PreprocessScaleTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
+BINDING_TEST_FIXTURE(PreprocessScaleTestFixture);
 
-  ~PreprocessScaleTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
-
-arma::mat PreprocessScaleTestFixture::dataset = "-1 -0.5 0 1;"
-                                                "2 6 10 18;";
+arma::mat scaleMainDataset = "-1 -0.5 0 1;"
+                             "2 6 10 18;";
 
 /**
  * Check that two different scalers give two different output.
@@ -52,20 +35,21 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "TwoScalerTest",
 {
   // Input custom data points.
   std::string method = "max_abs_scaler";
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", method);
 
-  mlpackMain();
-  arma::mat maxAbsScalerOutput = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat maxAbsScalerOutput = params.Get<arma::mat>("output");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   method = "standard_scaler";
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", std::move(method));
 
-  mlpackMain();
-  arma::mat standardScalerOutput = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat standardScalerOutput = params.Get<arma::mat>("output");
 
   CheckMatricesNotEqual(standardScalerOutput, maxAbsScalerOutput);
 }
@@ -79,23 +63,24 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "TwoOptionTest",
 {
   std::string method = "min_max_scaler";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", method);
 
-  mlpackMain();
-  arma::mat output = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat output = params.Get<arma::mat>("output");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("min_value", 2);
   SetInputParam("max_value", 4);
 
-  mlpackMain();
-  arma::mat output_with_param = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat outputWithParam = params.Get<arma::mat>("output");
 
-  CheckMatricesNotEqual(output, output_with_param);
+  CheckMatricesNotEqual(output, outputWithParam);
 }
 
 /**
@@ -106,22 +91,23 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "UnrelatedOptionTest",
 {
   std::string method = "standard_scaler";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", method);
 
-  mlpackMain();
-  arma::mat scaled = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat scaled = params.Get<arma::mat>("output");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("min_value", 2);
   SetInputParam("max_value", 4);
   SetInputParam("epsilon", 0.005);
 
-  mlpackMain();
-  arma::mat output = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat output = params.Get<arma::mat>("output");
 
   CheckMatrices(scaled, output);
 }
@@ -134,20 +120,20 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "InverseScalingTest",
 {
   std::string method = "zca_whitening";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", std::move(method));
 
-  mlpackMain();
-  arma::mat scaled = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat scaled = params.Get<arma::mat>("output");
 
   SetInputParam("input", scaled);
   SetInputParam("input_model",
-                IO::GetParam<ScalingModel*>("output_model"));
+                params.Get<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
 
-  mlpackMain();
-  arma::mat output = IO::GetParam<arma::mat>("output");
-  CheckMatrices(dataset, output);
+  RUN_BINDING();
+  arma::mat output = params.Get<arma::mat>("output");
+  CheckMatrices(scaleMainDataset, output);
 }
 
 /**
@@ -158,18 +144,18 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "SavedModelTest",
 {
   std::string method = "pca_whitening";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", std::move(method));
 
-  mlpackMain();
-  arma::mat scaled = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat scaled = params.Get<arma::mat>("output");
 
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("input_model",
-                IO::GetParam<ScalingModel*>("output_model"));
+                params.Get<ScalingModel*>("output_model"));
 
-  mlpackMain();
-  arma::mat output = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat output = params.Get<arma::mat>("output");
   CheckMatrices(scaled, output);
 }
 
@@ -181,20 +167,21 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "EpsilonTest",
 {
   std::string method = "pca_whitening";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", method);
 
-  mlpackMain();
-  arma::mat scaled = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat scaled = params.Get<arma::mat>("output");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   SetInputParam("scaler_method", std::move(method));
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("epsilon", 1.0);
 
-  mlpackMain();
-  arma::mat output = IO::GetParam<arma::mat>("output");
+  RUN_BINDING();
+  arma::mat output = params.Get<arma::mat>("output");
 
   CheckMatricesNotEqual(scaled, output);
 }
@@ -207,11 +194,11 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidEpsilonTest",
 {
   std::string method = "pca_whitening";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("epsilon", -1.0);
 
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
 /**
@@ -222,12 +209,12 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidRangeTest",
 {
   std::string method = "min_max_scaler";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("min_value", 4);
   SetInputParam("max_value", 2);
 
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
 }
 
 /**
@@ -238,13 +225,13 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "InvalidScalerTest",
 {
   std::string method = "invalid_scaler";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", std::move(method));
   SetInputParam("min_value", 4);
   SetInputParam("max_value", 2);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -256,15 +243,15 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "StandardScalerBindingTest",
 {
   std::string method = "standard_scaler";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", method);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
   SetInputParam("scaler_method", std::move(method));
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("input_model",
-                IO::GetParam<ScalingModel*>("output_model"));
+                params.Get<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
 }
 
 /**
@@ -275,15 +262,15 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "MaxAbsScalerBindingTest",
 {
   std::string method = "max_abs_scaler";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", method);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
   SetInputParam("scaler_method", std::move(method));
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("input_model",
-                IO::GetParam<ScalingModel*>("output_model"));
+                params.Get<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
 }
 
 /**
@@ -294,17 +281,17 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "MinMaxScalerBindingTest",
 {
   std::string method = "min_max_scaler";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", method);
   SetInputParam("min_value", 2);
   SetInputParam("max_value", 4);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
   SetInputParam("scaler_method", std::move(method));
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("input_model",
-                IO::GetParam<ScalingModel*>("output_model"));
+                params.Get<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
 }
 
 /**
@@ -315,16 +302,16 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "PCAScalerBindingTest",
 {
   std::string method = "pca_whitening";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", method);
   SetInputParam("epsilon", 1.0);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
   SetInputParam("scaler_method", std::move(method));
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("input_model",
-                IO::GetParam<ScalingModel*>("output_model"));
+                params.Get<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
 }
 
 /**
@@ -335,16 +322,16 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "ZCAScalerBindingTest",
 {
   std::string method = "zca_whitening";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", method);
   SetInputParam("epsilon", 1.0);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
   SetInputParam("scaler_method", std::move(method));
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("input_model",
-                IO::GetParam<ScalingModel*>("output_model"));
+                params.Get<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
 }
 
 /**
@@ -355,13 +342,13 @@ TEST_CASE_METHOD(PreprocessScaleTestFixture, "MeanNormalizationBindingTest",
 {
   std::string method = "mean_normalization";
   // Input custom data points.
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("scaler_method", method);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
   SetInputParam("scaler_method", std::move(method));
-  SetInputParam("input", dataset);
+  SetInputParam("input", scaleMainDataset);
   SetInputParam("input_model",
-                IO::GetParam<ScalingModel*>("output_model"));
+                params.Get<ScalingModel*>("output_model"));
   SetInputParam("inverse_scaling", true);
-  REQUIRE_NOTHROW(mlpackMain());
+  REQUIRE_NOTHROW(RUN_BINDING());
 }

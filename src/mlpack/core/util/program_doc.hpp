@@ -17,16 +17,18 @@
 namespace mlpack {
 namespace util {
 
-class ProgramName
+class BindingName
 {
  public:
   /**
-   * Construct a ProgramName object.  When constructed, it will register itself
-   * with IO.  A fatal error will be thrown if more than one is constructed.
+   * Construct a BindingName object.  When constructed, it will register itself
+   * with IO.  A fatal error will be thrown if more than one is constructed for
+   * a given bindingName.
    *
-   * @param programName Name of the binding.
+   * @param bindingName Name of the binding.
+   * @param name Name displayed to user of the binding.
    */
-  ProgramName(const std::string& programName);
+  BindingName(const std::string& bindingName, const std::string& name);
 };
 
 class ShortDescription
@@ -37,24 +39,29 @@ class ShortDescription
    * itself with IO.  A fatal error will be thrown if more than one is
    * constructed.
    *
+   * @param bindingName Name of the binding.
    * @param shortDescription A short two-sentence description of the binding,
    *     what it does, and what it is useful for.
    */
-  ShortDescription(const std::string& shortDescription);
+  ShortDescription(const std::string& bindingName,
+                   const std::string& shortDescription);
 };
 
 class LongDescription
 {
  public:
   /**
-   * Construct a LongDescription object. When constructed, it will register itself
-   * with IO.  A fatal error will be thrown if more than one is constructed.
+   * Construct a LongDescription object. When constructed, it will register
+   * itself with IO.  A fatal error will be thrown if more than one is
+   * constructed for a given `bindingName`.
    *
+   * @param bindingName Name of the binding.
    * @param longDescription Long string containing documentation on
    *     what it is.  No newline characters are necessary; this is
    *     taken care of by IO later.
    */
-  LongDescription(const std::function<std::string()>& longDescription);
+  LongDescription(const std::string& bindingName,
+                  const std::function<std::string()>& longDescription);
 };
 
 class Example
@@ -62,11 +69,13 @@ class Example
  public:
   /**
    * Construct a Example object.  When constructed, it will register itself
-   * with IO.
+   * with IO for the given `bindingName`.
    *
+   * @param bindingName Name of the binding.
    * @param example Documentation on how to use the binding.
    */
-  Example(const std::function<std::string()>& example);
+  Example(const std::string& bindingName,
+          const std::function<std::string()>& example);
 };
 
 class SeeAlso
@@ -74,12 +83,15 @@ class SeeAlso
  public:
   /**
    * Construct a SeeAlso object.  When constructed, it will register itself
-   * with IO.
+   * with IO for the given `bindingName`.
    *
+   * @param bindingName Name of the binding.
    * @param description Description of SeeAlso.
    * @param link Link of SeeAlso.
    */
-  SeeAlso(const std::string& description, const std::string& link);
+  SeeAlso(const std::string& bindingName,
+          const std::string& description,
+          const std::string& link);
 };
 
 } // namespace util

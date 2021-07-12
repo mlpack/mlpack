@@ -2,44 +2,26 @@
  * @file tests/main_tests/approx_kfn_test.cpp
  * @author Namrata Mukhija
  *
- * Test mlpackMain() of approx_kfn_main.cpp.
+ * Test RUN_BINDING() of approx_kfn_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
-static const std::string testName = "ApproxK-FurthestNeighbors";
 
 #include <mlpack/core.hpp>
 #include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/approx_kfn/approx_kfn_main.cpp>
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct ApproxKFNTestFixture
-{
- public:
-  ApproxKFNTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~ApproxKFNTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(ApproxKFNTestFixture);
 
 /**
  * Check that we can't specify both a reference set and an input model.
@@ -60,7 +42,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNRefModelTest",
 
   // Input pre-trained model.
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -78,7 +60,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNInvalidKTest",
   SetInputParam("k", (int) 81); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -96,15 +78,15 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNOutputDimensionTest",
   SetInputParam("reference", std::move(referenceData));
   SetInputParam("k", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check the neighbors matrix has 10 points for each of the 80 input points.
-  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_rows == 10);
-  REQUIRE(IO::GetParam<arma::Mat<size_t>>("neighbors").n_cols == 80);
+  REQUIRE(params.Get<arma::Mat<size_t>>("neighbors").n_rows == 10);
+  REQUIRE(params.Get<arma::Mat<size_t>>("neighbors").n_cols == 80);
 
   // Check the distances matrix has 10 points for each of the 80 input points.
-  REQUIRE(IO::GetParam<arma::mat>("distances").n_rows == 10);
-  REQUIRE(IO::GetParam<arma::mat>("distances").n_cols == 80);
+  REQUIRE(params.Get<arma::mat>("distances").n_rows == 10);
+  REQUIRE(params.Get<arma::mat>("distances").n_cols == 80);
 }
 
 /**
@@ -120,7 +102,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNInvalidAlgorithmTest",
   SetInputParam("algorithm", (string) "any_algo"); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -138,7 +120,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNZeroNumProjTest",
   SetInputParam("num_projections", (int) 0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -156,7 +138,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNegativeNumProjTest",
   SetInputParam("num_projections", (int) -5); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -174,7 +156,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNZeroNumTablesTest",
   SetInputParam("num_tables", (int) 0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -192,7 +174,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNegativeNumTablesTest",
   SetInputParam("num_tables", (int) -5); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -213,31 +195,29 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNModelReuseTest",
   SetInputParam("query", queryData);
   SetInputParam("k", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Mat<size_t> neighbors;
   arma::mat distances;
-  neighbors = std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  distances = std::move(IO::GetParam<arma::mat>("distances"));
+  neighbors = std::move(params.Get<arma::Mat<size_t>>("neighbors"));
+  distances = std::move(params.Get<arma::mat>("distances"));
   ApproxKFNModel* model =
-      new ApproxKFNModel(*IO::GetParam<ApproxKFNModel*>("output_model"));
+      new ApproxKFNModel(*params.Get<ApproxKFNModel*>("output_model"));
 
-  bindings::tests::CleanMemory();
-
-  // Reset passed parameters.
-  IO::GetSingleton().Parameters()["reference"].wasPassed = false;
-  IO::GetSingleton().Parameters()["query"].wasPassed = false;
+  CleanMemory();
+  ResetSettings();
 
   // Input saved model, pass the same query and keep k unchanged.
   SetInputParam("input_model", model);
   SetInputParam("query", queryData);
+  SetInputParam("k", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial output matrices and the output matrices using
   // saved model are equal.
-  CheckMatrices(neighbors, IO::GetParam<arma::Mat<size_t>>("neighbors"));
-  CheckMatrices(distances, IO::GetParam<arma::mat>("distances"));
+  CheckMatrices(neighbors, params.Get<arma::Mat<size_t>>("neighbors"));
+  CheckMatrices(distances, params.Get<arma::mat>("distances"));
 }
 
 /**
@@ -257,16 +237,15 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNumTablesChangeTest",
   SetInputParam("num_projections", (int) 10);
 
   // First solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the distances matrix after first training.
   arma::mat firstOutputDistances =
-      std::move(IO::GetParam<arma::mat>("distances"));
+      std::move(params.Get<arma::mat>("distances"));
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   // Second setting.
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
@@ -278,11 +257,11 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNumTablesChangeTest",
 
   SetInputParam("num_projections", (int) 10);
   // Second solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the distances matrix after second training.
   arma::mat secondOutputDistances =
-      std::move(IO::GetParam<arma::mat>("distances"));
+      std::move(params.Get<arma::mat>("distances"));
 
   // Check that the size of distance matrices (FirstOutputDistances and
   // SecondOutputDistances) are not equal which ensures num_tables changes
@@ -307,16 +286,16 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNumProjectionsChangeTest",
   SetInputParam("num_projections", (int) 4);
   SetInputParam("num_tables", (int) 3);
   // First solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the distances matrix after first training.
   arma::mat firstOutputDistances =
-      std::move(IO::GetParam<arma::mat>("distances"));
+      std::move(params.Get<arma::mat>("distances"));
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
+
   // Second setting.
   referenceData.randu(2, 80); // 80 points in 2 dimensions.
   SetInputParam("reference", std::move(referenceData));
@@ -327,11 +306,11 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNNumProjectionsChangeTest",
   SetInputParam("num_tables", (int) 3);
 
   // Second solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the distances matrix after second training.
   arma::mat secondOutputDistances =
-      std::move(IO::GetParam<arma::mat>("distances"));
+      std::move(params.Get<arma::mat>("distances"));
 
   // Check that the size of distance matrices (FirstOutputDistances and
   // SecondOutputDistances) are not equal which ensures num_tables changes
@@ -361,7 +340,7 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNExactDistDimensionTest",
   SetInputParam("exact_distances", std::move(exactDistances));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -381,18 +360,17 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNDifferentAlgoTest",
   SetInputParam("algorithm", (string) "ds");
 
   // First solution.
-  mlpackMain();
+  RUN_BINDING();
 
   // Get the distances and neighbors matrix after first training.
   arma::mat firstOutputDistances =
-  std::move(IO::GetParam<arma::mat>("distances"));
+  std::move(params.Get<arma::mat>("distances"));
   arma::Mat<size_t> firstOutputNeighbors =
-    std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
+    std::move(params.Get<arma::Mat<size_t>>("neighbors"));
 
   // Reset the settings.
-  bindings::tests::CleanMemory();
-  IO::ClearSettings();
-  IO::RestoreSettings(testName);
+  CleanMemory();
+  ResetSettings();
 
   // Second solution.
   SetInputParam("reference", std::move(referenceData));
@@ -402,9 +380,9 @@ TEST_CASE_METHOD(ApproxKFNTestFixture, "ApproxKFNDifferentAlgoTest",
 
   // Get the distances and neighbors matrix after second training.
   arma::mat secondOutputDistances =
-      std::move(IO::GetParam<arma::mat>("distances"));
+      std::move(params.Get<arma::mat>("distances"));
   arma::Mat<size_t> secondOutputNeighbors =
-      std::move(IO::GetParam<arma::Mat<size_t>>("neighbors"));
+      std::move(params.Get<arma::Mat<size_t>>("neighbors"));
 
   // Check that the distance matrices (firstOutputDistances and
   // secondOutputDistances) and neighbor matrices (firstOutputNeighbors and

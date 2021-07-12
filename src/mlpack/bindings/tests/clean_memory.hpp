@@ -13,6 +13,8 @@
 #ifndef MLPACK_BINDINGS_TESTS_CLEAN_MEMORY_HPP
 #define MLPACK_BINDINGS_TESTS_CLEAN_MEMORY_HPP
 
+#include <mlpack/core/util/params.hpp>
+
 namespace mlpack {
 namespace bindings {
 namespace tests {
@@ -20,7 +22,7 @@ namespace tests {
 /**
  * Delete any unique pointers that are held by the IO object.
  */
-void CleanMemory();
+void CleanMemory(util::Params& params);
 
 } // namespace tests
 } // namespace bindings

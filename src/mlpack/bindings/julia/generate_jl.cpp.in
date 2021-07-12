@@ -17,7 +17,6 @@
 #endif
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/bindings/julia/print_jl.hpp>
 
 // This will include the ParamData options that are part of the program.
@@ -31,9 +30,6 @@ using namespace mlpack::util;
 
 int main(int /* argc */, char** /* argv */)
 {
-  // All the parameters are registered, but stored, so restore them.
-  // programName is defined in mlpack_main.hpp.
-  IO::RestoreSettings(programName);
-
-  PrintJL(IO::GetSingleton().doc, "${NAME}", "${MLPACK_JL_LIB_SUFFIX}");
+  // All the parameters are registered under the name BINDING_NAME.
+  PrintJL(STRINGIFY(BINDING_NAME), "${NAME}", "${MLPACK_JL_LIB_SUFFIX}");
 }

@@ -33,26 +33,25 @@ PARAM_FLAG("version", "Display the version of mlpack.", "V");
  * Parse the command line, setting all of the options inside of the CLI object
  * to their appropriate given values.
  */
-void ParseCommandLine(int argc, char** argv)
+mlpack::util::Params ParseCommandLine(int argc, char** argv)
 {
   // First, we need to build the CLI11 variables for parsing.
   CLI::App app;
   app.set_help_flag();
 
+  // Get an empty Params object that will hold all of the parameters for this
+  // call.
+  mlpack::util::Params params = IO::Parameters(STRINGIFY(BINDING_NAME));
   // Go through list of options in order to add them.
-  std::map<std::string, util::ParamData>& parameters = IO::Parameters();
+  std::map<std::string, util::ParamData>& parameters = params.Parameters();
   using ItType = std::map<std::string, util::ParamData>::iterator;
 
   for (ItType it = parameters.begin(); it != parameters.end(); ++it)
   {
     // Add the parameter to desc.
     util::ParamData& d = it->second;
-    IO::GetSingleton().functionMap[d.tname]["AddToCLI11"](d, NULL, (void*)
-        &app);
+    params.functionMap[d.tname]["AddToCLI11"](d, NULL, (void*) &app);
   }
-
-  // Mark that we did parsing.
-  IO::GetSingleton().didParse = true;
 
   // Parse the command line, then place the values in the right place.
   try
@@ -85,37 +84,37 @@ void ParseCommandLine(int argc, char** argv)
   // --info), handle those.
 
   // --version is prioritized over --help.
-  if (IO::HasParam("version"))
+  if (params.Has("version"))
   {
-    std::cout << IO::GetSingleton().ProgramName() << ": part of "
-        << util::GetVersion() << "." << std::endl;
+    std::cout << params.Doc().name << ": part of " << util::GetVersion() << "."
+        << std::endl;
     exit(0); // Don't do anything else.
   }
 
   // Default help message.
-  if (IO::HasParam("help"))
+  if (params.Has("help"))
   {
     Log::Info.ignoreInput = false;
-    PrintHelp();
+    PrintHelp(params);
     exit(0); // The user doesn't want to run the program, he wants help.
   }
 
   // Info on a specific parameter.
-  if (IO::HasParam("info"))
+  if (params.Has("info"))
   {
     Log::Info.ignoreInput = false;
-    std::string str = IO::GetParam<std::string>("info");
+    std::string str = params.Get<std::string>("info");
 
     // The info node should always be there, but the user may not have specified
     // anything.
     if (str != "")
     {
-      PrintHelp(str);
+      PrintHelp(params, str);
       exit(0);
     }
 
     // Otherwise just print the generalized help.
-    PrintHelp();
+    PrintHelp(params);
     exit(0);
   }
 
@@ -123,7 +122,7 @@ void ParseCommandLine(int argc, char** argv)
   // if we have not compiled in debugging mode.
   Log::Debug << "Compiled with debugging symbols." << std::endl;
 
-  if (IO::HasParam("verbose"))
+  if (params.Has("verbose"))
   {
     // Give [INFO ] output.
     Log::Info.ignoreInput = false;
@@ -138,7 +137,7 @@ void ParseCommandLine(int argc, char** argv)
     {
       // CLI11 expects the parameter name to have "--" prepended.
       std::string cliName;
-      IO::GetSingleton().functionMap[d.tname]["MapParameterName"](d, NULL,
+      params.functionMap[d.tname]["MapParameterName"](d, NULL,
           (void*) &cliName);
       cliName = "--" + cliName;
 
@@ -149,6 +148,8 @@ void ParseCommandLine(int argc, char** argv)
       }
     }
   }
+
+  return params;
 }
 
 } // namespace cli
