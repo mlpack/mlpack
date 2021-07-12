@@ -20,6 +20,7 @@
 #include "atrous_convolution.hpp"
 #include "base_layer.hpp"
 #include "batch_norm.hpp"
+#include "bicubic_interpolation.hpp"
 #include "bilinear_interpolation.hpp"
 #include "c_relu.hpp"
 #include "celu.hpp"
