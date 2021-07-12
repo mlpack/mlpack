@@ -25,7 +25,7 @@ void GenerateProblemSparse(arma::mat& matX,
 			   float sigma = 0.0)
 {
   matX = arma::randn(nDims, nPoints);
-  arma::colvec omega = arma::zeros<arma::rowvec>(nDims);
+  arma::colvec omega = arma::zeros<arma::colvec>(nDims);
   omega.head(nDims / 5) = arma::randn(nDims / 5) * 10; 
   
   // Compute y and add noise.
