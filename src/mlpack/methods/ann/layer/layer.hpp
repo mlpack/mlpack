@@ -66,6 +66,7 @@
 #include "reinforce_normal.hpp"
 #include "relu6.hpp"
 #include "reparametrization.hpp"
+#include "separable_convolution.hpp"
 #include "select.hpp"
 #include "sequential.hpp"
 #include "softshrink.hpp"

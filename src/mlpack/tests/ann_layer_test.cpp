@@ -1700,7 +1700,7 @@ TEST_CASE("ConcatAlongAxisTest", "[ANNLayerTest]")
   size_t kW = 3, kH = 3;
   size_t batch = 1;
 
-  // Using Convolution<> layer as inout to Concat<> layer.
+  // Using Convolution<> layer as input to Concat<> layer.
   // Compute the output shape of convolution layer.
   outputWidth  = (inputWidth - kW) + 1;
   outputHeight = (inputHeight - kH) + 1;
@@ -4291,6 +4291,79 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
   // Test the Backward Function.
   module4.Backward(input, output, delta);
   REQUIRE(arma::accu(delta) == 2.25);
+}
+
+/**
+ * Simple Separable Convolution layer test.
+ */
+TEST_CASE("SimpleSeparableConvolutionLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input(224 * 224 * 3, 1), output;
+  SeparableConvolution<> module1(3, 21, 3, 3, 1, 1, 0, 0, 224, 224, 3);
+
+  // Test the forward function.
+  input.fill(2);
+  module1.Parameters().fill(1);
+  module1.Reset();
+  module1.Forward(input, output);
+
+  // Comparison value taken from PyTorch conv layer with the same config
+  REQUIRE(arma::accu(output) == 19664316);
+}
+
+/**
+ * Separable Convolution layer numerical gradient test.
+ */
+TEST_CASE("GradientSeparableConvolutionLayerTest", "[ANNLayerTest]")
+{
+  // There are two gradient tests in this test case.
+  struct GradientFunction
+  {
+    GradientFunction() :
+        input(arma::ones(20 * 20 * 2, 1)),
+        target(arma::mat("0"))
+    {
+      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
+      model->Predictors() = input;
+      model->Responses() = target;
+      model->Add<SeparableConvolution<>>(2, 4, 3, 3, 1, 1, 0, 0, 20, 20, 2);
+      model->Add<LogSoftMax<>>();
+      model->Parameters().fill(0.4);
+    }
+
+    ~GradientFunction()
+    {
+      delete model;
+    }
+
+    double Gradient(arma::mat& gradient) const
+    {
+      double error = model->Evaluate(model->Parameters(), 0, 1);
+      model->Gradient(model->Parameters(), 0, gradient, 1);
+      return error;
+    }
+
+    arma::mat& Parameters() { return model->Parameters(); }
+
+    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    arma::mat input, target;
+  } function;
+
+  REQUIRE(CheckGradient(function) <= 0.4);
+
+  SeparableConvolution<> module(2, 4, 3, 3, 1, 1, 0, 0, 20, 20, 2);
+  arma::mat error(20 * 20 * 2, 1), input1(20 * 20 * 2, 1), gradient1, output;
+  error.fill(1.0);
+  input1.fill(1.0);
+  module.Parameters().fill(1);
+  module.Reset();
+  module.Forward(input1, output);
+  module.Gradient(output, error, gradient1);
+
+  // Value of 324 has been from PyTorch's convolution gradient under same
+  // parametric conditions.
+  for (size_t i = 0; i < gradient1.n_elem; ++i)
+    REQUIRE(gradient1(i) == 324);
 }
 
 TEST_CASE("TransposedConvolutionalLayerOptionalParameterTest", "[ANNLayerTest]")
