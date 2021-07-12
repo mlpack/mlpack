@@ -83,7 +83,7 @@ inline void SetParamWithInfo(const std::string& identifier,
   if (hasCategoricals)
   {
     arma::vec maxs = arma::max(
-        std::get<1>(IO::GetParam<TupleType>(identifier)), 1);
+        std::get<1>(IO::GetParam<TupleType>(identifier)), 1) + 1;
 
     for (size_t i = 0; i < dimensions; ++i)
     {

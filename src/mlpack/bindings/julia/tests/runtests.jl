@@ -287,6 +287,64 @@ end
   end
 end
 
+# Test that we can pass a matrix with categorical features.
+@testset "TestMatrixAndInfoCategorical" begin
+  x = collect(hcat(rand(100),
+                   rand(1:2, 100),
+                   rand(100),
+                   rand(1:4, 100),
+                   rand(1:6, 100),
+                   rand(100))')
+  dims = [false, true, false, true, true, false]
+  z = x
+
+  _, _, _, matrix_and_info_out, _, _, _,  _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         matrix_and_info_in=(dims, z),
+                         points_are_rows=false)
+
+  @test size(matrix_and_info_out, 1) == 6
+  @test size(matrix_and_info_out, 2) == 100
+
+  for i in 1:100
+    for j in [1, 3, 6]
+      @test matrix_and_info_out[j, i] == 2.0 * z[j, i]
+    end
+    for j in [2, 4, 5]
+      @test matrix_and_info_out[j, i] == z[j, i]
+    end
+  end
+end
+
+# Test that we can pass a matrix with categorical features.
+@testset "TestMatrixAndInfoCategoricalRowMajor" begin
+  x = hcat(rand(100),
+           rand(1:2, 100),
+           rand(100),
+           rand(1:4, 100),
+           rand(1:6, 100),
+           rand(100))
+  dims = [false, true, false, true, true, false]
+  z = x
+
+  _, _, _, matrix_and_info_out, _, _, _,  _, _, _, _, _, _, _ =
+      test_julia_binding(4.0, 12, "hello",
+                         matrix_and_info_in=(dims, z),
+                         points_are_rows=true)
+
+  @test size(matrix_and_info_out, 1) == 100
+  @test size(matrix_and_info_out, 2) == 6
+
+  for i in 1:100
+    for j in [1, 3, 6]
+      @test matrix_and_info_out[i, j] == 2.0 * z[i, j]
+    end
+    for j in [2, 4, 5]
+      @test matrix_and_info_out[i, j] == z[i, j]
+    end
+  end
+end
+
 # Test that we can pass a vector of ints and get back that same vector but with
 # the last element removed.
 @testset "TestIntVector" begin

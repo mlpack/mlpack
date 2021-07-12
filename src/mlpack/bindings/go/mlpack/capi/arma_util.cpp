@@ -280,13 +280,37 @@ void mlpackToArmaMatWithInfo(const char* identifier,
                              const size_t cols)
 {
   data::DatasetInfo d(rows);
+  bool hasCategoricals = false;
   for (size_t i = 0; i < d.Dimensionality(); ++i)
   {
     d.Type(i) = (dimensions[i]) ? data::Datatype::categorical :
         data::Datatype::numeric;
+    if (dimensions[i])
+      hasCategoricals = true;
   }
 
   arma::mat m(memptr, rows, cols, false, true);
+
+  // Do we need to find how many categories we have?
+  if (hasCategoricals)
+  {
+    arma::vec maxs = arma::max(m, 1) + 1;
+
+    for (size_t i = 0; i < d.Dimensionality(); ++i)
+    {
+      if (dimensions[i])
+      {
+        // Map the right number of objects.
+        for (size_t j = 0; j < (size_t) maxs[i]; ++j)
+        {
+          std::ostringstream oss;
+          oss << j;
+          d.MapString<double>(oss.str(), i);
+        }
+      }
+    }
+  }
+
   std::get<0>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(
       identifier)) = std::move(d);
   std::get<1>(IO::GetParam<std::tuple<data::DatasetInfo, arma::mat>>(

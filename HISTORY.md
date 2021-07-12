@@ -63,6 +63,9 @@
 
   * Fix `LoadCSV()` to use pre-populated `DatasetInfo` objects (#2980).
 
+  * Fix Julia, Python, R, and Go handling of categorical data for
+    `decision_tree()` and `hoeffding_tree()` (#2971).
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.
