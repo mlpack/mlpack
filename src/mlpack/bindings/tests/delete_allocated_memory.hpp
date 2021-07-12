@@ -42,7 +42,7 @@ void DeleteAllocatedMemoryImpl(
     const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Delete the allocated memory (hopefully we actually own it).
-  delete *boost::any_cast<T*>(&d.value);
+  delete *ANY_CAST<T*>(&d.value);
 }
 
 template<typename T>

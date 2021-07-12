@@ -60,7 +60,7 @@ T& IO::GetParam(const std::string& identifier)
   }
   else
   {
-    return *boost::any_cast<T>(&d.value);
+    return *ANY_CAST<T>(&d.value);
   }
 }
 

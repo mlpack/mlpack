@@ -7,9 +7,6 @@ set(SOURCES
   detail/unchecked_bernoulli.hpp
   math_fwd.hpp
   policy.hpp
-  string_view.hpp
-  string_view_fwd.hpp
-  boost_backport_string_view.hpp
 )
 
 # add directory name to sources

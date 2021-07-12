@@ -36,7 +36,7 @@ std::string DefaultParamImpl(
   if (std::is_same<T, bool>::value)
     oss << "FALSE";
   else
-    oss << boost::any_cast<T>(data.value);
+    oss << ANY_CAST<T>(data.value);
 
   return oss.str();
 }
@@ -51,7 +51,7 @@ std::string DefaultParamImpl(
 {
   // Print each element in an array delimited by square brackets.
   std::ostringstream oss;
-  const T& vector = boost::any_cast<T>(data.value);
+  const T& vector = ANY_CAST<T>(data.value);
   oss << "c(";
   if (std::is_same<T, std::vector<std::string>>::value)
   {
@@ -92,7 +92,7 @@ std::string DefaultParamImpl(
     util::ParamData& data,
     const typename std::enable_if<std::is_same<T, std::string>::value>::type*)
 {
-  const std::string& s = *boost::any_cast<std::string>(&data.value);
+  const std::string& s = *ANY_CAST<std::string>(&data.value);
   return "\"" + s + "\"";
 }
 

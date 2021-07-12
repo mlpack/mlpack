@@ -73,7 +73,7 @@ class JuliaOption
     data.cppType = cppName;
 
     // Every parameter we'll get from Julia will have the correct type.
-    data.value = boost::any(defaultValue);
+    data.value = ANY(defaultValue);
 
     // Restore the parameters for this program.
     if (identifier != "verbose")
