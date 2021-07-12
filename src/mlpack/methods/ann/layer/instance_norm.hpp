@@ -1,46 +1,45 @@
 /**
- * @file methods/ann/layer/batch_norm.hpp
- * @author Praveen Ch
- * @author Manthan-R-Sheth
+ * @file methods/ann/layer/instance_norm.hpp
+ * @author Anjishnu Mukherjee
+ * @author Shah Anwaar Khalid
  *
- * Definition of the Batch Normalization layer class.
+ * Definition of the Instance Normalization layer class.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
-#define MLPACK_METHODS_ANN_LAYER_BATCHNORM_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_INSTANCE_NORM_HPP
+#define MLPACK_METHODS_ANN_LAYER_INSTANCE_NORM_HPP
 
 #include <mlpack/prereqs.hpp>
+#include "layer_types.hpp"
 
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Declaration of the Batch Normalization layer class. The layer transforms
+ * Declaration of the Instance Normalization layer class. The layer transforms
  * the input data into zero mean and unit variance and then scales and shifts
  * the data by parameters, gamma and beta respectively. These parameters are
- * learnt by the network.
+ * learnt by the network. The mean and standard-deviation are calculated
+ * per-dimension separately for each object in a mini-batch.
  *
- * If deterministic is false (training), the mean and variance over the batch is
- * calculated and the data is normalized. If it is set to true (testing) then
+ * If deterministic is false (training), the mean and variance are calculated
+ * and the data is normalized. If it is set to true (testing) then
  * the mean and variance accrued over the training set is used.
  *
  * For more information, refer to the following paper,
  *
  * @code
- * @article{Ioffe15,
- *   author    = {Sergey Ioffe and
- *                Christian Szegedy},
- *   title     = {Batch Normalization: Accelerating Deep Network Training by
- *                Reducing Internal Covariate Shift},
- *   journal   = {CoRR},
- *   volume    = {abs/1502.03167},
- *   year      = {2015},
- *   url       = {http://arxiv.org/abs/1502.03167},
- *   eprint    = {1502.03167},
+ * @article{Ulyanov17,
+ *   author    = {Dmitry Ulyanov, Andrea Vedaldi and
+ *                Victor Lempitsky},
+ *   title     = {Instance Normalization:
+ *                The Missing Ingredient for Fast Stylization},
+ *   year      = {2017},
+ *   url       = {https://arxiv.org/abs/1607.08022}
  * }
  * @endcode
  *
@@ -53,36 +52,31 @@ template <
   typename InputDataType = arma::mat,
   typename OutputDataType = arma::mat
 >
-class BatchNorm
+class InstanceNorm
 {
  public:
-  //! Create the BatchNorm object.
-  BatchNorm();
+  //! Create the InstanceNorm object.
+  InstanceNorm();
 
   /**
-   * Create the BatchNorm layer object for a specified number of input units.
+   * Create the InstanceNorm layer object with the specified parameters.
    *
    * @param size The number of input units / channels.
+   * @param batchSize Size of the minibatch.
    * @param eps The epsilon added to variance to ensure numerical stability.
    * @param average Boolean to determine whether cumulative average is used for
-   *                updating the parameters or momentum is used.
-   * @param affine  Boolean value that when set to True,
-   *                the module has learnable affine parameters.
-   * @param momentum Parameter used to to update the running mean and variance.
+   *                updating the parameters or momentum.
+   * @param momentum Parameter used to update the running mean and variance.
    */
-  BatchNorm(const size_t size,
-            const double eps = 1e-8,
-            const bool average = true,
-            const bool affine = true,
-            const double momentum = 0.1);
+  InstanceNorm(const size_t size,
+               const size_t batchSize,
+               const double eps = 1e-5,
+               const bool average = true,
+               const bool affine = true,
+               const double momentum = 0.1);
 
   /**
-   * Reset the layer parameters
-   */
-  void Reset();
-
-  /**
-   * Forward pass of the Batch Normalization layer. Transforms the input data
+   * Forward pass of the Instance Normalization layer. Transforms the input data
    * into zero mean and unit variance, scales the data by a factor gamma and
    * shifts it by beta.
    *
@@ -117,24 +111,26 @@ class BatchNorm
                 arma::Mat<eT>& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputDataType const& Parameters() const { return batchNorm.Parameters(); }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputDataType& Parameters() { return batchNorm.Parameters(); }
 
   //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
+  OutputDataType const& OutputParameter() const
+  { return batchNorm.OutputParameter(); }
+
   //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
+  OutputDataType& OutputParameter() { return batchNorm.OutputParameter(); }
 
   //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
+  OutputDataType const& Delta() const { return batchNorm.Delta(); }
   //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  OutputDataType& Delta() { return batchNorm.Delta(); }
 
   //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
+  OutputDataType const& Gradient() const { return batchNorm.Gradient(); }
   //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputDataType& Gradient() { return batchNorm.Gradient(); }
 
   //! Get the value of deterministic parameter.
   bool Deterministic() const { return deterministic; }
@@ -153,21 +149,34 @@ class BatchNorm
 
   //! Get the number of input units / channels.
   size_t InputSize() const { return size; }
+  //! Modify the input units/ channels.
+  size_t InputSize() {return size; }
 
   //! Get the epsilon value.
   double Epsilon() const { return eps; }
+  //! Modify the epsilon value.
+  double Epsilon() { return eps; }
+
 
   //! Get the momentum value.
   double Momentum() const { return momentum; }
+  //! Modify the momentum value.
+  double Momentum() { return momentum; }
 
   //! Get the average parameter.
   bool Average() const { return average; }
+  //! Modify the average parameter.
+  bool Average() { return average; }
 
   //! Get the affine parameter.
   bool Affine() const { return affine; }
-
-  //! Get size of weights.
-  size_t WeightSize() const { return 2 * size; }
+  //! Modify the affine parameter.
+  bool Affine() { return affine; }
+  
+  //! Get the batchSize parameter.
+  bool Batchsize() const { return batchSize; }
+  //! Modify the batchSize parameter.
+  bool Batchsize() { return batchSize; }
 
   /**
    * Serialize the layer
@@ -176,6 +185,18 @@ class BatchNorm
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
+  //! Locally stored BatchNorm Object.
+  BatchNorm<InputDataType, OutputDataType> batchNorm;
+
+  //! Locally-stored reset parameter used to initialize the layer once.
+  bool reset;
+
+  //! Number of input rows.
+  size_t shapeA;
+
+  //! Number of input columns.
+  size_t shapeB;
+
   //! Locally-stored number of input units.
   size_t size;
 
@@ -192,23 +213,8 @@ class BatchNorm
   //! Locally-stored value for momentum.
   double momentum;
 
-  //! Variable to keep track of whether we are in loading or saving mode.
-  bool loading;
-
-  //! Locally-stored scale parameter.
-  OutputDataType gamma;
-
-  //! Locally-stored shift parameter.
-  OutputDataType beta;
-
-  //! Locally-stored mean object.
-  OutputDataType mean;
-
-  //! Locally-stored variance object.
-  OutputDataType variance;
-
-  //! Locally-stored parameters.
-  OutputDataType weights;
+  //! Locally stored vale for numFunctions
+  size_t batchSize;
 
   /**
    * If true then mean and variance over the training set will be considered
@@ -216,39 +222,17 @@ class BatchNorm
    */
   bool deterministic;
 
-  //! Locally-stored running mean/variance counter.
-  size_t count;
-
-  //! Locally-stored value for average factor which used to update running
-  //! mean and variance.
-  double averageFactor;
-
   //! Locally-stored mean object.
   OutputDataType runningMean;
 
   //! Locally-stored variance object.
   OutputDataType runningVariance;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
-  //! Locally-stored normalized input.
-  arma::cube normalized;
-
-  //! Locally-stored zero mean input.
-  arma::cube inputMean;
-}; // class BatchNorm
+}; // class InstanceNorm
 
 } // namespace ann
 } // namespace mlpack
 
 // Include the implementation.
-#include "batch_norm_impl.hpp"
+#include "instance_norm_impl.hpp"
 
 #endif

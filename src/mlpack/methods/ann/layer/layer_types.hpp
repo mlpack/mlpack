@@ -26,6 +26,7 @@
 #include <mlpack/methods/ann/layer/dropout.hpp>
 #include <mlpack/methods/ann/layer/elu.hpp>
 #include <mlpack/methods/ann/layer/hard_tanh.hpp>
+#include <mlpack/methods/ann/layer/instance_norm.hpp>
 #include <mlpack/methods/ann/layer/join.hpp>
 #include <mlpack/methods/ann/layer/layer_norm.hpp>
 #include <mlpack/methods/ann/layer/leaky_relu.hpp>
@@ -245,7 +246,8 @@ using MoreTypes = boost::variant<
         RBF<arma::mat, arma::mat, GaussianFunction>*,
         BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
         PositionalEncoding<arma::mat, arma::mat>*,
-        ISRLU<arma::mat, arma::mat>*
+        ISRLU<arma::mat, arma::mat>*,
+        InstanceNorm<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
