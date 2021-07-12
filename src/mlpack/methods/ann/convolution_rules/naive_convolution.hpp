@@ -55,27 +55,29 @@ class NaiveConvolution
               const size_t dW = 1,
               const size_t dH = 1,
               const size_t dilationW = 1,
-              const size_t dilationH = 1)
+              const size_t dilationH = 1, const size_t appending = false)
   {
-    output = arma::zeros<arma::Mat<eT> >(
+    if (!appending) {
+      output = arma::zeros<arma::Mat<eT> >(
         (input.n_rows - (filter.n_rows - 1) * dilationW - 1) / dW + 1,
         (input.n_cols - (filter.n_cols - 1) * dilationH -  1) / dH + 1);
-
-    // It seems to be about 3.5 times faster to use pointers instead of
-    // filter(ki, kj) * input(leftInput + ki, topInput + kj) and output(i, j).
+    }
     eT* outputPtr = output.memptr();
-
-    for (size_t j = 0; j < output.n_cols; ++j)
+    const size_t o_cols = output.n_cols, o_rows = output.n_rows;
+    const size_t f_cols = filter.n_cols, f_rows = filter.n_rows;
+    // parallelize computation if the output is large enough
+    #pragma omp parallel for schedule(static) if (input.n_cols >= 64)
+    for (omp_size_t j = 0; j < o_cols; ++j)
     {
-      for (size_t i = 0; i < output.n_rows; ++i, outputPtr++)
+      for (size_t i = 0; i < o_rows; ++i)
       {
         const eT* kernelPtr = filter.memptr();
-        for (size_t kj = 0; kj < filter.n_cols; ++kj)
+        for (size_t kj = 0; kj < f_cols; ++kj)
         {
-          const eT* inputPtr = input.colptr(kj * dilationW + j * dW) + i * dH;
-          for (size_t ki = 0; ki < filter.n_rows; ++ki, ++kernelPtr,
+         const eT* inputPtr = input.colptr(kj*dilationW + j*dW) + i*dH;
+         for (size_t ki = 0; ki < f_rows; ++ki, ++kernelPtr,
               inputPtr += dilationH)
-            *outputPtr += *kernelPtr * (*inputPtr);
+           outputPtr[j*o_rows + i] += *kernelPtr * (*inputPtr);
         }
       }
     }
@@ -101,7 +103,7 @@ class NaiveConvolution
               const size_t dW = 1,
               const size_t dH = 1,
               const size_t dilationW = 1,
-              const size_t dilationH = 1)
+              const size_t dilationH = 1, const bool appending = false)
   {
     size_t outputRows = (input.n_rows - 1) * dW + 2 * (filter.n_rows - 1)
         * dilationW + 1;
@@ -133,7 +135,7 @@ class NaiveConvolution
         (filter.n_cols - 1) * dilationH + input.n_cols - 1) = input;
 
     NaiveConvolution<ValidConvolution>::Convolution(inputPadded, filter,
-        output, 1, 1, dilationW, dilationH);
+        output, 1, 1, dilationW, dilationH, appending);
   }
 
   /*

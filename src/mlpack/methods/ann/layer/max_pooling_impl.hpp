@@ -93,8 +93,8 @@ void MaxPooling<InputDataType, OutputDataType>::Forward(
 
     reset = true;
   }
-
-  for (size_t s = 0; s < inputTemp.n_slices; s++)
+  #pragma omp parallel for
+  for (omp_size_t s = 0; s < inputTemp.n_slices; s++)
   {
     if (!deterministic)
     {
@@ -126,8 +126,8 @@ void MaxPooling<InputDataType, OutputDataType>::Backward(
 
   gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
       inputTemp.n_cols, inputTemp.n_slices);
-
-  for (size_t s = 0; s < mappedError.n_slices; s++)
+  #pragma omp parallel for
+  for (omp_size_t s = 0; s < mappedError.n_slices; s++)
   {
     Unpooling(mappedError.slice(s), gTemp.slice(s),
         poolingIndices.back().slice(s));
