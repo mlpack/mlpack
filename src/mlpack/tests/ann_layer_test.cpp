@@ -4326,6 +4326,7 @@ TEST_CASE("GradientSeparableConvolutionLayerTest", "[ANNLayerTest]")
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
+      model->Add<IdentityLayer<>>();
       model->Add<SeparableConvolution<>>(2, 4, 3, 3, 1, 1, 0, 0, 20, 20, 2);
       model->Add<LogSoftMax<>>();
     }
@@ -4344,7 +4345,7 @@ TEST_CASE("GradientSeparableConvolutionLayerTest", "[ANNLayerTest]")
 
     arma::mat& Parameters() { return model->Parameters(); }
 
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
+    FFN<NegativeLogLikelihood<>, RandomInitialization>* model;
     arma::mat input, target;
   } function;
 
