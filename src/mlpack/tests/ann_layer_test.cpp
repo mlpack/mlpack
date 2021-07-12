@@ -4320,7 +4320,7 @@ TEST_CASE("GradientSeparableConvolutionLayerTest", "[ANNLayerTest]")
   struct GradientFunction
   {
     GradientFunction() :
-        input(arma::randu(20 * 20 * 2, 1)),
+        input(arma::ones(20 * 20 * 2, 1)),
         target(arma::mat("0"))
     {
       model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
@@ -4328,6 +4328,7 @@ TEST_CASE("GradientSeparableConvolutionLayerTest", "[ANNLayerTest]")
       model->Responses() = target;
       model->Add<SeparableConvolution<>>(2, 4, 3, 3, 1, 1, 0, 0, 20, 20, 2);
       model->Add<LogSoftMax<>>();
+      model->Parameters().fill(0.4);
     }
 
     ~GradientFunction()
