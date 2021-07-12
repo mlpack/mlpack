@@ -15,7 +15,7 @@
 #include <mlpack/core/dists/discrete_distribution.hpp>
 
 /**
- * Create a mock categorical dataset for testing.
+ * Create a mock categorical dataset for testing classification.
  */
 inline void MockCategoricalData(arma::mat& d,
                                 arma::Row<size_t>& l,
@@ -111,6 +111,64 @@ inline void MockCategoricalData(arma::mat& d,
     d.col(i) = spiralDataset.col(indices[i]);
     l[i] = labels[indices[i]];
   }
+}
+
+/**
+ * Create a mock categorical dataset for testing regression.
+ */
+inline void MockCategoricalData(arma::mat& d,
+                                arma::Row<double>& l,
+                                mlpack::data::DatasetInfo& datasetInfo)
+{
+  // Dataset of size 4000.
+  d.set_size(5, 4000);
+  l.set_size(4000);
+
+  for (size_t i = 0; i < 4000; ++i)
+  {
+    // Random numeric features.
+    d(0, i) = mlpack::math::Random();
+    d(1, i) = mlpack::math::Random(-1, 1);
+    d(2, i) = mlpack::math::Random();
+
+    // Binary feature.
+    d(3, i) = mlpack::math::RandInt(0, 2);
+    // 5-category categorical feature.
+    d(4, i) = mlpack::math::RandInt(0, 5);
+
+    // Mappings from categorical features to regression value.
+    std::map<int, double> f;
+    f[0] = 5.0;
+    f[1] = -5.0;
+
+    std::map<int, double> g;
+    g[0] = 2.0;
+    g[1] = 7.0;
+    g[2] = -3.0;
+    g[3] = 0.0;
+    g[4] = 4.0;
+
+    // Random noise in range [-0.5, 0.5).
+    const double noise = mlpack::math::Random() - 0.5;
+
+    // y = x1 + x2 + 3 * x3 + f(x4) + g(x5) + noise
+    l[i] = d(0, i) + d(1, i) + 3 * d(2, i) + f[(int) d(3, i)] +
+        g[(int) d(4, i)] + noise;
+  }
+
+  // Now create the dataset info.
+  datasetInfo = mlpack::data::DatasetInfo(5);
+  datasetInfo.Type(3) = mlpack::data::Datatype::categorical;
+  datasetInfo.Type(4) = mlpack::data::Datatype::categorical;
+  // Set mappings.
+  datasetInfo.MapString<double>("0", 3);
+  datasetInfo.MapString<double>("1", 3);
+
+  datasetInfo.MapString<double>("0", 4);
+  datasetInfo.MapString<double>("1", 4);
+  datasetInfo.MapString<double>("2", 4);
+  datasetInfo.MapString<double>("3", 4);
+  datasetInfo.MapString<double>("4", 4);
 }
 
 #endif
