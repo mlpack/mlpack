@@ -58,7 +58,9 @@ template<
   typename Model,
   typename InitializationRuleType,
   typename Noise,
-  typename PolicyType = StandardGAN
+  typename PolicyType = StandardGAN,
+  typename InputType = arma::mat,
+  typename OutputType = arma::mat
 >
 class GAN
 {
@@ -104,7 +106,7 @@ class GAN
    *
    * @param trainData The data points of real distribution.
    */
-  void ResetData(arma::mat trainData);
+  void ResetData(InputType predictors);
 
   // Reset function.
   void Reset();
@@ -114,16 +116,35 @@ class GAN
    *
    * @tparam OptimizerType Type of optimizer to use to train the model.
    * @tparam CallbackTypes Types of Callback functions.
-   * @param trainData The data points of real distribution.
+   * @param predictors The data points of real distribution.
    * @param Optimizer Instantiated optimizer used to train the model. 
    * @param callbacks Callback function for ensmallen optimizer `OptimizerType`.
    *      See https://www.ensmallen.org/docs.html#callback-documentation.
    * @return The final objective of the trained model (NaN or Inf on error).
    */
   template<typename OptimizerType, typename... CallbackTypes>
-  double Train(arma::mat trainData,
+  double Train(InputType predictors,
                OptimizerType& Optimizer,
                CallbackTypes&&... callbacks);
+
+  /*
+   * Train function for the Standard GAN and DCGAN.
+   *
+   * @param predictors The data points of real distribution.
+   * @param discriminatorOptimizer Optimizer for discriminator network.
+   * @param generatorOptimizer Optimizer for generator network.
+   * @param maxIterations Number of iterations for which to train GAN.
+   */
+  template<typename Policy = PolicyType,
+           typename DiscOptimizerType,
+           typename GenOptimizerType,
+           typename... CallbackTypes>
+  typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
+                          std::is_same<Policy, DCGAN>::value, double>::type
+  Train(InputType predictors,
+        DiscOptimizerType& discriminatorOptimizer,
+        GenOptimizerType& generatorOptimizer,
+        CallbackTypes&&... callbacks);
 
   /**
    * Evaluate function for the Standard GAN and DCGAN.
@@ -137,7 +158,7 @@ class GAN
   template<typename Policy = PolicyType>
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
                           std::is_same<Policy, DCGAN>::value, double>::type
-  Evaluate(const arma::mat& parameters,
+  Evaluate(const InputType& parameters,
            const size_t i,
            const size_t batchSize);
 
@@ -149,12 +170,12 @@ class GAN
    * @param i Index of the current input.
    * @param batchSize Variable to store the present number of inputs.
    */
-  template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGAN>::value,
-                          double>::type
-  Evaluate(const arma::mat& parameters,
-           const size_t i,
-           const size_t batchSize);
+  //template<typename Policy = PolicyType>
+  //typename std::enable_if<std::is_same<Policy, WGAN>::value,
+  //                        double>::type
+  //Evaluate(const InputType& parameters,
+  //         const size_t i,
+  //         const size_t batchSize);
 
   /**
    * Evaluate function for the WGAN-GP.
@@ -164,12 +185,12 @@ class GAN
    * @param i Index of the current input.
    * @param batchSize Variable to store the present number of inputs.
    */
-  template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGANGP>::value,
-                          double>::type
-  Evaluate(const arma::mat& parameters,
-           const size_t i,
-           const size_t batchSize);
+  //template<typename Policy = PolicyType>
+  //typename std::enable_if<std::is_same<Policy, WGANGP>::value,
+  //                        double>::type
+  //Evaluate(const InputType& parameters,
+  //         const size_t i,
+  //         const size_t batchSize);
 
   /**
    * EvaluateWithGradient function for the Standard GAN and DCGAN.
@@ -184,7 +205,7 @@ class GAN
   template<typename GradType, typename Policy = PolicyType>
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
                           std::is_same<Policy, DCGAN>::value, double>::type
-  EvaluateWithGradient(const arma::mat& parameters,
+  EvaluateWithGradient(const InputType& parameters,
                        const size_t i,
                        GradType& gradient,
                        const size_t batchSize);
@@ -199,13 +220,13 @@ class GAN
    * @param gradient Variable to store the present gradient.
    * @param batchSize Variable to store the present number of inputs.
    */
-  template<typename GradType, typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGAN>::value,
-                          double>::type
-  EvaluateWithGradient(const arma::mat& parameters,
-                       const size_t i,
-                       GradType& gradient,
-                       const size_t batchSize);
+  //template<typename GradType, typename Policy = PolicyType>
+  //typename std::enable_if<std::is_same<Policy, WGAN>::value,
+  //                        double>::type
+  //EvaluateWithGradient(const InputType& parameters,
+  //                     const size_t i,
+  //                     GradType& gradient,
+  //                     const size_t batchSize);
 
   /**
    * EvaluateWithGradient function for the WGAN-GP.
@@ -217,13 +238,13 @@ class GAN
    * @param gradient Variable to store the present gradient.
    * @param batchSize Variable to store the present number of inputs.
    */
-  template<typename GradType, typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGANGP>::value,
-                          double>::type
-  EvaluateWithGradient(const arma::mat& parameters,
-                       const size_t i,
-                       GradType& gradient,
-                       const size_t batchSize);
+  //template<typename GradType, typename Policy = PolicyType>
+  //typename std::enable_if<std::is_same<Policy, WGANGP>::value,
+  //                        double>::type
+  //EvaluateWithGradient(const InputType& parameters,
+  //                     const size_t i,
+  //                     GradType& gradient,
+  //                     const size_t batchSize);
 
   /**
    * Gradient function for Standard GAN and DCGAN.
@@ -238,9 +259,9 @@ class GAN
   template<typename Policy = PolicyType>
   typename std::enable_if<std::is_same<Policy, StandardGAN>::value ||
                           std::is_same<Policy, DCGAN>::value, void>::type
-  Gradient(const arma::mat& parameters,
+  Gradient(const InputType& parameters,
            const size_t i,
-           arma::mat& gradient,
+           OutputType& gradient,
            const size_t batchSize);
 
   /**
@@ -253,12 +274,12 @@ class GAN
    * @param gradient Variable to store the present gradient.
    * @param batchSize Variable to store the present number of inputs.
    */
-  template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGAN>::value, void>::type
-  Gradient(const arma::mat& parameters,
-           const size_t i,
-           arma::mat& gradient,
-           const size_t batchSize);
+  //template<typename Policy = PolicyType>
+  //typename std::enable_if<std::is_same<Policy, WGAN>::value, void>::type
+  //Gradient(const InputType& parameters,
+  //         const size_t i,
+  //         OutputType& gradient,
+  //         const size_t batchSize);
 
   /**
    * Gradient function for WGAN-GP.
@@ -270,14 +291,14 @@ class GAN
    * @param gradient Variable to store the present gradient.
    * @param batchSize Variable to store the present number of inputs.
    */
-  template<typename Policy = PolicyType>
-  typename std::enable_if<std::is_same<Policy, WGANGP>::value,
-                          void>::type
-  Gradient(const arma::mat& parameters,
-           const size_t i,
-           arma::mat& gradient,
-           const size_t batchSize);
-
+//  template<typename Policy = PolicyType>
+//  typename std::enable_if<std::is_same<Policy, WGANGP>::value,
+//                          void>::type
+//  Gradient(const InputType& parameters,
+//           const size_t i,
+//           OutputType& gradient,
+//           const size_t batchSize);
+//
   /**
    * Shuffle the order of function visitation. This may be called by the
    * optimizer.
@@ -289,7 +310,7 @@ class GAN
    *
    * @param input Sampled noise.
    */
-  void Forward(const arma::mat& input);
+  void Forward(const InputType& input);
 
   /**
    * This function predicts the output of the network on the given input.
@@ -297,12 +318,12 @@ class GAN
    * @param input The input of the Generator network.
    * @param output Result of the Discriminator network.
    */
-  void Predict(arma::mat input, arma::mat& output);
+  void Predict(InputType& input, OutputType& output);
 
   //! Return the parameters of the network.
-  const arma::mat& Parameters() const { return parameter; }
+  const InputType& Parameters() const { return parameter; }
   //! Modify the parameters of the network.
-  arma::mat& Parameters() { return parameter; }
+  InputType& Parameters() { return parameter; }
 
   //! Return the generator of the GAN.
   const Model& Generator() const { return generator; }
@@ -317,14 +338,14 @@ class GAN
   size_t NumFunctions() const { return numFunctions; }
 
   //! Get the matrix of responses to the input data points.
-  const arma::mat& Responses() const { return responses; }
+  const OutputType& Responses() const { return responses; }
   //! Modify the matrix of responses to the input data points.
-  arma::mat& Responses() { return responses; }
+  OutputType& Responses() { return responses; }
 
   //! Get the matrix of data points (predictors).
-  const arma::mat& Predictors() const { return predictors; }
+  const InputType& Predictors() const { return predictors; }
   //! Modify the matrix of data points (predictors).
-  arma::mat& Predictors() { return predictors; }
+  InputType& Predictors() { return predictors; }
 
   //! Serialize the model.
   template<typename Archive>
@@ -338,9 +359,9 @@ class GAN
   void ResetDeterministic();
 
   //! Locally stored parameter for training data + noise data.
-  arma::mat predictors;
+  InputType predictors;
   //! Locally stored parameters of the network.
-  arma::mat parameter;
+  InputType parameter;
   //! Locally stored Generator network.
   Model generator;
   //! Locally stored Discriminator network.
@@ -372,11 +393,11 @@ class GAN
   //! Locally stored delta visitor.
   DeltaVisitor deltaVisitor;
   //! Locally stored responses.
-  arma::mat responses;
+  OutputType responses;
   //! Locally stored current input.
-  arma::mat currentInput;
+  InputType currentInput;
   //! Locally stored current target.
-  arma::mat currentTarget;
+  OutputType currentTarget;
   //! Locally-stored output parameter visitor.
   OutputParameterVisitor outputParameterVisitor;
   //! Locally-stored weight size visitor.
@@ -384,17 +405,17 @@ class GAN
   //! Locally-stored reset visitor.
   ResetVisitor resetVisitor;
   //! Locally stored gradient parameters.
-  arma::mat gradient;
+  OutputType gradient;
   //! Locally stored gradient for Discriminator.
-  arma::mat gradientDiscriminator;
+  OutputType gradientDiscriminator;
   //! Locally stored gradient for noise data in the predictors.
-  arma::mat noiseGradientDiscriminator;
+  OutputType noiseGradientDiscriminator;
   //! Locally stored norm of the gradient of Discriminator.
-  arma::mat normGradientDiscriminator;
+  OutputType normGradientDiscriminator;
   //! Locally stored noise using the noise function.
-  arma::mat noise;
+  InputType noise;
   //! Locally stored gradient for Generator.
-  arma::mat gradientGenerator;
+  OutputType gradientGenerator;
   //! The current evaluation mode (training or testing).
   bool deterministic;
   //! To keep track of number of generator weights in total weights.
