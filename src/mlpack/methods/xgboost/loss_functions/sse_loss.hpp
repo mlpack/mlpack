@@ -58,16 +58,6 @@ class SSELoss
 
   /**
    * Returns the second order gradient of the loss function with respect to the
-   * values. This is used only for scalars.
-   */
-  template<typename T>
-  T Hessians(const T& /* observed */, const T& /* values */)
-  {
-    return (T) 1;
-  }
-
-  /**
-   * Returns the second order gradient of the loss function with respect to the
    * values. This is used only for vectors.
    */
   template<typename VecType,
