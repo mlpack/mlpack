@@ -1,7 +1,5 @@
 /**
- * @file methods/ann/layer/bilinear_interpolation.hpp
- * @author Kris Singh
- * @author Shikhar Jaiswal
+ * @file methods/ann/layer/nearest_interpolation.hpp
  * @author Abhinav Anand
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
@@ -9,8 +7,8 @@
  * 3-clause BSD license along with mlpack. If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#ifndef MLPACK_METHODS_ANN_LAYER_BILINEAR_INTERPOLATION_HPP
-#define MLPACK_METHODS_ANN_LAYER_BILINEAR_INTERPOLATION_HPP
+#ifndef MLPACK_METHODS_ANN_LAYER_NEAREST_INTERPOLATION_HPP
+#define MLPACK_METHODS_ANN_LAYER_NEAREST_INTERPOLATION_HPP
 
 #include <mlpack/prereqs.hpp>
 
@@ -18,15 +16,11 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Definition and Implementation of the Bilinear Interpolation Layer.
+ * Definition and Implementation of the Nearest Interpoltion Layer.
  *
- * Bilinear Interpolation is an mathematical technique, primarily used for
- * scaling purposes. It is an extension of linear interpolation, for
- * interpolating functions of two variables on a rectangular grid. The key
- * idea is to perform linear interpolation first in one direction (e.g., along
- * x-axis), and then again in the other direction (i.e., y-axis), on four
- * different known points in the grid. This way, we represent any arbitrary
- * point, present within the grid, as a function of those four points.
+ * Nearest Interpoltion is an mathematical technique, primarily used for
+ * scaling purposes. The input should be a 2D matrix and it can have
+ * a number of channels/units.
  *
  * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -37,14 +31,14 @@ template <
     typename InputDataType = arma::mat,
     typename OutputDataType = arma::mat
 >
-class BilinearInterpolation
+class NearestInterpolation
 {
  public:
-  //! Create the Bilinear Interpolation object.
-  BilinearInterpolation();
+  //! Create the NearestInterpolation object.
+  NearestInterpolation();
 
   /**
-   * The constructor for the Bilinear Interpolation.
+   * The constructor for the NearestInterpolation.
    *
    * @param inRowSize Number of input rows.
    * @param inColSize Number of input columns.
@@ -52,15 +46,15 @@ class BilinearInterpolation
    * @param outColSize Number of output columns.
    * @param depth Number of input slices.
    */
-  BilinearInterpolation(const size_t inRowSize,
-                        const size_t inColSize,
-                        const size_t outRowSize,
-                        const size_t outColSize,
-                        const size_t depth);
+  NearestInterpolation(const size_t inRowSize,
+           const size_t inColSize,
+           const size_t outRowSize,
+           const size_t outColSize,
+           const size_t depth);
 
   /**
    * Forward pass through the layer. The layer interpolates
-   * the matrix using the given Bilinear Interpolation method.
+   * the matrix using the given Nearest Interpolation method.
    *
    * @param input The input matrix.
    * @param output The resulting interpolated output matrix.
@@ -84,10 +78,6 @@ class BilinearInterpolation
                 const arma::Mat<eT>& gradient,
                 arma::Mat<eT>& output);
 
-  //! Get the size of the weights.
-  size_t WeightSize() const { return (inRowSize + 3) * (inColSize + 2)
-    + 6 * outRowSize * outColSize; }
-
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
   //! Modify the output parameter.
@@ -97,11 +87,6 @@ class BilinearInterpolation
   OutputDataType const& Delta() const { return delta; }
   //! Modify the delta.
   OutputDataType& Delta() { return delta; }
-
-  //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
 
   //! Get the row size of the input.
   size_t const& InRowSize() const { return inRowSize; }
@@ -141,9 +126,6 @@ class BilinearInterpolation
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Element Type of the input.
-  typedef typename OutputDataType::elem_type ElemType;
-
   //! Locally stored row size of the input.
   size_t inRowSize;
   //! Locally stored column size of the input.
@@ -160,21 +142,12 @@ class BilinearInterpolation
   OutputDataType delta;
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
-  //! Locally-stored weights parameter.
-  OutputDataType weights;
-
-  // Locally-stored coeffs precomputation.
-  arma::Cube<ElemType> coeffsPre;
-  // Locally-stored submat index precomputation.
-  arma::Cube<ElemType> indexPre;
-  // Locally-stored temp for padded output matrix.
-  arma::Mat<ElemType> temp;
-}; // class BilinearInterpolation
+}; // class NearestInterpolation
 
 } // namespace ann
 } // namespace mlpack
 
 // Include implementation.
-#include "bilinear_interpolation_impl.hpp"
+#include "nearest_interpolation_impl.hpp"
 
 #endif

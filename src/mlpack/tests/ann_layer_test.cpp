@@ -2103,37 +2103,107 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
 }
 
 /*
- * Simple test for the BilinearInterpolation layer
+ * Simple test for the NearestInterpolation layer
  */
-TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
+TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
 {
-  // Tested output against tensorflow.image.resize_bilinear()
+  // Tested output against  torch.nn.Upsample(mode="nearest")
   arma::mat input, output, unzoomedOutput, expectedOutput;
   size_t inRowSize = 2;
   size_t inColSize = 2;
   size_t outRowSize = 5;
-  size_t outColSize = 5;
+  size_t outColSize = 7;
   size_t depth = 1;
   input.zeros(inRowSize * inColSize * depth, 1);
   input[0] = 1.0;
-  input[1] = input[2] = 2.0;
-  input[3] = 3.0;
-  BilinearInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize,
+  input[1] = 3.0;
+  input[2] = 2.0;
+  input[3] = 4.0;
+  NearestInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize,
       depth);
-  expectedOutput = arma::mat("1.0000 1.4000 1.8000 2.0000 2.0000 \
-      1.4000 1.8000 2.2000 2.4000 2.4000 \
-      1.8000 2.2000 2.6000 2.8000 2.8000 \
-      2.0000 2.4000 2.8000 3.0000 3.0000 \
-      2.0000 2.4000 2.8000 3.0000 3.0000");
-  expectedOutput.reshape(25, 1);
+  expectedOutput << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000 << 2.0000 << 2.0000 << arma::endr
+                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000 << 2.0000 << 2.0000 << arma::endr
+                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000 << 2.0000 << 2.0000 << arma::endr
+                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000 << 4.0000 << 4.0000 << arma::endr
+                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000 << 4.0000 << 4.0000 << arma::endr;
+  expectedOutput.reshape(35, 1);
   layer.Forward(input, output);
-  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-12);
+  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-4);
 
-  expectedOutput = arma::mat("1.0000 1.9000 1.9000 2.8000");
+  expectedOutput.clear();
+  expectedOutput << 12.0000 << 18.0000 << arma::endr
+                 << 24.0000 << 24.0000 << arma::endr;
   expectedOutput.reshape(4, 1);
   layer.Backward(output, output, unzoomedOutput);
   CheckMatrices(unzoomedOutput - expectedOutput,
-      arma::zeros(input.n_rows), 1e-12);
+      arma::zeros(input.n_rows), 1e-4);
+
+  arma::mat input1, output1, unzoomedOutput1, expectedOutput1;
+  inRowSize = 2;
+  inColSize = 3;
+  outRowSize = 17;
+  outColSize = 23;
+  input1 << 1 << 2 << 3 << arma::endr
+         << 4 << 5 << 6 << arma::endr;
+  input1.reshape(6, 1);
+  NearestInterpolation<> layer1(inRowSize, inColSize, outRowSize, outColSize,
+      depth);
+  layer1.Forward(input1, output1); 
+  layer1.Backward(output1, output1, unzoomedOutput1);
+  REQUIRE(arma::accu(output1) - 1317.00 == Approx(0.0).margin(1e-05));
+  REQUIRE(arma::accu(unzoomedOutput1) - 1317.00 == Approx(0.0).margin(1e-05));
+}
+
+/*
+ * Simple test for the BilinearInterpolation layer
+ */
+TEST_CASE("SimpleBilinearInterpolationLayerTest", "[ANNLayerTest]")
+{
+  // Tested output against  torch.nn.Upsample(mode="bilinear")
+  arma::mat input, output, unzoomedOutput, expectedOutput;
+  size_t inRowSize = 2;
+  size_t inColSize = 2;
+  size_t outRowSize = 5;
+  size_t outColSize = 7;
+  size_t depth = 1;
+  input.zeros(inRowSize * inColSize * depth, 1);
+  input[0] = 1.0;
+  input[1] = 3.0;
+  input[2] = 2.0;
+  input[3] = 4.0;
+  BilinearInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize,
+      depth);
+  expectedOutput << 1.0000 << 1.0000 << 1.2143 << 1.5000 << 1.7857 << 2.0000 << 2.0000 << arma::endr
+                 << 1.2000 << 1.2000 << 1.4143 << 1.7000 << 1.9857 << 2.2000 << 2.2000 << arma::endr
+                 << 2.0000 << 2.0000 << 2.2143 << 2.5000 << 2.7857 << 3.0000 << 3.0000 << arma::endr
+                 << 2.8000 << 2.8000 << 3.0143 << 3.3000 << 3.5857 << 3.8000 << 3.8000 << arma::endr
+                 << 3.0000 << 3.0000 << 3.2143 << 3.5000 << 3.7857 << 4.0000 << 4.0000 << arma::endr;
+  expectedOutput.reshape(35, 1);
+  layer.Forward(input, output);
+  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-4);
+
+  expectedOutput.clear();
+  expectedOutput << 13.2268 << 19.0432 << arma::endr
+                 << 24.7068 << 30.5232 << arma::endr;
+  expectedOutput.reshape(4, 1);
+  layer.Backward(output, output, unzoomedOutput);
+  CheckMatrices(unzoomedOutput - expectedOutput,
+      arma::zeros(input.n_rows), 1e-4);
+
+  arma::mat input1, output1, unzoomedOutput1, expectedOutput1;
+  inRowSize = 2;
+  inColSize = 3;
+  outRowSize = 17;
+  outColSize = 23;
+  input1 << 1 << 2 << 3 << arma::endr
+         << 4 << 5 << 6 << arma::endr;
+  input1.reshape(6, 1);
+  BilinearInterpolation<> layer1(inRowSize, inColSize, outRowSize, outColSize,
+      depth);
+  layer1.Forward(input1, output1); 
+  layer1.Backward(output1, output1, unzoomedOutput1);
+  REQUIRE(arma::accu(output1) - 1368.50 == Approx(0.0).margin(1e-05));
+  REQUIRE(arma::accu(unzoomedOutput1) - 1368.50 == Approx(0.0).margin(1e-05));
 }
 
 /**

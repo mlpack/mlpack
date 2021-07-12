@@ -56,6 +56,7 @@
 #include "multihead_attention.hpp"
 #include "multiply_constant.hpp"
 #include "multiply_merge.hpp"
+#include "nearest_interpolation.hpp"
 #include "noisylinear.hpp"
 #include "padding.hpp"
 #include "parametric_relu.hpp"

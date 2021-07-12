@@ -87,6 +87,8 @@ set(SOURCES
   multiply_merge_impl.hpp
   noisylinear.hpp
   noisylinear_impl.hpp
+  nearest_interpolation.hpp
+  nearest_interpolation_impl.hpp
   parametric_relu.hpp
   parametric_relu_impl.hpp
   pixel_shuffle.hpp

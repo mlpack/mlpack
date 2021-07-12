@@ -40,6 +40,7 @@
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/lp_pooling.hpp>
+#include <mlpack/methods/ann/layer/nearest_interpolation.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
@@ -245,7 +246,8 @@ using MoreTypes = boost::variant<
         RBF<arma::mat, arma::mat, GaussianFunction>*,
         BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
         PositionalEncoding<arma::mat, arma::mat>*,
-        ISRLU<arma::mat, arma::mat>*
+        ISRLU<arma::mat, arma::mat>*,
+        NearestInterpolation<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
