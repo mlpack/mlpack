@@ -37,7 +37,7 @@ LinearNoBiasType<InputType, OutputType, RegularizerType>::LinearNoBiasType(
     outSize(outSize),
     regularizer(regularizer)
 {
-  weights.set_size(outSize * inSize, 1);
+  // Nothing to do.
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
@@ -69,7 +69,7 @@ void LinearNoBiasType<InputType, OutputType, RegularizerType>::Gradient(
 {
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
       error * input.t());
-  regularizer.Evaluate(weights, gradient);
+  regularizer.Evaluate(weight, gradient);
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>

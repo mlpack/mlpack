@@ -93,9 +93,9 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
                 OutputType& gradient);
 
   //! Get the parameters.
-  const OutputType& Parameters() const { return weights; }
+  const OutputType& Parameters() const { return weight; }
   //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
+  OutputType& Parameters() { return weight; }
 
   size_t WeightSize() const { return inSize * outSize; }
 
@@ -119,9 +119,6 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
 
   //! Locally-stored number of output units.
   size_t outSize;
-
-  //! Locally-stored weight object.
-  OutputType weights;
 
   //! Locally-stored weight parameter.
   OutputType weight;
