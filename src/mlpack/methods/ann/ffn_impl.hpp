@@ -683,8 +683,11 @@ void FFN<
       inputDimensions.end(), 0);
 
   // TODO: improve this error message...
-  Log::Assert(totalInputSize == inputDimensionality, functionName + ": input "
-      "size does not match expected size set with InputDimensions()!");
+  if (totalInputSize != inputDimensionality)
+  {
+    throw std::logic_error(functionName + ": input size does not match expected"
+        " size set with InputDimensions()!");
+  }
 
   // If the input dimensions have not changed from what has been computed
   // before, we can terminate early---the network already has its dimensions

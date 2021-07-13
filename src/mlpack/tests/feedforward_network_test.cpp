@@ -868,11 +868,10 @@ TEST_CASE("OptimizerTest", "[FeedForwardNetworkTest]")
   model.Train(trainData, trainLabels, opt);
 }
 
-// TODO: this is no longer possible for the Linear layer, at least.
 /**
  * Test to see if an exception is thrown when input with
  * wrong shape is provided to a FFN.
- *
+ */
 TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
@@ -889,20 +888,14 @@ TEST_CASE("FFNCheckInputShapeTest", "[FeedForwardNetworkTest]")
   testData.shed_row(testData.n_rows - 1);
 
   FFN<NegativeLogLikelihood<>, RandomInitialization> model;
-  // Purposely putting wrong input shape so that error is thrown.
-  model.Add<Linear>(trainData.n_rows - 3, 8);
-  model.Add<Linear>(8, 3);
+  model.Add<Linear>(8);
+  model.Add<Linear>(3);
   model.Add<LogSoftMax>();
-
-  std::string expectedMsg = "FFN<>::Train(): ";
-  expectedMsg += "the first layer of the network expects ";
-  expectedMsg += std::to_string(trainData.n_rows - 3) + " elements, ";
-  expectedMsg += "but the input has " + std::to_string(trainData.n_rows) +
-      " dimensions! ";
 
   ens::DE opt(200, 1000, 0.6, 0.8, 1e-5);
 
+  // Now set up the input incorrectly.
+  model.InputDimensions() = std::vector<size_t>({ 1, 2, 3 });
+
   REQUIRE_THROWS_AS(model.Train(trainData, trainLabels, opt), std::logic_error);
-  // TODO: check expectedMsg ?
 }
-*/
