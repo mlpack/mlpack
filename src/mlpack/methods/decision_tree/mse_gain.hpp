@@ -112,7 +112,7 @@ class MSEGain
     double mseRight = (totalSumSquares - leftSumSquares) / rightSize
           - rightMean * rightMean;
 
-    return {-mseLeft, -mseRight};
+    return std::make_tuple(-mseLeft, -mseRight);
   }
 
   /**
