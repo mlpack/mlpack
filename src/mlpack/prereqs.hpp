@@ -76,7 +76,7 @@ using enable_if_t = typename enable_if<B, T>::type;
 // Backport std::any from C+17 to C++11 to replace boost::any.
 // Use mnmlstc backport implementation only if compiler does not
 // support C++17.
-#if __cplusplus <=201703L
+#if __cplusplus < 201703L
   #include <mlpack/core/std_backport/any.hpp>
   #include <mlpack/core/std_backport/string_view.hpp>
   #define ANY core::v2::any
