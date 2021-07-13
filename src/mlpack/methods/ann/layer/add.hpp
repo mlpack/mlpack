@@ -36,11 +36,10 @@ class AddType : public Layer<InputType, OutputType>
 {
  public:
   /**
-   * Create the Add object using the specified number of output units.
-   *
-   * @param outSize The number of output units.
+   * Create the Add object.  The output size of the layer will be the same as
+   * the input size.
    */
-  AddType(const size_t outSize = 0);
+  AddType();
 
   //! Clone the AddType object. This handles polymorphism correctly.
   AddType* Clone() const { return new AddType(*this); }
@@ -78,14 +77,19 @@ class AddType : public Layer<InputType, OutputType>
                 const OutputType& error,
                 OutputType& gradient);
 
+  //! Return the weights of the network.
+  const OutputType& Parameters() const { return weights; }
+  //! Modify the weights of the network.
+  OutputType& Parameters() { return weights; }
+
   //! Get the size of weights.
   size_t WeightSize() const { return outSize; }
 
-  const std::vector<size_t>& OutputDimensions() const
+  void ComputeOutputDimensions()
   {
-    std::vector<size_t> result(this->inputDimensions.size(), 1);
-    result[0] = outSize;
-    return result;
+    this->outputDimensions = this->inputDimensions;
+    outSize = std::accumulate(this->outputDimensions.begin(),
+        this->outputDimensions.end(), 0);
   }
 
   void SetWeights(typename OutputType::elem_type* weightPtr);

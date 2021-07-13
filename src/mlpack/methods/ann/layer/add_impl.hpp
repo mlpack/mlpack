@@ -20,18 +20,16 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
-AddType<InputType, OutputType>::AddType(const size_t outSize) :
-    outSize(outSize)
+AddType<InputType, OutputType>::AddType() : outSize(0)
 {
-  weights.set_size(WeightSize(), 1);
+  // Nothing to do.
 }
 
 template<typename InputType, typename OutputType>
 void AddType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output = input;
-  output.each_col() += weights;
+  output = input + arma::repmat(arma::vectorise(weights), 1, input.n_cols);
 }
 
 template<typename InputType, typename OutputType>

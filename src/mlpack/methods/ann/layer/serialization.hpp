@@ -38,6 +38,7 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::BatchNorm<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::BilinearInterpolationType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::CELUType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::ConcatenateType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::ConcatType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::ConcatPerformance< \
         mlpack::ann::NegativeLogLikelihood<>, __VA_ARGS__>); \
@@ -123,6 +124,7 @@
     CEREAL_REGISTER_TYPE(mlpack::ann::Linear3DType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::NoisyLinearType<__VA_ARGS__>); \
     CEREAL_REGISTER_TYPE(mlpack::ann::ConcatenateType<__VA_ARGS__>); \
+    CEREAL_REGISTER_TYPE(mlpack::ann::AddType<__VA_ARGS__>); \
 
 // TODO: continue...
 
