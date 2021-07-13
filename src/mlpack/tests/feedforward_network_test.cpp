@@ -222,11 +222,11 @@ TEST_CASE("CheckCopyMovingLinear3DNetworkTest", "[FeedForwardNetworkTest]")
 
 /**
  * Check whether copying and moving of Noisy Linear layer is working or not.
- *
+ */
 TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
 {
-  // Create training input by 5x5 matrix.
-  arma::mat input = arma::randu(10,1);
+  // Create training input by 10x1 matrix.
+  arma::mat input = arma::randu(10, 1);
   // Create training output by 1 matrix.
   arma::mat output = arma::mat("1");
 
@@ -235,8 +235,8 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
   model1->Predictors() = input;
   model1->Responses() = output;
   model1->Add<Identity>();
-  model1->Add<NoisyLinear>(10, 5);
-  model1->Add<Linear>(5, 1);
+  model1->Add<NoisyLinear>(5);
+  model1->Add<Linear>(1);
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
@@ -247,8 +247,8 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
   model2->Predictors() = input;
   model2->Responses() = output;
   model2->Add<Identity>();
-  model2->Add<NoisyLinear>(10, 5);
-  model2->Add<Linear>(5, 1);
+  model2->Add<NoisyLinear>(5);
+  model2->Add<Linear>(1);
   model2->Add<LogSoftMax>();
 
   // Check whether move constructor is working or not.
@@ -257,7 +257,7 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
 
 /**
  * Check whether copying and moving of concatenate layer is working or not.
- *
+ */
 TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 {
   // Create training input by 5x5 matrix.
@@ -270,7 +270,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   model1->Predictors() = input;
   model1->Responses() = output;
   model1->Add<Identity>();
-  model1->Add<Linear>(10, 5);
+  model1->Add<Linear>(5);
 
   // Create concatenate layer.
   arma::mat concatMatrix = arma::ones(5, 1);
@@ -279,7 +279,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 
   // Add concatenate layer to the current network.
   model1->Add(concatLayer);
-  model1->Add<Linear>(10, 5);
+  model1->Add<Linear>(5);
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.
@@ -290,7 +290,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
   model2->Predictors() = input;
   model2->Responses() = output;
   model2->Add<Identity>();
-  model2->Add<Linear>(10, 5);
+  model2->Add<Linear>(5);
 
   // Create new concat layer.
   Concatenate* concatLayer2 = new Concatenate();
@@ -298,7 +298,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 
   // Add concatenate layer to the current network.
   model2->Add(concatLayer2);
-  model2->Add<Linear>(10, 5);
+  model2->Add<Linear>(5);
   model2->Add<LogSoftMax>();
 
   // Check whether move constructor is working or not.
@@ -307,7 +307,7 @@ TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 
 /**
  * Check whether copying and moving of Dropout network is working or not.
- *
+ */
 TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
 {
   // Load the dataset.
@@ -318,17 +318,17 @@ TEST_CASE("CheckCopyMovingDropoutNetworkTest", "[FeedForwardNetworkTest]")
   trainData.shed_row(trainData.n_rows - 1);
 
   FFN<NegativeLogLikelihood<> > *model = new FFN<NegativeLogLikelihood<> >;
-  model->Add<Linear>(trainData.n_rows, 8);
+  model->Add<Linear>(8);
   model->Add<Sigmoid>();
   model->Add<Dropout>(0.3);
-  model->Add<Linear>(8, 3);
+  model->Add<Linear>(3);
   model->Add<LogSoftMax>();
 
   FFN<NegativeLogLikelihood<> > *model1 = new FFN<NegativeLogLikelihood<> >;
-  model1->Add<Linear>(trainData.n_rows, 8);
+  model1->Add<Linear>(8);
   model1->Add<Sigmoid>();
   model1->Add<Dropout>(0.3);
-  model1->Add<Linear>(8, 3);
+  model1->Add<Linear>(3);
   model1->Add<LogSoftMax>();
 
   // Check whether copy constructor is working or not.

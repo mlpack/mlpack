@@ -33,27 +33,12 @@ template<typename InputType = arma::mat, typename OutputType = arma::mat>
 class NoisyLinearType : public Layer<InputType, OutputType>
 {
  public:
-  //! Create the NoisyLinear object.
-  NoisyLinearType();
-
   /**
    * Create the NoisyLinear layer object using the specified number of units.
    *
    * @param outSize The number of output units.
    */
-  NoisyLinearType(const size_t outSize);
-
-  //! Copy constructor.
-  NoisyLinearType(const NoisyLinearType&);
-
-  //! Move constructor.
-  NoisyLinearType(NoisyLinearType&&);
-
-  //! Operator= copy constructor.
-  NoisyLinearType& operator=(const NoisyLinearType& layer);
-
-  //! Operator= move constructor.
-  NoisyLinearType& operator=(NoisyLinearType&& layer);
+  NoisyLinearType(const size_t outSize = 0);
 
   //! Clone the NoisyLinearType object. This handles polymorphism correctly.
   NoisyLinearType* Clone() const { return new NoisyLinearType(*this); }
@@ -108,14 +93,17 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   //! Modify the bias weights of the layer.
   OutputType& Bias() { return bias; }
 
-  const size_t WeightSize() const { return (outSize * inSize + outSize) * 2; }
+  size_t WeightSize() const { return (outSize * inSize + outSize) * 2; }
 
-  const std::vector<size_t> OutputDimensions() const
+  void ComputeOutputDimensions()
   {
-    inSize = std::accumulate(inputDimensions.begin(), inputDimensions.end(), 0);
-    std::vector<size_t> outputDimensions(inputDimensions, 1);
-    outputDimensions[0] = outSize;
-    return outputDimensions;
+    inSize = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
+
+    // The NoisyLinear layer flattens its output.
+    this->outputDimensions[0] = outSize;
   }
 
   //! Serialize the layer.

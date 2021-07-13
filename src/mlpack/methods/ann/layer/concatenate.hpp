@@ -46,18 +46,6 @@ class ConcatenateType : public Layer<InputType, OutputType>
    */
   ConcatenateType(const InputType& concat = InputType());
 
-  //! Copy constructor.
-  ConcatenateType(const ConcatenateType& layer);
-
-  //! Move constructor.
-  ConcatenateType(ConcatenateType&& layer);
-
-  //! Operator= copy constructor.
-  ConcatenateType& operator=(const ConcatenateType& layer);
-
-  //! Operator= move constructor.
-  ConcatenateType& operator=(ConcatenateType&& layer);
-
   //! Clone the ConcatenateType object. This handles polymorphism correctly.
   ConcatenateType* Clone() const { return new ConcatenateType(*this); }
 
@@ -88,12 +76,14 @@ class ConcatenateType : public Layer<InputType, OutputType>
   //! Modify the concat.
   OutputType& Concat() { return concat; }
 
-  const std::vector<size_t>& OutputDimension() const
+  void ComputeOutputDimensions()
   {
-    std::vector<size_t> result(inputDimension.size(), 0);
-    result[0] = std::accumulate(inputDimension.begin(), inputDimension.end(),
-        0) + concat.n_elem;
-    return result;
+    // This flattens the input.
+    const size_t inSize = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
+    this->outputDimensions[0] = inSize + concat.n_elem;
   }
 
   /**

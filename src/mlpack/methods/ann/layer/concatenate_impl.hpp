@@ -28,57 +28,18 @@ ConcatenateType(const InputType& concat) :
 }
 
 template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>::
-ConcatenateType(const ConcatenateType& layer) :
-  concat(layer.concat)
-{
-  // Nothing to to here.
-}
-
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>::
-ConcatenateType(ConcatenateType&& layer) :
-  concat(std::move(layer.concat))
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>&
-ConcatenateType<InputType, OutputType>::
-operator=(const ConcatenateType& layer)
-{
-  if (this != &layer)
-  {
-    concat = layer.concat;
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>&
-ConcatenateType<InputType, OutputType>::
-operator=(ConcatenateType&& layer)
-{
-  if (this != &layer)
-  {
-    concat = std::move(layer.concat);
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType>
 void ConcatenateType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   if (concat.is_empty())
+  {
     Log::Warn << "Concatenate::Forward(): the concat matrix is empty or was "
         << "not provided." << std::endl;
+  }
 
-  output = arma::join_rows(input,
-      arma::repmat(arma::vectorise(concat), input.n_cols));
+  output.submat(0, 0, input.n_rows - 1, input.n_cols - 1) = input;
+  output.submat(input.n_rows, 0, output.n_rows - 1, input.n_cols - 1) =
+      arma::repmat(arma::vectorise(concat), 1, input.n_cols);
 }
 
 template<typename InputType, typename OutputType>
@@ -87,8 +48,8 @@ void ConcatenateType<InputType, OutputType>::Backward(
     const OutputType& gy,
     OutputType& g)
 {
-  // TODO: was this change correct?
-  g = gy.submat(0, 0, gy.n_rows - concat.n_elem, gy.n_cols - 1);
+  // Pass back the non-concatenated part.
+  g = gy.submat(0, 0, gy.n_rows - 1 - concat.n_elem, gy.n_cols - 1);
 }
 
 } // namespace ann

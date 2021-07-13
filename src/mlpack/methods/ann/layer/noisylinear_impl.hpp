@@ -19,69 +19,10 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>::NoisyLinearType() :
-    outSize(0)
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>::NoisyLinearType(
-  const NoisyLinearType& layer) :
-    outSize(layer.outSize),
-    weights(layer.weights)
-{
-
-}
-
-template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>::NoisyLinearType(
-    const size_t outSize) :
+NoisyLinearType<InputType, OutputType>::NoisyLinearType(const size_t outSize) :
     outSize(outSize)
 {
-
-}
-
-template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>::NoisyLinearType(
-    NoisyLinearType&& layer) :
-    inSize(std::move(layer.inSize)),
-    outSize(std::move(layer.outSize)),
-    weights(std::move(layer.weights))
-{
-  layer.outSize = 0;
-  layer.weights = nullptr;
-}
-
-template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>&
-NoisyLinearType<InputType, OutputType>::operator=(const NoisyLinearType& layer)
-{
-  if (this != &layer)
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights = layer.weights;
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>&
-NoisyLinearType<InputType, OutputType>::operator=(NoisyLinearType&& layer)
-{
-  if (this != &layer)
-  {
-    inSize = std::move(layer.inSize);
-    layer.inSize = 0;
-    outSize = std::move(layer.outSize);
-    layer.outSize = 0;
-    weights = std::move(layer.weights);
-    layer.weights = nullptr;
-  }
-
-  return *this;
+  // Nothing to do here.
 }
 
 template<typename InputType, typename OutputType>
@@ -174,8 +115,6 @@ void NoisyLinearType<InputType, OutputType>::serialize(
 
   if (cereal::is_loading<Archive>())
   {
-    // TODO: more to do here?
-
     ResetNoise();
   }
 }
