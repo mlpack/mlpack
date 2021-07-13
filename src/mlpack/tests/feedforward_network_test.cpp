@@ -260,9 +260,9 @@ TEST_CASE("CheckCopyMovingNoisyLinearTest", "[FeedForwardNetworkTest]")
  */
 TEST_CASE("CheckCopyMovingConcatenateTest", "[FeedForwardNetworkTest]")
 {
-  // Create training input by 5x5 matrix.
-  arma::mat input = arma::randu(10,1);
-  // Create training output by 1 matrix.
+  // Create training input as a 10x1 matrix.
+  arma::mat input = arma::randu(10, 1);
+  // Create training output (one value) matrix.
   arma::mat output = arma::mat("1");
 
   // Check copying constructor.
@@ -725,20 +725,23 @@ TEST_CASE("FFSerializationTest", "[FeedForwardNetworkTest]")
 
 /**
  * Test the overload of Forward function which allows partial forward pass.
- *
+ */
 TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
 {
   FFN<NegativeLogLikelihood<>, RandomInitialization> model;
   model.Add<Linear>(10);
 
-  // Add a new Add<> module which adds a constant term to the input.
-  Add* addModule = new Add(10);
+  // Add a new Add<> module which adds a (learnable) constant term to the input.
+  Add* addModule = new Add();
   model.Add(addModule);
 
   LinearNoBias* linearNoBiasModule = new LinearNoBias(10);
   model.Add(linearNoBiasModule);
 
   model.Add<Linear>(10);
+
+  // Set up the network for inputs of dimensionality 10.
+  model.Reset(10);
 
   // Set the parameters of the Add<> module to a matrix of ones.
   addModule->Parameters() = arma::ones(10, 1);
@@ -751,8 +754,8 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   // Forward pass only through the Add module.
   model.Forward(input,
                 output,
-                1 /* Index of the Add module *,
-                1 /* Index of the Add module *);
+                1 /* Index of the Add module */,
+                1 /* Index of the Add module */);
 
   // As we only forward pass through Add module, input and output should
   // differ by a matrix of ones.
@@ -761,14 +764,13 @@ TEST_CASE("PartialForwardTest", "[FeedForwardNetworkTest]")
   // Forward pass only through the Add module and the LinearNoBias module.
   model.Forward(input,
                 output,
-                1 /* Index of the Add module *,
-                2 /* Index of the LinearNoBias module *);
+                1 /* Index of the Add module */,
+                2 /* Index of the LinearNoBias module */);
 
   // As we only forward pass through Add module followed by the LinearNoBias
   // module, output should be a matrix of 20s.(output = weight * input)
   CheckMatrices(output, arma::ones(10, 1) * 20);
 }
-*/
 
 /**
  * Test that FFN::Train() returns finite objective value.
