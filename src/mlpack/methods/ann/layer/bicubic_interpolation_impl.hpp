@@ -41,7 +41,7 @@ BicubicInterpolation(
     const size_t outRowSize,
     const size_t outColSize,
     const size_t depth,
-    const double aplha):
+    const double alpha):
   inRowSize(inRowSize),
   inColSize(inColSize),
   outRowSize(outRowSize),
