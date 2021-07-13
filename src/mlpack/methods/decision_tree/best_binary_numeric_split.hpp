@@ -20,18 +20,24 @@
 namespace mlpack {
 namespace tree {
 
-// This gives us a HasBinaryScanInitialize<T, U> type (where U is a function
-// pointer) we can use with SFINAE to catch when a type has a
-// BinaryScanInitialize(...) function.
-HAS_MEM_FUNC(BinaryScanInitialize, HasBinaryScanInitialize);
-
-// This gives us a HasBinaryStep<T, U> type (where U is a function pointer)
-// we can use with SFINAE to catch when a type has a BinaryStep(...) function.
-HAS_MEM_FUNC(BinaryStep, HasBinaryStep);
-
 // This gives us a HasBinaryGains<T, U> type (where U is a function pointer)
 // we can use with SFINAE to catch when a type has a BinaryGains(...) function.
 HAS_MEM_FUNC(BinaryGains, HasBinaryGains);
+
+// This struct will have `value` set to `true` if a BinaryGains() function of
+// the right signature is detected.  We only check for BinaryGains(), and not
+// BinaryScanInitialize() or BinaryStep(), because those two are template
+// members functions and would make this check far more difficult.
+//
+// The unused UseWeights template parameter is necessary to ensure that the
+// compiler thinks the result `value` depends on a parameter specific to the
+// SplitIfBetter() function in BestBinaryNumericSplit().
+template<typename T, bool /* UseWeights */>
+struct HasOptimizedBinarySplitForms
+{
+  const static bool value = HasBinaryGains<T,
+      std::tuple<double, double>(T::*)()>::value;
+};
 
 /**
  * The BestBinaryNumericSplit is a splitting function for decision trees that
@@ -102,8 +108,7 @@ class BestBinaryNumericSplit
   template<bool UseWeights, typename VecType, typename ResponsesType,
            typename WeightVecType>
   static typename std::enable_if<
-      !HasBinaryGains<FitnessFunction,
-          std::tuple<double, double>(FitnessFunction::*)(void)>::value,
+      !HasOptimizedBinarySplitForms<FitnessFunction, UseWeights>::value,
       double>::type
   SplitIfBetter(
       const double bestGain,
@@ -139,8 +144,7 @@ class BestBinaryNumericSplit
   template<bool UseWeights, typename VecType, typename ResponsesType,
           typename WeightVecType>
   static typename std::enable_if<
-      HasBinaryGains<FitnessFunction,
-          std::tuple<double, double>(FitnessFunction::*)(void)>::value,
+      HasOptimizedBinarySplitForms<FitnessFunction, UseWeights>::value,
       double>::type
   SplitIfBetter(
       const double bestGain,
