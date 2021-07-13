@@ -57,9 +57,8 @@ void PrintHeaders(const std::string& bindingName,
 void PrintDocs(const std::string& bindingName,
                const vector<string>& languages)
 {
-  BindingDetails& doc = BindingInfo::GetBindingDetails(bindingName);
-
-  IO::RestoreSettings(bindingName);
+  Params params = IO::Parameters(bindingName);
+  const BindingDetails& doc = params.Doc();
 
   // First, for this section, print each of the names.
   for (size_t i = 0; i < languages.size(); ++i)
@@ -122,7 +121,7 @@ void PrintDocs(const std::string& bindingName,
         << endl;
     cout << "|------------|------------|-------------------|---------------|"
         << endl;
-    map<string, ParamData>& parameters = IO::Parameters();
+    map<string, ParamData>& parameters = params.Parameters();
     for (map<string, ParamData>::iterator it = parameters.begin();
          it != parameters.end(); ++it)
     {
@@ -288,6 +287,4 @@ void PrintDocs(const std::string& bindingName,
     cout << "</div>" << endl;
     cout << endl;
   }
-
-  IO::ClearSettings();
 }

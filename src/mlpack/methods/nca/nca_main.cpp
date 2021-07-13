@@ -149,7 +149,7 @@ using namespace mlpack::metric;
 using namespace mlpack::util;
 using namespace std;
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   if (params.Get<int>("seed") != 0)
     math::RandomSeed((size_t) params.Get<int>("seed"));

@@ -309,7 +309,8 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 #define PRINT_DATASET mlpack::bindings::go::PrintDataset
 #define PRINT_MODEL mlpack::bindings::go::PrintModel
 #define PRINT_CALL mlpack::bindings::go::ProgramCall
-#define BINDING_IGNORE_CHECK mlpack::bindings::go::IgnoreCheck
+#define BINDING_IGNORE_CHECK(x) mlpack::bindings::go::IgnoreCheck( \
+    STRINGIFY(BINDING_NAME), x)
 
 namespace mlpack {
 namespace util {
@@ -320,21 +321,15 @@ using Option = mlpack::bindings::go::GoOption<T>;
 }
 }
 
-static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
-#undef BINDING_USER_NAME
-#define BINDING_USER_NAME(NAME) static \
-    mlpack::util::ProgramName \
-    io_programname_dummy_object = mlpack::util::ProgramName(NAME); \
-    namespace mlpack { \
-    namespace bindings { \
-    namespace go { \
-    std::string programName = NAME; \
-    } \
-    } \
-    }
+// In Go, we want to call the binding function mlpack_<BINDING_NAME>() instead
+// of just <BINDING_NAME>(), so we change the definition of BINDING_FUNCTION().
+#undef BINDING_FUNCTION
+#define BINDING_FUNCTION(...) JOIN(mlpack_, BINDING_NAME)(__VA_ARGS__)
 
+// TODO: can't use PARAM_FLAG here---need to actually specify it as part of the
+// "" binding
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
 

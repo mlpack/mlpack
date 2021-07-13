@@ -175,7 +175,7 @@ PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
     "p");
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   if (params.Get<int>("seed") != 0)
     math::RandomSeed((size_t) params.Get<int>("seed"));

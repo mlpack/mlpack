@@ -77,12 +77,13 @@ class PyOption
     IO::AddFunction(data.tname, "PrintClassDefn", &PrintClassDefn<T>);
     IO::AddFunction(data.tname, "PrintDefn", &PrintDefn<T>);
     IO::AddFunction(data.tname, "PrintDoc", &PrintDoc<T>);
-    IO::AddFunction(data.tname, "PrintOutputProcessing", &PrintOutputProcessing<T>);
-    IO::AddFunction(data.tname, "PrintInputProcessing", &PrintInputProcessing<T>);
+    IO::AddFunction(data.tname, "PrintOutputProcessing",
+        &PrintOutputProcessing<T>);
+    IO::AddFunction(data.tname, "PrintInputProcessing",
+        &PrintInputProcessing<T>);
     IO::AddFunction(data.tname, "ImportDecl", &ImportDecl<T>);
 
-    // Add the ParamData object to the IO class
-    // for the correct binding name.
+    // Add the ParamData object to the IO class for the correct binding name.
     IO::AddParameter(bindingName, std::move(data));
   }
 };
