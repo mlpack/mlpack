@@ -63,6 +63,9 @@
 
   * Fix `LoadCSV()` to use pre-populated `DatasetInfo` objects (#2980).
 
+  * Add `probabilities` option to softmax regression binding, to get class
+    probabilities for test points (#3001).
+
 ### mlpack 3.4.2
 ###### 2020-10-26
   * Added Mean Absolute Percentage Error.

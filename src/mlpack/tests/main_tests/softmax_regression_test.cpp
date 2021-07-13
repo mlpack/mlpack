@@ -497,3 +497,51 @@ TEST_CASE_METHOD(
       IO::GetParam<SoftmaxRegression*>("output_model")->Parameters().n_cols ==
       modelParam.n_cols + 1);
 }
+
+/**
+ * Check that we can get output probabilities, and also that they are
+ * reasonable.
+ */
+TEST_CASE_METHOD(
+    SoftmaxRegressionTestFixture,
+    "SoftmaxRegressionProbabilitiesTest",
+    "[SoftmaxRegressionMainTest][BindingsTest]")
+{
+  // Train softmax regression.
+  arma::mat data;
+  if (!data::Load("vc2.csv", data))
+    FAIL("Cannot load train dataset 'vc2.csv'!");
+  // Get the labels out.
+  arma::Row<size_t> labels;
+  if (!data::Load("vc2_labels.txt", labels))
+    FAIL("Cannot load training labels 'vc2_labels.txt'!");
+
+  // Input training data.
+  SetInputParam("training", data);
+  SetInputParam("labels", labels);
+  SetInputParam("no_intercept", (bool) true);
+
+  // Input test data.
+  SetInputParam("test", data);
+
+  mlpackMain();
+
+  // Get predictions and probabilities.
+  arma::Row<size_t>& predictions =
+      IO::GetParam<arma::Row<size_t>>("predictions");
+  arma::mat& probabilities = IO::GetParam<arma::mat>("probabilities");
+
+  REQUIRE(predictions.n_elem == probabilities.n_cols);
+  REQUIRE(probabilities.n_rows == arma::max(labels) + 1);
+
+  // Manually compute the predictions and ensure they match, and also check that
+  // the probabilities sum to 1.
+  for (size_t i = 0; i < probabilities.n_cols; ++i)
+  {
+    const double sum = arma::accu(probabilities.col(i));
+    REQUIRE(sum == Approx(1.0));
+
+    size_t classPrediction = (size_t) arma::index_max(probabilities.col(i));
+    REQUIRE(classPrediction == predictions[i]);
+  }
+}
