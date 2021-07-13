@@ -190,8 +190,7 @@ template<typename FitnessFunction>
 template<bool UseWeights, typename VecType, typename ResponsesType,
          typename WeightVecType>
 typename std::enable_if<
-    !HasBinaryGains<FitnessFunction,
-        std::tuple<double, double>(FitnessFunction::*)(void)>::value,
+    !HasOptimizedBinarySplitForms<FitnessFunction, UseWeights>::value,
     double>::type
 BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
@@ -328,8 +327,7 @@ template<typename FitnessFunction>
 template<bool UseWeights, typename VecType, typename ResponsesType,
          typename WeightVecType>
 typename std::enable_if<
-    HasBinaryGains<FitnessFunction,
-        std::tuple<double, double>(FitnessFunction::*)(void)>::value,
+    HasOptimizedBinarySplitForms<FitnessFunction, UseWeights>::value,
     double>::type
 BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double bestGain,
@@ -401,7 +399,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
 
   // Initialize and precompute various statistics to efficiently compute gain
   // values for all possible splits.
-  fitnessFunction.BinaryScanInitialize<UseWeights>(sortedResponses,
+  fitnessFunction.template BinaryScanInitialize<UseWeights>(sortedResponses,
       sortedWeights, minimum);
 
   // Loop through all possible split points, choosing the best one.
@@ -414,7 +412,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     }
 
     // Steps through the current index and updates the cached data.
-    fitnessFunction.BinaryStep<UseWeights>(sortedResponses,
+    fitnessFunction.template BinaryStep<UseWeights>(sortedResponses,
         sortedWeights, index - 1);
 
     // Make sure that the value has changed.
