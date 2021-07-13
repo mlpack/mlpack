@@ -133,6 +133,69 @@ class ConcatType : public MultiLayer<InputType, OutputType>
   //! Get the size of the weight matrix.
   size_t WeightSize() const { return 0; }
 
+  void ComputeOutputDimensions()
+  {
+    // The input is sent to every layer.
+    for (size_t i = 0; i < network.size(); ++i)
+    {
+      network[i]->InputDimensions() = this->inputDimensions;
+      network[i]->ComputeOutputDimensions();
+    }
+
+    // If the user did not specify an axis, we will use the last one.
+    // Otherwise, we must sanity check to ensure that the axis we are
+    // concatenating along is valid.
+    if (!useAxis)
+    {
+      axis  = this->inputDimensions.size() - 1;
+    }
+    else if (axis >= this->inputDimensions.size())
+    {
+      std::ostringstream oss;
+      oss << "Concat::ComputeOutputDimensions(): cannot concatenate outputs "
+          << "along axis " << axis << " when input only has "
+          << this->inputDimensions.size() << " axes!";
+      throw std::invalid_argument(oss.str());
+    }
+
+    // Now, we concatenate the output along a specific axis.
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        0);
+    for (size_t i = 0; i < this->inputDimensions.size(); ++i)
+    {
+      if (i == axis)
+      {
+        // Accumulate output size along this axis for each layer output.
+        for (size_t n = 0; n < this->network.size(); ++n)
+        {
+          this->outputDimensions[i] += this->network[n]->OutputDimensions()[i];
+        }
+      }
+      else
+      {
+        // Ensure that the output size is the same along this axis.
+        const size_t axisDim = this->network[0]->OutputDimensions()[i];
+        for (size_t n = 1; n < this->network.size(); ++n)
+        {
+          const size_t axisDim2 = this->network[n]->OutputDimensions()[i];
+          if (axisDim != axisDim2)
+          {
+            std::ostringstream oss;
+            oss << "Concat::ComputeOutputDimensions(): cannot concatenate "
+                << "outputs along axis " << axis << "; held layer " << n
+                << " has output size " << axisDim2 << " along axis " << i
+                << ", but the first held layer has output size " << axisDim
+                << "!  All layers must have identical output size in any "
+                << "axis other than the concatenated axis.";
+            throw std::invalid_argument(oss.str());
+          }
+        }
+
+        this->outputDimensions[i] = axisDim;
+      }
+    }
+  }
+
   /**
    * Serialize the layer
    */
@@ -140,22 +203,11 @@ class ConcatType : public MultiLayer<InputType, OutputType>
   void serialize(Archive& ar,  const uint32_t /* version */);
 
  private:
-  //! Utility function to compute the channels given the current
-  //! inputDimensions.
-  void ComputeChannels();
-
   //! Parameter which indicates the axis of concatenation.
   size_t axis;
 
   //! Parameter which indicates whether to use the axis of concatenation.
   bool useAxis;
-
-  //! Parameter to store channels.
-  size_t channels;
-
-  //! Parameter which indicates if the Forward/Backward method should be called
-  //! before merging the output.
-  bool run;
 }; // class ConcatType.
 
 // Standard Concat layer.
