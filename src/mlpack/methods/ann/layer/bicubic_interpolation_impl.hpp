@@ -126,13 +126,13 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Forward(
           double fr = rOrigin - 0.5;
           fr = fr - std::floor(fr);
 
-          arma::mat weightR = arma::mat(1, 4);
-          arma::mat weightC = arma::mat(4, 1);
+          arma::mat weightR = arma::mat(4, 1);
+          arma::mat weightC = arma::mat(1, 4);
           GetKernalWeight(fr, weightR);
           GetKernalWeight(fc, weightC);
 
-          arma::mat val = weightR * kernal * weightC;
-          outputAsCube(i, j, k) = val(0);
+          arma::mat weightMatrix = weightR * weightC;
+          outputAsCube(i, j, k) = arma::accu(weightMatrix % kernal);
         }
       }
     }
