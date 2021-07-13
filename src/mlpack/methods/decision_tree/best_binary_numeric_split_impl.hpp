@@ -322,7 +322,8 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   return bestFoundGain;
 }
 
-// Optimized version when fitness function is MSEGain.
+// Optimized version for any fitness function that implements
+// BinaryScanInitialize(), BinaryStep() and BinaryGains() functions.
 template<typename FitnessFunction>
 template<bool UseWeights, typename VecType, typename ResponsesType,
          typename WeightVecType>
