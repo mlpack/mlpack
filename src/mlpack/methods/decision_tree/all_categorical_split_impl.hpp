@@ -127,6 +127,8 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */)
 {
+  FitnessFunction fitnessFunction;
+
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
   arma::Col<size_t> counts(numCategories, arma::fill::zeros);
@@ -190,7 +192,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const double childPct = UseWeights ?
         double(childWeightSums[i]) / sumWeight :
         double(counts[i]) / double(data.n_elem);
-    const double childGain = FitnessFunction::template Evaluate<UseWeights>(
+    const double childGain = fitnessFunction.template Evaluate<UseWeights>(
         childResponses[i], childWeights[i]);
 
     overallGain += childPct * childGain;

@@ -607,6 +607,8 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType& dimensionSelector)
 {
+  FitnessFunction fitnessFunction;
+
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
@@ -617,7 +619,7 @@ double DecisionTreeRegressor<FitnessFunction,
   // in numericAux and categoricalAux (and clear them later if we make no
   // split). The split point is stored in splitPointOrPrediction for all
   // internal nodes of the tree.
-  double bestGain = FitnessFunction::template Evaluate<UseWeights>(
+  double bestGain = fitnessFunction.template Evaluate<UseWeights>(
       responses.subvec(begin, begin + count - 1),
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
@@ -786,6 +788,8 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t maximumDepth,
     DimensionSelectionType& dimensionSelector)
 {
+  FitnessFunction fitnessFunction;
+
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
@@ -798,7 +802,7 @@ double DecisionTreeRegressor<FitnessFunction,
   // the best numeric split auxiliary information in numericAux (and clear it
   // later if we don't make a split). The split point is stored in
   // splitPointOrPrediction for all internal nodes of the tree.
-  double bestGain = FitnessFunction::template Evaluate<UseWeights>(
+  double bestGain = fitnessFunction.template Evaluate<UseWeights>(
       responses.subvec(begin, begin + count - 1),
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = data.n_rows; // This means "no split".

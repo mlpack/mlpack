@@ -77,7 +77,8 @@ TEST_CASE("MSEGainPerfectTest", "[DecisionTreeRegressorTest]")
   arma::rowvec responses;
   responses.ones(10);
 
-  REQUIRE(MSEGain::Evaluate<false>(responses, weights) ==
+  MSEGain Gain;
+  REQUIRE(Gain.Evaluate<false>(responses, weights) ==
           Approx(0.0).margin(1e-5));
 }
 
@@ -88,10 +89,12 @@ TEST_CASE("MSEGainEmptyTest", "[DecisionTreeRegressorTest]")
 {
   arma::rowvec weights = arma::ones<arma::rowvec>(10);
   arma::rowvec responses;
-  REQUIRE(MSEGain::Evaluate<false>(responses, weights) ==
+
+  MSEGain Gain;
+  REQUIRE(Gain.Evaluate<false>(responses, weights) ==
           Approx(0.0).margin(1e-5));
 
-  REQUIRE(MSEGain::Evaluate<true>(responses, weights) ==
+  REQUIRE(Gain.Evaluate<true>(responses, weights) ==
           Approx(0.0).margin(1e-5));
 }
 
@@ -107,9 +110,11 @@ TEST_CASE("MSEGainHandCalculation", "[DecisionTreeRegressorTest]")
   // Hand calculated gain values.
   const double gain = -27.08999;
   const double weightedGain = -27.53960;
-  REQUIRE(MSEGain::Evaluate<false>(responses, weights) ==
+
+  MSEGain Gain;
+  REQUIRE(Gain.Evaluate<false>(responses, weights) ==
           Approx(gain).margin(1e-5));
-  REQUIRE(MSEGain::Evaluate<true>(responses, weights) ==
+  REQUIRE(Gain.Evaluate<true>(responses, weights) ==
           Approx(weightedGain).margin(1e-5));
 }
 
@@ -122,7 +127,8 @@ TEST_CASE("MADGainPerfectTest", "[DecisionTreeRegressorTest]")
   arma::rowvec responses;
   responses.ones(10);
 
-  REQUIRE(MADGain::Evaluate<false>(responses, weights) ==
+  MADGain Gain;
+  REQUIRE(Gain.Evaluate<false>(responses, weights) ==
           Approx(0.0).margin(1e-5));
 }
 
@@ -142,8 +148,8 @@ TEST_CASE("MADGainNormalTest", "[DecisionTreeRegressorTest")
   theoreticalGain /= (double) responses.n_elem;
 
   // Calculated gain.
-  const double calculatedGain =
-      MADGain::Evaluate<false>(responses, weights);
+  MADGain Gain;
+  const double calculatedGain = Gain.Evaluate<false>(responses, weights);
 
   REQUIRE(calculatedGain == Approx(theoreticalGain).margin(1e-5));
 }
@@ -155,10 +161,12 @@ TEST_CASE("MADGainEmptyTest", "[DecisionTreeRegressorTest]")
 {
   arma::rowvec weights = arma::ones<arma::rowvec>(10);
   arma::rowvec responses;
-  REQUIRE(MADGain::Evaluate<false>(responses, weights) ==
+
+  MADGain Gain;
+  REQUIRE(Gain.Evaluate<false>(responses, weights) ==
           Approx(0.0).margin(1e-5));
 
-  REQUIRE(MADGain::Evaluate<true>(responses, weights) ==
+  REQUIRE(Gain.Evaluate<true>(responses, weights) ==
           Approx(0.0).margin(1e-5));
 }
 
@@ -174,9 +182,11 @@ TEST_CASE("MADGainHandCalculation", "[DecisionTreeRegressorTest]")
   // Hand calculated gain values.
   const double gain = -4.1;
   const double weightedGain = -3.8592;
-  REQUIRE(MADGain::Evaluate<false>(responses, weights) ==
+
+  MADGain Gain;
+  REQUIRE(Gain.Evaluate<false>(responses, weights) ==
           Approx(gain).margin(1e-5));
-  REQUIRE(MADGain::Evaluate<true>(responses, weights) ==
+  REQUIRE(Gain.Evaluate<true>(responses, weights) ==
           Approx(weightedGain).margin(1e-5));
 }
 
@@ -203,7 +213,8 @@ TEST_CASE("AllCategoricalSplitSimpleSplitTest_", "[DecisionTreeRegressorTest]")
   AllCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(responses, weights);
+  MSEGain Gain;
+  const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
       bestGain, predictor, 2, responses, weights, 3, 1e-7, splitInfo, aux);
   const double weightedGain =
@@ -234,7 +245,8 @@ TEST_CASE("AllCategoricalSplitMinSamplesTest_", "[DecisionTreeRegressorTest]")
   AllCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(responses, weights);
+  MSEGain Gain;
+  const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
       bestGain, predictors, 4, responses, weights, 4, 1e-7, splitInfo, aux);
 
@@ -265,7 +277,8 @@ TEST_CASE("AllCategoricalSplitNoGainTest_", "[DecisionTreeRegressorTest]")
   AllCategoricalSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(responses, weights);
+  MSEGain Gain;
+  const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
       bestGain, predictors, 10, responses, weights, 10, 1e-7,
       splitInfo, aux);
@@ -296,7 +309,8 @@ TEST_CASE("BestBinaryNumericSplitSimpleSplitTest_",
   BestBinaryNumericSplit<MADGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MADGain::Evaluate<false>(responses, weights);
+  MADGain Gain;
+  const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = BestBinaryNumericSplit<MADGain>::SplitIfBetter<false>(
       bestGain, predictors, responses, weights, 3, 1e-7, splitInfo, aux);
   const double weightedGain =
@@ -332,7 +346,8 @@ TEST_CASE("BestBinaryNumericSplitMinSamplesTest_",
   BestBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(responses, weights);
+  MSEGain Gain;
+  const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = BestBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
       bestGain, predictors, responses, weights, 8, 1e-7, splitInfo, aux);
   // This should make no difference because it won't split at all.
@@ -366,7 +381,8 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
   BestBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(responses, weights);
+  MSEGain Gain;
+  const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = BestBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
       bestGain, predictors, responses, weights, 10, 1e-7, splitInfo, aux);
 
@@ -390,7 +406,8 @@ TEST_CASE("RandomBinaryNumericSplitAlwaysSplit_",
   RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(responses, weights);
+  MSEGain Gain;
+  const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
       bestGain, values, responses, weights, 1, 1e-7, splitInfo, aux);
   const double weightedGain =
@@ -417,7 +434,8 @@ TEST_CASE("RandomBinaryNumericSplitMinSamplesTest_",
   RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(responses, weights);
+  MSEGain Gain;
+  const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
       bestGain, values, responses, weights, 8, 1e-7, splitInfo, aux);
   // This should make no difference because it won't split at all.
@@ -451,7 +469,8 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
   RandomBinaryNumericSplit<MSEGain>::AuxiliarySplitInfo aux;
 
   // Call the method to do the splitting.
-  const double bestGain = MSEGain::Evaluate<false>(responses, weights);
+  MSEGain Gain;
+  const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
       bestGain, values, responses, weights, 10, 1e-7, splitInfo, aux, true);
 
