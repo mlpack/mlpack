@@ -2185,7 +2185,7 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 
   input << 10 << 20 << arma::endr
         << 30 << 40 << arma::endr;
-
+  input.reshape(4, 1);
   BicubicInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize, depth, alpha);
 
   expectedOutput << 6.6880  <<  7.3331  <<   9.6973 <<  12.7950 <<  15.8927 <<  18.2569 << 18.9020 << arma::endr
