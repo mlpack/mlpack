@@ -340,7 +340,6 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */)
 {
-  std::cout << "Optimized\n";
   typedef typename ResponsesType::elem_type RType;
   typedef typename WeightVecType::elem_type WType;
 
