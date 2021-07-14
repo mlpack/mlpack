@@ -348,7 +348,8 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 #define PRINT_DATASET mlpack::bindings::r::PrintDataset
 #define PRINT_MODEL mlpack::bindings::r::PrintModel
 #define PRINT_CALL(...) mlpack::bindings::r::ProgramCall(false, __VA_ARGS__)
-#define BINDING_IGNORE_CHECK mlpack::bindings::r::IgnoreCheck
+#define BINDING_IGNORE_CHECK(...) mlpack::bindings::r::IgnoreCheck( \
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
 
 namespace mlpack {
 namespace util {
@@ -359,11 +360,13 @@ using Option = mlpack::bindings::r::ROption<T>;
 }
 }
 
-static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
+
+#undef BINDING_FUNCTION
+#define BINDING_FUNCTION(...) JOIN(mlpack_, BINDING_NAME)(__VA_ARGS__)
 
 // Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 
