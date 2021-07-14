@@ -2180,7 +2180,6 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
   size_t outRowSize = 5;
   size_t outColSize = 7;
   size_t depth = 1;
-  double alpha = -0.75;
   input.zeros(inRowSize * inColSize * depth, 1);
 
   input << 10 << 20 << arma::endr
@@ -2196,6 +2195,15 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
   expectedOutput.reshape(35, 1);
   layer.Forward(input, output);
   CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-4);
+
+  expectedOutput.clear();
+  expectedOutput << 103.7905 << 180.5134 << arma::endr
+                 << 256.9865 << 333.7095 << arma::endr;
+  expectedOutput.reshape(4, 1);
+
+  layer.Backward(output, output, unzoomedOutput);
+  CheckMatrices(unzoomedOutput - expectedOutput, arma::zeros(output.n_rows), 1e-4);
+  
 }
 
 /**
