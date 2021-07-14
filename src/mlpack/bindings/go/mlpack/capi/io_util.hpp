@@ -28,7 +28,7 @@ namespace util {
 template<typename T>
 inline void SetParam(const std::string& identifier, T& value)
 {
-  IO::GetParam<T>(identifier) = std::move(value);
+  IO::GetParam<typename std::remove_cv<T>::type>(identifier) = std::move(value);
 }
 
 /**
@@ -41,7 +41,7 @@ template<typename T>
 inline void SetParamPtr(const std::string& identifier,
                         T* value)
 {
-  IO::GetParam<std::remove_cv<T*>::type>(identifier) = value;
+  IO::GetParam<typename std::remove_cv<T*>::type>(identifier) = value;
 }
 
 /**
@@ -51,7 +51,7 @@ inline void SetParamPtr(const std::string& identifier,
 template<typename T>
 T* GetParamPtr(const std::string& paramName)
 {
-  return IO::GetParam<std::remove_cv<T*>::type>(paramName);
+  return IO::GetParam<typename std::remove_cv<T*>::type>(paramName);
 }
 
 /**
