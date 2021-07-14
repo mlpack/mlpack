@@ -488,7 +488,8 @@ class DecisionTreeRegressor :
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector);
+               DimensionSelectionType& dimensionSelector,
+               FitnessFunction fitnessFunction = FitnessFunction());
 
   /**
    * Corresponding to the public Train() method, this method is designed for
@@ -514,7 +515,8 @@ class DecisionTreeRegressor :
                const size_t minimumLeafSize,
                const double minimumGainSplit,
                const size_t maximumDepth,
-               DimensionSelectionType& dimensionSelector);
+               DimensionSelectionType& dimensionSelector,
+               FitnessFunction fitnessFunction = FitnessFunction());
 };
 
 

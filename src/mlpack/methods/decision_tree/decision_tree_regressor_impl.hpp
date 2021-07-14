@@ -605,10 +605,9 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType& dimensionSelector)
+    DimensionSelectionType& dimensionSelector,
+    FitnessFunction fitnessFunction)
 {
-  FitnessFunction fitnessFunction;
-
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
@@ -786,10 +785,9 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType& dimensionSelector)
+    DimensionSelectionType& dimensionSelector,
+    FitnessFunction fitnessFunction)
 {
-  FitnessFunction fitnessFunction;
-
   // Clear children if needed.
   for (size_t i = 0; i < children.size(); ++i)
     delete children[i];
