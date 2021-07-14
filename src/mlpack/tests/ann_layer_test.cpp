@@ -2202,7 +2202,7 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
   expectedOutput.reshape(4, 1);
 
   layer.Backward(output, output, unzoomedOutput);
-  CheckMatrices(unzoomedOutput - expectedOutput, arma::zeros(output.n_rows), 1e-4);
+  CheckMatrices(unzoomedOutput - expectedOutput, arma::zeros(input.n_rows), 1e-4);
   
 }
 
