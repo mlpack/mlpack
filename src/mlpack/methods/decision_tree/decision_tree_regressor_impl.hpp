@@ -640,7 +640,8 @@ double DecisionTreeRegressor<FitnessFunction,
             minimumLeafSize,
             minimumGainSplit,
             splitPointOrPrediction,
-            *this);
+            *this,
+            fitnessFunction);
       }
       else if (datasetInfo.Type(i) == data::Datatype::numeric)
       {
@@ -651,7 +652,8 @@ double DecisionTreeRegressor<FitnessFunction,
             minimumLeafSize,
             minimumGainSplit,
             splitPointOrPrediction,
-            *this);
+            *this,
+            fitnessFunction);
       }
 
       // If the splitter reported that it did not split, move to the next
@@ -820,7 +822,8 @@ double DecisionTreeRegressor<FitnessFunction,
                                     minimumLeafSize,
                                     minimumGainSplit,
                                     splitPointOrPrediction,
-                                    *this);
+                                    *this,
+                                    fitnessFunction);
 
       // If the splitter did not report that it improved, then move to the next
       // dimension.

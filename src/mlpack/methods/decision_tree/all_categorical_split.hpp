@@ -103,7 +103,8 @@ class AllCategoricalSplit
       const size_t minimumLeafSize,
       const double minimumGainSplit,
       double& splitInfo,
-      AuxiliarySplitInfo& aux);
+      AuxiliarySplitInfo& aux,
+      FitnessFunction fitnessFunction);
 
   /**
    * Return the number of children in the split.

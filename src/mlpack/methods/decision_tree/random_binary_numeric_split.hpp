@@ -121,6 +121,7 @@ class RandomBinaryNumericSplit
       const double minimumGainSplit,
       double& splitInfo,
       AuxiliarySplitInfo& aux,
+      FitnessFunction fitnessFunction,
       const bool splitIfBetterGain = false);
 
   /**

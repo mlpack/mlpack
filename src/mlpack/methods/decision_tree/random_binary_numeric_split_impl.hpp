@@ -149,10 +149,9 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double minimumGainSplit,
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */,
+    FitnessFunction fitnessFunction,
     const bool splitIfBetterGain)
 {
-  FitnessFunction fitnessFunction;
-
   double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
   // Forcing a minimum leaf size of 1 (empty children don't make sense).
   const size_t minimum = std::max(minimumLeafSize, (size_t) 1);

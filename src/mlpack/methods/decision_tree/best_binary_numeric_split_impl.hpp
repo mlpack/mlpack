@@ -200,12 +200,11 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     double& splitInfo,
-    AuxiliarySplitInfo& /* aux */)
+    AuxiliarySplitInfo& /* aux */,
+    FitnessFunction fitnessFunction)
 {
   typedef typename ResponsesType::elem_type RType;
   typedef typename WeightVecType::elem_type WType;
-
-  FitnessFunction fitnessFunction;
 
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))
@@ -340,12 +339,11 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     double& splitInfo,
-    AuxiliarySplitInfo& /* aux */)
+    AuxiliarySplitInfo& /* aux */,
+    FitnessFunction fitnessFunction)
 {
   typedef typename ResponsesType::elem_type RType;
   typedef typename WeightVecType::elem_type WType;
-
-  FitnessFunction fitnessFunction;
 
   // First sanity check: if we don't have enough points, we can't split.
   if (data.n_elem < (minimumLeafSize * 2))

@@ -125,10 +125,9 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     double& splitInfo,
-    AuxiliarySplitInfo& /* aux */)
+    AuxiliarySplitInfo& /* aux */,
+    FitnessFunction fitnessFunction)
 {
-  FitnessFunction fitnessFunction;
-
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
   arma::Col<size_t> counts(numCategories, arma::fill::zeros);

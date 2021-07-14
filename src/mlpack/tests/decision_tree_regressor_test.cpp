@@ -216,10 +216,11 @@ TEST_CASE("AllCategoricalSplitSimpleSplitTest_", "[DecisionTreeRegressorTest]")
   MSEGain Gain;
   const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictor, 2, responses, weights, 3, 1e-7, splitInfo, aux);
+      bestGain, predictor, 2, responses, weights, 3, 1e-7, splitInfo, aux,
+      Gain);
   const double weightedGain =
       AllCategoricalSplit<MSEGain>::SplitIfBetter<true>(bestGain, predictor, 2,
-      responses, weights, 3, 1e-7, splitInfo, aux);
+      responses, weights, 3, 1e-7, splitInfo, aux, Gain);
 
   // Make sure that a split was made.
   REQUIRE(gain > bestGain);
@@ -248,7 +249,8 @@ TEST_CASE("AllCategoricalSplitMinSamplesTest_", "[DecisionTreeRegressorTest]")
   MSEGain Gain;
   const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictors, 4, responses, weights, 4, 1e-7, splitInfo, aux);
+      bestGain, predictors, 4, responses, weights, 4, 1e-7, splitInfo, aux,
+      Gain);
 
   // Make sure it's not split.
   REQUIRE(gain == DBL_MAX);
@@ -281,10 +283,10 @@ TEST_CASE("AllCategoricalSplitNoGainTest_", "[DecisionTreeRegressorTest]")
   const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = AllCategoricalSplit<MSEGain>::SplitIfBetter<false>(
       bestGain, predictors, 10, responses, weights, 10, 1e-7,
-      splitInfo, aux);
+      splitInfo, aux, Gain);
   const double weightedGain =
       AllCategoricalSplit<MSEGain>::SplitIfBetter<true>(bestGain, predictors,
-      10, responses, weights, 10, 1e-7, splitInfo, aux);
+      10, responses, weights, 10, 1e-7, splitInfo, aux, Gain);
 
   // Make sure that there was no split.
   REQUIRE(gain == DBL_MAX);
@@ -312,10 +314,10 @@ TEST_CASE("BestBinaryNumericSplitSimpleSplitTest_",
   MADGain Gain;
   const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = BestBinaryNumericSplit<MADGain>::SplitIfBetter<false>(
-      bestGain, predictors, responses, weights, 3, 1e-7, splitInfo, aux);
+      bestGain, predictors, responses, weights, 3, 1e-7, splitInfo, aux, Gain);
   const double weightedGain =
       BestBinaryNumericSplit<MADGain>::SplitIfBetter<true>(bestGain, predictors,
-      responses, weights, 3, 1e-7, splitInfo, aux);
+      responses, weights, 3, 1e-7, splitInfo, aux, Gain);
 
   // Make sure that a split was made.
   REQUIRE(gain > bestGain);
@@ -349,11 +351,11 @@ TEST_CASE("BestBinaryNumericSplitMinSamplesTest_",
   MSEGain Gain;
   const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = BestBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictors, responses, weights, 8, 1e-7, splitInfo, aux);
+      bestGain, predictors, responses, weights, 8, 1e-7, splitInfo, aux, Gain);
   // This should make no difference because it won't split at all.
   const double weightedGain =
       BestBinaryNumericSplit<MSEGain>::SplitIfBetter<true>(bestGain,
-      predictors, responses, weights, 8, 1e-7, splitInfo, aux);
+      predictors, responses, weights, 8, 1e-7, splitInfo, aux, Gain);
 
   // Make sure that no split was made.
   REQUIRE(gain == DBL_MAX);
@@ -384,7 +386,8 @@ TEST_CASE("BestBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
   MSEGain Gain;
   const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = BestBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, predictors, responses, weights, 10, 1e-7, splitInfo, aux);
+      bestGain, predictors, responses, weights, 10, 1e-7, splitInfo, aux,
+      Gain);
 
   // Make sure there was no split.
   REQUIRE(gain == DBL_MAX);
@@ -409,10 +412,10 @@ TEST_CASE("RandomBinaryNumericSplitAlwaysSplit_",
   MSEGain Gain;
   const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, values, responses, weights, 1, 1e-7, splitInfo, aux);
+      bestGain, values, responses, weights, 1, 1e-7, splitInfo, aux, Gain);
   const double weightedGain =
       RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<true>(bestGain, values,
-      responses, weights, 1, 1e-7, splitInfo, aux);
+      responses, weights, 1, 1e-7, splitInfo, aux, Gain);
 
   // Make sure that split was made.
   REQUIRE(gain != DBL_MAX);
@@ -437,11 +440,11 @@ TEST_CASE("RandomBinaryNumericSplitMinSamplesTest_",
   MSEGain Gain;
   const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, values, responses, weights, 8, 1e-7, splitInfo, aux);
+      bestGain, values, responses, weights, 8, 1e-7, splitInfo, aux, Gain);
   // This should make no difference because it won't split at all.
   const double weightedGain =
       RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<true>(bestGain, values,
-      responses, weights, 8, 1e-7, splitInfo, aux);
+      responses, weights, 8, 1e-7, splitInfo, aux, Gain);
 
   // Make sure that no split was made.
   REQUIRE(gain == DBL_MAX);
@@ -472,7 +475,8 @@ TEST_CASE("RandomBinaryNumericSplitNoGainTest_", "[DecisionTreeRegressorTest]")
   MSEGain Gain;
   const double bestGain = Gain.Evaluate<false>(responses, weights);
   const double gain = RandomBinaryNumericSplit<MSEGain>::SplitIfBetter<false>(
-      bestGain, values, responses, weights, 10, 1e-7, splitInfo, aux, true);
+      bestGain, values, responses, weights, 10, 1e-7, splitInfo, aux, Gain,
+      true);
 
   // Make sure there was no split.
   REQUIRE(gain == DBL_MAX);

@@ -118,7 +118,8 @@ class BestBinaryNumericSplit
       const size_t minimumLeafSize,
       const double minimumGainSplit,
       double& splitInfo,
-      AuxiliarySplitInfo& aux);
+      AuxiliarySplitInfo& aux,
+      FitnessFunction fitnessFunction);
 
   /**
    * Check if we can split a node.  If we can split a node in a way that
@@ -154,7 +155,8 @@ class BestBinaryNumericSplit
       const size_t minimumLeafSize,
       const double minimumGainSplit,
       double& splitInfo,
-      AuxiliarySplitInfo& /* aux */);
+      AuxiliarySplitInfo& /* aux */,
+      FitnessFunction fitnessFunction);
 
   /**
    * Returns 2, since the binary split always has two children.
