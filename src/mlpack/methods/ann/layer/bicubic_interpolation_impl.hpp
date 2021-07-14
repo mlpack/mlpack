@@ -188,12 +188,12 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
             double fr = rOrigin - 0.5;
             fr = fr - std::floor(fr);
 
-            arma::mat weightR = arma::mat(1, 4);
-            arma::mat weightC = arma::mat(4, 1);
+            arma::mat weightR = arma::mat(4, 1);
+            arma::mat weightC = arma::mat(1, 4);
             GetKernalWeight(fr, weightR);
             GetKernalWeight(fc, weightC);
 
-            temp(arma::span(rEnd - 3, rEnd), arma::span(cEnd - 3, cEnd)) += (weightR * gradientAsCube(i, j, k) * weightC);
+            temp(arma::span(rEnd - 3, rEnd), arma::span(cEnd - 3, cEnd)) += weightR * weightC * gradientAsCube(i, j, k);
           }
         }
         // Adding the contribution of the corner points to the output matrix.
@@ -205,10 +205,6 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
         temp.col(2) += temp.col(1);
         temp.col(inColSize + 1) += temp.col(inColSize + 2);
         temp.col(inColSize + 1) += temp.col(inColSize + 3);
-        temp(2, 2) += arma::accu(temp(arma::span(0, 1), arma::span(0, 1)));
-        temp(inRowSize + 1, inColSize + 1) += arma::accu(temp(arma::span(inRowSize + 2, inRowSize + 3), arma::span(inColSize + 2, inColSize + 3)));
-        temp(inRowSize + 1, 2) += arma::accu(temp(arma::span(inRowSize + 2, inRowSize + 3), arma::span(0, 1)));
-        temp(2, inColSize + 1) += arma::accu(temp(arma::span(0, 1), arma::span(inColSize + 2, inColSize + 3)));
  
         outputAsCube.slice(k) += temp(arma::span(2, inRowSize + 1), arma::span(2, inColSize + 1));
       }
