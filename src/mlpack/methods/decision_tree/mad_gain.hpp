@@ -98,6 +98,28 @@ class MADGain
 
     return Evaluate<UseWeights>(values, weights, 0, values.n_elem);
   }
+
+  /**
+   * Calculates the output value for each leaf node for prediction.
+   */
+  template<bool UseWeights, typename ResponsesType, typename WeightsType>
+  double OutputLeafValue(const ResponsesType& responses,
+                         const WeightsType& weights)
+  {
+    if (UseWeights)
+    {
+      double accWeights, weightedSum;
+      WeightedSum(responses, weights, 0, responses.n_elem, accWeights,
+          weightedSum);
+      return weightedSum / accWeights;
+    }
+    else
+    {
+      double sum;
+      Sum(responses, 0, responses.n_elem, sum);
+      return sum / responses.n_elem;
+    }
+  }
 };
 
 } // namespace tree

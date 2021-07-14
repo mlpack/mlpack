@@ -460,13 +460,6 @@ class DecisionTreeRegressor :
       CategoricalAuxiliarySplitInfo;
 
   /**
-   * Calculate the prediction value for the leaf nodes.
-   */
-  template<bool UseWeights, typename ResponsesType, typename WeightsType>
-  void CalculatePrediction(const ResponsesType& responses,
-                           const WeightsType& weights);
-
-  /**
    * Corresponding to the public Train() method, this method is designed for
    * avoiding unnecessary copies during training.  This function is called to
    * train children.

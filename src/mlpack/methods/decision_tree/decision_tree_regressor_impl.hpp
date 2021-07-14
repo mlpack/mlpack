@@ -762,10 +762,11 @@ double DecisionTreeRegressor<FitnessFunction,
     NumericAuxiliarySplitInfo::operator=(NumericAuxiliarySplitInfo());
     CategoricalAuxiliarySplitInfo::operator=(CategoricalAuxiliarySplitInfo());
 
-    // Calculate prediction label because we are a leaf.
-    CalculatePrediction<UseWeights>(
-        responses.subvec(begin, begin + count - 1),
-        UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
+    // Calculate prediction value because we are a leaf.
+    splitPointOrPrediction =
+        fitnessFunction.template OutputLeafValue<UseWeights>(
+            responses.subvec(begin, begin + count - 1),
+            UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
 
   return -bestGain;
@@ -916,10 +917,11 @@ double DecisionTreeRegressor<FitnessFunction,
     // We won't be needing these members, so reset them.
     NumericAuxiliarySplitInfo::operator=(NumericAuxiliarySplitInfo());
 
-    // Calculate prediction label because we are a leaf.
-    CalculatePrediction<UseWeights>(
-        responses.subvec(begin, begin + count - 1),
-        UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
+    // Calculate prediction value because we are a leaf.
+    splitPointOrPrediction =
+        fitnessFunction.template OutputLeafValue<UseWeights>(
+            responses.subvec(begin, begin + count - 1),
+            UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
 
   return -bestGain;
@@ -972,35 +974,6 @@ void DecisionTreeRegressor<FitnessFunction,
   // Loop over each point.
   for (size_t i = 0; i < data.n_cols; ++i)
     predictions[i] = Predict(data.col(i));
-}
-
-template<typename FitnessFunction,
-         template<typename> class NumericSplitType,
-         template<typename> class CategoricalSplitType,
-         typename DimensionSelectionType,
-         bool NoRecursion>
-template<bool UseWeights, typename ResponsesType, typename WeightsType>
-void DecisionTreeRegressor<FitnessFunction,
-                             NumericSplitType,
-                             CategoricalSplitType,
-                             DimensionSelectionType,
-                             NoRecursion
->::CalculatePrediction(const ResponsesType& responses,
-                       const WeightsType& weights)
-{
-  if (UseWeights)
-  {
-    double accWeights, weightedSum;
-    WeightedSum(responses, weights, 0, responses.n_elem, accWeights,
-        weightedSum);
-    splitPointOrPrediction = weightedSum / accWeights;
-  }
-  else
-  {
-    double sum;
-    Sum(responses, 0, responses.n_elem, sum);
-    splitPointOrPrediction = sum / responses.n_elem;
-  }
 }
 
 template<typename FitnessFunction,
