@@ -432,7 +432,8 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType dimensionSelector)
+    DimensionSelectionType dimensionSelector,
+    FitnessFunction fitnessFunction)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, responses, "DecisionTreeRegressor::Train()");
@@ -451,7 +452,7 @@ double DecisionTreeRegressor<FitnessFunction,
   arma::rowvec weights; // Fake weights, not used.
   return Train<false>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses,
       weights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, fitnessFunction);
 }
 
 //! Train on the given data, assuming all dimensions are numeric.
@@ -471,7 +472,8 @@ double DecisionTreeRegressor<FitnessFunction,
     const size_t minimumLeafSize,
     const double minimumGainSplit,
     const size_t maximumDepth,
-    DimensionSelectionType dimensionSelector)
+    DimensionSelectionType dimensionSelector,
+    FitnessFunction fitnessFunction)
 {
   // Sanity check on data.
   util::CheckSameSizes(data, responses, "DecisionTreeRegressor::Train()");
@@ -490,7 +492,7 @@ double DecisionTreeRegressor<FitnessFunction,
   arma::rowvec weights; // Fake weights, not used.
   return Train<false>(tmpData, 0, tmpData.n_cols, tmpResponses,
       weights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, fitnessFunction);
 }
 
 //! Train on the given weighted data.
@@ -513,6 +515,7 @@ double DecisionTreeRegressor<FitnessFunction,
     const double minimumGainSplit,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
+    FitnessFunction fitnessFunction,
     const std::enable_if_t<
         arma::is_arma_type<
         typename std::remove_reference<
@@ -536,7 +539,7 @@ double DecisionTreeRegressor<FitnessFunction,
   // Pass off work to the Train() method.
   return Train<true>(tmpData, 0, tmpData.n_cols, datasetInfo, tmpResponses,
       tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, fitnessFunction);
 }
 
 //! Train on the given weighted all numeric data.
@@ -558,6 +561,7 @@ double DecisionTreeRegressor<FitnessFunction,
     const double minimumGainSplit,
     const size_t maximumDepth,
     DimensionSelectionType dimensionSelector,
+    FitnessFunction fitnessFunction,
     const std::enable_if_t<
         arma::is_arma_type<
         typename std::remove_reference<
@@ -581,7 +585,7 @@ double DecisionTreeRegressor<FitnessFunction,
   // Pass off work to the Train() method.
   return Train<true>(tmpData, 0, tmpData.n_cols, tmpResponses,
       tmpWeights, minimumLeafSize, minimumGainSplit, maximumDepth,
-      dimensionSelector);
+      dimensionSelector, fitnessFunction);
 }
 
 //! Train on the given data.

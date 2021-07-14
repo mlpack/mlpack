@@ -286,7 +286,8 @@ class DecisionTreeRegressor :
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               FitnessFunction fitnessFunction = FitnessFunction());
 
   /**
    * Train the decision tree on the given data, assuming that all dimensions are
@@ -311,7 +312,8 @@ class DecisionTreeRegressor :
                const double minimumGainSplit = 1e-7,
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
-                   DimensionSelectionType());
+                   DimensionSelectionType(),
+               FitnessFunction fitnessFunction = FitnessFunction());
 
   /**
    * Train the decision tree on the given weighted data.  This will overwrite
@@ -343,6 +345,7 @@ class DecisionTreeRegressor :
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
+               FitnessFunction fitnessFunction = FitnessFunction(),
                const std::enable_if_t<arma::is_arma_type<typename
                    std::remove_reference<WeightsType>::type>::value>* = 0);
 
@@ -373,6 +376,7 @@ class DecisionTreeRegressor :
                const size_t maximumDepth = 0,
                DimensionSelectionType dimensionSelector =
                    DimensionSelectionType(),
+               FitnessFunction fitnessFunction = FitnessFunction(),
                const std::enable_if_t<arma::is_arma_type<typename
                    std::remove_reference<WeightsType>::type>::value>* = 0);
 
