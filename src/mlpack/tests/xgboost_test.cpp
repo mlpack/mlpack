@@ -105,5 +105,5 @@ TEST_CASE("SSEOutputValueTest", "[XGBTest]")
   arma::vec hessians = Loss.Hessians(observed, predicted);
 
   // Lambda = 0;
-  REQUIRE(Loss.OutputValue(gradients, hessians, 0) == outputValue);
+  REQUIRE(Loss.OutputValue(gradients, hessians) == outputValue);
 }
