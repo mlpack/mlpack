@@ -131,7 +131,7 @@ class Dropout
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 
-  //! Locally-stored mast object.
+  //! Locally-stored mask object.
   OutputDataType mask;
 
   //! The probability of setting a value to zero.
