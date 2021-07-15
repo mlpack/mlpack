@@ -58,10 +58,9 @@ class SSELoss
 
   /**
    * Returns the second order gradient of the loss function with respect to the
-   * values. This is used only for vectors.
+   * values.
    */
-  template<typename VecType,
-           class = std::enable_if_t<VecType::is_col || VecType::is_row>>
+  template<typename VecType>
   VecType Hessians(const VecType& /* observed */, const VecType& values)
   {
     VecType h(values.n_elem, arma::fill::ones);
