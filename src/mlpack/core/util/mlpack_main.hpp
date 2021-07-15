@@ -277,22 +277,9 @@ using Option = mlpack::bindings::julia::JuliaOption<T>;
 
 #include <mlpack/core/util/param.hpp>
 
-#ifdef BINDING_NAME
-  #define OLD_BINDING_NAME BINDING_NAME
-#undef BINDING_NAME
-#endif
-#define BINDING_NAME
-
+// TODO: fix so that this is a part of the "" binding name
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "v");
-
-#ifdef OLD_BINDING_NAME
-  #undef BINDING_NAME
-  #define BINDING_NAME OLD_BINDING_NAME
-  #undef OLD_BINDING_NAME
-#else
-  #undef BINDING_NAME
-#endif
 
 // Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 

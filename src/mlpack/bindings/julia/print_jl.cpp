@@ -253,7 +253,7 @@ void PrintJL(const string& bindingName,
   cout << endl;
 
   // Get an empty Params and Timers object.
-  cout << "  p = IOGetParameters(\"" << bindingName << "\")" << endl;
+  cout << "  p = GetParameters(\"" << bindingName << "\")" << endl;
   cout << "  t = Timers()" << endl;
   cout << endl;
 
