@@ -60,9 +60,12 @@ class SSELoss
   }
 
   /**
-   * Calculates the similarity score for evaluating the splits.
+   * Calculates the gain from begin to end.
+   *
+   * @param begin The begin index to calculate gain.
+   * @param end The end index to calculate gain.
    */
-  double SimilarityScore(const size_t begin, const size_t end)
+  double Evaluate(const size_t begin, const size_t end)
   {
     return std::pow(ApplyL1(arma::accu(gradients.subvec(begin, end))), 2) /
         (arma::accu(hessians.subvec(begin, end)) + lambda);
