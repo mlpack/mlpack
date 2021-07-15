@@ -35,6 +35,10 @@ class SSELoss
   template<typename VecType>
   typename VecType::elem_type InitialPrediction(const VecType& values)
   {
+    // Sanity check for empty vector.
+    if (values.n_elem == 0)
+      return 0;
+
     return arma::accu(values) / (typename VecType::elem_type) values.n_elem;
   }
 
