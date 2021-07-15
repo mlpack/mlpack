@@ -97,9 +97,7 @@ class SSELoss
   /**
    * Returns the output value for the leaf in the tree.
    */
-  template<typename VecType>
-  typename VecType::elem_type
-  OutputLeafValue(const VecType& gradients, const VecType& hessians)
+  double OutputLeafValue()
   {
     return -ApplyL1(arma::accu(gradients)) / (arma::accu(hessians) + lambda);
   }
@@ -119,11 +117,36 @@ class SSELoss
     return std::pow(ApplyL1(arma::accu(gradients)), 2) /
         (arma::accu(hessians) + lambda);
   }
+
+  /**
+   * Calculates the gain of the node before splitting. It also initializes the
+   * gradients and hessians used later for finding split.
+   * UseWeights and weights are ignored here. These are just to make the API
+   * consistent.
+   *
+   * @param input This is a 2D matrix. The first row stores the true observed
+   *    values and the second row stores the prediction at the current step
+   *    of boosting.
+   */
+  template<bool UseWeights, typename MatType, typename WeightVecType>
+  double Evaluate(const MatType& input, const WeightVecType& /* weights */)
+  {
+    // Calculate gradients and hessians.
+    gradients = input.row(1) - input.row(0);
+    hessians = arma::vec(input.n_cols, arma::fill::ones);
+
+    return std::pow(ApplyL1(arma::accu(gradients)), 2) /
+        (arma::accu(hessians) + lambda);
+  }
  private:
   //! The L2 regularization parameter.
   const double lambda;
   //! The L1 regularization parameter.
   const double alpha;
+  //! First order gradients.
+  arma::vec gradients;
+  //! Second order gradients (hessians).
+  arma::vec hessians;
 
   //! Applies the L1 regularization.
   double ApplyL1(const double sumGradients)
