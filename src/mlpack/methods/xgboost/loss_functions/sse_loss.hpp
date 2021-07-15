@@ -99,7 +99,7 @@ class SSELoss
    */
   template<typename VecType>
   typename VecType::elem_type
-  OutputValue(const VecType& gradients, const VecType& hessians)
+  OutputLeafValue(const VecType& gradients, const VecType& hessians)
   {
     return -ApplyL1(arma::accu(gradients)) / (arma::accu(hessians) + lambda);
   }

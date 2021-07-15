@@ -89,21 +89,20 @@ TEST_CASE("SSEResidualsTest", "[XGBTest]")
 }
 
 /**
- * Test that output value is calculated correctly for SSE Loss.
+ * Test that output leaf value is calculated correctly for SSE Loss.
  */
-TEST_CASE("SSEOutputValueTest", "[XGBTest]")
+TEST_CASE("SSELeafValueTest", "[XGBTest]")
 {
   arma::vec observed = {1, 3, 2, 2, 5, 6, 9, 11, 8, 8};
   arma::vec predicted = {0.5, 1, 2.5, 1.5, 5, 8, 8, 10.75, 9, 9.5};
 
-  // Actual outut value.
-  double outputValue = -0.075;
+  // Actual output leaf value.
+  double leafValue = -0.075;
 
   SSELoss Loss;
-  // Calculating gradients and hessians for input to OutputValue().
+  // Calculating gradients and hessians for input to OutputLeafValue().
   arma::vec gradients = Loss.Gradients(observed, predicted);
   arma::vec hessians = Loss.Hessians(observed, predicted);
 
-  // Lambda = 0;
-  REQUIRE(Loss.OutputValue(gradients, hessians) == outputValue);
+  REQUIRE(Loss.OutputLeafValue(gradients, hessians) == leafValue);
 }
