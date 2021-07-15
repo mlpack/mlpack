@@ -193,7 +193,7 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
             GetKernalWeight(fr, weightR);
             GetKernalWeight(fc, weightC);
 
-            temp(arma::span(rEnd - 3, rEnd), arma::span(cEnd - 3, cEnd)) += weightR * weightC * gradientAsCube(i, j, k);
+            temp(arma::span(rEnd - 3, rEnd), arma::span(cEnd - 3, cEnd)) += gradientAsCube(i, j, k) * weightR * weightC;
           }
         }
         // Adding the contribution of the corner points to the output matrix.
