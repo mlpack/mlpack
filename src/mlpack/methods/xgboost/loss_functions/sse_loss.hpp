@@ -90,7 +90,7 @@ class SSELoss
   OutputValue(const VecType& gradients, const VecType& hessians,
               const double lambda)
   {
-    return - arma::accu(gradients) / (arma::accu(hessians) + lambda);
+    return -arma::accu(gradients) / (arma::accu(hessians) + lambda);
   }
 
   /**
