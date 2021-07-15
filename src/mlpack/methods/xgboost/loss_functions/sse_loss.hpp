@@ -101,7 +101,7 @@ class SSELoss
   typename VecType::elem_type
   OutputValue(const VecType& gradients, const VecType& hessians)
   {
-    return -arma::accu(gradients) / (arma::accu(hessians) + lambda);
+    return -ApplyL1(arma::accu(gradients)) / (arma::accu(hessians) + lambda);
   }
 
   /**
@@ -116,7 +116,7 @@ class SSELoss
     VecType hessians = Hessians(observed.subvec(begin, end),
         residuals.subvec(begin, end));
 
-    return std::pow(arma::accu(gradients), 2) /
+    return std::pow(ApplyL1(arma::accu(gradients)), 2) /
         (arma::accu(hessians) + lambda);
   }
  private:
@@ -124,6 +124,21 @@ class SSELoss
   const double lambda;
   //! The L1 regularization parameter.
   const double alpha;
+
+  //! Applies the L1 regularization.
+  double ApplyL1(const double sumGradients)
+  {
+    if (sumGradients > alpha)
+    {
+      return sumGradients - alpha;
+    }
+    else if (sumGradients < - alpha)
+    {
+      return sumGradients + alpha;
+    }
+    
+    return 0;
+  }
 };
 
 } // namespace ensemble
