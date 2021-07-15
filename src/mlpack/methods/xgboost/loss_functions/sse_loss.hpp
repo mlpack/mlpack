@@ -29,6 +29,12 @@ namespace ensemble {
 class SSELoss
 {
  public:
+  SSELoss(const double alpha, const double lambda):
+      alpha(alpha), lambda(lambda)
+  {
+    // Nothing to do.
+  }
+
   /**
    * Returns the initial predition for gradient boosting.
    */
@@ -90,8 +96,7 @@ class SSELoss
    */
   template<typename VecType>
   typename VecType::elem_type
-  OutputValue(const VecType& gradients, const VecType& hessians,
-              const double lambda)
+  OutputValue(const VecType& gradients, const VecType& hessians)
   {
     return -arma::accu(gradients) / (arma::accu(hessians) + lambda);
   }
@@ -101,7 +106,7 @@ class SSELoss
    */
   template<typename VecType>
   double SimilarityScore(const VecType& observed, const VecType& residuals,
-      const size_t begin, const size_t end, const double lambda)
+      const size_t begin, const size_t end)
   {
     VecType gradients = Gradients(observed.subvec(begin, end),
         residuals.subvec(begin, end));
@@ -111,6 +116,11 @@ class SSELoss
     return std::pow(arma::accu(gradients), 2) /
         (arma::accu(hessians) + lambda);
   }
+ private:
+  //! The L2 regularization parameter.
+  const double lambda;
+  //! The L1 regularization parameter.
+  const double alpha;
 };
 
 } // namespace ensemble
