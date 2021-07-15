@@ -52,49 +52,6 @@ class SSELoss
   }
 
   /**
-   * Returns the first order gradient of the loss function with respect to the
-   * values.
-   *
-   * This is primarily used in calculating the residuals and split gain for the
-   * gradient boosted trees.
-   *
-   * @tparam T The type of input data. This can be both a vector or a scalar.
-   * @param observed The true observed values.
-   * @param values The values with respect to which the gradient will be
-   *     calculated.
-   */
-  template<typename T>
-  T Gradients(const T& observed, const T& values)
-  {
-    return values - observed;
-  }
-
-  /**
-   * Returns the second order gradient of the loss function with respect to the
-   * values.
-   */
-  template<typename VecType>
-  VecType Hessians(const VecType& /* observed */, const VecType& values)
-  {
-    VecType h(values.n_elem, arma::fill::ones);
-    return h;
-  }
-
-  /**
-   * Returns the pseudo residuals of the predictions.
-   * This is equal to the negative gradient of the loss function with respect
-   * to the predicted values f.
-   *
-   * @param observed The true observed values.
-   * @param f The prediction at the current step of boosting.
-   */
-  template<typename VecType>
-  VecType Residuals(const VecType& observed, const VecType& f)
-  {
-    return observed - f;
-  }
-
-  /**
    * Returns the output value for the leaf in the tree.
    */
   double OutputLeafValue()
@@ -105,17 +62,10 @@ class SSELoss
   /**
    * Calculates the similarity score for evaluating the splits.
    */
-  template<typename VecType>
-  double SimilarityScore(const VecType& observed, const VecType& residuals,
-      const size_t begin, const size_t end)
+  double SimilarityScore(const size_t begin, const size_t end)
   {
-    VecType gradients = Gradients(observed.subvec(begin, end),
-        residuals.subvec(begin, end));
-    VecType hessians = Hessians(observed.subvec(begin, end),
-        residuals.subvec(begin, end));
-
-    return std::pow(ApplyL1(arma::accu(gradients)), 2) /
-        (arma::accu(hessians) + lambda);
+    return std::pow(ApplyL1(arma::accu(gradients.subvec(begin, end))), 2) /
+        (arma::accu(hessians.subvec(begin, end)) + lambda);
   }
 
   /**
