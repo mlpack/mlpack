@@ -623,7 +623,7 @@ double DecisionTreeRegressor<FitnessFunction,
   // split). The split point is stored in splitPointOrPrediction for all
   // internal nodes of the tree.
   double bestGain = fitnessFunction.template Evaluate<UseWeights>(
-      responses.subvec(begin, begin + count - 1),
+      responses.cols(begin, begin + count - 1),
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = datasetInfo.Dimensionality(); // This means "no split".
   const size_t end = dimensionSelector.End();
@@ -639,7 +639,7 @@ double DecisionTreeRegressor<FitnessFunction,
         dimGain = CategoricalSplit::template SplitIfBetter<UseWeights>(bestGain,
             data.cols(begin, begin + count - 1).row(i),
             datasetInfo.NumMappings(i),
-            responses.subvec(begin, begin + count - 1),
+            responses.cols(begin, begin + count - 1),
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
             minimumGainSplit,
@@ -651,7 +651,7 @@ double DecisionTreeRegressor<FitnessFunction,
       {
         dimGain = NumericSplit::template SplitIfBetter<UseWeights>(bestGain,
             data.cols(begin, begin + count - 1).row(i),
-            responses.subvec(begin, begin + count - 1),
+            responses.cols(begin, begin + count - 1),
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights,
             minimumLeafSize,
             minimumGainSplit,
@@ -765,7 +765,7 @@ double DecisionTreeRegressor<FitnessFunction,
     // Calculate prediction value because we are a leaf.
     splitPointOrPrediction =
         fitnessFunction.template OutputLeafValue<UseWeights>(
-            responses.subvec(begin, begin + count - 1),
+            responses.cols(begin, begin + count - 1),
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
 
@@ -808,7 +808,7 @@ double DecisionTreeRegressor<FitnessFunction,
   // later if we don't make a split). The split point is stored in
   // splitPointOrPrediction for all internal nodes of the tree.
   double bestGain = fitnessFunction.template Evaluate<UseWeights>(
-      responses.subvec(begin, begin + count - 1),
+      responses.cols(begin, begin + count - 1),
       UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   size_t bestDim = data.n_rows; // This means "no split".
 
@@ -920,7 +920,7 @@ double DecisionTreeRegressor<FitnessFunction,
     // Calculate prediction value because we are a leaf.
     splitPointOrPrediction =
         fitnessFunction.template OutputLeafValue<UseWeights>(
-            responses.subvec(begin, begin + count - 1),
+            responses.cols(begin, begin + count - 1),
             UseWeights ? weights.subvec(begin, begin + count - 1) : weights);
   }
 
