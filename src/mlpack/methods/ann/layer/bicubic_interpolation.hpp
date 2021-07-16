@@ -83,9 +83,6 @@ class BicubicInterpolation
                 const arma::Mat<eT>& gradient,
                 arma::Mat<eT>& output);
 
-  //! Get the size of the weights.
-  size_t WeightSize() const { return (inRowSize + 5) * (inColSize + 4); }
-
   template<typename eT>
   void GetKernalWeight(eT delta, arma::mat& coeffs);
 
@@ -171,8 +168,6 @@ class BicubicInterpolation
   //! Locally-stored weights parameter.
   OutputDataType weights;
 
-  // Locally-stored temp for padded output matrix.
-  arma::Mat<ElemType> temp;
 }; // class BicubicInterpolation
 
 } // namespace ann

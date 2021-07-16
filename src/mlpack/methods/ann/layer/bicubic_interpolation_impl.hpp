@@ -50,8 +50,7 @@ BicubicInterpolation(
   alpha(alpha),
   batchSize(0)
   {
-    weights.set_size(WeightSize(), 1);
-    temp = arma::mat(weights.memptr(), inRowSize + 4, inColSize + 4, false, false);
+
   }
 
 template<typename InputDataType, typename OutputDataType>
@@ -170,6 +169,7 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
     }
     else
     {
+      arma::mat temp = arma::mat(inRowSize + 4, inColSize + 4);
       for (size_t k = 0; k < depth * batchSize; ++k)
       {
         temp.zeros();
