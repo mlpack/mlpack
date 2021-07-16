@@ -246,7 +246,7 @@ using MoreTypes = boost::variant<
         RBF<arma::mat, arma::mat, GaussianFunction>*,
         BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
         PositionalEncoding<arma::mat, arma::mat>*,
-        ISRLU<arma::mat, arma::mat>*
+        ISRLU<arma::mat, arma::mat>*,
         NearestInterpolation<arma::mat, arma::mat>*
 >;
 
