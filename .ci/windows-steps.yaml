@@ -9,9 +9,9 @@ steps:
 # Fetch build dependencies
 - powershell: |
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
-    nuget install boost -o $(Agent.ToolsDirectory) -Version 1.60.0
-    nuget install boost_random-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
-    nuget install boost_math_c99-vc140 -o $(Agent.ToolsDirectory) -Version 1.60.0
+    nuget install boost -o $(Agent.ToolsDirectory) -Version 1.66.0
+    nuget install boost_random-vc140 -o $(Agent.ToolsDirectory) -Version 1.66.0
+    nuget install boost_math_c99-vc140 -o $(Agent.ToolsDirectory) -Version 1.66.0
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
     nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory)
 
