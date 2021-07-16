@@ -2121,12 +2121,14 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
   input[3] = 4.0;
   NearestInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize,
       depth);
+
   expectedOutput << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000 << 2.0000 << 2.0000 << arma::endr
                  << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000 << 2.0000 << 2.0000 << arma::endr
                  << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000 << 2.0000 << 2.0000 << arma::endr
                  << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000 << 4.0000 << 4.0000 << arma::endr
                  << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000 << 4.0000 << 4.0000 << arma::endr;
   expectedOutput.reshape(35, 1);
+
   layer.Forward(input, output);
   CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-4);
 
