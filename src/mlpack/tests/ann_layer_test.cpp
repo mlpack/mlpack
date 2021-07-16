@@ -2187,24 +2187,24 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
   input.reshape(4, 1);
   BicubicInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize, depth);
 
-  expectedOutput << 6.6880  <<  7.3331  <<   9.6973 <<  12.7950 <<  15.8927 <<  18.2569 << 18.9020 << arma::endr
-                 << 10.5330 <<  11.1781 <<  13.5423 <<  16.6400 <<  19.7377 <<  22.1019 << 22.7470 << arma::endr
-                 << 18.8930 <<  19.5381 <<  21.9023 <<  25.0000 <<  28.0977 <<  30.4619 << 31.1070 << arma::endr
-                 << 27.2530 <<  27.8981 <<  30.2623 <<  33.3600 <<  36.4577 <<  38.8219 << 39.4670 << arma::endr
-                 << 31.0980 <<  31.7431 <<  34.1073 <<  37.2050 <<  40.3027 <<  42.6669 << 43.3120 << arma::endr;
+  expectedOutput << 6.6880435944 << 7.3330874443 << 9.6973438263 << 12.7950067520 << 15.8926725388 << 18.2569236755 << 18.9019603729 << arma::endr
+                 << 10.5330419540 << 11.1780862808 << 13.5423421860 << 16.6400032043 << 19.7376689911 << 22.1019191742 << 22.7469558716 << arma::endr
+                 << 18.8930358887 << 19.5380821228 << 21.9023399353 << 25.0000000000 << 28.0976638794 << 30.4619140625 << 31.1069507599 << arma::endr
+                 << 27.2530345917 << 27.8980865479 << 30.2623443604 << 33.3600006104 << 36.4576644897 << 38.8219146729 << 39.4669494629 << arma::endr
+                 << 31.0980434418 << 31.7430934906 << 34.1073532104 << 37.2050094604 << 40.3026695251 << 42.6669273376 << 43.3119621277 << arma::endr;
   expectedOutput.reshape(35, 1);
   layer.Forward(input, output);
-  output.raw_print(std::cout, "output:");
+
   CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-4);
 
   expectedOutput.clear();
-  expectedOutput << 103.79045868 << 180.51335144 << arma::endr
-                 << 256.98651123 << 333.70950317 << arma::endr;
+  expectedOutput << 103.7904586792 << 180.5133514404 << arma::endr
+                 << 256.9865112305 << 333.7095031738 << arma::endr;
   expectedOutput.reshape(4, 1);
 
   layer.Backward(output, output, unzoomedOutput);
-  unzoomedOutput.raw_print(std::cout, "unzoomedOutput:");
-  CheckMatrices(unzoomedOutput - expectedOutput, arma::zeros(input.n_rows), 1e-2);
+
+  CheckMatrices(unzoomedOutput - expectedOutput, arma::zeros(input.n_rows), 1e-4);
   
 }
 
