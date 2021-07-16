@@ -2187,24 +2187,24 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
   input.reshape(4, 1);
   BicubicInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize, depth);
 
-  expectedOutput << 6.6880435944 << 7.3330874443 << 9.6973438263 << 12.7950067520 << 15.8926725388 << 18.2569236755 << 18.9019603729 << arma::endr
-                 << 10.5330419540 << 11.1780862808 << 13.5423421860 << 16.6400032043 << 19.7376689911 << 22.1019191742 << 22.7469558716 << arma::endr
-                 << 18.8930358887 << 19.5380821228 << 21.9023399353 << 25.0000000000 << 28.0976638794 << 30.4619140625 << 31.1069507599 << arma::endr
-                 << 27.2530345917 << 27.8980865479 << 30.2623443604 << 33.3600006104 << 36.4576644897 << 38.8219146729 << 39.4669494629 << arma::endr
-                 << 31.0980434418 << 31.7430934906 << 34.1073532104 << 37.2050094604 << 40.3026695251 << 42.6669273376 << 43.3119621277 << arma::endr;
+  expectedOutput << 6.68803935860  <<  7.33308309038 <<  9.69733236152 << 12.79500000000 << 15.89266763848 << 18.25691690962 << 18.90196064140 << arma::endr
+                 << 10.53303935860 << 11.17808309038 << 13.54233236152 << 16.64000000000 << 19.73766763848 << 22.10191690962 << 22.74696064140 << arma::endr
+                 << 18.89303935860 << 19.53808309038 << 21.90233236152 << 25.00000000000 << 28.09766763848 << 30.46191690962 << 31.10696064140 << arma::endr
+                 << 27.25303935860 << 27.89808309038 << 30.26233236152 << 33.36000000000 << 36.45766763848 << 38.82191690962 << 39.46696064140 << arma::endr
+                 << 31.09803935860 << 31.74308309038 << 34.10733236152 << 37.20500000000 << 40.30266763848 << 42.66691690962 << 43.31196064140 << arma::endr;
   expectedOutput.reshape(35, 1);
   layer.Forward(input, output);
 
-  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-4);
+  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-6);
 
   expectedOutput.clear();
-  expectedOutput << 103.7904586792 << 180.5133514404 << arma::endr
-                 << 256.9865112305 << 333.7095031738 << arma::endr;
+  expectedOutput << 103.79040654914 << 180.51345595086 << arma::endr
+                 << 256.98654404914 << 333.70959345086 << arma::endr;
   expectedOutput.reshape(4, 1);
 
   layer.Backward(output, output, unzoomedOutput);
 
-  CheckMatrices(unzoomedOutput - expectedOutput, arma::zeros(input.n_rows), 1e-4);
+  CheckMatrices(unzoomedOutput - expectedOutput, arma::zeros(input.n_rows), 1e-6);
   
 }
 
