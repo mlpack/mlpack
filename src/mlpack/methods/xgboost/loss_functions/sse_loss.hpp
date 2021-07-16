@@ -55,7 +55,7 @@ class SSELoss
    * Returns the output value for the leaf in the tree.
    */
   template<typename MatType, typename WeightVecType>
-  double OutputLeafValue(const MatType& input,
+  double OutputLeafValue(const MatType& /* input */,
                          const WeightVecType& /* weights */)
   {
     return -ApplyL1(arma::accu(gradients)) / (arma::accu(hessians) + lambda);

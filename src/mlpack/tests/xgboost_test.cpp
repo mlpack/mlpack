@@ -44,7 +44,7 @@ TEST_CASE("SSELeafValueTest", "[XGBTest]")
   double leafValue = -0.075;
 
   SSELoss Loss;
-  double gain = Loss.Evaluate<false>(input, weights);
+  double = Loss.Evaluate<false>(input, weights);
 
   REQUIRE(Loss.OutputLeafValue(input, weights) == leafValue);
 }
