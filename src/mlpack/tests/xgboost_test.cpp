@@ -44,7 +44,23 @@ TEST_CASE("SSELeafValueTest", "[XGBTest]")
   double leafValue = -0.075;
 
   SSELoss Loss;
-  double = Loss.Evaluate<false>(input, weights);
+  (void) Loss.Evaluate<false>(input, weights);
 
   REQUIRE(Loss.OutputLeafValue(input, weights) == leafValue);
+}
+
+/**
+ * Test that the gain is computed correctly for SSE Loss.
+ */
+TEST_CASE("SSEGainTest", "[XGBTest]")
+{
+  arma::mat input = { { 1,   3,   2,   2, 5, 6, 9,    11, 8,   8 },
+                      { 0.5, 1, 2.5, 1.5, 5, 8, 8, 10.75, 9, 9.5 } };
+  arma::vec weights; // dummy weights not used.
+
+  // Actual gain value.
+  double gain = 0.05625;
+
+  SSELoss Loss;
+  REQUIRE(Loss.Evaluate<false>(input, weights) == gain);
 }
