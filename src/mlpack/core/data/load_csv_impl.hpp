@@ -183,7 +183,7 @@ namespace data
 
     std::pair<int, int> mat_size = GetMatSize(f);
 
-    x.set_size(mat_size.first, mat_size.second);
+    x.set_size(mat_size.second, mat_size.first);
 
     size_t row = 0;
 

@@ -150,56 +150,61 @@ class LoadCSV
     cols = 0;
 
     // First, count the number of rows in the file (this is the dimensionality).
-    // std::string line;
-    // while (std::getline(inFile, line))
-    // {
-    //   ++rows;
-    // }
+    std::string line;
+    while (std::getline(inFile, line))
+    {
+       ++rows;
+    }
 
-    // Parser parser;
-
-    // std::pair<int, int> matSize = parser.GetMatSize(inFile);
-
-  //  info = DatasetMapper<MapPolicy>(matSize.first);
+    // Reset the DatasetInfo object, if needed.
+    if (info.Dimensionality() == 0)
+    {
+      info.SetDimensionality(rows);
+    }
+    else if (info.Dimensionality() != rows)
+    {
+      std::ostringstream oss;
+      oss << "data::LoadCSV(): given DatasetInfo has dimensionality "
+          << info.Dimensionality() << ", but data has dimensionality "
+          << rows;
+      throw std::invalid_argument(oss.str());
+    }
 
     // Now, jump back to the beginning of the file.
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
     rows = 0;
-
-    std::string line;
-   
+    
     while (std::getline(inFile, line))
     {
       ++rows;
-      // Remove whitespace from either side.
-      boost::trim(line);
 
-      /*if (rows == 1)
+      if (rows == 1)
       {
         // Extract the number of columns.
-        auto findColSize = [&cols](iter_type) { ++cols; };
-        qi::parse(line.begin(), line.end(),
-            stringRule[findColSize] % delimiterRule);
-      }*/
+	std::pair<int, int> dimen = GetMatSize(inFile);
+        cols = dimen.second;
+      }
 
       // I guess this is technically a second pass, but that's ok... still the
       // same idea...
       if (MapPolicy::NeedsFirstPass)
       {
-        // info.template MapFirstPass<T>(std::move(line), rows-1);
         // In this case we must pass everything we parse to the MapPolicy.
-        // auto firstPassMap = [&](const iter_type& iter)
-        // {
-        //   std::string str(iter.begin(), iter.end());
-        //   boost::trim(str);
+	std::string str(line.begin(), line.end());
+        
+	for(int i = 0; i < str.size(); i++)
+	{
+	  // Maybe there is a faster way to parser each element of the string
+	  // Also for now it is being considered that delimiter will always
+	  // be comma(,)
+	  if(str[i] != ',')
+	  {
+	    std::string cc(1, str[i]);
+	    info.template MapFirstPass<T>(std::move(cc), rows - 1);
+	  }
+	}
 
-        //   info.template MapFirstPass<T>(std::move(str), rows - 1);
-        // };
-
-        // // Now parse the line.
-        // qi::parse(line.begin(), line.end(),
-        //     stringRule[firstPassMap] % delimiterRule);
       }
     }
   }
@@ -236,37 +241,36 @@ class LoadCSV
     while (std::getline(inFile, line))
     {
       ++cols;
-      // Remove whitespace from either side.
-      boost::trim(line);
 
       if (cols == 1)
       {
         // Extract the number of dimensions.
-        auto findRowSize = [&rows](iter_type) { ++rows; };
-        qi::parse(line.begin(), line.end(),
-            stringRule[findRowSize] % delimiterRule);
+        std::pair<int, int> dimen = GetMatSize(inFile);
+        rows = dimen.second;
 
-        // Now that we know the dimensionality, initialize the DatasetMapper.
-        info.SetDimensionality(rows);
+	// Now that we know the dimensionality, initialize the DatasetMapper.
+	info.SetDimensionality(rows);
       }
 
-      // If we need to do a first pass for the DatasetMapper, do it.
+      // If we need to do a first pas12dds for the DatasetMapper, do it.
       if (MapPolicy::NeedsFirstPass)
       {
         size_t dim = 0;
 
         // In this case we must pass everything we parse to the MapPolicy.
-        auto firstPassMap = [&](const iter_type& iter)
+        std::string str(line.begin(), line.end());
+
+	// Maybe there is a faster way to parser each element of the string
+	// Also for now it is being considered that delimiter will always
+	// be comma(,)
+	for(int i = 0; i < str.size(); i++)
         {
-          std::string str(iter.begin(), iter.end());
-          boost::trim(str);
-
-          info.template MapFirstPass<T>(std::move(str), dim++);
-        };
-
-        // Now parse the line.
-        qi::parse(line.begin(), line.end(),
-            stringRule[firstPassMap] % delimiterRule);
+	  if(str[i] != ',')
+	  {
+	    std::string cc(1, str[i]);
+	    info.template MapFirstPass<T>(std::move(cc), dim++);
+	  }
+        }
       }
     }
   }
