@@ -2174,6 +2174,7 @@ TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
 TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 {
   // Tested output against  torch.nn.Upsample(mode="bicubic")
+  // Test case with square input with rectangular output
   arma::mat input, output, unzoomedOutput, expectedOutput;
   size_t inRowSize = 2;
   size_t inColSize = 2;
@@ -2205,7 +2206,41 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
   layer.Backward(output, output, unzoomedOutput);
 
   CheckMatrices(unzoomedOutput, expectedOutput, 1e-6);
-  
+
+  // Tested output against  torch.nn.Upsample(mode="bicubic")
+  // Test case with rectangular input with rectangular output
+  arma::mat input1, output1, unzoomedOutput1, expectedOutput1;
+
+  inRowSize = 2;
+  inColSize = 3;
+  outRowSize = 5;
+  outColSize = 7;
+  depth = 1;
+  input1.zeros(inRowSize * inColSize * depth, 1);
+
+  input1 << 10 << 20 << 30 << arma::endr
+         << 40 << 50 << 60 << arma::endr;
+  input1.reshape(6, 1);
+
+  BicubicInterpolation<> layer1(inRowSize, inColSize, outRowSize, outColSize, depth);
+
+  expectedOutput1 << 5.59920553936  << 7.77121720117  << 11.44468658892 << 16.69250000000 << 21.94031341108 << 25.61378279883 << 27.78579446064 << arma::endr
+                  << 11.36670553936 << 13.53871720117 << 17.21218658892 << 22.46000000000 << 27.70781341108 << 31.38128279883 << 33.55329446064 << arma::endr
+                  << 23.90670553936 << 26.07871720117 << 29.75218658892 << 35.00000000000 << 40.24781341108 << 43.92128279883 << 46.09329446064 << arma::endr
+                  << 36.44670553936 << 38.61871720117 << 42.29218658892 << 47.54000000000 << 52.78781341108 << 56.46128279883 << 58.63329446064 << arma::endr
+                  << 42.21420553936 << 44.38621720117 << 48.05968658892 << 53.30750000000 << 58.55531341108 << 62.22878279883 << 64.40079446064 << arma::endr;
+  expectedOutput1.reshape(35, 1);
+  layer1.Forward(input1, output1);
+
+  CheckMatrices(output1, expectedOutput1, 1e-6);
+
+  expectedOutput1.clear();
+  expectedOutput1 << 67.65674505130  << 132.29729646501 << 182.75175223368 << arma::endr
+                  << 218.01355388877 << 291.17209129009 << 333.10856107115 << arma::endr;
+  expectedOutput1.reshape(6, 1);
+
+  layer1.Backward(output1, output1, unzoomedOutput1);
+  CheckMatrices(unzoomedOutput1, expectedOutput1, 1e-6);
 }
 
 /**
