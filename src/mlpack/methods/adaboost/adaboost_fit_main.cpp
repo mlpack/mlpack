@@ -73,7 +73,8 @@ BINDING_LONG_DESC(
 
 // Example.
 BINDING_EXAMPLE(
-    "For example, to run AdaBoost on an input dataset");
+    "For example, to run AdaBoost on an input dataset: "
+    "\n\n" + IMPORT_LIBS + GET_DATASET("df", "https://example.com"));
 
 // See also...
 BINDING_SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/"

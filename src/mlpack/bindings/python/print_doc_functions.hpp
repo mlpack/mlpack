@@ -103,6 +103,25 @@ inline std::string PrintModel(const std::string& modelName);
 inline std::string PrintDataset(const std::string& datasetName);
 
 /**
+ * Read dataset from a URL and store it in a variable.
+ */
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url);
+
+/**
+ * recursion base case.
+ */
+inline std::string ImportLibs();
+
+/**
+ * Import arbitrary number of libs.
+ */
+template<typename... Args>
+std::string ImportLibs(const std::string& libName,
+                       const std::string& callAs,
+                       Args... args);
+
+/**
  * Given the parameter name, determine what it would actually be when passed to
  * the command line.
  */

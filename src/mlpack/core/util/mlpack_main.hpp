@@ -67,6 +67,9 @@
  */
 #define PRINT_DATASET mlpack::bindings::cli::PrintDataset
 
+// TODO: Change this.
+#define GET_DATASET
+
 /**
  * PRINT_MODEL() returns a string that contains a correct language-specific
  * representation of an mlpack model name.
@@ -200,6 +203,19 @@ using Option = mlpack::bindings::tests::TestOption<T>;
  * not a flag).
  */
 #define PRINT_CALL mlpack::bindings::python::ProgramCall
+
+/**
+ * GET_DATASET() returns a string that reads data from a source and,
+ * stores in a variable.
+ */
+#define GET_DATASET(x,y) mlpack::bindings::python::GetDataset(x,y)
+
+/**
+ * IMPORT_LIBS() returns a string that imports required libraries for a
+ * particular language.
+ */
+#define IMPORT_LIBS mlpack::bindings::python::ImportLibs("pandas", "pd", \
+    "mlpack.preprocess_split", "preprocess_split")
 
 /**
  * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or

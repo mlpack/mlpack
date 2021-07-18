@@ -337,6 +337,34 @@ inline std::string PrintDataset(const std::string& datasetName)
 }
 
 /**
+ * Read dataset from a URL and store in a variable.
+ */
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url)
+{
+  std::string readString = ">>> " + datasetName + " = ";
+  readString += "pd.read_csv('" + url + "')" + "\n";
+  return readString;
+}
+/**
+ * recursion base case.
+ */
+inline std::string ImportLibs() { return ""; }
+
+/**
+ * Import arbitrary number of libraries.
+ */
+template<typename... Args>
+std::string ImportLibs(const std::string& libName,
+                       const std::string& callAs,
+                       Args... args)
+{
+  string importString = ">>> import " + libName + " as " + callAs + "\n";
+  importString += ImportLibs(args...);
+  return importString;
+}
+
+/**
  * Print any closing call to a program.  For a Python binding this is a closing
  * brace.
  */
