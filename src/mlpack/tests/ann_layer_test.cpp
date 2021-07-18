@@ -2209,7 +2209,7 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 
   // Tested output against  torch.nn.Upsample(mode="bicubic")
   // Test case with rectangular input with rectangular output
-  arma::mat input1, output1, unzoomedOutput1, expectedOutput1;
+  arma::mat input1, output1, unzoomedOutput1, expectedOutput1, expectedUnzoomed;
 
   inRowSize = 2;
   inColSize = 3;
@@ -2234,14 +2234,13 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 
   CheckMatrices(output1, expectedOutput1, 1e-6);
 
-  expectedOutput1.clear();
-  expectedOutput1 << 67.65674505130  << 132.29729646501 << 182.75175223368 << arma::endr
-                  << 218.01355388877 << 291.17209129009 << 333.10856107115 << arma::endr;
-  expectedOutput1.reshape(6, 1);
+  expectedUnzoomed << 67.65674505130  << 132.29729646501 << 182.75175223368 << arma::endr
+                   << 218.01355388877 << 291.17209129009 << 333.10856107115 << arma::endr;
+  expectedUnzoomed.reshape(6, 1);
 
   layer1.Backward(output1, output1, unzoomedOutput1);
   unzoomedOutput1.raw_print(std::cout, "unzoomedOutput1:");
-  CheckMatrices(unzoomedOutput1, expectedOutput1, 1e-6);
+  CheckMatrices(unzoomedOutput1, expectedUnzoomed, 1e-6);
 }
 
 /**
