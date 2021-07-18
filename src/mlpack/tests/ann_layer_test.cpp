@@ -2240,7 +2240,7 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
   expectedOutput1.reshape(6, 1);
 
   layer1.Backward(output1, output1, unzoomedOutput1);
-  std::cout << unzoomedOutput1 << endl;
+  unzoomedOutput1.raw_print(std::cout, "unzoomedOutput1:");
   CheckMatrices(unzoomedOutput1, expectedOutput1, 1e-6);
 }
 
