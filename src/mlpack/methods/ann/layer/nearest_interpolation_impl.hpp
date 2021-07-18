@@ -68,9 +68,9 @@ void NearestInterpolation<InputDataType, OutputDataType>::Forward(
     assert(inColSize >= 2);
 
     arma::cube inputAsCube(const_cast<arma::Mat<eT>&>(input).memptr(),
-      inRowSize, inColSize, depth * batchSize, false, false);
+        inRowSize, inColSize, depth * batchSize, false, false);
     arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
-      depth * batchSize, false, true);
+        depth * batchSize, false, true);
 
     double scaleRow = (double) inRowSize / (double) outRowSize;
     double scaleCol = (double) inColSize / (double) outColSize;
@@ -86,7 +86,7 @@ void NearestInterpolation<InputDataType, OutputDataType>::Forward(
         for (size_t k = 0; k < depth * batchSize; ++k)
         {
           outputAsCube(i, j, k) = inputAsCube.slice(k)(
-            rOrigin, cOrigin);
+              rOrigin, cOrigin);
         }
       }
     }
@@ -113,9 +113,9 @@ void NearestInterpolation<InputDataType, OutputDataType>::Backward(
     assert(outColSize >= 2);
 
     arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
-      depth * batchSize, false, true);
+        depth * batchSize, false, true);
     arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
-      outColSize, depth * batchSize, false, false);
+        outColSize, depth * batchSize, false, false);
 
     double scaleRow = (double)(inRowSize) / outRowSize;
     double scaleCol = (double)(inColSize) / outColSize;
@@ -132,12 +132,12 @@ void NearestInterpolation<InputDataType, OutputDataType>::Backward(
 
         for (size_t j = 0; j < outColSize; ++j)
         {
-          const size_t cOrigin = std::floor(j* scaleCol);
+          const size_t cOrigin = std::floor(j * scaleCol);
 
           for (size_t k = 0; k < depth * batchSize; ++k)
           {
             outputAsCube(rOrigin, cOrigin, k) +=
-              gradientAsCube(i, j, k);
+                gradientAsCube(i, j, k);
           }
         }
       }
@@ -148,13 +148,13 @@ template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
 void NearestInterpolation<InputDataType, OutputDataType>::serialize(
   Archive& ar, const uint32_t /* version */)
-  {
-    ar(CEREAL_NVP(inRowSize));
-    ar(CEREAL_NVP(inColSize));
-    ar(CEREAL_NVP(outRowSize));
-    ar(CEREAL_NVP(outColSize));
-    ar(CEREAL_NVP(depth));
-  }
+{
+ ar(CEREAL_NVP(inRowSize));
+ ar(CEREAL_NVP(inColSize));
+ ar(CEREAL_NVP(outRowSize));
+ ar(CEREAL_NVP(outColSize));
+ ar(CEREAL_NVP(depth));
+}
 
 } // namespace ann
 } // namespace mlpack

@@ -16,9 +16,9 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Definition and Implementation of the Nearest Interpoltion Layer.
+ * Definition and Implementation of the Nearest Interpolation Layer.
  *
- * Nearest Interpoltion is an mathematical technique, primarily used for
+ * Nearest interpolation is an mathematical technique, primarily used for
  * scaling purposes. The input should be a 2D matrix and it can have
  * a number of channels/units.
  *
@@ -47,10 +47,10 @@ class NearestInterpolation
    * @param depth Number of input slices.
    */
   NearestInterpolation(const size_t inRowSize,
-           const size_t inColSize,
-           const size_t outRowSize,
-           const size_t outColSize,
-           const size_t depth);
+                       const size_t inColSize,
+                       const size_t outRowSize,
+                       const size_t outColSize,
+                       const size_t depth);
 
   /**
    * Forward pass through the layer. The layer interpolates

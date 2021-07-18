@@ -2107,7 +2107,7 @@ TEST_CASE("GradientSoftmaxTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
 {
-  // Tested output against  torch.nn.Upsample(mode="nearest")
+  // Tested output against torch.nn.Upsample(mode="nearest").
   arma::mat input, output, unzoomedOutput, expectedOutput;
   size_t inRowSize = 2;
   size_t inColSize = 2;
