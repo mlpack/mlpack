@@ -119,7 +119,7 @@ class BestBinaryNumericSplit
       const double minimumGainSplit,
       double& splitInfo,
       AuxiliarySplitInfo& aux,
-      FitnessFunction fitnessFunction);
+      FitnessFunction& fitnessFunction);
 
   /**
    * Check if we can split a node.  If we can split a node in a way that
@@ -156,7 +156,7 @@ class BestBinaryNumericSplit
       const double minimumGainSplit,
       double& splitInfo,
       AuxiliarySplitInfo& /* aux */,
-      FitnessFunction fitnessFunction);
+      FitnessFunction& fitnessFunction);
 
   /**
    * Returns 2, since the binary split always has two children.

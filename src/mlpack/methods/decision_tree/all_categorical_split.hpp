@@ -104,7 +104,7 @@ class AllCategoricalSplit
       const double minimumGainSplit,
       double& splitInfo,
       AuxiliarySplitInfo& aux,
-      FitnessFunction fitnessFunction);
+      FitnessFunction& fitnessFunction);
 
   /**
    * Return the number of children in the split.
