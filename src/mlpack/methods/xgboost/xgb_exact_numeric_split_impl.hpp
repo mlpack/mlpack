@@ -29,7 +29,29 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
     AuxiliarySplitInfo& aux,
     LossFunction lossFunction)
 {
-  
+  // It can't be outperformed.
+  if (bestGain == 0.0)
+    return DBL_MAX;
+
+  // Next, sort the data.
+  arma::uvec sortedIndices = arma::sort_index(data);
+  ResponsesType sortedResponses(responses.n_elem);
+  for (size_t i = 0; i < sortedResponses.n_elem; ++i)
+    sortedResponses[i] = responses[sortedIndices[i]];
+  lossFunction.sortGradAndHess(sortedIndices);
+
+  // Sanity check: if the first element is the same as the last, we can't split
+  // in this dimension.
+  if (data[sortedIndices[0]] == data[sortedIndices[sortedIndices.n_elem - 1]])
+    return DBL_MAX;
+
+  // Initialize the binary scan.
+  lossFunction.BinaryScanInitialize();
+
+  double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
+  bool improved = false;
+  // Force a minimum leaf size of 1 (empty children don't make sense).
+  const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
 }
 
 } // namespace ensemble

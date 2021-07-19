@@ -93,6 +93,28 @@ class SSELoss
     return std::pow(ApplyL1(arma::accu(gradients)), 2) /
         (arma::accu(hessians) + lambda);
   }
+
+  /**
+   * Sorts the gradients and hessians according to the sorted order of the
+   * feature.
+   *
+   * @param sortedIndices Vector of indices according to the sorted order of
+   *      the feature.
+   */
+  void sortGradAndHess(const arma::uvec& sortedIndices)
+  {
+    arma::vec sortedGradients(sortedIndices.n_elem);
+    arma::vec sortedHessians(sortedIndices.n_elem);
+
+    for (size_t i = 0; i < sortedIndices.n_elem; ++i)
+    {
+      sortedGradients[i] = gradients[sortedIndices[i]];
+      sortedHessians[i] = hessians[sortedIndices[i]];
+    }
+
+    gradients = sortedGradients;
+    hessians = sortedHessians;
+  }
  private:
   //! The L2 regularization parameter.
   const double lambda;
