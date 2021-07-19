@@ -201,7 +201,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double minimumGainSplit,
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */,
-    FitnessFunction fitnessFunction)
+    FitnessFunction& fitnessFunction)
 {
   typedef typename ResponsesType::elem_type RType;
   typedef typename WeightVecType::elem_type WType;
@@ -340,7 +340,7 @@ BestBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double minimumGainSplit,
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */,
-    FitnessFunction fitnessFunction)
+    FitnessFunction& fitnessFunction)
 {
   typedef typename ResponsesType::elem_type RType;
   typedef typename WeightVecType::elem_type WType;

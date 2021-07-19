@@ -149,7 +149,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double minimumGainSplit,
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */,
-    FitnessFunction fitnessFunction,
+    FitnessFunction& fitnessFunction,
     const bool splitIfBetterGain)
 {
   double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);

@@ -126,7 +126,7 @@ double AllCategoricalSplit<FitnessFunction>::SplitIfBetter(
     const double minimumGainSplit,
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */,
-    FitnessFunction fitnessFunction)
+    FitnessFunction& fitnessFunction)
 {
   // Count the number of elements in each potential child.
   const double epsilon = 1e-7; // Tolerance for floating-point errors.
