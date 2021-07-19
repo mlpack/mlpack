@@ -169,9 +169,9 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
     }
     else
     {
-      arma::mat temp = arma::mat(inRowSize + 4, inColSize + 4);
       for (size_t k = 0; k < depth * batchSize; ++k)
       {
+        arma::mat temp = arma::mat(inRowSize + 4, inColSize + 4);
         temp.zeros();
         for (size_t i = 0; i < outRowSize; ++i)
         {
