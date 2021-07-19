@@ -109,23 +109,36 @@ inline std::string GetDataset(const std::string& datasetName,
                               const std::string& url);
 
 /**
- * recursion base case.
+ * Split dataset into training and testing.
  */
-inline std::string ImportLibs();
-
-/**
- * Import arbitrary number of libs.
- */
-template<typename... Args>
-std::string ImportLibs(const std::string& libName,
-                       const std::string& callAs,
-                       Args... args);
+inline std::string SplitTrainTest(const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
+                                  const std::string& splitRatio);
 
 /**
  * Given the parameter name, determine what it would actually be when passed to
  * the command line.
  */
 inline std::string ParamString(const std::string& paramName);
+
+/**
+ * Get a string that imports external libraries.
+ */
+inline std::string ImportExtLib();
+
+/**
+ * Get a string that imports mlpack's preprocess_split.
+ */
+inline std::string ImportSplit();
+
+/**
+ * Get a string that imports the current method.
+ */
+inline std::string ImportThis(const std::string& groupName);
 
 /**
  * Print whether or not we should ignore a check on the given parameter.  For

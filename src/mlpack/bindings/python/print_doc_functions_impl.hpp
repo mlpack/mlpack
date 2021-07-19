@@ -14,6 +14,7 @@
 #define MLPACK_BINDINGS_PYTHON_PRINT_DOC_FUNCTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
+#include "get_class_name_wrapper.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -346,22 +347,56 @@ inline std::string GetDataset(const std::string& datasetName,
   readString += "pd.read_csv('" + url + "')" + "\n";
   return readString;
 }
-/**
- * recursion base case.
- */
-inline std::string ImportLibs() { return ""; }
 
 /**
- * Import arbitrary number of libraries.
+ * Split dataset into training and testing.
  */
-template<typename... Args>
-std::string ImportLibs(const std::string& libName,
-                       const std::string& callAs,
-                       Args... args)
+inline std::string SplitTrainTest(const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
+                                  const std::string& splitRatio)
 {
-  string importString = ">>> import " + libName + " as " + callAs + "\n";
-  importString += ImportLibs(args...);
-  return importString;
+  std::string splitString = ">>> ";
+  splitString += "ps = ";
+  splitString += "PreprocessSplit(test_ratio=" + splitRatio + ")\n";
+  splitString += ">>> ";
+  splitString += testDataset + ", " + testLabels + ", ";
+  splitString += trainDataset + ", " + trainLabels;
+  splitString += " = ";
+  splitString += "ps.split(input_=" + datasetName + ", input_labels=";
+  splitString += labelName + ")\n";
+  return splitString;
+}
+
+/**
+ * Get a string that imports external libraries.
+ */
+inline std::string ImportExtLib()
+{
+  std::string extImports = ">>> import pandas as pd\n";
+  return extImports;
+}
+
+/**
+ * Get a string that imports mlpack's preprocess_split.
+ */
+inline std::string ImportSplit()
+{
+  std::string splitImport = ">>> from mlpack import PreprocessSplit\n";
+  return splitImport;
+}
+
+/**
+ * Get a string that imports the current method.
+ */
+inline std::string ImportThis(const std::string& groupName)
+{
+  std::string className = GetClassName(groupName);
+  std::string thisString = ">>> from mlpack import " + className + "\n";
+  return thisString;
 }
 
 /**

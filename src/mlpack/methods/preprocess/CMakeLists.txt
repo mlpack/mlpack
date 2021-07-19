@@ -20,6 +20,10 @@ add_type(preprocess_scale "preprocessing")
 group_bindings(preprocess_scale "fit;transform;inverse_transform")
 add_python_binding(preprocess_scale)
 
+add_type(preprocess_split "preprocessing")
+group_bindings(preprocess_split "split")
+add_python_binding(preprocess_split)
+
 # add_cli_executable(preprocess_split)
 # add_julia_binding(preprocess_split)
 # add_go_binding(preprocess_split)

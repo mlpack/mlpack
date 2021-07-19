@@ -10,7 +10,7 @@ namespace mlpack {
 namespace bindings {
 namespace python {
 
-string GetClassName(const string& groupName)
+inline string GetClassName(const string& groupName)
 {
 	string className = "";
 	stringstream groupNameStream(groupName);

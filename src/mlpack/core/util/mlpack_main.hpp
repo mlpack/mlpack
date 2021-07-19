@@ -211,11 +211,26 @@ using Option = mlpack::bindings::tests::TestOption<T>;
 #define GET_DATASET(x,y) mlpack::bindings::python::GetDataset(x,y)
 
 /**
- * IMPORT_LIBS() returns a string that imports required libraries for a
- * particular language.
+ * SPLIT_TRAIN_TEST() splits the dataset into train and test datasets.
  */
-#define IMPORT_LIBS mlpack::bindings::python::ImportLibs("pandas", "pd", \
-    "mlpack.preprocess_split", "preprocess_split")
+#define SPLIT_TRAIN_TEST(t, u, v, w, x, y, z) \
+    mlpack::bindings::python::SplitTrainTest(t, u, v, w, x, y, z)
+
+/**
+ * IMPORT_EXT_LIBS returns a string that imports required external libraries
+ * for a particular language.
+ */
+#define IMPORT_EXT_LIB mlpack::bindings::python::ImportExtLib
+
+/**
+ * IMPORT_THIS returns a string that imports the current method.
+ */
+#define IMPORT_THIS mlpack::bindings::python::ImportThis
+
+/**
+ * IMPORT_SPLIT returns a string that imports mlpack's preprocess_split.
+ */
+#define IMPORT_SPLIT mlpack::bindings::python::ImportSplit
 
 /**
  * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or
