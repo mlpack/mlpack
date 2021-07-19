@@ -64,6 +64,7 @@
 #include "recurrent_attention.hpp"
 #include "recurrent.hpp"
 #include "reinforce_normal.hpp"
+#include "relu6.hpp"
 #include "reparametrization.hpp"
 #include "select.hpp"
 #include "sequential.hpp"

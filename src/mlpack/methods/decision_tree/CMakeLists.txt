@@ -4,6 +4,8 @@ set(SOURCES
   all_dimension_select.hpp
   decision_tree.hpp
   decision_tree_impl.hpp
+  decision_tree_regressor.hpp
+  decision_tree_regressor_impl.hpp
   all_categorical_split.hpp
   all_categorical_split_impl.hpp
   best_binary_numeric_split.hpp
