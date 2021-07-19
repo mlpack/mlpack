@@ -28,10 +28,10 @@ template<typename T>
 std::string GetPrintableParamValue(
     util::ParamData& /* data */,
     const std::string& input,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::disable_if<data::HasSerialize<T>>::type*,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   return input;
 }
@@ -44,7 +44,7 @@ template<typename T>
 std::string GetPrintableParamValue(
     util::ParamData& /* data */,
     const std::string& input,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type*)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
   return input + ".csv";
 }
@@ -57,8 +57,8 @@ template<typename T>
 std::string GetPrintableParamValue(
     util::ParamData& /* data */,
     const std::string& input,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::enable_if<data::HasSerialize<T>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
 {
   return input + ".bin";
 }
@@ -71,8 +71,8 @@ template<typename T>
 std::string GetPrintableParamValue(
     util::ParamData& /* data */,
     const std::string& input,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   return input + ".arff";
 }

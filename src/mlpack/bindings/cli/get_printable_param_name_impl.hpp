@@ -26,10 +26,10 @@ namespace cli {
 template<typename T>
 std::string GetPrintableParamName(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::disable_if<data::HasSerialize<T>>::type*,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type*,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   return "--" + data.name;
 }
@@ -41,7 +41,7 @@ std::string GetPrintableParamName(
 template<typename T>
 std::string GetPrintableParamName(
     util::ParamData& data,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type*)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type*)
 {
   return "--" + data.name + "_file";
 }
@@ -53,8 +53,8 @@ std::string GetPrintableParamName(
 template<typename T>
 std::string GetPrintableParamName(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type*,
-    const typename boost::enable_if<data::HasSerialize<T>>::type*)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type*,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type*)
 {
   return "--" + data.name + "_file";
 }
@@ -66,8 +66,8 @@ std::string GetPrintableParamName(
 template<typename T>
 std::string GetPrintableParamName(
     util::ParamData& data,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type*)
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type*)
 {
   return "--" + data.name + "_file";
 }

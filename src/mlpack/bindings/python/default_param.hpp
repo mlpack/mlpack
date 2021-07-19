@@ -26,12 +26,13 @@ namespace python {
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T, std::string>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0);
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::string>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0);
 
 /**
  * Return the default value of a vector option.
@@ -39,7 +40,7 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename boost::enable_if<util::IsStdVector<T>>::type* = 0);
+    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0);
 
 /**
  * Return the default value of a string option.
@@ -47,7 +48,7 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename boost::enable_if<std::is_same<T, std::string>>::type* = 0);
+    const typename std::enable_if<std::is_same<T, std::string>::value>::type* = 0);
 
 /**
  * Return the default value of a matrix option, a tuple option, a
@@ -57,10 +58,10 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename boost::enable_if_c<
+    const typename std::enable_if<
         arma::is_arma_type<T>::value ||
         std::is_same<T, std::tuple<mlpack::data::DatasetInfo,
-                                   arma::mat>>::value>::type* /* junk */ = 0);
+                                   arma::mat>>::value>::type* = 0);
 
 /**
  * Return the default value of a model option (this returns the default
@@ -69,8 +70,8 @@ std::string DefaultParamImpl(
 template<typename T>
 std::string DefaultParamImpl(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0);
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0);
 
 /**
  * Return the default value of an option.  This is the function that will be
