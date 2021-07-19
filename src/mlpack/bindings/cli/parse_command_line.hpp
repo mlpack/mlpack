@@ -22,13 +22,6 @@ namespace mlpack {
 namespace bindings {
 namespace cli {
 
-// Add default parameters that are included in every program.
-PARAM_FLAG("help", "Default help info.", "h");
-PARAM_STRING_IN("info", "Print help on a specific option.", "", "");
-PARAM_FLAG("verbose", "Display informational messages and the full list of "
-    "parameters and timers at the end of execution.", "v");
-PARAM_FLAG("version", "Display the version of mlpack.", "V");
-
 /**
  * Parse the command line, setting all of the options inside of the CLI object
  * to their appropriate given values.

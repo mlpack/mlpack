@@ -53,9 +53,9 @@ BINDING_EXAMPLE(
     "column-wise" + PRINT_DATASET("dataset") + ", and save the result to " +
     PRINT_DATASET("result") + ", we could run :"
     "\n\n" +
-    PRINT_CALL("mlpack_preprocess_imputer", "input_file", "dataset",
-        "output_file", "result", "missing_value", "NULL", "dimension", "0",
-        "strategy", "listwise_deletion"));
+    PRINT_CALL("preprocess_imputer", "input_file", "dataset", "output_file",
+        "result", "missing_value", "NULL", "dimension", "0", "strategy",
+        "listwise_deletion"));
 
 // See also...
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");

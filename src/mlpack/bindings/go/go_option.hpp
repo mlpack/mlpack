@@ -98,18 +98,7 @@ class GoOption
     IO::AddFunction(data.tname, "GetType", &GetType<T>);
 
     // Add the ParamData object to the IO class for the correct binding name.
-    if (identifier != "verbose")
-    {
-      IO::AddParameter(bindingName, std::move(data));
-    }
-    else
-    {
-      // This is a total hack!
-      // TODO: remove this when the macro solution in mlpack_main.hpp is fixed.
-      util::Params p = IO::Parameters("");
-      if (p.Parameters().count("verbose") == 0)
-        IO::AddParameter("", std::move(data));
-    }
+    IO::AddParameter(bindingName, std::move(data));
   }
 };
 

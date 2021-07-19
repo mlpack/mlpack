@@ -88,7 +88,6 @@ using Option = mlpack::bindings::cli::CLIOption<T>;
 }
 }
 
-static const std::string testName = "";
 #include <mlpack/core/util/param.hpp>
 #include <mlpack/bindings/cli/parse_command_line.hpp>
 #include <mlpack/bindings/cli/end_program.hpp>
@@ -97,7 +96,7 @@ static const std::string testName = "";
   #error "BINDING_NAME not defined!"
 #endif
 
-static void BINDING_NAME(mlpack::util::Params&, mlpack::util::Timers&);
+void BINDING_NAME(mlpack::util::Params&, mlpack::util::Timers&);
 
 int main(int argc, char** argv)
 {
@@ -117,6 +116,17 @@ int main(int argc, char** argv)
   // clean up, and so forth.
   mlpack::bindings::cli::EndProgram(params, timers);
 }
+
+// Add default parameters that are included in every program.
+PARAM_GLOBAL(bool, "help", "Default help info.", "h", "bool", false, true,
+    false, false);
+PARAM_GLOBAL(std::string, "info", "Print help on a specific option.", "",
+    "std::string", false, true, false, "");
+PARAM_GLOBAL(bool, "verbose", "Display informational messages and the full "
+    "list of parameters and timers at the end of execution.", "v", "bool",
+    false, true, false, false);
+PARAM_GLOBAL(bool, "version", "Display the version of mlpack.", "V", "bool",
+    false, true, false, false);
 
 #elif (BINDING_TYPE == BINDING_TYPE_TEST) // This is a unit test.
 
@@ -237,15 +247,15 @@ using Option = mlpack::bindings::python::PyOption<T>;
 
 PARAM_GLOBAL(bool, "verbose", "Display informational messages and the full "
     "list of parameters and timers at the end of execution.", "v", "bool",
-    false, true, false, false)
+    false, true, false, false);
 PARAM_GLOBAL(bool, "copy_all_inputs", "If specified, all input parameters "
     "will be deep copied before the method is run.  This is useful for "
     "debugging problems where the input parameters are being modified "
     "by the algorithm, but can slow down the code.", "", "bool",
-    false, true, false, false)
+    false, true, false, false);
 PARAM_GLOBAL(bool, "check_input_matrices", "If specified, the input matrix "
     "is checked for NaN and inf values; an exception is thrown if any are "
-    "found.", "", "bool", false, true, false, false)
+    "found.", "", "bool", false, true, false, false);
 
 // Nothing else needs to be defined---the binding will use BINDING_NAME() as-is.
 
@@ -277,9 +287,9 @@ using Option = mlpack::bindings::julia::JuliaOption<T>;
 
 #include <mlpack/core/util/param.hpp>
 
-// TODO: fix so that this is a part of the "" binding name
-PARAM_FLAG("verbose", "Display informational messages and the full list of "
-    "parameters and timers at the end of execution.", "v");
+PARAM_GLOBAL(bool, "verbose", "Display informational messages and the full "
+    "list of parameters and timers at the end of execution.", "v", "bool",
+    false, true, false, false);
 
 // Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 
@@ -315,10 +325,9 @@ using Option = mlpack::bindings::go::GoOption<T>;
 #undef BINDING_FUNCTION
 #define BINDING_FUNCTION(...) JOIN(mlpack_, BINDING_NAME)(__VA_ARGS__)
 
-// TODO: can't use PARAM_FLAG here---need to actually specify it as part of the
-// "" binding
-PARAM_FLAG("verbose", "Display informational messages and the full list of "
-    "parameters and timers at the end of execution.", "v");
+PARAM_GLOBAL(bool, "verbose", "Display informational messages and the full "
+    "list of parameters and timers at the end of execution.", "v", "bool",
+    false, true, false, false);
 
 // Nothing else needs to be defined---the binding will use mlpackMain() as-is.
 
@@ -359,13 +368,6 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
 
 #elif BINDING_TYPE == BINDING_TYPE_MARKDOWN
 
-// We use MARKDOWN_BINDING_NAME in BINDING_NAME(), BINDING_SHORT_DESC(),
-// BINDING_LONG_DESC(), BINDING_EXAMPLE() and BINDING_SEE_ALSO()
-// so it needs to be defined.
-#ifndef MARKDOWN_BINDING_NAME
-  #error "MARKDOWN_BINDING_NAME must be defined when BINDING_TYPE is Markdown!"
-#endif
-
 // This value doesn't actually matter, but it needs to be defined as something.
 #define BINDING_MATRIX_TRANSPOSED true
 
@@ -376,7 +378,8 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
  * PRINT_PARAM_STRING() returns a string that contains the correct
  * language-specific representation of a parameter's name.
  */
-#define PRINT_PARAM_STRING mlpack::bindings::markdown::ParamString
+#define PRINT_PARAM_STRING(x) mlpack::bindings::markdown::ParamString( \
+    STRINGIFY(BINDING_NAME), x)
 
 /**
  * PRINT_PARAM_VALUE() returns a string that contains a correct
@@ -409,7 +412,8 @@ PARAM_FLAG("verbose", "Display informational messages and the full list of "
  * BINDING_IGNORE_CHECK() is an internally-used macro to determine whether or
  * not a specific parameter check should be ignored.
  */
-#define BINDING_IGNORE_CHECK mlpack::bindings::markdown::IgnoreCheck
+#define BINDING_IGNORE_CHECK(x) mlpack::bindings::markdown::IgnoreCheck( \
+    STRINGIFY(BINDING_NAME), x)
 
 // This doesn't actually matter for this binding type.
 #define BINDING_MATRIX_TRANSPOSED true
@@ -424,6 +428,8 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
 }
 
 #include <mlpack/core/util/param.hpp>
+
+/*
 #include <mlpack/bindings/markdown/program_doc_wrapper.hpp>
 
 #undef BINDING_USER_NAME
@@ -436,59 +442,68 @@ using Option = mlpack::bindings::markdown::MDOption<T>;
     mlpack::bindings::markdown::ProgramNameWrapper \
     io_programname_dummy_object = \
     mlpack::bindings::markdown::ProgramNameWrapper( \
-    MARKDOWN_BINDING_NAME, NAME);
+    STRINGIFY(BINDING_NAME), NAME);
 
 #define BINDING_SHORT_DESC(SHORT_DESC) static \
     mlpack::bindings::markdown::ShortDescriptionWrapper \
     io_programshort_desc_dummy_object = \
     mlpack::bindings::markdown::ShortDescriptionWrapper( \
-    MARKDOWN_BINDING_NAME, SHORT_DESC);
+    STRINGIFY(BINDING_NAME), SHORT_DESC);
 
 #define BINDING_LONG_DESC(LONG_DESC) static \
     mlpack::bindings::markdown::LongDescriptionWrapper \
     io_programlong_desc_dummy_object = \
     mlpack::bindings::markdown::LongDescriptionWrapper( \
-    MARKDOWN_BINDING_NAME, []() { return std::string(LONG_DESC); });
+    STRINGIFY(BINDING_NAME), []() { return std::string(LONG_DESC); });
 
 #ifdef __COUNTER__
   #define BINDING_EXAMPLE(EXAMPLE) static \
       mlpack::bindings::markdown::ExampleWrapper \
       JOIN(io_programexample_dummy_object_, __COUNTER__) = \
-      mlpack::bindings::markdown::ExampleWrapper(MARKDOWN_BINDING_NAME, \
+      mlpack::bindings::markdown::ExampleWrapper(STRINGIFY(BINDING_NAME), \
       []() { return(std::string(EXAMPLE)); });
 
   #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
       mlpack::bindings::markdown::SeeAlsoWrapper \
       JOIN(io_programsee_also_dummy_object_, __COUNTER__) = \
-      mlpack::bindings::markdown::SeeAlsoWrapper(MARKDOWN_BINDING_NAME, \
+      mlpack::bindings::markdown::SeeAlsoWrapper(STRINGIFY(BINDING_NAME), \
       DESCRIPTION, LINK);
 #else
   #define BINDING_EXAMPLE(EXAMPLE) static \
       mlpack::bindings::markdown::ExampleWrapper \
       JOIN(JOIN(io_programexample_dummy_object_, __LINE__), opt) = \
-      mlpack::bindings::markdown::ExampleWrapper(MARKDOWN_BINDING_NAME, \
+      mlpack::bindings::markdown::ExampleWrapper(STRINGIFY(BINDING_NAME), \
       []() { return(std::string(EXAMPLE)); });
 
   #define BINDING_SEE_ALSO(DESCRIPTION, LINK) static \
       mlpack::bindings::markdown::SeeAlsoWrapper \
       JOIN(JOIN(io_programsee_also_dummy_object_, __LINE__), opt) = \
-      mlpack::bindings::markdown::SeeAlsoWrapper(MARKDOWN_BINDING_NAME, \
+      mlpack::bindings::markdown::SeeAlsoWrapper(STRINGIFY(BINDING_NAME), \
       DESCRIPTION, LINK);
 #endif
+*/
 
-PARAM_FLAG("verbose", "Display informational messages and the full list of "
-    "parameters and timers at the end of execution.", "v");
+// This parameter is available for all languages.
+PARAM_GLOBAL(bool, "verbose", "Display informational messages and the full "
+    "list of parameters and timers at the end of execution.", "v", "bool",
+    false, true, false, false);
 
 // CLI-specific parameters.
-PARAM_FLAG("help", "Default help info.", "h");
-PARAM_STRING_IN("info", "Print help on a specific option.", "", "");
-PARAM_FLAG("version", "Display the version of mlpack.", "V");
+PARAM_GLOBAL(bool, "help", "Default help info.", "h", "bool", false, true,
+    false, false);
+PARAM_GLOBAL(std::string, "info", "Print help on a specific option.", "",
+    "std::string", false, true, false, "");
+PARAM_GLOBAL(bool, "version", "Display the version of mlpack.", "V", "bool",
+    false, true, false, false);
 
 // Python-specific parameters.
-PARAM_FLAG("copy_all_inputs", "If specified, all input parameters will be deep"
-    " copied before the method is run.  This is useful for debugging problems "
-    "where the input parameters are being modified by the algorithm, but can "
-    "slow down the code.", "");
+PARAM_GLOBAL(bool, "copy_all_inputs", "If specified, all input parameters will be"
+    " deep copied before the method is run.  This is useful for debugging "
+    "problems where the input parameters are being modified by the algorithm, but"
+    " can slow down the code.", "", "bool", false, true, false, false);
+PARAM_GLOBAL(bool, "check_input_matrices", "If specified, the input matrix "
+    "is checked for NaN and inf values; an exception is thrown if any are "
+    "found.", "", "bool", false, true, false, false);
 
 #else
 

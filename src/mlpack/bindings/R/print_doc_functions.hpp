@@ -98,7 +98,7 @@ std::string ProgramCall(const bool markdown,
  * Given the name of a binding, print a program call assuming that all options
  * are specified.
  */
-inline std::string ProgramCall(const std::string& programName);
+inline std::string ProgramCall(util::Params& p, const std::string& programName);
 
 /**
  * Given the name of a model, print it.  Here we do not need to modify anything.

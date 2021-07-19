@@ -88,15 +88,7 @@ class JuliaOption
     IO::AddFunction(data.tname, "DefaultParam", &DefaultParam<T>);
 
     // Add the ParamData object.
-    // TODO: fix this hack!
-    if (identifier != "verbose")
-    {
-      IO::AddParameter(bindingName, std::move(data));
-    }
-    else
-    {
-      IO::AddParameter("", std::move(data));
-    }
+    IO::AddParameter(bindingName, std::move(data));
   }
 };
 

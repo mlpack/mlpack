@@ -251,10 +251,9 @@ std::string ProgramCall(const std::string& bindingName, Args... args)
  * Given the name of a binding, print a program call assuming that all options
  * are specified.  The bindingName should not be the output of GetBindingName().
  */
-inline std::string ProgramCall(const std::string& bindingName)
+inline std::string ProgramCall(util::Params& params,
+                               const std::string& bindingName)
 {
-  util::Params params = IO::Parameters(bindingName);
-
   std::ostringstream oss;
   oss << ">>> ";
 

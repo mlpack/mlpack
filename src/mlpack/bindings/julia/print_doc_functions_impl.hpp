@@ -174,7 +174,7 @@ inline std::string CreateInputArguments(util::Params& p,
 }
 
 // Recursion base case.
-inline std::string PrintInputOptions() { return ""; }
+inline std::string PrintInputOptions(util::Params& /* params */) { return ""; }
 
 /**
  * This prints an argument, assuming that it is already known whether or not it
@@ -403,11 +403,10 @@ inline std::string PrintOutputOptions(util::Params& p, Args... args)
  * contents), print the corresponding function call.
  */
 template<typename... Args>
-inline std::string ProgramCall(const std::string& bindingName,
-                               const std::string& programName,
+inline std::string ProgramCall(const std::string& programName,
                                Args... args)
 {
-  util::Params p = IO::Parameters(bindingName);
+  util::Params p = IO::Parameters(programName);
 
   std::ostringstream oss;
 
@@ -466,13 +465,10 @@ inline std::string PrintDataset(const std::string& datasetName)
 /**
  * Given the name of a binding, print its invocation.
  */
-inline std::string ProgramCall(const std::string& bindingName,
-                               const std::string& programName)
+inline std::string ProgramCall(util::Params& p, const std::string& programName)
 {
   std::ostringstream result;
   result << "julia> ";
-
-  util::Params p = IO::Parameters(bindingName);
 
   // First, print all output options.
   std::map<std::string, util::ParamData>& parameters = p.Parameters();

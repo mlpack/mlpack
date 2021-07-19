@@ -270,14 +270,13 @@ std::string ProgramCall(const bool markdown,
  * Given the name of a binding, print a program call assuming that all options
  * are specified.  The programName should not be the output of GetBindingName().
  */
-inline std::string ProgramCall(const std::string& programName)
+inline std::string ProgramCall(util::Params& p, const std::string& programName)
 {
   std::ostringstream oss;
   std::string command_prefix = "R> ";
   oss << command_prefix;
 
   // Determine if we have any output options.
-  util::Params p = IO::Parameters(programName);
   std::map<std::string, util::ParamData>& parameters = p.Parameters();
   bool hasOutput = false;
   for (auto it = parameters.begin(); it != parameters.end(); ++it)

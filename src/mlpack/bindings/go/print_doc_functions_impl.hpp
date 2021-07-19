@@ -434,14 +434,14 @@ inline std::string PrintDataset(const std::string& datasetName)
 /**
  * Given the name of a binding, print its invocation.
  */
-inline std::string ProgramCall(const std::string& programName)
+inline std::string ProgramCall(util::Params& params,
+                               const std::string& programName)
 {
   std::ostringstream oss;
   std::string goProgramName = util::CamelCase(programName, false);
 
   std::ostringstream ossInital;
   // Determine if we have any output options.
-  util::Params params = IO::Parameters(programName);
   std::map<std::string, util::ParamData>& parameters = params.Parameters();
 
   ossInital << "// Initialize optional parameters for " << goProgramName

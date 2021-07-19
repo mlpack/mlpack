@@ -114,6 +114,12 @@ template<typename... Args>
 std::string ProgramCall(const std::string& programName, Args... args);
 
 /**
+ * Given the name of a binding, print its invocation.
+ */
+inline std::string ProgramCall(util::Params& params,
+                               const std::string& programName);
+
+/**
  * Given the name of a model, print it.  Here we do not need to modify anything.
  */
 inline std::string PrintModel(const std::string& modelName);

@@ -1273,7 +1273,7 @@ using DatasetInfo = DatasetMapper<IncrementPolicy, std::string>;
       JOIN(io_option_dummy_object_in_, __COUNTER__) \
       (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, STRINGIFY(BINDING_NAME));
 
-  #define PARAM_GLOBAL(T, ID, DESC,  ALIAS, NAME, REQ, IN, TRANS, DEF) \
+  #define PARAM_GLOBAL(T, ID, DESC, ALIAS, NAME, REQ, IN, TRANS, DEF) \
       static mlpack::util::Option<T> \
       JOIN(io_option_global_dummy_object_in_, __COUNTER__) \
       (DEF, ID, DESC, ALIAS, NAME, REQ, IN, !TRANS, "");

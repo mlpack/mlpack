@@ -58,13 +58,20 @@ void IO::AddParameter(const std::string& bindingName, ParamData&& data)
       GetSingleton().aliases[bindingName];
 
   // If found in current map, print fatal error and terminate the program, but
-  // only if the parameter is not consistent.
-  if (bindingParams.count(data.name))
+  // only if the parameter is not a global parameter.
+  if (bindingParams.count(data.name) && bindingName != "")
   {
     outstr << "Parameter '" << data.name << "' ('" << data.alias << "') "
            << "is defined multiple times with the same identifiers."
            << std::endl;
   }
+  else if (bindingParams.count(data.name) && bindingName == "")
+  {
+    // It already exists; no need to add it again.
+    return;
+  }
+
+  // Check for duplicate aliases.
   if (data.alias != '\0' && bindingAliases.count(data.alias))
   {
     outstr << "Parameter '" << data.name << " ('" << data.alias << "') "
