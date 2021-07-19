@@ -8,10 +8,6 @@
  * In this mlpack's version, all the arma dependencies were removed or replaced
  * accordingly, making the parser totally independent of armadillo.
  *
- * This parser will be totally independent to any linear algebra library.
- * This can be used to load data into any matrix, i.e. arma and bandicoot
- * in future.
- *
  * https://gitlab.com/conradsnicta/armadillo-code/-/blob/10.5.x/include/armadillo_bits/diskio_meat.hpp
  * Copyright 2008-2016 Conrad Sanderson (http://conradsanderson.id.au)
  * Copyright 2008-2016 National ICT Australia (NICTA)
@@ -178,11 +174,10 @@ class LoadCSV
     while (std::getline(inFile, line))
     {
       ++rows;
-
       if (rows == 1)
       {
         // Extract the number of columns.
-	std::pair<int, int> dimen = GetMatSize(inFile);
+        std::pair<int, int> dimen = GetMatSize(inFile);
         cols = dimen.second;
       }
 
@@ -252,7 +247,7 @@ class LoadCSV
 	info.SetDimensionality(rows);
       }
 
-      // If we need to do a first pas12dds for the DatasetMapper, do it.
+      // If we need to do a first pass for the DatasetMapper, do it.
       if (MapPolicy::NeedsFirstPass)
       {
         size_t dim = 0;
