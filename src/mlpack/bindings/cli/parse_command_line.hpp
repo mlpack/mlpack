@@ -25,8 +25,15 @@ namespace cli {
 /**
  * Parse the command line, setting all of the options inside of the CLI object
  * to their appropriate given values.
+ *
+ * If `bindingName` is specified, that is used for the name of the binding,
+ * instead of whatever the setting of the macro `BINDING_NAME` is.  That is
+ * generally only used for testing, in `io_test.cpp`.
  */
-mlpack::util::Params ParseCommandLine(int argc, char** argv)
+mlpack::util::Params ParseCommandLine(
+    int argc,
+    char** argv,
+    const char* bindingName = "")
 {
   // First, we need to build the CLI11 variables for parsing.
   CLI::App app;
@@ -34,7 +41,10 @@ mlpack::util::Params ParseCommandLine(int argc, char** argv)
 
   // Get an empty Params object that will hold all of the parameters for this
   // call.
-  mlpack::util::Params params = IO::Parameters(STRINGIFY(BINDING_NAME));
+  mlpack::util::Params params = (std::string(bindingName) == "") ?
+      IO::Parameters(STRINGIFY(BINDING_NAME)) :
+      IO::Parameters(bindingName);
+
   // Go through list of options in order to add them.
   std::map<std::string, util::ParamData>& parameters = params.Parameters();
   using ItType = std::map<std::string, util::ParamData>::iterator;
