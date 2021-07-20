@@ -12,14 +12,14 @@
 extern "C"
 {
 
-bool BINDING_NAME(void* params, void* timers)
+bool BINDING_FUNCTION(void* params, void* timers)
 {
   util::Params* p = (util::Params*) params;
   util::Timers* t = (util::Timers*) timers;
 
   try
   {
-    BINDING_NAME(*p, *t);
+    BINDING_FUNCTION(*p, *t);
     return true;
   }
   catch (std::runtime_error& e)

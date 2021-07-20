@@ -101,6 +101,7 @@ set(BINDING_SOURCES
   get_printable_param.hpp
   get_python_type.hpp
   import_decl.hpp
+  mlpack_main.hpp
   print_class_defn.hpp
   print_defn.hpp
   print_doc.hpp

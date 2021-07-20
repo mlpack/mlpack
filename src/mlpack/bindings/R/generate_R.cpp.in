@@ -17,11 +17,11 @@
 #endif
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include <mlpack/bindings/R/print_R.hpp>
 
 // This will include the ParamData options that are part of the program.
 #include <${PROGRAM_MAIN_FILE}>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include <mlpack/bindings/R/print_R.hpp>
 
 using namespace mlpack;
 using namespace mlpack::bindings;

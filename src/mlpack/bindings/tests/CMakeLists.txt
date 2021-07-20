@@ -10,6 +10,7 @@ set(SOURCES
   get_param.hpp
   get_printable_param.hpp
   get_printable_param_impl.hpp
+  mlpack_main.hpp
 )
 
 # Add directory name to sources.

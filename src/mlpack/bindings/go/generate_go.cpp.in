@@ -27,10 +27,10 @@
 #endif
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 
 // This will include the ParamData options that are a part of the program.
 #include <${PROGRAM_MAIN_FILE}>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include <mlpack/bindings/go/print_go.hpp>
 
