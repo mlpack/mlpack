@@ -122,8 +122,8 @@ TEST_CASE("MADGainPerfectTest", "[DecisionTreeRegressorTest]")
   arma::rowvec responses;
   responses.ones(10);
 
-  MADGain f;
-  REQUIRE(f.Evaluate<false>(responses, weights) == Approx(0.0).margin(1e-5));
+  REQUIRE(MADGain::Evaluate<false>(responses, weights) ==
+      Approx(0.0).margin(1e-5));
 }
 
 /**
@@ -142,8 +142,7 @@ TEST_CASE("MADGainNormalTest", "[DecisionTreeRegressorTest")
   theoreticalGain /= (double) responses.n_elem;
 
   // Calculated gain.
-  MADGain f;
-  const double calculatedGain = f.Evaluate<false>(responses, weights);
+  const double calculatedGain = MADGain::Evaluate<false>(responses, weights);
 
   REQUIRE(calculatedGain == Approx(theoreticalGain).margin(1e-5));
 }
@@ -156,9 +155,10 @@ TEST_CASE("MADGainEmptyTest", "[DecisionTreeRegressorTest]")
   arma::rowvec weights = arma::ones<arma::rowvec>(10);
   arma::rowvec responses;
 
-  MADGain f;
-  REQUIRE(f.Evaluate<false>(responses, weights) == Approx(0.0).margin(1e-5));
-  REQUIRE(f.Evaluate<true>(responses, weights) == Approx(0.0).margin(1e-5));
+  REQUIRE(MADGain::Evaluate<false>(responses, weights) ==
+      Approx(0.0).margin(1e-5));
+  REQUIRE(MADGain::Evaluate<true>(responses, weights) ==
+      Approx(0.0).margin(1e-5));
 }
 
 /**
@@ -174,9 +174,9 @@ TEST_CASE("MADGainHandCalculation", "[DecisionTreeRegressorTest]")
   const double gain = -4.1;
   const double weightedGain = -3.8592;
 
-  MADGain f;
-  REQUIRE(f.Evaluate<false>(responses, weights) == Approx(gain).margin(1e-5));
-  REQUIRE(f.Evaluate<true>(responses, weights) ==
+  REQUIRE(MADGain::Evaluate<false>(responses, weights) ==
+      Approx(gain).margin(1e-5));
+  REQUIRE(MADGain::Evaluate<true>(responses, weights) ==
           Approx(weightedGain).margin(1e-5));
 }
 

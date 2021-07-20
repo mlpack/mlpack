@@ -43,10 +43,10 @@ class MADGain
    * @param end End index.
    */
   template<bool UseWeights, typename VecType, typename WeightVecType>
-  double Evaluate(const VecType& values,
-                  const WeightVecType& weights,
-                  const size_t begin,
-                  const size_t end)
+  static double Evaluate(const VecType& values,
+                         const WeightVecType& weights,
+                         const size_t begin,
+                         const size_t end)
   {
     double mad = 0.0;
 
@@ -89,8 +89,8 @@ class MADGain
    * @param weights Weights associated to each value.
    */
   template<bool UseWeights, typename VecType, typename WeightVecType>
-  double Evaluate(const VecType& values,
-                  const WeightVecType& weights)
+  static double Evaluate(const VecType& values,
+                         const WeightVecType& weights)
   {
     // Corner case: if there are no elements, the impurity is zero.
     if (values.n_elem == 0)
