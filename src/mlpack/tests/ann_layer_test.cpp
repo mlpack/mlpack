@@ -2119,18 +2119,24 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
   input[1] = 3.0;
   input[2] = 2.0;
   input[3] = 4.0;
-  NearestInterpolation<> layer(inRowSize, inColSize, outRowSize, outColSize,
-      depth);
+  NearestInterpolation<> layer(inRowSize, inColSize, outRowSize,
+                               outColSize, depth);
 
-  expectedOutput << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000 << 2.0000 << 2.0000 << arma::endr
-                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000 << 2.0000 << 2.0000 << arma::endr
-                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000 << 2.0000 << 2.0000 << arma::endr
-                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000 << 4.0000 << 4.0000 << arma::endr
-                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000 << 4.0000 << 4.0000 << arma::endr;
+  expectedOutput << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
+                 << 2.0000 << 2.0000 << arma::endr
+                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
+                 << 2.0000 << 2.0000 << arma::endr
+                 << 1.0000 << 1.0000 << 1.0000 << 1.0000 << 2.0000
+                 << 2.0000 << 2.0000 << arma::endr
+                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000
+                 << 4.0000 << 4.0000 << arma::endr
+                 << 3.0000 << 3.0000 << 3.0000 << 3.0000 << 4.0000
+                 << 4.0000 << 4.0000 << arma::endr;
   expectedOutput.reshape(35, 1);
 
   layer.Forward(input, output);
-  CheckMatrices(output - expectedOutput, arma::zeros(output.n_rows), 1e-4);
+  CheckMatrices(output - expectedOutput,
+                arma::zeros(output.n_rows), 1e-4);
 
   expectedOutput.clear();
   expectedOutput << 12.0000 << 18.0000 << arma::endr
@@ -2148,12 +2154,13 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
   input1 << 1 << 2 << 3 << arma::endr
          << 4 << 5 << 6 << arma::endr;
   input1.reshape(6, 1);
-  NearestInterpolation<> layer1(inRowSize, inColSize, outRowSize, outColSize,
-      depth);
+  NearestInterpolation<> layer1(inRowSize, inColSize, outRowSize,
+                                outColSize, depth);
   layer1.Forward(input1, output1);
   layer1.Backward(output1, output1, unzoomedOutput1);
   REQUIRE(arma::accu(output1) - 1317.00 == Approx(0.0).margin(1e-05));
-  REQUIRE(arma::accu(unzoomedOutput1) - 1317.00 == Approx(0.0).margin(1e-05));
+  REQUIRE(arma::accu(unzoomedOutput1) - 1317.00 ==
+          Approx(0.0).margin(1e-05));
 }
 
 /*
