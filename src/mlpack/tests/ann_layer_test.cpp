@@ -2169,12 +2169,12 @@ TEST_CASE("BilinearInterpolationLayerParametersTest", "[ANNLayerTest]")
 }
 
 /*
- * Simple test for the BicubicInterpolation layer
+ * Simple test for the BicubicInterpolation layer.
  */
 TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 {
-  // Tested output against  torch.nn.Upsample(mode="bicubic")
-  // Test case with square input with rectangular output
+  // Tested output against torch.nn.Upsample(mode="bicubic").
+  // Test case with square input with rectangular output.
   arma::mat input, output, unzoomedOutput, expectedOutput;
   size_t inRowSize = 2;
   size_t inColSize = 2;
@@ -2207,8 +2207,8 @@ TEST_CASE("SimpleBicubicInterpolationLayerTest", "[ANNLayerTest]")
 
   CheckMatrices(unzoomedOutput, expectedOutput, 1e-6);
 
-  // Tested output against  torch.nn.Upsample(mode="bicubic")
-  // Test case with rectangular input with rectangular output
+  // Tested output against torch.nn.Upsample(mode="bicubic")
+  // Test case with rectangular input with rectangular output.
   arma::mat input1, output1, unzoomedOutput1, expectedOutput1, expectedUnzoomed;
 
   inRowSize = 2;

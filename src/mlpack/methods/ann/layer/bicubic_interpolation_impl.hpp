@@ -30,7 +30,7 @@ BicubicInterpolation():
   alpha(-0.75),
   batchSize(0)
   {
-  // Nothing to do here.
+   // Nothing to do here.
   }
 
 template<typename InputDataType, typename OutputDataType>
@@ -56,12 +56,12 @@ BicubicInterpolation(
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void BicubicInterpolation<InputDataType, OutputDataType>::GetKernalWeight(eT delta, arma::mat& coeffs)
-  {
-    coeffs(0) = ((alpha * (delta + 1) - 5 * alpha) * (delta + 1) + 8 * alpha) * (delta + 1) - 4 * alpha;
-    coeffs(1) = ((alpha + 2) * delta - (alpha + 3)) * delta * delta + 1;
-    coeffs(2) = ((alpha + 2) * (1 - delta) - (alpha + 3)) * (1 - delta) * (1 - delta) + 1;
-    coeffs(3) = 1 - coeffs[0] - coeffs[1] - coeffs[2];
-  }
+{
+  coeffs(0) = ((alpha * (delta + 1) - 5 * alpha) * (delta + 1) + 8 * alpha) * (delta + 1) - 4 * alpha;
+  coeffs(1) = ((alpha + 2) * delta - (alpha + 3)) * delta * delta + 1;
+  coeffs(2) = ((alpha + 2) * (1 - delta) - (alpha + 3)) * (1 - delta) * (1 - delta) + 1;
+  coeffs(3) = 1 - coeffs[0] - coeffs[1] - coeffs[2];
+}
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
@@ -84,9 +84,9 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Forward(
     const double scaleCol = (double) inColSize / (double) outColSize;
 
     arma::cube inputAsCube(const_cast<arma::Mat<eT>&>(input).memptr(),
-      inRowSize, inColSize, depth * batchSize, false, false);
+        inRowSize, inColSize, depth * batchSize, false, false);
     arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
-      depth * batchSize, false, true);
+        depth * batchSize, false, true);
 
     for (size_t k = 0; k < depth * batchSize; ++k)
     {
@@ -114,11 +114,11 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Forward(
         {
           arma::mat kernal = arma::mat(4, 4);
           double cOrigin = (j + 0.5) * scaleCol;
-          // Bottom right corner of the kernal
+          // Bottom right corner of the kernel.
           const size_t cEnd = (size_t) std::floor(cOrigin + 1.5) + 2;
           const size_t rEnd = (size_t) std::floor(rOrigin + 1.5) + 2;
           kernal = grid(arma::span(rEnd - 3, rEnd),
-            arma::span(cEnd - 3, cEnd));
+              arma::span(cEnd - 3, cEnd));
 
           double fc = cOrigin - 0.5;
           fc = fc - std::floor(fc);
@@ -156,9 +156,9 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
     assert(outColSize >= 2);
 
     arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
-      outColSize, depth * batchSize, false, false);
+        outColSize, depth * batchSize, false, false);
     arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
-      depth * batchSize, false, true);
+        depth * batchSize, false, true);
 
     const double scaleRow = (double) inRowSize / (double) outRowSize;
     const double scaleCol = (double) inColSize / (double) outColSize;
@@ -179,7 +179,7 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
           for (size_t j = 0; j < outColSize; ++j)
           {
             double cOrigin = (j + 0.5) * scaleCol;
-            // Bottom right corner of the kernal
+            // Bottom right corner of the kernel.
             const size_t cEnd = (size_t) std::floor(cOrigin + 1.5) + 2;
             const size_t rEnd = (size_t) std::floor(rOrigin + 1.5) + 2;
 

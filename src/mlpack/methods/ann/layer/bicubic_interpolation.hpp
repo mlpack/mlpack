@@ -51,11 +51,11 @@ class BicubicInterpolation
    * @param depth Number of input slices.
    */
   BicubicInterpolation(const size_t inRowSize,
-                        const size_t inColSize,
-                        const size_t outRowSize,
-                        const size_t outColSize,
-                        const size_t depth,
-                        const double alpha = -0.75);
+                       const size_t inColSize,
+                       const size_t outRowSize,
+                       const size_t outColSize,
+                       const size_t depth,
+                       const double alpha = -0.75);
 
   /**
    * Forward pass through the layer. The layer interpolates
@@ -167,7 +167,6 @@ class BicubicInterpolation
   OutputDataType outputParameter;
   //! Locally-stored weights parameter.
   OutputDataType weights;
-
 }; // class BicubicInterpolation
 
 } // namespace ann
