@@ -12,8 +12,8 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/range_search/range_search_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "range_search_utils.hpp"
 #include "main_test_fixture.hpp"

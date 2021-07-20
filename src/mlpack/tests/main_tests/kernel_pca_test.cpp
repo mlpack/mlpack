@@ -11,8 +11,8 @@
  */
 #define BINDING_TYPE BINDING_TYPE_TEST
 
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/kernel_pca/kernel_pca_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "main_test_fixture.hpp"
 

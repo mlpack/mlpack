@@ -12,8 +12,8 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/logistic_regression/logistic_regression_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "main_test_fixture.hpp"
 

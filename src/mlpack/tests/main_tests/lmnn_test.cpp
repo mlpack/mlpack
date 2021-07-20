@@ -12,9 +12,9 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/metrics/lmetric.hpp>
 #include <mlpack/methods/lmnn/lmnn_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
 
 #include "main_test_fixture.hpp"
 
