@@ -34,21 +34,20 @@ NearestInterpolation<InputDataType, OutputDataType>::
 
 template<typename InputDataType, typename OutputDataType>
 NearestInterpolation<InputDataType, OutputDataType>::
-  NearestInterpolation(
-    const size_t inRowSize,
-    const size_t inColSize,
-    const size_t outRowSize,
-    const size_t outColSize,
-    const size_t depth):
-  inRowSize(inRowSize),
-  inColSize(inColSize),
-  outRowSize(outRowSize),
-  outColSize(outColSize),
-  depth(depth),
-  batchSize(0)
-  {
-    // Nothing to do here.
-  }
+NearestInterpolation(const size_t inRowSize,
+                     const size_t inColSize,
+                     const size_t outRowSize,
+                     const size_t outColSize,
+                     const size_t depth) :
+    inRowSize(inRowSize),
+    inColSize(inColSize),
+    outRowSize(outRowSize),
+    outColSize(outColSize),
+    depth(depth),
+    batchSize(0)
+{
+  // Nothing to do here.
+}
 
 template<typename InputDataType, typename OutputDataType>
 template<typename eT>
