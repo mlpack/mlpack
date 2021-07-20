@@ -35,13 +35,12 @@ BicubicInterpolation():
 
 template<typename InputDataType, typename OutputDataType>
 BicubicInterpolation<InputDataType, OutputDataType>::
-BicubicInterpolation(
-    const size_t inRowSize,
-    const size_t inColSize,
-    const size_t outRowSize,
-    const size_t outColSize,
-    const size_t depth,
-    const double alpha):
+BicubicInterpolation(const size_t inRowSize,
+                     const size_t inColSize,
+                     const size_t outRowSize,
+                     const size_t outColSize,
+                     const size_t depth,
+                     const double alpha):
   inRowSize(inRowSize),
   inColSize(inColSize),
   outRowSize(outRowSize),
