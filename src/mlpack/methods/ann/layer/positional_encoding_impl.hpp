@@ -75,6 +75,8 @@ template<typename Archive>
 void PositionalEncodingType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(embedDim));
   ar(CEREAL_NVP(maxSequenceLength));
 

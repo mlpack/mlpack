@@ -50,10 +50,10 @@ namespace ann /** Artificial Neural Network. */ {
  *         arma::sp_mat or arma::cube).
  */
 template <
-  typename InputDataType = arma::mat,
-  typename OutputDataType = arma::mat
+  typename InputType = arma::mat,
+  typename OutputType = arma::mat
 >
-class BatchNorm
+class BatchNorm : public Layer<InputType, OutputType>
 {
  public:
   //! Create the BatchNorm object.
@@ -74,9 +74,9 @@ class BatchNorm
             const double momentum = 0.1);
 
   /**
-   * Reset the layer parameters
+   * Reset the layer parameters.
    */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Forward pass of the Batch Normalization layer. Transforms the input data
@@ -86,8 +86,7 @@ class BatchNorm
    * @param input Input data for the layer
    * @param output Resulting output activations.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Backward pass through the layer.
@@ -96,10 +95,9 @@ class BatchNorm
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& input,
+                const OutputType& gy,
+                OutputType& g);
 
   /**
    * Calculate the gradient using the output delta and the input activations.
@@ -108,45 +106,24 @@ class BatchNorm
    * @param error The calculated error
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& input,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& input,
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  const OutputType& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
-
-  //! Get the value of deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of deterministic parameter.
-  bool& Deterministic() { return deterministic; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the mean over the training data.
-  OutputDataType const& TrainingMean() const { return runningMean; }
+  const OutputType& TrainingMean() const { return runningMean; }
   //! Modify the mean over the training data.
-  OutputDataType& TrainingMean() { return runningMean; }
+  OutputType& TrainingMean() { return runningMean; }
 
   //! Get the variance over the training data.
-  OutputDataType const& TrainingVariance() const { return runningVariance; }
+  const OutputType& TrainingVariance() const { return runningVariance; }
   //! Modify the variance over the training data.
-  OutputDataType& TrainingVariance() { return runningVariance; }
+  OutputType& TrainingVariance() { return runningVariance; }
 
   //! Get the number of input units / channels.
   size_t InputSize() const { return size; }
@@ -187,25 +164,19 @@ class BatchNorm
   bool loading;
 
   //! Locally-stored scale parameter.
-  OutputDataType gamma;
+  OutputType gamma;
 
   //! Locally-stored shift parameter.
-  OutputDataType beta;
+  OutputType beta;
 
   //! Locally-stored mean object.
-  OutputDataType mean;
+  OutputType mean;
 
   //! Locally-stored variance object.
-  OutputDataType variance;
+  OutputType variance;
 
   //! Locally-stored parameters.
-  OutputDataType weights;
-
-  /**
-   * If true then mean and variance over the training set will be considered
-   * instead of being calculated over the batch.
-   */
-  bool deterministic;
+  OutputType weights;
 
   //! Locally-stored running mean/variance counter.
   size_t count;
@@ -215,25 +186,16 @@ class BatchNorm
   double averageFactor;
 
   //! Locally-stored mean object.
-  OutputDataType runningMean;
+  OutputType runningMean;
 
   //! Locally-stored variance object.
-  OutputDataType runningVariance;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  OutputType runningVariance;
 
   //! Locally-stored normalized input.
-  arma::cube normalized;
+  arma::Cube<typename InputType::elem_type> normalized;
 
   //! Locally-stored zero mean input.
-  arma::cube inputMean;
+  arma::Cube<typename InputType::elem_type> inputMean;
 }; // class BatchNorm
 
 } // namespace ann

@@ -43,7 +43,7 @@ class ReinforceNormalType : public Layer<InputType, OutputType>
   ReinforceNormalType(const double stdev = 1.0);
 
   //! Clone the ReinforceNormalType object. This handles polymorphism correctly.
-	ReinforceNormalType* Clone() const { return new ReinforceNormalType(*this); }
+  ReinforceNormalType* Clone() const { return new ReinforceNormalType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -67,21 +67,6 @@ class ReinforceNormalType : public Layer<InputType, OutputType>
                 const OutputType& /* gy */,
                 OutputType& g);
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the value of the deterministic parameter.
-  bool const& Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
   //! Get the value of the reward parameter.
   double const& Reward() const { return reward; }
   //! Modify the value of the deterministic parameter.
@@ -102,12 +87,6 @@ class ReinforceNormalType : public Layer<InputType, OutputType>
 
   //! Locally-stored reward parameter.
   double reward;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 
   //!  Locally-stored output module parameter parameters.
   std::vector<InputType> moduleInputParameter;

@@ -126,16 +126,6 @@ class GlimpseType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
-  //! Get the output parameter.
-  const OutputType& OutputParameter() const {return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the detla.
-  const OutputType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
   //! Set the locationthe x and y coordinate of the center of the output
   //! glimpse.
   void Location(const arma::mat& location) { this->location = location; }
@@ -172,10 +162,15 @@ class GlimpseType : public Layer<InputType, OutputType>
   //! Get the used glimpse size (height = width).
   size_t GlimpseSize() const { return size;}
 
-  //! Get the value of deterministic parameter.
-  bool const& Deterministic() const { return deterministic; }
-  //! Modify the value of deterministic parameter.
-  bool& Deterministic() { return deterministic; }
+  const std::vector<size_t> OutputDimensions() const
+  {
+    std::vector<size_t> result(inputDimensions.size(), 0);
+    result[0] = outputWidth;
+    result[1] = outputHeight;
+    for (size_t i = 2; i < inputDimensions.size(); ++i)
+      result[i] = inputDimensions[i];
+    return result;
+  }
 
   /**
    * Serialize the layer.
@@ -389,20 +384,14 @@ class GlimpseType : public Layer<InputType, OutputType>
   //! Locally-stored output height.
   size_t outputHeight;
 
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
-
   //! Locally-stored depth of the input.
   size_t inputDepth;
 
   //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
+  arma::Cube<typename InputType::elem_type> inputTemp;
 
   //! Locally-stored transformed output parameter.
-  arma::cube outputTemp;
+  arma::Cube<typename OutputType::elem_type> outputTemp;
 
   //! The x and y coordinate of the center of the output glimpse.
   OutputType location;
@@ -414,10 +403,7 @@ class GlimpseType : public Layer<InputType, OutputType>
   std::vector<OutputType> locationParameter;
 
   //! Location-stored transformed gradient paramter.
-  arma::cube gTemp;
-
-  //! If true use maximum a posteriori during the forward pass.
-  bool deterministic;
+  arma::Cube<typename OutputType::elem_type> gTemp;
 }; // class GlimpseType
 
 // Standard Glimpse layer.

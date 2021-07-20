@@ -20,6 +20,7 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+// TODO: this could likely use inputDimensions to remove the `size` parameter!
 /**
  * Implementation of the SpatialDropout layer.
  *
@@ -50,6 +51,7 @@ class SpatialDropoutType : public Layer<InputType, OutputType>
  public:
   //! Create the SpatialDropout object.
   SpatialDropoutType();
+
   /**
    * Create the SpatialDropout object using the specified parameters.
    *
@@ -83,11 +85,6 @@ class SpatialDropoutType : public Layer<InputType, OutputType>
 
   //! Modify the number of channels.
   size_t& Size() { return size; }
-
-  //! Get the value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
 
   //! Get the probability value.
   double Ratio() const { return ratio; }
@@ -124,9 +121,6 @@ class SpatialDropoutType : public Layer<InputType, OutputType>
 
   //! The number of pixels in each feature map.
   size_t inputSize;
-
-  //! If true dropout and scaling are disabled.
-  bool deterministic;
 }; // class SpatialDropout
 
 // Convenience typedefs.

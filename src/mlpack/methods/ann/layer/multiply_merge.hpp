@@ -37,7 +37,7 @@ template<
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class MultiplyMergeType : public Layer<InputType, OutputType>
+class MultiplyMergeType : public MultiLayer<InputType, OutputType>
 {
  public:
   /**
@@ -51,8 +51,8 @@ class MultiplyMergeType : public Layer<InputType, OutputType>
   //! Destructor to release allocated memory.
   ~MultiplyMergeType();
 
-	//! Clone the MultiplyMergeType object. This handles polymorphism correctly.
-	MultiplyMergeType* Clone() const { return new MultiplyMergeType(*this); }
+  //! Clone the MultiplyMergeType object. This handles polymorphism correctly.
+  MultiplyMergeType* Clone() const { return new MultiplyMergeType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -87,47 +87,6 @@ class MultiplyMergeType : public Layer<InputType, OutputType>
                 const OutputType& error,
                 OutputType& gradient);
 
-  /**
-   * Add a new module to the model.
-   *
-   * @param args The layer parameter.
-   */
-  template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
-
-  /**
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  void Add(Layer<>* layer) { network.push_back(layer); }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
-  //! Return the model modules.
-  std::vector<Layer<>*>& Model()
-  {
-    if (model)
-    {
-      return network;
-    }
-
-    return empty;
-  }
-
   //! Get the parameters.
   OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
@@ -140,39 +99,12 @@ class MultiplyMergeType : public Layer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Parameter which indicates if the modules should be exposed.
-  bool model;
-
   //! Parameter which indicates if the Forward/Backward method should be called
   //! before merging the output.
   bool run;
 
   //! We need this to know whether we should delete the layer in the destructor.
   bool ownsLayer;
-
-  //! Locally-stored network modules.
-  std::vector<Layer<>*> network;
-
-  //! Locally-stored empty list of modules.
-  std::vector<Layer<>*> empty;
-
-  //! Locally-stored delete visitor module object.
-  // DeleteVisitor deleteVisitor;
-
-  //! Locally-stored output parameter visitor module object.
-  // OutputParameterVisitor outputParameterVisitor;
-
-  //! Locally-stored delta visitor module object.
-  // DeltaVisitor deltaVisitor;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 
   //! Locally-stored weight object.
   OutputType weights;

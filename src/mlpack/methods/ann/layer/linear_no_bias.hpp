@@ -47,19 +47,17 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
   /**
    * Create the LinearNoBias object using the specified number of units.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param regularizer The regularizer to use, optional.
    */
-  LinearNoBiasType(const size_t inSize,
-                   const size_t outSize,
+  LinearNoBiasType(const size_t outSize,
                    RegularizerType regularizer = RegularizerType());
 
   //! Clone the LinearNoBiasType object. This handles polymorphism correctly.
   LinearNoBiasType* Clone() const { return new LinearNoBiasType(*this); }
 
   //! Reset the layer parameter.
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -95,16 +93,21 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
                 OutputType& gradient);
 
   //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
+  const OutputType& Parameters() const { return weight; }
   //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
+  OutputType& Parameters() { return weight; }
 
+  size_t WeightSize() const { return inSize * outSize; }
 
-  //! Get the input size.
-  size_t InputSize() const { return inSize; }
+  void ComputeOutputDimensions()
+  {
+    inSize = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
 
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
+    this->outputDimensions[0] = outSize;
+  }
 
   //! Serialize the layer.
   template<typename Archive>
@@ -116,9 +119,6 @@ class LinearNoBiasType : public Layer<InputType, OutputType>
 
   //! Locally-stored number of output units.
   size_t outSize;
-
-  //! Locally-stored weight object.
-  OutputType weights;
 
   //! Locally-stored weight parameter.
   OutputType weight;

@@ -13,12 +13,6 @@
 #define MLPACK_METHODS_ANN_LAYER_RECURRENT_ATTENTION_HPP
 
 #include <mlpack/prereqs.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
-
-#include "../visitor/delta_visitor.hpp"
-#include "../visitor/output_parameter_visitor.hpp"
-#include "../visitor/reset_visitor.hpp"
-#include "../visitor/weight_size_visitor.hpp"
 
 #include "layer_types.hpp"
 #include "add_merge.hpp"
@@ -27,6 +21,7 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+// TODO: refactor recurrent layer
 /**
  * This class implements the Recurrent Model for Visual Attention, using a
  * variety of possible layer implementations.
@@ -44,16 +39,16 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class RecurrentAttention
+class RecurrentAttention : public MultiLayer<InputType, OutputType>
 {
  public:
   /**
@@ -83,8 +78,7 @@ class RecurrentAttention
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -95,10 +89,9 @@ class RecurrentAttention
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -107,41 +100,9 @@ class RecurrentAttention
    * @param * (error) The calculated error.
    * @param * (gradient) The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& /* error */,
-                arma::Mat<eT>& /* gradient */);
-
-  //! Get the model modules.
-  std::vector<LayerTypes<>>& Model() { return network; }
-
-    //! The value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
-  //! Get the parameters.
-  OutputDataType const& Parameters() const { return parameters; }
-  //! Modify the parameters.
-  OutputDataType& Parameters() { return parameters; }
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
-
-  //! Get the module output size.
-  size_t OutSize() const { return outSize; }
+  void Gradient(const InputType& /* input */,
+                const OutputType& /* error */,
+                OutputType& /* gradient */);
 
   //! Get the number of steps to backpropagate through time.
   size_t const& Rho() const { return rho; }
@@ -161,20 +122,18 @@ class RecurrentAttention
     // Gradient of the action module.
     if (backwardStep == (rho - 1))
     {
-      boost::apply_visitor(GradientVisitor(initialInput, actionError),
-          actionModule);
+      actionModule->Gradient(initialInput, actionError,
+          actionModule->Gradient());
     }
     else
     {
-      boost::apply_visitor(GradientVisitor(boost::apply_visitor(
-          outputParameterVisitor, actionModule), actionError),
-          actionModule);
+      actionModule->Gradient(actionModule->OutputParameter(), actionError,
+          actionModule->Gradient());
     }
 
     // Gradient of the recurrent module.
-    boost::apply_visitor(GradientVisitor(boost::apply_visitor(
-        outputParameterVisitor, rnnModule), recurrentError),
-        rnnModule);
+    rnnModule->Gradient(rnnModule->OutputParameter(), recurrentError,
+        rnnModule->Gradient());
 
     attentionGradient += intermediateGradient;
   }
@@ -183,10 +142,10 @@ class RecurrentAttention
   size_t outSize;
 
   //! Locally-stored start module.
-  LayerTypes<> rnnModule;
+  Layer<InputType, OutputType>* rnnModule;
 
   //! Locally-stored input module.
-  LayerTypes<> actionModule;
+  Layer<InputType, OutputType>* actionModule;
 
   //! Number of steps to backpropagate through time (BPTT).
   size_t rho;
@@ -197,62 +156,38 @@ class RecurrentAttention
   //! Locally-stored number of backward steps.
   size_t backwardStep;
 
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
-
   //! Locally-stored weight object.
-  OutputDataType parameters;
+  OutputType parameters;
 
   //! Locally-stored model modules.
-  std::vector<LayerTypes<>> network;
-
-  //! Locally-stored weight size visitor.
-  WeightSizeVisitor weightSizeVisitor;
-
-  //! Locally-stored delta visitor.
-  DeltaVisitor deltaVisitor;
-
-  //! Locally-stored output parameter visitor.
-  OutputParameterVisitor outputParameterVisitor;
+  std::vector<Layer<InputType, OutputType>*> network;
 
   //! Locally-stored feedback output parameters.
-  std::vector<arma::mat> feedbackOutputParameter;
+  std::vector<OutputType> feedbackOutputParameter;
 
   //! List of all module parameters for the backward pass (BBTT).
-  std::vector<arma::mat> moduleOutputParameter;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  std::vector<OutputType> moduleOutputParameter;
 
   //! Locally-stored recurrent error parameter.
-  arma::mat recurrentError;
+  OutputType recurrentError;
 
   //! Locally-stored action error parameter.
-  arma::mat actionError;
+  OutputType actionError;
 
   //! Locally-stored action delta.
-  arma::mat actionDelta;
+  OutputType actionDelta;
 
   //! Locally-stored recurrent delta.
-  arma::mat rnnDelta;
+  OutputType rnnDelta;
 
   //! Locally-stored initial action input.
-  arma::mat initialInput;
-
-  //! Locally-stored reset visitor.
-  ResetVisitor resetVisitor;
+  InputType initialInput;
 
   //! Locally-stored attention gradient.
-  arma::mat attentionGradient;
+  OutputType attentionGradient;
 
   //! Locally-stored intermediate gradient for the attention module.
-  arma::mat intermediateGradient;
+  OutputType intermediateGradient;
 }; // class RecurrentAttention
 
 } // namespace ann

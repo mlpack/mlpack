@@ -21,6 +21,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType, typename RegularizerType>
 LinearNoBiasType<InputType, OutputType, RegularizerType>::LinearNoBiasType() :
+    Layer<InputType, OutputType>(),
     inSize(0),
     outSize(0)
 {
@@ -29,20 +30,21 @@ LinearNoBiasType<InputType, OutputType, RegularizerType>::LinearNoBiasType() :
 
 template<typename InputType, typename OutputType, typename RegularizerType>
 LinearNoBiasType<InputType, OutputType, RegularizerType>::LinearNoBiasType(
-    const size_t inSize,
     const size_t outSize,
     RegularizerType regularizer) :
-    inSize(inSize),
+    Layer<InputType, OutputType>(),
+    inSize(0), // This will be set by ComputeOutputDimensions().
     outSize(outSize),
     regularizer(regularizer)
 {
-  weights.set_size(outSize * inSize, 1);
+  // Nothing to do.
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
-void LinearNoBiasType<InputType, OutputType, RegularizerType>::Reset()
+void LinearNoBiasType<InputType, OutputType, RegularizerType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  weight = arma::mat(weights.memptr(), outSize, inSize, false, false);
+  weight = arma::mat(weightsPtr, outSize, inSize, false, false);
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
@@ -67,7 +69,7 @@ void LinearNoBiasType<InputType, OutputType, RegularizerType>::Gradient(
 {
   gradient.submat(0, 0, weight.n_elem - 1, 0) = arma::vectorise(
       error * input.t());
-  regularizer.Evaluate(weights, gradient);
+  regularizer.Evaluate(weight, gradient);
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
@@ -75,13 +77,11 @@ template<typename Archive>
 void LinearNoBiasType<InputType, OutputType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
-
-  // This is inefficient, but necessary so that WeightSetVisitor sets the right
-  // size.
-  if (cereal::is_loading<Archive>())
-    weights.set_size(outSize * inSize, 1);
+  ar(CEREAL_NVP(regularizer));
 }
 
 } // namespace ann

@@ -24,24 +24,30 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 DropConnectType<InputType, OutputType>::DropConnectType() :
+    Layer<InputType, OutputType>(),
     ratio(0.5),
     scale(2.0),
-    deterministic(true)
+    baseLayer(new LinearType<InputType, OutputType>(0))
 {
   // Nothing to do here.
 }
 
 template<typename InputType, typename OutputType>
 DropConnectType<InputType, OutputType>::DropConnectType(
-    const size_t inSize,
     const size_t outSize,
     const double ratio) :
+    Layer<InputType, OutputType>(),
     ratio(ratio),
     scale(1.0 / (1 - ratio)),
-    deterministic(false),
-    baseLayer(new LinearType<InputType, OutputType>(inSize, outSize))
+    baseLayer(new LinearType<InputType, OutputType>(outSize))
 {
-  network.push_back(baseLayer);
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+DropConnectType<InputType, OutputType>::~DropConnectType()
+{
+  delete baseLayer;
 }
 
 template<typename InputType, typename OutputType>
@@ -49,9 +55,8 @@ void DropConnectType<InputType, OutputType>::Forward(
     const InputType& input,
     OutputType& output)
 {
-  // The DropConnect mask will not be multiplied in the deterministic mode
-  // (during testing).
-  if (deterministic)
+  // The DropConnect mask will not be multiplied in testing mode.
+  if (!this->training)
   {
     baseLayer->Forward(input, output);
   }
@@ -85,9 +90,9 @@ template<typename InputType, typename OutputType>
 void DropConnectType<InputType, OutputType>::Gradient(
     const InputType& input,
     const OutputType& error,
-    OutputType& /* gradient */)
+    OutputType& gradient)
 {
-  baseLayer->Gradient(input, error, baseLayer->Gradient());
+  baseLayer->Gradient(input, error, gradient);
 
   // Denoise the weights.
   baseLayer->Parameters() = denoise;
@@ -98,19 +103,11 @@ template<typename Archive>
 void DropConnectType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  // Delete the old network first, if needed.
-  if (cereal::is_loading<Archive>())
-    delete baseLayer;
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
   ar(CEREAL_NVP(ratio));
   ar(CEREAL_NVP(scale));
-  ar(CEREAL_VARIANT_POINTER(baseLayer));
-
-  if (cereal::is_loading<Archive>())
-  {
-    network.clear();
-    network.push_back(baseLayer);
-  }
+  ar(CEREAL_POINTER(baseLayer));
 }
 
 }  // namespace ann

@@ -19,92 +19,25 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>::NoisyLinearType() :
-    inSize(0),
-    outSize(0)
+NoisyLinearType<InputType, OutputType>::NoisyLinearType(const size_t outSize) :
+    outSize(outSize)
 {
   // Nothing to do here.
 }
 
 template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>::NoisyLinearType(
-  const NoisyLinearType& layer) :
-    inSize(layer.inSize),
-    outSize(layer.outSize),
-    weights(layer.weights)
+void NoisyLinearType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  Reset();
-}
+  weights = OutputType(weightsPtr, 1, (outSize * inSize + outSize) * 2, false,
+      true);
 
-template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>::NoisyLinearType(
-    const size_t inSize,
-    const size_t outSize) :
-    inSize(inSize),
-    outSize(outSize)
-{
-  weights.set_size((outSize * inSize + outSize) * 2, 1);
-  weightEpsilon.set_size(outSize, inSize);
-  biasEpsilon.set_size(outSize, 1);
-}
-
-template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>::NoisyLinearType(
-    NoisyLinearType&& layer) :
-    inSize(std::move(layer.inSize)),
-    outSize(std::move(layer.outSize)),
-    weights(std::move(layer.weights))
-{
-  layer.inSize = 0;
-  layer.outSize = 0;
-  layer.weights = nullptr;
-  Reset();
-}
-
-template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>&
-NoisyLinearType<InputType, OutputType>::operator=(const NoisyLinearType& layer)
-{
-  if (this != &layer)
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights = layer.weights;
-    Reset();
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType>
-NoisyLinearType<InputType, OutputType>&
-NoisyLinearType<InputType, OutputType>::operator=(NoisyLinearType&& layer)
-{
-  if (this != &layer)
-  {
-    inSize = std::move(layer.inSize);
-    layer.inSize = 0;
-    outSize = std::move(layer.outSize);
-    layer.outSize = 0;
-    weights = std::move(layer.weights);
-    layer.weights = nullptr;
-    Reset();
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType>
-void NoisyLinearType<InputType, OutputType>::Reset()
-{
-  weightMu = arma::mat(weights.memptr(),
-      outSize, inSize, false, false);
-  biasMu = arma::mat(weights.memptr() + weightMu.n_elem,
-      outSize, 1, false, false);
-  weightSigma = arma::mat(weights.memptr() + weightMu.n_elem + biasMu.n_elem,
-      outSize, inSize, false, false);
-  biasSigma = arma::mat(weights.memptr() + weightMu.n_elem * 2 + biasMu.n_elem,
-      outSize, 1, false, false);
+  weightMu = OutputType(weightsPtr, outSize, inSize, false, true);
+  biasMu = OutputType(weightsPtr + weightMu.n_elem, outSize, 1, false, true);
+  weightSigma = OutputType(weightsPtr + weightMu.n_elem + biasMu.n_elem,
+      outSize, inSize, false, true);
+  biasSigma = OutputType(weightsPtr + weightMu.n_elem * 2 + biasMu.n_elem,
+      outSize, 1, false, true);
 
   this->ResetNoise();
 }
@@ -175,13 +108,15 @@ template<typename Archive>
 void NoisyLinearType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
 
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
   if (cereal::is_loading<Archive>())
-    weights.set_size((outSize * inSize + outSize) * 2, 1);
+  {
+    ResetNoise();
+  }
 }
 
 } // namespace ann

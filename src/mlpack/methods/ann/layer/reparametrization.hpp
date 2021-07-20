@@ -22,8 +22,8 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * Implementation of the Reparametrization layer class. This layer samples from the
- * given parameters of a normal distribution.
+ * Implementation of the Reparametrization layer class. This layer samples from
+ * the given parameters of a normal distribution.
  *
  * This class also supports beta-VAE, a state-of-the-art framework for
  * automated discovery of interpretable factorised latent representations from
@@ -38,7 +38,8 @@ namespace ann /** Artificial Neural Network. */ {
  *   author  = {Irina Higgins, Loic Matthey, Arka Pal, Christopher Burgess,
  *              Xavier Glorot, Matthew Botvinick, Shakir Mohamed and
  *              Alexander Lerchner | Google DeepMind},
- *   journal = {2017 International Conference on Learning Representations(ICLR)},
+ *   journal = {2017 International Conference on Learning Representations
+ *                 (ICLR)},
  *   year    = {2017},
  *   url     = {https://deepmind.com/research/publications/beta-VAE-Learning-Basic-Visual-Concepts-with-a-Constrained-Variational-Framework}
  * }
@@ -56,27 +57,37 @@ template <
 class ReparametrizationType : public Layer<InputType, OutputType>
 {
  public:
-  //! Create the Reparametrization object.
-  ReparametrizationType();
-
   /**
-   * Create the Reparametrization layer object using the specified sample vector size.
+   * Create the Reparametrization layer object.  Note that the inputs are
+   * expected to be the parameters of the normal distribution; see the
+   * documentation for Forward().
    *
-   * @param latentSize The number of output latent units.
    * @param stochastic Whether we want random sample or constant.
    * @param includeKl Whether we want to include KL loss in backward function.
    * @param beta The beta (hyper)parameter for beta-VAE mentioned above.
    */
-  ReparametrizationType(const size_t latentSize,
-                         const bool stochastic = true,
-                         const bool includeKl = true,
-                         const double beta = 1);
+  ReparametrizationType(const bool stochastic = true,
+                        const bool includeKl = true,
+                        const double beta = 1);
+/*
+  //! Copy constructor.
+  ReparametrizationType(const ReparametrizationType& layer);
+
+  //! Move constructor.
+  ReparametrizationType(ReparametrizationType&& layer);
+
+  //! Copy assignment operator.
+  ReparametrizationType& operator=(const ReparametrizationType& layer);
+
+  //! Move assignment operator.
+  ReparametrizationType& operator=(ReparametrizationType&& layer);
+*/
 
   /**
    * Clone the ReparametrizationType object. This handles polymorphism
    * correctly.
    */
-	ReparametrizationType* Clone() const
+  ReparametrizationType* Clone() const
   {
     return new ReparametrizationType(*this);
   }
@@ -84,6 +95,13 @@ class ReparametrizationType : public Layer<InputType, OutputType>
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
+   *
+   * Note that `input` is expected to be the parameters of the distribution.
+   * The first `input.n_rows / 2` elements correspond to the
+   * pre-standard-deviation values for each output element, and the second
+   * `input.n_rows / 2` elements correspond to the means for each element.
+   * Thus, the output size of the layer is the number of input elements divided
+   * by 2.
    *
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
@@ -103,50 +121,50 @@ class ReparametrizationType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the output size.
-  size_t const& OutputSize() const { return latentSize; }
-  //! Modify the output size.
-  size_t& OutputSize() { return latentSize; }
-
   //! Get the KL divergence with standard normal.
-  double Loss()
-  {
-    if (!includeKl)
-      return 0;
-
-    return -0.5 * beta * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
-        - arma::pow(mean, 2) + 1) / mean.n_cols;
-  }
+  double Loss();
 
   //! Get the value of the stochastic parameter.
-  bool const& Stochastic() const { return stochastic; }
+  bool Stochastic() const { return stochastic; }
+  //! Modify the value of the stochastic parameter.
+  bool& Stochastic() { return stochastic; }
 
   //! Get the value of the includeKl parameter.
-  bool const& IncludeKL() const { return includeKl; }
+  bool IncludeKL() const { return includeKl; }
+  //! Modify the value of the includeKl parameter.
+  bool& IncludeKL() { return includeKl; }
 
   //! Get the value of the beta hyperparameter.
-  double const& Beta() const { return beta; }
+  double Beta() const { return beta; }
+  //! Modify the value of the beta hyperparameter.
+  double& Beta() { return beta; }
+
+  void ComputeOutputDimensions()
+  {
+    const size_t inputElem = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
+    if (inputElem % 2 != 0)
+    {
+      std::ostringstream oss;
+      oss << "Reparametrization layer requires that the total number of input "
+          << "elements is divisible by 2!  (Received input with " << inputElem
+          << " total elements.)";
+      throw std::invalid_argument(oss.str());
+    }
+
+    this->outputDimensions = std::vector<size_t>(
+        this->inputDimensions.size(), 1);
+    // This flattens the input, and removes half the elements.
+    this->outputDimensions[0] = inputElem / 2;
+  }
 
   /**
-   * Serialize the layer
+   * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of output units.
-  size_t latentSize;
-
   //! If false, sample will be constant.
   bool stochastic;
 
@@ -155,9 +173,6 @@ class ReparametrizationType : public Layer<InputType, OutputType>
 
   //! The beta hyperparameter for constrained variational frameworks.
   double beta;
-
-  //! Locally-stored delta object.
-  OutputType delta;
 
   //! Locally-stored current gaussian sample.
   OutputType gaussianSample;
@@ -171,9 +186,6 @@ class ReparametrizationType : public Layer<InputType, OutputType>
 
   //! Locally-stored current standard deviation.
   OutputType stdDev;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class ReparametrizationType
 
 // Standard Reparametrization layer.

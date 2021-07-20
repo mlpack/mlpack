@@ -20,7 +20,7 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 /**
- * The select module selects the specified column from a given input matrix.
+ * The select module selects the specified dimensions from a given input point.
  *
  * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -37,13 +37,15 @@ class SelectType : public Layer<InputType, OutputType>
   /**
    * Create the Select object.
    *
-   * @param index The column which should be extracted from the given input.
-   * @param elements The number of elements that should be used.
+   * @param index The first dimension to extract from the input.
+   * @param elements The number of elements that should be used.  If 0 is given,
+   *      then all dimensions starting with index up to the number of dimensions
+   *      are used.
    */
   SelectType(const size_t index = 0, const size_t elements = 0);
 
   //! Clone the SelectType object. This handles polymorphism correctly.
-	SelectType* Clone() const { return new SelectType(*this); }
+  SelectType* Clone() const { return new SelectType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -67,16 +69,6 @@ class SelectType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
-  //! Get the output parameter.
-  const OutputType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  const OutputType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
   //! Get the column index.
   const size_t& Index() const { return index; }
 
@@ -89,18 +81,30 @@ class SelectType : public Layer<InputType, OutputType>
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
+  const std::vector<size_t> OutputDimensions() const
+  {
+    std::vector<size_t> outputDimensions(inputDimensions.size(), 1);
+    if (elements > 0)
+    {
+      outputDimensions[0] = elements;
+    }
+    else
+    {
+      // Compute the total number of dimensions.
+      const size_t totalDims = std::accumulate(inputDimensions.begin(),
+          inputDimensions.end(), 0);
+      outputDimensions[0] = (totalDims - index);
+    }
+
+    return outputDimensions;
+  }
+
  private:
   //! Locally-stored column index.
   size_t index;
 
   //! Locally-stored number of elements selected.
   size_t elements;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class SelectType
 
 // Standard Select layer.

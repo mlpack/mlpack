@@ -24,10 +24,7 @@ namespace ann /** Artificial Neural Network. */ {
  * The dropout layer is a regularizer that randomly with probability 'ratio'
  * sets input values to zero and scales the remaining elements by factor 1 /
  * (1 - ratio) rather than during test time so as to keep the expected sum same.
- * In the deterministic mode (during testing), there is no change in the input.
- *
- * Note: During training you should set deterministic to false and during
- * testing you should set deterministic to true.
+ * When the layer is in testing mode, there is no change in the input.
  *
  * For more information, see the following.
  *
@@ -61,18 +58,6 @@ class DropoutType : public Layer<InputType, OutputType>
    */
   DropoutType(const double ratio = 0.5);
 
-  //! Copy Constructor.
-  DropoutType(const DropoutType& layer);
-
-  //! Move Constructor.
-  DropoutType(const DropoutType&&);
-
-  //! Copy assignment operator.
-  DropoutType& operator=(const DropoutType& layer);
-
-  //! Move assignment operator.
-  DropoutType& operator=(DropoutType&& layer);
-
   //! Clone the DropoutType object. This handles polymorphism correctly.
   DropoutType* Clone() const { return new DropoutType(*this); }
 
@@ -94,11 +79,6 @@ class DropoutType : public Layer<InputType, OutputType>
   void Backward(const InputType& /* input */,
                 const OutputType& gy,
                 OutputType& g);
-
-  //! The value of the deterministic parameter.
-  bool const& Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
 
   //! The probability of setting a value to zero.
   double Ratio() const { return ratio; }
@@ -125,9 +105,6 @@ class DropoutType : public Layer<InputType, OutputType>
 
   //! The scale fraction.
   double scale;
-
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
 }; // class DropoutType
 
 // Convenience typedefs.

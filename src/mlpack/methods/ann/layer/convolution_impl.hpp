@@ -151,12 +151,11 @@ void ConvolutionType<
     GradientConvolutionRule,
     InputType,
     OutputType
->::Reset()
+>::SetWeights(const typename OutputType::elem_type* weightPtr)
 {
-    weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
-        outSize * inSize, false, false);
-    bias = OutputType(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
+  weight = arma::Cube<typename OutputType::elem_type>(weightPtr,
+      kernelWidth, kernelHeight, outSize * inSize, false, false);
+  bias = OutputType(weightPtr + weight.n_elem, outSize, 1, false, false);
 }
 
 template<
@@ -175,8 +174,9 @@ void ConvolutionType<
 >::Forward(const InputType& input, OutputType& output)
 {
   batchSize = input.n_cols;
-  arma::cube inputTemp(const_cast<InputType&>(input).memptr(),
-      inputWidth, inputHeight, inSize * batchSize, false, false);
+  arma::Cube<typename InputType::elem_type> inputTemp(
+      const_cast<InputType&>(input).memptr(), inputWidth, inputHeight, inSize *
+      batchSize, false, false);
 
   if (padWLeft != 0 || padWRight != 0 || padHTop != 0 || padHBottom != 0)
   {
@@ -195,8 +195,8 @@ void ConvolutionType<
       padHBottom);
 
   output.set_size(wConv * hConv * outSize, batchSize);
-  outputTemp = arma::cube(output.memptr(), wConv, hConv,
-      outSize * batchSize, false, false);
+  outputTemp = arma::Cube<typename OutputType::elem_type>(output.memptr(),
+      wConv, hConv, outSize * batchSize, false, false);
   outputTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
@@ -251,12 +251,13 @@ void ConvolutionType<
 >::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  arma::cube mappedError(((OutputType&) gy).memptr(), outputWidth,
-      outputHeight, outSize * batchSize, false, false);
+  arma::Cube<typename OutputType::elem_type> mappedError(
+      ((OutputType&) gy).memptr(), outputWidth, outputHeight, outSize *
+      batchSize, false, false);
 
   g.set_size(inputWidth * inputHeight * inSize, batchSize);
-  gTemp = arma::cube(g.memptr(), inputWidth, inputHeight,
-      inSize * batchSize, false, false);
+  gTemp = arma::Cube<typename OutputType::elem_type>(g.memptr(), inputWidth,
+      inputHeight, inSize * batchSize, false, false);
   gTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
@@ -307,14 +308,16 @@ void ConvolutionType<
     const OutputType& error,
     OutputType& gradient)
 {
-  arma::cube mappedError(((OutputType&) error).memptr(), outputWidth,
-      outputHeight, outSize * batchSize, false, false);
-  arma::cube inputTemp(((InputType&) input).memptr(), inputWidth,
-      inputHeight, inSize * batchSize, false, false);
+  arma::Cube<typename OutputType::elem_type> mappedError(
+      ((OutputType&) error).memptr(), outputWidth, outputHeight, outSize *
+      batchSize, false, false);
+  arma::Cube<typename InputType::elem_type> inputTemp(
+      ((InputType&) input).memptr(), inputWidth, inputHeight, inSize *
+      batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
-  gradientTemp = arma::cube(gradient.memptr(), weight.n_rows,
-      weight.n_cols, weight.n_slices, false, false);
+  gradientTemp = arma::Cube<typename OutputType::elem_type>(gradient.memptr(),
+      weight.n_rows, weight.n_cols, weight.n_slices, false, false);
   gradientTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
@@ -383,6 +386,8 @@ void ConvolutionType<
     OutputType
 >::serialize(Archive& ar, const uint32_t /* version*/)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
   ar(CEREAL_NVP(batchSize));
@@ -399,12 +404,6 @@ void ConvolutionType<
   ar(CEREAL_NVP(outputWidth));
   ar(CEREAL_NVP(outputHeight));
   ar(CEREAL_NVP(padding));
-
-  if (cereal::is_loading<Archive>())
-  {
-    weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-        1);
-  }
 }
 
 template<

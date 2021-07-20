@@ -20,18 +20,16 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
-AddType<InputType, OutputType>::AddType(const size_t outSize) :
-    outSize(outSize)
+AddType<InputType, OutputType>::AddType() : outSize(0)
 {
-  weights.set_size(WeightSize(), 1);
+  // Nothing to do.
 }
 
 template<typename InputType, typename OutputType>
 void AddType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output = input;
-  output.each_col() += weights;
+  output = input + arma::repmat(arma::vectorise(weights), 1, input.n_cols);
 }
 
 template<typename InputType, typename OutputType>
@@ -53,14 +51,22 @@ void AddType<InputType, OutputType>::Gradient(
 }
 
 template<typename InputType, typename OutputType>
+void AddType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightPtr)
+{
+  // Set the weights to wrap the given memory.
+  weights = OutputType(weightPtr, 1, outSize, false, true);
+}
+
+template<typename InputType, typename OutputType>
 template<typename Archive>
 void AddType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(outSize));
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 
-  if (cereal::is_loading<Archive>())
-    weights.set_size(outSize, 1);
+  ar(CEREAL_NVP(outSize));
+  ar(CEREAL_NVP(weights));
 }
 
 } // namespace ann

@@ -29,8 +29,7 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputType, typename OutputType>
 ELUType<InputType, OutputType>::ELUType() :
     alpha(1.6732632423543774),
-    lambda(1.0507009873554802),
-    deterministic(false)
+    lambda(1.0507009873554802)
 {
   // Nothing to do here.
 }
@@ -40,8 +39,7 @@ ELUType<InputType, OutputType>::ELUType() :
 template<typename InputType, typename OutputType>
 ELUType<InputType, OutputType>::ELUType(const double alpha) :
     alpha(alpha),
-    lambda(1),
-    deterministic(false)
+    lambda(1)
 {
   // Nothing to do here.
 }
@@ -50,7 +48,7 @@ template<typename InputType, typename OutputType>
 void ELUType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output = arma::ones<OutputType>(arma::size(input));
+  output.ones();
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     if (input(i) < DBL_MAX)
@@ -62,7 +60,6 @@ void ELUType<InputType, OutputType>::Forward(
 
   if (!deterministic)
   {
-    derivative.set_size(arma::size(input));
     for (size_t i = 0; i < input.n_elem; ++i)
       derivative(i) = (input(i) > 0) ? lambda : output(i) + lambda * alpha;
   }
@@ -80,6 +77,8 @@ template<typename Archive>
 void ELUType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(alpha));
   ar(CEREAL_NVP(lambda));
 }

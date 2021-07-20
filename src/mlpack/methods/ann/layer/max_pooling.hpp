@@ -70,6 +70,10 @@ class MaxPoolingType : public Layer<InputType, OutputType>
                  const size_t strideHeight = 1,
                  const bool floor = true);
 
+  // TODO: copy constructor / move constructor
+
+  MaxPoolingType* Clone() const { return new MaxPoolingType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -91,42 +95,6 @@ class MaxPoolingType : public Layer<InputType, OutputType>
   void Backward(const InputType& /* input */,
                 const OutputType& gy,
                 OutputType& g);
-
-  //! Get the output parameter.
-  const OutputType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  const OutputType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the input width.
-  size_t const& InputWidth() const { return inputWidth; }
-  //! Modify the input width.
-  size_t& InputWidth() { return inputWidth; }
-
-  //! Get the input height.
-  size_t const& InputHeight() const { return inputHeight; }
-  //! Modify the input height.
-  size_t& InputHeight() { return inputHeight; }
-
-  //! Get the output width.
-  size_t const& OutputWidth() const { return outputWidth; }
-  //! Modify the output width.
-  size_t& OutputWidth() { return outputWidth; }
-
-  //! Get the output height.
-  size_t const& OutputHeight() const { return outputHeight; }
-  //! Modify the output height.
-  size_t& OutputHeight() { return outputHeight; }
-
-  //! Get the input size.
-  size_t const& InputSize() const { return inSize; }
-
-  //! Get the output size.
-  size_t const& OutputSize() const { return outSize; }
 
   //! Get the kernel width.
   size_t const& KernelWidth() const { return kernelWidth; }
@@ -153,13 +121,39 @@ class MaxPoolingType : public Layer<InputType, OutputType>
   //! Modify the value of the rounding operation.
   bool& Floor() { return floor; }
 
-  //! Get the value of the deterministic parameter.
-  bool const& Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
+  //! Get the size of the output.
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    outputDimensions = this->inputDimensions;
 
-  //! Get the size of the weights.
-  //size_t const& WeightSize() const { return 0; }
+    // Compute the size of the output.
+    if (floor)
+    {
+      outputDimensions[0] = std::floor((this->inputDimensions[0] -
+          (double) kernelWidth) / (double) strideWidth + 1);
+      outputDimensions[1] = std::floor((this->inputDimensions[1] -
+          (double) kernelHeight) / (double) strideHeight + 1);
+      offset = 0;
+    }
+    else
+    {
+      outputDimensions[0] = std::ceil((this->inputDimensions[0] -
+          (double) kernelWidth) / (double) strideWidth + 1);
+      outputDimensions[1] = std::ceil((this->inputDimensions[1] -
+          (double) kernelHeight) / (double) strideHeight + 1);
+      offset = 1;
+    }
+
+    // Higher dimensions are not modified.
+    for (size_t i = 2; i < this->inputDimensions.size(); ++i)
+      outputDimensions[i] = this->inputDimensions[i];
+
+    // Cache input size and output size.
+    channels = std::accumulate(this->inputDimensions.begin() + 2,
+        this->inputDimensions.end(), 0);
+
+    return outputDimensions;
+  }
 
   /**
    * Serialize the layer.
@@ -168,7 +162,7 @@ class MaxPoolingType : public Layer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
- /**
+  /**
    * Apply pooling to the input and store the results.
    *
    * @param input The input to be apply the pooling rule.
@@ -192,7 +186,7 @@ class MaxPoolingType : public Layer<InputType, OutputType>
         const size_t idx = pooling.Pooling(subInput);
         output(i, j) = subInput(idx);
 
-        if (!deterministic)
+        if (this->training)
         {
           arma::Mat<size_t> subIndices = indices(arma::span(rowidx,
               rowidx + kernelWidth - 1 - offset),
@@ -236,29 +230,14 @@ class MaxPoolingType : public Layer<InputType, OutputType>
   //! Rounding operation used.
   bool floor;
 
-  //! Locally-stored number of input channels.
-  size_t inSize;
+  //! Locally-stored number of channels.
+  size_t channels;
 
-  //! Locally-stored number of output channels.
-  size_t outSize;
+  //! Locally-stored cached output dimensions.
+  std::vector<size_t> outputDimensions;
 
   //! Locally-stored reset parameter used to initialize the module once.
   bool reset;
-
-  //! Locally-stored input width.
-  size_t inputWidth;
-
-  //! Locally-stored input height.
-  size_t inputHeight;
-
-  //! Locally-stored output width.
-  size_t outputWidth;
-
-  //! Locally-stored output height.
-  size_t outputHeight;
-
-  //! If true use maximum a posteriori during the forward pass.
-  bool deterministic;
 
   //! Locally-stored stored rounding offset.
   size_t offset;
@@ -266,26 +245,8 @@ class MaxPoolingType : public Layer<InputType, OutputType>
   //! Locally-stored number of input units.
   size_t batchSize;
 
-  //! Locally-stored output parameter.
-  arma::cube outputTemp;
-
-  //! Locally-stored transformed input parameter.
-  arma::cube inputTemp;
-
-  //! Locally-stored transformed output parameter.
-  arma::cube gTemp;
-
   //! Locally-stored pooling strategy.
   MaxPoolingRule pooling;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 
   //! Locally-stored indices matrix parameter.
   arma::Mat<size_t> indices;
@@ -294,7 +255,7 @@ class MaxPoolingType : public Layer<InputType, OutputType>
   arma::Col<size_t> indicesCol;
 
   //! Locally-stored pooling indicies.
-  std::vector<arma::cube> poolingIndices;
+  std::vector<arma::Cube<typename InputType::elem_type>> poolingIndices;
 }; // class MaxPoolingType
 
 // Standard MaxPooling layer.

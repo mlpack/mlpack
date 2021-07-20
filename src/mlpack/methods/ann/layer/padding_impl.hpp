@@ -39,12 +39,10 @@ template<typename InputType, typename OutputType>
 void PaddingType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  nRows = input.n_rows;
-  nCols = input.n_cols;
-  output = arma::zeros(nRows + padWLeft + padWRight,
-      nCols + padHTop + padHBottom);
-  output.submat(padWLeft, padHTop, padWLeft + nRows - 1,
-      padHTop + nCols - 1) = input;
+  // TODO: this implementation could be faster---no need to zero everything.
+  output.zeros();
+  output.submat(padWLeft, padHTop, padWLeft + inputDimensions[0] - 1,
+      padHTop + inputDimensions[1] - 1) = input;
 }
 
 template<typename InputType, typename OutputType>
@@ -53,8 +51,8 @@ void PaddingType<InputType, OutputType>::Backward(
     const OutputType& gy,
     OutputType& g)
 {
-  g = gy.submat(padWLeft, padHTop, padWLeft + nRows - 1,
-      padHTop + nCols - 1);
+  g = gy.submat(padWLeft, padHTop, padWLeft + inputDimensions[0] - 1,
+      padHTop + inputDimensions[1] - 1);
 }
 
 template<typename InputType, typename OutputType>
@@ -62,6 +60,8 @@ template<typename Archive>
 void PaddingType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(padWLeft));
   ar(CEREAL_NVP(padWRight));
   ar(CEREAL_NVP(padHTop));

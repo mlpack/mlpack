@@ -25,8 +25,7 @@ SpatialDropoutType<InputType, OutputType>::SpatialDropoutType() :
     scale(1.0 / (1.0 - ratio)),
     reset(false),
     batchSize(0),
-    inputSize(0),
-    deterministic(false)
+    inputSize(0)
 {
   // Nothing to do here.
 }
@@ -40,8 +39,7 @@ SpatialDropoutType<InputType, OutputType>::SpatialDropoutType(
     scale(1.0 / (1.0 - ratio)),
     reset(false),
     batchSize(0),
-    inputSize(0),
-    deterministic(false)
+    inputSize(0)
 {
   // Nothing to do here.
 }
@@ -61,16 +59,20 @@ void SpatialDropoutType<InputType, OutputType>::Forward(
   }
 
   if (deterministic)
+  {
     output = input;
+  }
   else
   {
     output.zeros(arma::size(input));
-    arma::cube inputTemp(const_cast<arma::mat&>(input).memptr(), inputSize,
-        size, batchSize, false, false);
-    arma::cube outputTemp(const_cast<arma::mat&>(output).memptr(), inputSize,
-        size, batchSize, false, false);
-    arma::mat probabilities(1, size);
-    arma::mat maskRow(1, size);
+    arma::Cube<typename InputType::elem_type> inputTemp(
+        const_cast<InputType&>(input).memptr(), inputSize, size, batchSize,
+        false, true);
+    arma::Cube<typename OutputType::elem_type> outputTemp(
+        const_cast<OutputType&>(output).memptr(), inputSize, size, batchSize,
+        false, true);
+    OutputType probabilities(1, size);
+    OutputType maskRow(1, size);
     probabilities.fill(ratio);
     ann::BernoulliDistribution<> bernoulli_dist(probabilities, false);
     maskRow = bernoulli_dist.Sample();
@@ -86,10 +88,12 @@ void SpatialDropoutType<InputType, OutputType>::Backward(
     const InputType& input, const OutputType& gy, OutputType& g)
 {
   g.zeros(arma::size(input));
-  arma::cube gyTemp(const_cast<arma::mat&>(gy).memptr(), inputSize, size,
-      batchSize, false, false);
-  arma::cube gTemp(const_cast<arma::mat&>(g).memptr(), inputSize, size,
-      batchSize, false, false);
+  arma::Cube<typename OutputType::elem_type> gyTemp(
+      const_cast<OutputType&>(gy).memptr(), inputSize, size, batchSize, false,
+      true);
+  arma::Cube<typename OutputType::elem_type> gTemp(
+      const_cast<OutputType&>(g).memptr(), inputSize, size, batchSize, false,
+      true);
 
   for (size_t n = 0; n < batchSize; n++)
     gTemp.slice(n) = gyTemp.slice(n) % mask * scale;
@@ -101,15 +105,17 @@ void SpatialDropoutType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(size));
   ar(CEREAL_NVP(ratio));
   ar(CEREAL_NVP(batchSize));
   ar(CEREAL_NVP(inputSize));
   ar(CEREAL_NVP(reset));
-  ar(CEREAL_NVP(deterministic));
 
   // Reset scale.
-  scale = 1.0 / (1.0 - ratio);
+  if (Archive::is_loading::value)
+    scale = 1.0 / (1.0 - ratio);
 }
 
 } // namespace ann

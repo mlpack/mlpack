@@ -38,7 +38,7 @@ template<typename InputType, typename OutputType>
 void HardShrinkType<InputType, OutputType>::Backward(
     const InputType& input, const OutputType& gy, OutputType& g)
 {
-  g = gy %  (arma::ones(arma::size(input)) - (input == 0));
+  g = gy % (arma::ones<OutputType>(arma::size(input)) - (input == 0));
 }
 
 template<typename InputType, typename OutputType>
@@ -47,6 +47,8 @@ void HardShrinkType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(lambda));
 }
 

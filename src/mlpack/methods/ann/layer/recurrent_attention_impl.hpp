@@ -15,19 +15,11 @@
 // In case it hasn't yet been included.
 #include "recurrent_attention.hpp"
 
-#include "../visitor/load_output_parameter_visitor.hpp"
-#include "../visitor/save_output_parameter_visitor.hpp"
-#include "../visitor/backward_visitor.hpp"
-#include "../visitor/forward_visitor.hpp"
-#include "../visitor/gradient_set_visitor.hpp"
-#include "../visitor/gradient_update_visitor.hpp"
-#include "../visitor/gradient_visitor.hpp"
-
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention() :
+template<typename InputType, typename OutputType>
+RecurrentAttention<InputType, OutputType>::RecurrentAttention() :
     rho(0),
     forwardStep(0),
     backwardStep(0),
@@ -36,9 +28,9 @@ RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention() :
   // Nothing to do.
 }
 
-template <typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename RNNModuleType, typename ActionModuleType>
-RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention(
+RecurrentAttention<InputType, OutputType>::RecurrentAttention(
     const size_t outSize,
     const RNNModuleType& rnn,
     const ActionModuleType& action,
@@ -55,11 +47,16 @@ RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention(
   network.push_back(actionModule);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void RecurrentAttention<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void RecurrentAttention<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
+  InitializeForwardPassMemory();
+
+  // Convenience naming.
+  OutputType& rnnOutput = layerOutputs.front();
+  OutputType& actionOutput = layerOutputs.back();
+
   // Initialize the action input.
   if (initialInput.is_empty())
   {
@@ -71,75 +68,80 @@ void RecurrentAttention<InputDataType, OutputDataType>::Forward(
   {
     if (forwardStep == 0)
     {
-      boost::apply_visitor(ForwardVisitor(initialInput,
-          boost::apply_visitor(outputParameterVisitor, actionModule)),
-          actionModule);
+      actionModule->Forward(initialInput, actionOutput);
     }
     else
     {
-      boost::apply_visitor(ForwardVisitor(boost::apply_visitor(
-          outputParameterVisitor, rnnModule), boost::apply_visitor(
-          outputParameterVisitor, actionModule)), actionModule);
+      actionModule->Forward(rnnOutput, actionOutput);
     }
 
     // Initialize the glimpse input.
-    arma::mat glimpseInput = arma::zeros(input.n_elem, 2);
+    InputType glimpseInput = arma::zeros(input.n_elem, 2);
     glimpseInput.col(0) = input;
-    glimpseInput.submat(0, 1, boost::apply_visitor(outputParameterVisitor,
-        actionModule).n_elem - 1, 1) = boost::apply_visitor(
-        outputParameterVisitor, actionModule);
+    glimpseInput.submat(0, 1, actionOutput.n_elem - 1, 1) =
+        actionOutput;
 
-    boost::apply_visitor(ForwardVisitor(glimpseInput,
-        boost::apply_visitor(outputParameterVisitor, rnnModule)),
-        rnnModule);
+    rnnModule->Forward(glimpseInput, rnnOutput);
 
     // Save the output parameter when training the module.
     if (!deterministic)
     {
       for (size_t l = 0; l < network.size(); ++l)
       {
-        boost::apply_visitor(SaveOutputParameterVisitor(
-            moduleOutputParameter), network[l]);
+        // TODO: what if network[i] has a Model()?
+        // TODO: what does this actually do?  do we need it?
+        moduleOutputParameter.push_back(network[l]->OutputParameter());
       }
     }
   }
 
-  output = boost::apply_visitor(outputParameterVisitor, rnnModule);
+  output = rnnOutput;
 
   forwardStep = 0;
   backwardStep = 0;
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void RecurrentAttention<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& gy,
-    arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void RecurrentAttention<InputType, OutputType>::Backward(
+    const InputType& /* input */,
+    const OutputType& gy,
+    OutputType& g)
 {
+  InitializeBackwardPassMemory();
+
+  // Convenience names.
+  OutputType& rnnOutput = layerOutputs.front();
+  OutputType& actionOutput = layerOutputs.back();
+  OutputType& rnnGradient = layerGradients.front();
+  OutputType& actionGradient = layerGradients.back();
+
   if (intermediateGradient.is_empty() && backwardStep == 0)
   {
     // Initialize the attention gradients.
-    size_t weights = boost::apply_visitor(weightSizeVisitor, rnnModule) +
-        boost::apply_visitor(weightSizeVisitor, actionModule);
+    // TODO: do rnnModule or actionModule have a Model()?  We may need to
+    // account for those weights too.
+    size_t weights = rnnModule->Parameters().n_elem +
+        actionModule->Parameters().n_elem;
 
     intermediateGradient = arma::zeros(weights, 1);
     attentionGradient = arma::zeros(weights, 1);
 
     // Initialize the action error.
-    actionError = arma::zeros(
-      boost::apply_visitor(outputParameterVisitor, actionModule).n_rows,
-      boost::apply_visitor(outputParameterVisitor, actionModule).n_cols);
+    actionError = arma::zeros(actionOutput.n_rows, actionOutput.n_cols);
   }
 
   // Propagate the attention gradients.
   if (backwardStep == 0)
   {
     size_t offset = 0;
-    offset += boost::apply_visitor(GradientSetVisitor(
-        intermediateGradient, offset), rnnModule);
-    boost::apply_visitor(GradientSetVisitor(
-        intermediateGradient, offset), actionModule);
+    //  TODO: what if rnnModule has a Model()?
+    rnnGradient = OutputType(intermediateGradient.memptr() + offset,
+        rnnModule->Parameters().n_rows, rnnModule->Parameters().n_cols, false,
+        false);
+    offset += rnnModule->Parameters().n_elem;
+    actionGradient = OutputType(intermediateGradient.memptr() + offset,
+        actionModule->Parameters().n_rows, actionModule->Parameters().n_cols,
+        false, false);
 
     attentionGradient.zeros();
   }
@@ -158,25 +160,21 @@ void RecurrentAttention<InputDataType, OutputDataType>::Backward(
 
     for (size_t l = 0; l < network.size(); ++l)
     {
-      boost::apply_visitor(LoadOutputParameterVisitor(
-         moduleOutputParameter), network[network.size() - 1 - l]);
+      // TODO: handle case where HasModelCheck is true
+      network[network.size() - 1 - l] = moduleOutputParameter.back();
+      moduleOutputParameter.pop_back();
     }
 
     if (backwardStep == (rho - 1))
     {
-      boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-          outputParameterVisitor, actionModule), actionError,
-          actionDelta), actionModule);
+      actionModule->Backward(actionOutput, actionError, actionDelta);
     }
     else
     {
-      boost::apply_visitor(BackwardVisitor(initialInput, actionError,
-          actionDelta), actionModule);
+      actionModule->Backward(initialInput, actionError, actionDelta);
     }
 
-    boost::apply_visitor(BackwardVisitor(boost::apply_visitor(
-        outputParameterVisitor, rnnModule), recurrentError, rnnDelta),
-        rnnModule);
+    rnnModule->Backward(rnnOutput, recurrentError, rnnDelta);
 
     if (backwardStep == 0)
     {
@@ -191,32 +189,45 @@ void RecurrentAttention<InputDataType, OutputDataType>::Backward(
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void RecurrentAttention<InputDataType, OutputDataType>::Gradient(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& /* error */,
-    arma::Mat<eT>& /* gradient */)
+template<typename InputType, typename OutputType>
+void RecurrentAttention<InputType, OutputType>::Gradient(
+    const InputType& /* input */,
+    const OutputType& /* error */,
+    OutputType& /* gradient */)
 {
+  // Convenience naming.
+  OutputType& rnnGradient = layerGradients.front();
+  OutputType& actionGradient = layerGradients.back();
+
   size_t offset = 0;
-  offset += boost::apply_visitor(GradientUpdateVisitor(
-      attentionGradient, offset), rnnModule);
-  boost::apply_visitor(GradientUpdateVisitor(
-      attentionGradient, offset), actionModule);
+  // TODO: handle case where rnnModule or actionModule have a model
+  if (rnnModule->Parameters().n_elem != 0)
+  {
+    rnnGradient = attentionGradient.submat(offset, 0, offset +
+        rnnModule->Parameters().n_elem - 1, 0);
+    offset += rnnModule->Parameters().n_elem;
+  }
+
+  if (actionModule->Parameters().n_elem != 0)
+  {
+    actionGradient = attentionGradient.submat(offset, 0, offset +
+        actionModule->Parameters().n_elem - 1, 0);
+  }
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void RecurrentAttention<InputDataType, OutputDataType>::serialize(
+void RecurrentAttention<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<MultiLayer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(rho));
   ar(CEREAL_NVP(outSize));
   ar(CEREAL_NVP(forwardStep));
   ar(CEREAL_NVP(backwardStep));
 
-  ar(CEREAL_VARIANT_POINTER(rnnModule));
-  ar(CEREAL_VARIANT_POINTER(actionModule));
+  // TODO: lots of clearing?
 }
 
 } // namespace ann

@@ -22,7 +22,11 @@ namespace ann /** Artificial Neural Network. */ {
 /**
  * Implementation of the Concatenate module class. The Concatenate module
  * concatenates a constant given matrix to the incoming data.
- * Note: Users need to use the Concat() function to provide the concat matrix.
+ *
+ * The Concat() function to provide the concat matrix, or it can be passed to
+ * the constructor.
+ *
+ * After this layer is applied, the shape of the data will be a vector.
  *
  * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
@@ -37,24 +41,13 @@ class ConcatenateType : public Layer<InputType, OutputType>
 {
  public:
   /**
-   * Create the ConcatenateType object using the specified number of output units.
+   * Create the ConcatenateType object using the given constant matrix as the
+   * data to be concatenated to the output of the forward pass.
    */
   ConcatenateType(const InputType& concat = InputType());
 
-  //! Copy constructor.
-  ConcatenateType(const ConcatenateType& layer);
-
-  //! Move constructor.
-  ConcatenateType(ConcatenateType&& layer);
-
-  //! Operator= copy constructor.
-  ConcatenateType& operator=(const ConcatenateType& layer);
-
-  //! Operator= move constructor.
-  ConcatenateType& operator=(ConcatenateType&& layer);
-
   //! Clone the ConcatenateType object. This handles polymorphism correctly.
-	ConcatenateType* Clone() const { return new ConcatenateType(*this); }
+  ConcatenateType* Clone() const { return new ConcatenateType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -78,50 +71,36 @@ class ConcatenateType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
-  //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
   //! Get the concat matrix.
   OutputType const& Concat() const { return concat; }
   //! Modify the concat.
   OutputType& Concat() { return concat; }
 
+  void ComputeOutputDimensions()
+  {
+    // This flattens the input.
+    const size_t inSize = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
+    this->outputDimensions[0] = inSize + concat.n_elem;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
-  void serialize(Archive& /* ar */, const uint32_t /* version */)
+  void serialize(Archive& ar, const uint32_t /* version */)
   {
-    // Nothing to do here.
+    ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
+    ar(CEREAL_NVP(concat));
   }
 
  private:
-  //! Locally-stored number of input rows.
-  size_t inRows;
-
-  //! Locally-stored weight object.
-  OutputType weights;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
-
-  //! Locally-stored matrix to be concatenated to input.
+  //! Matrix to be concatenated to input.
   InputType concat;
+
 }; // class Concatenate
 
 // Standard Concatenate layer.

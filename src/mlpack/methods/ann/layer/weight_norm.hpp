@@ -53,6 +53,11 @@ class WeightNormType : public Layer<InputType, OutputType>
 {
  public:
   /**
+   * Create an empty WeightNorm layer.
+   */
+  WeightNormType();
+
+  /**
    * Create the WeightNorm layer object.
    *
    * @param layer The layer whose weights are needed to be normalized.
@@ -62,13 +67,22 @@ class WeightNormType : public Layer<InputType, OutputType>
   //! Destructor to release allocated memory.
   ~WeightNormType();
 
+  //! Create a WeightNorm layer by copying the given layer.
+  WeightNormType(const WeightNormType& other);
+  //! Create a WeightNorm layer by taking ownership of the other layer.
+  WeightNormType(WeightNormType&& other);
+  //! Copy the given layer.
+  WeightNormType& operator=(const WeightNormType& other);
+  //! Take ownership of the data in the given layer.
+  WeightNormType& operator=(WeightNormType&& other);
+
   //! Clone the WeightNormType object. This handles polymorphism correctly.
   WeightNormType* Clone() const { return new WeightNormType(*this); }
 
   /**
    * Reset the layer parameters.
    */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Forward pass of the WeightNorm layer. Calculates the weights of the
@@ -105,21 +119,6 @@ class WeightNormType : public Layer<InputType, OutputType>
                 const OutputType& error,
                 OutputType& gradient);
 
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
   //! Get the parameters.
   OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
@@ -127,6 +126,14 @@ class WeightNormType : public Layer<InputType, OutputType>
 
   //! Get the wrapped layer.
   Layer<InputType, OutputType>* const& WrappedLayer() { return wrappedLayer; }
+
+  const size_t WeightSize() const { return wrappedLayer->WeightSize(); }
+
+  const std::vector<size_t> OutputDimensions() const
+  {
+    wrappedLayer->InputDimensions() = inputDimensions;
+    return wrappedLayer->OutputDimensions();
+  }
 
   /**
    * Serialize the layer.
@@ -138,20 +145,11 @@ class WeightNormType : public Layer<InputType, OutputType>
   //! Locally-stored number of bias elements in the weights of wrapped layer.
   size_t biasWeightSize;
 
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
   //! Locally-stored wrapped layer.
   Layer<InputType, OutputType>* wrappedLayer;
 
   //! Locally stored number of elements in the weights of wrapped layer.
   size_t layerWeightSize;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 
   //! Reset the gradient for all modules that implement the Gradient function.
   void ResetGradients(OutputType& gradient);

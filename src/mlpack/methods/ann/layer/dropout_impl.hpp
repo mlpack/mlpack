@@ -23,58 +23,9 @@ template<typename InputType, typename OutputType>
 DropoutType<InputType, OutputType>::DropoutType(
     const double ratio) :
     ratio(ratio),
-    scale(1.0 / (1.0 - ratio)),
-    deterministic(false)
+    scale(1.0 / (1.0 - ratio))
 {
   // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>::DropoutType(
-    const DropoutType& layer) :
-    ratio(layer.ratio),
-    scale(layer.scale),
-    deterministic(layer.deterministic)
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>::DropoutType(
-    const DropoutType&& layer) :
-    ratio(std::move(layer.ratio)),
-    scale(std::move(scale)),
-    deterministic(std::move(deterministic))
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>& DropoutType<InputType, OutputType>::
-operator=(const DropoutType& layer)
-{
-  if (this != &layer)
-  {
-    ratio = layer.ratio;
-    scale = layer.scale;
-    deterministic = layer.deterministic;
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType>
-DropoutType<InputType, OutputType>& DropoutType<InputType, OutputType>::
-operator=(DropoutType&& layer)
-{
-  if (this != &layer)
-  {
-    ratio = std::move(layer.ratio);
-    scale = std::move(layer.scale);
-    deterministic = std::move(layer.deterministic);
-  }
-
-  return *this;
 }
 
 template<typename InputType, typename OutputType>
@@ -82,9 +33,8 @@ void DropoutType<InputType, OutputType>::Forward(
     const InputType& input,
     OutputType& output)
 {
-  // The dropout mask will not be multiplied in the deterministic mode
-  // (during testing).
-  if (deterministic)
+  // The dropout mask will not be multiplied in testing mode.
+  if (!this->training)
   {
     output = input;
   }
@@ -113,6 +63,8 @@ void DropoutType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(ratio));
 
   // Reset scale.

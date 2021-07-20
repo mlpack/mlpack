@@ -47,8 +47,8 @@ class PaddingType : public Layer<InputType, OutputType>
               const size_t padHTop = 0,
               const size_t padHBottom = 0);
 
-	//! Clone the PaddingType object. This handles polymorphism correctly.
-	PaddingType* Clone() const { return new PaddingType(*this); }
+  //! Clone the PaddingType object. This handles polymorphism correctly.
+  PaddingType* Clone() const { return new PaddingType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -72,16 +72,6 @@ class PaddingType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
   //! Get the left padding width.
   size_t PadWLeft() const { return padWLeft; }
   //! Modify the left padding width.
@@ -102,6 +92,19 @@ class PaddingType : public Layer<InputType, OutputType>
   //! Modify the bottom padding width.
   size_t& PadHBottom() { return padHBottom; }
 
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> outputDimensions(inputDimensions);
+
+    // TODO: throw an error if the input dimensions are greater than 2?
+    // or adapt accordingly?
+
+    outputDimensions[0] += padWLeft + padWRight;
+    outputDimensions[1] += padHTop + padHBottom;
+
+    return outputDimensions;
+  }
+
   /**
    * Serialize the layer.
    */
@@ -120,15 +123,6 @@ class PaddingType : public Layer<InputType, OutputType>
 
   //! Locally-stored bottom padding height.
   size_t padHBottom;
-
-  //! Locally-stored number of rows and columns of input.
-  size_t nRows, nCols;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class PaddingType
 
 // Standard Padding layer.

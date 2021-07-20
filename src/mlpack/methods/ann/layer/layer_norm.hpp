@@ -77,7 +77,7 @@ class LayerNormType : public Layer<InputType, OutputType>
   LayerNormType(const size_t size, const double eps = 1e-8);
 
   //! Clone the LayerNormType object. This handles polymorphism correctly.
-	LayerNormType* Clone() const { return new LayerNormType(*this); }
+  LayerNormType* Clone() const { return new LayerNormType(*this); }
 
   /**
    * Reset the layer parameters.
@@ -121,21 +121,6 @@ class LayerNormType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
   //! Get the mean across single training data.
   OutputType Mean() { return mean; }
 
@@ -147,6 +132,8 @@ class LayerNormType : public Layer<InputType, OutputType>
 
   //! Get the value of epsilon.
   double Epsilon() const { return eps; }
+
+  const size_t WeightSize() const { return 2 * size; }
 
   /**
    * Serialize the layer.
@@ -178,15 +165,6 @@ class LayerNormType : public Layer<InputType, OutputType>
 
   //! Locally-stored variance object.
   OutputType variance;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 
   //! Locally-stored normalized input.
   OutputType normalized;

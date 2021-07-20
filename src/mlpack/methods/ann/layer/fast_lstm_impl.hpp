@@ -57,7 +57,6 @@ FastLSTMType<InputType, OutputType>::FastLSTMType(const FastLSTMType& layer) :
     batchSize(layer.batchSize),
     batchStep(layer.batchStep),
     gradientStepIdx(layer.gradientStepIdx),
-    grad(layer.grad),
     rhoSize(layer.rho),
     bpttSteps(layer.bpttSteps)
 {
@@ -76,7 +75,6 @@ FastLSTMType<InputType, OutputType>::FastLSTMType(FastLSTMType&& layer) :
     batchSize(std::move(layer.batchSize)),
     batchStep(std::move(layer.batchStep)),
     gradientStepIdx(std::move(layer.gradientStepIdx)),
-    grad(std::move(layer.grad)),
     rhoSize(std::move(layer.rho)),
     bpttSteps(std::move(layer.bpttSteps))
 {
@@ -99,7 +97,6 @@ FastLSTMType<InputType, OutputType>::operator=(const FastLSTMType& layer)
     batchSize = layer.batchSize;
     batchStep = layer.batchStep;
     gradientStepIdx = layer.gradientStepIdx;
-    grad = layer.grad;
     rhoSize = layer.rho;
     bpttSteps = layer.bpttSteps;
   }
@@ -122,7 +119,6 @@ FastLSTMType<InputType, OutputType>::operator=(FastLSTMType&& layer)
     batchSize = std::move(layer.batchSize);
     batchStep = std::move(layer.batchStep);
     gradientStepIdx = std::move(layer.gradientStepIdx);
-    grad = std::move(layer.grad);
     rhoSize = std::move(layer.rho);
     bpttSteps = std::move(layer.bpttSteps);
   }
@@ -134,14 +130,14 @@ void FastLSTMType<InputType, OutputType>::Reset()
 {
   // Set the weight parameter for the input to gate layer (linear layer) using
   // the overall layer parameter matrix.
-  input2GateWeight = OutputDataType(weights.memptr(),
+  input2GateWeight = OutputType(weights.memptr(),
       4 * outSize, inSize, false, false);
-  input2GateBias = OutputDataType(weights.memptr() + input2GateWeight.n_elem,
+  input2GateBias = OutputType(weights.memptr() + input2GateWeight.n_elem,
       4 * outSize, 1, false, false);
 
   // Set the weight parameter for the output to gate layer
   // (linear no bias layer) using the overall layer parameter matrix.
-  output2GateWeight = OutputDataType(weights.memptr() + input2GateWeight.n_elem
+  output2GateWeight = OutputType(weights.memptr() + input2GateWeight.n_elem
       + input2GateBias.n_elem, 4 * outSize, outSize, false, false);
 }
 
@@ -210,8 +206,8 @@ void FastLSTMType<InputType, OutputType>::Forward(
       forwardStep, forwardStep + batchStep);
   gate.cols(forwardStep, forwardStep + batchStep).each_col() += input2GateBias;
 
-  arma::subview<double> sigmoidOut = gateActivation.cols(forwardStep,
-      forwardStep + batchStep);
+  InputType sigmoidOut(gateActivation.colptr(forwardStep),
+      gateActivation.n_rows, batchStep, false, false);
   FastSigmoid(
       gate.submat(0, forwardStep, 3 * outSize - 1, forwardStep + batchStep),
       sigmoidOut);
@@ -363,6 +359,8 @@ template<typename Archive>
 void FastLSTMType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(weights));
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
@@ -381,7 +379,10 @@ void FastLSTMType<InputType, OutputType>::serialize(
   ar(CEREAL_NVP(cellActivation));
   ar(CEREAL_NVP(forgetGateError));
   ar(CEREAL_NVP(prevError));
-  ar(CEREAL_NVP(outParameter));
+
+  // Restore aliases.
+  if (Archive::is_loading::value)
+    Reset();
 }
 
 } // namespace ann

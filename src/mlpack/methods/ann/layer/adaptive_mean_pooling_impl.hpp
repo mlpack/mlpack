@@ -49,7 +49,7 @@ void AdaptiveMeanPoolingType<InputType, OutputType>::Forward(
 {
   if (!reset)
   {
-    IntializeAdaptivePadding();
+    InitializeAdaptivePadding();
     reset = true;
   }
 
@@ -71,6 +71,8 @@ void AdaptiveMeanPoolingType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(outputWidth));
   ar(CEREAL_NVP(outputHeight));
   ar(CEREAL_NVP(reset));

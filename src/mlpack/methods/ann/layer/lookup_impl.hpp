@@ -26,7 +26,14 @@ LookupType<InputType, OutputDataType>::LookupType(
     vocabSize(vocabSize),
     embeddingSize(embeddingSize)
 {
-  weights.set_size(embeddingSize, vocabSize);
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
+void LookupType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
+{
+  weights = OutputType(weightsPtr, embeddingSize, vocabSize, false, true);
 }
 
 template<typename InputType, typename OutputType>
@@ -35,8 +42,6 @@ void LookupType<InputType, OutputType>::Forward(
 {
   const size_t seqLength = input.n_rows;
   const size_t batchSize = input.n_cols;
-
-  output.set_size(embeddingSize * seqLength, batchSize);
 
   for (size_t i = 0; i < batchSize; ++i)
   {
@@ -70,9 +75,7 @@ void LookupType<InputType, OutputType>::Gradient(
   const CubeType errorTemp(const_cast<OutputType&>(error).memptr(),
       embeddingSize, seqLength, batchSize, false, false);
 
-  gradient.set_size(arma::size(weights));
   gradient.zeros();
-
   for (size_t i = 0; i < batchSize; ++i)
   {
     gradient.cols(arma::conv_to<arma::uvec>::from(input.col(i)) - 1)
@@ -85,13 +88,10 @@ template<typename Archive>
 void LookupType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(vocabSize));
   ar(CEREAL_NVP(embeddingSize));
-
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
-  if (cereal::is_loading<Archive>())
-    weights.set_size(embeddingSize, vocabSize);
 }
 
 } // namespace ann

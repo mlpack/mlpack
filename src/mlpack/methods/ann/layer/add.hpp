@@ -36,11 +36,10 @@ class AddType : public Layer<InputType, OutputType>
 {
  public:
   /**
-   * Create the Add object using the specified number of output units.
-   *
-   * @param outSize The number of output units.
+   * Create the Add object.  The output size of the layer will be the same as
+   * the input size.
    */
-  AddType(const size_t outSize = 0);
+  AddType();
 
   //! Clone the AddType object. This handles polymorphism correctly.
   AddType* Clone() const { return new AddType(*this); }
@@ -78,31 +77,22 @@ class AddType : public Layer<InputType, OutputType>
                 const OutputType& error,
                 OutputType& gradient);
 
-  //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
-  //! Modify the parameters.
+  //! Return the weights of the network.
+  const OutputType& Parameters() const { return weights; }
+  //! Modify the weights of the network.
   OutputType& Parameters() { return weights; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
 
   //! Get the size of weights.
   size_t WeightSize() const { return outSize; }
+
+  void ComputeOutputDimensions()
+  {
+    this->outputDimensions = this->inputDimensions;
+    outSize = std::accumulate(this->outputDimensions.begin(),
+        this->outputDimensions.end(), 0);
+  }
+
+  void SetWeights(typename OutputType::elem_type* weightPtr);
 
   /**
    * Serialize the layer
@@ -116,15 +106,6 @@ class AddType : public Layer<InputType, OutputType>
 
   //! Locally-stored weight object.
   OutputType weights;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class Add
 
 // Standard Add layer.

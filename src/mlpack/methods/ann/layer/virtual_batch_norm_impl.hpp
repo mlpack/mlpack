@@ -38,8 +38,6 @@ VirtualBatchNormType<InputType, OutputType>::VirtualBatchNormType(
     eps(eps),
     loading(false)
 {
-  weights.set_size(size + size, 1);
-
   referenceBatchMean = arma::mean(referenceBatch, 1);
   referenceBatchMeanSquared = arma::mean(arma::square(referenceBatch), 1);
   newCoefficient = 1.0 / (referenceBatch.n_cols + 1);
@@ -47,10 +45,11 @@ VirtualBatchNormType<InputType, OutputType>::VirtualBatchNormType(
 }
 
 template<typename InputType, typename OutputType>
-void VirtualBatchNormType<InputType, OutputType>::Reset()
+void VirtualBatchNormType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  gamma = OutputType(weights.memptr(), size, 1, false, false);
-  beta = OutputType(weights.memptr() + gamma.n_elem, size, 1, false, false);
+  gamma = OutputType(weightsPtr, size, 1, false, false);
+  beta = OutputType(weightsPtr + gamma.n_elem, size, 1, false, false);
 
   if (!loading)
   {
@@ -135,17 +134,15 @@ template<typename Archive>
 void VirtualBatchNormType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(size));
+  ar(CEREAL_NVP(eps));
 
   if (cereal::is_loading<Archive>())
   {
-    weights.set_size(size + size, 1);
-    loading = false;
+    loading = true;
   }
-
-  ar(CEREAL_NVP(eps));
-  ar(CEREAL_NVP(gamma));
-  ar(CEREAL_NVP(beta));
 }
 
 } // namespace ann

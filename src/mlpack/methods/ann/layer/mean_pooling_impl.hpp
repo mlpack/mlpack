@@ -37,14 +37,7 @@ MeanPoolingType<InputType, OutputType>::MeanPoolingType(
     strideWidth(strideWidth),
     strideHeight(strideHeight),
     floor(floor),
-    inSize(0),
-    outSize(0),
-    inputWidth(0),
-    inputHeight(0),
-    outputWidth(0),
-    outputHeight(0),
-    reset(false),
-    deterministic(false),
+    channels(0),
     offset(0),
     batchSize(0)
 {
@@ -56,41 +49,16 @@ void MeanPoolingType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   batchSize = input.n_cols;
-  inSize = input.n_elem / (inputWidth * inputHeight * batchSize);
-  inputTemp = arma::cube(const_cast<InputType&>(input).memptr(),
-      inputWidth, inputHeight, batchSize * inSize, false, false);
+  inputTemp = arma::Cube<typename InputType::elem_type>(
+      const_cast<InputType&>(input).memptr(), this->inputDimensions[0],
+      this->inputDimensions[1], batchSize * channels, false, false);
 
-  if (floor)
-  {
-    outputWidth = std::floor((inputWidth -
-        (double) kernelWidth) / (double) strideWidth + 1);
-    outputHeight = std::floor((inputHeight -
-        (double) kernelHeight) / (double) strideHeight + 1);
-
-    offset = 0;
-  }
-  else
-  {
-    outputWidth = std::ceil((inputWidth -
-        (double) kernelWidth) / (double) strideWidth + 1);
-    outputHeight = std::ceil((inputHeight -
-        (double) kernelHeight) / (double) strideHeight + 1);
-
-    offset = 1;
-  }
-
-  outputTemp = arma::zeros<arma::cube>(outputWidth, outputHeight,
-      batchSize * inSize);
+  arma::Cube<typename OutputType::elem_type> outputTemp(output.memptr(),
+      outputDimensions[0], outputDimensions[1], batchSize * channels, false,
+      true);
 
   for (size_t s = 0; s < inputTemp.n_slices; s++)
     Pooling(inputTemp.slice(s), outputTemp.slice(s));
-
-  output = OutputType(outputTemp.memptr(), outputTemp.n_elem / batchSize,
-      batchSize);
-
-  outputWidth = outputTemp.n_rows;
-  outputHeight = outputTemp.n_cols;
-  outSize = batchSize * inSize;
 }
 
 template<typename InputType, typename OutputType>
@@ -99,18 +67,18 @@ void MeanPoolingType<InputType, OutputType>::Backward(
   const OutputType& gy,
   OutputType& g)
 {
-  arma::cube mappedError = arma::cube(((OutputType&) gy).memptr(),
-      outputWidth, outputHeight, outSize, false, false);
+  arma::Cube<typename OutputType::elem_type> mappedError(
+      ((OutputType&) gy).memptr(), outputDimensions[0], outputDimensions[1],
+      batchSize * channels, false, true);
 
-  gTemp = arma::zeros<arma::cube>(inputTemp.n_rows,
-      inputTemp.n_cols, inputTemp.n_slices);
+  arma::Cube<typename OutputType::elem_type> gTemp(g.memptr(),
+      this->inputDimensions[0], this->inputDimensions[1], channels * batchSize,
+      false, true);
 
   for (size_t s = 0; s < mappedError.n_slices; s++)
   {
     Unpooling(inputTemp.slice(s), mappedError.slice(s), gTemp.slice(s));
   }
-
-  g = OutputType(gTemp.memptr(), gTemp.n_elem / batchSize, batchSize);
 }
 
 template<typename InputType, typename OutputType>
@@ -119,16 +87,19 @@ void MeanPoolingType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(kernelWidth));
   ar(CEREAL_NVP(kernelHeight));
   ar(CEREAL_NVP(strideWidth));
   ar(CEREAL_NVP(strideHeight));
   ar(CEREAL_NVP(batchSize));
   ar(CEREAL_NVP(floor));
-  ar(CEREAL_NVP(inputWidth));
-  ar(CEREAL_NVP(inputHeight));
-  ar(CEREAL_NVP(outputWidth));
-  ar(CEREAL_NVP(outputHeight));
+  ar(CEREAL_NVP(outputDimensions));
+  ar(CEREAL_NVP(offset));
+
+  if (Archive::is_loading::value)
+    inputTemp.clear();
 }
 
 } // namespace ann

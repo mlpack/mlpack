@@ -55,11 +55,11 @@ class PReLUType : public Layer<InputType, OutputType>
    */
   PReLUType(const double userAlpha = 0.03);
 
-	//! Clone the PReLUType object. This handles polymorphism correctly.
-	PReLUType* Clone() const { return new PReLUType(*this); }
+  //! Clone the PReLUType object. This handles polymorphism correctly.
+  PReLUType* Clone() const { return new PReLUType(*this); }
 
   //! Reset the layer parameter.
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -101,6 +101,8 @@ class PReLUType : public Layer<InputType, OutputType>
   double const& Alpha() const { return alpha(0); }
   //! Modify the non zero gradient.
   double& Alpha() { return alpha(0); }
+
+  const size_t WeightSize() const { return 1; }
 
   //! Serialize the layer.
   template<typename Archive>

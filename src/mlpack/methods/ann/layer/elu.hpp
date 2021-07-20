@@ -93,10 +93,8 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * In the deterministic mode, there is no computation of the derivative.
+ * In testing mode, there is no computation of the derivative.
  *
- * @note During training deterministic should be set to false and during
- *       testing/inference deterministic should be set to true.
  * @note Make sure to use SELU activation function with normalized inputs and
  *       weights initialized with Lecun Normal Initialization.
  *
@@ -154,11 +152,6 @@ class ELUType : public Layer<InputType, OutputType>
   //! Modify the non zero gradient.
   double& Alpha() { return alpha; }
 
-  //! Get the value of deterministic parameter.
-  bool const& Deterministic() const { return deterministic; }
-  //! Modify the value of deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
   //! Get the lambda parameter.
   double const& Lambda() const { return lambda; }
 
@@ -181,9 +174,6 @@ class ELUType : public Layer<InputType, OutputType>
   //! For SELU activation function, lambda = 1.0507009873554802 for normalized
   //! inputs.
   double lambda;
-
-  //! If true the derivative computation is disabled, see notes above.
-  bool deterministic;
 }; // class ELUType
 
 // Convenience typedefs.

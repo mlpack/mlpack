@@ -22,63 +22,9 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputType, typename OutputType>
 ConcatenateType<InputType, OutputType>::
 ConcatenateType(const InputType& concat) :
-  inRows(0),
   concat(concat)
 {
   // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>::
-ConcatenateType(const ConcatenateType& layer) :
-  inRows(layer.inRows),
-  weights(layer.weights),
-  delta(layer.delta),
-  concat(layer.concat)
-{
-  // Nothing to to here.
-}
-
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>::
-ConcatenateType(ConcatenateType&& layer) :
-  inRows(layer.inRows),
-  weights(std::move(layer.weights)),
-  delta(std::move(layer.delta)),
-  concat(std::move(layer.concat))
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>&
-ConcatenateType<InputType, OutputType>::
-operator=(const ConcatenateType& layer)
-{
-  if (this != &layer)
-  {
-    inRows = layer.inRows;
-    weights = layer.weights;
-    delta = layer.delta;
-    concat = layer.concat;
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType>
-ConcatenateType<InputType, OutputType>&
-ConcatenateType<InputType, OutputType>::
-operator=(ConcatenateType&& layer)
-{
-  if (this != &layer)
-  {
-    inRows = layer.inRows;
-    weights = std::move(layer.weights);
-    delta = std::move(layer.delta);
-    concat = std::move(layer.concat);
-  }
-  return *this;
 }
 
 template<typename InputType, typename OutputType>
@@ -86,16 +32,14 @@ void ConcatenateType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
   if (concat.is_empty())
-    Log::Warn << "The concat matrix has not been provided." << std::endl;
-
-  if (input.n_cols != concat.n_cols)
   {
-    Log::Fatal << "The number of columns of the concat matrix should be equal "
-        << "to the number of columns of input matrix." << std::endl;
+    Log::Warn << "Concatenate::Forward(): the concat matrix is empty or was "
+        << "not provided." << std::endl;
   }
 
-  inRows = input.n_rows;
-  output = arma::join_cols(input, concat);
+  output.submat(0, 0, input.n_rows - 1, input.n_cols - 1) = input;
+  output.submat(input.n_rows, 0, output.n_rows - 1, input.n_cols - 1) =
+      arma::repmat(arma::vectorise(concat), 1, input.n_cols);
 }
 
 template<typename InputType, typename OutputType>
@@ -104,7 +48,8 @@ void ConcatenateType<InputType, OutputType>::Backward(
     const OutputType& gy,
     OutputType& g)
 {
-  g = gy.submat(0, 0, inRows - 1, concat.n_cols - 1);
+  // Pass back the non-concatenated part.
+  g = gy.submat(0, 0, gy.n_rows - 1 - concat.n_elem, gy.n_cols - 1);
 }
 
 } // namespace ann

@@ -12,6 +12,9 @@
 #ifndef MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 #define MLPACK_METHODS_ANN_LAYER_LAYER_HPP
 
+namespace mlpack {
+namespace ann {
+
 /**
  * A layer is an abstract class implementing common neural networks operations,
  * such as convolution, batch norm, etc. These operations require managing
@@ -56,26 +59,26 @@ template<
 class Layer
 {
  public:
-   //! Default constructor.
-   Layer() : outputWidth(0), outputHeight(0) { /* Nothing to do here */ }
+  //! Default constructor.
+  Layer() : validOutputDimensions(false) { /* Nothing to do here */ }
 
-   //! Default deconstructor.
-   virtual ~Layer() = default;
+  //! Default deconstructor.
+  virtual ~Layer() { }
 
-   //! Copy constructor.
-   Layer(const Layer& /* layer */) { /* Nothing to do here */ }
+  //! Copy constructor.
+  Layer(const Layer& /* layer */) { /* Nothing to do here */ }
 
-   //! Make a copy of the object.
-   virtual Layer* Clone() const = 0;
+  //! Make a copy of the object.
+  virtual Layer* Clone() const = 0;
 
-   //! Move constructor.
-   Layer(Layer&& /* layer */) { /* Nothing to do here */ }
+  //! Move constructor.
+  Layer(Layer&& /* layer */) { /* Nothing to do here */ }
 
-   //! Copy assignment operator.
-   virtual Layer& operator=(const Layer& /* layer */) { return *this; }
+  //! Copy assignment operator.
+  virtual Layer& operator=(const Layer& /* layer */) { return *this; }
 
-   //! Move assignment operator.
-   virtual Layer& operator=(Layer&& /* layer */) { return *this; }
+  //! Move assignment operator.
+  virtual Layer& operator=(Layer&& /* layer */) { return *this; }
 
   /**
    * Takes an input object, and computes the corresponding output of the layer.
@@ -153,8 +156,11 @@ class Layer
    * do not respect this rule, Forward(input, output) and Backward(input, gy, g)
    * might compute incorrect results.
    */
-  virtual void Reset() {}
+  virtual void SetWeights(typename OutputType::elem_type* /* weightsPtr */) { }
 
+  virtual size_t WeightSize() const { return 0; }
+
+  // TODO: figure out what to do
   /**
    * Resets the cell to accept a new input. This breaks the BPTT chain starts a
    * new one.
@@ -163,120 +169,111 @@ class Layer
    */
   virtual void ResetCell(const size_t /* size */) {}
 
-  //! Get the model modules.
-  virtual std::vector<Layer<InputType, OutputType>*>& Model()
+  /**
+   * Get whether the layer is currently in training mode.
+   *
+   * @note During network training, this should be set to `true` for each layer
+   * in the network, and when predicting/testing the network, this should be set
+   * to `false`.  (This is handled automatically by the `FFN` class and other
+   * related classes.)
+   */
+  virtual bool const& Training() const { return training; }
+
+  /**
+   * Modify whether the layer is currently in training mode.
+   *
+   * @note During network training, this should be set to `true` for each layer
+   * in the network, and when predicting/testing the network, this should be set
+   * to `false`.  (This is handled automatically by the `FFN` class and other
+   * related classes.)
+   */
+  virtual bool& Training() { return training; }
+
+  //! Get the layer loss.  Overload this if the layer should add any extra loss
+  //! to the loss function when computing the objective.  (TODO: better comment)
+  virtual double Loss() { return 0; }
+
+  // TODO: these need better comments.
+
+  //! Get the input dimensions.
+  const std::vector<size_t>& InputDimensions() const { return inputDimensions; }
+  //! Modify the input dimensions.
+  std::vector<size_t>& InputDimensions()
   {
-    return model;
+    validOutputDimensions = false;
+    return inputDimensions;
+  }
+
+  //! Get the output dimensions.
+  const std::vector<size_t>& OutputDimensions()
+  {
+    if (!validOutputDimensions)
+    {
+      this->ComputeOutputDimensions();
+      validOutputDimensions = true;
+    }
+
+    return outputDimensions;
   }
 
   //! Get the parameters.
-  virtual OutputType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  virtual OutputType& Parameters() { return weights; }
+  virtual const OutputType& Parameters() const { return OutputType(); }
+  //! Set the parameters.
+  virtual OutputType& Parameters()
+  {
+    throw std::invalid_argument("Layer::Parameters(): cannot modify parameters "
+        "of a layer with no weights!");
+  }
 
-  //! Get the input parameter.
-  virtual InputType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  virtual InputType& InputParameter() { return inputParameter; }
+  //! Compute the output dimensions.  This should be overloaded if the layer is
+  //! meant to work on higher-dimensional objects.  When this is called, it is a
+  //! safe assumption that InputDimensions() is correct.
+  virtual void ComputeOutputDimensions()
+  {
+    // The default implementation is to assume that the output size is the same
+    // as the input.
+    outputDimensions = inputDimensions;
+  }
 
-  //! Get the output parameter.
-  virtual OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  virtual OutputType& OutputParameter() { return outputParameter; }
+  //! Get the number of elements in the output from this layer.
+  //! This is marked final because no class should ever need to override
+  //! this---instead, override OutputDimensions()!
+  // TODO: is final not available in C++11?
+  size_t OutputSize()
+  {
+    if (!validOutputDimensions)
+    {
+      this->ComputeOutputDimensions();
+      validOutputDimensions = true;
+    }
 
-  //! Get the delta.
-  virtual OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  virtual OutputType& Delta() { return delta; }
+    return std::accumulate(this->outputDimensions.begin(),
+        this->outputDimensions.end(), 0);
+  }
 
-  //! Get the gradient.
-  virtual OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  virtual OutputType& Gradient() { return gradient; }
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(inputDimensions);
+    ar(outputDimensions);
+    ar(training);
 
-  /**
-   * Get the deterministic parameter.
-   *
-   * @note During training you should set the deterministic parameter for each
-   * layer to false and during testing you should set deterministic to true.
-   */
-  virtual bool const& Deterministic() const { return deterministic; }
-  /**
-   * Modify the deterministic parameter.
-   *
-   * @note During training you should set the deterministic parameter for each
-   * layer to false and during testing you should set deterministic to true.
-   */
-  virtual bool& Deterministic() { return deterministic; }
+    // Note that layer weights are serialized by the FFN!
+  }
 
-  //! Get the layer loss.
-  virtual double Loss() { return 0; }
+ protected:
+  // This matrix holds the parameters of the 
 
-  //! Get the value of reward parameter.
-  virtual double const& Reward() const { return reward; }
-  //! Modify the value of reward parameter.
-  virtual double& Reward() { return reward; }
+  // TODO: comment
+  std::vector<size_t> inputDimensions;
+  std::vector<size_t> outputDimensions;
+  bool validOutputDimensions;
 
-  //! Get the weight size.
-  virtual size_t WeightSize() const { return 0; }
-
-  //! Get the the output width.
-  virtual size_t const& OutputWidth() const { return outputWidth; }
-  //! Modify the output width.
-  virtual size_t& OutputWidth() { return outputWidth; }
-
-  //! Get the the output height.
-  virtual size_t const& OutputHeight() const { return outputHeight; }
-  //! Modify the output height.
-  virtual size_t& OutputHeight() { return outputHeight; }
-
-  //! Get the input width.
-  virtual size_t const& InputWidth() const { return inputWidth; }
-  //! Modify input the width.
-  virtual size_t& InputWidth() { return inputWidth; }
-
-  //! Get the input height.
-  virtual size_t const& InputHeight() const { return inputHeight; }
-  //! Modify the input height.
-  virtual size_t& InputHeight() { return inputHeight; }
-
- private:
-  //! Locally-stored output width.
-  size_t outputWidth;
-
-  //! Locally-stored output height.
-  size_t outputHeight;
-
-  //! Locally-stored input width.
-  size_t inputWidth;
-
-  //! Locally-stored input height.
-  size_t inputHeight;
-
-  //! Locally-stored reward parameter.
-  double reward;
-
-  //! Locally-stored weight object.
-  OutputType weights;
-
-  //! Locally-stored input parameter object.
-  InputType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! If true testing mode otherwise training mode.
-  bool deterministic;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored model.
-  std::vector<Layer<InputType, OutputType>*> model;
-
+  //! If true, the layer is in training mode; otherwise, it is in testing mode.
+  bool training;
 };
+
+} // namespace ann
+} // namespace mlpack
 
 #endif

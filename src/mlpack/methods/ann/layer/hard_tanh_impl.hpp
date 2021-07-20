@@ -32,7 +32,6 @@ template<typename InputType, typename OutputType>
 void HardTanHType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  output = input;
   for (size_t i = 0; i < input.n_elem; ++i)
   {
     output(i) = (output(i) > maxValue ? maxValue :
@@ -60,6 +59,8 @@ void HardTanHType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(maxValue));
   ar(CEREAL_NVP(minValue));
 }

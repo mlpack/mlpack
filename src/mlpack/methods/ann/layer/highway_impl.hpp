@@ -22,7 +22,6 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputType, typename OutputType>
 HighwayType<InputType, OutputType>::HighwayType() :
     inSize(0),
-    model(true),
     reset(false),
     width(0),
     height(0)
@@ -32,10 +31,8 @@ HighwayType<InputType, OutputType>::HighwayType() :
 
 template<typename InputType, typename OutputType>
 HighwayType<InputType, OutputType>::HighwayType(
-    const size_t inSize,
-    const bool model) :
+    const size_t inSize) :
     inSize(inSize),
-    model(model),
     reset(false),
     width(0),
     height(0)
@@ -46,78 +43,41 @@ HighwayType<InputType, OutputType>::HighwayType(
 template<typename InputType, typename OutputType>
 HighwayType<InputType, OutputType>::~HighwayType()
 {
-  if (!model)
+  for (size_t i = 0; i < network.size(); ++i)
   {
-    for (size_t i = 0; i < network.size(); ++i)
-    {
-      if (networkOwnerships[i])
-        delete network[i];
-    }
+    if (networkOwnerships[i])
+      delete network[i];
   }
 }
 
 template<typename InputType, typename OutputType>
-void HighwayType<InputType, OutputType>::Reset()
+void HighwayType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  transformWeight = OutputType(weights.memptr(), inSize, inSize, false, false);
-  transformBias = OutputType(weights.memptr() + transformWeight.n_elem,
+  transformWeight = OutputType(weightsPtr, inSize, inSize, false, false);
+  transformBias = OutputType(weightsPtr + transformWeight.n_elem,
       inSize, 1, false, false);
+
+  size_t start = transformWeight.n_elem + transformBias.n_elem;
+  for (size_t i = 0; i < network.size(); ++i)
+  {
+    network[i]->SetWeights(weightsPtr + start);
+    start += network[i]->WeightSize();
+  }
 }
 
 template<typename InputType, typename OutputType>
 void HighwayType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  network.front()->Forward(input, network.front()->OutputParameter());
+  InitializeForwardPassMemory();
 
-  // if (!reset)
-  // {
-  //   if (boost::apply_visitor(outputWidthVisitor, network.front()) != 0)
-  //   {
-  //     width = boost::apply_visitor(outputWidthVisitor, network.front());
-  //   }
-
-  //   if (boost::apply_visitor(outputHeightVisitor, network.front()) != 0)
-  //   {
-  //     height = boost::apply_visitor(outputHeightVisitor, network.front());
-  //   }
-  // }
+  network.front()->Forward(input, layerOutputs.front());
 
   for (size_t i = 1; i < network.size(); ++i)
   {
-    // if (!reset)
-    // {
-    //   // Set the input width.
-    //   boost::apply_visitor(SetInputWidthVisitor(width), network[i]);
-
-    //   // Set the input height.
-    //   boost::apply_visitor(SetInputHeightVisitor(height), network[i]);
-    // }
-
-    network[i]->Forward(
-        network[i - 1]->OutputParameter(),
-        network[i]->OutputParameter()
-      );
-
-    // if (!reset)
-    // {
-    //   // Get the output width.
-    //   if (boost::apply_visitor(outputWidthVisitor, network[i]) != 0)
-    //   {
-    //     width = boost::apply_visitor(outputWidthVisitor, network[i]);
-    //   }
-
-    //   // Get the output height.
-    //   if (boost::apply_visitor(outputHeightVisitor, network[i]) != 0)
-    //   {
-    //     height = boost::apply_visitor(outputHeightVisitor, network[i]);
-    //   }
-    // }
+    network[i]->Forward(layerOutputs[i - 1], layerOutputs[i]);
   }
-  // if (!reset)
-  // {
-  //   reset = true;
-  // }
 
   output = network.back()->OutputParameter();
 
@@ -131,8 +91,8 @@ void HighwayType<InputType, OutputType>::Forward(
   transformGate.each_col() += transformBias;
   transformGateActivation = 1.0 /(1 + arma::exp(-transformGate));
   inputParameter = input;
-  networkOutput = output;
-  output = (output % transformGateActivation) +
+  networkOutput = output; // TODO: what is done with this?
+  output = (layerOutputs.back() % transformGateActivation) +
       (input % (1 - transformGateActivation));
 }
 
@@ -142,26 +102,22 @@ void HighwayType<InputType, OutputType>::Backward(
     const OutputType& gy,
     OutputType& g)
 {
+  InitializeBackwardPassMemory();
+
   OutputType gyTransform = gy % transformGateActivation;
-  network.back()->Backward(network.back()->OutputParameter(),
-                           gyTransform,
-                           network.back()->Delta());
+  network.back()->Backward(layerOutputs.back(), gyTransform,
+      layerDeltas.back());
 
   for (size_t i = 2; i < network.size() + 1; ++i)
   {
-    network[network.size() - i]->Backward(
-        network[network.size() - i]->OutputParameter(),
-        network[network.size() - i + 1]->Delta(),
-        network[network.size() - i]->Delta()
-      );
+    network[network.size() - i]->Backward(layerOutputs[network.size() - i],
+        layerDeltas[network.size() - i + 1], layerDeltas[network.size() - i]);
   }
-
-  g = network.front()->Delta();
 
   transformGateError = gy % (networkOutput - inputParameter) %
       transformGateActivation % (1.0 - transformGateActivation);
-  g += transformWeight.t() * transformGateError;
-  g += gy % (1 - transformGateActivation);
+  g = layerDeltas.front() + (transformWeight.t() * transformGateError) +
+      (gy % (1 - transformGateActivation));
 }
 
 template<typename InputType, typename OutputType>
@@ -171,31 +127,36 @@ void HighwayType<InputType, OutputType>::Gradient(
     OutputType& gradient)
 {
   OutputType errorTransform = error % transformGateActivation;
+  size_t gradientStart = gradient.n_elem -
+      network[network.size() - 1].WeightSize();
   network.back()->Gradient(
-      network[network.size() - 2]->OutputParameter(),
+      layerOutputs[network.size() - 2],
       errorTransform,
-      network[network.size() - 2]->Gradient()
+      OutputType(gradient.colptr(gradientStart), 1,
+          network[network.size() - 1].WeightSize(), false, true)
     );
 
   for (size_t i = 2; i < network.size(); ++i)
   {
+    gradientStart -= network[network.size() - i]->WeightSize();
     network[network.size() - i]->Gradient(
-        network[network.size() - i - 1]->OutputParameter(),
-        network[network.size() - i + 1]->Delta(),
-        network[network.size() - i]->Gradient()
+        layerOutputs[network.size() - i - 1],
+        layerDeltas[network.size() - i],
+        OutputType(gradient.colptr(gradientStart), 1,
+            network[network.size() - i]->WeightSize(), false, true)
       );
   }
 
   network.front()->Gradient(
       input,
-      network[1]->Delta(),
-      network.front()->Delta()
+      layerDeltas[1],
+      layerDeltas.front()
     );
 
   gradient.submat(0, 0, transformWeight.n_elem - 1, 0) = arma::vectorise(
       transformGateError * input.t());
-  gradient.submat(transformWeight.n_elem, 0, gradient.n_elem - 1, 0) =
-      arma::sum(transformGateError, 1);
+  gradient.submat(transformWeight.n_elem, 0, transformWeight.n_elem +
+      transformBias.n_elem - 1, 0) = arma::sum(transformGateError, 1);
 }
 
 template<typename InputType, typename OutputType>
@@ -203,17 +164,16 @@ template<typename Archive>
 void HighwayType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  // If loading, delete the old layers and set size for weights.
-  if (cereal::is_loading<Archive>())
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
+  ar(CEREAL_VECTOR_POINTER(network));
+
+  // Reset the memory.
+  if (Archive::is_loading::value)
   {
-    for (size_t i = 0; i < network.size(); ++i)
-      delete network[i];
-
-    weights.set_size(inSize * inSize + inSize, 1);
+    networkOwnerships.clear();
+    networkOwnerships.resize(network.size(), true);
   }
-
-  ar(CEREAL_NVP(model));
-  // ar(CEREAL_VECTOR_VARIANT_POINTER(network));
 }
 
 } // namespace ann

@@ -33,35 +33,18 @@ template<typename InputType = arma::mat, typename OutputType = arma::mat>
 class NoisyLinearType : public Layer<InputType, OutputType>
 {
  public:
-  //! Create the NoisyLinear object.
-  NoisyLinearType();
-
   /**
    * Create the NoisyLinear layer object using the specified number of units.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    */
-  NoisyLinearType(const size_t inSize,
-                  const size_t outSize);
-
-  //! Copy constructor.
-  NoisyLinearType(const NoisyLinearType&);
-
-  //! Move constructor.
-  NoisyLinearType(NoisyLinearType&&);
-
-  //! Operator= copy constructor.
-  NoisyLinearType& operator=(const NoisyLinearType& layer);
-
-  //! Operator= move constructor.
-  NoisyLinearType& operator=(NoisyLinearType&& layer);
+  NoisyLinearType(const size_t outSize = 0);
 
   //! Clone the NoisyLinearType object. This handles polymorphism correctly.
   NoisyLinearType* Clone() const { return new NoisyLinearType(*this); }
 
   //! Reset the layer parameter.
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   //! Reset the noise parameters (epsilons).
   void ResetNoise();
@@ -107,21 +90,28 @@ class NoisyLinearType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the input size.
-  size_t InputSize() const { return inSize; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
-
   //! Modify the bias weights of the layer.
   OutputType& Bias() { return bias; }
+
+  size_t WeightSize() const { return (outSize * inSize + outSize) * 2; }
+
+  void ComputeOutputDimensions()
+  {
+    inSize = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
+
+    // The NoisyLinear layer flattens its output.
+    this->outputDimensions[0] = outSize;
+  }
 
   //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
+  //! Cached size of input.
   size_t inSize;
 
   //! Locally-stored number of output units.

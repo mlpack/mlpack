@@ -66,6 +66,13 @@ class LogSoftMaxType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
+  template<typename Archive>
+  void serialize(Archive& ar, const uint32_t /* version */)
+  {
+    ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+    // Nothing to do.
+  }
+
  private:
 }; // class LogSoftmaxType
 

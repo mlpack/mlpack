@@ -28,10 +28,10 @@ namespace ann /**Artificial Neural Network*/ {
  * @f{eqnarray*}{
  * f(x) &=& \max(0,x)+alpha \\
  * f'(x) &=& \left\{
- * 	 \begin{array}{lr}
- * 	   1 & : x > 0 \\
- * 	   0 & : x \le 0
- * 	 \end{array}
+ *   \begin{array}{lr}
+ *      1 & : x > 0 \\
+ *      0 & : x \le 0
+ *   \end{array}
  * \right.
  * @f}
  *
@@ -74,7 +74,7 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
    * Reset the layer parameter (alpha). The method is called to
    * assign the allocated memory to the learnable layer parameter.
    */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -113,9 +113,11 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
   OutputType& Parameters() { return alpha; }
 
   //! Get the parameter controlling the range of the ReLU function.
-  double const& Alpha() const { return alpha; }
+  const double& Alpha() const { return alpha; }
   //! Modify the parameter controlling the range of the ReLU function.
   double& Alpha() { return alpha; }
+
+  const size_t WeightSize() const { return 1; }
 
   /**
    * Serialize the layer.
@@ -129,6 +131,9 @@ class FlexibleReLUType : public Layer<InputType, OutputType>
 
   //! Parameter controlling the range of the ReLU function.
   double userAlpha;
+
+  //! Whether or not a forward pass has ever been performed.
+  bool initialized;
 }; // class FlexibleReLUType
 
 // Convenience typedefs.

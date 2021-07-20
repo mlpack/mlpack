@@ -48,7 +48,7 @@ template <
     typename InputType = arma::mat,
     typename OutputType = arma::mat
 >
-class HighwayType : public Layer<InputType, OutputType>
+class HighwayType : public MultiLayer<InputType, OutputType>
 {
  public:
   //! Create the HighwayTest object.
@@ -58,9 +58,8 @@ class HighwayType : public Layer<InputType, OutputType>
    * Create the HighwayTest object.
    *
    * @param inSize The number of input units.
-   * @param model Expose all the network modules.
    */
-  HighwayType(const size_t inSize, const bool model = true);
+  HighwayType(const size_t inSize);
 
   //! Destroy the Highway object.
   ~HighwayType();
@@ -68,10 +67,7 @@ class HighwayType : public Layer<InputType, OutputType>
   //! Clone the HighwayType object. This handles polymorphism correctly.
   HighwayType* Clone() const { return new HighwayType(*this); }
 
-  /**
-   * Reset the layer parameter.
-   */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed-forward pass of a neural network, evaluating the function
@@ -129,44 +125,36 @@ class HighwayType : public Layer<InputType, OutputType>
     networkOwnerships.push_back(false);
   }
 
-  //! Return the modules of the model.
-  std::vector<Layer<>*>& Model()
-  {
-    if (model)
-    {
-      return network;
-    }
-
-    return empty;
-  }
-
   //! Get the parameters.
   OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the input parameter.
-  InputType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
   //! Get the number of input units.
   size_t InSize() const { return inSize; }
+
+  //! Get the number of trainable weights.
+  const size_t WeightSize() const
+  {
+    size_t result = inSize * (inSize + 1);
+    for (size_t i = 0; i < network.size(); ++i)
+      result += network[i]->WeightSize();
+    return result;
+  }
+
+  //! Get the output dimensions.
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    // Push the input dimensions through the layers in order to compute the
+    // output size.
+    network.front()->InputDimensions() = inputDimensions;
+    for (size_t i = 1; i < network.size(); ++i)
+    {
+      network[i]->InputDimensions() = network[i - 1]->OutputDimensions();
+    }
+
+    return network.back()->OutputDimensions();
+  }
 
   /**
    * Serialize the layer.
@@ -185,13 +173,13 @@ class HighwayType : public Layer<InputType, OutputType>
   bool reset;
 
   //! Locally-stored network modules.
-  std::vector<Layer<arma::mat, arma::mat>*> network;
+  std::vector<Layer<InputType, OutputType>*> network;
 
   //! The list of network modules we are responsible for.
   std::vector<bool> networkOwnerships;
 
   //! Locally-stored empty list of modules.
-  std::vector<Layer<arma::mat, arma::mat>*> empty;
+  std::vector<Layer<InputType, OutputType>*> empty;
 
   //! Locally-stored weight object.
   OutputType weights;

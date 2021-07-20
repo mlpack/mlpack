@@ -17,6 +17,9 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+// TODO: should we clarify the comments?  This seems to join together points of
+// a different batch
+// TODO: I don't understand this layer well enough to update it...
 /**
  * Implementation of the Join module class. The Join class accumulates
  * the output of various modules.
@@ -37,7 +40,7 @@ class JoinType : public Layer<InputType, OutputType>
   JoinType();
 
   //! Clone the JoinType object. This handles polymorphism correctly.
-	JoinType* Clone() const { return new JoinType(*this); }
+  JoinType* Clone() const { return new JoinType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -61,15 +64,15 @@ class JoinType : public Layer<InputType, OutputType>
                 const OutputType& gy,
                 OutputType& g);
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
+  // This layer simply flattens its input into a vector.
+  const std::vector<size_t> OutputDimensions() const
+  {
+    // TODO: it's not clear what to do here
+    std::vector<size_t> result(inputDimensions.size(), 0);
+    result[0] = std::accumulate(inputDimensions.begin(), inputDimensions.end(),
+        0);
+    return result;
+  }
 
   /**
    * Serialize the layer.
@@ -83,12 +86,6 @@ class JoinType : public Layer<InputType, OutputType>
 
   //! Locally-stored number of input cols.
   size_t inSizeCols;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class JoinType
 
 //Standard Join layer.

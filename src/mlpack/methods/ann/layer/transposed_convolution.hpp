@@ -76,6 +76,7 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
    * @param outputHeight The height of the output data.
    * @param paddingType The type of padding (Valid or Same). Defaults to None.
    */
+  // TODO: remove inputWidth and inputHeight?
   TransposedConvolutionType(const size_t inSize,
                             const size_t outSize,
                             const size_t kernelWidth,
@@ -135,7 +136,7 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
   /*
    * Set the weight and bias term.
    */
-  void Reset();
+  void SetWeights(const typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -176,34 +177,17 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
   OutputType& Parameters() { return weights; }
 
   //! Get the weight of the layer.
-  arma::cube const& Weight() const { return weight; }
+  arma::Cube<typename OutputType::elem_type> const& Weight() const
+  {
+    return weight;
+  }
   //! Modify the weight of the layer.
-  arma::cube& Weight() { return weight; }
+  arma::Cube<typename OutputType::elem_type>& Weight() { return weight; }
 
   //! Get the bias of the layer.
   OutputType const& Bias() const { return bias; }
   //! Modify the bias of the layer.
   OutputType& Bias() { return bias; }
-
-  //! Get the input parameter.
-  InputType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
 
   //! Get the input width.
   size_t const& InputWidth() const { return inputWidth; }
@@ -270,6 +254,22 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
   size_t const& PadWRight() const { return padWRight; }
   //! Modify the right padding width.
   size_t& PadWRight() { return padWRight; }
+
+  size_t WeightSize() const
+  {
+    return (outSize * inSize * kernelWidth * kernelHeight) + outSize;
+  }
+
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> result(inputDimensions.size(), 0);
+    result[0] = outputWidth;
+    result[1] = outputHeight;
+    // Higher dimensions are unmodified.
+    for (size_t i = 2; i < inputDimensions.size(); ++i)
+      result[i] = inputDimensions[i];
+    return result;
+  }
 
   /**
    * Serialize the layer.
@@ -414,7 +414,7 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
   OutputType weights;
 
   //! Locally-stored weight object.
-  arma::cube weight;
+  arma::Cube<typename OutputType::elem_type> weight;
 
   //! Locally-stored bias term object.
   OutputType bias;
@@ -432,37 +432,25 @@ class TransposedConvolutionType : public Layer<InputType, OutputType>
   size_t outputHeight;
 
   //! Locally-stored transformed output parameter.
-  arma::cube outputTemp;
+  arma::Cube<typename OutputType::elem_type> outputTemp;
 
   //! Locally-stored transformed padded input parameter.
-  arma::cube inputPaddedTemp;
+  arma::Cube<typename InputType::elem_type> inputPaddedTemp;
 
   //! Locally-stored transformed expanded input parameter.
-  arma::cube inputExpandedTemp;
+  arma::Cube<typename InputType::elem_type> inputExpandedTemp;
 
   //! Locally-stored transformed error parameter.
-  arma::cube gTemp;
+  arma::Cube<typename OutputType::elem_type> gTemp;
 
   //! Locally-stored transformed gradient parameter.
-  arma::cube gradientTemp;
+  arma::Cube<typename OutputType::elem_type> gradientTemp;
 
   //! Locally-stored padding layer for forward propagation.
   ann::Padding paddingForward;
 
   //! Locally-stored padding layer for back propagation.
   ann::Padding paddingBackward;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored input parameter object.
-  InputType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class TransposedConvolutionType
 
 // Standard TransposedConvolution

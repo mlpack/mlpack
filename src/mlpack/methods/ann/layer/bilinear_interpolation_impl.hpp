@@ -22,30 +22,18 @@ namespace ann /** Artificial Neural Network. */ {
 template<typename InputType, typename OutputType>
 BilinearInterpolationType<InputType, OutputType>::
 BilinearInterpolationType():
-    inRowSize(0),
-    inColSize(0),
     outRowSize(0),
-    outColSize(0),
-    depth(0),
-    batchSize(0)
+    outColSize(0)
 {
   // Nothing to do here.
 }
 
 template<typename InputType, typename OutputType>
 BilinearInterpolationType<InputType, OutputType>::
-BilinearInterpolationType(
-    const size_t inRowSize,
-    const size_t inColSize,
-    const size_t outRowSize,
-    const size_t outColSize,
-    const size_t depth):
-    inRowSize(inRowSize),
-    inColSize(inColSize),
+BilinearInterpolationType(const size_t outRowSize,
+                          const size_t outColSize) :
     outRowSize(outRowSize),
-    outColSize(outColSize),
-    depth(depth),
-    batchSize(0)
+    outColSize(outColSize)
 {
   // Nothing to do here.
 }
@@ -54,32 +42,31 @@ template<typename InputType, typename OutputType>
 void BilinearInterpolationType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  batchSize = input.n_cols;
-  if (output.is_empty())
-    output.set_size(outRowSize * outColSize * depth, batchSize);
-  else
-  {
-    assert(output.n_rows == outRowSize * outColSize * depth);
-    assert(output.n_cols == batchSize);
-  }
+  const size_t batchSize = input.n_cols;
+  const size_t depth = this->inputDimensions.size() <= 2 ? 1 :
+      std::accumulate(this->inputDimensions.begin() + 2, this->inputDimensions.end(), 0);
 
-  assert(inRowSize >= 2);
-  assert(inColSize >= 2);
+  assert(output.n_rows == outRowSize * outColSize * depth);
+  assert(output.n_cols == batchSize);
 
-  arma::cube inputAsCube(const_cast<InputType&>(input).memptr(),
-      inRowSize, inColSize, depth * batchSize, false, false);
-  arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
-                          depth * batchSize, false, true);
+  assert(this->inputDimensions[0] >= 2);
+  assert(this->inputDimensions[1] >= 2);
 
-  double scaleRow = (double) inRowSize / (double) outRowSize;
-  double scaleCol = (double) inColSize / (double) outColSize;
+  arma::Cube<typename InputType::elem_type> inputAsCube(
+      const_cast<InputType&>(input).memptr(), this->inputDimensions[0],
+      this->inputDimensions[1], depth * batchSize, false, false);
+  arma::Cube<typename OutputType::elem_type> outputAsCube(
+      output.memptr(), outRowSize, outColSize, depth * batchSize, false, true);
+
+  double scaleRow = (double) this->inputDimensions[0] / (double) outRowSize;
+  double scaleCol = (double) this->inputDimensions[1] / (double) outColSize;
 
   arma::mat22 coeffs;
   for (size_t i = 0; i < outRowSize; ++i)
   {
     size_t rOrigin = (size_t) std::floor(i * scaleRow);
-    if (rOrigin > inRowSize - 2)
-      rOrigin = inRowSize - 2;
+    if (rOrigin > this->inputDimensions[0] - 2)
+      rOrigin = this->inputDimensions[0] - 2;
 
     // Scaled distance of the interpolated point from the topmost row.
     double deltaR = i * scaleRow - rOrigin;
@@ -89,8 +76,8 @@ void BilinearInterpolationType<InputType, OutputType>::Forward(
     {
       // Scaled distance of the interpolated point from the leftmost column.
       size_t cOrigin = (size_t) std::floor(j * scaleCol);
-      if (cOrigin > inColSize - 2)
-        cOrigin = inColSize - 2;
+      if (cOrigin > this->inputDimensions[1] - 2)
+        cOrigin = this->inputDimensions[1] - 2;
 
       double deltaC = j * scaleCol - cOrigin;
       if (deltaC > 1)
@@ -115,21 +102,21 @@ void BilinearInterpolationType<InputType, OutputType>::Backward(
     const OutputType& gradient,
     OutputType& output)
 {
-  if (output.is_empty())
-    output.set_size(inRowSize * inColSize * depth, batchSize);
-  else
-  {
-    assert(output.n_rows == inRowSize * inColSize * depth);
-    assert(output.n_cols == batchSize);
-  }
+  const size_t batchSize = output.n_cols;
+  const size_t depth = this->inputDimensions.size() <= 2 ? 1 :
+      std::accumulate(this->inputDimensions.begin() + 2, this->inputDimensions.end(), 0);
+
+  assert(output.n_rows == this->inputDimensions[0] * this->inputDimensions[1] * depth);
 
   assert(outRowSize >= 2);
   assert(outColSize >= 2);
 
-  arma::cube gradientAsCube(((OutputType&) gradient).memptr(), outRowSize,
-      outColSize, depth * batchSize, false, false);
-  arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
-                          depth * batchSize, false, true);
+  arma::Cube<typename OutputType::elem_type> gradientAsCube(
+      ((OutputType&) gradient).memptr(), outRowSize, outColSize, depth *
+      batchSize, false, false);
+  arma::Cube<typename OutputType::elem_type> outputAsCube(
+      output.memptr(), this->inputDimensions[0], this->inputDimensions[1], depth * batchSize,
+      false, true);
 
   if (gradient.n_elem == output.n_elem)
   {
@@ -137,17 +124,17 @@ void BilinearInterpolationType<InputType, OutputType>::Backward(
   }
   else
   {
-    double scaleRow = (double)(outRowSize) / inRowSize;
-    double scaleCol = (double)(outColSize) / inColSize;
+    double scaleRow = (double)(outRowSize) / this->inputDimensions[0];
+    double scaleCol = (double)(outColSize) / this->inputDimensions[1];
 
     arma::mat22 coeffs;
-    for (size_t i = 0; i < inRowSize; ++i)
+    for (size_t i = 0; i < this->inputDimensions[0]; ++i)
     {
       size_t rOrigin = (size_t) std::floor(i * scaleRow);
       if (rOrigin > outRowSize - 2)
         rOrigin = outRowSize - 2;
       double deltaR = i * scaleRow - rOrigin;
-      for (size_t j = 0; j < inColSize; ++j)
+      for (size_t j = 0; j < this->inputDimensions[1]; ++j)
       {
         size_t cOrigin = (size_t) std::floor(j * scaleCol);
 
@@ -175,11 +162,10 @@ template<typename Archive>
 void BilinearInterpolationType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(inRowSize));
-  ar(CEREAL_NVP(inColSize));
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(outRowSize));
   ar(CEREAL_NVP(outColSize));
-  ar(CEREAL_NVP(depth));
 }
 
 } // namespace ann

@@ -39,18 +39,15 @@ class SubviewType : public Layer<InputType, OutputType>
    * Create the Subview layer object using the specified range of input to
    * accept.
    *
-   * @param inSize Width of sample.
    * @param beginRow Starting row index.
    * @param endRow Ending row index.
    * @param beginCol Starting column index.
    * @param endCol Ending column index.
    */
-  SubviewType(const size_t inSize = 1,
-              const size_t beginRow = 0,
+  SubviewType(const size_t beginRow = 0,
               const size_t endRow = 0,
               const size_t beginCol = 0,
               const size_t endCol = 0) :
-      inSize(inSize),
       beginRow(beginRow),
       endRow(endRow),
       beginCol(beginCol),
@@ -59,8 +56,8 @@ class SubviewType : public Layer<InputType, OutputType>
     /* Nothing to do here */
   }
 
-	//! Clone the SubviewType object. This handles polymorphism correctly.
-	SubviewType* Clone() const { return new SubviewType(*this); }
+  //! Clone the SubviewType object. This handles polymorphism correctly.
+  SubviewType* Clone() const { return new SubviewType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -71,14 +68,16 @@ class SubviewType : public Layer<InputType, OutputType>
    */
   void Forward(const InputType& input, OutputType& output)
   {
-    size_t batchSize = input.n_cols / inSize;
+    size_t batchSize = input.n_cols;
 
     // Check if subview parameters are within the indices of input sample.
-    endRow = ((endRow < input.n_rows) && (endRow >= beginRow))?
-        endRow : (input.n_rows - 1);
-    endCol = ((endCol < inSize) && (endCol >= beginCol)) ?
-        endCol : (inSize - 1);
+    // TODO: this seems incorrect
+    endRow = ((endRow < inputDimensions[0]) && (endRow >= beginRow))?
+        endRow : (inputDimensions[0] - 1);
+    endCol = ((endCol < inputDimensions[1]) && (endCol >= beginCol)) ?
+        endCol : (inputDimensions[1] - 1);
 
+    // TODO: this is maybe not right?
     output.set_size(
         (endRow - beginRow + 1) * (endCol - beginCol + 1), batchSize);
 
@@ -121,19 +120,6 @@ class SubviewType : public Layer<InputType, OutputType>
     g = gy;
   }
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the width of each sample.
-  size_t InSize() const { return inSize; }
-
   //! Get the starting row index of subview vector or matrix.
   size_t const& BeginRow() const { return beginRow; }
   //! Modify the width of each sample.
@@ -154,13 +140,33 @@ class SubviewType : public Layer<InputType, OutputType>
   //! Modify the width of each sample.
   size_t& EndCol() { return endCol; }
 
+  const std::vector<size_t> OutputDimensions() const
+  {
+    // TODO: relax this restriction
+    for (size_t i = 2; i < inputDimensions.size(); ++i)
+    {
+      if (inputDimensions[i] > 1)
+      {
+        throw std::invalid_argument("Subview(): layer input must be two-"
+            "dimensional!");
+      }
+    }
+
+    std::vector<size_t> outputDimensions(inputDimensions);
+    outputDimensions[0] = (endRow - beginRow + 1);
+    outputDimensions[1] = (endCol - beginCol + 1);
+
+    return outputDimensions;
+  }
+
   /**
    * Serialize the layer.
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */)
   {
-    ar(CEREAL_NVP(inSize));
+    ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
     ar(CEREAL_NVP(beginRow));
     ar(CEREAL_NVP(endRow));
     ar(CEREAL_NVP(beginCol));
@@ -168,9 +174,6 @@ class SubviewType : public Layer<InputType, OutputType>
   }
 
  private:
-  //! Width of each sample.
-  size_t inSize;
-
   //! Starting row index of subview vector or matrix.
   size_t beginRow;
 
@@ -182,12 +185,6 @@ class SubviewType : public Layer<InputType, OutputType>
 
   //! Ending column index of subview vector or matrix.
   size_t endCol;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class SubviewType
 
 // Standard Subview layer.

@@ -46,10 +46,10 @@ template <
     typename ForwardConvolutionRule = NaiveConvolution<ValidConvolution>,
     typename BackwardConvolutionRule = NaiveConvolution<FullConvolution>,
     typename GradientConvolutionRule = NaiveConvolution<ValidConvolution>,
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat
 >
-class AtrousConvolution
+class AtrousConvolution : public Layer<InputType, OutputType>
 {
  public:
   //! Create the AtrousConvolution object.
@@ -137,8 +137,7 @@ class AtrousConvolution
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of a neural network, calculating the function
@@ -149,10 +148,9 @@ class AtrousConvolution
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   /*
    * Calculate the gradient using the output delta and the input activation.
@@ -161,101 +159,90 @@ class AtrousConvolution
    * @param error The calculated error.
    * @param gradient The calculated gradient.
    */
-  template<typename eT>
-  void Gradient(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& error,
-                arma::Mat<eT>& gradient);
+  void Gradient(const InputType& /* input */,
+                const OutputType& error,
+                OutputType& gradient);
 
   //! Get the parameters.
-  OutputDataType const& Parameters() const { return weights; }
+  OutputType const& Parameters() const { return weights; }
   //! Modify the parameters.
-  OutputDataType& Parameters() { return weights; }
+  OutputType& Parameters() { return weights; }
 
   //! Get the weight of the layer.
-  arma::cube const& Weight() const { return weight; }
+  const arma::Cube<typename OutputType::elem_type>& Weight() const
+  {
+    return weight;
+  }
   //! Modify the weight of the layer.
-  arma::cube& Weight() { return weight; }
+  arma::Cube<typename OutputType::elem_type>& Weight() { return weight; }
+
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> result(inputDimensions.size(), 0);
+    result[0] = outputWidth;
+    result[1] = outputHeight;
+    return result;
+  }
 
   //! Get the bias of the layer.
-  arma::mat const& Bias() const { return bias; }
+  const OutputType& Bias() const { return bias; }
   //! Modify the bias of the layer.
-  arma::mat& Bias() { return bias; }
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputDataType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputDataType& Gradient() { return gradient; }
+  OutputType& Bias() { return bias; }
 
   //! Get the input width.
-  size_t InputWidth() const { return inputWidth; }
+  const size_t& InputWidth() const { return inputWidth; }
   //! Modify input the width.
   size_t& InputWidth() { return inputWidth; }
 
   //! Get the input height.
-  size_t InputHeight() const { return inputHeight; }
+  const size_t& InputHeight() const { return inputHeight; }
   //! Modify the input height.
   size_t& InputHeight() { return inputHeight; }
 
   //! Get the output width.
-  size_t OutputWidth() const { return outputWidth; }
+  const size_t& OutputWidth() const { return outputWidth; }
   //! Modify the output width.
   size_t& OutputWidth() { return outputWidth; }
 
   //! Get the output height.
-  size_t OutputHeight() const { return outputHeight; }
+  const size_t& OutputHeight() const { return outputHeight; }
   //! Modify the output height.
   size_t& OutputHeight() { return outputHeight; }
 
-  //! Get the input size.
-  size_t InputSize() const { return inSize; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
-
   //! Get the kernel width.
-  size_t KernelWidth() const { return kernelWidth; }
+  const size_t& KernelWidth() const { return kernelWidth; }
   //! Modify the kernel width.
   size_t& KernelWidth() { return kernelWidth; }
 
   //! Get the kernel height.
-  size_t KernelHeight() const { return kernelHeight; }
+  const size_t& KernelHeight() const { return kernelHeight; }
   //! Modify the kernel height.
   size_t& KernelHeight() { return kernelHeight; }
 
   //! Get the stride width.
-  size_t StrideWidth() const { return strideWidth; }
+  const size_t& StrideWidth() const { return strideWidth; }
   //! Modify the stride width.
   size_t& StrideWidth() { return strideWidth; }
 
   //! Get the stride height.
-  size_t StrideHeight() const { return strideHeight; }
+  const size_t& StrideHeight() const { return strideHeight; }
   //! Modify the stride height.
   size_t& StrideHeight() { return strideHeight; }
 
   //! Get the dilation rate on the X axis.
-  size_t DilationWidth() const { return dilationWidth; }
+  const size_t& DilationWidth() const { return dilationWidth; }
   //! Modify the dilation rate on the X axis.
   size_t& DilationWidth() { return dilationWidth; }
 
   //! Get the dilation rate on the Y axis.
-  size_t DilationHeight() const { return dilationHeight; }
+  const size_t& DilationHeight() const { return dilationHeight; }
   //! Modify the dilation rate on the Y axis.
   size_t& DilationHeight() { return dilationHeight; }
 
   //! Get the internal Padding layer.
-  ann::Padding<> const& Padding() const { return padding; }
+  PaddingType<InputType, OutputType> const& Padding() const { return padding; }
   //! Modify the internal Padding layer.
-  ann::Padding<>& Padding() { return padding; }
+  PaddingType<InputType, OutputType>& Padding() { return padding; }
 
   //! Get size of the weight matrix.
   size_t WeightSize() const
@@ -350,13 +337,13 @@ class AtrousConvolution
   size_t strideHeight;
 
   //! Locally-stored weight object.
-  OutputDataType weights;
+  OutputType weights;
 
   //! Locally-stored weight object.
-  arma::cube weight;
+  arma::Cube<typename OutputType::elem_type> weight;
 
   //! Locally-stored bias term object.
-  arma::mat bias;
+  OutputType bias;
 
   //! Locally-stored input width.
   size_t inputWidth;
@@ -377,28 +364,19 @@ class AtrousConvolution
   size_t dilationHeight;
 
   //! Locally-stored transformed output parameter.
-  arma::cube outputTemp;
+  arma::Cube<typename OutputType::elem_type> outputTemp;
 
   //! Locally-stored transformed padded input parameter.
-  arma::cube inputPaddedTemp;
+  arma::Cube<typename OutputType::elem_type> inputPaddedTemp;
 
   //! Locally-stored transformed error parameter.
-  arma::cube gTemp;
+  arma::Cube<typename OutputType::elem_type> gTemp;
 
   //! Locally-stored transformed gradient parameter.
-  arma::cube gradientTemp;
+  arma::Cube<typename OutputType::elem_type> gradientTemp;
 
   //! Locally-stored padding layer.
-  ann::Padding<> padding;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored gradient object.
-  OutputDataType gradient;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
+  PaddingType<InputType, OutputType> padding;
 }; // class AtrousConvolution
 
 } // namespace ann

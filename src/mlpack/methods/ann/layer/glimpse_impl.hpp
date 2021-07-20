@@ -46,8 +46,10 @@ template <typename InputType, typename OutputType>
 void GlimpseType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  inputTemp = arma::cube(input.colptr(0), inputWidth, inputHeight, inSize);
-  outputTemp = arma::cube(size, size, depth * inputTemp.n_slices);
+  inputTemp = arma::Cube<typename InputType::elem_type>(input.colptr(0),
+      inputWidth, inputHeight, inSize);
+  outputTemp = arma::Cube<typename OutputType::elem_type>(size, size, depth *
+      inputTemp.n_slices);
 
   location = input.submat(0, 1, 1, 1);
 
@@ -65,7 +67,8 @@ void GlimpseType<InputType, OutputType>::Forward(
     {
       size_t padSize = std::floor((glimpseSize - 1) / 2);
 
-      arma::cube inputPadded = arma::zeros<arma::cube>(
+      arma::Cube<typename InputType::elem_type> inputPadded =
+          arma::zeros<arma::Cube<typename InputType::elem_type>>(
           inputTemp.n_rows + padSize * 2, inputTemp.n_cols + padSize * 2,
           inputTemp.n_slices / inSize);
 
@@ -129,7 +132,8 @@ void GlimpseType<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   // Generate a cube using the backpropagated error matrix.
-  arma::cube mappedError = arma::zeros<arma::cube>(outputWidth,
+  arma::Cube<typename OutputType::elem_type> mappedError =
+      arma::zeros<arma::Cube<typename OutputType::elem_type>>(outputWidth,
       outputHeight, 1);
 
   location = locationParameter.back();
@@ -144,8 +148,8 @@ void GlimpseType<InputType, OutputType>::Backward(
     }
   }
 
-  gTemp = arma::zeros<arma::cube>(inputTemp.n_rows, inputTemp.n_cols,
-      inputTemp.n_slices);
+  gTemp = arma::zeros<arma::Cube<typename InputType::elem_type>>(
+      inputTemp.n_rows, inputTemp.n_cols, inputTemp.n_slices);
 
   for (size_t inputIdx = 0; inputIdx < inSize; inputIdx++)
   {
@@ -154,7 +158,8 @@ void GlimpseType<InputType, OutputType>::Backward(
     {
       size_t padSize = std::floor((glimpseSize - 1) / 2);
 
-      arma::cube inputPadded = arma::zeros<arma::cube>(
+      arma::Cube<typename InputType::elem_type> inputPadded =
+          arma::zeros<arma::Cube<typename InputType::elem_type>>(
           inputTemp.n_rows + padSize * 2, inputTemp.n_cols +
           padSize * 2, inputTemp.n_slices / inSize);
 
@@ -215,6 +220,8 @@ template<typename Archive>
 void GlimpseType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(size));
   ar(CEREAL_NVP(depth));

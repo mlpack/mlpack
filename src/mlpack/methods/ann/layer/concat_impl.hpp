@@ -21,135 +21,121 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 ConcatType<InputType, OutputType>::ConcatType(
-    const bool model, const bool run) :
+    const bool run) :
     axis(0),
-    useAxis(false),
-    model(model),
-    run(run),
-    channels(1)
+    useAxis(false)
 {
-  weights.set_size(0, 0);
+  // Nothing to do.
 }
 
 template<typename InputType, typename OutputType>
 ConcatType<InputType, OutputType>::ConcatType(
-    arma::Row<size_t>& inputSize,
     const size_t axis,
-    const bool model,
     const bool run) :
-    inputSize(inputSize),
     axis(axis),
-    useAxis(true),
-    model(model),
-    run(run)
+    useAxis(true)
 {
-  weights.set_size(0, 0);
-
-  // Parameters to help calculate the number of channels.
-  size_t oldColSize = 1, newColSize = 1;
-  // Axis is specified and useAxis is true.
-  if (useAxis)
-  {
-    // Axis is specified without input dimension.
-    // Throw an error.
-    if (inputSize.n_elem > 0)
-    {
-      // Calculate rowSize, newColSize based on the axis
-      // of concatenation. Finally concat along cols and
-      // reshape to original format i.e. (input, batch_size).
-      size_t i = std::min(axis + 1, (size_t) inputSize.n_elem);
-      for (; i < inputSize.n_elem; ++i)
-        newColSize *= inputSize[i];
-    }
-    else
-      Log::Fatal << "Input dimensions not specified." << std::endl;
-  }
-  else
-    channels = 1;
-
-  if (newColSize <= 0)
-    Log::Fatal << "Col size is zero." << std::endl;
-
-  channels = newColSize / oldColSize;
-  inputSize.clear();
+  // Nothing to do.
 }
 
 template<typename InputType, typename OutputType>
 ConcatType<InputType, OutputType>::~ConcatType()
 {
-  if (!model)
-  {
-    // Clear memory.
-    for (size_t i = 0; i < network.size(); ++i)
-      delete network[i];
-  }
+  // Clear memory.
+  for (size_t i = 0; i < this->network.size(); ++i)
+    delete this->network[i];
 }
 
 template<typename InputType, typename OutputType>
 void ConcatType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  if (run)
+  this->InitializeForwardPassMemory();
+
+  // Pass the input through all the layers in the network.
+  for (size_t i = 0; i < this->network.size(); ++i)
   {
-    for (size_t i = 0; i < network.size(); ++i)
-    {
-      network[i]->Forward(input,network[i]->OutputParameter());
-    }
+    this->network[i]->Forward(input, this->layerOutputs[i]);
   }
 
-  output = network.front()->OutputParameter();
+  // Now concatenate the outputs along the correct axis.
+  // We can actually use Armadillo to do this for us---we will treat the axis of
+  // interest as "columns", any axes that come before the axis of interest as
+  // 'flattened slices', and any axes that come after the axis of interest as
+  // 'flattened rows'.  As a result, we will only have to do join_cols() to
+  // produce the right result.
+  //
+  // Note that we will have one "extra" axis in addition to
+  // this->outputDimensions.size(); that is the batch size (represented as the
+  // number of columns in `input`).
 
-  // Reshape output to incorporate the channels.
-  output.reshape(output.n_rows / channels, output.n_cols * channels);
+  size_t slices = (axis == 0) ? input.n_cols :
+      std::accumulate(this->outputDimensions.begin(),
+          this->outputDimensions.begin() + axis, 0) + input.n_cols;
+  size_t rows = (axis == this->outputDimensions.size() - 1) ? 1 :
+      std::accumulate(this->outputDimensions.begin() + axis + 1,
+          this->outputDimensions.end(), 0);
 
-  for (size_t i = 1; i < network.size(); ++i)
+  std::vector<arma::Cube<typename OutputType::elem_type>> layerOutputAliases;
+  for (size_t i = 0; i < this->layerOutputs.size(); ++i)
   {
-    OutputType out = network[i]->OutputParameter();
-
-    out.reshape(out.n_rows / channels, out.n_cols * channels);
-
-    // Vertically concatentate output from each layer.
-    output = arma::join_cols(output, out);
+    layerOutputAliases.emplace_back(arma::Cube<typename OutputType::elem_type>(
+        this->layerOutputs[i].memptr(), rows,
+        this->network[i]->OutputDimensions()[axis], slices, false, true);
   }
-  // Reshape output to its original shape.
-  output.reshape(output.n_rows * channels, output.n_cols / channels);
+
+  arma::Cube<typename OutputType::elem_type> output(output.memptr(), rows,
+      this->outputDimensions[axis], slices, false, true);
+
+  // Now get the columns from each output.
+  size_t startCol = 0;
+  for (size_t i = 0; i < layerOutputAliases.size(); ++i)
+  {
+    const size_t cols = layerOutputAliases[i].n_cols;
+    output.cols(startCol, startCol + cols - 1) = layerOutputAliases[i];
+    startCol += cols;
+  }
 }
 
 template<typename InputType, typename OutputType>
 void ConcatType<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  size_t rowCount = 0;
-  if (run)
+  this->InitializeBackwardPassMemory();
+
+  // Just like the forward pass, we can treat our inputs as a cube, but here we
+  // have to distribute the correct parts of `gy` to the layers.
+
+  size_t slices = (axis == 0) ? gy.n_cols :
+      std::accumulate(this->outputDimensions.begin(),
+          this->outputDimensions.begin() + axis, 0) + gy.n_cols;
+  size_t rows = (axis == this->outputDimensions.size() - 1) ? 1 :
+      std::accumulate(this->outputDimensions.begin() + axis + 1,
+          this->outputDimensions.end(), 0);
+
+  arma::Cube<typename OutputType::elem_type> gyTmp(gy.memptr(), rows,
+      this->outputDimensions[axis], slices, false, true);
+
+  size_t startCol = 0;
+  for (size_t i = 0; i < this->network.size(); ++i)
   {
-    OutputType delta;
-    OutputType gyTmp(((OutputType&) gy).memptr(), gy.n_rows / channels,
-        gy.n_cols * channels, false, false);
-    for (size_t i = 0; i < network.size(); ++i)
-    {
-      // Use rows from the error corresponding to the output from each layer.
-      size_t rows = network[i]->OutputParameter().n_rows;
+    const size_t cols = this->network[i]->OutputDimensions()[axis];
+    // TODO: is delta size correct?
+    // TODO: no copy!
+    OutputType delta = gyTmp.cols(startCol, startCol + cols - 1);
+    // TODO: consider batch size correctly
+    delta.reshape( ... );
+    this->network[i]->Backward(this->layerOutputs[i], delta,
+        this->layerDeltas[i]);
 
-      // Extract from gy the parameters for the i-th network.
-      delta = gyTmp.rows(rowCount / channels, (rowCount + rows) / channels - 1);
-      delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
-
-      network[i]->Backward(
-          network[i]->OutputParameter(),
-          delta,
-          network[i]->Delta()
-        );
-      rowCount += rows;
-    }
-
-    g = network[0]->Delta();
-    for (size_t i = 1; i < network.size(); ++i)
-    {
-      g += network[i]->Delta();
-    }
+    startCol += cols;
   }
-  else
-    g = gy;
+
+  g = this->layerDeltas[0];
+  for (size_t i = 1; i < this->network.size(); ++i)
+  {
+    g += this->layerDeltas[i];
+  }
 }
 
 template<typename InputType, typename OutputType>
@@ -159,79 +145,109 @@ void ConcatType<InputType, OutputType>::Backward(
     OutputType& g,
     const size_t index)
 {
-  size_t rowCount = 0, rows = 0;
+  // We only intend to perform a backward pass on one layer.
+  // Thus, we need to extract the parts of gy that correspond to the desired
+  // layer (specified by `index`).
 
+  size_t slices = (axis == 0) ? gy.n_cols :
+      std::accumulate(this->outputDimensions.begin(),
+          this->outputDimensions.begin() + axis, 0) + gy.n_cols;
+  size_t rows = (axis == this->outputDimensions.size() - 1) ? 1 :
+      std::accumulate(this->outputDimensions.begin() + axis + 1,
+          this->outputDimensions.end(), 0);
+
+  arma::Cube<typename OutputType::elem_type> gyTmp(gy.memptr(), rows,
+      this->outputDimensions[axis], slices, false, true);
+
+  size_t startCol = 0;
   for (size_t i = 0; i < index; ++i)
   {
-    rowCount += network[i]->OutputParameter().n_rows;
+    startCol += this->network[i]->OutputDimensions()[axis];
   }
-  rows = network[index]->OutputParameter().n_rows;
 
-  // Reshape gy to extract the i-th layer gy.
-  OutputType gyTmp(((OutputType&) gy).memptr(), gy.n_rows / channels,
-      gy.n_cols * channels, false, false);
+  // TODO: no copy!
+  const size_t cols = this->network[index]->OutputDimensions()[axis];
+  OutputType delta = gyTmp.cols(startCol, startCol + cols - 1);
+  delta.reshape( ... );
 
-  OutputType delta = gyTmp.rows(rowCount / channels, (rowCount + rows) /
-      channels - 1);
-  delta.reshape(delta.n_rows * channels, delta.n_cols / channels);
-
-  network[index]->Backward(
-      network[index]->OutputParameter(),
-      delta,
-      network[index]->Delta()
-    );
-
-  g = network[index]->Delta();
+  this->network[index]->Backward(this->layerOutputs[index], delta, g);
 }
 
 template<typename InputType, typename OutputType>
 void ConcatType<InputType, OutputType>::Gradient(
     const InputType& input,
     const OutputType& error,
-    OutputType& /* gradient */)
+    OutputType& gradient)
 {
-  if (run)
+  // Just like the forward pass, we can treat our inputs as a cube, but here we
+  // have to distribute the correct parts of `gy` to the layers.
+
+  size_t slices = (axis == 0) ? input.n_cols :
+      std::accumulate(this->outputDimensions.begin(),
+          this->outputDimensions.begin() + axis, 0) + input.n_cols;
+  size_t rows = (axis == this->outputDimensions.size() - 1) ? 1 :
+      std::accumulate(this->outputDimensions.begin() + axis + 1,
+          this->outputDimensions.end(), 0);
+
+  arma::Cube<typename OutputType::elem_type> errorTmp(error.memptr(), rows,
+      this->outputDimensions[axis], slices, false, true);
+
+  size_t startCol = 0;
+  size_t startParam = 0;
+  for (size_t i = 0; i < this->network.size(); ++i)
   {
-    size_t rowCount = 0;
-    // Reshape error to extract the i-th layer error.
-    OutputType errorTmp(((OutputType&) error).memptr(),
-        error.n_rows / channels, error.n_cols * channels, false, false);
-    for (size_t i = 0; i < network.size(); ++i)
-    {
-      size_t rows = network[i]->OutputParameter().n_rows;
+    const size_t cols = this->network[i]->OutputDimensions()[axis];
+    const size_t params = this->network[i]->WeightSize();
 
-      // Extract from error the parameters for the i-th network.
-      OutputType err = errorTmp.rows(rowCount / channels, (rowCount + rows) /
-          channels - 1);
-      err.reshape(err.n_rows * channels, err.n_cols / channels);
+    OutputType err = errorTmp.cols(startCol, startCol + cols - 1);
+    err.reshape(input.n_cols, err.n_elem / input.n_cols);
+    // TODO: what about layerGradients?
+    OutputType gradientAlias(gradient.colptr(startParam, 1, params, false,
+        true);
+    this->network[i]->Gradient(input, err, gradientAlias);
 
-      network[i]->Gradient(input, err, network[i]->Gradient());
-      rowCount += rows;
-    }
+    startCol += cols;
+    startParam += params;
   }
 }
 
+// TODO: adapt
 template<typename InputType, typename OutputType>
 void ConcatType<InputType, OutputType>::Gradient(
     const InputType& input,
     const OutputType& error,
-    OutputType& /* gradient */,
+    OutputType& gradient,
     const size_t index)
 {
-  size_t rowCount = 0;
+  // Just like the forward pass, we can treat our inputs as a cube, but here we
+  // have to distribute the correct parts of `gy` to the layers.
+
+  size_t slices = (axis == 0) ? input.n_cols :
+      std::accumulate(this->outputDimensions.begin(),
+          this->outputDimensions.begin() + axis, 0) + input.n_cols;
+  size_t rows = (axis == this->outputDimensions.size() - 1) ? 1 :
+      std::accumulate(this->outputDimensions.begin() + axis + 1,
+          this->outputDimensions.end(), 0);
+
+  arma::Cube<typename OutputType::elem_type> errorTmp(error.memptr(), rows,
+      this->outputDimensions[axis], slices, false, true);
+
+  size_t startCol = 0;
+  size_t startParam = 0;
   for (size_t i = 0; i < index; ++i)
   {
-    rowCount += network[i]->OutputParameter().n_rows;
+    startCol += this->network[i]->OutputDimensions()[axis];
+    startParam += this->network[i]->WeightSize();
   }
-  size_t rows = network[index]->OutputParameter().n_rows;
 
-  OutputType errorTmp(((OutputType&) error).memptr(),
-      error.n_rows / channels, error.n_cols * channels, false, false);
-  OutputType err = errorTmp.rows(rowCount / channels, (rowCount + rows) /
-      channels - 1);
-  err.reshape(err.n_rows * channels, err.n_cols / channels);
+  const size_t cols = this->network[index]->OutputDimensions()[axis];
+  const size_t params = this->network[index]->WeightSize();
 
-  network[index]->Gradient(input, err, network[index]->Gradient());
+  // TODO: no copy!
+  OutputType err = errorTmp.cols(startCol, startCol + cols - 1);
+  err.reshape(input.n_cols, err.n_elem / input.n_cols);
+  OutputType gradientAlias(gradient.memptr(), 1, params, false, true);
+  this->network[index]->Gradient(input, err, gradientAlias);
 }
 
 template<typename InputType, typename OutputType>
@@ -239,24 +255,13 @@ template<typename Archive>
 void ConcatType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(model));
-  ar(CEREAL_NVP(run));
+  ar(cereal::base_class<MultiLayer<InputType, OutputType>>(this));
 
-  // Do we have to load or save a model?
-  if (model)
-  {
-    // Clear memory first, if needed.
-    if (cereal::is_loading<Archive>())
-    {
-      for (size_t i = 0; i < network.size(); ++i)
-        delete network[i];
-    }
-    // ar(CEREAL_VECTOR_VARIANT_POINTER(network));
-  }
+  ar(CEREAL_NVP(axis));
+  ar(CEREAL_NVP(useAxis));
 }
 
 } // namespace ann
 } // namespace mlpack
-
 
 #endif

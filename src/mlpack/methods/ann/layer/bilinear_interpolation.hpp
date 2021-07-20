@@ -43,19 +43,14 @@ class BilinearInterpolationType : public Layer<InputType, OutputType>
   BilinearInterpolationType();
 
   /**
-   * The constructor for the Bilinear Interpolation.
+   * The constructor for the Bilinear Interpolation.  The input size will be set
+   * by the given input when the layer is used.
    *
-   * @param inRowSize Number of input rows.
-   * @param inColSize Number of input columns.
    * @param outRowSize Number of output rows.
    * @param outColSize Number of output columns.
-   * @param depth Number of input slices.
    */
-  BilinearInterpolationType(const size_t inRowSize,
-                            const size_t inColSize,
-                            const size_t outRowSize,
-                            const size_t outColSize,
-                            const size_t depth);
+  BilinearInterpolationType(const size_t outRowSize,
+                            const size_t outColSize);
 
   /**
    * Forward pass through the layer. The layer interpolates
@@ -81,25 +76,18 @@ class BilinearInterpolationType : public Layer<InputType, OutputType>
                 const OutputType& gradient,
                 OutputType& output);
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the row size of the input.
-  size_t const& InRowSize() const { return inRowSize; }
-  //! Modify the row size of the input.
-  size_t& InRowSize() { return inRowSize; }
-
-  //! Get the column size of the input.
-  size_t const& InColSize() const { return inColSize; }
-  //! Modify the column size of the input.
-  size_t& InColSize() { return inColSize; }
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> result(this->inputDimensions.size(), 0);
+    result[0] = outRowSize;
+    result[1] = outColSize;
+    if (result.size() > 2)
+    {
+      for (size_t i = 0; i < result.size(); ++i)
+        result[i] = this->inputDimensions[i];
+    }
+    return result;
+  }
 
   //! Get the row size of the output.
   size_t const& OutRowSize() const { return outRowSize; }
@@ -111,11 +99,6 @@ class BilinearInterpolationType : public Layer<InputType, OutputType>
   //! Modify the column size of the output.
   size_t& OutColSize() { return outColSize; }
 
-  //! Get the depth of the input.
-  size_t const& InDepth() const { return depth; }
-  //! Modify the depth of the input.
-  size_t& InDepth() { return depth; }
-
   /**
    * Serialize the layer.
    */
@@ -123,29 +106,11 @@ class BilinearInterpolationType : public Layer<InputType, OutputType>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally stored row size of the input.
-  size_t inRowSize;
-
-  //! Locally stored column size of the input.
-  size_t inColSize;
-
   //! Locally stored row size of the output.
   size_t outRowSize;
 
   //! Locally stored column size of the input.
   size_t outColSize;
-
-  //! Locally stored depth of the input.
-  size_t depth;
-
-  //! Locally stored number of input points.
-  size_t batchSize;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class BilinearInterpolation
 
 // Standard BilinearInterpolation layer.

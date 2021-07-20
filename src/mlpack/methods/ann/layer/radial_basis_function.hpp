@@ -23,9 +23,9 @@ namespace ann /** Artificial Neural Network. */ {
 
 
 /**
- * Implementation of the Radial Basis Function layer. The RBF class when use with a 
- * non-linear activation function acts as a Radial Basis Function which can be used
- * with Feed-Forward neural network.
+ * Implementation of the Radial Basis Function layer. The RBF class when use
+ * with a non-linear activation function acts as a Radial Basis Function which
+ * can be used with Feed-Forward neural network.
  *
  * For more information, refer to the following paper,
  *
@@ -38,19 +38,19 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  * @tparam Activation Type of the activation function (mlpack::ann::Gaussian).
  */
 
 template <
-    typename InputDataType = arma::mat,
-    typename OutputDataType = arma::mat,
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat,
     typename Activation = GaussianFunction
 >
-class RBF
+class RBF : public Layer<InputType, OutputType>
 {
  public:
   //! Create the RBF object.
@@ -60,14 +60,12 @@ class RBF
    * Create the Radial Basis Function layer object using the specified
    * parameters.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param centres The centres calculated using k-means of data.
    * @param betas The beta value to be used with centres.
    */
-  RBF(const size_t inSize,
-      const size_t outSize,
-      arma::mat& centres,
+  RBF(const size_t outSize,
+      InputType& centres,
       double betas = 0);
 
   /**
@@ -76,39 +74,22 @@ class RBF
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of the radial basis function.
-   *
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& /* gy */,
-                arma::Mat<eT>& /* g */);
+  void Backward(const InputType& /* input */,
+                const OutputType& /* gy */,
+                OutputType& /* g */);
 
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-  //! Get the parameters.
-
-  //! Get the input parameter.
-  InputDataType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputDataType& InputParameter() { return inputParameter; }
-
-  //! Get the input size.
-  size_t InputSize() const { return inSize; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
-
-  //! Get the detla.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> outputDimensions(inputDimensions.size(), 1);
+    // This flattens the input.
+    outputDimensions[0] = outSize;
+    return outputDimensions;
+  }
 
   /**
    * Serialize the layer.
@@ -117,32 +98,17 @@ class RBF
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
-  size_t inSize;
-
   //! Locally-stored number of output units.
   size_t outSize;
-
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
-  //! Locally-stored the sigmas values.
-  double sigmas;
 
   //! Locally-stored the betas values.
   double betas;
 
   //! Locally-stored the learnable centre of the shape.
-  InputDataType centres;
-
-  //! Locally-stored input parameter object.
-  InputDataType inputParameter;
+  InputType centres;
 
   //! Locally-stored the output distances of the shape.
-  OutputDataType distances;
+  OutputType distances;
 }; // class RBF
 
 } // namespace ann

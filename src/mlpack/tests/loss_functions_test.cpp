@@ -424,9 +424,9 @@ TEST_CASE("GradientMeanSquaredErrorTest", "[LossFunctionsTest]")
       model = new FFN<MeanSquaredError<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
-      model->Add<IdentityLayer>();
-      model->Add<Linear>(10, 2);
-      model->Add<SigmoidLayer>();
+      model->Add<IdentityLayer<>>();
+      model->Add<LinearType<>>(2);
+      model->Add<SigmoidLayer<>>();
     }
 
     ~GradientFunction()
@@ -467,9 +467,9 @@ TEST_CASE("GradientReconstructionLossTest", "[LossFunctionsTest]")
       model = new FFN<ReconstructionLoss<>, NguyenWidrowInitialization>();
       model->Predictors() = input;
       model->Responses() = target;
-      model->Add<IdentityLayer>();
-      model->Add<Linear>(10, 2);
-      model->Add<SigmoidLayer>();
+      model->Add<IdentityLayer<>>();
+      model->Add<LinearType<>>(2);
+      model->Add<SigmoidLayer<>>();
     }
 
     ~GradientFunction()

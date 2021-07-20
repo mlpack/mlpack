@@ -20,10 +20,16 @@ namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
+ConstantType<InputType, OutputType>::ConstantType() :
+    outSize(0)
+{
+  // Nothing to do.
+}
+
+template<typename InputType, typename OutputType>
 ConstantType<InputType, OutputType>::ConstantType(
     const size_t outSize,
     const double scalar) :
-    inSize(0),
     outSize(outSize)
 {
   constantOutput = OutputType(outSize, 1);
@@ -31,12 +37,59 @@ ConstantType<InputType, OutputType>::ConstantType(
 }
 
 template<typename InputType, typename OutputType>
+ConstantType<InputType, OutputType>::ConstantType(
+    const ConstantType<InputType, OutputType>& other) :
+    outSize(other.outSize),
+    constantOutput(other.constantOutput)
+{
+  // Nothing else to do.
+}
+
+template<typename InputType, typename OutputType>
+ConstantType<InputType, OutputType>::ConstantType(
+    ConstantType<InputType, OutputType>&& other) :
+    outSize(other.outSize),
+    constantOutput(std::move(other.constantOutput))
+{
+  other.outSize = 1;
+  other.constantOutput = OutputType(other.outSize, 1);
+}
+
+template<typename InputType, typename OutputType>
+ConstantType<InputType, OutputType>&
+ConstantType<InputType, OutputType>::operator=(
+    const ConstantType<InputType, OutputType>& other)
+{
+  if (this != &other)
+  {
+    outSize = other.outSize;
+    constantOutput = other.constantOutput;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+ConstantType<InputType, OutputType>&
+ConstantType<InputType, OutputType>::operator=(
+    ConstantType<InputType, OutputType>&& other)
+{
+  if (this != *other)
+  {
+    outSize = other.outSize;
+    constantOutput = std::move(other.constantOutput);
+
+    other.outSize = 1;
+    other.constantOutput = OutputType(other.outSize, 1);
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
 void ConstantType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  if (inSize == 0)
-    inSize = input.n_elem;
-
   output = constantOutput;
 }
 
@@ -44,7 +97,7 @@ template<typename InputType, typename OutputType>
 void ConstantType<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& /* gy */, OutputType& g)
 {
-  g = arma::zeros<OutputType>(inSize, 1);
+  g.zeros();
 }
 
 template<typename InputType, typename OutputType>
@@ -52,7 +105,11 @@ template<typename Archive>
 void ConstantType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(constantOutput));
+  if (Archive::is_loading::value)
+    outSize = constantOutput.n_elem;
 }
 
 } // namespace ann

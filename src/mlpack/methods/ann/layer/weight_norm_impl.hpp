@@ -21,6 +21,17 @@ namespace ann { /** Artificial Neural Network. */
 
 template<typename InputType, typename OutputType>
 WeightNormType<InputType, OutputType>::
+WeightNormType() : wrappedLayer(new LinearType<InputType, OutputType>())
+{
+  layerWeightSize = wrappedLayer->WeightSize();
+  weights.set_size(layerWeightSize + 1, 1);
+
+  layerWeights.set_size(layerWeightSize, 1);
+  layerGradients.set_size(layerWeightSize, 1);
+}
+
+template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>::
 WeightNormType(Layer<InputType, OutputType>* layer) : wrappedLayer(layer)
 {
   layerWeightSize = wrappedLayer->WeightSize();
@@ -31,23 +42,84 @@ WeightNormType(Layer<InputType, OutputType>* layer) : wrappedLayer(layer)
 }
 
 template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>::WeightNormType(
+    const WeightNormType<InputType, OutputType>& other) :
+    wrappedLayer(other.wrappedLayer->Clone()),
+    layerWeightSize(other.layerWeightSize),
+    weights(other.weights),
+    layerGradients(other.layerGradients),
+    layerWeights(other.layerWeights)
+{
+  // Nothing else to do.
+}
+
+template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>::WeightNormType(
+    WeightNormType<InputType, OutputType>&& other) :
+    wrappedLayer(std::move(other.wrappedLayer)),
+    layerWeightSize(other.layerWeightSize),
+    weights(std::move(other.weights)),
+    layerGradients(std::move(other.layerGradients)),
+    layerWeights(std::move(other.layerWeights))
+{
+  // Reset the other layer.
+  other = WeightNormType<InputType, OutputType>();
+}
+
+template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>&
+WeightNormType<InputType, OutputType>::operator=(
+    const WeightNormType<InputType, OutputType>& other)
+{
+  if (this != &other)
+  {
+    wrappedLayer = other.wrappedLayer->Clone();
+    layerWeightSize = other.layerWeightSize;
+    weights = other.weights;
+    layerWeights = other.layerWeights;
+    layerGradients = other.layerGradients;
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
+WeightNormType<InputType, OutputType>&
+WeightNormType<InputType, OutputType>::operator=(
+    WeightNormType<InputType, OutputType>&& other)
+{
+  if (this != &other)
+  {
+    wrappedLayer = std::move(other.wrappedLayer);
+    layerWeightSize = other.layerWeightSize;
+    weights = std::move(other.weights);
+    layerWeights = std::move(other.layerWeights);
+    layerGradients = std::move(other.layerGradients);
+
+    // Reset the other layer.
+    other = WeightNormType<InputType, OutputType>();
+  }
+
+  return *this;
+}
+
+template<typename InputType, typename OutputType>
 WeightNormType<InputType, OutputType>::~WeightNormType()
 {
   delete wrappedLayer;
 }
 
 template<typename InputType, typename OutputType>
-void WeightNormType<InputType, OutputType>::Reset()
+void WeightNormType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
   // Set the weights of the inside layer to layerWeights.
   // This is done to set the non-bias terms correctly.
   /* boost::apply_visitor(WeightSetVisitor(layerWeights, 0), wrappedLayer); */
+  wrappedLayer->SetWeights(weightsPtr);
   wrappedLayer->Parameters() = OutputType(layerWeights.memptr(),
       wrappedLayer->Parameters().n_rows, wrappedLayer->Parameters().n_cols,
       false, false);
-
-  /* boost::apply_visitor(ResetVisitor(), wrappedLayer); */
-  wrappedLayer->Reset();
 
   /* biasWeightSize = boost::apply_visitor(BiasSetVisitor(weights, 0), */
   /*     wrappedLayer); */
@@ -69,24 +141,17 @@ void WeightNormType<InputType, OutputType>::Forward(
   layerWeights.rows(0, layerWeightSize - biasWeightSize - 1) =
       scalarParameter(0) * vectorParameter / normVectorParameter;
 
-  wrappedLayer->Forward(input, wrappedLayer->OutputParameter());
-
-  output = wrappedLayer->OutputParameter();
+  wrappedLayer->Forward(input, output);
 }
 
 template<typename InputType, typename OutputType>
 void WeightNormType<InputType, OutputType>::Backward(
-    const InputType& /* input */, const OutputType& gy, OutputType& g)
+    const InputType& input, const OutputType& gy, OutputType& g)
 {
-  wrappedLayer->Backward(
-      wrappedLayer->OutputParameter(),
-      gy,
-      wrappedLayer->Delta()
-  );
-
-  g = wrappedLayer->Delta();
+  wrappedLayer->Backward(input, gy, g);
 }
 
+// TODO: this part is not trivial...
 template<typename InputType, typename OutputType>
 void WeightNormType<InputType, OutputType>::Gradient(
     const InputType& input,
@@ -96,11 +161,7 @@ void WeightNormType<InputType, OutputType>::Gradient(
   ResetGradients(layerGradients);
 
   // Calculate the gradients of the wrapped layer.
-  wrappedLayer->Gradient(
-      input,
-      error,
-      wrappedLayer->Gradient()
-  );
+  wrappedLayer->Gradient(input, error, gradient);
 
   // Store the norm of vector parameter temporarily.
   const double normVectorParameter = arma::norm(vectorParameter, 2);
@@ -125,31 +186,14 @@ void WeightNormType<InputType, OutputType>::Gradient(
 }
 
 template<typename InputType, typename OutputType>
-void WeightNormType<InputType, OutputType>::ResetGradients(OutputType& gradient)
-{
-  // boost::apply_visitor(GradientSetVisitor(gradient, 0), wrappedLayer);
-  wrappedLayer->Gradient() = OutputType(gradient.memptr(),
-      weights.n_rows, weights.n_cols, false, false);
-}
-
-template<typename InputType, typename OutputType>
 template<typename Archive>
 void WeightNormType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  if (cereal::is_loading<Archive>())
-  {
-    delete wrappedLayer;
-  }
+  ar(cereal::base_class<Layer<InputType, OutputType>*>(this));
 
-  // ar(CEREAL_VARIANT_POINTER(wrappedLayer));
+  ar(CEREAL_POINTER(wrappedLayer));
   ar(CEREAL_NVP(layerWeightSize));
-
-  // If we are loading, we need to initialize the weights.
-  if (cereal::is_loading<Archive>())
-  {
-    weights.set_size(layerWeightSize + 1, 1);
-  }
 }
 
 } // namespace ann

@@ -921,6 +921,7 @@ TEST_CASE("JacobianHardTanHLayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleSelectLayerTest", "[ANNLayerTest]")
 {
+  // TODO: this needs to be adapted
   arma::mat outputA, outputB, input, delta;
 
   input = arma::ones(10, 5);

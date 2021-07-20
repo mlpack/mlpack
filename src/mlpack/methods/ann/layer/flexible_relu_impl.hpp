@@ -24,25 +24,30 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 FlexibleReLUType<InputType, OutputType>::FlexibleReLUType(const double alpha) :
-    userAlpha(alpha)
+    userAlpha(alpha),
+    initialized(false)
 {
   this->alpha.set_size(1, 1);
-  this->alpha(0) = userAlpha;
+  this->alpha(0) = alpha;
 }
 
 template<typename InputType, typename OutputType>
-void FlexibleReLUType<InputType, OutputType>::Reset()
+void FlexibleReLUType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  alpha = arma::mat(alpha.memptr(), 1, 1, false, false);
-
-  // Set value of alpha to the one given by user.
-  alpha(0) = userAlpha;
+  alpha = OutputType(weightsPtr, 1, 1, false, false);
 }
 
 template<typename InputType, typename OutputType>
 void FlexibleReLUType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
+  if (!initialized)
+  {
+    alpha[0] = userAlpha;
+    initialized = true;
+  }
+
   output = arma::clamp(input, 0.0, DBL_MAX) + alpha(0);
 }
 
@@ -60,9 +65,6 @@ void FlexibleReLUType<InputType, OutputType>::Gradient(
     const OutputType& error,
     OutputType& gradient)
 {
-  if (gradient.n_elem == 0)
-    gradient.set_size(1, 1);
-
   gradient(0) = arma::accu(error) / input.n_cols;
 }
 
@@ -72,7 +74,11 @@ void FlexibleReLUType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version*/)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(alpha));
+  ar(CEREAL_NVP(userAlpha));
+  ar(CEREAL_NVP(initialized));
 }
 
 } // namespace ann

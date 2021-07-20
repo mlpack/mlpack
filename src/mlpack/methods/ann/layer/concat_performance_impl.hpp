@@ -20,15 +20,14 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<
     typename OutputLayerType,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
 ConcatPerformance<
     OutputLayerType,
-    InputDataType,
-    OutputDataType
->::ConcatPerformance(const size_t inSize, OutputLayerType&& outputLayer) :
-    inSize(inSize),
+    InputType,
+    OutputType
+>::ConcatPerformance(OutputLayerType&& outputLayer) :
     outputLayer(std::move(outputLayer))
 {
   // Nothing to do here.
@@ -36,51 +35,51 @@ ConcatPerformance<
 
 template<
     typename OutputLayerType,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
-template<typename eT>
-double ConcatPerformance<
+void ConcatPerformance<
     OutputLayerType,
-    InputDataType,
-    OutputDataType
->::Forward(const arma::Mat<eT>& input, arma::Mat<eT>& target)
+    InputType,
+    OutputType
+>::Forward(const InputType& input, OutputType& target)
 {
-  const size_t elements = input.n_elem / inSize;
+  const size_t elements = input.n_elem / inputDimensions[0];
 
   double output = 0;
-  for (size_t i = 0; i < input.n_elem; i+= elements)
+  for (size_t i = 0; i < input.n_elem; i += elements)
   {
-    arma::mat subInput = input.submat(i, 0, i + elements - 1, 0);
+    InputType subInput = input.submat(i, 0, i + elements - 1, 0);
     output += outputLayer.Forward(subInput, target);
   }
 
-  return output;
+  // TODO: what to do with output?
+  //return output;
+  return;
 }
 
 template<
     typename OutputLayerType,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
-template<typename eT>
 void ConcatPerformance<
     OutputLayerType,
-    InputDataType,
-    OutputDataType
+    InputType,
+    OutputType
 >::Backward(
-    const arma::Mat<eT>& input,
-    const arma::Mat<eT>& target,
-    arma::Mat<eT>& output)
+    const InputType& input,
+    const OutputType& target,
+    OutputType& output)
 {
-  const size_t elements = input.n_elem / inSize;
+  const size_t elements = input.n_elem / inputDimensions[0];
 
-  arma::mat subInput = input.submat(0, 0, elements - 1, 0);
-  arma::mat subOutput;
+  InputType subInput = input.submat(0, 0, elements - 1, 0);
+  OutputType subOutput;
 
   outputLayer.Backward(subInput, target, subOutput);
 
-  output = arma::zeros(subOutput.n_elem, inSize);
+  output = arma::zeros(subOutput.n_elem, inputDimensions[0]);
   output.col(0) = subOutput;
 
   for (size_t i = elements, j = 0; i < input.n_elem; i+= elements, ++j)
@@ -94,17 +93,19 @@ void ConcatPerformance<
 
 template<
     typename OutputLayerType,
-    typename InputDataType,
-    typename OutputDataType
+    typename InputType,
+    typename OutputType
 >
 template<typename Archive>
 void ConcatPerformance<
     OutputLayerType,
-    InputDataType,
-    OutputDataType
+    InputType,
+    OutputType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(inSize));
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
+  ar(CEREAL_NVP(outputLayer));
 }
 
 } // namespace ann

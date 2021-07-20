@@ -50,28 +50,15 @@ class LinearType: public Layer<InputType, OutputType>
   LinearType();
 
   /**
-   * Create the Linear layer object using the specified input dimension.
+   * Create the Linear layer object with the specified number of output
+   * dimensions.
    *
-   * @param inSize The input dimension.
    * @param outSize The output dimension.
    * @param regularizer The regularizer to use, optional (default: no
    *     regularizer).
    */
-  LinearType(const size_t inSize,
-             const size_t outSize,
+  LinearType(const size_t outSize,
              RegularizerType regularizer = RegularizerType());
-
-  //! Copy constructor.
-  LinearType(const LinearType& layer);
-
-  //! Move constructor.
-  LinearType(LinearType&&);
-
-  //! Copy assignment operator.
-  LinearType& operator=(const LinearType& layer);
-
-  //! Move assignment operator.
-  LinearType& operator=(LinearType&& layer);
 
   //! Clone the LinearType object. This handles polymorphism correctly.
   LinearType* Clone() const { return new LinearType(*this); }
@@ -80,7 +67,7 @@ class LinearType: public Layer<InputType, OutputType>
    * Reset the layer parameter (weights and bias). The method is called to
    * assign the allocated memory to the internal learnable parameters.
    */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -121,15 +108,9 @@ class LinearType: public Layer<InputType, OutputType>
                 OutputType& gradient);
 
   //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
+  const OutputType& Parameters() const { return weights; }
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
-
-  //! Get the input size.
-  size_t InputSize() const { return inSize; }
-
-  //! Get the output size.
-  size_t OutputSize() const { return outSize; }
 
   //! Get the weight of the layer.
   OutputType const& Weight() const { return weight; }
@@ -145,6 +126,17 @@ class LinearType: public Layer<InputType, OutputType>
   size_t WeightSize() const
   {
     return (inSize * outSize) + outSize;
+  }
+
+  void ComputeOutputDimensions()
+  {
+    inSize = std::accumulate(this->inputDimensions.begin(),
+        this->inputDimensions.end(), 0);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
+
+    // The Linear layer flattens its input.
+    this->outputDimensions[0] = outSize;
   }
 
   //! Serialize the layer.

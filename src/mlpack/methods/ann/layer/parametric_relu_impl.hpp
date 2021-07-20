@@ -30,11 +30,14 @@ PReLUType<InputType, OutputType>::PReLUType(
 }
 
 template<typename InputType, typename OutputType>
-void PReLUType<InputType, OutputType>::Reset()
+void PReLUType<InputType, OutputType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  alpha = arma::mat(alpha.memptr(), 1, 1, false, false);
+  alpha = arma::mat(weightsPtr, 1, 1, false, false);
 
   //! Set value of alpha to the one given by user.
+  // TODO: this doesn't even make any sense.  is it trainable or not?
+  // why is there userAlpha?  is that for initialization only?
   alpha(0) = userAlpha;
 }
 
@@ -42,6 +45,7 @@ template<typename InputType, typename OutputType>
 void PReLUType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
+  // TODO: use transform()?
   output = input;
   arma::uvec negative = arma::find(input < 0);
   output(negative) = input(negative) * alpha(0);
@@ -65,9 +69,6 @@ void PReLUType<InputType, OutputType>::Gradient(
     const OutputType& error,
     OutputType& gradient)
 {
-  if (gradient.n_elem == 0)
-    gradient = arma::zeros<OutputType>(1, 1);
-
   OutputType zeros = arma::zeros<OutputType>(input.n_rows, input.n_cols);
   gradient(0) = arma::accu(error % arma::min(zeros, input)) / input.n_cols;
 }
@@ -78,6 +79,8 @@ void PReLUType<InputType, OutputType>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(alpha));
 }
 

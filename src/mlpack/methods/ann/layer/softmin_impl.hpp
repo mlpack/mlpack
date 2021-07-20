@@ -46,10 +46,10 @@ void SoftminType<InputType, OutputType>::Backward(
 template<typename InputType, typename OutputType>
 template<typename Archive>
 void SoftminType<InputType, OutputType>::serialize(
-    Archive& /* ar */,
+    Archive& ar,
     const uint32_t /* version */)
 {
-  // Nothing to do here.
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
 }
 
 } // namespace ann

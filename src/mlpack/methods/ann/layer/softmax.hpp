@@ -64,12 +64,9 @@ class SoftmaxType : public Layer<InputType, OutputType>
    */
   void Backward(const InputType& input, const OutputType& gy, OutputType& g);
 
-  //! Get the size of the weights.
-  size_t WeightSize() const { return 0; }
-
   //! Serialize the layer.
   template<typename Archive>
-  void serialize(Archive& /* ar */, const uint32_t /* version */);
+  void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
 }; // class SoftmaxType

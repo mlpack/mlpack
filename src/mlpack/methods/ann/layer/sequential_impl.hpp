@@ -16,21 +16,23 @@
 // In case it hasn't yet been included.
 #include "sequential.hpp"
 
+// TODO: can this be merged with MultiLayer more closely?
+
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
 template <typename InputType, typename OutputType, bool Residual>
 SequentialType<InputType, OutputType, Residual>::
-SequentialType(const bool model) :
-    model(model), reset(false), width(0), height(0), ownsLayers(!model)
+SequentialType() :
+    reset(false), ownsLayers(true)
 {
   // Nothing to do here.
 }
 
 template <typename InputType, typename OutputType, bool Residual>
 SequentialType<InputType, OutputType, Residual>::
-SequentialType(const bool model, const bool ownsLayers) :
-    model(model), reset(false), width(0), height(0), ownsLayers(ownsLayers)
+SequentialType(const bool ownsLayers) :
+    reset(false), ownsLayers(ownsLayers)
 {
   // Nothing to do here.
 }
@@ -38,10 +40,7 @@ SequentialType(const bool model, const bool ownsLayers) :
 template <typename InputType, typename OutputType, bool Residual>
 SequentialType<InputType, OutputType, Residual>::
 SequentialType(const SequentialType& layer) :
-    model(layer.model),
     reset(layer.reset),
-    width(layer.width),
-    height(layer.height),
     ownsLayers(layer.ownsLayers)
 {
   // Nothing to do here.
@@ -54,19 +53,10 @@ operator = (const SequentialType& layer)
 {
   if (this != &layer)
   {
-    model = layer.model;
     reset = layer.reset;
-    width = layer.width;
-    height = layer.height;
     ownsLayers = layer.ownsLayers;
-    parameters = layer.parameters;
-    network.clear();
-    // Build new layers according to source network.
-    // for (size_t i = 0; i < layer.network.size(); ++i)
-    // {
-    //   this->network.push_back(boost::apply_visitor(copyVisitor,
-    //       layer.network[i]));
-    // }
+    network = layer.network;
+    // Call copy constructor of parent...
   }
   return *this;
 }
@@ -75,7 +65,7 @@ operator = (const SequentialType& layer)
 template <typename InputType, typename OutputType, bool Residual>
 SequentialType<InputType, OutputType, Residual>::~SequentialType()
 {
-  if (!model && ownsLayers)
+  if (ownsLayers)
   {
     for (size_t i = 0; i < network.size(); ++i)
       delete network[i];
@@ -86,59 +76,17 @@ template <typename InputType, typename OutputType, bool Residual>
 void SequentialType<InputType, OutputType, Residual>::
 Forward(const InputType& input, OutputType& output)
 {
-  network.front()->Forward(input, network.front()->OutputParameter());
+  InitializeForwardPassMemory();
 
-  // if (!reset)
-  // {
-  //   if (boost::apply_visitor(outputWidthVisitor, network.front()) != 0)
-  //   {
-  //     width = boost::apply_visitor(outputWidthVisitor, network.front());
-  //   }
-
-  //   if (boost::apply_visitor(outputHeightVisitor, network.front()) != 0)
-  //   {
-  //     height = boost::apply_visitor(outputHeightVisitor, network.front());
-  //   }
-  // }
+  network.front()->Forward(input, layerOutputs.front());
 
   for (size_t i = 1; i < network.size(); ++i)
   {
-    // if (!reset)
-    // {
-    //   // Set the input width.
-    //   boost::apply_visitor(SetInputWidthVisitor(width), network[i]);
-
-    //   // Set the input height.
-    //   boost::apply_visitor(SetInputHeightVisitor(height), network[i]);
-    // }
-
-    network[i]->Forward(
-        network[i - 1]->OutputParameter(),
-        network[i]->OutputParameter()
-    );
-
-    // if (!reset)
-    // {
-    //   // Get the output width.
-    //   if (boost::apply_visitor(outputWidthVisitor, network[i]) != 0)
-    //   {
-    //     width = boost::apply_visitor(outputWidthVisitor, network[i]);
-    //   }
-
-    //   // Get the output height.
-    //   if (boost::apply_visitor(outputHeightVisitor, network[i]) != 0)
-    //   {
-    //     height = boost::apply_visitor(outputHeightVisitor, network[i]);
-    //   }
-    // }
+    network[i]->Forward(layerOutputs[i - 1], layerOutputs[i]);
   }
 
-  // if (!reset)
-  // {
-  //   reset = true;
-  // }
-
-  output = network.back()->OutputParameter();
+  // TODO: optimization is possible here
+  output = layerOutputs.back();
 
   if (Residual)
   {
@@ -158,22 +106,17 @@ void SequentialType<InputType, OutputType, Residual>::Backward(
         const OutputType& gy,
         OutputType& g)
 {
-  network.back()->Backward(
-      network.back()->OutputParameter(),
-      gy,
-      network.back()->Delta()
-  );
+  InitializeBackwardPassMemory();
+
+  network.back()->Backward(layerOutputs.back(), gy, layerDeltas.back());
 
   for (size_t i = 2; i < network.size() + 1; ++i)
   {
-    network[network.size() - i]->Backward(
-        network[network.size() - i]->OutputParameter(),
-        network[network.size() - i + 1]->Delta(),
-        network[network.size() - i]->Delta()
-    );
+    network[network.size() - i]->Backward(layerOutputs[network.size() - i],
+        layerDeltas[network.size() - i + 1], layerDeltas[network.size() - i]);
   }
 
-  g = network.front()->Delta();
+  g = layerDeltas.front();
 
   if (Residual)
   {
@@ -187,26 +130,21 @@ Gradient(const InputType& input,
          const OutputType& error,
          OutputType& /* gradient */)
 {
-  network.back()->Gradient(
-      network[network.size() - 2]->OutputParameter(),
-      error,
-      network.back()->Gradient()
-  );
+  InitializeGradientPassMemory();
+
+  network.back()->Gradient(layerOutputs[network.size() - 2], error,
+      layerGradients.back());
 
   for (size_t i = 2; i < network.size(); ++i)
   {
     network[network.size() - i]->Gradient(
-        network[network.size() - i - 1]->OutputParameter(),
-        network[network.size() - i + 1]->Delta(),
-        network[network.size() - i]->Gradient()
+        layerOutputs[network.size() - i - 1],
+        layerDeltas[network.size() - i + 1],
+        layerGradients[network.size() - i]
     );
   }
 
-  network.front()->Gradient(
-      input,
-      network[1]->Delta(),
-      network.front()->Gradient()
-  );
+  network.front()->Gradient(input, layerDeltas[1], layerGradients.front());
 }
 
 template <typename InputType, typename OutputType, bool Residual>
@@ -214,15 +152,8 @@ template<typename Archive>
 void SequentialType<InputType, OutputType, Residual>::serialize(
         Archive& ar, const uint32_t /* version */)
 {
-  // If loading, delete the old layers.
-  if (cereal::is_loading<Archive>())
-  {
-    for (size_t i = 0; i < network.size(); ++i)
-      delete network[i];
-  }
+  ar(cereal::base_class<MultiLayer<InputType, OutputType>>(this));
 
-  ar(CEREAL_NVP(model));
-  // ar(CEREAL_VECTOR_VARIANT_POINTER(network));
   ar(CEREAL_NVP(ownsLayers));
 }
 

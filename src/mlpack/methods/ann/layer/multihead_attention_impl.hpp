@@ -58,29 +58,31 @@ MultiheadAttentionType(
   }
 
   headDim = embedDim / numHeads;
-  weights.set_size(4 * (embedDim + 1) * embedDim, 1);
 }
 
 template <typename InputType, typename OutputType, typename RegularizerType>
-void MultiheadAttentionType<InputType, OutputType, RegularizerType>::
-Reset()
+void MultiheadAttentionType<InputType, OutputType, RegularizerType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  queryWt = OutputType(weights.memptr(), embedDim, embedDim, false, false);
-  keyWt = OutputType(weights.memptr() + embedDim * embedDim,
-      embedDim, embedDim, false, false);
-  valueWt = OutputType(weights.memptr() + 2 * embedDim * embedDim,
-      embedDim, embedDim, false, false);
-  outWt = OutputType(weights.memptr() + 3 * embedDim * embedDim,
-      embedDim, embedDim, false, false);
+  weights = OutputType(weightsPtr, 1, (4 * embedDim + 4) * embedDim, false,
+      true);
 
-  qBias = OutputType(weights.memptr()
-      + 4 * embedDim * embedDim, embedDim, 1, false, false);
-  kBias = OutputType(weights.memptr()
-      + (4 * embedDim + 1) * embedDim, embedDim, 1, false, false);
-  vBias = OutputType(weights.memptr()
-      + (4 * embedDim + 2) * embedDim, embedDim, 1, false, false);
-  outBias = OutputType(weights.memptr()
-      + (4 * embedDim + 3) * embedDim, 1, embedDim, false, false);
+  queryWt = OutputType(weightsPtr, embedDim, embedDim, false, true);
+  keyWt = OutputType(weightsPtr + embedDim * embedDim, embedDim, embedDim,
+      false, true);
+  valueWt = OutputType(weightsPtr + 2 * embedDim * embedDim, embedDim, embedDim,
+      false, true);
+  outWt = OutputType(weightsPtr + 3 * embedDim * embedDim, embedDim, embedDim,
+      false, true);
+
+  qBias = OutputType(weightsPtr + 4 * embedDim * embedDim, embedDim, 1, false,
+      true);
+  kBias = OutputType(weightsPtr + (4 * embedDim + 1) * embedDim, embedDim, 1,
+      false, true);
+  vBias = OutputType(weightsPtr + (4 * embedDim + 2) * embedDim, embedDim, 1,
+      false, true);
+  outBias = OutputType(weightsPtr + (4 * embedDim + 3) * embedDim, 1, embedDim,
+      false, true);
 }
 
 template <typename InputType, typename OutputType, typename RegularizerType>
@@ -429,16 +431,35 @@ template <typename Archive>
 void MultiheadAttentionType<InputType, OutputType, RegularizerType>::
 serialize(Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(tgtSeqLen));
   ar(CEREAL_NVP(srcSeqLen));
   ar(CEREAL_NVP(embedDim));
   ar(CEREAL_NVP(numHeads));
   ar(CEREAL_NVP(headDim));
+  ar(CEREAL_NVP(softmax));
+  ar(CEREAL_NVP(regularizer));
 
-  // This is inefficient, but we have to allocate this memory so that
-  // WeightSetVisitor gets the right size.
-  if (cereal::is_loading<Archive>())
-    weights.set_size(4 * embedDim * (embedDim + 1), 1);
+  if (Archive::is_loading::value)
+  {
+    attnMask.clear();
+    keyPaddingMask.clear();
+    queryWt.clear();
+    keyWt.clear();
+    valueWt.clear();
+    outWt.clear();
+    qBias.clear();
+    kBias.clear();
+    vBias.clear();
+    outBias.clear();
+    weights.clear();
+    qProj.clear();
+    kProj.clear();
+    vProj.clear();
+    scores.clear();
+    attnOut.clear();
+  }
 }
 
 } // namespace ann

@@ -19,23 +19,11 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputType, typename OutputType>
-ReparametrizationType<InputType, OutputType>::ReparametrizationType() :
-    latentSize(0),
-    stochastic(true),
-    includeKl(true),
-    beta(1)
-{
-  // Nothing to do here.
-}
-
 template <typename InputType, typename OutputType>
 ReparametrizationType<InputType, OutputType>::ReparametrizationType(
-    const size_t latentSize,
     const bool stochastic,
     const bool includeKl,
     const double beta) :
-    latentSize(latentSize),
     stochastic(stochastic),
     includeKl(includeKl),
     beta(beta)
@@ -51,13 +39,7 @@ template<typename InputType, typename OutputType>
 void ReparametrizationType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  if (input.n_rows != 2 * latentSize)
-  {
-    Log::Fatal << "The output size of layer before the Reparametrization "
-        << "layer should be 2 * latent size of the Reparametrization layer!"
-        << std::endl;
-  }
-
+  const size_t latentSize = this->outputDimensions[0];
   mean = input.submat(latentSize, 0, 2 * latentSize - 1, input.n_cols - 1);
   preStdDev = input.submat(0, 0, latentSize - 1, input.n_cols - 1);
 
@@ -74,15 +56,28 @@ template<typename InputType, typename OutputType>
 void ReparametrizationType<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  SoftplusFunction::Deriv(preStdDev, g);
+  OutputType tmp;
+  SoftplusFunction::Deriv(preStdDev, tmp);
 
   if (includeKl)
   {
-    g = join_cols(gy % std::move(gaussianSample) % g + (-1 / stdDev + stdDev)
-        % g * beta, gy + mean * beta / mean.n_cols);
+    g = join_cols(gy % std::move(gaussianSample) % tmp + (-1 / stdDev + stdDev)
+        % tmp * beta, gy + mean * beta / mean.n_cols);
   }
   else
-    g = join_cols(gy % std::move(gaussianSample) % g, gy);
+  {
+    g = join_cols(gy % std::move(gaussianSample) % tmp, gy);
+  }
+}
+
+template<typename InputType, typename OutpuType>
+double ReparametrizationType<InputType, OutpuType>::Loss()
+{
+  if (!includeKl)
+    return 0;
+
+  return -0.5 * beta * arma::accu(2 * arma::log(stdDev) - arma::pow(stdDev, 2)
+      - arma::pow(mean, 2) + 1) / mean.n_cols;
 }
 
 template<typename InputType, typename OutputType>
@@ -90,9 +85,11 @@ template<typename Archive>
 void ReparametrizationType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  ar(CEREAL_NVP(latentSize));
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(stochastic));
   ar(CEREAL_NVP(includeKl));
+  ar(CEREAL_NVP(beta));
 }
 
 } // namespace ann

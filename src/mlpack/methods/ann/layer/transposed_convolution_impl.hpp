@@ -185,12 +185,12 @@ void TransposedConvolutionType<
     GradientConvolutionRule,
     InputType,
     OutputType
->::Reset()
+>::SetWeights(typename OutputType::elem_type* weightPtr)
 {
-    weight = arma::cube(weights.memptr(), kernelWidth, kernelHeight,
-        outSize * inSize, false, false);
-    bias = arma::mat(weights.memptr() + weight.n_elem,
-        outSize, 1, false, false);
+  weight = arma::Cube<typename OutputType::elem_type>(weightPtr,
+      kernelWidth, kernelHeight, outSize * inSize, false, false);
+  bias = arma::Mat<typename OutputType::elem_type>(weightsPtr +
+      weight.n_elem, outSize, 1, false, false);
 }
 
 template<
@@ -209,8 +209,9 @@ void TransposedConvolutionType<
 >::Forward(const InputType& input, OutputType& output)
 {
   batchSize = input.n_cols;
-  arma::cube inputTemp(const_cast<InputType&>(input).memptr(),
-      inputWidth, inputHeight, inSize * batchSize, false, false);
+  arma::Cube<typename InputType::elem_type> inputTemp(
+      const_cast<InputType&>(input).memptr(), inputWidth, inputHeight,
+      inSize * batchSize, false, false);
 
   if (strideWidth > 1 || strideHeight > 1)
   {
@@ -232,9 +233,9 @@ void TransposedConvolutionType<
     }
     else
     {
-      inputPaddedTemp = arma::cube(inputExpandedTemp.memptr(),
-          inputExpandedTemp.n_rows, inputExpandedTemp.n_cols,
-          inputExpandedTemp.n_slices, false, false);;
+      inputPaddedTemp = arma::Cube<typename InputType::elem_type>(
+          inputExpandedTemp.memptr(), inputExpandedTemp.n_rows,
+          inputExpandedTemp.n_cols, inputExpandedTemp.n_slices, false, false);;
     }
   }
   else if (paddingForward.PadWLeft() != 0 ||
@@ -254,8 +255,8 @@ void TransposedConvolutionType<
   }
 
   output.set_size(outputWidth * outputHeight * outSize, batchSize);
-  outputTemp = arma::cube(output.memptr(), outputWidth, outputHeight,
-      outSize * batchSize, false, false);
+  outputTemp = arma::Cube<typename OutputType::elem_type>(output.memptr(),
+      outputWidth, outputHeight, outSize * batchSize, false, false);
   outputTemp.zeros();
 
   for (size_t outMap = 0, outMapIdx = 0, batchCount = 0; outMap <
@@ -311,9 +312,10 @@ void TransposedConvolutionType<
 >::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
-  arma::cube mappedError(((OutputType&) gy).memptr(), outputWidth,
+  arma::Cube<typename OutputType::elem_type> mappedError(
+      ((OutputType&) gy).memptr(), outputWidth,
       outputHeight, outSize * batchSize, false, false);
-  arma::cube mappedErrorPadded;
+  arma::Cube<typename OutputType::elem_type> mappedErrorPadded;
   if (paddingBackward.PadWLeft() != 0 || paddingBackward.PadWRight() != 0 ||
       paddingBackward.PadHTop() != 0 || paddingBackward.PadHBottom() != 0)
   {
@@ -329,8 +331,8 @@ void TransposedConvolutionType<
     }
   }
   g.set_size(inputWidth * inputHeight * inSize, batchSize);
-  gTemp = arma::cube(g.memptr(), inputWidth, inputHeight, inSize *
-      batchSize, false, false);
+  gTemp = arma::Cube<typename OutputType::elem_type>(g.memptr(), inputWidth,
+      inputHeight, inSize * batchSize, false, false);
 
   gTemp.zeros();
 
@@ -382,14 +384,16 @@ void TransposedConvolutionType<
     const OutputType& error,
     OutputType& gradient)
 {
-  arma::cube mappedError(((OutputType&) error).memptr(), outputWidth,
-      outputHeight, outSize * batchSize, false, false);
-  arma::cube inputTemp(const_cast<InputType&>(input).memptr(),
-      inputWidth, inputHeight, inSize * batchSize, false, false);
+  arma::Cube<typename OutputType::elem_type> mappedError(
+      ((OutputType&) error).memptr(), outputWidth, outputHeight,
+      outSize * batchSize, false, false);
+  arma::Cube<typename InputType::elem_type> inputTemp(
+      const_cast<InputType&>(input).memptr(), inputWidth, inputHeight,
+      inSize * batchSize, false, false);
 
   gradient.set_size(weights.n_elem, 1);
-  gradientTemp = arma::cube(gradient.memptr(), weight.n_rows,
-      weight.n_cols, weight.n_slices, false, false);
+  gradientTemp = arma::Cube<typename InputType::elem_type>(gradient.memptr(),
+      weight.n_rows, weight.n_cols, weight.n_slices, false, false);
   gradientTemp.zeros();
 
   OutputType inputSlice, output, deltaSlice, rotatedOutput;
@@ -448,6 +452,8 @@ void TransposedConvolutionType<
     OutputType
 >::serialize(Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
   ar(CEREAL_NVP(batchSize));
@@ -468,8 +474,6 @@ void TransposedConvolutionType<
 
   if (cereal::is_loading<Archive>())
   {
-    weights.set_size((outSize * inSize * kernelWidth * kernelHeight) + outSize,
-        1);
     size_t totalPadWidth = padWLeft + padWRight;
     size_t totalPadHeight = padHTop + padHBottom;
     aW = (outputWidth + kernelWidth - totalPadWidth - 2) % strideWidth;

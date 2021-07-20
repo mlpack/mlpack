@@ -25,14 +25,9 @@ namespace ann /** Artificial Neural Network. */ {
  * The DropConnect layer is a regularizer that randomly with probability
  * ratio sets the connection values to zero and scales the remaining
  * elements by factor 1 /(1 - ratio). The output is scaled with 1 / (1 - p)
- * when deterministic is false. In the deterministic mode(during testing),
- * the layer just computes the output. The output is computed according
- * to the input layer. If no input layer is given, it will take a linear layer
- * as default.
- *
- * Note:
- * During training you should set deterministic to false and during testing
- * you should set deterministic to true.
+ * when in training mode.  During testing, the layer just computes the output.
+ * The output is computed according to the input layer. If no input layer is
+ * given, it will take a linear layer as default.
  *
  * For more information, see the following.
  *
@@ -62,19 +57,21 @@ class DropConnectType : public Layer<InputType, OutputType>
   DropConnectType();
 
   /**
-   * Creates the DropConnect Layer as a Linear Object that takes input size,
-   * output size and ratio as parameter.
+   * Creates the DropConnect Layer as a Linear Object that takes the number of
+   * output units and a ratio as parameter.
    *
-   * @param inSize The number of input units.
    * @param outSize The number of output units.
    * @param ratio The probability of setting a value to zero.
    */
-  DropConnectType(const size_t inSize,
-                  const size_t outSize,
+  DropConnectType(const size_t outSize,
                   const double ratio = 0.5);
 
   //! Clone the DropConnectType object. This handles polymorphism correctly.
   DropConnectType* Clone() const { return new DropConnectType(*this); }
+
+  // TODO: copy constructor, move constructor, operators
+
+  ~DropConnectType();
 
   /**
    * Ordinary feed forward pass of the DropConnect layer.
@@ -104,20 +101,6 @@ class DropConnectType : public Layer<InputType, OutputType>
                 const OutputType& error,
                 OutputType& gradient);
 
-  //! Get the model modules.
-  std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
-
-  //! Get the parameters.
-  OutputType const& Parameters() const { return weights; }
-  //! Modify the parameters.
-  OutputType& Parameters() { return weights; }
-
-  //! The value of the deterministic parameter.
-  bool const& Deterministic() const { return deterministic; }
-
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
-
   //! The probability of setting a value to zero.
   double Ratio() const { return ratio; }
 
@@ -128,8 +111,22 @@ class DropConnectType : public Layer<InputType, OutputType>
     scale = 1.0 / (1.0 - ratio);
   }
 
-  //! Return the size of the weight matrix.
-  size_t WeightSize() const { return 0; }
+  void ComputeOutputDimensions()
+  {
+    // Propagate input dimensions to the base layer.
+    baseLayer->InputDimensions() = this->inputDimensions;
+    this->outputDimensions = baseLayer->OutputDimensions();
+  }
+
+  size_t WeightSize() const
+  {
+    return baseLayer->WeightSize();
+  }
+
+  void SetWeights(typename OutputType::elem_type* weightsPtr)
+  {
+    baseLayer->SetWeights(weightsPtr);
+  }
 
   /**
    * Serialize the layer.
@@ -144,23 +141,14 @@ class DropConnectType : public Layer<InputType, OutputType>
   //! The scale fraction.
   double scale;
 
-  //! Locally-stored weight object.
-  OutputType weights;
-
   //! Locally-stored mask object.
   OutputType mask;
-
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
 
   //! Denoise mask for the weights.
   OutputType denoise;
 
   //! Locally-stored layer module.
   Layer<InputType, OutputType>* baseLayer;
-
-  //! Locally-stored network modules.
-  std::vector<Layer<InputType, OutputType>*> network;
 }; // class DropConnect.
 
 // Convenience typedefs.

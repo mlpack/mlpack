@@ -35,6 +35,11 @@ class ConstantType : public Layer<InputType, OutputType>
 {
  public:
   /**
+   * Create an empty Constant layer.
+   */
+  ConstantType();
+
+  /**
    * Create the Constant object that outputs a given constant scalar value
    * given any input value.
    *
@@ -43,8 +48,18 @@ class ConstantType : public Layer<InputType, OutputType>
    */
   ConstantType(const size_t outSize, const double scalar = 0);
 
+  //! Copy another ConstantType.
+  ConstantType(const ConstantType& layer);
+  //! Take ownership of another ConstantType.
+  ConstantType(ConstantType&& layer);
+  //! Copy another ConstantType.
+  ConstantType& operator=(const ConstantType& layer);
+  //! Take ownership of another ConstantType.
+  ConstantType& operator=(ConstantType&& layer);
+
   //! Clone the ConstantType object. This handles polymorphism correctly.
   ConstantType* Clone() const { return new ConstantType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network. The forward pass fills the
    * output with the specified constant parameter.
@@ -67,16 +82,18 @@ class ConstantType : public Layer<InputType, OutputType>
                 OutputType& g);
 
   //! Get the output size.
-  size_t OutSize() const { return outSize; }
+  const std::vector<size_t>& OutputDimensions() const
+  {
+    std::vector<size_t> result(this->inputDimensions.size(), 0);
+    result[0] = outSize;
+    return result;
+  }
 
   //! Serialize the layer.
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored number of input units.
-  size_t inSize;
-
   //! Locally-stored number of output units.
   size_t outSize;
 

@@ -33,10 +33,10 @@ namespace ann /** Artificial Neural Network. */ {
  * @tparam InitializationRuleType Rule used to initialize the weight matrix.
  */
 template<
-  typename OutputLayerType = NegativeLogLikelihood<>,
-  typename InitializationRuleType = RandomInitialization,
-  typename InputType = arma::mat,
-  typename OutputType = arma::mat>
+    typename OutputLayerType = NegativeLogLikelihood<>,
+    typename InitializationRuleType = RandomInitialization,
+    typename InputType = arma::mat,
+    typename OutputType = arma::mat>
 class FFN
 {
  public:
@@ -69,7 +69,7 @@ class FFN
   FFN(FFN&&);
 
   //! Copy/move assignment operator.
-  FFN& operator = (FFN);
+  FFN& operator=(FFN);
 
   //! Destructor to release allocated memory.
   ~FFN();
@@ -164,8 +164,11 @@ class FFN
    *
    * @param predictors Input predictors.
    * @param results Matrix to put output predictions of responses into.
+   * @param batchSize Batch size to use for prediction.
    */
-  void Predict(InputType predictors, OutputType& results);
+  void Predict(InputType predictors,
+               OutputType& results,
+               const size_t batchSize = 128);
 
   /**
    * Evaluate the feedforward network with the given predictors and responses.
@@ -191,24 +194,8 @@ class FFN
    * a number of data points. This is useful for optimizers such as SGD, which
    * require a separable objective function.
    *
-   * @param parameters Matrix model parameters.
-   * @param begin Index of the starting point to use for objective function
-   *        evaluation.
-   * @param batchSize Number of points to be passed at a time to use for
-   *        objective function evaluation.
-   * @param deterministic Whether or not to train or test the model. Note some
-   *        layer act differently in training or testing mode.
-   */
-  double Evaluate(const OutputType& parameters,
-                  const size_t begin,
-                  const size_t batchSize,
-                  const bool deterministic);
-
-   /**
-   * Evaluate the feedforward network with the given parameters, but using only
-   * a number of data points. This is useful for optimizers such as SGD, which
-   * require a separable objective function. This just calls the overload of
-   * Evaluate() with deterministic = true.
+   * Note that the network may return different results depending on the mode it
+   * is in (see `SetNetworkMode()`).
    *
    * @param parameters Matrix model parameters.
    * @param begin Index of the starting point to use for objective function
@@ -228,7 +215,8 @@ class FFN
    * @param parameters Matrix model parameters.
    * @param gradient Matrix to output gradient into.
    */
-  double EvaluateWithGradient(const OutputType& parameters, OutputType& gradient);
+  double EvaluateWithGradient(const OutputType& parameters,
+                              OutputType& gradient);
 
    /**
    * Evaluate the feedforward network with the given parameters, but using only
@@ -276,14 +264,30 @@ class FFN
    * @param args The layer parameter.
    */
   template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
+  void Add(Args... args)
+  {
+    network.push_back(new LayerType(args...));
+    layerOutputs.push_back(OutputType());
+    layerDeltas.push_back(OutputType());
+    layerGradients.push_back(OutputType());
+    inputDimensionsAreSet = false;
+  }
 
   /**
    * Add a new module to the model.
    *
    * @param layer The Layer to be added to the model.
    */
-  void Add(Layer<InputType, OutputType>* layer) { network.push_back(layer); }
+  //! TODO: if weights are set in this layer, we should copy them and update our
+  //cached parameters
+  void Add(Layer<InputType, OutputType>* layer)
+  {
+    network.push_back(layer);
+    layerOutputs.push_back(OutputType());
+    layerDeltas.push_back(OutputType());
+    layerGradients.push_back(OutputType());
+    inputDimensionsAreSet = false;
+  }
 
   //! Get the network model.
   const std::vector<Layer<InputType, OutputType>*>& Model() const
@@ -299,12 +303,12 @@ class FFN
   std::vector<Layer<InputType, OutputType>*>& Model() { return network; }
 
   //! Return the number of separable functions (the number of predictor points).
-  size_t NumFunctions() const { return numFunctions; }
+  size_t NumFunctions() const { return responses.n_cols; }
 
   //! Return the initial point for the optimization.
-  const OutputType& Parameters() const { return parameter; }
+  const OutputType& Parameters() const { return parameters; }
   //! Modify the initial point for the optimization.
-  OutputType& Parameters() { return parameter; }
+  OutputType& Parameters() { return parameters; }
 
   //! Get the matrix of responses to the input data points.
   const InputType& Responses() const { return responses; }
@@ -316,8 +320,23 @@ class FFN
   //! Modify the matrix of data points (predictors).
   InputType& Predictors() { return predictors; }
 
-  //! Reset the module infomration (weights/parameters).
-  void ResetParameters();
+  /**
+   * Reset the stored data of the network entirely.  This resets all weights of
+   * each layer, and prepares the network to accept an input size of
+   * `inputDimensionality` (if passed), or whatever input size has been set
+   * with `InputDimensions()`.
+   *
+   * This also resets the mode of the network to prediction mode (not training
+   * mode).  See `SetNetworkMode()` for more information.
+   */
+  void Reset(const size_t inputDimensionality = 0);
+
+  /**
+   * Set all the layers in the network to training mode, if `training` is
+   * `true`, or set all the layers in the network to testing mode, if `training`
+   * is `false`.
+   */
+  void SetNetworkMode(const bool training);
 
   //! Serialize the model.
   template<typename Archive>
@@ -372,16 +391,26 @@ class FFN
                   const TargetsType& targets,
                   GradientsType& gradients);
 
+  /**
+   * Set the logical dimensions of the input.
+   *
+   * TODO: better comment.  You would call this when you want to, e.g., pass an
+   * n-dimensional tensor, so that you can specify each of those n dimensions.
+   */
+  // Note: we don't need to invalidate any caches, because any forward pass will
+  // already check if the input dimensions have changed.
+  std::vector<size_t>& InputDimensions() { return inputDimensions; }
+  //! Get the logical dimensions of the input.
+  const std::vector<size_t>& InputDimensions() const
+  {
+    // The user may change the input dimensions, so we will have to propagate
+    // these changes to the network.
+    inputDimensionsAreSet = false;
+    return inputDimensions;
+  }
+
  private:
   // Helper functions.
-
-  /**
-   * The Forward algorithm (part of the Forward-Backward algorithm).  Computes
-   * forward probabilities for each module.
-   *
-   * @param input Data sequence to compute probabilities for.
-   */
-  void Forward(const InputType& input);
 
   /**
    * Prepare the network for the given data.
@@ -391,6 +420,13 @@ class FFN
    * @param responses Outputs results from input data variables.
    */
   void ResetData(InputType predictors, InputType responses);
+
+  //! Use the InitializationPolicy to initialize all the weights in the network.
+  void InitializeWeights();
+
+  //! Make the memory of each layer point to the right place, by calling
+  //! SetWeightPtr() on each layer.
+  void SetLayerMemory();
 
   /**
    * The Backward algorithm (part of the Forward-Backward algorithm). Computes
@@ -402,18 +438,41 @@ class FFN
    * Iterate through all layer modules and update the the gradient using the
    * layer defined optimizer.
    */
-  void Gradient(const InputType& input);
+  void Gradient(const InputType& input, OutputType& gradient);
 
   /**
-   * Reset the module status by setting the current deterministic parameter
-   * for all modules that implement the Deterministic function.
+   * Ensure that all the locally-cached information about the network is valid,
+   * all parameter memory is initialized, and we can make forward and backward
+   * passes.
+   *
+   * @param functionName Name of function to use if an exception is thrown.
+   * @param inputDimensionality Given dimensionality of the input data.
+   * @param setMode If true, the mode of the network will be set to the
+   *     parameter given in `training`.  Otherwise the mode of the network is
+   *     left unmodified.
+   * @param training Mode to set the network to; `true` indicates the network
+   *     should be set to training mode; `false` indicates testing mode.
    */
-  void ResetDeterministic();
+  void CheckNetwork(const std::string& functionName,
+                    const size_t inputDimensionality,
+                    const bool setMode = false,
+                    const bool training = false);
 
   /**
-   * Reset the gradient for all modules that implement the Gradient function.
+   * Set the input and output dimensions of each layer in the network correctly.
+   * The size of the input is taken, in case `inputDimensions` has not been set
+   * otherwise (e.g. via `InputDimensions()`).
    */
-  void ResetGradients(OutputType& gradient);
+  void UpdateDimensions(const std::string& functionName,
+                        const size_t inputDimensionality);
+
+  /**
+   * Initialize memory to be used for storing the outputs of each layer, if
+   * necessary.
+   */
+  void InitializeForwardPassMemory(const size_t batchSize);
+  void InitializeBackwardPassMemory(const size_t batchSize);
+  void InitializeGradientPassMemory(OutputType& gradient);
 
   /**
    * Swap the content of this network with given network.
@@ -429,48 +488,78 @@ class FFN
   //! parameter.
   InitializationRuleType initializeRule;
 
-  //! The input width.
-  size_t width;
-
-  //! The input height.
-  size_t height;
-
-  //! Indicator if we already trained the model.
-  bool reset;
-
   //! Locally-stored model modules.
   std::vector<Layer<InputType, OutputType>*> network;
 
-  //! The matrix of data points (predictors).
+  /**
+   * Matrix of (trainable) parameters.  Each weight here corresponds to a layer,
+   * and each layer's `parameters` member is an alias pointing to parameters in
+   * this matrix.
+   *
+   * Note: although each layer may have its own InputType and OutputType,
+   * ensmallen optimization requires everything to be stored in one matrix
+   * object, so we have chosen OutputType.  This could be made more flexible
+   * with a "wrapper" class implementing the Armadillo API.
+   */
+  OutputType parameters;
+
+  //! Dimensions of input data.
+  std::vector<size_t> inputDimensions;
+
+  //! The matrix of data points (predictors).  This member is empty, except
+  //! during training---we must store a local copy of the training data since
+  //! the ensmallen optimizer will not provide training data.
   InputType predictors;
 
-  //! The matrix of responses to the input data points.
+  //! The matrix of responses to the input data points.  This member is empty,
+  //! except during training.
   InputType responses;
-
-  //! Matrix of (trained) parameters.
-  OutputType parameter;
-
-  //! The number of separable functions (the number of predictor points).
-  size_t numFunctions;
 
   //! The current error for the backward pass.
   OutputType error;
 
   //! The current evaluation mode (training or testing).
-  bool deterministic;
+  bool training;
+
+  //! If true, each layer has its memory properly set for a forward/backward
+  //! pass.
+  bool layerMemoryIsSet;
+
+  //! If true, each layer has its inputDimensions properly set, and
+  //! `totalInputSize` and `totalOutputSize` are valid.
+  bool inputDimensionsAreSet;
+
+  //! Cached total number of input elements across all layers (for deltaMatrix
+  //! and layerDeltas).
+  size_t totalInputSize;
+  //! Cached total number of output elements across all layers (for
+  //! layerOutputMatrix and layerOutputs).
+  size_t totalOutputSize;
+
+  //! Locally-stored output parameter object.  This holds the results of
+  //! Forward() for each layer, all in one matrix.
+  OutputType layerOutputMatrix;
+  //! Aliases to different parts of layerOutputMatrix, for convenience.
+  //! layerOutputs[i] stores the results of Forward() for layer i.
+  std::vector<OutputType> layerOutputs;
 
   //! Locally-stored delta object.
-  OutputType delta;
+  OutputType deltaMatrix;
+  std::vector<OutputType> layerDeltas;
 
-  //! Locally-stored input parameter object.
-  InputType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
-
-  //! Locally-stored gradient parameter.
-  OutputType gradient;
+  //! Aliases to different parts of the gradient, for convenience.
+  //! gradientOutputs[i] stores the results of Gradient() for layer i.  These
+  //! elements are only valid inside of Gradient().
+  std::vector<OutputType> layerGradients;
 }; // class FFN
+
+// Utility function to make `m` an alias of the given memory at `newMem`, with a
+// size of numElem x 1.
+template<typename MatType>
+void MakeAlias(MatType& m,
+               typename MatType::elem_type* newMem,
+               const size_t numRows,
+               const size_t numCols);
 
 } // namespace ann
 } // namespace mlpack

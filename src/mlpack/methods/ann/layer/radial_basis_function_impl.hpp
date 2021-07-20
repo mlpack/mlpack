@@ -17,85 +17,86 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType,
+template<typename InputType, typename OutputType,
          typename Activation>
-RBF<InputDataType, OutputDataType, Activation>::RBF() :
-    inSize(0),
+RBF<InputType, OutputType, Activation>::RBF() :
     outSize(0),
-    sigmas(0),
     betas(0)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType,
+template<typename InputType, typename OutputType,
          typename Activation>
-RBF<InputDataType, OutputDataType, Activation>::RBF(
-    const size_t inSize,
+RBF<InputType, OutputType, Activation>::RBF(
     const size_t outSize,
-    arma::mat& centres,
+    InputType& centres,
     double betas) :
-    inSize(inSize),
     outSize(outSize),
     betas(betas),
     centres(centres)
 {
-  sigmas = 0;
+  double sigmas = 0;
   if (betas == 0)
   {
     for (size_t i = 0; i < centres.n_cols; i++)
     {
-      double max_dis = 0;
-      arma::mat temp = centres.each_col() - centres.col(i);
-      max_dis = arma::accu(arma::max(arma::pow(arma::sum(
+      double maxDis = 0;
+      InputType temp = centres.each_col() - centres.col(i);
+      maxDis = arma::accu(arma::max(arma::pow(arma::sum(
           arma::pow((temp), 2), 0), 0.5).t()));
-      if (max_dis > sigmas)
-        sigmas = max_dis;
+      if (maxDis > sigmas)
+        sigmas = maxDis;
     }
     this->betas = std::pow(2 * outSize, 0.5) / sigmas;
   }
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename Activation>
-template<typename eT>
-void RBF<InputDataType, OutputDataType, Activation>::Forward(
-    const arma::Mat<eT>& input,
-    arma::Mat<eT>& output)
+template<typename InputType, typename OutputType, typename Activation>
+void RBF<InputType, OutputType, Activation>::Forward(
+    const InputType& input,
+    OutputType& output)
 {
-  distances = arma::mat(outSize, input.n_cols);
+  // Sanity check: make sure the dimensions are right.
+  if (input.n_rows != centres.n_rows)
+  {
+    Log::Fatal << "RBF::Forward(): input size (" << input.n_rows << ") does "
+        << "not match given center size (" << centres.n_rows << ")!"
+        << std::endl;
+  }
+
+  distances = InputType(outSize, input.n_cols);
 
   for (size_t i = 0; i < input.n_cols; i++)
   {
-    arma::mat temp = centres.each_col() - input.col(i);
+    InputType temp = centres.each_col() - input.col(i);
     distances.col(i) = arma::pow(arma::sum(
-      arma::pow((temp), 2), 0), 0.5).t();
+        arma::pow((temp), 2), 0), 0.5).t();
   }
-  Activation::Fn(distances * std::pow(betas, 0.5),
-      output);
+  Activation::Fn(distances * std::pow(betas, 0.5), output);
 }
 
 
-template<typename InputDataType, typename OutputDataType,
-         typename Activation>
-template<typename eT>
-void RBF<InputDataType, OutputDataType, Activation>::Backward(
-    const arma::Mat<eT>& /* input */,
-    const arma::Mat<eT>& /* gy */,
-    arma::Mat<eT>& /* g */)
+template<typename InputType, typename OutputType, typename Activation>
+void RBF<InputType, OutputType, Activation>::Backward(
+    const InputType& /* input */,
+    const OutputType& /* gy */,
+    OutputType& /* g */)
 {
   // Nothing to do here.
 }
 
-template<typename InputDataType, typename OutputDataType,
-         typename Activation>
+template<typename InputType, typename OutputType, typename Activation>
 template<typename Archive>
-void RBF<InputDataType, OutputDataType, Activation>::serialize(
+void RBF<InputType, OutputType, Activation>::serialize(
     Archive& ar,
     const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(distances));
   ar(CEREAL_NVP(centres));
+  ar(CEREAL_NVP(betas);
 }
 
 } // namespace ann

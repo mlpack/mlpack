@@ -22,25 +22,22 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
-template<typename InputDataType, typename OutputDataType>
-AlphaDropout<InputDataType, OutputDataType>::AlphaDropout(
+template<typename InputType, typename OutputType>
+AlphaDropout<InputType, OutputType>::AlphaDropout(
     const double ratio,
     const double alphaDash) :
     ratio(ratio),
-    alphaDash(alphaDash),
-    deterministic(false)
+    alphaDash(alphaDash)
 {
   Ratio(ratio);
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void AlphaDropout<InputDataType, OutputDataType>::Forward(
-    const arma::Mat<eT>& input, arma::Mat<eT>& output)
+template<typename InputType, typename OutputType>
+void AlphaDropout<InputType, OutputType>::Forward(
+    const InputType& input, OutputType& output)
 {
-  // The dropout mask will not be multiplied in the deterministic mode
-  // (during testing).
-  if (deterministic)
+  // The dropout mask will not be multiplied during testing.
+  if (!this->training)
   {
     output = input;
   }
@@ -49,29 +46,33 @@ void AlphaDropout<InputDataType, OutputDataType>::Forward(
     // Set values to alphaDash with probability ratio.  Then apply affine
     // transformation so as to keep mean and variance of outputs to their
     // original values.
-    mask = arma::randu< arma::Mat<eT> >(input.n_rows, input.n_cols);
+    mask = arma::randu<InputType>(input.n_rows, input.n_cols);
     mask.transform( [&](double val) { return (val > ratio); } );
     output = (input % mask + alphaDash * (1 - mask)) * a + b;
   }
 }
 
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void AlphaDropout<InputDataType, OutputDataType>::Backward(
-    const arma::Mat<eT>& /* input */, const arma::Mat<eT>& gy, arma::Mat<eT>& g)
+template<typename InputType, typename OutputType>
+void AlphaDropout<InputType, OutputType>::Backward(
+    const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
   g = gy % mask * a;
 }
 
-template<typename InputDataType, typename OutputDataType>
+template<typename InputType, typename OutputType>
 template<typename Archive>
-void AlphaDropout<InputDataType, OutputDataType>::serialize(
+void AlphaDropout<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(ratio));
   ar(CEREAL_NVP(alphaDash));
   ar(CEREAL_NVP(a));
   ar(CEREAL_NVP(b));
+
+  // No need to serialize the mask, since it will be recomputed on the next
+  // forward pass.
 }
 
 } // namespace ann

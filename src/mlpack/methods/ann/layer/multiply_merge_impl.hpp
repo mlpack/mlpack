@@ -25,38 +25,38 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType>
 MultiplyMergeType<InputType, OutputType>::MultiplyMergeType(
-    const bool model, const bool run) :
-    model(model), run(run), ownsLayer(!model)
+    const bool run) :
+    run(run)
 {
   // Nothing to do here.
 }
 
+// TODO: is this destructor needed?
 template<typename InputType, typename OutputType>
 MultiplyMergeType<InputType, OutputType>::~MultiplyMergeType()
 {
-  if (ownsLayer)
-  {
-    for (size_t i = 0; i < network.size(); ++i)
-      delete network[i];
-  }
+  for (size_t i = 0; i < network.size(); ++i)
+    delete network[i];
 }
 
 template<typename InputType, typename OutputType>
 void MultiplyMergeType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
+  InitializeForwardPassMemory();
+
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      network[i]->Forward(input, network[i]->OutputParameter());
+      network[i]->Forward(input, layerOutputs[i]);
     }
   }
 
-  output = network.front()->OutputParameter();
+  output = layerOutputs.front();
   for (size_t i = 1; i < network.size(); ++i)
   {
-    output %= network[i]->OutputParameter();
+    output %= layerOutputs[i];
   }
 }
 
@@ -64,23 +64,25 @@ template<typename InputType, typename OutputType>
 void MultiplyMergeType<InputType, OutputType>::Backward(
     const InputType& /* input */, const OutputType& gy, OutputType& g)
 {
+  InitializeBackwardPassMemory();
+
   if (run)
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      network[i]->Backward(network[i]->OutputParameter(),
-                           gy,
-                           network[i]->Delta());
+      network[i]->Backward(layerOutputs[i], gy, layerDeltas[i]);
     }
 
-    g = network[0]->Delta();
+    g = layerDeltas.front();
     for (size_t i = 1; i < network.size(); ++i)
     {
-      g += network[i]->Delta();
+      g += layerDeltas[i];
     }
   }
   else
+  {
     g = gy;
+  }
 }
 
 template<typename InputType, typename OutputType>
@@ -93,7 +95,7 @@ void MultiplyMergeType<InputType, OutputType>::Gradient(
   {
     for (size_t i = 0; i < network.size(); ++i)
     {
-      network[i]->Gradient(input, error, network[i]->Gradient());
+      network[i]->Gradient(input, error, layerGradients[i]);
     }
   }
 }
@@ -103,14 +105,9 @@ template<typename Archive>
 void MultiplyMergeType<InputType, OutputType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
-  // Be sure to clear other layers before loading.
-  if (cereal::is_loading<Archive>())
-    network.clear();
+  ar(cereal::base_class<MultiLayer<InputType, OutputType>>(this));
 
-  // ar(CEREAL_VECTOR_VARIANT_POINTER(network));
-  ar(CEREAL_NVP(model));
   ar(CEREAL_NVP(run));
-  ar(CEREAL_NVP(ownsLayer));
 }
 
 } // namespace ann

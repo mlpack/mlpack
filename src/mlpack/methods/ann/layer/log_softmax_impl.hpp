@@ -28,7 +28,7 @@ template<typename InputType, typename OutputType>
 void LogSoftMaxType<InputType, OutputType>::Forward(
     const InputType& input, OutputType& output)
 {
-  arma::mat maxInput = arma::repmat(arma::max(input), input.n_rows, 1);
+  InputType maxInput = arma::repmat(arma::max(input), input.n_rows, 1);
   output = (maxInput - input);
 
   // Approximation of the base-e exponential function. The acuracy however is

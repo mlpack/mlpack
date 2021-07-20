@@ -18,10 +18,11 @@
 namespace mlpack {
 namespace ann /** Artificial Neural Network. */ {
 
+// TODO: what about sizes for this layer?
 /**
  * Declaration of the VirtualBatchNorm layer class. Instead of using the
- * batch statistics for normalizing on a mini-batch, it uses a reference subset of
- * the data for calculating the normalization statistics.
+ * batch statistics for normalizing on a mini-batch, it uses a reference subset
+ * of the data for calculating the normalization statistics.
  *
  * For more information, refer to the following paper,
  *
@@ -51,7 +52,8 @@ class VirtualBatchNormType : public Layer<InputType, OutputType>
   VirtualBatchNormType();
 
   /**
-   * Create the VirtualBatchNorm layer object for a specified number of input units.
+   * Create the VirtualBatchNorm layer object for a specified number of input
+   * units.
    *
    * @param referenceBatch The data from which the normalization
    *        statistics are computed.
@@ -62,7 +64,8 @@ class VirtualBatchNormType : public Layer<InputType, OutputType>
                        const size_t size,
                        const double eps = 1e-8);
 
-  //! Clone the VirtualBatchNormType object. This handles polymorphism correctly.
+  //! Clone the VirtualBatchNormType object. This handles polymorphism
+  //! correctly.
   VirtualBatchNormType* Clone() const
   {
     return new VirtualBatchNormType(*this);
@@ -71,12 +74,12 @@ class VirtualBatchNormType : public Layer<InputType, OutputType>
   /**
    * Reset the layer parameters.
    */
-  void Reset();
+  void SetWeights(typename OutputType::elem_type* weightsPtr);
 
   /**
-   * Forward pass of the Virtual Batch Normalization layer. Transforms the input data
-   * into zero mean and unit variance, scales the data by a factor gamma and
-   * shifts it by beta.
+   * Forward pass of the Virtual Batch Normalization layer. Transforms the input
+   * data into zero mean and unit variance, scales the data by a factor gamma
+   * and shifts it by beta.
    *
    * @param input Input data for the layer.
    * @param output Resulting output activations.
@@ -110,26 +113,16 @@ class VirtualBatchNormType : public Layer<InputType, OutputType>
   //! Modify the parameters.
   OutputType& Parameters() { return weights; }
 
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  OutputType const& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
   //! Get the number of input units.
   size_t InSize() const { return size; }
 
   //! Get the epsilon value.
   double Epsilon() const { return eps; }
+
+  const size_t WeightSize() const
+  {
+    return 2 * size;
+  }
 
   /**
    * Serialize the layer.
@@ -173,18 +166,6 @@ class VirtualBatchNormType : public Layer<InputType, OutputType>
 
   //! Locally-stored variance object.
   OutputType variance;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
-
-  //! Locally-stored input parameter object.
-  OutputType inputParameter;
 
   //! Locally-stored normalized input.
   OutputType normalized;

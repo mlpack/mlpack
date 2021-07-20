@@ -21,6 +21,7 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputType, typename OutputType, typename RegularizerType>
 LinearType<InputType, OutputType, RegularizerType>::LinearType() :
+    Layer<InputType, OutputType>(),
     inSize(0),
     outSize(0)
 {
@@ -29,10 +30,10 @@ LinearType<InputType, OutputType, RegularizerType>::LinearType() :
 
 template<typename InputType, typename OutputType, typename RegularizerType>
 LinearType<InputType, OutputType, RegularizerType>::LinearType(
-    const size_t inSize,
     const size_t outSize,
     RegularizerType regularizer) :
-    inSize(inSize),
+    Layer<InputType, OutputType>(),
+    inSize(0), // This will be computed in ComputeOutputDimensions().
     outSize(outSize),
     regularizer(regularizer)
 {
@@ -40,66 +41,12 @@ LinearType<InputType, OutputType, RegularizerType>::LinearType(
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>::LinearType(
-    const LinearType& layer) :
-    inSize(layer.inSize),
-    outSize(layer.outSize),
-    weights(layer.weights),
-    regularizer(layer.regularizer)
+void LinearType<InputType, OutputType, RegularizerType>::SetWeights(
+    typename OutputType::elem_type* weightsPtr)
 {
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>::LinearType(
-    LinearType&& layer) :
-    inSize(0),
-    outSize(0),
-    weights(std::move(layer.weights)),
-    regularizer(std::move(layer.regularizer))
-{
-  // Nothing to do here.
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>&
-LinearType<InputType, OutputType, RegularizerType>::operator=(
-    const LinearType& layer)
-{
-  if (this != &layer)
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights = layer.weights;
-    regularizer = layer.regularizer;
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
-LinearType<InputType, OutputType, RegularizerType>&
-LinearType<InputType, OutputType, RegularizerType>::operator=(
-    LinearType&& layer)
-{
-  if (this != &layer)
-  {
-    inSize = layer.inSize;
-    outSize = layer.outSize;
-    weights = std::move(layer.weights);
-    regularizer = std::move(layer.regularizer);
-  }
-
-  return *this;
-}
-
-template<typename InputType, typename OutputType, typename RegularizerType>
-void LinearType<InputType, OutputType, RegularizerType>::Reset()
-{
-  weight = arma::mat(
-      weights.memptr(), outSize, inSize, false, false);
-  bias = arma::mat(
-      weights.memptr() + weight.n_elem, outSize, 1, false, false);
+  weights = OutputType(weightsPtr, outSize * inSize + outSize, 1, false, false);
+  weight = OutputType(weightsPtr, outSize, inSize, false, false);
+  bias = OutputType(weightsPtr + weight.n_elem, outSize, 1, false, false);
 }
 
 template<typename InputType, typename OutputType, typename RegularizerType>
@@ -127,6 +74,7 @@ void LinearType<InputType, OutputType, RegularizerType>::Gradient(
       error * input.t());
   gradient.submat(weight.n_elem, 0, gradient.n_elem - 1, 0) =
       arma::sum(error, 1);
+
   regularizer.Evaluate(weights, gradient);
 }
 
@@ -135,9 +83,11 @@ template<typename Archive>
 void LinearType<InputType, OutputType, RegularizerType>::serialize(
     Archive& ar, const uint32_t /* version */)
 {
+  ar(cereal::base_class<Layer<InputType, OutputType>>(this));
+
   ar(CEREAL_NVP(inSize));
   ar(CEREAL_NVP(outSize));
-  ar(CEREAL_NVP(weights));
+  ar(CEREAL_NVP(regularizer));
 }
 
 } // namespace ann

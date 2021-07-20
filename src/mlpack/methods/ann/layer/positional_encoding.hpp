@@ -52,7 +52,8 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
                          const size_t maxSequenceLength);
 
   //! Clone the PositionalEncodingType object. This handles polymorphism correctly.
-	PositionalEncodingType* Clone() const { return new PositionalEncodingType(*this); }
+  PositionalEncodingType* Clone() const { return new PositionalEncodingType(*this); }
+
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
    * f(x) by propagating the activity forward through f.
@@ -74,21 +75,6 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
   void Backward(const InputType& /* input */,
                 const OutputType& gy,
                 OutputType& g);
-
-  //! Get the input parameter.
-  InputType const& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  OutputType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  OutputType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
 
   //! Get the positional encoding vector.
   InputType const& Encoding() const { return positionalEncoding; }
@@ -113,15 +99,6 @@ class PositionalEncodingType : public Layer<InputType, OutputType>
 
   //! Locally-stored positional encodings.
   InputType positionalEncoding;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored input parameter object.
-  InputType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
 }; // class PositionalEncodingTest
 
 // Standard PositionalEncoding layer.

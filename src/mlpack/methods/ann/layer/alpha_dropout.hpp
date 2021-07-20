@@ -40,14 +40,14 @@ namespace ann /** Artificial Neural Network. */ {
  * }
  * @endcode
  *
- * @tparam InputDataType Type of the input data (arma::colvec, arma::mat,
+ * @tparam InputType Type of the input data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
- * @tparam OutputDataType Type of the output data (arma::colvec, arma::mat,
+ * @tparam OutputType Type of the output data (arma::colvec, arma::mat,
  *         arma::sp_mat or arma::cube).
  */
-template <typename InputDataType = arma::mat,
-          typename OutputDataType = arma::mat>
-class AlphaDropout
+template <typename InputType = arma::mat,
+          typename OutputType = arma::mat>
+class AlphaDropout : public Layer<InputType, OutputType>
 {
  public:
   /**
@@ -65,8 +65,7 @@ class AlphaDropout
    * @param input Input data used for evaluating the specified function.
    * @param output Resulting output activation.
    */
-  template<typename eT>
-  void Forward(const arma::Mat<eT>& input, arma::Mat<eT>& output);
+  void Forward(const InputType& input, OutputType& output);
 
   /**
    * Ordinary feed backward pass of the alpha_dropout layer.
@@ -75,25 +74,9 @@ class AlphaDropout
    * @param gy The backpropagated error.
    * @param g The calculated gradient.
    */
-  template<typename eT>
-  void Backward(const arma::Mat<eT>& /* input */,
-                const arma::Mat<eT>& gy,
-                arma::Mat<eT>& g);
-
-  //! Get the output parameter.
-  OutputDataType const& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputDataType& OutputParameter() { return outputParameter; }
-
-  //! Get the detla.
-  OutputDataType const& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputDataType& Delta() { return delta; }
-
-  //! The value of the deterministic parameter.
-  bool Deterministic() const { return deterministic; }
-  //! Modify the value of the deterministic parameter.
-  bool& Deterministic() { return deterministic; }
+  void Backward(const InputType& /* input */,
+                const OutputType& gy,
+                OutputType& g);
 
   //! The probability of setting a value to alphaDash.
   double Ratio() const { return ratio; }
@@ -105,10 +88,10 @@ class AlphaDropout
   double B() const { return b; }
 
   //! Value of alphaDash.
-  double AlphaDash() const {return alphaDash; }
+  double AlphaDash() const { return alphaDash; }
 
   //! Get the mask.
-  OutputDataType const& Mask() const {return mask;}
+  const OutputType& Mask() const { return mask; }
 
   //! Modify the probability of setting a value to alphaDash. As
   //! 'a' and 'b' depend on 'ratio', modify them as well.
@@ -126,23 +109,14 @@ class AlphaDropout
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Locally-stored delta object.
-  OutputDataType delta;
-
-  //! Locally-stored output parameter object.
-  OutputDataType outputParameter;
-
-  //! Locally-stored mast object.
-  OutputDataType mask;
+  //! Locally-stored mask object.
+  OutputType mask;
 
   //! The probability of setting a value to aplhaDash.
   double ratio;
 
   //! The low variance value of SELU activation function.
   double alphaDash;
-
-  //! If true dropout and scaling is disabled, see notes above.
-  bool deterministic;
 
   //! Value of alpha for normalized inputs (taken from SELU).
   static constexpr double alpha = 1.6732632423543772848170429916717;

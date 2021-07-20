@@ -60,36 +60,33 @@ template <
     typename OutputType = arma::mat,
     bool Residual = false
 >
-class SequentialType : public Layer<InputType, OutputType>
+class SequentialType : public MultiLayer<InputType, OutputType>
 {
  public:
   /**
-   * Create the Sequential object using the specified parameters.
-   *
-   * @param model Expose the all network modules.
+   * Create the Sequential object.
    */
-  SequentialType(const bool model = true);
+  SequentialType();
 
   /**
    * Create the Sequential object using the specified parameters.
    *
-   * @param model Expose all the network modules.
    * @param ownsLayers If true, then this module will delete its layers when
    *      deallocated.
    */
-  SequentialType(const bool model, const bool ownsLayers);
+  SequentialType(const bool ownsLayers);
 
   //! Copy constructor.
   SequentialType(const SequentialType& layer);
 
   //! Copy assignment operator.
-  SequentialType& operator = (const SequentialType& layer);
+  SequentialType& operator=(const SequentialType& layer);
 
   //! Destroy the Sequential object.
   ~SequentialType();
 
   //! Clone the SequentialType object. This handles polymorphism correctly.
-	SequentialType* Clone() const { return new SequentialType(*this); }
+  SequentialType* Clone() const { return new SequentialType(*this); }
 
   /**
    * Ordinary feed forward pass of a neural network, evaluating the function
@@ -125,95 +122,14 @@ class SequentialType : public Layer<InputType, OutputType>
                 OutputType& /* gradient */);
 
   /**
-   * Add a new module to the model.
-   *
-   * @param args The layer parameter.
-   */
-  template <class LayerType, class... Args>
-  void Add(Args... args) { network.push_back(new LayerType(args...)); }
-
-  /**
-   * Add a new module to the model.
-   *
-   * @param layer The Layer to be added to the model.
-   */
-  void Add(Layer<InputType, OutputType>* layer) { network.push_back(layer); }
-
-  //! Return the model modules.
-  std::vector<Layer<InputType, OutputType>*>& Model()
-  {
-    if (model)
-    {
-      return network;
-    }
-
-    return empty;
-  }
-
-  //! Return the initial point for the optimization.
-  const OutputType& Parameters() const { return parameters; }
-  //! Modify the initial point for the optimization.
-  OutputType& Parameters() { return parameters; }
-
-  //! Get the input parameter.
-  const InputType& InputParameter() const { return inputParameter; }
-  //! Modify the input parameter.
-  InputType& InputParameter() { return inputParameter; }
-
-  //! Get the output parameter.
-  const OutputType& OutputParameter() const { return outputParameter; }
-  //! Modify the output parameter.
-  OutputType& OutputParameter() { return outputParameter; }
-
-  //! Get the delta.
-  const OutputType& Delta() const { return delta; }
-  //! Modify the delta.
-  OutputType& Delta() { return delta; }
-
-  //! Get the gradient.
-  const OutputType& Gradient() const { return gradient; }
-  //! Modify the gradient.
-  OutputType& Gradient() { return gradient; }
-
-  /**
    * Serialize the layer
    */
   template<typename Archive>
   void serialize(Archive& ar, const uint32_t /* version */);
 
  private:
-  //! Parameter which indicates if the modules should be exposed.
-  bool model;
-
   //! Indicator if we already initialized the model.
   bool reset;
-
-  //! Locally-stored network modules.
-  std::vector<Layer<InputType, OutputType>*> network;
-
-  //! Locally-stored model parameters.
-  OutputType parameters;
-
-  //! Locally-stored empty list of modules.
-  std::vector<Layer<InputType, OutputType>*> empty;
-
-  //! Locally-stored delta object.
-  OutputType delta;
-
-  //! Locally-stored input parameter object.
-  InputType inputParameter;
-
-  //! Locally-stored output parameter object.
-  OutputType outputParameter;
-
-  //! Locally-stored gradient object.
-  OutputType gradient;
-
-  //! The input width.
-  size_t width;
-
-  //! The input height.
-  size_t height;
 
   //! Whether we are responsible for deleting the layers held in this module.
   bool ownsLayers;
