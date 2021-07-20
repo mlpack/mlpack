@@ -130,7 +130,7 @@ PARAM_MATRIX_OUT("codes", "Matrix to save the output sparse codes of the test "
 
 PARAM_MATRIX_IN("test", "Optional matrix to be encoded by trained model.", "T");
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   if (params.Get<int>("seed") != 0)
     RandomSeed((size_t) params.Get<int>("seed"));

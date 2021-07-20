@@ -199,7 +199,7 @@ PARAM_STRING_IN("interpolation", "Algorithm used for weight interpolation.",
 PARAM_STRING_IN("neighbor_search", "Algorithm used for neighbor search.",
     "S", "euclidean");
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   if (params.Get<int>("seed") == 0)
     math::RandomSeed(std::time(NULL));

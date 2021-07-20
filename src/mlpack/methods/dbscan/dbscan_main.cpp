@@ -154,7 +154,7 @@ void ChoosePointSelectionPolicy(util::Params& params,
     RunDBSCAN<RangeSearchType, RandomPointSelection>(params, rs);
 }
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   RequireAtLeastOnePassed(params, { "assignments", "centroids" }, false,
       "no output will be saved");

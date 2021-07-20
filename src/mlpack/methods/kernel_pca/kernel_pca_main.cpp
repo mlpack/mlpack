@@ -190,7 +190,7 @@ void RunKPCA(arma::mat& dataset,
   }
 }
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   RequireAtLeastOnePassed(params, { "output" }, false,
       "no output will be saved");

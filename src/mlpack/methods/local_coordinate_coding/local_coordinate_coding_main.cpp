@@ -122,7 +122,7 @@ PARAM_MATRIX_OUT("codes", "Output codes matrix.", "c");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   if (params.Get<int>("seed") != 0)
     RandomSeed((size_t) params.Get<int>("seed"));

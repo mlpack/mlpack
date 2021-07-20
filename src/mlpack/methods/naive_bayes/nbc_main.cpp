@@ -143,7 +143,7 @@ PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
 PARAM_MATRIX_OUT("probabilities", "The matrix in which the predicted"
     " probability of labels for the test set will be written.", "p");
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   // Check input parameters.
   RequireOnlyOnePassed(params, { "training", "input_model" }, true);
