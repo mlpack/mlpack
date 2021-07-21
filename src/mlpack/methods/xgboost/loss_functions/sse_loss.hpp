@@ -87,7 +87,7 @@ class SSELoss
   double Evaluate(const MatType& input, const WeightVecType& /* weights */)
   {
     // Calculate gradients and hessians.
-    gradients = input.row(1) - input.row(0);
+    gradients = (input.row(1) - input.row(0)).t();
     hessians = arma::vec(input.n_cols, arma::fill::ones);
 
     return std::pow(ApplyL1(arma::accu(gradients)), 2) /
