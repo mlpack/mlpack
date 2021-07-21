@@ -108,6 +108,16 @@ void NearestInterpolation<InputDataType, OutputDataType>::Backward(
       assert(output.n_cols == batchSize);
     }
 
+    if (gradient.is_empty())
+    {
+      gradient.set_size(outRowSize * outColSize * depth, batchSize);
+    }
+    else
+    {
+      assert(gradient.n_rows == outRowSize * outColSize * depth);
+      assert(gradient.n_cols == batchSize);
+    }
+
     assert(outRowSize >= 2);
     assert(outColSize >= 2);
 
