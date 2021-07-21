@@ -28,9 +28,9 @@ NearestInterpolation<InputDataType, OutputDataType>::
   outColSize(0),
   depth(0),
   batchSize(0)
-  {
-    // Nothing to do here.
-  }
+{
+  // Nothing to do here.
+}
 
 template<typename InputDataType, typename OutputDataType>
 NearestInterpolation<InputDataType, OutputDataType>::
@@ -53,27 +53,78 @@ template<typename InputDataType, typename OutputDataType>
 template<typename eT>
 void NearestInterpolation<InputDataType, OutputDataType>::Forward(
   const arma::Mat<eT>& input, arma::Mat<eT>& output)
+{
+  batchSize = input.n_cols;
+  if (output.is_empty())
+    output.set_size(outRowSize * outColSize * depth, batchSize);
+  else
   {
-    batchSize = input.n_cols;
-    if (output.is_empty())
-      output.set_size(outRowSize * outColSize * depth, batchSize);
-    else
+    assert(output.n_rows == outRowSize * outColSize * depth);
+    assert(output.n_cols == batchSize);
+  }
+
+  assert(inRowSize >= 2);
+  assert(inColSize >= 2);
+
+  arma::cube inputAsCube(const_cast<arma::Mat<eT>&>(input).memptr(),
+      inRowSize, inColSize, depth * batchSize, false, false);
+  arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
+      depth * batchSize, false, true);
+
+  double scaleRow = (double) inRowSize / (double) outRowSize;
+  double scaleCol = (double) inColSize / (double) outColSize;
+
+  for (size_t i = 0; i < outRowSize; ++i)
+  {
+    const size_t rOrigin = std::floor(i * scaleRow);
+
+    for (size_t j = 0; j < outColSize; ++j)
     {
-      assert(output.n_rows == outRowSize * outColSize * depth);
-      assert(output.n_cols == batchSize);
+      const size_t cOrigin = std::floor(j * scaleCol);
+
+      for (size_t k = 0; k < depth * batchSize; ++k)
+      {
+        outputAsCube(i, j, k) = inputAsCube.slice(k)(
+            rOrigin, cOrigin);
+      }
     }
+  }
+}
 
-    assert(inRowSize >= 2);
-    assert(inColSize >= 2);
+template<typename InputDataType, typename OutputDataType>
+template<typename eT>
+void NearestInterpolation<InputDataType, OutputDataType>::Backward(
+  const arma::Mat<eT>& /*input*/,
+  const arma::Mat<eT>& gradient,
+  arma::Mat<eT>& output)
+{
+  if (output.is_empty())
+  {
+    output.set_size(inRowSize * inColSize * depth, batchSize);
+  }
+  else
+  {
+    assert(output.n_rows == inRowSize * inColSize * depth);
+    assert(output.n_cols == batchSize);
+  }
 
-    arma::cube inputAsCube(const_cast<arma::Mat<eT>&>(input).memptr(),
-        inRowSize, inColSize, depth * batchSize, false, false);
-    arma::cube outputAsCube(output.memptr(), outRowSize, outColSize,
-        depth * batchSize, false, true);
+  assert(outRowSize >= 2);
+  assert(outColSize >= 2);
 
-    double scaleRow = (double) inRowSize / (double) outRowSize;
-    double scaleCol = (double) inColSize / (double) outColSize;
+  arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
+      depth * batchSize, false, true);
+  arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
+      outColSize, depth * batchSize, false, false);
 
+  double scaleRow = (double)(inRowSize) / outRowSize;
+  double scaleCol = (double)(inColSize) / outColSize;
+
+  if (gradient.n_elem == output.n_elem)
+  {
+    outputAsCube = gradientAsCube;
+  }
+  else
+  {
     for (size_t i = 0; i < outRowSize; ++i)
     {
       const size_t rOrigin = std::floor(i * scaleRow);
@@ -84,64 +135,13 @@ void NearestInterpolation<InputDataType, OutputDataType>::Forward(
 
         for (size_t k = 0; k < depth * batchSize; ++k)
         {
-          outputAsCube(i, j, k) = inputAsCube.slice(k)(
-              rOrigin, cOrigin);
+          outputAsCube(rOrigin, cOrigin, k) +=
+              gradientAsCube(i, j, k);
         }
       }
     }
   }
-
-template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void NearestInterpolation<InputDataType, OutputDataType>::Backward(
-  const arma::Mat<eT>& /*input*/,
-    const arma::Mat<eT>& gradient,
-    arma::Mat<eT>& output)
-  {
-    if (output.is_empty())
-    {
-      output.set_size(inRowSize * inColSize * depth, batchSize);
-    }
-    else
-    {
-      assert(output.n_rows == inRowSize * inColSize * depth);
-      assert(output.n_cols == batchSize);
-    }
-
-    assert(outRowSize >= 2);
-    assert(outColSize >= 2);
-
-    arma::cube outputAsCube(output.memptr(), inRowSize, inColSize,
-        depth * batchSize, false, true);
-    arma::cube gradientAsCube(((arma::Mat<eT>&) gradient).memptr(), outRowSize,
-        outColSize, depth * batchSize, false, false);
-
-    double scaleRow = (double)(inRowSize) / outRowSize;
-    double scaleCol = (double)(inColSize) / outColSize;
-
-    if (gradient.n_elem == output.n_elem)
-    {
-      outputAsCube = gradientAsCube;
-    }
-    else
-    {
-      for (size_t i = 0; i < outRowSize; ++i)
-      {
-        const size_t rOrigin = std::floor(i * scaleRow);
-
-        for (size_t j = 0; j < outColSize; ++j)
-        {
-          const size_t cOrigin = std::floor(j * scaleCol);
-
-          for (size_t k = 0; k < depth * batchSize; ++k)
-          {
-            outputAsCube(rOrigin, cOrigin, k) +=
-                gradientAsCube(i, j, k);
-          }
-        }
-      }
-    }
-  }
+}
 
 template<typename InputDataType, typename OutputDataType>
 template<typename Archive>
