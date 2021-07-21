@@ -53,8 +53,8 @@ BicubicInterpolation(const size_t inRowSize,
   }
 
 template<typename InputDataType, typename OutputDataType>
-template<typename eT>
-void BicubicInterpolation<InputDataType, OutputDataType>::GetKernalWeight(eT delta, arma::mat& coeffs)
+void BicubicInterpolation<InputDataType, OutputDataType>::GetKernalWeight(double delta,
+                                                                          arma::mat& coeffs)
 {
   coeffs(0) = ((alpha * (delta + 1) - 5 * alpha) * (delta + 1) + 8 * alpha) * (delta + 1) - 4 * alpha;
   coeffs(1) = ((alpha + 2) * delta - (alpha + 3)) * delta * delta + 1;
@@ -149,16 +149,6 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
     {
       assert(output.n_rows == inRowSize * inColSize * depth);
       assert(output.n_cols == batchSize);
-    }
-
-    if (gradient.is_empty())
-    {
-      gradient.set_size(outRowSize * outColSize * depth, batchSize);
-    }
-    else
-    {
-      assert(gradient.n_rows == outRowSize * outColSize * depth);
-      assert(gradient.n_cols == batchSize);
     }
 
     assert(outRowSize >= 2);
