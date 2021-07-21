@@ -2156,8 +2156,10 @@ TEST_CASE("SimpleNearestInterpolationLayerTest", "[ANNLayerTest]")
   input1.reshape(6, 1);
   NearestInterpolation<> layer1(inRowSize, inColSize, outRowSize,
                                 outColSize, depth);
+
   layer1.Forward(input1, output1);
   layer1.Backward(output1, output1, unzoomedOutput1);
+
   REQUIRE(arma::accu(output1) - 1317.00 == Approx(0.0).margin(1e-05));
   REQUIRE(arma::accu(unzoomedOutput1) - 1317.00 ==
           Approx(0.0).margin(1e-05));
