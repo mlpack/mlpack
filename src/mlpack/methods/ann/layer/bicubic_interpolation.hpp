@@ -83,8 +83,7 @@ class BicubicInterpolation
                 const arma::Mat<eT>& gradient,
                 arma::Mat<eT>& output);
 
-  template<typename eT>
-  void GetKernalWeight(eT delta, arma::mat& coeffs);
+  void GetKernalWeight(double delta, arma::mat& coeffs);
 
   //! Get the output parameter.
   OutputDataType const& OutputParameter() const { return outputParameter; }
