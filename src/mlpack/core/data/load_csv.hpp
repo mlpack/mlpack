@@ -166,6 +166,20 @@ class LoadCSV
       throw std::invalid_argument(oss.str());
     }
 
+    // Reset the DatasetInfo object, if needed.
+    if (info.Dimensionality() == 0)
+    {
+      info.SetDimensionality(rows);
+    }
+    else if (info.Dimensionality() != rows)
+    {
+      std::ostringstream oss;
+      oss << "data::LoadCSV(): given DatasetInfo has dimensionality "
+          << info.Dimensionality() << ", but data has dimensionality "
+          << rows;
+      throw std::invalid_argument(oss.str());
+    }
+
     // Now, jump back to the beginning of the file.
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
@@ -243,8 +257,24 @@ class LoadCSV
         std::pair<int, int> dimen = GetMatSize(inFile);
         rows = dimen.second;
 
+<<<<<<< HEAD
 	// Now that we know the dimensionality, initialize the DatasetMapper.
 	info.SetDimensionality(rows);
+=======
+        // Reset the DatasetInfo object, if needed.
+        if (info.Dimensionality() == 0)
+        {
+          info.SetDimensionality(rows);
+        }
+        else if (info.Dimensionality() != rows)
+        {
+          std::ostringstream oss;
+          oss << "data::LoadCSV(): given DatasetInfo has dimensionality "
+              << info.Dimensionality() << ", but data has dimensionality "
+              << rows;
+          throw std::invalid_argument(oss.str());
+        }
+>>>>>>> 1fa385493a679809822f92151add8bc50a6f3260
       }
 
       // If we need to do a first pass for the DatasetMapper, do it.

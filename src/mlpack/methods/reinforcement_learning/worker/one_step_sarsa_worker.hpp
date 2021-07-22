@@ -13,6 +13,7 @@
 #ifndef MLPACK_METHODS_RL_WORKER_ONE_STEP_SARSA_WORKER_HPP
 #define MLPACK_METHODS_RL_WORKER_ONE_STEP_SARSA_WORKER_HPP
 
+#include <ensmallen.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 namespace mlpack {

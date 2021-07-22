@@ -2,13 +2,15 @@
  * @file methods/ann/activation_functions/silu_function.hpp
  * @author Fawwaz Mayda
  *
- * Definition and implementation of the Sigmoid Weighted Linear Unit function (SILU).
+ * Definition and implementation of the Sigmoid Weighted Linear Unit function
+ * (SILU).
  *
  * For more information see the following paper
  *
  * @code
  * @misc{elfwing2017sigmoidweighted ,
- *    title = {Sigmoid-Weighted Linear Units for Neural Network Function Approximation in Reinforcement Learning},
+ *    title = {Sigmoid-Weighted Linear Units for Neural Network Function
+ *             Approximation in Reinforcement Learning},
  *    author = {Stefan Elfwing and Eiji Uchibe and Kenji Doya},
  *    year = {2017},
  *    url = {https://arxiv.org/pdf/1702.03118.pdf},
@@ -38,7 +40,7 @@ namespace ann /* Artificial Neural Network */ {
  * f'(x) &=& \frac{1}{1 + e^{-x}} * (1 + x * (1-\frac{1}{1 + e^{-x}}))\\
  * @f}
  */
-class SILUFunction 
+class SILUFunction
 {
  public:
   /**
@@ -47,11 +49,11 @@ class SILUFunction
    * @param x Input data.
    * @return f(x).
    */
-  static double Fn(const double x) 
+  static double Fn(const double x)
   {
     return x / (1.0 + std::exp(-x));
   }
-        
+
   /**
    * Computes the SILU function.
    *
@@ -59,9 +61,9 @@ class SILUFunction
    * @param y The resulting output activation.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Fn(const InputVecType &x, OutputVecType &y) 
+  static void Fn(const InputVecType &x, OutputVecType &y)
   {
-     y = x / (1.0 + arma::exp(-x));
+    y = x / (1.0 + arma::exp(-x));
   }
 
   /**
@@ -70,10 +72,10 @@ class SILUFunction
    * @param y Input activation.
    * @return f'(x)
    */
-  static double Deriv(const double x) 
+  static double Deriv(const double x)
   {
-     double sigmoid = 1.0 / (1.0 + std::exp(-x));
-     return sigmoid * (1.0 + x * (1.0 - sigmoid));
+    double sigmoid = 1.0 / (1.0 + std::exp(-x));
+    return sigmoid * (1.0 + x * (1.0 - sigmoid));
   }
 
   /**
@@ -83,10 +85,10 @@ class SILUFunction
    * @param x The resulting derivatives.
    */
   template<typename InputVecType, typename OutputVecType>
-  static void Deriv(const InputVecType &x, OutputVecType &y) 
+  static void Deriv(const InputVecType &x, OutputVecType &y)
   {
-     OutputVecType sigmoid = 1.0 / (1.0 + arma::exp(-x));
-     y = sigmoid % (1.0 + x % (1.0 - sigmoid));
+    OutputVecType sigmoid = 1.0 / (1.0 + arma::exp(-x));
+    y = sigmoid % (1.0 + x % (1.0 - sigmoid));
   }
 }; // class SILUFunction
 

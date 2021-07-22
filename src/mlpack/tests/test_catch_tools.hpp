@@ -13,7 +13,6 @@
 #define MLPACK_TESTS_TEST_CATCH_TOOLS_HPP
 
 #include <mlpack/core.hpp>
-#include <boost/version.hpp>
 
 #include "catch.hpp"
 

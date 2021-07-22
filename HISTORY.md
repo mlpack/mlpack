@@ -1,5 +1,10 @@
 ### mlpack ?.?.?
 ###### ????-??-??
+  * Added Decision Tree Regressor (#2905). It can be used using the class
+    `mlpack::tree::DecisionTreeRegressor`. It is accessible only though C++.
+    
+  * Added dict-style inspection of mlpack models in python bindings (#2868).
+
   * Added Extra Trees Algorithm (#2883). Currently, it can be used using the
     class `mlpack::tree::ExtraTrees`, but only through C++.
 
@@ -53,6 +58,13 @@
 
   * The `mlpack_test` target is no longer built as part of `make all`.  Use
     `make mlpack_test` to build the tests.
+
+  * Fixes to `HoeffdingTree`: ensure that training still works when empty
+    constructor is used (#2964).
+
+  * Fix Julia model serialization bug (#2970).
+
+  * Fix `LoadCSV()` to use pre-populated `DatasetInfo` objects (#2980).
 
 ### mlpack 3.4.2
 ###### 2020-10-26

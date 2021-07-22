@@ -101,7 +101,7 @@ mlpack has the following dependencies:
 
       Armadillo      >= 8.400.0
       Boost (math_c99, spirit) >= 1.58.0
-      CMake          >= 3.2.2
+      CMake          >= 3.6
       ensmallen      >= 2.10.0
       cereal         >= 1.1.2
 
@@ -153,10 +153,15 @@ mlpack_pca, mlpack_kmeans etc.) with the following command:
 On Fedora or Red Hat (EPEL):
     $ sudo dnf install mlpack-devel mlpack-bin
 
-Note: Older Ubuntu versions may not have the most recent version of mlpack
+*Note*: Older Ubuntu versions may not have the most recent version of mlpack
 available---for instance, at the time of this writing, Ubuntu 16.04 only has
 mlpack 3.4.2 available.  Options include upgrading your Ubuntu version, finding
 a PPA or other non-official sources, or installing with a manual build.
+
+*Note*: If you are using RHEL7/CentOS 7, gcc 4.8 is too old to compile mlpack.
+One option is to use `devtoolset-8`; see
+[here](https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/) for more
+information.
 
 There are some useful pages to consult in addition to this section:
 
@@ -214,10 +219,8 @@ Options are specified with the -D flag.  The allowed options include:
     BUILD_SHARED_LIBS=(ON/OFF): compile shared libraries and executables as
         opposed to static libraries
     DISABLE_DOWNLOADS=(ON/OFF): whether to disable all downloads during build
-    DOWNLOAD_ENSMALLEN=(ON/OFF): If ensmallen is not found, download it
     ENSMALLEN_INCLUDE_DIR=(/path/to/ensmallen/include): path to include directory
        for ensmallen
-    DOWNLOAD_STB_IMAGE=(ON/OFF): If STB is not found, download it
     STB_IMAGE_INCLUDE_DIR=(/path/to/stb/include): path to include directory for
        STB image library
     USE_OPENMP=(ON/OFF): whether or not to use OpenMP if available

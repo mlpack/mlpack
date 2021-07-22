@@ -228,8 +228,8 @@ TEST_CASE("WeightSizeVisitorTestForMultiheadAttentionLayer", "[ANNVisitorTest]")
   size_t randomembedDim = 768;
   size_t randomnumHeads = 12;
 
-  LayerTypes<> MultiheadAttentionLayer = new MultiheadAttention<>(randomtgtSeqLen,
-      randomsrcSeqLen, randomembedDim, randomnumHeads);
+  LayerTypes<> MultiheadAttentionLayer = new MultiheadAttention<>(
+      randomtgtSeqLen, randomsrcSeqLen, randomembedDim, randomnumHeads);
 
   CheckCorrectnessOfWeightSize(MultiheadAttentionLayer);
 }

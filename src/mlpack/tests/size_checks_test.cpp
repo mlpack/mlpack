@@ -32,7 +32,8 @@ TEST_CASE("CheckSizeTest", "[SizeCheckTest]")
 
   REQUIRE_NOTHROW(CheckSameSizes(data, secondLabels, "TestChecking"));
   REQUIRE_NOTHROW(CheckSameSizes(data, (size_t) 30, "TestChecking"));
-  REQUIRE_NOTHROW(CheckSameSizes(data, (size_t) thirdLabels.n_cols, "TestChecking"));
+  REQUIRE_NOTHROW(CheckSameSizes(data, (size_t) thirdLabels.n_cols,
+      "TestChecking"));
 }
 
 /**

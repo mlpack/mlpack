@@ -13,6 +13,7 @@
 #ifndef MLPACK_METHODS_RL_WORKER_N_STEP_Q_LEARNING_WORKER_HPP
 #define MLPACK_METHODS_RL_WORKER_N_STEP_Q_LEARNING_WORKER_HPP
 
+#include <ensmallen.hpp>
 #include <mlpack/methods/reinforcement_learning/training_config.hpp>
 
 namespace mlpack {

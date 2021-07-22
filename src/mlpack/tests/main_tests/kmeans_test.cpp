@@ -153,7 +153,7 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheck",
   REQUIRE(IO::GetParam<arma::mat>("output").n_rows == row+1);
   REQUIRE(IO::GetParam<arma::mat>("output").n_cols == col);
   REQUIRE(IO::GetParam<arma::mat>("centroid").n_rows == row);
-  REQUIRE(IO::GetParam<arma::mat>("centroid").n_cols == c);
+  REQUIRE(IO::GetParam<arma::mat>("centroid").n_cols == (arma::uword) c);
 }
 
 /**
@@ -179,7 +179,7 @@ TEST_CASE_METHOD(KmTestFixture, "KmClusteringSizeCheckLabelOnly",
   REQUIRE(IO::GetParam<arma::mat>("output").n_rows == 1);
   REQUIRE(IO::GetParam<arma::mat>("output").n_cols == col);
   REQUIRE(IO::GetParam<arma::mat>("centroid").n_rows == row);
-  REQUIRE(IO::GetParam<arma::mat>("centroid").n_cols == c);
+  REQUIRE(IO::GetParam<arma::mat>("centroid").n_cols == (arma::uword) c);
 }
 
 

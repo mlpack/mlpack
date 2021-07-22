@@ -33,7 +33,7 @@ namespace data /** Functions to load and save matrices. */ {
  * The supported types of files are the same as found in Armadillo:
  *
  *  - CSV (arma::csv_ascii), denoted by .csv, or optionally .txt
- *  - ASCII (arma::raw_ascii), denoted by .json
+ *  - ASCII (arma::raw_ascii), denoted by .txt
  *  - Armadillo ASCII (arma::arma_ascii), also denoted by .txt
  *  - PGM (arma::pgm_binary), denoted by .pgm
  *  - PPM (arma::ppm_binary), denoted by .ppm
