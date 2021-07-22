@@ -152,7 +152,7 @@ class Linear
     return (inSize * outSize) + outSize;
   }
 
-  //! Get the shape of the input.  
+  //! Get the shape of the input.
   size_t InputShape() const
   {
     return inSize;

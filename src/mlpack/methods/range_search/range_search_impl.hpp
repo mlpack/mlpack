@@ -174,7 +174,8 @@ RangeSearch<MetricType, MatType, TreeType>::operator=(const RangeSearch& other)
   if (this != &other)
   {
     oldFromNewReferences = other.oldFromNewReferences;
-    referenceTree = other.referenceTree ? new Tree(*other.referenceTree) : nullptr;
+    referenceTree = other.referenceTree ? new Tree(*other.referenceTree) :
+        nullptr;
     referenceSet = other.referenceTree ? &referenceTree->Dataset() :
         new MatType(*other.referenceSet);
     treeOwner = other.referenceTree;
@@ -222,7 +223,6 @@ RangeSearch<MetricType, MatType, TreeType>::operator=(RangeSearch&& other)
     other.singleMode = false;
     other.baseCases = 0;
     other.scores = 0;
-
   }
   return *this;
 }

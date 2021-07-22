@@ -23,11 +23,11 @@ namespace cli {
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* /* junk */)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* /* junk */,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* /* junk */,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* /* junk */)
 {
   std::ostringstream oss;
   oss << boost::any_cast<T>(data.value);
@@ -83,13 +83,15 @@ std::string GetPrintableParam(
   const TupleType* tuple = boost::any_cast<TupleType>(&data.value);
 
   std::ostringstream oss;
-  oss << "'" << std::get<1>(*tuple) << "'";
+  oss << "'" << std::get<0>(std::get<1>(*tuple)) << "'";
 
-  if (std::get<1>(*tuple) != "")
+  if (std::get<0>(std::get<1>(*tuple)) != "")
   {
     // Make sure the matrix is loaded so that we can print its size.
-    T& mat = GetParam<T>(const_cast<util::ParamData&>(data));
-    std::string matDescription = GetMatrixSize(mat);
+    GetParam<T>(const_cast<util::ParamData&>(data));
+    std::string matDescription =
+        std::to_string(std::get<2>(std::get<1>(*tuple))) + "x" +
+        std::to_string(std::get<1>(std::get<1>(*tuple))) + " matrix";
 
     oss << " (" << matDescription << ")";
   }
@@ -101,8 +103,8 @@ std::string GetPrintableParam(
 template<typename T>
 std::string GetPrintableParam(
     util::ParamData& data,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* /* junk */,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* /* junk */,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* /* junk */)
 {
   // Extract the string from the tuple that's being held.
   typedef std::tuple<T*, typename ParameterType<T>::type> TupleType;

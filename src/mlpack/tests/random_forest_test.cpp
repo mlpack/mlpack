@@ -514,7 +514,7 @@ TEST_CASE("WarmStartTreesTest", "[RandomForestTest]")
   // Train a random forest.
   RandomForest<> rf(trainingData, di, trainingLabels, 5, 25 /* 25 trees */, 1,
       1e-7, 0, MultipleRandomDimensionSelect(4));
-  
+
   REQUIRE(rf.NumTrees() == 25);
 
   rf.Train(trainingData, di, trainingLabels, 5, 20 /* 20 trees */, 1, 1e-7, 0,
@@ -538,7 +538,7 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
   // Train a random forest.
   RandomForest<> rf(trainingData, di, trainingLabels, 5, 3 /* 3 trees */, 1,
       1e-7, 0, MultipleRandomDimensionSelect(4));
-  
+
   // Get performance statistics on train data.
   arma::Row<size_t> oldPredictions;
   rf.Classify(trainingData, oldPredictions);
@@ -556,7 +556,7 @@ TEST_CASE("WarmStartTreesPredictionsQualityTest", "[RandomForestTest]")
   // Calculate the number of correct points.
   size_t newCorrect = arma::accu(newPredictions == trainingLabels);
 
-  REQUIRE(newCorrect - oldCorrect >= 0);
+  REQUIRE(newCorrect >= oldCorrect);
 }
 
 /**

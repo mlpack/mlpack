@@ -33,22 +33,22 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename boost::disable_if<std::is_same<T,
-                    bool>>::type* = 0,
-                const typename boost::disable_if<
-                    arma::is_arma_type<T>>::type* = 0,
-                const typename boost::disable_if<
-                    data::HasSerialize<T>>::type* = 0,
-                const typename boost::enable_if<std::is_same<T,
+                const typename std::enable_if<!std::is_same<T,
+                    bool>::value>::type* = 0,
+                const typename std::enable_if<!
+                    arma::is_arma_type<T>::value>::type* = 0,
+                const typename std::enable_if<!
+                    data::HasSerialize<T>::value>::type* = 0,
+                const typename std::enable_if<std::is_same<T,
                     std::tuple<mlpack::data::DatasetInfo,
-                    arma::mat>>>::type* = 0)
+                    arma::mat>>::value>::type* = 0)
 {
   app.add_option_function<std::string>(cliName.c_str(),
       [&param](const std::string& value)
       {
         using TupleType = std::tuple<T, typename ParameterType<T>::type>;
         TupleType& tuple = *boost::any_cast<TupleType>(&param.value);
-        std::get<1>(tuple) = boost::any_cast<std::string>(value);
+        std::get<0>(std::get<1>(tuple)) = boost::any_cast<std::string>(value);
         param.wasPassed = true;
       },
       param.desc.c_str());
@@ -65,15 +65,15 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename boost::disable_if<std::is_same<T,
-                    bool>>::type* = 0,
-                const typename boost::disable_if<
-                    arma::is_arma_type<T>>::type* = 0,
-                const typename boost::enable_if<
-                    data::HasSerialize<T>>::type* = 0,
-                const typename boost::disable_if<std::is_same<T,
+                const typename std::enable_if<!std::is_same<T,
+                    bool>::value>::type* = 0,
+                const typename std::enable_if<!
+                    arma::is_arma_type<T>::value>::type* = 0,
+                const typename std::enable_if<
+                    data::HasSerialize<T>::value>::type* = 0,
+                const typename std::enable_if<!std::is_same<T,
                     std::tuple<mlpack::data::DatasetInfo,
-                    arma::mat>>>::type* = 0)
+                    arma::mat>>::value>::type* = 0)
 {
   app.add_option_function<std::string>(cliName.c_str(),
       [&param](const std::string& value)
@@ -97,20 +97,20 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename boost::disable_if<
-                    std::is_same<T, bool>>::type* = 0,
-                const typename boost::enable_if<
-                    arma::is_arma_type<T>>::type* = 0,
-                const typename boost::disable_if<std::is_same<T,
+                const typename std::enable_if<!
+                    std::is_same<T, bool>::value>::type* = 0,
+                const typename std::enable_if<
+                    arma::is_arma_type<T>::value>::type* = 0,
+                const typename std::enable_if<!std::is_same<T,
                   std::tuple<mlpack::data::DatasetInfo,
-                    arma::mat>>>::type* = 0)
+                    arma::mat>>::value>::type* = 0)
 {
   app.add_option_function<std::string>(cliName.c_str(),
       [&param](const std::string& value)
       {
         using TupleType = std::tuple<T, typename ParameterType<T>::type>;
         TupleType& tuple = *boost::any_cast<TupleType>(&param.value);
-        std::get<1>(tuple) = boost::any_cast<std::string>(value);
+        std::get<0>(std::get<1>(tuple)) = boost::any_cast<std::string>(value);
         param.wasPassed = true;
       },
       param.desc.c_str());
@@ -127,15 +127,15 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename boost::disable_if<
-                    std::is_same<T, bool>>::type* = 0,
-                const typename boost::disable_if<
-                    arma::is_arma_type<T>>::type* = 0,
-                const typename boost::disable_if<
-                    data::HasSerialize<T>>::type* = 0,
-                const typename boost::disable_if<std::is_same<T,
+                const typename std::enable_if<!
+                    std::is_same<T, bool>::value>::type* = 0,
+                const typename std::enable_if<!
+                    arma::is_arma_type<T>::value>::type* = 0,
+                const typename std::enable_if<!
+                    data::HasSerialize<T>::value>::type* = 0,
+                const typename std::enable_if<!std::is_same<T,
                     std::tuple<mlpack::data::DatasetInfo,
-                    arma::mat>>>::type* = 0)
+                    arma::mat>>::value>::type* = 0)
 {
   app.add_option_function<T>(cliName.c_str(),
       [&param](const T& value)
@@ -157,15 +157,15 @@ template<typename T>
 void AddToCLI11(const std::string& cliName,
                 util::ParamData& param,
                 CLI::App& app,
-                const typename boost::enable_if<
-                    std::is_same<T, bool>>::type* = 0,
-                const typename boost::disable_if<
-                    arma::is_arma_type<T>>::type* = 0,
-                const typename boost::disable_if<
-                    data::HasSerialize<T>>::type* = 0,
-                const typename boost::disable_if<std::is_same<T,
+                const typename std::enable_if<
+                    std::is_same<T, bool>::value>::type* = 0,
+                const typename std::enable_if<!
+                    arma::is_arma_type<T>::value>::type* = 0,
+                const typename std::enable_if<!
+                    data::HasSerialize<T>::value>::type* = 0,
+                const typename std::enable_if<!std::is_same<T,
                     std::tuple<mlpack::data::DatasetInfo,
-                    arma::mat>>>::type* = 0)
+                    arma::mat>>::value>::type* = 0)
 {
   app.add_flag_function(cliName.c_str(),
       [&param](const T& value)

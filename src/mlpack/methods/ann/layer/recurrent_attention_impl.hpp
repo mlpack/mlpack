@@ -28,11 +28,11 @@ namespace ann /** Artificial Neural Network. */ {
 
 template<typename InputDataType, typename OutputDataType>
 RecurrentAttention<InputDataType, OutputDataType>::RecurrentAttention() :
+    outSize(0),
     rho(0),
     forwardStep(0),
     backwardStep(0),
-    deterministic(false),
-    outSize(0)
+    deterministic(false)
 {
   // Nothing to do.
 }

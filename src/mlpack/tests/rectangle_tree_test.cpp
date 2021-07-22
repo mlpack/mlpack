@@ -364,7 +364,7 @@ TEST_CASE("TreeBalance", "[RectangleTreeTraitsTest]")
   TreeType tree(dataset, 20, 6, 5, 2, 0);
 
   REQUIRE(GetMinLevel(tree) == GetMaxLevel(tree));
-  REQUIRE(tree.TreeDepth() == GetMinLevel(tree));
+  REQUIRE((int) tree.TreeDepth() == GetMinLevel(tree));
 }
 
 // A test to see if point deletion is working correctly.  We build a tree, then
@@ -982,7 +982,7 @@ TEST_CASE("RPlusTreeOverlapTest", "[RectangleTreeTraitsTest]")
 
   // Ensure that all leaf nodes are at the same level.
   REQUIRE(GetMinLevel(rPlusTree) == GetMaxLevel(rPlusTree));
-  REQUIRE(rPlusTree.TreeDepth() == GetMinLevel(rPlusTree));
+  REQUIRE((int) rPlusTree.TreeDepth() == GetMinLevel(rPlusTree));
 }
 
 
@@ -1099,7 +1099,7 @@ TEST_CASE("RPlusPlusTreeBoundTest", "[RectangleTreeTraitsTest]")
   REQUIRE(b == false);
 
   REQUIRE(GetMinLevel(rPlusPlusTree) == GetMaxLevel(rPlusPlusTree));
-  REQUIRE(rPlusPlusTree.TreeDepth() == GetMinLevel(rPlusPlusTree));
+  REQUIRE((int) rPlusPlusTree.TreeDepth() == GetMinLevel(rPlusPlusTree));
 
   // Check the MinimalSplitsNumberSweep.
   typedef RectangleTree<EuclideanDistance,
@@ -1113,7 +1113,7 @@ TEST_CASE("RPlusPlusTreeBoundTest", "[RectangleTreeTraitsTest]")
   CheckRPlusPlusTreeBound(rPlusPlusTree2);
 
   REQUIRE(GetMinLevel(rPlusPlusTree2) == GetMaxLevel(rPlusPlusTree2));
-  REQUIRE(rPlusPlusTree2.TreeDepth() == GetMinLevel(rPlusPlusTree2));
+  REQUIRE((int) rPlusPlusTree2.TreeDepth() == GetMinLevel(rPlusPlusTree2));
 }
 
 TEST_CASE("RPlusPlusTreeTraverserTest", "[RectangleTreeTraitsTest]")

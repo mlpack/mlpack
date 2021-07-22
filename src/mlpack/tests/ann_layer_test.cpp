@@ -697,7 +697,7 @@ TEST_CASE("SimpleLinearNoBiasLayerTest", "[ANNLayerTest]")
  */
 TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
 {
-  arma::mat output, input, delta;
+  arma::mat output, input, delta, input1, output1;
   Padding<> module(1, 2, 3, 4);
 
   // Test the Forward function.
@@ -710,6 +710,26 @@ TEST_CASE("SimplePaddingLayerTest", "[ANNLayerTest]")
   // Test the Backward function.
   module.Backward(input, output, delta);
   CheckMatrices(delta, input);
+
+  // Test forward function for multiple filters.
+  // Here it's 3 filters with height = 224, width = 224
+  // the output should be [226 * 226 * 3, 1] with 1 padding.
+  Padding<> module1(1, 1, 1, 1, 224, 224);
+  input1 = arma::randu(224 * 224 * 3, 1);
+  module1.Forward(input1, output1);
+  REQUIRE(arma::accu(input1) == arma::accu(output1));
+  REQUIRE(output1.n_rows == (226 * 226 * 3));
+  REQUIRE(output1.n_cols == 1);
+
+  // Test forward function for multiple batches with multiple filters.
+  // Here it's 3 filters with height = 244, width = 244
+  // the output should be [246 * 246 * 3, 3] with 1 padding.
+  Padding<> module2(1, 1, 1, 1, 244, 244);
+  input1 = arma::randu(244 * 244 * 3, 3);
+  module2.Forward(input1, output1);
+  REQUIRE(arma::accu(input1) == arma::accu(output1));
+  REQUIRE(output1.n_rows == (246 * 246 * 3));
+  REQUIRE(output1.n_cols == 3);
 }
 
 /**
@@ -3927,7 +3947,7 @@ TEST_CASE("MeanPoolingTestCase", "[ANNLayerTest]")
   CheckMatrices(output1, result1, 1e-1);
   CheckMatrices(output2, result2, 1e-1);
 
-  arma::mat delta1, delta2; 
+  arma::mat delta1, delta2;
   module1.Backward(input, output1, delta1);
   REQUIRE(arma::accu(delta1) == 25.5);
   module2.Backward(input, output2, delta2);
@@ -4654,6 +4674,51 @@ TEST_CASE("TransposedConvolutionWeightInitializationTest", "[ANNLayerTest]")
   REQUIRE(module.Bias().n_cols == 1);
   REQUIRE(module.Parameters().n_rows
       == (outSize * inSize * kernelWidth * kernelHeight) + outSize);
+}
+
+/**
+ * Simple Test for ChannelShuffle layer.
+ */
+TEST_CASE("ChannelShuffleLayerTest", "[ANNLayerTest]")
+{
+  arma::mat input1, output1, outputExpected1, outputBackward1;
+  ChannelShuffle<> module1(2, 2, 6, 2);
+
+  input1 << 1  << 13 << arma::endr
+         << 2  << 14 << arma::endr
+         << 3  << 15 << arma::endr
+         << 4  << 16 << arma::endr
+         << 5  << 17 << arma::endr
+         << 6  << 18 << arma::endr
+         << 7  << 19 << arma::endr
+         << 8  << 20 << arma::endr
+         << 9  << 21 << arma::endr
+         << 10 << 22 << arma::endr
+         << 11 << 23 << arma::endr
+         << 12 << 24 << arma::endr;
+  input1.reshape(24, 1);
+  // Value calculated using torch.nn.ChannelShuffle().
+  outputExpected1 << 1  << 17 << arma::endr
+                  << 2  << 18 << arma::endr
+                  << 3  << 19 << arma::endr
+                  << 4  << 20 << arma::endr
+                  << 13 << 9 << arma::endr
+                  << 14 << 10 << arma::endr
+                  << 15 << 11 << arma::endr
+                  << 16 << 12 << arma::endr
+                  << 5  << 21 << arma::endr
+                  << 6  << 22 << arma::endr
+                  << 7  << 23 << arma::endr
+                  << 8  << 24 << arma::endr;
+  outputExpected1.reshape(24, 1);
+  // Check the Forward pass of the layer.
+  module1.Forward(input1, output1);
+  CheckMatrices(output1, outputExpected1);
+
+  // Check the Backward pass of the layer.
+  module1.Backward(output1, output1, outputBackward1);
+  CheckMatrices(input1, outputBackward1);
+
 }
 
 /**

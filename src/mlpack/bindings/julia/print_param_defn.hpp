@@ -79,12 +79,14 @@ void PrintParamDefn(
   //   buffer = ccall((:Serialize<Type>Ptr, <programName>Library),
   //       Vector{UInt8}, (Ptr{Nothing}, Ptr{UInt8}), model.ptr,
   //       Base.pointer(buf_len))
-  //   buf = Base.unsafe_wrap(buf_ptr, buf_len[0]; own=true)
+  //   buf = Base.unsafe_wrap(buf_ptr, buf_len[1]; own=true)
+  //   write(stream, buf_len[1])
   //   write(stream, buf)
   // end
   //
   // function deserialize<Type>(stream::IO)::<Type>
-  //   buffer = read(stream)
+  //   buf_len = read(stream, UInt)
+  //   buffer = read(stream, buf_len)
   //   <Type>(ccall((:Deserialize<Type>Ptr, <programName>Library),
   //       Ptr{Nothing}, (Vector{UInt8}, UInt), buffer, length(buffer)))
   // end
@@ -138,6 +140,7 @@ void PrintParamDefn(
       << "Base.pointer(buf_len))" << std::endl;
   std::cout << "  buf = Base.unsafe_wrap(Vector{UInt8}, buf_ptr, buf_len[1]; "
       << "own=true)" << std::endl;
+  std::cout << "  write(stream, buf_len[1])" << std::endl;
   std::cout << "  write(stream, buf)" << std::endl;
   std::cout << "end" << std::endl;
 
@@ -145,7 +148,8 @@ void PrintParamDefn(
   std::cout << "# Deserialize a model from the given stream." << std::endl;
   std::cout << "function deserialize" << type << "(stream::IO)::" << type
       << std::endl;
-  std::cout << "  buffer = read(stream)" << std::endl;
+  std::cout << "  buf_len = read(stream, UInt)" << std::endl;
+  std::cout << "  buffer = read(stream, buf_len)" << std::endl;
   std::cout << "  " << type << "(ccall((:Deserialize" << type << "Ptr, "
       << programName << "Library), Ptr{Nothing}, (Ptr{UInt8}, UInt), "
       << "Base.pointer(buffer), length(buffer)))" << std::endl;

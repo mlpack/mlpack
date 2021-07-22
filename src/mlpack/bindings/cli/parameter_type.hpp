@@ -53,7 +53,7 @@ struct ParameterType
 template<typename eT>
 struct ParameterType<arma::Col<eT>>
 {
-  typedef std::string type;
+  typedef std::tuple<std::string, size_t, size_t> type;
 };
 
 /**
@@ -65,7 +65,7 @@ struct ParameterType<arma::Col<eT>>
 template<typename eT>
 struct ParameterType<arma::Row<eT>>
 {
-  typedef std::string type;
+  typedef std::tuple<std::string, size_t, size_t> type;
 };
 
 /**
@@ -76,7 +76,7 @@ struct ParameterType<arma::Row<eT>>
 template<typename eT>
 struct ParameterType<arma::Mat<eT>>
 {
-  typedef std::string type;
+  typedef std::tuple<std::string, size_t, size_t> type;
 };
 
 /**
@@ -86,7 +86,7 @@ template<typename eT, typename PolicyType>
 struct ParameterType<std::tuple<mlpack::data::DatasetMapper<PolicyType,
                          std::string>, arma::Mat<eT>>>
 {
-  typedef std::string type;
+  typedef std::tuple<std::string, size_t, size_t> type;
 };
 
 } // namespace cli
