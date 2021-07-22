@@ -100,7 +100,9 @@ class MADGain
   }
 
   /**
-   * Calculates the output value for each leaf node for prediction.
+   * Returns the output value for each leaf node for prediction. The output
+   * value is calculated as the average of all the points in that leaf node.
+   * This calculation is specific to regression trees only.
    */
   template<bool UseWeights, typename ResponsesType, typename WeightsType>
   double OutputLeafValue(const ResponsesType& responses,
