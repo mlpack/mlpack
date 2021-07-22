@@ -149,11 +149,11 @@ template<typename Archive>
 void NearestInterpolation<InputDataType, OutputDataType>::serialize(
   Archive& ar, const uint32_t /* version */)
 {
- ar(CEREAL_NVP(inRowSize));
- ar(CEREAL_NVP(inColSize));
- ar(CEREAL_NVP(outRowSize));
- ar(CEREAL_NVP(outColSize));
- ar(CEREAL_NVP(depth));
+  ar(CEREAL_NVP(inRowSize));
+  ar(CEREAL_NVP(inColSize));
+  ar(CEREAL_NVP(outRowSize));
+  ar(CEREAL_NVP(outColSize));
+  ar(CEREAL_NVP(depth));
 }
 
 } // namespace ann
