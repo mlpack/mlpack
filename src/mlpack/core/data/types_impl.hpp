@@ -26,7 +26,7 @@ namespace mlpack
 namespace data
 {
 
-inline arma::file_type ToArmaFileType(file_type& type)
+inline arma::file_type ToArmaFileType(const file_type& type)
 {
   switch(type)
   {
@@ -82,5 +82,4 @@ inline arma::file_type ToArmaFileType(file_type& type)
 
 }  // namespace data
 }  // namespace mlpack
-
 #endif
