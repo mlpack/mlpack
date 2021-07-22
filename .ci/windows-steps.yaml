@@ -10,13 +10,14 @@ steps:
 - powershell: |
     nuget install OpenBLAS -o $(Agent.ToolsDirectory)
     nuget install boost -o $(Agent.ToolsDirectory) -Version 1.66.0
-    nuget install OpenBLAS -o $(Agent.ToolsDirectory)
     nuget install unofficial-flayan-cereal -o $(Agent.ToolsDirectory)
 
     mkdir -p $(Agent.ToolsDirectory)/boost_libs
     ls
-    tree boost
-    cp $(Agent.ToolsDirectory)/boost 1.66.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
+    tree $(Agent.ToolsDirectory)
+    tree $(Agent.ToolsDirectory)/boost.166.0
+    tree $(Agent.ToolsDirectory)/boost.166.0/lib/native
+    cp $(Agent.ToolsDirectory)/boost.1.66.0/lib/native/address-model-64/lib/*.* $(Agent.ToolsDirectory)/boost_libs
   displayName: 'Fetch build dependencies'
 
 # Configure armadillo
