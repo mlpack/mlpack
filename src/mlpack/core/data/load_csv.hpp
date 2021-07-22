@@ -257,10 +257,8 @@ class LoadCSV
         std::pair<int, int> dimen = GetMatSize(inFile);
         rows = dimen.second;
 
-<<<<<<< HEAD
 	// Now that we know the dimensionality, initialize the DatasetMapper.
 	info.SetDimensionality(rows);
-=======
         // Reset the DatasetInfo object, if needed.
         if (info.Dimensionality() == 0)
         {
@@ -274,7 +272,6 @@ class LoadCSV
               << rows;
           throw std::invalid_argument(oss.str());
         }
->>>>>>> 1fa385493a679809822f92151add8bc50a6f3260
       }
 
       // If we need to do a first pass for the DatasetMapper, do it.
