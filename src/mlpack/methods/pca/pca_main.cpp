@@ -97,6 +97,7 @@ PARAM_STRING_IN("decomposition_method", "Method used for the principal "
 //! Run RunPCA on the specified dataset with the given decomposition method.
 template<typename DecompositionPolicy>
 void RunPCA(util::Params& params,
+            util::Timers& timers,
             arma::mat& dataset,
             const size_t newDimension,
             const bool scale,
@@ -107,6 +108,7 @@ void RunPCA(util::Params& params,
   Log::Info << "Performing PCA on dataset..." << endl;
   double varRetained;
 
+  timers.Start("pca");
   if (params.Has("var_to_retain"))
   {
     if (params.Has("new_dimensionality"))
@@ -119,12 +121,13 @@ void RunPCA(util::Params& params,
   {
     varRetained = p.Apply(dataset, newDimension);
   }
+  timers.Stop("pca");
 
   Log::Info << (varRetained * 100) << "% of variance retained (" <<
       dataset.n_rows << " dimensions)." << endl;
 }
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Load input dataset.
   arma::mat& dataset = params.Get<arma::mat>("input");
@@ -164,21 +167,23 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   // Perform PCA.
   if (decompositionMethod == "exact")
   {
-    RunPCA<ExactSVDPolicy>(params, dataset, newDimension, scale, varToRetain);
+    RunPCA<ExactSVDPolicy>(params, timers, dataset, newDimension, scale,
+        varToRetain);
   }
   else if (decompositionMethod == "randomized")
   {
-    RunPCA<RandomizedSVDPolicy>(params, dataset, newDimension, scale,
+    RunPCA<RandomizedSVDPolicy>(params, timers, dataset, newDimension, scale,
         varToRetain);
   }
   else if (decompositionMethod == "randomized-block-krylov")
   {
-    RunPCA<RandomizedBlockKrylovSVDPolicy>(params, dataset, newDimension, scale,
-        varToRetain);
+    RunPCA<RandomizedBlockKrylovSVDPolicy>(params, timers, dataset,
+        newDimension, scale, varToRetain);
   }
   else if (decompositionMethod == "quic")
   {
-    RunPCA<QUICSVDPolicy>(params, dataset, newDimension, scale, varToRetain);
+    RunPCA<QUICSVDPolicy>(params, timers, dataset, newDimension, scale,
+        varToRetain);
   }
 
   // Now save the results.

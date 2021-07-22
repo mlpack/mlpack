@@ -143,7 +143,7 @@ PARAM_MATRIX_OUT("output_probs", "The matrix in which the predicted probability"
 PARAM_MATRIX_OUT("probabilities", "The matrix in which the predicted"
     " probability of labels for the test set will be written.", "p");
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Check input parameters.
   RequireOnlyOnePassed(params, { "training", "input_model" }, true);
@@ -184,10 +184,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     }
     const bool incrementalVariance = params.Has("incremental_variance");
 
-    Timer::Start("nbc_training");
+    timers.Start("nbc_training");
     model->nbc = NaiveBayesClassifier<>(trainingData, labels,
         model->mappings.n_elem, incrementalVariance);
-    Timer::Stop("nbc_training");
+    timers.Stop("nbc_training");
   }
   else
   {
@@ -210,9 +210,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     // Time the running of the Naive Bayes Classifier.
     Row<size_t> predictions;
     mat probabilities;
-    Timer::Start("nbc_testing");
+    timers.Start("nbc_testing");
     model->nbc.Classify(testingData, predictions, probabilities);
-    Timer::Stop("nbc_testing");
+    timers.Stop("nbc_testing");
 
     if (params.Has("output") || params.Has("predictions"))
     {

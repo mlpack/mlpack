@@ -129,7 +129,7 @@ PARAM_STRING_IN("algorithm", "Type of neighbor search: 'naive', 'single_tree', "
 PARAM_DOUBLE_IN("epsilon", "If specified, will do approximate nearest neighbor "
     "search with given relative error.", "e", 0);
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
     math::RandomSeed((size_t) params.Get<int>("seed"));
@@ -267,7 +267,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 
     arma::mat referenceSet = std::move(params.Get<arma::mat>("reference"));
 
-    knn->BuildModel(std::move(referenceSet), searchMode, epsilon);
+    knn->BuildModel(timers, std::move(referenceSet), searchMode, epsilon);
   }
   else
   {
@@ -344,9 +344,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     arma::mat distances;
 
     if (params.Has("query"))
-      knn->Search(std::move(queryData), k, neighbors, distances);
+      knn->Search(timers, std::move(queryData), k, neighbors, distances);
     else
-      knn->Search(k, neighbors, distances);
+      knn->Search(timers, k, neighbors, distances);
+
     Log::Info << "Search complete." << endl;
 
     // Calculate the effective error, if desired.

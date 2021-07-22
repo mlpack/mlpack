@@ -73,6 +73,7 @@ using Option = mlpack::bindings::cli::CLIOption<T>;
 }
 
 #include <mlpack/core/util/param.hpp>
+#include <mlpack/core/util/timers.hpp>
 #include <mlpack/bindings/cli/parse_command_line.hpp>
 #include <mlpack/bindings/cli/end_program.hpp>
 
@@ -88,6 +89,7 @@ int main(int argc, char** argv)
   // Create a new timer object for this call.
   mlpack::util::Timers timers;
   timers.Enabled() = true;
+  mlpack::Timer::EnableTiming();
 
   // A "total_time" timer is run by default for each mlpack program.
   timers.Start("total_time");

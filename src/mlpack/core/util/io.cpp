@@ -176,6 +176,12 @@ IO& IO::GetSingleton()
   return singleton;
 }
 
+// Returns the sole instance of the timers.
+util::Timers& IO::GetTimers()
+{
+  return GetSingleton().timer;
+}
+
 /**
  * Return a new Params object initialized with all the parameters of the
  * binding `bindingName`.  This is intended to be called at the beginning of

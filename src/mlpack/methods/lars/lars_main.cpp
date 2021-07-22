@@ -127,7 +127,7 @@ PARAM_DOUBLE_IN("lambda2", "Regularization parameter for l2-norm penalty.", "L",
 PARAM_FLAG("use_cholesky", "Use Cholesky decomposition during computation "
     "rather than explicitly computing the full Gram matrix.", "c");
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   double lambda1 = params.Get<double>("lambda1");
   double lambda2 = params.Get<double>("lambda2");
@@ -173,7 +173,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 
     vec beta;
     arma::rowvec y = std::move(matY);
+    timers.Start("lars_regression");
     lars->Train(matX, y, beta, false /* do not transpose */);
+    timers.Stop("lars_regression");
   }
   else // We must have --input_model_file.
   {

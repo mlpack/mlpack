@@ -116,14 +116,15 @@ class KDEWrapperBase
   virtual KDEMode& Mode() = 0;
 
   //! Train the model (build the tree).
-  virtual void Train(arma::mat&& referenceSet) = 0;
+  virtual void Train(util::Timers& timers, arma::mat&& referenceSet) = 0;
 
   //! Perform bichromatic KDE (i.e. KDE with a separate query set).
-  virtual void Evaluate(arma::mat&& querySet,
+  virtual void Evaluate(util::Timers& timers,
+                        arma::mat&& querySet,
                         arma::vec& estimates) = 0;
 
   //! Perform monochromatic KDE (i.e. with the reference set as the query set).
-  virtual void Evaluate(arma::vec& estimates) = 0;
+  virtual void Evaluate(util::Timers& timers, arma::vec& estimates) = 0;
 };
 
 /**
@@ -194,14 +195,15 @@ class KDEWrapper : public KDEWrapperBase
   virtual KDEMode& Mode() { return kde.Mode(); }
 
   //! Train the model (build the tree).
-  virtual void Train(arma::mat&& referenceSet);
+  virtual void Train(util::Timers& timers, arma::mat&& referenceSet);
 
   //! Perform bichromatic KDE (i.e. KDE with a separate query set).
-  virtual void Evaluate(arma::mat&& querySet,
+  virtual void Evaluate(util::Timers& timers,
+                        arma::mat&& querySet,
                         arma::vec& estimates);
 
   //! Perform monochromatic KDE (i.e. with the reference set as the query set).
-  virtual void Evaluate(arma::vec& estimates);
+  virtual void Evaluate(util::Timers& timers, arma::vec& estimates);
 
   //! Serialize the KDE model.
   template<typename Archive>
@@ -425,9 +427,10 @@ class KDEModel
    * Takes possession of the reference set to avoid a copy, so the reference set
    * will not be usable after this.
    *
+   * @param timers Object to hold timing information in.
    * @param referenceSet Set of reference points.
    */
-  void BuildModel(arma::mat&& referenceSet);
+  void BuildModel(util::Timers& timers, arma::mat&& referenceSet);
 
   /**
    * Perform kernel density estimation on the given query set.
@@ -436,21 +439,25 @@ class KDEModel
    * estimations.
    *
    * @pre The model has to be previously created with BuildModel.
+   * @param timers Object to hold timing information in.
    * @param querySet Set of query points.
    * @param estimations Vector where the results will be stored in the same
    *                    order as the query points.
    */
-  void Evaluate(arma::mat&& querySet, arma::vec& estimations);
+  void Evaluate(util::Timers& timers,
+                arma::mat&& querySet,
+                arma::vec& estimations);
 
   /**
    * Perform kernel density estimation on the reference set.
    * If possible, it returns normalized estimations.
    *
    * @pre The model has to be previously created with BuildModel.
+   * @param timers Object to hold timing information in.
    * @param estimations Vector where the results will be stored in the same
    *                    order as the query points.
    */
-  void Evaluate(arma::vec& estimations);
+  void Evaluate(util::Timers& timers, arma::vec& estimations);
 
 
  private:

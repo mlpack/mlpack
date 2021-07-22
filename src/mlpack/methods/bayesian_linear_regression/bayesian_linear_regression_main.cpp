@@ -133,7 +133,7 @@ PARAM_FLAG("center", "Center the data and fit the intercept if enabled.", "c");
 PARAM_FLAG("scale", "Scale each feature by their standard deviations if "
            "enabled.", "s");
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   bool center = params.Get<bool>("center");
   bool scale = params.Get<bool>("scale");
@@ -179,7 +179,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 
     arma::rowvec predictionsTrain;
     // The Train method is ready to take data in column-major format.
+    timers.Start("bayesian_linear_regression_training");
     bayesLinReg->Train(matX, responses);
+    timers.Stop("bayesian_linear_regression_training");
   }
   else // We must have --input_model_file.
   {
@@ -193,6 +195,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     mat testPoints = std::move(params.Get<arma::mat>("test"));
     arma::rowvec predictions;
 
+    timers.Start("bayesian_linear_regression_prediction");
     if (params.Has("stds"))
     {
       arma::rowvec std;
@@ -205,6 +208,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     {
       bayesLinReg->Predict(testPoints, predictions);
     }
+    timers.Stop("bayesian_linear_regression_prediction");
 
     // Save test predictions (one per line).
     params.Get<arma::mat>("predictions") = std::move(predictions);

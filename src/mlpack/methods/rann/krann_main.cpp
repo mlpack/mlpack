@@ -124,7 +124,7 @@ PARAM_FLAG("first_leaf_exact", "The flag to trigger sampling only after "
 PARAM_INT_IN("single_sample_limit", "The limit on the maximum number of "
     "samples (and hence the largest node you can approximate).", "z", 20);
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
     math::RandomSeed((size_t) params.Get<int>("seed"));
@@ -216,7 +216,8 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
         << params.GetPrintable<arma::mat>("reference") << "." << endl;
     arma::mat referenceSet = std::move(params.Get<arma::mat>("reference"));
 
-    rann->BuildModel(std::move(referenceSet), size_t(lsInt), naive, singleMode);
+    rann->BuildModel(timers, std::move(referenceSet), size_t(lsInt), naive,
+        singleMode);
   }
   else
   {
@@ -277,9 +278,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     arma::Mat<size_t> neighbors;
     arma::mat distances;
     if (params.Has("query"))
-      rann->Search(std::move(queryData), k, neighbors, distances);
+      rann->Search(timers, std::move(queryData), k, neighbors, distances);
     else
-      rann->Search(k, neighbors, distances);
+      rann->Search(timers, k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
     // Save output.

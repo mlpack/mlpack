@@ -122,7 +122,7 @@ PARAM_MATRIX_OUT("codes", "Output codes matrix.", "c");
 
 PARAM_INT_IN("seed", "Random seed.  If 0, 'std::time(NULL)' is used.", "s", 0);
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
     RandomSeed((size_t) params.Get<int>("seed"));
@@ -184,6 +184,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     lcc->Tolerance() = params.Get<double>("tolerance");
 
     // Inform the user if we are overwriting their model.
+    timers.Start("local_coordinate_coding");
     if (params.Has("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
@@ -226,6 +227,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       // Run with the default initialization.
       lcc->Train(matX);
     }
+    timers.Stop("local_coordinate_coding");
   }
 
   // Now, do we have any matrix to encode?

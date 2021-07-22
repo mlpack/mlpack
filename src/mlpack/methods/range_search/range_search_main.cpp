@@ -120,7 +120,7 @@ PARAM_FLAG("naive", "If true, O(n^2) naive mode is used for computation.", "N");
 PARAM_FLAG("single_mode", "If true, single-tree search is used (as opposed to "
     "dual-tree search).", "S");
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
     math::RandomSeed((size_t) params.Get<int>("seed"));
@@ -220,7 +220,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 
     const size_t leafSize = size_t(lsInt);
 
-    rs->BuildModel(std::move(referenceSet), leafSize, naive, singleMode);
+    rs->BuildModel(timers, std::move(referenceSet), leafSize, naive, singleMode);
   }
   else
   {
@@ -265,9 +265,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     vector<vector<double>> distances;
 
     if (params.Has("query"))
-      rs->Search(std::move(queryData), r, neighbors, distances);
+      rs->Search(timers, std::move(queryData), r, neighbors, distances);
     else
-      rs->Search(r, neighbors, distances);
+      rs->Search(timers, r, neighbors, distances);
 
     Log::Info << "Search complete." << endl;
 

@@ -98,7 +98,7 @@ PARAM_DOUBLE_IN("radius", "If the distance between two centroids is less than "
     "the given radius, one will be removed.  A radius of 0 or less means an "
     "estimate will be calculated and used for the radius.", "r", 0);
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   const double radius = params.Get<double>("radius");
   const int maxIterations = params.Get<int>("max_iterations");
@@ -119,11 +119,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 
   MeanShift<> meanShift(radius, maxIterations);
 
-  Timer::Start("clustering");
+  timers.Start("clustering");
   Log::Info << "Performing mean shift clustering..." << endl;
   meanShift.Cluster(dataset, assignments, centroids,
       params.Has("force_convergence"));
-  Timer::Stop("clustering");
+  timers.Stop("clustering");
 
   Log::Info << "Found " << centroids.n_cols << " centroids." << endl;
   if (radius <= 0.0)

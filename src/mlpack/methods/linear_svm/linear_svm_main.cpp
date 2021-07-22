@@ -175,7 +175,7 @@ PARAM_MATRIX_OUT("probabilities", "If test data is specified, this "
     "matrix is where the class probabilities for the test set will be saved.",
     "p");
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
     math::RandomSeed((size_t) params.Get<int>("seed"));
@@ -344,7 +344,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       Log::Info << "Training model with L-BFGS optimizer." << endl;
 
       // This will train the model.
+      timers.Start("linear_svm_optimization");
       model->svm.Train(trainingSet, labels, numClasses, lbfgsOpt);
+      timers.Stop("linear_svm_optimization");
     }
     else if (optimizerType == "psgd")
     {
@@ -369,7 +371,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       Log::Info << "Training model with ParallelSGD optimizer." << endl;
 
       // This will train the model.
+      timers.Start("linear_svm_optimization");
       model->svm.Train(trainingSet, labels, numClasses, psgdOpt);
+      timers.Stop("linear_svm_optimization");
     }
   }
   if (params.Has("test"))

@@ -130,7 +130,7 @@ PARAM_MATRIX_OUT("codes", "Matrix to save the output sparse codes of the test "
 
 PARAM_MATRIX_IN("test", "Optional matrix to be encoded by trained model.", "T");
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
     RandomSeed((size_t) params.Get<int>("seed"));
@@ -209,6 +209,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     sc->NewtonTolerance() = params.Get<double>("newton_tolerance");
 
     // Inform the user if we are overwriting their model.
+    timers.Start("sparse_coding");
     if (params.Has("input_model"))
     {
       Log::Info << "Using dictionary from existing model in '"
@@ -252,6 +253,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       // Run sparse coding with the default initialization.
       sc->Train(matX);
     }
+    timers.Stop("sparse_coding");
   }
 
   // Now, de we have any matrix to encode?

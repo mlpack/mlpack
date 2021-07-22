@@ -198,7 +198,7 @@ PARAM_COL_OUT("predictions", "Vector to store density predictions.",
 
 // Maybe, in the future, it could be interesting to implement different metrics.
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Get some parameters.
   const double bandwidth = params.Get<double>("bandwidth");
@@ -292,7 +292,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
       kde->TreeType() = KDEModel::R_TREE;
 
     // Build model.
-    kde->BuildModel(std::move(reference));
+    kde->BuildModel(timers, std::move(reference));
 
     // Set Mode.
     if (modeStr == "dual-tree")
@@ -320,11 +320,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   if (params.Has("query"))
   {
     arma::mat query = std::move(params.Get<arma::mat>("query"));
-    kde->Evaluate(std::move(query), estimations);
+    kde->Evaluate(timers, std::move(query), estimations);
   }
   else
   {
-    kde->Evaluate(estimations);
+    kde->Evaluate(timers, estimations);
   }
 
   // Output predictions if needed.

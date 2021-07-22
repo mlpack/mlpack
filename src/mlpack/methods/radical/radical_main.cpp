@@ -87,7 +87,7 @@ using namespace mlpack::util;
 using namespace std;
 using namespace arma;
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Set random seed.
   if (params.Get<int>("seed") != 0)
@@ -127,7 +127,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   Radical rad(noiseStdDev, nReplicates, nAngles, nSweeps);
   mat matY;
   mat matW;
-  rad.DoRadical(matX, matY, matW);
+  rad.DoRadical(matX, matY, matW, timers);
 
   // Save results.
   if (params.Has("output_ic"))

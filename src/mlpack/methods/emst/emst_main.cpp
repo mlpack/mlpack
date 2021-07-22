@@ -98,7 +98,7 @@ using namespace mlpack::metric;
 using namespace mlpack::util;
 using namespace std;
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   RequireAtLeastOnePassed(params, { "output" }, false,
       "no output will be saved");
@@ -130,19 +130,21 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     // by hand.
     const size_t leafSize = (size_t) params.Get<int>("leaf_size");
 
-    Timer::Start("tree_building");
+    timers.Start("tree_building");
     std::vector<size_t> oldFromNew;
     KDTree<EuclideanDistance, DTBStat, arma::mat> tree(dataPoints, oldFromNew,
         leafSize);
     metric::LMetric<2, true> metric;
-    Timer::Stop("tree_building");
+    timers.Stop("tree_building");
 
     DualTreeBoruvka<> dtb(&tree, metric);
 
     // Run the DTB algorithm.
     Log::Info << "Calculating minimum spanning tree." << endl;
     arma::mat results;
+    timers.Start("mst_computation");
     dtb.ComputeMST(results);
+    timers.Stop("mst_computation");
 
     // Unmap the results.
     arma::mat unmappedResults(results.n_rows, results.n_cols);

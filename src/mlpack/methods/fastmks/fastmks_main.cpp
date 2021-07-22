@@ -111,7 +111,7 @@ PARAM_FLAG("single", "If true, single-tree search is used (as opposed to "
 PARAM_MATRIX_OUT("kernels", "Output matrix of kernels.", "p");
 PARAM_UMATRIX_OUT("indices", "Output matrix of indices.", "i");
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   // Validate command-line parameters.
   RequireOnlyOnePassed(params, { "reference", "input_model" }, true);
@@ -180,43 +180,50 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     {
       LinearKernel lk;
       model->KernelType() = FastMKSModel::LINEAR_KERNEL;
-      model->BuildModel(std::move(referenceData), lk, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), lk, single, naive,
+          base);
     }
     else if (kernelType == "polynomial")
     {
       PolynomialKernel pk(degree, offset);
       model->KernelType() = FastMKSModel::POLYNOMIAL_KERNEL;
-      model->BuildModel(std::move(referenceData), pk, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), pk, single, naive,
+          base);
     }
     else if (kernelType == "cosine")
     {
       CosineDistance cd;
       model->KernelType() = FastMKSModel::COSINE_DISTANCE;
-      model->BuildModel(std::move(referenceData), cd, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), cd, single, naive,
+          base);
     }
     else if (kernelType == "gaussian")
     {
       GaussianKernel gk(bandwidth);
       model->KernelType() = FastMKSModel::GAUSSIAN_KERNEL;
-      model->BuildModel(std::move(referenceData), gk, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), gk, single, naive,
+          base);
     }
     else if (kernelType == "epanechnikov")
     {
       EpanechnikovKernel ek(bandwidth);
       model->KernelType() = FastMKSModel::EPANECHNIKOV_KERNEL;
-      model->BuildModel(std::move(referenceData), ek, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), ek, single, naive,
+          base);
     }
     else if (kernelType == "triangular")
     {
       TriangularKernel tk(bandwidth);
       model->KernelType() = FastMKSModel::TRIANGULAR_KERNEL;
-      model->BuildModel(std::move(referenceData), tk, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), tk, single, naive,
+          base);
     }
     else if (kernelType == "hyptan")
     {
       HyperbolicTangentKernel htk(scale, offset);
       model->KernelType() = FastMKSModel::HYPTAN_KERNEL;
-      model->BuildModel(std::move(referenceData), htk, single, naive, base);
+      model->BuildModel(timers, std::move(referenceData), htk, single, naive,
+          base);
     }
   }
   else
@@ -246,7 +253,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 
       try
       {
-        model->Search(queryData, (size_t) params.Get<int>("k"), indices,
+        model->Search(timers, queryData, (size_t) params.Get<int>("k"), indices,
             kernels, base);
       }
       catch (std::invalid_argument& e)
@@ -261,7 +268,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
     {
       try
       {
-        model->Search((size_t) params.Get<int>("k"), indices, kernels);
+        model->Search(timers, (size_t) params.Get<int>("k"), indices, kernels);
       }
       catch (std::invalid_argument& e)
       {

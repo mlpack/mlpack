@@ -149,7 +149,7 @@ using namespace mlpack::metric;
 using namespace mlpack::util;
 using namespace std;
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
   if (params.Get<int>("seed") != 0)
     math::RandomSeed((size_t) params.Get<int>("seed"));
@@ -250,6 +250,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
   }
 
   // Now create the NCA object and run the optimization.
+  timers.Start("nca_optimization");
   if (optimizerType == "sgd")
   {
     NCA<LMetric<2> > nca(data, labels);
@@ -275,6 +276,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 
     nca.LearnDistance(distance);
   }
+  timers.Stop("nca_optimization");
 
   // Save the output.
   if (params.Has("output"))
