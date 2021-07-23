@@ -33,6 +33,9 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
   if (bestGain == 0.0)
     return DBL_MAX;
 
+  // TODO: Filter out and separate the missing data before sorting to decrease
+  // sensitivity towards missing data.
+
   // Next, sort the data.
   arma::uvec sortedIndices = arma::sort_index(data);
   ResponsesType sortedResponses(responses.n_elem);
@@ -46,12 +49,58 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
     return DBL_MAX;
 
   // Initialize the binary scan.
-  lossFunction.BinaryScanInitialize();
+  // In XGBoost, minimum number of points in a node is determined by a parameter
+  // called min_child_weight. This parameter will be stored within the loss function
+  // class and thus the begin index will be calculated inside BinaryScanInitialize().
+  size_t index = 0;
+  lossFunction.BinaryScanInitialize(index);
 
-  double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
   bool improved = false;
-  // Force a minimum leaf size of 1 (empty children don't make sense).
-  const size_t minimum = std::max(minimumLeafSize, (size_t) 1);
+  bool endLoop = false;
+  for (; index < data.n_elem - 1; ++index)
+  {
+    lossFunction.BinaryStep(index, endLoop);
+
+    // We have to ensure that the min_child_weight condition is held in the right
+    // child too. So, if at any index, that condition will be false, then we will
+    // end the loop.
+    if (endLoop) break;
+
+    // Make sure that the value has changed.
+    if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
+      continue;
+
+    // Calculate the gain for the left and right child.
+    std::tuple<double, double> binaryGains = fitnessFunction.BinaryGains();
+    const double leftGain = std::get<0>(binaryGains);
+    const double rightGain = std::get<1>(binaryGains);
+
+    // Corner case: is this the best possible split?
+    if (gain >= 0.0)
+    {
+      // We can take a shortcut: no split will be better than this, so just
+      // take this one. The actual split value will be halfway between the
+      // value at index - 1 and index.
+      splitInfo = (data[sortedIndices[index - 1]] +
+          data[sortedIndices[index]]) / 2.0;
+
+      return gain;
+    }
+    if (gain > bestFoundGain)
+    {
+      // We still have a better split.
+      bestFoundGain = gain;
+      splitInfo = (data[sortedIndices[index - 1]] +
+          data[sortedIndices[index]]) / 2.0;
+      improved = true;
+    }
+  }
+  // If we didn't improve, return the original gain exactly as we got it
+  // (without introducing floating point errors).
+  if (!improved)
+    return DBL_MAX;
+
+  return bestFoundGain;
 }
 
 } // namespace ensemble
