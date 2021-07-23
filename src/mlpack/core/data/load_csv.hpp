@@ -191,7 +191,7 @@ class LoadCSV
       if (rows == 1)
       {
         // Extract the number of columns.
-        std::pair<int, int> dimen = GetMatSize(inFile);
+        std::pair<size_t, size_t> dimen = GetMatSize(inFile);
         cols = dimen.second;
       }
 
@@ -450,7 +450,7 @@ class LoadCSV
     }
   }
 
-  inline std::pair<int, int> GetMatSize(std::ifstream& f);
+  inline std::pair<size_t, size_t> GetMatSize(std::ifstream& f);
 
   //! Spirit rule for parsing.
   boost::spirit::qi::rule<std::string::iterator, iter_type()> stringRule;
