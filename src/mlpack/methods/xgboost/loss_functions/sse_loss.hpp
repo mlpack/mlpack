@@ -30,7 +30,7 @@ class SSELoss
 {
  public:
   // Default constructor---No regularization.
-  SSELoss(): alpha(0), lambda(0) { /* Nothing to do. */}
+  SSELoss() : alpha(0), lambda(0) { /* Nothing to do. */}
 
   SSELoss(const double alpha, const double lambda):
       alpha(alpha), lambda(lambda)
