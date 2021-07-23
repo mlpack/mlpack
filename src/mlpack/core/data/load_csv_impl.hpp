@@ -119,7 +119,7 @@ namespace data
     return true;
   }
 
-  inline std::pair<int, int> LoadCSV::GetMatSize(std::ifstream& f)
+  inline std::pair<size_t, size_t> LoadCSV::GetMatSize(std::ifstream& f)
   {
     
     bool load_okay = f.good();
@@ -164,8 +164,7 @@ namespace data
     f.clear();
     f.seekg(pos1);
 
-    //x.set_size(f_n_rows, f_n_cols);
-    std::pair<int, int> mat_size(f_n_rows, f_n_cols);
+    std::pair<size_t, size_t> mat_size(f_n_rows, f_n_cols);
 
     return mat_size;
   }
@@ -181,9 +180,9 @@ namespace data
 
     f.clear();
 
-    std::pair<int, int> mat_size = GetMatSize(f);
+    std::pair<size_t, size_t> mat_size = GetMatSize(f);
 
-    x.set_size(mat_size.second, mat_size.first);
+    x.zeros(mat_size.second, mat_size.first);
 
     size_t row = 0;
 
