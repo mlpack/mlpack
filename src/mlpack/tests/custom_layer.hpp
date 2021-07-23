@@ -15,7 +15,8 @@
 
 #include <mlpack/prereqs.hpp>
 #include <mlpack/methods/ann/layer/layer.hpp>
-
+#include <mlpack/methods/ann/layer/base_layer.hpp>
+#include <mlpack/methods/ann/activation_functions/logistic_function.hpp>
 
 namespace mlpack {
 namespace ann {

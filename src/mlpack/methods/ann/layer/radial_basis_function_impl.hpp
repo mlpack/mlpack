@@ -2,7 +2,6 @@
  * @file radial_basis_function_impl.hpp
  * @author Himanshu Pathak
  *
- *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
  * 3-clause BSD license along with mlpack.  If not, see
@@ -96,7 +95,7 @@ void RBF<InputType, OutputType, Activation>::serialize(
 
   ar(CEREAL_NVP(distances));
   ar(CEREAL_NVP(centres));
-  ar(CEREAL_NVP(betas);
+  ar(CEREAL_NVP(betas));
 }
 
 } // namespace ann

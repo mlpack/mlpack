@@ -14,6 +14,7 @@
 #include <mlpack/core.hpp>
 
 #include <mlpack/methods/ann/layer/layer.hpp>
+#include <mlpack/methods/ann/layer/layer_types.hpp>
 #include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
 #include <mlpack/methods/ann/ffn.hpp>
 #include <mlpack/methods/kmeans/kmeans.hpp>
@@ -100,8 +101,8 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   kmeans.Cluster(trainData, 8, centroids);
 
   FFN<MeanSquaredError<> > model;
-  model.Add<RBF<> >(trainData.n_rows, 8, centroids);
-  model.Add<Linear<> >(8, 3);
+  model.Add<RBF<> >(8, centroids);
+  model.Add<Linear>(3);
 
   // RBFN neural net with MeanSquaredError.
   TestNetwork<>(model, trainData, trainLabels1, testData, testLabels, 10, 0.1);
@@ -132,8 +133,8 @@ TEST_CASE("RBFNetworkTest", "[FeedForwardNetworkTest]")
   kmeans1.Cluster(dataset, 140, centroids1);
 
   FFN<MeanSquaredError<> > model1;
-  model1.Add<RBF<> >(dataset.n_rows, 140, centroids1, 4.1);
-  model1.Add<Linear<> >(140, 2);
+  model1.Add<RBF<> >(140, centroids1, 4.1);
+  model1.Add<Linear>(2);
 
   // RBFN neural net with MeanSquaredError.
   TestNetwork<>(model1, dataset, labels1, dataset, labels, 10, 0.1);
