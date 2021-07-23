@@ -144,7 +144,7 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Backward(
   arma::Mat<eT>& output)
 {
   if (output.is_empty())
-    output.set_size(inRowSize * inColSize * depth, batchSize);
+    output.zeros(inRowSize * inColSize * depth, batchSize);
   else
   {
     assert(output.n_rows == inRowSize * inColSize * depth);
