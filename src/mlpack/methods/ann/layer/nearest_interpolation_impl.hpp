@@ -100,8 +100,7 @@ void NearestInterpolation<InputDataType, OutputDataType>::Backward(
 {
   if (output.is_empty())
   {
-    output.set_size(inRowSize * inColSize * depth, batchSize);
-    output.zeros();
+    output.zeros(inRowSize * inColSize * depth, batchSize);
   }
   else
   {
