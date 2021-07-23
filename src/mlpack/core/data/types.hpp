@@ -43,13 +43,13 @@ enum struct file_type
 };
 
 /**
- * WHhere should I place this fucntion?
  * This fucntion is used to convert mlpack file type to respective
  * arma file type.
  *
- * @param type Mlpack's file_type which will we converted to arma's file_type
+ * @param type mlpack::file_type
  */
-inline arma::file_type ToArmaFileType(file_type& type);
+inline arma::file_type ToArmaFileType(const file_type& type);
+
 
 }  // namespace data
 }  // namespace mlpack
