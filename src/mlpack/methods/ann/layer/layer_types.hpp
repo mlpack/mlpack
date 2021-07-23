@@ -58,7 +58,7 @@
 //#include <mlpack/methods/ann/layer/padding.hpp>
 //#include <mlpack/methods/ann/layer/parametric_relu.hpp>
 //#include <mlpack/methods/ann/layer/positional_encoding.hpp>
-//#include <mlpack/methods/ann/layer/radial_basis_function.hpp>
+#include <mlpack/methods/ann/layer/radial_basis_function.hpp>
 //#include <mlpack/methods/ann/layer/recurrent.hpp>
 //#include <mlpack/methods/ann/layer/recurrent_attention.hpp>
 //#include <mlpack/methods/ann/layer/reinforce_normal.hpp>

@@ -68,6 +68,9 @@ class RBF : public Layer<InputType, OutputType>
       InputType& centres,
       double betas = 0);
 
+  //! Clone the LinearType object. This handles polymorphism correctly.
+  RBF* Clone() const { return new RBF(*this); }
+
   /**
    * Ordinary feed forward pass of the radial basis function.
    *
@@ -83,12 +86,12 @@ class RBF : public Layer<InputType, OutputType>
                 const OutputType& /* gy */,
                 OutputType& /* g */);
 
-  const std::vector<size_t>& OutputDimensions() const
+  void ComputeOutputDimensions()
   {
-    std::vector<size_t> outputDimensions(inputDimensions.size(), 1);
+    this->outputDimensions = std::vector<size_t>(this->inputDimensions.size(),
+        1);
     // This flattens the input.
-    outputDimensions[0] = outSize;
-    return outputDimensions;
+    this->outputDimensions[0] = outSize;
   }
 
   /**
