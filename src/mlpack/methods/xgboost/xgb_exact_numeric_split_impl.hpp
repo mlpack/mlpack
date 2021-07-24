@@ -38,13 +38,8 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
 
   // Next, sort the data.
   arma::uvec sortedIndices = arma::sort_index(data);
-  ResponsesType sortedResponses(responses.n_elem);
   arma::vec sortedGradients(sortedIndices.n_elem);
   arma::vec sortedHessians(sortedIndices.n_elem);
-
-  for (size_t i = 0; i < sortedResponses.n_elem; ++i)
-    sortedResponses[i] = responses[sortedIndices[i]];
-
   lossFunction.sortGradAndHess(sortedIndices, sortedGradients,
       sortedHessians);
 
