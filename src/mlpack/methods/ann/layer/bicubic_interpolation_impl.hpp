@@ -90,8 +90,7 @@ void BicubicInterpolation<InputDataType, OutputDataType>::Forward(
   for (size_t k = 0; k < depth * batchSize; ++k)
   {
     // The input is padded on all sides using replication of the input boundary.
-    arma::mat grid = arma::mat(inRowSize + 4, inColSize + 4);
-    grid.zeros();
+    arma::mat grid = arma::zeros(inRowSize + 4, inColSize + 4);
     grid(arma::span(2, inRowSize + 1), arma::span(2, inColSize + 1)) = inputAsCube.slice(k);
     grid(arma::span(2, inRowSize + 1), 0) = grid(arma::span(2, inRowSize + 1), 2);
     grid(arma::span(2, inRowSize + 1), 1) = grid(arma::span(2, inRowSize + 1), 2);
