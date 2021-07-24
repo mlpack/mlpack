@@ -63,18 +63,6 @@ class SSELoss
   }
 
   /**
-   * Calculates the gain from begin to end.
-   *
-   * @param begin The begin index to calculate gain.
-   * @param end The end index to calculate gain.
-   */
-  double Evaluate(const size_t begin, const size_t end)
-  {
-    return std::pow(ApplyL1(arma::accu(gradients.subvec(begin, end))), 2) /
-        (arma::accu(hessians.subvec(begin, end)) + lambda);
-  }
-
-  /**
    * Calculates the gain of the node before splitting. It also initializes the
    * gradients and hessians used later for finding split.
    * UseWeights and weights are ignored here. These are just to make the API
