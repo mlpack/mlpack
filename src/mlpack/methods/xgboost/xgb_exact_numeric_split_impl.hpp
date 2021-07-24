@@ -49,6 +49,7 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
   size_t index = lossFunction.BinaryScanInitialize(sortedGradients,
       sortedHessians);
 
+  double bestFoundGain = bestGain + minimumGainSplit;
   bool improved = false;
   bool endLoop = false;
   for (; index < data.n_elem - 1; ++index)
