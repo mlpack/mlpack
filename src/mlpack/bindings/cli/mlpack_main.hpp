@@ -78,7 +78,7 @@ using Option = mlpack::bindings::cli::CLIOption<T>;
 #include <mlpack/bindings/cli/end_program.hpp>
 
 // Forward definition of the binding function.
-void BINDING_FUNCTION(mlpack::util::Params&, mlpack::util::Timers&);
+static void BINDING_FUNCTION(mlpack::util::Params&, mlpack::util::Timers&);
 
 // Define the main function that will be used by this binding.
 int main(int argc, char** argv)
