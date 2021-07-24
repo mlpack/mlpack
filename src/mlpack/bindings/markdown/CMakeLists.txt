@@ -19,11 +19,6 @@ endif ()
 # We don't need to find any libraries or anything to generate markdown
 # documentation.
 
-# Get categories.  The list of allowable categories for add_markdown_docs() is
-# in that file.
-include(MarkdownCategories.cmake)
-set(MARKDOWN_CATEGORIES ${MARKDOWN_CATEGORIES} PARENT_SCOPE)
-
 # Add sources for Markdown bindings.
 set(SOURCES
   "binding_info.hpp"
@@ -62,16 +57,9 @@ endforeach()
 # 'add_markdown_docs(knn, "cli;python;julia", "classification")', for instance.
 # See the file 'MarkdownCategories.cmake' for valid categories that can be used
 # by the macro.
-macro (add_markdown_docs name languages category)
+macro (add_markdown_docs name languages)
 
-  # First, make sure that the category is a valid category.
-  list(FIND MARKDOWN_CATEGORIES ${category} cat_index)
-  if (${cat_index} EQUAL -1)
-    string(CONCAT error_str "add_markdown_docs(): unknown category ${category}!"
-        "  See the categories in "
-        "src/mlpack/bindings/markdown/MarkdownCategories.cmake.")
-    message(FATAL_ERROR "${ERROR_STR}")
-  endif ()
+  set(category ${${name}_category})
 
   # Next, we should use configure_file() to generate each
   # generate_markdown.<binding>.cpp.  We need to loop over all the languages for
@@ -123,10 +111,10 @@ function (post_markdown_setup)
 
   # Iterate over categories of binding.
   list(LENGTH MARKDOWN_NAMES NUM_MARKDOWN_BINDINGS)
-  list(LENGTH MARKDOWN_CATEGORIES NUM_MARKDOWN_CATEGORIES)
+  list(LENGTH CATEGORIES NUM_MARKDOWN_CATEGORIES)
   math(EXPR cat_limit "${NUM_MARKDOWN_CATEGORIES} - 1")
   foreach (i RANGE ${cat_limit})
-    list (GET MARKDOWN_CATEGORIES ${i} cat)
+    list (GET CATEGORIES ${i} cat)
     # Put the things in this category in a div.
     string(CONCAT header_code "${MARKDOWN_HEADER_CODE}  cout << "
         "\"<div class=\\\"category\\\" markdown=\\\"1\\\">\" << endl;\n  "

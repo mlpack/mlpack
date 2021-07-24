@@ -262,11 +262,8 @@ if (WIN32)
 endif ()
 
 # Add a macro to build a python binding.
-macro (add_python_binding group_name)
-  foreach (method ${${group_name}_valid_methods})
-    set(name ${group_name}_${method})
-
-    if (BUILD_PYTHON_BINDINGS)
+macro (add_python_binding name)
+  if (BUILD_PYTHON_BINDINGS)
     set (MLPACK_PYXS ${MLPACK_PYXS} "${name}.pyx")
     set (MLPACK_PYXS ${MLPACK_PYXS} PARENT_SCOPE)
     add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
@@ -306,10 +303,64 @@ macro (add_python_binding group_name)
     add_dependencies(python build_pyx_${name})
     add_dependencies(build_pyx_${name} generate_pyx_${name})
     add_dependencies(generate_pyx_${name} python_configured)
+
     # Add the convenience import to __init__.py.  Note that this happens during
     # configuration.
     file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
-    "from .${name} import ${name}\n")
+        "from .${name} import ${name}\n")
+  endif ()
+endmacro()
+
+# if using add_python_wrapper(), then must group bindings using group_bindings()
+macro (add_python_wrapper group_name)
+
+  foreach (method ${${group_name}_valid_methods})
+    set(name ${group_name}_${method})
+
+    if (BUILD_PYTHON_BINDINGS)
+      set (MLPACK_PYXS ${MLPACK_PYXS} "${name}.pyx")
+      set (MLPACK_PYXS ${MLPACK_PYXS} PARENT_SCOPE)
+      add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
+          COMMAND ${CMAKE_COMMAND}
+              -DGENERATE_CPP_IN=${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in
+              -DGENERATE_CPP_OUT=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
+              -DPROGRAM_MAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp
+              -DPROGRAM_NAME=${name}
+              -P ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake
+          DEPENDS ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/generate_pyx.cpp.in
+                  ${CMAKE_SOURCE_DIR}/CMake/ConfigureFile.cmake)
+
+      add_executable(generate_pyx_${name}
+          ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/generate_pyx_${name}.cpp
+          ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_pyx.hpp
+          ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/python/print_pyx.cpp)
+      target_link_libraries(generate_pyx_${name} mlpack ${MLPACK_LIBRARIES})
+      set_target_properties(generate_pyx_${name} PROPERTIES COMPILE_FLAGS
+          -DBINDING_TYPE=BINDING_TYPE_PYX)
+      add_custom_command(TARGET generate_pyx_${name} POST_BUILD
+          COMMAND ${CMAKE_COMMAND}
+              -DPROGRAM=$<TARGET_FILE:generate_pyx_${name}>
+              -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/${name}.pyx
+              -P ${CMAKE_SOURCE_DIR}/CMake/RunProgram.cmake)
+
+      # Build the pyx.  Since distutils doesn't support a parallel build, we'll
+      # enforce it here.  Although this will always be rebuilt, that's okay because
+      # distutils will determine whether or not it *actually* needs to be rebuilt.
+      add_custom_target(build_pyx_${name}
+          ${PYTHON_EXECUTABLE}
+              ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/setup.py
+              build_ext --module=${name}.pyx
+          DEPENDS generate_pyx_${name}
+          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/
+          COMMENT "Building Cython binding ${name}.so...")
+
+      add_dependencies(python build_pyx_${name})
+      add_dependencies(build_pyx_${name} generate_pyx_${name})
+      add_dependencies(generate_pyx_${name} python_configured)
+      # Add the convenience import to __init__.py.  Note that this happens during
+      # configuration.
+      file(APPEND ${CMAKE_BINARY_DIR}/src/mlpack/bindings/python/mlpack/__init__.py
+      "from .${name} import ${name}\n")
     endif()
   endforeach()
 

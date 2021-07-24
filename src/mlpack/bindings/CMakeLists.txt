@@ -34,6 +34,16 @@ macro(group_bindings name methods)
   endforeach()
 endmacro()
 
-macro(add_type name category)
+include(Categories.cmake)
+set(CATEGORIES ${CATEGORIES} PARENT_SCOPE)
+
+macro(add_category name category)
+  # First, make sure that the category is a valid category.
+  list(FIND CATEGORIES ${category} cat_index)
+  if (${cat_index} EQUAL -1)
+    message(FATAL_ERROR "add_category(): unknown category ${category}!"
+        "  See the categories in "
+        "src/mlpack/bindings/Categories.cmake.")
+  endif ()
   set(${name}_category ${category})
 endmacro()
