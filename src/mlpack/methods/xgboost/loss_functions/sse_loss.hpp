@@ -91,8 +91,11 @@ class SSELoss
     gradients = input.row(1) - input.row(0);
     hessians = arma::vec(input.n_cols, arma::fill::ones);
 
-    return std::pow(ApplyL1(arma::accu(gradients)), 2) /
-        (arma::accu(hessians) + lambda);
+    // Calculates total sum of gradients and hessians.
+    gTotal = arma::accu(gradients);
+    hTotal = arma::accu(hessians);
+
+    return std::pow(ApplyL1(gTotal), 2) / (hTotal + lambda);
   }
 
   /**
@@ -101,32 +104,92 @@ class SSELoss
    *
    * @param sortedIndices Vector of indices according to the sorted order of
    *      the feature.
+   * @param sortedGradients Vector to store the sorted gradients.
+   * @param sortedHessians Vector to store the sorted hessians.
    */
-  void sortGradAndHess(const arma::uvec& sortedIndices)
+  void sortGradAndHess(const arma::uvec& sortedIndices,
+                       arma::vec& sortedGradients,
+                       arma::vec& sortedHessians)
   {
-    arma::vec sortedGradients(sortedIndices.n_elem);
-    arma::vec sortedHessians(sortedIndices.n_elem);
-
     for (size_t i = 0; i < sortedIndices.n_elem; ++i)
     {
       sortedGradients[i] = gradients[sortedIndices[i]];
       sortedHessians[i] = hessians[sortedIndices[i]];
     }
+  }
 
-    gradients = sortedGradients;
-    hessians = sortedHessians;
+  /**
+   * Calculates the sum of hessians and gradients for the left child.
+   *
+   * @return The start index for the iteration to find the best split.
+   */
+  size_t BinaryScanInitialize(const arma::vec& sortedGradients,
+                              const arma::vec& sortedHessians)
+  {
+    size_t index = 0;
+    // Initializing the data members.
+    gLeft = 0;
+    hLeft = 0;
+    while (index < sortedHessians.n_elem - 1 &&
+           hLeft + sortedHessians[index] < minChildWeight)
+    {
+      gLeft += sortedGradients[index];
+      hLeft += sortedHessians[index++];
+    }
+    return index;
+  }
+
+  /**
+   * Steps through the current index and update the statistics. While taking
+   * the step, it ensures that the weight of right child is higher than the
+   * minChildWeight.
+   */
+  void BinaryStep(const arma::vec& sortedGradients,
+                  const arma::vec& sortedHessians,
+                  size_t index,
+                  bool& endLoop)
+  {
+    gLeft += sortedGradients[index];
+    hLeft += sortedHessians[index];
+
+    // If the total weight of right child is lesser than the minChildWeight,
+    // then we need to terminate the loop for iterating over split points.
+    if (hTotal - hLeft < minChildWeight)
+      endLoop = true;
+    return;
+  }
+
+  /**
+   * Calculates the gains for the current split.
+   */
+  double Evaluate()
+  {
+    double leftGain = std::pow(ApplyL1(gLeft), 2) / (hLeft + lambda);
+    double rightGain = std::pow(ApplyL1(gTotal - gLeft), 2) /
+        (hTotal - hLeft + lambda);
+
+    return leftGain + rightGain;
   }
  private:
   //! The L2 regularization parameter.
   const double lambda;
   //! The L1 regularization parameter.
   const double alpha;
-  //! The minimum total weight possible for any child.
+  //! The minimum total weight possible for any child. A higher value of this
+  //! parameter reduces overfitting.
   const double minChildWeight;
   //! First order gradients.
   arma::vec gradients;
   //! Second order gradients (hessians).
   arma::vec hessians;
+  //! Sum of gradients of left child.
+  double gLeft;
+  //! Total sum of gradients.
+  double gTotal;
+  //! Sum of hessians of left child.
+  double hLeft;
+  //! Total sum of hessians.
+  double hTotal;
 
   //! Applies the L1 regularization.
   double ApplyL1(const double sumGradients)

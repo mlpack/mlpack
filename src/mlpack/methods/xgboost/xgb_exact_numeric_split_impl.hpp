@@ -27,7 +27,7 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
     const double minimumGainSplit,
     double& splitInfo,
     AuxiliarySplitInfo& aux,
-    LossFunction lossFunction)
+    LossFunction& lossFunction)
 {
   // It can't be outperformed.
   if (bestGain == 0.0)
@@ -39,41 +39,42 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
   // Next, sort the data.
   arma::uvec sortedIndices = arma::sort_index(data);
   ResponsesType sortedResponses(responses.n_elem);
+  arma::vec sortedGradients(sortedIndices.n_elem);
+  arma::vec sortedHessians(sortedIndices.n_elem);
+
   for (size_t i = 0; i < sortedResponses.n_elem; ++i)
     sortedResponses[i] = responses[sortedIndices[i]];
-  lossFunction.sortGradAndHess(sortedIndices);
+
+  lossFunction.sortGradAndHess(sortedIndices, sortedGradients,
+      sortedHessians);
 
   // Sanity check: if the first element is the same as the last, we can't split
   // in this dimension.
   if (data[sortedIndices[0]] == data[sortedIndices[sortedIndices.n_elem - 1]])
     return DBL_MAX;
 
-  // Initialize the binary scan.
-  // In XGBoost, minimum number of points in a node is determined by a parameter
-  // called min_child_weight. This parameter will be stored within the loss function
-  // class and thus the begin index will be calculated inside BinaryScanInitialize().
-  size_t index = 0;
-  lossFunction.BinaryScanInitialize(index);
+  // Initialize the binary scan. It initialises the index such that the weight
+  // of the left child is higher than the minChildWeight.
+  size_t index = lossFunction.BinaryScanInitialize(sortedGradients,
+      sortedHessians);
 
   bool improved = false;
   bool endLoop = false;
   for (; index < data.n_elem - 1; ++index)
   {
-    lossFunction.BinaryStep(index, endLoop);
+    lossFunction.BinaryStep(sortedGradients, sortedHessians, index, endLoop);
 
-    // We have to ensure that the min_child_weight condition is held in the right
-    // child too. So, if at any index, that condition will be false, then we will
-    // end the loop.
+    // We have to ensure that the minChildWeight condition is held in the right
+    // child too. So, if at any index, that condition doesn't hold true, then
+    // terminate the loop.
     if (endLoop) break;
 
     // Make sure that the value has changed.
     if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])
       continue;
 
-    // Calculate the gain for the left and right child.
-    std::tuple<double, double> binaryGains = fitnessFunction.BinaryGains();
-    const double leftGain = std::get<0>(binaryGains);
-    const double rightGain = std::get<1>(binaryGains);
+    // Evaluate the gain for the split.
+    const double gain = lossFunction.Evaluate();
 
     // Corner case: is this the best possible split?
     if (gain >= 0.0)

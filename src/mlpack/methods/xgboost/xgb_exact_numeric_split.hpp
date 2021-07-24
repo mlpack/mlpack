@@ -50,6 +50,7 @@ class XGBExactNumericSplit
    * @param splitInfo Stores split information on a successful split.
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
+   * @param lossFunction Instantiated LossFunction to evaluate the split.
    */
   template<bool UseWeights, typename VecType, typename MatType,
            typename WeightVecType>
@@ -62,7 +63,7 @@ class XGBExactNumericSplit
       const double minimumGainSplit,
       double& splitInfo,
       AuxiliarySplitInfo& aux,
-      LossFunction lossFunction);
+      LossFunction& lossFunction);
 
   /**
    * Returns 2, since the binary split always has two children.
