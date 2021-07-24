@@ -76,17 +76,6 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
     // Evaluate the gain for the split.
     const double gain = lossFunction.Evaluate();
 
-    // Corner case: is this the best possible split?
-    if (gain >= 0.0)
-    {
-      // We can take a shortcut: no split will be better than this, so just
-      // take this one. The actual split value will be halfway between the
-      // value at index - 1 and index.
-      splitInfo = (data[sortedIndices[index - 1]] +
-          data[sortedIndices[index]]) / 2.0;
-
-      return gain;
-    }
     if (gain > bestFoundGain)
     {
       // We still have a better split.
