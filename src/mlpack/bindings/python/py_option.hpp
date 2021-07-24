@@ -83,6 +83,7 @@ class PyOption
     IO::AddFunction(data.tname, "PrintInputProcessing",
         &PrintInputProcessing<T>);
     IO::AddFunction(data.tname, "ImportDecl", &ImportDecl<T>);
+    IO::AddFunction(data.tname, "IsSerializable", &IsSerializable<T>);
 
     // Add the ParamData object to the IO class for the correct binding name.
     IO::AddParameter(bindingName, std::move(data));
