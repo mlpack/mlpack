@@ -90,10 +90,8 @@ double LogisticRegression<MatType>::Train(
   if (parameters.n_elem != predictors.n_rows + 1)
     parameters = arma::rowvec(predictors.n_rows + 1, arma::fill::zeros);
 
-  Timer::Start("logistic_regression_optimization");
   const double out = optimizer.Optimize(errorFunction, parameters,
       callbacks...);
-  Timer::Stop("logistic_regression_optimization");
 
   Log::Info << "LogisticRegression::LogisticRegression(): final objective of "
       << "trained model is " << out << "." << std::endl;

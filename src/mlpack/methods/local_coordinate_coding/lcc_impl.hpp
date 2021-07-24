@@ -40,8 +40,6 @@ double LocalCoordinateCoding::Train(
     const arma::mat& data,
     const DictionaryInitializer& initializer)
 {
-  Timer::Start("local_coordinate_coding");
-
   // Initialize the dictionary.
   initializer.Initialize(data, atoms, dictionary);
 
@@ -102,7 +100,6 @@ double LocalCoordinateCoding::Train(
     lastObjVal = curObjVal;
   }
 
-  Timer::Stop("local_coordinate_coding");
   return lastObjVal;
 }
 

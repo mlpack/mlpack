@@ -339,7 +339,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       Log::Info << "Training model with SGD optimizer." << endl;
 
       // This will train the model.
+      timers.Start("logistic_regression_optimization");
       model->Train(regressors, responses, sgdOpt);
+      timers.Stop("logistic_regression_optimization");
     }
     else if (optimizerType == "lbfgs")
     {
@@ -349,7 +351,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       Log::Info << "Training model with L-BFGS optimizer." << endl;
 
       // This will train the model.
+      timers.Start("logistic_regression_optimization");
       model->Train(regressors, responses, lbfgsOpt);
+      timers.Stop("logistic_regression_optimization");
     }
   }
 

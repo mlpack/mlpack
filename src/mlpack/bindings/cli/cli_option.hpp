@@ -109,8 +109,6 @@ class CLIOption
     std::string progOptId = (alias[0] != '\0') ?
         "-" + std::string(1, alias[0]) + ",--" + cliName : "--" + cliName;
 
-    IO::AddParameter(bindingName, std::move(data));
-
     // Set some function pointers that we need.
     IO::AddFunction(tname, "DefaultParam", &DefaultParam<N>);
     IO::AddFunction(tname, "OutputParam", &OutputParam<N>);
@@ -126,6 +124,8 @@ class CLIOption
     IO::AddFunction(tname, "GetAllocatedMemory", &GetAllocatedMemory<N>);
     IO::AddFunction(tname, "DeleteAllocatedMemory", &DeleteAllocatedMemory<N>);
     IO::AddFunction(tname, "InPlaceCopy", &InPlaceCopy<N>);
+
+    IO::AddParameter(bindingName, std::move(data));
   }
 };
 

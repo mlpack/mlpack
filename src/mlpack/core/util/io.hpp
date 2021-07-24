@@ -265,6 +265,11 @@ class IO
    */
   static IO& GetSingleton();
 
+  /**
+   * Retrieve the global Timers object.
+   */
+  static util::Timers& GetTimers();
+
  private:
   //! Ensure only one thread can call Add() at a time to modify the map.
   std::mutex mapMutex;

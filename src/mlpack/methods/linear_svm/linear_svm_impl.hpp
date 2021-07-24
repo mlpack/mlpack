@@ -105,9 +105,7 @@ double LinearSVM<MatType>::Train(
     parameters = svm.InitialPoint();
 
   // Train the model.
-  Timer::Start("linear_svm_optimization");
   const double out = optimizer.Optimize(svm, parameters, callbacks...);
-  Timer::Stop("linear_svm_optimization");
 
   Log::Info << "LinearSVM::LinearSVM(): final objective of "
             << "trained model is " << out << "." << std::endl;
@@ -134,9 +132,7 @@ double LinearSVM<MatType>::Train(
     parameters = svm.InitialPoint();
 
   // Train the model.
-  Timer::Start("linear_svm_optimization");
   const double out = optimizer.Optimize(svm, parameters);
-  Timer::Stop("linear_svm_optimization");
 
   Log::Info << "LinearSVM::LinearSVM(): final objective of "
             << "trained model is " << out << "." << std::endl;

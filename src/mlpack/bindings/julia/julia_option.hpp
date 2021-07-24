@@ -87,9 +87,7 @@ class JuliaOption
     // This is needed for the Markdown binding output.
     IO::AddFunction(data.tname, "DefaultParam", &DefaultParam<T>);
 
-    // Add the ParamData object, then store.  This is necessary because we may
-    // import more than one .so that uses IO, so we have to keep the options
-    // separate.
+    // Add the ParamData object.
     IO::AddParameter(bindingName, std::move(data));
   }
 };

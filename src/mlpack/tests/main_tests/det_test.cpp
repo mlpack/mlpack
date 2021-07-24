@@ -2,45 +2,26 @@
   * @file det_test.cpp
   * @author Manish Kumar
   *
-  * Test mlpackMain() of det_main.cpp
+  * Test RUN_BINDING() of det_main.cpp
   *
   * mlpack is free software; you may redistribute it and/or modify it under the
   * terms of the 3-clause BSD license.  You should have received a copy of the
   * 3-clause BSD license along with mlpack.  If not, see
   * http://www.opensource.org/licenses/BSD-3-Clause for more information.
   */
-#include <string>
-
 #define BINDING_TYPE BINDING_TYPE_TEST
 
-static const std::string testName = "DET";
-
 #include <mlpack/core.hpp>
-#include <mlpack/core/util/mlpack_main.hpp>
-#include "test_helper.hpp"
 #include <mlpack/methods/det/det_main.cpp>
+#include <mlpack/core/util/mlpack_main.hpp>
+#include "main_test_fixture.hpp"
 
 #include "../test_catch_tools.hpp"
 #include "../catch.hpp"
 
 using namespace mlpack;
 
-struct DETTestFixture
-{
- public:
-  DETTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~DETTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(DETTestFixture);
 
 /**
  * Check that number of output training_set_estimates and number of input data
@@ -61,16 +42,16 @@ TEST_CASE_METHOD(DETTestFixture, "DETOutputDimensionTest",
   SetInputParam("training", trainingData);
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check the training_set_estimates has 100 points.
-  REQUIRE(IO::GetParam<arma::mat>("training_set_estimates").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("training_set_estimates").n_cols ==
+  REQUIRE(params.Get<arma::mat>("training_set_estimates").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("training_set_estimates").n_cols ==
           trainingData.n_cols);
 
   // Check the test_set_estimates has 40 points.
-  REQUIRE(IO::GetParam<arma::mat>("test_set_estimates").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("test_set_estimates").n_cols ==
+  REQUIRE(params.Get<arma::mat>("test_set_estimates").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("test_set_estimates").n_cols ==
           testData.n_cols);
 }
 
@@ -91,10 +72,10 @@ TEST_CASE_METHOD(DETTestFixture, "DETParamBoundTest",
   SetInputParam("max_leaf_size", (int) 0);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
 
   // Test for min_leaf_size.
 
@@ -102,10 +83,10 @@ TEST_CASE_METHOD(DETTestFixture, "DETParamBoundTest",
   SetInputParam("min_leaf_size", (int) 0);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
 
   // Test for folds.
 
@@ -113,7 +94,7 @@ TEST_CASE_METHOD(DETTestFixture, "DETParamBoundTest",
   SetInputParam("folds", (int) -1);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -135,24 +116,24 @@ TEST_CASE_METHOD(DETTestFixture, "DETModelReuseTest",
   SetInputParam("training", std::move(trainingData));
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat trainingSetEstimates =
-      IO::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = IO::GetParam<arma::mat>("test_set_estimates");
+      params.Get<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = params.Get<arma::mat>("test_set_estimates");
 
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
+  DTree<>* m = new DTree<>(*params.Get<DTree<>*>("output_model"));
+  CleanMemory();
+  ResetSettings();
 
-  SetInputParam("input_model", IO::GetParam<DTree<>*>("output_model"));
-  SetInputParam("test", std::move(testData));
+  SetInputParam("input_model", m);
+  SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial estimates and final estimate using saved model are same.
-  CheckMatrices(trainingSetEstimates,
-                IO::GetParam<arma::mat>("training_set_estimates"));
   CheckMatrices(testSetEstimates,
-                IO::GetParam<arma::mat>("test_set_estimates"));
+                params.Get<arma::mat>("test_set_estimates"));
 }
 
 /**
@@ -176,11 +157,11 @@ TEST_CASE_METHOD(DETTestFixture, "DETViDimensionTest",
   SetInputParam("training", std::move(trainingData));
   SetInputParam("test", std::move(testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check the number of output points equals number of input features.
-  REQUIRE(IO::GetParam<arma::mat>("vi").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("vi").n_cols == testRows);
+  REQUIRE(params.Get<arma::mat>("vi").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("vi").n_cols == testRows);
 }
 
 /**
@@ -195,12 +176,15 @@ TEST_CASE_METHOD(DETTestFixture, "DETModelValidityTest",
 
   SetInputParam("training", std::move(trainingData));
 
-  mlpackMain();
+  RUN_BINDING();
 
-  SetInputParam("input_model", IO::GetParam<DTree<>*>("output_model"));
+  DTree<>* m = params.Get<DTree<>*>("output_model");
+  ResetSettings();
+
+  SetInputParam("input_model", m);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -222,13 +206,13 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffMinLeafTest",
   SetInputParam("training", trainingData);
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat trainingSetEstimates =
-      IO::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = IO::GetParam<arma::mat>("test_set_estimates");
+      params.Get<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = params.Get<arma::mat>("test_set_estimates");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
 
   // Train model using min_leaf_size equals to 10.
 
@@ -236,16 +220,16 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffMinLeafTest",
   SetInputParam("test", std::move(testData));
   SetInputParam("min_leaf_size", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial estimates and final estimates using two models are
   // different.
   REQUIRE(arma::accu(trainingSetEstimates ==
-      IO::GetParam<arma::mat>("training_set_estimates")) <
+      params.Get<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
   REQUIRE(arma::accu(testSetEstimates ==
-      IO::GetParam<arma::mat>("test_set_estimates")) <
+      params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }
 
@@ -267,13 +251,13 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffMaxLeafTest",
   SetInputParam("training", trainingData);
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat trainingSetEstimates =
-      IO::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = IO::GetParam<arma::mat>("test_set_estimates");
+      params.Get<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = params.Get<arma::mat>("test_set_estimates");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
 
   // Train model using max_leaf_size equals to 40.
 
@@ -281,16 +265,16 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffMaxLeafTest",
   SetInputParam("test", std::move(testData));
   SetInputParam("max_leaf_size", (int) 40);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial estimates and final estimates using two models are
   // different.
   REQUIRE(arma::accu(trainingSetEstimates ==
-      IO::GetParam<arma::mat>("training_set_estimates")) <
+      params.Get<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
   REQUIRE(arma::accu(testSetEstimates ==
-      IO::GetParam<arma::mat>("test_set_estimates")) <
+      params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }
 
@@ -312,13 +296,13 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffFoldsTest",
   SetInputParam("training", trainingData);
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat trainingSetEstimates =
-      IO::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = IO::GetParam<arma::mat>("test_set_estimates");
+      params.Get<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = params.Get<arma::mat>("test_set_estimates");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
 
   // Train model using folds equals to 20.
 
@@ -326,16 +310,16 @@ TEST_CASE_METHOD(DETTestFixture, "DETDiffFoldsTest",
   SetInputParam("test", std::move(testData));
   SetInputParam("folds", (int) 20);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial estimates and final estimates using two models are
   // different.
   REQUIRE(arma::accu(trainingSetEstimates ==
-      IO::GetParam<arma::mat>("training_set_estimates")) <
+      params.Get<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
   REQUIRE(arma::accu(testSetEstimates ==
-      IO::GetParam<arma::mat>("test_set_estimates")) <
+      params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }
 
@@ -357,13 +341,13 @@ TEST_CASE_METHOD(DETTestFixture, "DETSkipPruningTest",
   SetInputParam("training", trainingData);
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::mat trainingSetEstimates =
-      IO::GetParam<arma::mat>("training_set_estimates");
-  arma::mat testSetEstimates = IO::GetParam<arma::mat>("test_set_estimates");
+      params.Get<arma::mat>("training_set_estimates");
+  arma::mat testSetEstimates = params.Get<arma::mat>("test_set_estimates");
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
 
   // Train model by bypassing pruning process.
 
@@ -371,15 +355,15 @@ TEST_CASE_METHOD(DETTestFixture, "DETSkipPruningTest",
   SetInputParam("test", std::move(testData));
   SetInputParam("skip_pruning", (bool) true);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that initial estimates and final estimates using two models are
   // different.
   REQUIRE(arma::accu(trainingSetEstimates ==
-      IO::GetParam<arma::mat>("training_set_estimates")) <
+      params.Get<arma::mat>("training_set_estimates")) <
       trainingSetEstimates.n_elem);
 
   REQUIRE(arma::accu(testSetEstimates ==
-      IO::GetParam<arma::mat>("test_set_estimates")) <
+      params.Get<arma::mat>("test_set_estimates")) <
       testSetEstimates.n_elem);
 }

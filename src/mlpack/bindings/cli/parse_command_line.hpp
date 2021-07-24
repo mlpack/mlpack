@@ -22,18 +22,18 @@ namespace mlpack {
 namespace bindings {
 namespace cli {
 
-// Add default parameters that are included in every program.
-PARAM_FLAG("help", "Default help info.", "h");
-PARAM_STRING_IN("info", "Print help on a specific option.", "", "");
-PARAM_FLAG("verbose", "Display informational messages and the full list of "
-    "parameters and timers at the end of execution.", "v");
-PARAM_FLAG("version", "Display the version of mlpack.", "V");
-
 /**
  * Parse the command line, setting all of the options inside of the CLI object
  * to their appropriate given values.
+ *
+ * If `bindingName` is specified, that is used for the name of the binding,
+ * instead of whatever the setting of the macro `BINDING_NAME` is.  That is
+ * generally only used for testing, in `io_test.cpp`.
  */
-mlpack::util::Params ParseCommandLine(int argc, char** argv)
+mlpack::util::Params ParseCommandLine(
+    int argc,
+    char** argv,
+    const char* bindingName = "")
 {
   // First, we need to build the CLI11 variables for parsing.
   CLI::App app;
@@ -41,7 +41,10 @@ mlpack::util::Params ParseCommandLine(int argc, char** argv)
 
   // Get an empty Params object that will hold all of the parameters for this
   // call.
-  mlpack::util::Params params = IO::Parameters(STRINGIFY(BINDING_NAME));
+  mlpack::util::Params params = (std::string(bindingName) == "") ?
+      IO::Parameters(STRINGIFY(BINDING_NAME)) :
+      IO::Parameters(bindingName);
+
   // Go through list of options in order to add them.
   std::map<std::string, util::ParamData>& parameters = params.Parameters();
   using ItType = std::map<std::string, util::ParamData>::iterator;

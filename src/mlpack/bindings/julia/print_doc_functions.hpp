@@ -104,9 +104,14 @@ std::string PrintOutputOptions(util::Params& p,
  * contents), print the corresponding function call.
  */
 template<typename... Args>
-std::string ProgramCall(const std::string& bindingName,
-                        const std::string& programName,
+std::string ProgramCall(const std::string& programName,
                         Args... args);
+
+/**
+ * Given a name of a binding, print an example call that uses all parameters
+ * (for Markdown documentation).
+ */
+inline std::string ProgramCall(util::Params& p, const std::string& programName);
 
 /**
  * Given the parameter name, determine what it would actually be when passed to

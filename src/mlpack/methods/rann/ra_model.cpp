@@ -135,7 +135,8 @@ void RAModel::InitializeModel(const bool naive, const bool singleMode)
   }
 }
 
-void RAModel::BuildModel(arma::mat&& referenceSet,
+void RAModel::BuildModel(util::Timers& timers,
+                         arma::mat&& referenceSet,
                          const size_t leafSize,
                          const bool naive,
                          const bool singleMode)
@@ -143,33 +144,29 @@ void RAModel::BuildModel(arma::mat&& referenceSet,
   // Initialize random basis, if necessary.
   if (randomBasis)
   {
+    timers.Start("computing_random_basis");
     Log::Info << "Creating random basis..." << std::endl;
     math::RandomBasis(q, referenceSet.n_rows);
+
+    referenceSet = q * referenceSet;
+    timers.Stop("computing_random_basis");
   }
 
   this->leafSize = leafSize;
 
-  if (randomBasis)
-    referenceSet = q * referenceSet;
-
   if (!naive)
-  {
-    Timer::Start("tree_building");
     Log::Info << "Building reference tree..." << std::endl;
-  }
 
   InitializeModel(naive, singleMode);
 
-  raSearch->Train(std::move(referenceSet), leafSize);
+  raSearch->Train(timers, std::move(referenceSet), leafSize);
 
   if (!naive)
-  {
-    Timer::Stop("tree_building");
     Log::Info << "Tree built." << std::endl;
-  }
 }
 
-void RAModel::Search(arma::mat&& querySet,
+void RAModel::Search(util::Timers& timers,
+                     arma::mat&& querySet,
                      const size_t k,
                      arma::Mat<size_t>& neighbors,
                      arma::mat& distances)
@@ -187,10 +184,12 @@ void RAModel::Search(arma::mat&& querySet,
     Log::Info << "brute-force (naive) rank-approximate search...";
   Log::Info << std::endl;
 
-  raSearch->Search(std::move(querySet), k, neighbors, distances, leafSize);
+  raSearch->Search(timers, std::move(querySet), k, neighbors, distances,
+      leafSize);
 }
 
-void RAModel::Search(const size_t k,
+void RAModel::Search(util::Timers& timers,
+                     const size_t k,
                      arma::Mat<size_t>& neighbors,
                      arma::mat& distances)
 {
@@ -203,7 +202,7 @@ void RAModel::Search(const size_t k,
     Log::Info << "brute-force (naive) rank-approximate search...";
   Log::Info << std::endl;
 
-  raSearch->Search(k, neighbors, distances);
+  raSearch->Search(timers, k, neighbors, distances);
 }
 
 std::string RAModel::TreeName() const

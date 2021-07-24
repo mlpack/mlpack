@@ -184,10 +184,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     }
     const bool incrementalVariance = params.Has("incremental_variance");
 
-    Timer::Start("nbc_training");
+    timers.Start("nbc_training");
     model->nbc = NaiveBayesClassifier<>(trainingData, labels,
         model->mappings.n_elem, incrementalVariance);
-    Timer::Stop("nbc_training");
+    timers.Stop("nbc_training");
   }
   else
   {
@@ -210,9 +210,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     // Time the running of the Naive Bayes Classifier.
     Row<size_t> predictions;
     mat probabilities;
-    Timer::Start("nbc_testing");
+    timers.Start("nbc_testing");
     model->nbc.Classify(testingData, predictions, probabilities);
-    Timer::Stop("nbc_testing");
+    timers.Stop("nbc_testing");
 
     if (params.Has("output") || params.Has("predictions"))
     {

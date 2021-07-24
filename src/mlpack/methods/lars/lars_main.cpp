@@ -173,7 +173,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     vec beta;
     arma::rowvec y = std::move(matY);
+    timers.Start("lars_regression");
     lars->Train(matX, y, beta, false /* do not transpose */);
+    timers.Stop("lars_regression");
   }
   else // We must have --input_model_file.
   {

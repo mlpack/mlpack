@@ -193,10 +193,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         << params.GetPrintable<arma::mat>("reference") << "." << endl;
     referenceData = std::move(params.Get<arma::mat>("reference"));
 
-    Timer::Start("hash_building");
+    timers.Start("hash_building");
     allkann->Train(std::move(referenceData), numProj, numTables, hashWidth,
         secondHashSize, bucketSize);
-    Timer::Stop("hash_building");
+    timers.Stop("hash_building");
   }
   else // We must have an input model.
   {
@@ -213,11 +213,15 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
           << params.GetPrintable<arma::mat>("query") << "." << endl;
       queryData = std::move(params.Get<arma::mat>("query"));
 
+      timers.Start("computing_neighbors");
       allkann->Search(queryData, k, neighbors, distances, 0, numProbes);
+      timers.Stop("computing_neighbors");
     }
     else
     {
+      timers.Start("computing_neighbors");
       allkann->Search(k, neighbors, distances, 0, numProbes);
+      timers.Stop("computing_neighbors");
     }
 
     Log::Info << "Neighbors computed." << endl;

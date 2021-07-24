@@ -79,7 +79,7 @@ PARAM_MODEL_OUT(GaussianKernel, "model_out", "Output model, with twice the "
     "bandwidth.", "");
 PARAM_DOUBLE_OUT("model_bw_out", "The bandwidth of the model.");
 
-static void BINDING_NAME(util::Params& params, util::Timers& timer)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timer */)
 {
   const string s = params.Get<string>("string_in");
   const int i = params.Get<int>("int_in");

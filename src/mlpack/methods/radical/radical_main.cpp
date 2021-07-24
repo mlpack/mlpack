@@ -127,7 +127,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   Radical rad(noiseStdDev, nReplicates, nAngles, nSweeps);
   mat matY;
   mat matW;
-  rad.DoRadical(matX, matY, matW);
+  rad.DoRadical(matX, matY, matW, timers);
 
   // Save results.
   if (params.Has("output_ic"))

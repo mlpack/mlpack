@@ -187,13 +187,12 @@ std::string ProgramCall(const std::string& programName, Args... args)
  * Given a program name, print a program call invocation assuming that all
  * options are specified.
  */
-inline std::string ProgramCall(const std::string& programName)
+inline std::string ProgramCall(util::Params& p, const std::string& programName)
 {
   std::ostringstream oss;
   oss << "$ " << GetBindingName(programName);
 
   // Handle all options---first input options, then output options.
-  util::Params p = IO::Parameters(programName);
   std::map<std::string, util::ParamData>& parameters = p.Parameters();
 
   for (auto& it : parameters)

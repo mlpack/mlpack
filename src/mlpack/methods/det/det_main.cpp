@@ -174,21 +174,21 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       folds = trainingData.n_cols;
 
     // Obtain the optimal tree.
-    Timer::Start("det_training");
+    timers.Start("det_training");
     tree = Trainer<arma::mat, int>(trainingData, folds, regularization,
                                    maxLeafSize, minLeafSize,
-                                   skipPruning);
-    Timer::Stop("det_training");
+                                   skipPruning, timers);
+    timers.Stop("det_training");
 
     // Compute training set estimates, if desired.
     if (params.Has("training_set_estimates"))
     {
       // Compute density estimates for each point in the training set.
       arma::rowvec trainingDensities(trainingData.n_cols);
-      Timer::Start("det_estimation_time");
+      timers.Start("det_estimation_time");
       for (size_t i = 0; i < trainingData.n_cols; ++i)
         trainingDensities[i] = tree->ComputeValue(trainingData.unsafe_col(i));
-      Timer::Stop("det_estimation_time");
+      timers.Stop("det_estimation_time");
 
       params.Get<arma::mat>("training_set_estimates") =
           std::move(trainingDensities);
@@ -207,13 +207,13 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     if (params.Has("test_set_estimates"))
     {
       // Compute test set densities.
-      Timer::Start("det_test_set_estimation");
+      timers.Start("det_test_set_estimation");
       arma::rowvec testDensities(testData.n_cols);
 
       for (size_t i = 0; i < testData.n_cols; ++i)
         testDensities[i] = tree->ComputeValue(testData.unsafe_col(i));
 
-      Timer::Stop("det_test_set_estimation");
+      timers.Stop("det_test_set_estimation");
 
       params.Get<arma::mat>("test_set_estimates") = std::move(testDensities);
     }
@@ -237,7 +237,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     arma::Row<size_t> counters;
 
-    Timer::Start("det_test_set_tagging");
+    timers.Start("det_test_set_tagging");
     if (!ofs.is_open())
     {
       Log::Warn << "Unable to open file '" << tagFile
@@ -306,7 +306,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
         data::Save(params.Get<string>("tag_counters_file"), counters);
     }
 
-    Timer::Stop("det_test_set_tagging");
+    timers.Stop("det_test_set_tagging");
     ofs.close();
   }
 

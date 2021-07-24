@@ -369,6 +369,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   }
 
   // Now create the LMNN object and run the optimization.
+  timers.Start("lmnn_optimization");
   if (optimizerType == "amsgrad")
   {
     LMNN<LMetric<2>> lmnn(data, labels, k);
@@ -420,6 +421,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     lmnn.LearnDistance(distance);
   }
+  timers.Stop("lmnn_optimization");
 
   // Print initial & final accuracies if required.
   if (printAccuracy)

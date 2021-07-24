@@ -327,12 +327,14 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     else if (normalizationType == "z_score")
       cf->NormalizationType() = CFModel::Z_SCORE_NORMALIZATION;
 
+    timers.Start("cf_factorization");
     cf->Train(dataset,
               neighborhood,
               rank,
               size_t(params.Get<int>("max_iterations")),
               params.Get<double>("min_residue"),
               params.Has("iteration_only_termination"));
+    timers.Stop("cf_factorization");
   }
   else
   {

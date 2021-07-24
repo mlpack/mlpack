@@ -262,9 +262,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     if (!params.Has("input_model"))
     {
       // Create and train the classifier.
-      Timer::Start("training");
+      timers.Start("training");
       p->P() = Perceptron<>(trainingData, labels, numClasses, maxIterations);
-      Timer::Stop("training");
+      timers.Stop("training");
     }
     else
     {
@@ -288,10 +288,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
       }
 
       // Now train.
-      Timer::Start("training");
+      timers.Start("training");
       p->P().MaxIterations() = maxIterations;
       p->P().Train(trainingData, labels.t(), numClasses);
-      Timer::Stop("training");
+      timers.Stop("training");
     }
   }
 
@@ -316,9 +316,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     // Time the running of the perceptron classifier.
     Row<size_t> predictedLabels(testData.n_cols);
-    Timer::Start("testing");
+    timers.Start("testing");
     p->P().Classify(testData, predictedLabels);
-    Timer::Stop("testing");
+    timers.Stop("testing");
 
     // Un-normalize labels to prepare output.
     Row<size_t> results;

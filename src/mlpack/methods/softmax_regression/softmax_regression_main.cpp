@@ -139,12 +139,15 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 // Test the accuracy of the model.
 template<typename Model>
 void TestClassifyAcc(util::Params& params,
+                     util::Timers& timers,
                      const size_t numClasses,
                      const Model& model);
 
 // Build the softmax model given the parameters.
 template<typename Model>
-Model* TrainSoftmax(util::Params& params, const size_t maxIterations);
+Model* TrainSoftmax(util::Params& params,
+                    util::Timers& timers,
+                    const size_t maxIterations);
 
 void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 {
@@ -175,10 +178,10 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
   RequireAtLeastOnePassed(params, { "output_model", "predictions" }, false,
       "no results will be saved");
 
-  SoftmaxRegression* sm = TrainSoftmax<SoftmaxRegression>(params,
+  SoftmaxRegression* sm = TrainSoftmax<SoftmaxRegression>(params, timers,
       maxIterations);
 
-  TestClassifyAcc(params, sm->NumClasses(), *sm);
+  TestClassifyAcc(params, timers, sm->NumClasses(), *sm);
 
   params.Get<SoftmaxRegression*>("output_model") = sm;
 }
@@ -200,6 +203,7 @@ size_t CalculateNumberOfClasses(const size_t numClasses,
 
 template<typename Model>
 void TestClassifyAcc(util::Params& params,
+                     util::Timers& timers,
                      const size_t numClasses,
                      const Model& model)
 {
@@ -218,7 +222,9 @@ void TestClassifyAcc(util::Params& params,
   arma::mat testData = std::move(params.Get<arma::mat>("test"));
 
   arma::Row<size_t> predictLabels;
+  timers.Start("softmax_regression_classification");
   model.Classify(testData, predictLabels);
+  timers.Stop("softmax_regression_classification");
 
   // Calculate accuracy, if desired.
   if (params.Has("test_labels"))
@@ -264,7 +270,9 @@ void TestClassifyAcc(util::Params& params,
 }
 
 template<typename Model>
-Model* TrainSoftmax(util::Params& params, const size_t maxIterations)
+Model* TrainSoftmax(util::Params& params,
+                    util::Timers& timers,
+                    const size_t maxIterations)
 {
   using namespace mlpack;
 
@@ -290,8 +298,10 @@ Model* TrainSoftmax(util::Params& params, const size_t maxIterations)
 
     const size_t numBasis = 5;
     ens::L_BFGS optimizer(numBasis, maxIterations);
+    timers.Start("softmax_regression_optimization");
     sm = new Model(trainData, trainLabels, numClasses,
         params.Get<double>("lambda"), intercept, std::move(optimizer));
+    timers.Stop("softmax_regression_optimization");
   }
   return sm;
 }

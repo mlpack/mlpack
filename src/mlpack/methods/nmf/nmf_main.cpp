@@ -213,7 +213,7 @@ void ApplyFactorization(util::Params& params,
   }
 }
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   // Initialize random seed.
   if (params.Get<int>("seed") != 0)

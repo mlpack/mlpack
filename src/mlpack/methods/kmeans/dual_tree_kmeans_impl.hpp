@@ -113,8 +113,6 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   // Reset information in the tree, if we need to.
   if (iteration > 0)
   {
-    Timer::Start("knn");
-
     // If the tree maps points, we need an intermediate result matrix.
     arma::mat* interclusterDistancesTemp =
         (tree::TreeTraits<Tree>::RearrangesDataset) ?
@@ -133,8 +131,6 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
 
       delete interclusterDistancesTemp;
     }
-
-    Timer::Stop("knn");
 
     UpdateTree(*tree, centroids);
 
@@ -158,18 +154,14 @@ double DualTreeKMeans<MetricType, MatType, TreeType>::Iterate(
   typename Tree::template BreadthFirstDualTreeTraverser<RuleType>
       traverser(rules);
 
-  Timer::Start("tree_mod");
   CoalesceTree(*tree);
-  Timer::Stop("tree_mod");
 
   // Set the number of pruned centroids in the root to 0.
   tree->Stat().Pruned() = 0;
   traverser.Traverse(*tree, nns.ReferenceTree());
   distanceCalculations += rules.BaseCases() + rules.Scores();
 
-  Timer::Start("tree_mod");
   DecoalesceTree(*tree);
-  Timer::Stop("tree_mod");
 
   // Now we need to extract the clusters.
   newCentroids.zeros(centroids.n_rows, centroids.n_cols);

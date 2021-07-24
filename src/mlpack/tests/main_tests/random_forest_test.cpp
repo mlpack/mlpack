@@ -2,7 +2,7 @@
  * @file tests/main_tests/random_forest_test.cpp
  * @author Manish Kumar
  *
- * Test mlpackMain() of random_forest_main.cpp.
+ * Test RUN_BINDING() of random_forest_main.cpp.
  *
  * mlpack is free software; you may redistribute it and/or modify it under the
  * terms of the 3-clause BSD license.  You should have received a copy of the
@@ -12,33 +12,17 @@
 #define BINDING_TYPE BINDING_TYPE_TEST
 
 #include <mlpack/core.hpp>
-static const std::string testName = "RandomForest";
-
-#include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/methods/random_forest/random_forest_main.cpp>
-#include "test_helper.hpp"
+#include <mlpack/core/util/mlpack_main.hpp>
+
+#include "main_test_fixture.hpp"
 
 #include "../catch.hpp"
 #include "../test_catch_tools.hpp"
 
 using namespace mlpack;
 
-struct RandomForestTestFixture
-{
- public:
-  RandomForestTestFixture()
-  {
-    // Cache in the options for this program.
-    IO::RestoreSettings(testName);
-  }
-
-  ~RandomForestTestFixture()
-  {
-    // Clear the settings.
-    bindings::tests::CleanMemory();
-    IO::ClearSettings();
-  }
-};
+BINDING_TEST_FIXTURE(RandomForestTestFixture);
 
 /**
  * Check that number of output points and number of input
@@ -68,16 +52,16 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestOutputDimensionTest",
   // Input test data.
   SetInputParam("test", std::move(testData));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predictions.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 3);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_rows == 3);
 }
 
 /**
@@ -107,37 +91,37 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestModelReuseTest",
   // Input test data.
   SetInputParam("test", testData);
 
-  mlpackMain();
+  RUN_BINDING();
 
   arma::Row<size_t> predictions;
   arma::mat probabilities;
-  predictions = std::move(IO::GetParam<arma::Row<size_t>>("predictions"));
-  probabilities = std::move(IO::GetParam<arma::mat>("probabilities"));
+  predictions = std::move(params.Get<arma::Row<size_t>>("predictions"));
+  probabilities = std::move(params.Get<arma::mat>("probabilities"));
 
   // Reset passed parameters.
-  IO::GetSingleton().Parameters()["training"].wasPassed = false;
-  IO::GetSingleton().Parameters()["labels"].wasPassed = false;
-  IO::GetSingleton().Parameters()["test"].wasPassed = false;
+  RandomForestModel* m = params.Get<RandomForestModel*>("output_model");
+  params.Get<RandomForestModel*>("output_model") = NULL;
+  CleanMemory();
+  ResetSettings();
 
   // Input trained model.
   SetInputParam("test", std::move(testData));
-  SetInputParam("input_model",
-                IO::GetParam<RandomForestModel*>("output_model"));
+  SetInputParam("input_model", m);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Check that number of output points are equal to number of input points.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_cols == testSize);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_cols == testSize);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_cols == testSize);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_cols == testSize);
 
   // Check number of output rows equals number of classes in case of
   // probabilities and 1 for predicitions.
-  REQUIRE(IO::GetParam<arma::Row<size_t>>("predictions").n_rows == 1);
-  REQUIRE(IO::GetParam<arma::mat>("probabilities").n_rows == 3);
+  REQUIRE(params.Get<arma::Row<size_t>>("predictions").n_rows == 1);
+  REQUIRE(params.Get<arma::mat>("probabilities").n_rows == 3);
 
   // Check that initial predictions and predictions using saved model are same.
-  CheckMatrices(predictions, IO::GetParam<arma::Row<size_t>>("predictions"));
-  CheckMatrices(probabilities, IO::GetParam<arma::mat>("probabilities"));
+  CheckMatrices(predictions, params.Get<arma::Row<size_t>>("predictions"));
+  CheckMatrices(probabilities, params.Get<arma::mat>("probabilities"));
 }
 
 /**
@@ -157,7 +141,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestNumOfTreesTest",
   SetInputParam("num_trees", (int) 0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -178,7 +162,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMinimumLeafSizeTest",
   SetInputParam("minimum_leaf_size", (int) 0); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -199,7 +183,7 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestMaximumDepthTest",
   SetInputParam("maximum_depth", (int) -1); // Invalid.
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -222,14 +206,14 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingVerTest",
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                IO::GetParam<RandomForestModel*>("output_model"));
+                params.Get<RandomForestModel*>("output_model"));
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -270,14 +254,15 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMinLeafSizeTest",
   SetInputParam("labels", labels);
   SetInputParam("minimum_leaf_size", (int) 20);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Calculate training accuracy.
   RandomForestModel* rf1 =
-      std::move(IO::GetParam<RandomForestModel*>("output_model"));
-  IO::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(params.Get<RandomForestModel*>("output_model"));
+  params.Get<RandomForestModel*>("output_model") = NULL;
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Train for minimum leaf size 10.
 
@@ -286,13 +271,14 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMinLeafSizeTest",
   SetInputParam("labels", labels);
   SetInputParam("minimum_leaf_size", (int) 10);
 
-  mlpackMain();
+  RUN_BINDING();
 
   RandomForestModel* rf2 =
-      std::move(IO::GetParam<RandomForestModel*>("output_model"));
-  IO::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(params.Get<RandomForestModel*>("output_model"));
+  params.Get<RandomForestModel*>("output_model") = NULL;
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Train for minimum leaf size 1.
 
@@ -301,11 +287,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMinLeafSizeTest",
   SetInputParam("labels", labels);
   SetInputParam("minimum_leaf_size", (int) 1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   RandomForestModel* rf3 =
-      std::move(IO::GetParam<RandomForestModel*>("output_model"));
-  IO::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(params.Get<RandomForestModel*>("output_model"));
+  params.Get<RandomForestModel*>("output_model") = NULL;
 
   // Check that each tree is different.
   for (size_t i = 0; i < rf1->rf.NumTrees(); ++i)
@@ -349,12 +335,13 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffNumTreeTest",
   SetInputParam("num_trees", (int) 1);
   SetInputParam("minimum_leaf_size", (int) 1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   const size_t numTrees1 =
-      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
+      params.Get<RandomForestModel*>("output_model")->rf.NumTrees();
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Train for num_trees 5.
 
@@ -364,12 +351,13 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffNumTreeTest",
   SetInputParam("num_trees", (int) 5);
   SetInputParam("minimum_leaf_size", (int) 1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   const size_t numTrees2 =
-      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
+      params.Get<RandomForestModel*>("output_model")->rf.NumTrees();
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Train for num_trees 10.
 
@@ -379,10 +367,10 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffNumTreeTest",
   SetInputParam("num_trees", (int) 10);
   SetInputParam("minimum_leaf_size", (int) 1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   const size_t numTrees3 =
-      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
+      params.Get<RandomForestModel*>("output_model")->rf.NumTrees();
 
   REQUIRE(numTrees1 != numTrees2);
   REQUIRE(numTrees2 != numTrees3);
@@ -408,27 +396,29 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMaxDepthTest",
   SetInputParam("labels", labels);
   SetInputParam("maximum_depth", (int) 1);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Calculate training accuracy.
   RandomForestModel* rf1 =
-      std::move(IO::GetParam<RandomForestModel*>("output_model"));
-  IO::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(params.Get<RandomForestModel*>("output_model"));
+  params.Get<RandomForestModel*>("output_model") = NULL;
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Input training data.
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
   SetInputParam("maximum_depth", (int) 2);
 
-  mlpackMain();
+  RUN_BINDING();
 
   RandomForestModel* rf2 =
-      std::move(IO::GetParam<RandomForestModel*>("output_model"));
-  IO::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(params.Get<RandomForestModel*>("output_model"));
+  params.Get<RandomForestModel*>("output_model") = NULL;
 
-  bindings::tests::CleanMemory();
+  CleanMemory();
+  ResetSettings();
 
   // Train for minimum leaf size 1.
 
@@ -437,11 +427,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestDiffMaxDepthTest",
   SetInputParam("labels", labels);
   SetInputParam("maximum_depth", (int) 3);
 
-  mlpackMain();
+  RUN_BINDING();
 
   RandomForestModel* rf3 =
-      std::move(IO::GetParam<RandomForestModel*>("output_model"));
-  IO::GetParam<RandomForestModel*>("output_model") = NULL;
+      std::move(params.Get<RandomForestModel*>("output_model"));
+  params.Get<RandomForestModel*>("output_model") = NULL;
 
   // Check that each tree is different.
   for (size_t i = 0; i < rf1->rf.NumTrees(); ++i)
@@ -474,13 +464,13 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestTrainingModelWarmStart",
   SetInputParam("training", std::move(inputData));
   SetInputParam("labels", std::move(labels));
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Setting warm_start flag.
   SetInputParam("warm_start", false);
 
   Log::Fatal.ignoreInput = true;
-  REQUIRE_THROWS_AS(mlpackMain(), std::runtime_error);
+  REQUIRE_THROWS_AS(RUN_BINDING(), std::runtime_error);
   Log::Fatal.ignoreInput = false;
 }
 
@@ -503,11 +493,11 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestWarmStart",
   SetInputParam("training", inputData);
   SetInputParam("labels", labels);
 
-  mlpackMain();
+  RUN_BINDING();
 
   // Old number of trees in the model.
   size_t oldNumTrees =
-      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
+      params.Get<RandomForestModel*>("output_model")->rf.NumTrees();
 
   // Input training data.
   SetInputParam("training", std::move(inputData));
@@ -516,12 +506,12 @@ TEST_CASE_METHOD(RandomForestTestFixture, "RandomForestWarmStart",
 
   // Input pre-trained model.
   SetInputParam("input_model",
-                IO::GetParam<RandomForestModel*>("output_model"));
+                params.Get<RandomForestModel*>("output_model"));
 
-  mlpackMain();
+  RUN_BINDING();
 
   size_t newNumTrees =
-      IO::GetParam<RandomForestModel*>("output_model")->rf.NumTrees();
+      params.Get<RandomForestModel*>("output_model")->rf.NumTrees();
 
   REQUIRE(oldNumTrees + 10 == newNumTrees);
 }

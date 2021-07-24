@@ -22,38 +22,66 @@ namespace neighbor {
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RAWrapper<TreeType>::Train(arma::mat&& referenceSet,
+void RAWrapper<TreeType>::Train(util::Timers& timers,
+                                arma::mat&& referenceSet,
                                 const size_t /* leafSize */)
 {
+  if (!ra.Naive())
+    timers.Start("tree_building");
+
   ra.Train(std::move(referenceSet));
+
+  if (!ra.Naive())
+    timers.Stop("tree_building");
 }
 
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RAWrapper<TreeType>::Search(arma::mat&& querySet,
+void RAWrapper<TreeType>::Search(util::Timers& timers,
+                                 arma::mat&& querySet,
                                  const size_t k,
                                  arma::Mat<size_t>& neighbors,
                                  arma::mat& distances,
                                  const size_t /* leafSize */)
 {
-  ra.Search(querySet, k, neighbors, distances);
+  if (!ra.Naive() && !ra.SingleMode())
+  {
+    // Build the tree manually, so we can time it.
+    timers.Start("tree_building");
+    typename decltype(ra)::Tree tree(std::move(querySet));
+    timers.Stop("tree_building");
+
+    timers.Start("computing_neighbors");
+    ra.Search(&tree, k, neighbors, distances);
+    timers.Stop("computing_neighbors");
+  }
+  else
+  {
+    timers.Start("computing_neighbors");
+    ra.Search(querySet, k, neighbors, distances);
+    timers.Stop("computing_neighbors");
+  }
 }
 
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void RAWrapper<TreeType>::Search(const size_t k,
+void RAWrapper<TreeType>::Search(util::Timers& timers,
+                                 const size_t k,
                                  arma::Mat<size_t>& neighbors,
                                  arma::mat& distances)
 {
+  timers.Start("computing_neighbors");
   ra.Search(k, neighbors, distances);
+  timers.Stop("computing_neighbors");
 }
 
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void LeafSizeRAWrapper<TreeType>::Train(arma::mat&& referenceSet,
+void LeafSizeRAWrapper<TreeType>::Train(util::Timers& timers,
+                                        arma::mat&& referenceSet,
                                         const size_t leafSize)
 {
   // Build tree, if necessary.
@@ -63,11 +91,14 @@ void LeafSizeRAWrapper<TreeType>::Train(arma::mat&& referenceSet,
   }
   else
   {
+    timers.Start("tree_building");
     std::vector<size_t> oldFromNewReferences;
     typename decltype(ra)::Tree* tree =
         new typename decltype(ra)::Tree(std::move(referenceSet),
                                         oldFromNewReferences,
                                         leafSize);
+    timers.Stop("tree_building");
+
     ra.Train(tree);
 
     // Give the model ownership of the tree and the mappings.
@@ -79,7 +110,8 @@ void LeafSizeRAWrapper<TreeType>::Train(arma::mat&& referenceSet,
 template<template<typename TreeMetricType,
                   typename TreeStatType,
                   typename TreeMatType> class TreeType>
-void LeafSizeRAWrapper<TreeType>::Search(arma::mat&& querySet,
+void LeafSizeRAWrapper<TreeType>::Search(util::Timers& timers,
+                                         arma::mat&& querySet,
                                          const size_t k,
                                          arma::Mat<size_t>& neighbors,
                                          arma::mat& distances,
@@ -88,18 +120,20 @@ void LeafSizeRAWrapper<TreeType>::Search(arma::mat&& querySet,
   if (!ra.Naive() && !ra.SingleMode())
   {
     // Build a second tree and search, taking the leaf size into account.
-    Timer::Start("tree_building");
+    timers.Start("tree_building");
     Log::Info << "Building query tree...."<< std::endl;
     std::vector<size_t> oldFromNewQueries;
     typename decltype(ra)::Tree queryTree(std::move(querySet),
                                           oldFromNewQueries,
                                           leafSize);
     Log::Info << "Tree built." << std::endl;
-    Timer::Stop("tree_building");
+    timers.Stop("tree_building");
 
     arma::Mat<size_t> neighborsOut;
     arma::mat distancesOut;
+    timers.Start("computing_neighbors");
     ra.Search(&queryTree, k, neighborsOut, distancesOut);
+    timers.Stop("computing_neighbors");
 
     // Unmap the query points.
     distances.set_size(distancesOut.n_rows, distancesOut.n_cols);
@@ -113,7 +147,9 @@ void LeafSizeRAWrapper<TreeType>::Search(arma::mat&& querySet,
   else
   {
     // Search without building a second tree.
+    timers.Start("computing_neighbors");
     ra.Search(querySet, k, neighbors, distances);
+    timers.Stop("computing_neighbors");
   }
 }
 

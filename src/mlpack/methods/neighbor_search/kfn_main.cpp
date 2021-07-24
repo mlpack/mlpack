@@ -250,7 +250,7 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
     arma::mat referenceSet = std::move(params.Get<arma::mat>("reference"));
 
-    kfn->BuildModel(std::move(referenceSet), searchMode, epsilon);
+    kfn->BuildModel(timers, std::move(referenceSet), searchMode, epsilon);
   }
   else
   {
@@ -327,9 +327,9 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
     arma::mat distances;
 
     if (params.Has("query"))
-      kfn->Search(std::move(queryData), k, neighbors, distances);
+      kfn->Search(timers, std::move(queryData), k, neighbors, distances);
     else
-      kfn->Search(k, neighbors, distances);
+      kfn->Search(timers, k, neighbors, distances);
     Log::Info << "Search complete." << endl;
 
     // Calculate the effective error, if desired.

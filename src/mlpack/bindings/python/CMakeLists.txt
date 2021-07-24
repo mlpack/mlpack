@@ -108,6 +108,7 @@ set(BINDING_SOURCES
   get_valid_name.hpp
   import_decl.hpp
   is_serializable.hpp
+  mlpack_main.hpp
   print_class_defn.hpp
   print_defn.hpp
   print_doc.hpp

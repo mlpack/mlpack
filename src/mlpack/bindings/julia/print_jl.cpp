@@ -95,7 +95,7 @@ void PrintJL(const string& bindingName,
   cout << "# Call the C binding of the mlpack " << functionName << " binding."
       << endl;
   cout << "function call_" << bindingName << "(p, t)" << endl;
-  cout << "  success = ccall((:" << functionName << ", " << functionName
+  cout << "  success = ccall((:mlpack_" << functionName << ", " << functionName
       << "Library), Bool, (Ptr{Nothing}, Ptr{Nothing}), p, t)" << endl;
   cout << "  if !success" << endl;
   cout << "    # Throw an exception---false means there was a C++ exception."
@@ -253,7 +253,7 @@ void PrintJL(const string& bindingName,
   cout << endl;
 
   // Get an empty Params and Timers object.
-  cout << "  p = IOGetParameters(\"" << bindingName << "\")" << endl;
+  cout << "  p = GetParameters(\"" << bindingName << "\")" << endl;
   cout << "  t = Timers()" << endl;
   cout << endl;
 

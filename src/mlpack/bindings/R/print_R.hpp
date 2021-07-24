@@ -21,11 +21,13 @@ namespace r {
 /**
  * Print the code for a .R binding for an mlpack program to stdout.
  *
- * @param doc Documentation for the binding.
+ * @param params Instantiated Params object for this binding.
  * @param functionName Name of the function (i.e. "pca").
+ * @param bindingName Name of the binding (as specified by BINDING_NAME).
  */
-void PrintR(const util::BindingDetails& doc,
-            const std::string& functionName);
+void PrintR(util::Params& params,
+            const std::string& functionName,
+            const std::string& bindingName);
 
 } // namespace r
 } // namespace bindings

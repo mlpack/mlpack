@@ -119,11 +119,11 @@ void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
 
   MeanShift<> meanShift(radius, maxIterations);
 
-  Timer::Start("clustering");
+  timers.Start("clustering");
   Log::Info << "Performing mean shift clustering..." << endl;
   meanShift.Cluster(dataset, assignments, centroids,
       params.Has("force_convergence"));
-  Timer::Stop("clustering");
+  timers.Stop("clustering");
 
   Log::Info << "Found " << centroids.n_cols << " centroids." << endl;
   if (radius <= 0.0)
