@@ -30,10 +30,11 @@ class SSELoss
 {
  public:
   // Default constructor---No regularization.
-  SSELoss(): alpha(0), lambda(0) { /* Nothing to do. */}
+  SSELoss(): alpha(0), lambda(0), minChildWeight(1) { /* Nothing to do. */}
 
-  SSELoss(const double alpha, const double lambda):
-      alpha(alpha), lambda(lambda)
+  SSELoss(const double alpha, const double lambda,
+      const double minChildWeight) :
+      alpha(alpha), lambda(lambda), minChildWeight(minChildWeight)
   {
     // Nothing to do.
   }
@@ -120,6 +121,8 @@ class SSELoss
   const double lambda;
   //! The L1 regularization parameter.
   const double alpha;
+  //! The minimum total weight possible for any child.
+  const double minChildWeight;
   //! First order gradients.
   arma::vec gradients;
   //! Second order gradients (hessians).
