@@ -276,6 +276,8 @@ class DecisionTreeRegressor :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param fitnessFunction Instantiated fitnessFunction. It is used to
+   *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename ResponsesType>
@@ -303,6 +305,8 @@ class DecisionTreeRegressor :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param fitnessFunction Instantiated fitnessFunction. It is used to
+   *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename ResponsesType>
@@ -333,6 +337,8 @@ class DecisionTreeRegressor :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param fitnessFunction Instantiated fitnessFunction. It is used to
+   *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename ResponsesType, typename WeightsType>
@@ -365,6 +371,8 @@ class DecisionTreeRegressor :
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
    * @param dimensionSelector Instantiated dimension selection policy.
+   * @param fitnessFunction Instantiated fitnessFunction. It is used to
+   *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
   template<typename MatType, typename ResponsesType, typename WeightsType>
@@ -473,6 +481,8 @@ class DecisionTreeRegressor :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
+   * @param fitnessFunction Instantiated fitnessFunction. It is used to
+   *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType, typename ResponsesType>
@@ -501,6 +511,8 @@ class DecisionTreeRegressor :
    * @param minimumLeafSize Minimum number of points in each leaf node.
    * @param minimumGainSplit Minimum gain for the node to split.
    * @param maximumDepth Maximum depth for the tree.
+   * @param fitnessFunction Instantiated fitnessFunction. It is used to
+   *      evaluate the fitness score for splitting each node.
    * @return The final entropy of decision tree.
    */
   template<bool UseWeights, typename MatType, typename ResponsesType>

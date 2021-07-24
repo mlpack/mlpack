@@ -107,6 +107,8 @@ class RandomBinaryNumericSplit
    * @param splitInfo Stores split information on a successful split.
    * @param aux Auxiliary split information, which may be modified on a
    *      successful split.
+   * @param fitnessFunction The FitnessFunction object instance. It it used to
+   *      evaluate the gain for the split.
    * @param splitIfBetterGain When set to true, it will split only when gain is
    *      better than the current best gain. Otherwise, it always makes a
    *      split regardless of gain.
