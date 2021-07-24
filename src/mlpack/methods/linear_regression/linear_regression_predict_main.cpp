@@ -65,7 +65,7 @@ PARAM_MATRIX_IN("test", "Matrix containing X' (test regressors).", "T");
 PARAM_ROW_OUT("output_predictions", "If --test_file is specified, this "
     "matrix is where the predicted responses will be saved.", "o");
 
-static void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
 {
   LinearRegression* lr;
 	RequireOnlyOnePassed(params, {"input_model"}, true); // input_model must be passed.

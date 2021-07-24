@@ -74,7 +74,7 @@ PARAM_MODEL_OUT(LinearRegression, "output_model", "Output LinearRegression "
 PARAM_DOUBLE_IN("lambda", "Tikhonov regularization for ridge regression.  If 0,"
     " the method reduces to linear regression.", "l", 0.0);
 
-static void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
+void BINDING_FUNCTION(util::Params& params, util::Timers& timer)
 {
   const double lambda = params.Get<double>("lambda");
   RequireOnlyOnePassed(params, {"training"}, true); // training must be passsed.
