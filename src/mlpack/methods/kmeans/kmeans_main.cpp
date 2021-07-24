@@ -15,7 +15,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME kmeans_cluster
+#define BINDING_NAME kmeans
 
 #include <mlpack/core/util/mlpack_main.hpp>
 
@@ -98,7 +98,7 @@ BINDING_EXAMPLE(
     "each point to " + PRINT_DATASET("assignments") + ", the following "
     "command could be used:"
     "\n\n" +
-    PRINT_CALL("kmeans_cluster", "input", "data", "clusters", 10, "output",
+    PRINT_CALL("kmeans", "input", "data", "clusters", 10, "output",
         "assignments", "centroid", "centroids") +
     "\n\n"
     "To run k-means on that same dataset with initial centroids specified in " +
@@ -106,7 +106,7 @@ BINDING_EXAMPLE(
     "storing the output centroids in " + PRINT_DATASET("final") + " the "
     "following command may be used:"
     "\n\n" +
-    PRINT_CALL("kmeans_cluster", "input", "data", "initial_centroids", "initial",
+    PRINT_CALL("kmeans", "input", "data", "initial_centroids", "initial",
         "clusters", 10, "max_iterations", 500, "centroid", "final"));
 
 // See also...

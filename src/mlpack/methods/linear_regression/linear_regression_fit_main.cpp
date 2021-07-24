@@ -56,13 +56,7 @@ BINDING_LONG_DESC(
 
 // Example.
 BINDING_EXAMPLE(
-  "For example, to fit a linear regression on the dataset " +
-  PRINT_DATASET("X") + " with responses " + PRINT_DATASET("y") + ", saving "
-  "the trained model to " + PRINT_MODEL("lr_model") + ", the following "
-  "command could be used:"
-  "\n\n" +
-  PRINT_CALL("linear_regression_fit", "training", "X", "training_responses",
-  "y", "output_model", "lr_model"));
+  "For example, to fit a linear regression on the dataset ");
 
 // See also...
 BINDING_SEE_ALSO("Linear/ridge regression tutorial",

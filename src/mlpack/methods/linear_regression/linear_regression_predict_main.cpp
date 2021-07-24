@@ -50,13 +50,7 @@ BINDING_LONG_DESC(
 
 // Example.
 BINDING_EXAMPLE(
-  "To use a trained " + PRINT_MODEL("lr_model") + " to predict responses for a "
-  "test set " + PRINT_DATASET("X_test") + ", saving the predictions to " +
-  PRINT_DATASET("X_test_responses") + ", the following command could be "
-  "used:"
-  "\n\n" +
-  PRINT_CALL("linear_regression_predict", "input_model", "lr_model", "test",
-  "X_test", "output_predictions", "X_test_responses"));
+  "To use a trained ");
 
 // See also...
 BINDING_SEE_ALSO("Linear/ridge regression tutorial",

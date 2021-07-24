@@ -15,7 +15,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME preprocess_split_split
+#define BINDING_NAME preprocess_split
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/math/random.hpp>
@@ -34,14 +34,53 @@ BINDING_LONG_DESC(
     "This utility takes a dataset and optionally labels and splits them into a "
     "training set and a test set. Before the split, the points in the dataset "
     "are randomly reordered. The percentage of the dataset to be used as the "
-    "test set can be specified with the ");
+    "test set can be specified with the " + PRINT_PARAM_STRING("test_ratio") +
+    " parameter; the default is 0.2 (20%)."
+    "\n\n"
+    "The output training and test matrices may be saved with the " +
+    PRINT_PARAM_STRING("training") + " and " + PRINT_PARAM_STRING("test") +
+    " output parameters."
+    "\n\n"
+    "Optionally, labels can also be split along with the data by specifying "
+    "the " + PRINT_PARAM_STRING("input_labels") + " parameter.  Splitting "
+    "labels works the same way as splitting the data. The output training and "
+    "test labels may be saved with the " +
+    PRINT_PARAM_STRING("training_labels") + " and " +
+    PRINT_PARAM_STRING("test_labels") + " output parameters, respectively.");
 
 // Example.
 BINDING_EXAMPLE(
-    "So, a simple example where we want to split the dataset ");
+    "So, a simple example where we want to split the dataset " +
+    PRINT_DATASET("X") + " into " + PRINT_DATASET("X_train") + " and " +
+    PRINT_DATASET("X_test") + " with 60% of the data in the training set and "
+    "40% of the dataset in the test set, we could run "
+    "\n\n" +
+    PRINT_CALL("preprocess_split", "input", "X", "training", "X_train", "test",
+        "X_test", "test_ratio", 0.4) +
+    "\n\n"
+    "Also by default the dataset is shuffled and split; you can provide the " +
+    PRINT_PARAM_STRING("no_shuffle") + " option to avoid shuffling the "
+    "data; an example to avoid shuffling of data is:"
+    "\n\n" +
+    PRINT_CALL("preprocess_split", "input", "X", "training", "X_train", "test",
+        "X_test", "test_ratio", 0.4, "no_shuffle", true) +
+    "\n\n"
+    "If we had a dataset " + PRINT_DATASET("X") + " and associated labels " +
+    PRINT_DATASET("y") + ", and we wanted to split these into " +
+    PRINT_DATASET("X_train") + ", " + PRINT_DATASET("y_train") + ", " +
+    PRINT_DATASET("X_test") + ", and " + PRINT_DATASET("y_test") + ", with 30% "
+    "of the data in the test set, we could run"
+    "\n\n" +
+    PRINT_CALL("preprocess_split", "input", "X", "input_labels", "y",
+        "test_ratio", 0.3, "training", "X_train", "training_labels", "y_train",
+        "test", "X_test", "test_labels", "y_test"));
 
 BINDING_EXAMPLE(
-    "To maintain the ratio of each class in the train and test sets, the");
+    "To maintain the ratio of each class in the train and test sets, the" +
+    PRINT_PARAM_STRING("stratify_data") + " option can be used."
+    "\n\n" +
+    PRINT_CALL("preprocess_split", "input", "X", "training", "X_train", "test",
+        "X_test", "test_ratio", 0.4, "stratify_data", true));
 
 // See also...
 BINDING_SEE_ALSO("@preprocess_binarize", "#preprocess_binarize");

@@ -39,12 +39,9 @@ endforeach()
 # the parent scope).
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_type(kmeans "clustering")
-group_bindings(kmeans "cluster")
+add_cli_executable(kmeans)
 add_python_binding(kmeans)
-
-add_cli_executable(kmeans_cluster)
-add_julia_binding(kmeans_cluster)
-add_go_binding(kmeans_cluster)
-add_r_binding(kmeans_cluster)
-add_markdown_docs(kmeans_cluster "cli;python;julia;go;r" "clustering")
+add_julia_binding(kmeans)
+add_go_binding(kmeans)
+add_r_binding(kmeans)
+add_markdown_docs(kmeans "cli;python;julia;go;r" "clustering")

@@ -14,7 +14,6 @@
 #define MLPACK_BINDINGS_PYTHON_PRINT_DOC_FUNCTIONS_IMPL_HPP
 
 #include <mlpack/core/util/hyphenate_string.hpp>
-#include "get_class_name_wrapper.hpp"
 
 namespace mlpack {
 namespace bindings {
@@ -252,10 +251,9 @@ std::string ProgramCall(const std::string& bindingName, Args... args)
  * Given the name of a binding, print a program call assuming that all options
  * are specified.  The bindingName should not be the output of GetBindingName().
  */
-inline std::string ProgramCall(const std::string& bindingName)
+inline std::string ProgramCall(util::Params& params,
+                               const std::string& bindingName)
 {
-  util::Params params = IO::Parameters(bindingName);
-
   std::ostringstream oss;
   oss << ">>> ";
 
@@ -335,68 +333,6 @@ inline std::string PrintModel(const std::string& modelName)
 inline std::string PrintDataset(const std::string& datasetName)
 {
   return "'" + datasetName + "'";
-}
-
-/**
- * Read dataset from a URL and store in a variable.
- */
-inline std::string GetDataset(const std::string& datasetName,
-                              const std::string& url)
-{
-  std::string readString = ">>> " + datasetName + " = ";
-  readString += "pd.read_csv('" + url + "')" + "\n";
-  return readString;
-}
-
-/**
- * Split dataset into training and testing.
- */
-inline std::string SplitTrainTest(const std::string& datasetName,
-                                  const std::string& labelName,
-                                  const std::string& trainDataset,
-                                  const std::string& trainLabels,
-                                  const std::string& testDataset,
-                                  const std::string& testLabels,
-                                  const std::string& splitRatio)
-{
-  std::string splitString = ">>> ";
-  splitString += "ps = ";
-  splitString += "PreprocessSplit(test_ratio=" + splitRatio + ")\n";
-  splitString += ">>> ";
-  splitString += testDataset + ", " + testLabels + ", ";
-  splitString += trainDataset + ", " + trainLabels;
-  splitString += " = ";
-  splitString += "ps.split(input_=" + datasetName + ", input_labels=";
-  splitString += labelName + ")\n";
-  return splitString;
-}
-
-/**
- * Get a string that imports external libraries.
- */
-inline std::string ImportExtLib()
-{
-  std::string extImports = ">>> import pandas as pd\n";
-  return extImports;
-}
-
-/**
- * Get a string that imports mlpack's preprocess_split.
- */
-inline std::string ImportSplit()
-{
-  std::string splitImport = ">>> from mlpack import PreprocessSplit\n";
-  return splitImport;
-}
-
-/**
- * Get a string that imports the current method.
- */
-inline std::string ImportThis(const std::string& groupName)
-{
-  std::string className = GetClassName(groupName);
-  std::string thisString = ">>> from mlpack import " + className + "\n";
-  return thisString;
 }
 
 /**

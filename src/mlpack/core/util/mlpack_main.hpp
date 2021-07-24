@@ -202,7 +202,11 @@ using Option = mlpack::bindings::tests::TestOption<T>;
  * parameters followed by values (in the case where the preceding parameter is
  * not a flag).
  */
-#define PRINT_CALL mlpack::bindings::python::ProgramCall
+#define CREATE_OBJECT(...) mlpack::bindings::python::CreateObject(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
+
+#define CALL_METHOD(...) mlpack::bindings::python::CallMethod(\
+    STRINGIFY(BINDING_NAME), __VA_ARGS__)
 
 /**
  * GET_DATASET() returns a string that reads data from a source and,

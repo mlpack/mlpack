@@ -9,7 +9,7 @@ set(DIRS
   # bayesian_linear_regression
   # block_krylov_svd
   # cf
-  dbscan
+  # dbscan
   # decision_tree
   # det
   # emst
@@ -18,8 +18,8 @@ set(DIRS
   # hmm
   # hoeffding_trees
   # kde
-  kernel_pca
-  kmeans
+  # kernel_pca
+  # kmeans
   # lars
   linear_regression
   # linear_svm
@@ -36,7 +36,7 @@ set(DIRS
   # nystroem_method
   # pca
   # perceptron
-  preprocess
+  # preprocess
   # quic_svd
   # radical
   # random_forest

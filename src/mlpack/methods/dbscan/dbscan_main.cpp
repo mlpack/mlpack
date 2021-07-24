@@ -15,7 +15,7 @@
 #ifdef BINDING_NAME
   #undef BINDING_NAME
 #endif
-#define BINDING_NAME dbscan_cluster
+#define BINDING_NAME dbscan
 
 #include <mlpack/core/util/mlpack_main.hpp>
 #include <mlpack/core/tree/binary_space_tree.hpp>
@@ -77,8 +77,7 @@ BINDING_EXAMPLE(
     PRINT_DATASET("input") + " with a radius of 0.5 and a minimum cluster size"
     " of 5 is given below:"
     "\n\n" +
-    PRINT_CALL("dbscan_cluster", "input", "input", "epsilon", 0.5, "min_size",
-        5));
+    PRINT_CALL("dbscan", "input", "input", "epsilon", 0.5, "min_size", 5));
 
 // See also...
 BINDING_SEE_ALSO("DBSCAN on Wikipedia", "https://en.wikipedia.org/wiki/DBSCAN");
@@ -155,7 +154,7 @@ void ChoosePointSelectionPolicy(util::Params& params,
     RunDBSCAN<RangeSearchType, RandomPointSelection>(params, rs);
 }
 
-void BINDING_FUNCTION(util::Params& params, util::Timers& timers)
+void BINDING_FUNCTION(util::Params& params, util::Timers& /* timers */)
 {
   RequireAtLeastOnePassed(params, { "assignments", "centroids" }, false,
       "no output will be saved");
