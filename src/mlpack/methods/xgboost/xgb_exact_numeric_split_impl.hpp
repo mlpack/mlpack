@@ -29,10 +29,6 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
     AuxiliarySplitInfo& aux,
     LossFunction& lossFunction)
 {
-  // It can't be outperformed.
-  if (bestGain == 0.0)
-    return DBL_MAX;
-
   // TODO: Filter out and separate the missing data before sorting to decrease
   // sensitivity towards missing data.
 
