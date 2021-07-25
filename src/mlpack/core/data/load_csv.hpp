@@ -33,7 +33,6 @@
 #define MLPACK_CORE_DATA_LOAD_CSV_HPP
 
 #include <boost/spirit/include/qi.hpp>
-#include <boost/algorithm/string/trim.hpp>
 
 #include <mlpack/core/util/log.hpp>
 
@@ -337,16 +336,12 @@ class LoadCSV
       {
         str.clear();
       }
-      boost::trim(str);
 
       inout(row, col++) = infoSet.template MapString<T>(std::move(str), row);
     };
 
     while (std::getline(inFile, line))
     {
-      // Remove whitespace from either side.
-      boost::trim(line);
-
       // Parse the numbers from a line (ex: 1,2,3,4); if the parser finds a
       // number it will execute the setNum function.
       const bool canParse = qi::parse(line.begin(), line.end(),
@@ -407,7 +402,6 @@ class LoadCSV
     {
       // All parsed values must be mapped.
       std::string str(iter.begin(), iter.end());
-      boost::trim(str);
 
       inout(row, col) = infoSet.template MapString<T>(std::move(str), row);
       ++row;
@@ -415,9 +409,6 @@ class LoadCSV
 
     while (std::getline(inFile, line))
     {
-      // Remove whitespace from either side.
-      boost::trim(line);
-
       // Reset the row we are looking at.  (Remember this is transposed.)
       row = 0;
 
