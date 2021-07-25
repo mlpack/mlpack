@@ -201,7 +201,7 @@ class LoadCSV
         // In this case we must pass everything we parse to the MapPolicy.
 	std::string str(line.begin(), line.end());
         
-	for(int i = 0; i < str.size(); i++)
+	for(size_t i = 0; i < str.size(); i++)
 	{
 	  // Maybe there is a faster way to parser each element of the string
 	  // Also for now it is being considered that delimiter will always
@@ -282,7 +282,7 @@ class LoadCSV
 	// Maybe there is a faster way to parser each element of the string
 	// Also for now it is being considered that delimiter will always
 	// be comma(,)
-	for(int i = 0; i < str.size(); i++)
+	for(size_t i = 0; i < str.size(); i++)
         {
 	  if(str[i] != ',')
 	  {
