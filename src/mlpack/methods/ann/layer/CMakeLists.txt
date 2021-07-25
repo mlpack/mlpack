@@ -85,6 +85,8 @@ set(SOURCES
   multiply_constant_impl.hpp
   multiply_merge.hpp
   multiply_merge_impl.hpp
+  nearest_interpolation.hpp
+  nearest_interpolation_impl.hpp
   noisylinear.hpp
   noisylinear_impl.hpp
   parametric_relu.hpp
