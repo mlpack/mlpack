@@ -28,10 +28,10 @@ namespace go {
 template<typename T>
 void PrintDefnInput(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   if (d.required)
   {
@@ -46,7 +46,7 @@ void PrintDefnInput(
 template<typename T>
 void PrintDefnInput(
     util::ParamData& d,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   // param_name *mat.Dense
   if (d.required)
@@ -62,8 +62,8 @@ void PrintDefnInput(
 template<typename T>
 void PrintDefnInput(
     util::ParamData& d,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // param_name *DataWithInfo
   if (d.required)
@@ -79,8 +79,8 @@ void PrintDefnInput(
 template<typename T>
 void PrintDefnInput(
     util::ParamData& d,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // Get the type names we need to use.
   std::string goStrippedType, strippedType, printedType, defaultsType;

@@ -31,10 +31,10 @@ template<typename T>
 void InPlaceCopyInternal(
     util::ParamData& /* d */,
     util::ParamData& /* input */,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<mlpack::data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<mlpack::data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // Nothing to do.
 }

@@ -23,8 +23,8 @@ namespace cli {
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename boost::disable_if<util::IsStdVector<T>>::type* /* junk */,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* /* junk */)
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* /* junk */,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* /* junk */)
 {
   // Don't know what type this is.
   return "unknown";
@@ -35,7 +35,7 @@ std::string StringTypeParamImpl(
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename boost::enable_if<util::IsStdVector<T>>::type* /* junk */)
+    const typename std::enable_if<util::IsStdVector<T>::value>::type* /* junk */)
 {
   return "vector";
 }
@@ -45,7 +45,7 @@ std::string StringTypeParamImpl(
  */
 template<typename T>
 std::string StringTypeParamImpl(
-    const typename boost::enable_if<data::HasSerialize<T>>::type* /* junk */)
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* /* junk */)
 {
   return "string";
 }

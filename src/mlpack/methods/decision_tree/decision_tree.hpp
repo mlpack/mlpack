@@ -31,11 +31,6 @@ namespace tree {
  *
  * The class inherits from the auxiliary split information in order to prevent
  * an empty auxiliary split information struct from taking any extra size.
- *
- * Note that `ElemType` is a template parameter controlling the type that is
- * used to store split information.  In general, you would want to set this to
- * be the same as the type of the data that you will be using, but it's not
- * required to do that.
  */
 template<typename FitnessFunction = GiniGain,
          template<typename> class NumericSplitType = BestBinaryNumericSplit,
