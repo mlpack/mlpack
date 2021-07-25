@@ -70,7 +70,7 @@ add_executable(mlpack_test
   #log_test.cpp
   #loss_functions_test.cpp
   #lsh_test.cpp
-  #main.cpp
+  main.cpp
   #math_test.cpp
   #matrix_completion_test.cpp
   #maximal_inputs_test.cpp
