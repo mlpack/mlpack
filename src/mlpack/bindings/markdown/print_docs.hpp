@@ -35,6 +35,7 @@ void PrintHeaders(const std::string& bindingName,
  */
 void PrintDocs(const std::string& bindingName,
                const std::vector<std::string>& languages,
+               const std::vector<std::string>& validMethods,
                const std::vector<bool>& addWrapperDocs);
 
 #endif

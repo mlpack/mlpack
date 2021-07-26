@@ -31,30 +31,14 @@ using namespace std;
 BINDING_USER_NAME("Linear Regression Predict");
 
 // Short description.
-BINDING_SHORT_DESC(
-  "A pre-trained model obtained from the fit program can be used to "
-  "output regression predictions for a test set.");
+BINDING_SHORT_DESC("");
 
 // Long description.
-BINDING_LONG_DESC(
-  "The value of b calculated from the fit program of linear regression "
-  "is used to predict the responses for another matrix X' (specified by the " +
-  PRINT_PARAM_STRING("test") + " parameter):" +
-  "\n\n"
-  "   y' = X' * b"
-  "\n\n"
-  "and the predicted responses y' may be saved with the " +
-  PRINT_PARAM_STRING("output_predictions") + " output parameter. This type "
-  "of regression is related to least-angle regression, which mlpack implements "
-  "as the 'lars' program.");
+BINDING_LONG_DESC("");
 
 // Example.
 BINDING_EXAMPLE(
   "To use a trained ");
-
-// See also...
-BINDING_SEE_ALSO("Linear/ridge regression tutorial",
-       "@doxygen/lrtutorial.html");
 
 PARAM_MODEL_IN(LinearRegression, "input_model", "Existing LinearRegression "
     "model to use.", "m");

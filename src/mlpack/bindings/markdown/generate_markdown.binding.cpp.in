@@ -40,11 +40,13 @@ void Print${BINDING}Docs()
 {
   // Fill the vector of languages for which we want to print.
   vector<string> languages;
+  vector<string> validMethods;
   vector<bool> addWrapperDocs;
   ${LANGUAGES_PUSH_BACK_CODE}
   ${WRAPPER_PUSH_BACK_CODE}
+  ${VALID_METHODS_PUSH_BACK_CODE}
 
-  PrintDocs("${BINDING}", languages, addWrapperDocs);
+  PrintDocs("${BINDING}", languages, validMethods, addWrapperDocs);
 }
 
 } // namespace markdown

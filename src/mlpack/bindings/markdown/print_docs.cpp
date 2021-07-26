@@ -60,10 +60,23 @@ void PrintHeaders(const string& bindingName,
 
 void PrintDocs(const string& bindingName,
                const vector<string>& languages,
+               const vector<string>& validMethods,
                const vector<bool>& addWrapperDocs)
 {
   Params params = IO::Parameters(bindingName);
   const BindingDetails& doc = params.Doc();
+  map<string, BindingDetails> docMethods;
+
+  for (size_t i=0; i<validMethods.size(); ++i)
+  {
+    Params methodParams = IO::Parameters(bindingName + "_" + validMethods[i]);
+    BindingDetails docMethod = methodParams.Doc();
+    docMethods[validMethods[i]] = docMethod;
+  }
+
+  // For compatibility.
+  if(docMethods.size() == 0)
+    docMethods["MAIN"] = doc;
 
   // First, for this section, print each of the names.
   for (size_t i = 0; i < languages.size(); ++i)
@@ -72,7 +85,12 @@ void PrintDocs(const string& bindingName,
 
     cout << "<div class=\"language-title\" id=\"" << languages[i]
         << "\" markdown=\"1\">" << endl;
-    cout << "## " << GetBindingName(bindingName) << endl;
+
+    const string langBindingName = 
+        addWrapperDocs[i] ? GetWrapperName(bindingName) :
+            GetBindingName(bindingName);
+
+    cout << "## " << langBindingName << endl;
     cout << "{: #" << languages[i] << "_" << bindingName << " }" << endl;
     cout << "</div>" << endl;
   }
@@ -89,7 +107,8 @@ void PrintDocs(const string& bindingName,
 
     cout << "<div class=\"language-decl\" id=\"" << languages[i]
         << "\" markdown=\"1\">" << endl;
-    cout << ProgramCall(bindingName);
+    if(!addWrapperDocs[i])
+      cout << ProgramCall(bindingName);
     cout << "</div>" << endl;
   }
   cout << endl;

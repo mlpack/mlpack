@@ -56,33 +56,14 @@ using namespace mlpack::util;
 BINDING_USER_NAME("AdaBoost Prediction");
 
 // Short description.
-BINDING_SHORT_DESC(
-    "An implementation of the AdaBoost.MH (Adaptive Boosting) algorithm for "
-    "classification.  This can be used predict the classes of new points.");
+BINDING_SHORT_DESC("");
 
 // Long description.
-BINDING_LONG_DESC(
-    "This program implements the AdaBoost (or Adaptive "
-    "Boosting) algorithm. The variant of AdaBoost implemented here is "
-    "AdaBoost.MH. It uses a weak learner, either decision stumps or "
-    "perceptrons, and over many iterations, creates a strong learner that is a "
-    "weighted ensemble of weak learners. It runs these iterations until a "
-    "tolerance value is crossed for change in the value of the weighted "
-    "training error.");
+BINDING_LONG_DESC("");
 
 // Example.
 BINDING_EXAMPLE(
     "For example, to run AdaBoost on an input dataset ");
-
-// See also...
-BINDING_SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/"
-        "AdaBoost");
-BINDING_SEE_ALSO("Improved boosting algorithms using confidence-rated "
-        "predictions (pdf)", "http://rob.schapire.net/papers/SchapireSi98.pdf");
-BINDING_SEE_ALSO("Perceptron", "#perceptron");
-BINDING_SEE_ALSO("Decision Stump", "#decision_stump");
-BINDING_SEE_ALSO("mlpack::adaboost::AdaBoost C++ class documentation",
-        "@doxygen/classmlpack_1_1adaboost_1_1AdaBoost.html");
 
 // Classification options.
 PARAM_MATRIX_IN("test", "Test dataset.", "T");

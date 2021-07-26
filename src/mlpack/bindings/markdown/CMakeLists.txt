@@ -67,6 +67,7 @@ macro (add_markdown_docs name languages wrappers)
   set(BINDING ${name})
   set(LANGUAGES_PUSH_BACK_CODE "")
   set(WRAPPER_PUSH_BACK_CODE "")
+  set(VALID_METHODS_PUSH_BACK_CODE "")
   set(PROGRAM_MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
   set(WRAPPERS ${wrappers})
 
@@ -91,6 +92,13 @@ macro (add_markdown_docs name languages wrappers)
         "${WRAPPER_PUSH_BACK_CODE}\n  addWrapperDocs.push_back(${val});")
   endforeach()
   
+  if(NOT ${WRAPPERS} EQUAL "")
+    foreach(method ${${name}_valid_methods})
+      set(VALID_METHODS_PUSH_BACK_CODE
+          "${VALID_METHODS_PUSH_BACK_CODE}\n  validMethods.push_back(\"${method}\");")
+    endforeach()
+  endif()
+
   # Do the actual file configuration.
   set(BINDING_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown)
   set(BINDING_BINARY_DIR ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown)
