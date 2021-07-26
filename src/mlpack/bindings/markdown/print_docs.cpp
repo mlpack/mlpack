@@ -29,8 +29,9 @@ using namespace mlpack::util;
 using namespace mlpack::bindings;
 using namespace mlpack::bindings::markdown;
 
-void PrintHeaders(const std::string& bindingName,
-                  const std::vector<std::string>& languages)
+void PrintHeaders(const string& bindingName,
+                  const vector<string>& languages,
+                  const vector<bool>& addWrapperDocs)
 {
   // We just want to print the name of the function and a link, as Markdown.
   // We have to mark it as having the right language with a div.
@@ -40,10 +41,13 @@ void PrintHeaders(const std::string& bindingName,
 
     // Get the name of the binding in the target language, and convert it to
     // lowercase (since the anchor link will be in lowercase).
-    const std::string langBindingName = GetBindingName(bindingName);
-    std::string anchorName = langBindingName;
-    std::transform(anchorName.begin(), anchorName.end(), anchorName.begin(),
-        [](unsigned char c) { return std::tolower(c); });
+    const string langBindingName = 
+        addWrapperDocs[i] ? GetWrapperName(bindingName) :
+            GetBindingName(bindingName);
+
+    string anchorName = GetBindingName(bindingName);
+    transform(anchorName.begin(), anchorName.end(), anchorName.begin(),
+        [](unsigned char c) { return tolower(c); });
     // Strip '()' from the end if needed.
     if (anchorName.substr(anchorName.size() - 2, 2) == "()")
       anchorName = anchorName.substr(0, anchorName.size() - 2);
@@ -54,8 +58,9 @@ void PrintHeaders(const std::string& bindingName,
   }
 }
 
-void PrintDocs(const std::string& bindingName,
-               const vector<string>& languages)
+void PrintDocs(const string& bindingName,
+               const vector<string>& languages,
+               const vector<bool>& addWrapperDocs)
 {
   Params params = IO::Parameters(bindingName);
   const BindingDetails& doc = params.Doc();
@@ -148,8 +153,8 @@ void PrintDocs(const std::string& bindingName,
         }
         else
         {
-          std::string name = ParamString(bindingName, it->second.name);
-          name[1] = std::tolower(name[1]);
+          string name = ParamString(bindingName, it->second.name);
+          name[1] = tolower(name[1]);
           cout << name << " | ";
         }
       }
@@ -214,8 +219,8 @@ void PrintDocs(const std::string& bindingName,
       // parameter will be lowerCamelCase.
       if (languages[i] == "go")
       {
-        std::string name = ParamString(bindingName, it->second.name);
-        name[1] = std::tolower(name[1]);
+        string name = ParamString(bindingName, it->second.name);
+        name[1] = tolower(name[1]);
         cout << name << " | ";
       }
       else

@@ -54,10 +54,10 @@ foreach(file ${SOURCES})
 endforeach()
 
 # Create the add_markdown_docs() macro.  It's meant to be used as
-# 'add_markdown_docs(knn, "cli;python;julia", "classification")', for instance.
-# See the file 'MarkdownCategories.cmake' for valid categories that can be used
+# 'add_markdown_docs(knn, "cli;python;julia")', for instance.
+# See the file 'Categories.cmake' for valid categories that can be used
 # by the macro.
-macro (add_markdown_docs name languages)
+macro (add_markdown_docs name languages wrappers)
 
   set(category ${${name}_category})
 
@@ -66,7 +66,10 @@ macro (add_markdown_docs name languages)
   # this binding to do that.
   set(BINDING ${name})
   set(LANGUAGES_PUSH_BACK_CODE "")
+  set(WRAPPER_PUSH_BACK_CODE "")
   set(PROGRAM_MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
+  set(WRAPPERS ${wrappers})
+
   foreach (lang ${languages})
     set(LANGUAGES_PUSH_BACK_CODE
         "${LANGUAGES_PUSH_BACK_CODE}\n  languages.push_back(\"${lang}\");")
@@ -74,6 +77,20 @@ macro (add_markdown_docs name languages)
   endforeach ()
   list(REMOVE_DUPLICATES MARKDOWN_ALL_LANGUAGES_LIST)
 
+  foreach (lang ${MARKDOWN_ALL_LANGUAGES_LIST})
+    list(FIND WRAPPERS "${lang}" _idx)
+    if(${_idx} EQUAL -1)
+      set(ADD_WRAPPER_LANGUAGES ${ADD_WRAPPER_LANGUAGES} "false")
+    else()
+      set(ADD_WRAPPER_LANGUAGES ${ADD_WRAPPER_LANGUAGES} "true")
+    endif()
+  endforeach()
+
+  foreach (val ${ADD_WRAPPER_LANGUAGES})
+    set(WRAPPER_PUSH_BACK_CODE
+        "${WRAPPER_PUSH_BACK_CODE}\n  addWrapperDocs.push_back(${val});")
+  endforeach()
+  
   # Do the actual file configuration.
   set(BINDING_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown)
   set(BINDING_BINARY_DIR ${CMAKE_BINARY_DIR}/src/mlpack/bindings/markdown)
@@ -95,6 +112,7 @@ macro (add_markdown_docs name languages)
   set (MARKDOWN_NAME_CATEGORIES ${MARKDOWN_NAME_CATEGORIES} ${category})
   set (MARKDOWN_NAME_CATEGORIES ${MARKDOWN_NAME_CATEGORIES} PARENT_SCOPE)
   set (MARKDOWN_ALL_LANGUAGES_LIST ${MARKDOWN_ALL_LANGUAGES_LIST} PARENT_SCOPE)
+  set (ADD_WRAPPER_LANGUAGES ${ADD_WRAPPER_LANGUAGES} PARENT_SCOPE)
 endmacro ()
 
 # After all the methods/ directories have been traversed, we can add the

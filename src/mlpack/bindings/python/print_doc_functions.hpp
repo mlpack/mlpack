@@ -25,6 +25,11 @@ namespace python {
 inline std::string GetBindingName(const std::string& bindingName);
 
 /**
+ * Given the name of a binding, print its Python wrapper name.
+ */
+inline std::string GetWrapperName(const std::string& groupName);
+
+/**
  * Print any import information for the Python binding.
  */
 inline std::string PrintImport(const std::string& bindingName);

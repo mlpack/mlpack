@@ -62,6 +62,22 @@ inline std::string GetBindingName(const std::string& bindingName)
 }
 
 /**
+ * Given the name of the binding, print the name for the wrapper for
+ * current language.
+ */
+inline std::string GetWrapperName(const std::string& bindingName)
+{
+  if (BindingInfo::Language() == "python")
+  {
+    return python::GetWrapperName(bindingName);
+  }
+  else
+  {
+    return "Not Supported"; // Wrapper support is added only for Python.
+  }
+}
+
+/**
  * Print the name of the given language.
  */
 inline std::string PrintLanguage(const std::string& language)

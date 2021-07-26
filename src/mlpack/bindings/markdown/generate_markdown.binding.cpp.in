@@ -29,18 +29,22 @@ void Print${BINDING}Headers()
 {
   // Fill the vector of languages for which we want to print.
   vector<string> languages;
+  vector<bool> addWrapperDocs;
   ${LANGUAGES_PUSH_BACK_CODE}
+  ${WRAPPER_PUSH_BACK_CODE}
 
-  PrintHeaders("${BINDING}", languages);
+  PrintHeaders("${BINDING}", languages, addWrapperDocs);
 }
 
 void Print${BINDING}Docs()
 {
   // Fill the vector of languages for which we want to print.
   vector<string> languages;
+  vector<bool> addWrapperDocs;
   ${LANGUAGES_PUSH_BACK_CODE}
+  ${WRAPPER_PUSH_BACK_CODE}
 
-  PrintDocs("${BINDING}", languages);
+  PrintDocs("${BINDING}", languages, addWrapperDocs);
 }
 
 } // namespace markdown

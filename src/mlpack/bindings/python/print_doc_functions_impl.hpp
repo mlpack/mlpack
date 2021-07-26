@@ -29,6 +29,25 @@ inline std::string GetBindingName(const std::string& bindingName)
 }
 
 /**
+ * Given the name of a binding, print its Python wrapper name
+ * for the documentation.
+ */
+inline std::string GetWrapperName(const std::string& groupName)
+{
+	std::string className = "";
+	std::stringstream groupNameStream(groupName);
+	std::string temp;
+
+	while(getline(groupNameStream, temp, '_'))
+	{
+		temp[0] = toupper(temp[0]);
+		className += temp;
+	}
+
+	return "class " + className;
+}
+
+/**
  * Print any import information for the Python binding.
  */
 inline std::string PrintImport(const std::string& bindingName)

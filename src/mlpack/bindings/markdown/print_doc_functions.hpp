@@ -27,6 +27,12 @@ namespace markdown {
 inline std::string GetBindingName(const std::string& bindingName);
 
 /**
+ * Given the name of the binding, print the name for the wrapper for
+ * current language.
+ */
+inline std::string GetWrapperName(const std::string& bindingName);
+
+/**
  * Print the name of the given language.
  */
 inline std::string PrintLanguage(const std::string& language);
