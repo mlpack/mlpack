@@ -129,6 +129,7 @@ add_executable(mlpack_test
   union_find_test.cpp
   vantage_point_tree_test.cpp
   wgan_test.cpp
+  xgboost_test.cpp
   main_tests/adaboost_test.cpp
   main_tests/approx_kfn_test.cpp
   main_tests/bayesian_linear_regression_test.cpp
