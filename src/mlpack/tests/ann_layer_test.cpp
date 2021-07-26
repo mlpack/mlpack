@@ -4312,47 +4312,12 @@ TEST_CASE("SimpleSeparableConvolutionLayerTest", "[ANNLayerTest]")
 }
 
 /**
- * Separable Convolution layer numerical gradient test.
+ * Separable Convolution layer gradient test.
  */
 TEST_CASE("GradientSeparableConvolutionLayerTest", "[ANNLayerTest]")
 {
-  // There are two gradient tests in this test case.
-  struct GradientFunction
-  {
-    GradientFunction() :
-        input(arma::ones(20 * 20 * 2, 1)),
-        target(arma::mat("0"))
-    {
-      model = new FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>();
-      model->Predictors() = input;
-      model->Responses() = target;
-      model->Add<SeparableConvolution<>>(2, 4, 3, 3, 1, 1, 0, 0, 20, 20, 2);
-      model->Add<LogSoftMax<>>();
-      model->Parameters().fill(0.4);
-    }
-
-    ~GradientFunction()
-    {
-      delete model;
-    }
-
-    double Gradient(arma::mat& gradient) const
-    {
-      double error = model->Evaluate(model->Parameters(), 0, 1);
-      model->Gradient(model->Parameters(), 0, gradient, 1);
-      return error;
-    }
-
-    arma::mat& Parameters() { return model->Parameters(); }
-
-    FFN<NegativeLogLikelihood<>, NguyenWidrowInitialization>* model;
-    arma::mat input, target;
-  } function;
-
-  REQUIRE(CheckGradient(function) <= 0.4);
-
   SeparableConvolution<> module(2, 4, 3, 3, 1, 1, 0, 0, 20, 20, 2);
-  arma::mat error(20 * 20 * 2, 1), input1(20 * 20 * 2, 1), gradient1, output;
+  arma::mat error(20 * 20 * 4, 1), input1(20 * 20 * 2, 1), gradient1, output;
   error.fill(1.0);
   input1.fill(1.0);
   module.Parameters().fill(1);
