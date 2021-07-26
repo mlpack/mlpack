@@ -39,7 +39,6 @@ template<typename InputDataType = arma::mat,
 class ReLU6
 {
  public:
-
  /**
   * Create the ReLU6 object.
   */

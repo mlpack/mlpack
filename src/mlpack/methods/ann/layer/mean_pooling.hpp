@@ -210,12 +210,13 @@ class MeanPooling
                  const arma::Mat<eT>& error,
                  arma::Mat<eT>& output)
   {
-    // This condition comes by comparing the number of operations involved in the brute
-    // force method and the prefix method. Let the area of error be errorArea and area
-    // of kernal be kernalArea. Total number of operations in brute force method will be
-    // `errorArea * kernalArea` and for each element in error we are doing `kernalArea`
-    // number of operations. Whereas in the prefix method the total number of operations
-    // will be `4 * errorArea + 2 * inputArea`. The term `2 * inputArea` comes from
+    // This condition comes by comparing the number of operations involved in
+    // the brute force method and the prefix method. Let the area of error be
+    // errorArea and area of kernal be kernalArea. Total number of operations
+    // in brute force method will be `errorArea * kernalArea` and for each
+    // element in error we are doing `kernalArea` number of operations. Whereas
+    // in the prefix method the total number of operations will be
+    // `4 * errorArea + 2 * inputArea`. The term `2 * inputArea` comes from
     // prefix sums performed (col-wise and row-wise).
     // We can use this to determine which method to use.
     const bool condition = (error.n_elem * kernelHeight * kernelWidth) >
@@ -230,37 +231,43 @@ class MeanPooling
       // `error.n_elem * inputArea.n_elem` operations.
       // To improve this method we will use an idea of prefix sums. Let's see
       // this method in 1-D matrix then we will extend it to 2-D matrix.
-      // Let the input be a 1-D matrix input = `[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]` of size 10
-      // and we want to add `10` to idx = 1 to idx = 5. In brute force method we can run
-      // a loop from idx = 1 to idx = 5 and add `10` to each element. In prefix method
-      // We will add `+10` to idx = 1 and `-10` to idx = (5 + 1). Now the input will look
-      // like `[0, +10, 0, 0, 0, 0, -10, 0, 0, 0]`. After that we can just do prefix
-      // sum `input[i] += input[i - 1]`. Then the input becomes
-      // `[0, +10, +10, +10, +10, +10, 0, 0, 0, 0]`. So the total computation require
-      // by this method is (2 additions + Prefix operations).
+      // Let the input be a 1-D matrix input = `[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]`
+      // of size 10 and we want to add `10` to idx = 1 to idx = 5. In brute
+      // force method we can run a loop from idx = 1 to idx = 5 and add `10` to
+      // each element. In prefix method We will add `+10` to idx = 1 and `-10`
+      // to idx = (5 + 1). Now the input will look like `[0, +10, 0, 0, 0, 0,
+      // -10, 0, 0, 0]`. After that we can just do prefix sum `input[i] +=
+      // input[i - 1]`. Then the input becomes `[0, +10, +10, +10, +10, +10,
+      // 0, 0, 0, 0]`. So the total computation require by this method is
+      // (2 additions + Prefix operations).
       // Note that if there are `k` such operation of adding a number of some
       // continuous subarray. Then the brute force method will require
       // `k * size(subarray)` operations. But the prefix method will require
-      // `2 * k + Prefix` operations, because the Prefix can be performed once at
-      // the end.
+      // `2 * k + Prefix` operations, because the Prefix can be performed once
+      // at the end.
       // Now for 2-D matrix. Lets say we want to add `e` to all elements from
-      // input(x1 : x2, y1 : y2). So the inputArea = (x2 - x1 + 1) * (y2 - y1 + 1).
+      // input(x1 : x2, y1 : y2). So the inputArea = (x2 - x1 + 1) *
+      // (y2 - y1 + 1).
       // In prefix method the following operations will be performed:
       //    1. Add `+e` to input(x1, y1).
       //    2. Add `-e` to input(x1 + 1, y1).
       //    3. Add `-e` to input(x1, y1 + 1).
       //    4. Add `+e` to input(x1 + 1, y1 + 1).
-      //    5. Perform Prefix sum over columns i.e input(i, j) += input(i, j - 1)
+      //    5. Perform Prefix sum over columns i.e input(i, j) +=
+      //       input(i, j - 1)
       //    6. Perform Prefix sum over rows i.e input(i, j) += input(i - 1, j)
       // So lets say if we had `k` number of such operations. The brute force
       // method will require `kernalArea * k` operations.
       // The prefix method will require `4 * k + Prefix operation`.
 
-      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, ++colidx)
+      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight,
+          ++colidx)
       {
-        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, ++rowidx)
+        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth,
+            ++rowidx)
         {
-          // We have to add error(i, j) to output(span(rowidx, rowEnd), span(colidx, colEnd)).
+          // We have to add error(i, j) to output(span(rowidx, rowEnd),
+          // span(colidx, colEnd)).
           // The steps of prefix sum method:
           //
           // 1. For each (i, j) perform:
@@ -297,7 +304,8 @@ class MeanPooling
             output(rowEnd + 1, j) -= error(rowidx, colidx) / kernalArea;
 
             if (colEnd + 1 < input.n_cols)
-              output(rowEnd + 1, colEnd + 1) += error(rowidx, colidx) / kernalArea;
+              output(rowEnd + 1, colEnd + 1) += error(rowidx, colidx) /
+                  kernalArea;
           }
 
           if (colEnd + 1 < input.n_cols)
@@ -314,9 +322,11 @@ class MeanPooling
     else
     {
       arma::Mat<eT> unpooledError;
-      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight, ++colidx)
+      for (size_t j = 0, colidx = 0; j < input.n_cols; j += strideHeight,
+          ++colidx)
       {
-        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth, ++rowidx)
+        for (size_t i = 0, rowidx = 0; i < input.n_rows; i += strideWidth,
+            ++rowidx)
         {
           size_t rowEnd = i + kernelWidth - 1;
           size_t colEnd = j + kernelHeight - 1;
@@ -335,7 +345,8 @@ class MeanPooling
             colEnd = input.n_cols - 1;
           }
 
-          arma::mat InputArea = input(arma::span(i, rowEnd), arma::span(j, colEnd));
+          arma::mat InputArea = input(arma::span(i, rowEnd),
+              arma::span(j, colEnd));
 
           unpooledError = arma::Mat<eT>(InputArea.n_rows, InputArea.n_cols);
           unpooledError.fill(error(rowidx, colidx) / InputArea.n_elem);
@@ -407,7 +418,6 @@ class MeanPooling
   //! Locally-stored output parameter object.
   OutputDataType outputParameter;
 }; // class MeanPooling
-
 
 } // namespace ann
 } // namespace mlpack

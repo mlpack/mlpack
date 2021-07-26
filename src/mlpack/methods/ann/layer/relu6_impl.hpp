@@ -39,7 +39,7 @@ template<typename InputDataType, typename OutputDataType>
 template<typename InputType, typename OutputType>
 void ReLU6<InputDataType, OutputDataType>::Forward(
     const InputType& input, OutputType& output)
-{ 
+{
   OutputType outputTemp(arma::size(input));
   outputTemp.fill(6.0);
   output = arma::zeros<OutputType>(arma::size(input));
