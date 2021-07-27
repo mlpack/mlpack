@@ -57,7 +57,7 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
   // Forcing the loop to run for one less than the number of data points to
   // ensure that we have atleast one element in the right child even when
   // minChildWeight is lesser than or equal to zero.
-  for (; index < data.n_elem - 1; ++index)
+  while (index < data.n_elem - 1)
   {
     // We have to ensure that the minChildWeight condition is held in the right
     // child too. So, if at any index, that condition doesn't hold true, then

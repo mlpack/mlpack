@@ -140,10 +140,10 @@ class SSELoss
    */
   bool BinaryStep(const arma::vec& sortedGradients,
                   const arma::vec& sortedHessians,
-                  size_t index)
+                  size_t& index)
   {
     gLeft += sortedGradients[index];
-    hLeft += sortedHessians[index];
+    hLeft += sortedHessians[index++];
 
     // If the total weight of right child is lesser than the minChildWeight,
     // then we need to terminate the loop for iterating over split points.
