@@ -151,7 +151,7 @@ class SSELoss
   /**
    * Calculates the gains for the current split.
    */
-  double Evaluate()
+  double BinaryGains()
   {
     double leftGain = std::pow(ApplyL1(gLeft), 2) / (hLeft + lambda);
     double rightGain = std::pow(ApplyL1(gTotal - gLeft), 2) /

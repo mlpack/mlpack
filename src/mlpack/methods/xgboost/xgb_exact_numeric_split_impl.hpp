@@ -70,7 +70,7 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
       continue;
 
     // Evaluate the gain for the split.
-    const double gain = lossFunction.Evaluate();
+    const double gain = lossFunction.BinaryGains();
 
     // Corner case: is this the best possible split?
     if (gain >= 0.0)
