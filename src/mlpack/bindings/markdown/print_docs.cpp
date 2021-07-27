@@ -65,18 +65,13 @@ void PrintDocs(const string& bindingName,
 {
   Params params = IO::Parameters(bindingName);
   const BindingDetails& doc = params.Doc();
-  map<string, BindingDetails> docMethods;
+  map<string, Params> paramMethods;
 
   for (size_t i=0; i<validMethods.size(); ++i)
   {
     Params methodParams = IO::Parameters(bindingName + "_" + validMethods[i]);
-    BindingDetails docMethod = methodParams.Doc();
-    docMethods[validMethods[i]] = docMethod;
+    paramMethods[validMethods[i]] = methodParams;
   }
-
-  // For compatibility.
-  if(docMethods.size() == 0)
-    docMethods["MAIN"] = doc;
 
   // First, for this section, print each of the names.
   for (size_t i = 0; i < languages.size(); ++i)
@@ -116,6 +111,7 @@ void PrintDocs(const string& bindingName,
   cout << doc.shortDescription << " ";
   for (size_t i = 0; i < languages.size(); ++i)
   {
+    if(addWrapperDocs[i]) continue; // No Detailed Documentation for wrappers.
     cout << "[Detailed documentation](#" << languages[i] << "_"
       << bindingName << "_detailed-documentation){: .language-detail-link #"
       << languages[i] << " }";
@@ -125,190 +121,276 @@ void PrintDocs(const string& bindingName,
   // Next, print the PROGRAM_INFO() documentation for each language.
   for (size_t i = 0; i < languages.size(); ++i)
   {
-    BindingInfo::Language() = languages[i];
-
-    // This works with the Kramdown processor.
-    cout << "<div class=\"language-section\" id=\"" << languages[i]
-        << "\" markdown=\"1\">" << endl;
-
-    // We need to print the signature.
-
-    // Now, iterate through each of the input options.
-    cout << endl;
-    cout << "### Input options" << endl;
-    string inputInfo = PrintInputOptionInfo();
-    if (inputInfo.size() > 0)
-      cout << inputInfo << endl;
-    cout << endl;
-
-    cout << "| ***name*** | ***type*** | ***description*** | ***default*** |"
-        << endl;
-    cout << "|------------|------------|-------------------|---------------|"
-        << endl;
-    map<string, ParamData>& parameters = params.Parameters();
-    for (map<string, ParamData>::iterator it = parameters.begin();
-         it != parameters.end(); ++it)
+    if(!addWrapperDocs[i]) // different structure for wrappers.
     {
-      if (!it->second.input)
-        continue;
+      BindingInfo::Language() = languages[i];
 
-      // There are some special options that don't exist in some languages.
-      if (languages[i] != "python" && it->second.name == "copy_all_inputs")
-        continue;
-      if (languages[i] != "cli" &&
-          (it->second.name == "help" || it->second.name == "info" ||
-           it->second.name == "version"))
-        continue;
+      // This works with the Kramdown processor.
+      cout << "<div class=\"language-section\" id=\"" << languages[i]
+          << "\" markdown=\"1\">" << endl;
 
-      // Print name, type, description, default.
-      cout << "| ";
-      // We need special processing if the language is go then the required
-      // parameter will be lowerCamelCase.
-      if (languages[i] == "go")
+      // We need to print the signature.
+
+      // Now, iterate through each of the input options.
+      cout << endl;
+      cout << "### Input options" << endl;
+      string inputInfo = PrintInputOptionInfo();
+      if (inputInfo.size() > 0)
+        cout << inputInfo << endl;
+      cout << endl;
+
+      cout << "| ***name*** | ***type*** | ***description*** | ***default*** |"
+          << endl;
+      cout << "|------------|------------|-------------------|---------------|"
+          << endl;
+      map<string, ParamData>& parameters = params.Parameters();
+      for (map<string, ParamData>::iterator it = parameters.begin();
+          it != parameters.end(); ++it)
       {
-        if (!it->second.required)
+        if (!it->second.input)
+          continue;
+
+        // There are some special options that don't exist in some languages.
+        if (languages[i] != "python" && it->second.name == "copy_all_inputs")
+          continue;
+        if (languages[i] != "cli" &&
+            (it->second.name == "help" || it->second.name == "info" ||
+            it->second.name == "version"))
+          continue;
+
+        // Print name, type, description, default.
+        cout << "| ";
+        // We need special processing if the language is go then the required
+        // parameter will be lowerCamelCase.
+        if (languages[i] == "go")
+        {
+          if (!it->second.required)
+          {
+            cout << ParamString(bindingName, it->second.name) << " | ";
+          }
+          else
+          {
+            string name = ParamString(bindingName, it->second.name);
+            name[1] = tolower(name[1]);
+            cout << name << " | ";
+          }
+        }
+        else
         {
           cout << ParamString(bindingName, it->second.name) << " | ";
         }
+        cout << ParamType(params, it->second) << " | ";
+        string desc = boost::replace_all_copy(it->second.desc, "|", "\\|");
+        cout << desc; // just a string
+        // Print whether or not it's a "special" language-only parameter.
+        if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
+            it->second.name == "info" || it->second.name == "version")
+        {
+          cout << "  <span class=\"special\">Only exists in "
+              << PrintLanguage(languages[i]) << " binding.</span>";
+        }
+        cout << " | ";
+        string def = PrintDefault(bindingName, it->second.name);
+        if (def.size() > 0)
+          cout << "`" << def << "` |";
         else
+          cout << " |";
+        cout << endl;
+      }
+      cout << endl;
+
+      // Determine if there are any output options, to see if we need
+      // to print the header of the output options table.
+      bool hasOutputOptions = false;
+      for (map<string, ParamData>::iterator it = parameters.begin();
+          it != parameters.end(); ++it)
+      {
+        if (!it->second.input)
+        {
+          hasOutputOptions = true;
+          break;
+        }
+      }
+
+      if (hasOutputOptions)
+      {
+        // Next, iterate through the list of output options.
+        cout << "### Output options" << endl;
+        cout << endl;
+        string outputInfo = PrintOutputOptionInfo();
+        if (outputInfo.size() > 0)
+          cout << outputInfo << endl;
+        cout << endl;
+        cout << "| ***name*** | ***type*** | ***description*** |" << endl;
+        cout << "|------------|------------|-------------------|" << endl;
+      }
+      for (map<string, ParamData>::iterator it = parameters.begin();
+          it != parameters.end(); ++it)
+      {
+        if (it->second.input)
+          continue;
+
+        // Print name, type, description.
+        cout << "| ";
+        // We need special processing if the language is go then the output
+        // parameter will be lowerCamelCase.
+        if (languages[i] == "go")
         {
           string name = ParamString(bindingName, it->second.name);
           name[1] = tolower(name[1]);
           cout << name << " | ";
         }
-      }
-      else
-      {
-        cout << ParamString(bindingName, it->second.name) << " | ";
-      }
-      cout << ParamType(params, it->second) << " | ";
-      string desc = boost::replace_all_copy(it->second.desc, "|", "\\|");
-      cout << desc; // just a string
-      // Print whether or not it's a "special" language-only parameter.
-      if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
-          it->second.name == "info" || it->second.name == "version")
-      {
-        cout << "  <span class=\"special\">Only exists in "
-            << PrintLanguage(languages[i]) << " binding.</span>";
-      }
-      cout << " | ";
-      string def = PrintDefault(bindingName, it->second.name);
-      if (def.size() > 0)
-        cout << "`" << def << "` |";
-      else
+        else
+        {
+          cout << ParamString(bindingName, it->second.name) << " | ";
+        }
+        cout << ParamType(params, it->second) << " | ";
+        cout << it->second.desc;
+        // Print whether or not it's a "special" language-only parameter.
+        if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
+            it->second.name == "info" || it->second.name == "version")
+        {
+          cout << "  <span class=\"special\">Only exists in "
+              << PrintLanguage(languages[i]) << " binding.</span>";
+        }
         cout << " |";
+        cout << endl;
+      }
+      cout << endl;
+
+      cout << "### Detailed documentation" << endl;
+      cout << "{: #" << languages[i] << "_" << bindingName
+          << "_detailed-documentation }" << endl;
+      cout << endl;
+      string desc = boost::replace_all_copy(doc.longDescription(),
+                                            "|", "\\|");
+      cout << desc << endl << endl;
+
+      if (doc.example.size() > 0)
+        cout << "### Example" << endl;
+      for (size_t j = 0; j < doc.example.size(); ++j)
+      {
+        string eg = boost::replace_all_copy(doc.example[j](),
+                                            "|", "\\|");
+        cout << eg << endl << endl;
+      }
+      cout << "### See also" << endl;
+      cout << endl;
+      for (size_t j = 0; j < doc.seeAlso.size(); ++j)
+      {
+        cout << " - " << "[";
+        // We need special processing if the user has specified a binding name
+        // starting with @ (i.e., '@kfn' or similar).
+        if (doc.seeAlso[j].first[0] == '@')
+          cout << GetBindingName(doc.seeAlso[j].first.substr(1));
+        else
+          cout << doc.seeAlso[j].first;
+        cout << "](";
+
+        // We need special handling of Doxygen information.
+        if (doc.seeAlso[j].second.substr(0, 8) == "@doxygen")
+        {
+          cout << DOXYGEN_PREFIX << doc.seeAlso[j].second.substr(9);
+        }
+        else if (doc.seeAlso[j].second[0] == '#')
+        {
+          cout << "#" << languages[i] << "_"
+              << doc.seeAlso[j].second.substr(1);
+        }
+        else
+        {
+          cout << doc.seeAlso[j].second;
+        }
+
+        cout << ")" << endl;
+      }
+      cout << endl;
+
+      cout << "</div>" << endl;
       cout << endl;
     }
-    cout << endl;
-
-    // Determine if there are any output options, to see if we need
-    // to print the header of the output options table.
-    bool hasOutputOptions = false;
-    for (map<string, ParamData>::iterator it = parameters.begin();
-        it != parameters.end(); ++it)
+    else
     {
-      if (!it->second.input)
-      {
-        hasOutputOptions = true;
-        break;
-      }
-    }
-
-    if (hasOutputOptions)
-    {
-      // Next, iterate through the list of output options.
-      cout << "### Output options" << endl;
+      BindingInfo::Language() = languages[i];
+      cout << "<div class=\"language-section\" id=\"" << languages[i]
+          << "\" markdown=\"1\">" << endl;
       cout << endl;
-      string outputInfo = PrintOutputOptionInfo();
-      if (outputInfo.size() > 0)
-        cout << outputInfo << endl;
+
+      cout << "### Parameters" << endl;
+      cout << "| ***name*** | ***type*** | ***description*** | ***default*** |"
+          << endl;
+      cout << "|------------|------------|-------------------|---------------|"
+          << endl;
+
+      unordered_set<string> paramsSet; // to prevent duplicates.
+      for(auto mainItr=paramMethods.begin(); mainItr!=paramMethods.end();
+          ++mainItr)
+      {
+        map<string, ParamData> parameters = mainItr->second.Parameters();
+        for (map<string, ParamData>::iterator it = parameters.begin();
+            it != parameters.end(); ++it)
+        {
+          if(it->second.name == "help" || it->second.name == "version" ||
+              it->second.name == "version" || it->second.name == "info")
+            continue;
+
+          bool isSerial;
+          mainItr->second.functionMap[it->second.tname]["IsSerializable"](
+              it->second, NULL, (void*)& isSerial);
+
+          bool isHyperParam = false;
+          size_t foundArma = it->second.cppType.find("arma");
+          if(it->second.input && foundArma == string::npos &&
+              !isSerial)
+            isHyperParam = true;
+
+          if(!isHyperParam) continue;
+
+          if (paramsSet.find(it->second.name) != paramsSet.end()) continue;
+          else paramsSet.insert(it->second.name);
+
+          // Print name, type, description.
+          cout << "| ";
+          // We need special processing if the language is go then the output
+          // parameter will be lowerCamelCase.
+          if (languages[i] == "go")
+          {
+            string name = ParamString(bindingName, it->second.name);
+            name[1] = tolower(name[1]);
+            cout << name << " | ";
+          }
+          else
+          {
+            cout << ParamString(bindingName, it->second.name) << " | ";
+          }
+          cout << ParamType(params, it->second) << " | ";
+          cout << it->second.desc;
+          // Print whether or not it's a "special" language-only parameter.
+          if (it->second.name == "copy_all_inputs")
+          {
+            cout << "  <span class=\"special\">Only exists in "
+                << PrintLanguage(languages[i]) << " binding.</span>";
+          }
+          cout << " |";
+          cout << endl;
+        }
+      }
       cout << endl;
-      cout << "| ***name*** | ***type*** | ***description*** |" << endl;
-      cout << "|------------|------------|-------------------|" << endl;
-    }
-    for (map<string, ParamData>::iterator it = parameters.begin();
-         it != parameters.end(); ++it)
-    {
-      if (it->second.input)
-        continue;
 
-      // Print name, type, description.
-      cout << "| ";
-      // We need special processing if the language is go then the output
-      // parameter will be lowerCamelCase.
-      if (languages[i] == "go")
-      {
-        string name = ParamString(bindingName, it->second.name);
-        name[1] = tolower(name[1]);
-        cout << name << " | ";
-      }
-      else
-      {
-        cout << ParamString(bindingName, it->second.name) << " | ";
-      }
-      cout << ParamType(params, it->second) << " | ";
-      cout << it->second.desc;
-      // Print whether or not it's a "special" language-only parameter.
-      if (it->second.name == "copy_all_inputs" || it->second.name == "help" ||
-          it->second.name == "info" || it->second.name == "version")
-      {
-        cout << "  <span class=\"special\">Only exists in "
-            << PrintLanguage(languages[i]) << " binding.</span>";
-      }
-      cout << " |";
-      cout << endl;
-    }
-    cout << endl;
-
-    cout << "### Detailed documentation" << endl;
-    cout << "{: #" << languages[i] << "_" << bindingName
-        << "_detailed-documentation }" << endl;
-    cout << endl;
-    string desc = boost::replace_all_copy(doc.longDescription(),
-                                          "|", "\\|");
-    cout << desc << endl << endl;
-
-    if (doc.example.size() > 0)
       cout << "### Example" << endl;
-    for (size_t j = 0; j < doc.example.size(); ++j)
-    {
-      string eg = boost::replace_all_copy(doc.example[j](),
-                                          "|", "\\|");
-      cout << eg << endl << endl;
+      string example;
+      for(auto itr=paramMethods.begin(); itr!=paramMethods.end();
+          ++itr)
+      {
+        for(size_t j = 0; j < itr->second.Doc().example.size();
+            ++j)
+        {
+          string eg = boost::replace_all_copy(itr->second.Doc().example[j](),
+              "|", "\\|");
+          example += eg + "\n";
+        }
+      }
+      cout << example << "\n";
     }
-    cout << "### See also" << endl;
-    cout << endl;
-    for (size_t j = 0; j < doc.seeAlso.size(); ++j)
-    {
-      cout << " - " << "[";
-      // We need special processing if the user has specified a binding name
-      // starting with @ (i.e., '@kfn' or similar).
-      if (doc.seeAlso[j].first[0] == '@')
-        cout << GetBindingName(doc.seeAlso[j].first.substr(1));
-      else
-        cout << doc.seeAlso[j].first;
-      cout << "](";
-
-      // We need special handling of Doxygen information.
-      if (doc.seeAlso[j].second.substr(0, 8) == "@doxygen")
-      {
-        cout << DOXYGEN_PREFIX << doc.seeAlso[j].second.substr(9);
-      }
-      else if (doc.seeAlso[j].second[0] == '#')
-      {
-        cout << "#" << languages[i] << "_"
-            << doc.seeAlso[j].second.substr(1);
-      }
-      else
-      {
-        cout << doc.seeAlso[j].second;
-      }
-
-      cout << ")" << endl;
-    }
-    cout << endl;
-
-    cout << "</div>" << endl;
-    cout << endl;
   }
 }

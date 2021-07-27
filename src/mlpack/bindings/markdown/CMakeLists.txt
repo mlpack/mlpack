@@ -68,7 +68,7 @@ macro (add_markdown_docs name languages wrappers)
   set(LANGUAGES_PUSH_BACK_CODE "")
   set(WRAPPER_PUSH_BACK_CODE "")
   set(VALID_METHODS_PUSH_BACK_CODE "")
-  set(PROGRAM_MAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp")
+  set(INCLUDE_MAIN_FILES "")
   set(WRAPPERS ${wrappers})
 
   foreach (lang ${languages})
@@ -97,7 +97,14 @@ macro (add_markdown_docs name languages wrappers)
       set(VALID_METHODS_PUSH_BACK_CODE
           "${VALID_METHODS_PUSH_BACK_CODE}\n  validMethods.push_back(\"${method}\");")
     endforeach()
+    foreach(loc ${${name}_method_main_files})
+      set(INCLUDE_MAIN_FILES
+          "${INCLUDE_MAIN_FILES}\n#include <${loc}>")
+    endforeach()
   endif()
+
+  set(INCLUDE_MAIN_FILES
+      "${INCLUDE_MAIN_FILES}\n#include <${CMAKE_CURRENT_SOURCE_DIR}/${name}_main.cpp>")
 
   # Do the actual file configuration.
   set(BINDING_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src/mlpack/bindings/markdown)

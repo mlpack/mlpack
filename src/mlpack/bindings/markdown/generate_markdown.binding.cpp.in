@@ -17,7 +17,7 @@
 #include "print_docs.hpp"
 #include "get_binding_name.hpp"
 
-#include <${PROGRAM_MAIN_FILE}>
+${INCLUDE_MAIN_FILES}
 
 using namespace std;
 
