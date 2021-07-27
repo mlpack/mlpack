@@ -75,6 +75,10 @@ class SSELoss
   template<bool UseWeights, typename MatType, typename WeightVecType>
   double Evaluate(const MatType& input, const WeightVecType& /* weights */)
   {
+    // Sanity check for empty input.
+    if (input.n_cols == 0)
+      return 0.0;
+
     // Calculate gradients and hessians.
     gradients = (input.row(1) - input.row(0)).t();
     hessians = arma::vec(input.n_cols, arma::fill::ones);
