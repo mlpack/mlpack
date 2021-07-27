@@ -24,7 +24,7 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
     const MatType& input,
     const WeightVecType& weights,
     const size_t /* minimumLeafSize */,
-    const double /* minimumGainSplit */,
+    const double minimumGainSplit,
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */,
     LossFunction& lossFunction)
