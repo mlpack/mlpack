@@ -4361,10 +4361,13 @@ TEST_CASE("AdaptiveMeanPoolingTestCase", "[ANNLayerTest]")
  */
 TEST_CASE("SimpleSeparableConvolutionLayerTest", "[ANNLayerTest]")
 {
-  arma::mat input(224 * 224 * 3, 1), output;
+  arma::mat input, output, delta;
+  // Input channels = 3, output channels = 21 and groups = 3
+  // Input dim = (224, 224)
   SeparableConvolution<> module1(3, 21, 3, 3, 1, 1, 0, 0, 224, 224, 3);
 
   // Test the forward function.
+  input.set_size(224 * 224 * 3, 1);
   input.fill(2);
   module1.Parameters().fill(1);
   module1.Reset();
@@ -4372,6 +4375,30 @@ TEST_CASE("SimpleSeparableConvolutionLayerTest", "[ANNLayerTest]")
 
   // Comparison value taken from PyTorch conv layer with the same config
   REQUIRE(arma::accu(output) == 19664316);
+
+  // Test the backward function.
+  module1.Backward(input, output, delta);
+  // Calculated using nn.functional.conv2d 
+  REQUIRE(arma::accu(delta) == )
+
+  // Input channels = 1, output channels = 4 and groups = 1
+  // Input dim = (20, 20)
+  SeparableConvolution<> module2(1, 4, 3, 3, 1, 1, 0, 0, 20, 20, 1);
+
+  // Test the forward function.
+  input.set_size(20 * 20, 1);
+  input.fill(2);
+  module2.Parameters().fill(1);
+  module2.Reset();
+  module2.Forward(input, output);
+
+  // Comparison value taken from PyTorch conv layer with the same config
+  REQUIRE(arma::accu(output) == 24624);
+
+  // Test the backward function.
+  module2.Backward(input, output, delta);
+  // Calculated using nn.functional.conv2d 
+  REQUIRE(arma::accu(delta) == )
 }
 
 /**
