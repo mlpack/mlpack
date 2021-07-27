@@ -663,7 +663,7 @@ double DecisionTreeRegressor<FitnessFunction,
       bestGain = dimGain;
 
       // If the gain is the best possible, no need to keep looking.
-      if (bestGain >= 0.0)
+      if (FitnessFunction::bestGainIsZero && bestGain >= 0.0)
         break;
     }
   }
@@ -829,7 +829,7 @@ double DecisionTreeRegressor<FitnessFunction,
       bestGain = dimGain;
 
       // If the gain is the best possible, no need to keep looking.
-      if (bestGain >= 0.0)
+      if (FitnessFunction::bestGainIsZero && bestGain >= 0.0)
         break;
     }
   }
