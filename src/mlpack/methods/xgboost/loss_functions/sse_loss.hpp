@@ -29,6 +29,7 @@ namespace ensemble {
 class SSELoss
 {
  public:
+  static const bool bestGainIsZero = false;
   // Default constructor---No regularization.
   SSELoss(): alpha(0), lambda(0), minChildWeight(1) { /* Nothing to do. */}
 
