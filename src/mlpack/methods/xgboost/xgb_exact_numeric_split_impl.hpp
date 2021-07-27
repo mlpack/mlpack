@@ -54,18 +54,16 @@ double XGBExactNumericSplit<LossFunction>::SplitIfBetter(
 
   double bestFoundGain = bestGain + minimumGainSplit;
   bool improved = false;
-  bool endLoop = false;
   // Forcing the loop to run for one less than the number of data points to
   // ensure that we have atleast one element in the right child even when
   // minChildWeight is lesser than or equal to zero.
   for (; index < data.n_elem - 1; ++index)
   {
-    lossFunction.BinaryStep(sortedGradients, sortedHessians, index, endLoop);
-
     // We have to ensure that the minChildWeight condition is held in the right
     // child too. So, if at any index, that condition doesn't hold true, then
     // terminate the loop.
-    if (endLoop) break;
+    if (!lossFunction.BinaryStep(sortedGradients, sortedHessians, index))
+      break;
 
     // Make sure that the value has changed.
     if (data[sortedIndices[index]] == data[sortedIndices[index - 1]])

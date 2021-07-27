@@ -131,11 +131,12 @@ class SSELoss
    * Steps through the current index and update the statistics. While taking
    * the step, it ensures that the weight of right child is higher than the
    * minChildWeight.
+   *
+   * @return Returns true if the current step is valid else returns false.
    */
-  void BinaryStep(const arma::vec& sortedGradients,
+  bool BinaryStep(const arma::vec& sortedGradients,
                   const arma::vec& sortedHessians,
-                  size_t index,
-                  bool& endLoop)
+                  size_t index)
   {
     gLeft += sortedGradients[index];
     hLeft += sortedHessians[index];
@@ -143,8 +144,8 @@ class SSELoss
     // If the total weight of right child is lesser than the minChildWeight,
     // then we need to terminate the loop for iterating over split points.
     if (hTotal - hLeft < minChildWeight)
-      endLoop = true;
-    return;
+      return false;
+    return true;
   }
 
   /**
