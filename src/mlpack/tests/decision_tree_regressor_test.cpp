@@ -77,8 +77,8 @@ TEST_CASE("MSEGainPerfectTest", "[DecisionTreeRegressorTest]")
   arma::rowvec responses;
   responses.ones(10);
 
-  MSEGain f;
-  REQUIRE(f.Evaluate<false>(responses, weights) == Approx(0.0).margin(1e-5));
+  REQUIRE(MSEGain::Evaluate<false>(responses, weights) ==
+          Approx(0.0).margin(1e-5));
 }
 
 /**
@@ -89,9 +89,10 @@ TEST_CASE("MSEGainEmptyTest", "[DecisionTreeRegressorTest]")
   arma::rowvec weights = arma::ones<arma::rowvec>(10);
   arma::rowvec responses;
 
-  MSEGain f;
-  REQUIRE(f.Evaluate<false>(responses, weights) == Approx(0.0).margin(1e-5));
-  REQUIRE(f.Evaluate<true>(responses, weights) == Approx(0.0).margin(1e-5));
+  REQUIRE(MSEGain::Evaluate<false>(responses, weights) ==
+          Approx(0.0).margin(1e-5));
+  REQUIRE(MSEGain::Evaluate<true>(responses, weights) ==
+          Approx(0.0).margin(1e-5));
 }
 
 /**
@@ -107,9 +108,9 @@ TEST_CASE("MSEGainHandCalculation", "[DecisionTreeRegressorTest]")
   const double gain = -27.08999;
   const double weightedGain = -27.53960;
 
-  MSEGain f;
-  REQUIRE(f.Evaluate<false>(responses, weights) == Approx(gain).margin(1e-5));
-  REQUIRE(f.Evaluate<true>(responses, weights) ==
+  REQUIRE(MSEGain::Evaluate<false>(responses, weights) ==
+          Approx(gain).margin(1e-5));
+  REQUIRE(MSEGain::Evaluate<true>(responses, weights) ==
           Approx(weightedGain).margin(1e-5));
 }
 
@@ -123,7 +124,7 @@ TEST_CASE("MADGainPerfectTest", "[DecisionTreeRegressorTest]")
   responses.ones(10);
 
   REQUIRE(MADGain::Evaluate<false>(responses, weights) ==
-      Approx(0.0).margin(1e-5));
+          Approx(0.0).margin(1e-5));
 }
 
 /**
@@ -156,9 +157,9 @@ TEST_CASE("MADGainEmptyTest", "[DecisionTreeRegressorTest]")
   arma::rowvec responses;
 
   REQUIRE(MADGain::Evaluate<false>(responses, weights) ==
-      Approx(0.0).margin(1e-5));
+          Approx(0.0).margin(1e-5));
   REQUIRE(MADGain::Evaluate<true>(responses, weights) ==
-      Approx(0.0).margin(1e-5));
+          Approx(0.0).margin(1e-5));
 }
 
 /**
@@ -175,7 +176,7 @@ TEST_CASE("MADGainHandCalculation", "[DecisionTreeRegressorTest]")
   const double weightedGain = -3.8592;
 
   REQUIRE(MADGain::Evaluate<false>(responses, weights) ==
-      Approx(gain).margin(1e-5));
+          Approx(gain).margin(1e-5));
   REQUIRE(MADGain::Evaluate<true>(responses, weights) ==
           Approx(weightedGain).margin(1e-5));
 }
