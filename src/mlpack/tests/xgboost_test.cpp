@@ -64,3 +64,28 @@ TEST_CASE("SSEGainTest", "[XGBTest]")
   SSELoss Loss;
   REQUIRE(Loss.Evaluate<false>(input, weights) == gain);
 }
+
+/**
+ * Make sure the SSE loss is zero when the responses are perfect.
+ */
+TEST_CASE("SSELossPerfectTest", "[XGBTest]")
+{
+  arma::mat input = { { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 },
+                      { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 } };
+  arma::vec weights; // dummy weights not used.
+
+  SSELoss Loss;
+  REQUIRE(Loss.Evaluate<false>(input, weights) == Approx(0.0).margin(1e-5));
+}
+
+/**
+ * The SSe loss of an empty input is 0.
+ */
+TEST_CASE("SSELossEmptyTest", "[XGBTest]")
+{
+  arma::mat input;
+  arma::vec weights; // dummy weights not used.
+
+  SSELoss Loss;
+  REQUIRE(Loss.Evaluate<false>(input, weights) == Approx(0.0).margin(1e-5));
+}
