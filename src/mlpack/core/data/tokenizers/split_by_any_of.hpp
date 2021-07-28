@@ -61,7 +61,6 @@ class SplitByAnyOf
       if (pos == str.npos)
       {
         retval = str;
-        str.clear();
         return retval;
       }
       retval = str.substr(0, pos);
