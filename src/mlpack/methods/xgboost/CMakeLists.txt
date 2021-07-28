@@ -2,7 +2,8 @@
 # Anything not in this list will not be compiled into mlpack.
 set(SOURCES
   loss_functions/sse_loss.hpp
-  xgb_exact_muneric_split_impl.hpp
+  xgb_exact_numeric_split.hpp
+  xgb_exact_numeric_split_impl.hpp
   xgboost.hpp
   xgboost_impl.hpp
 )
