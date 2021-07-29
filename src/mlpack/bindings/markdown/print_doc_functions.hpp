@@ -107,6 +107,39 @@ inline std::string ParamString(const std::string& bindingName,
  */
 inline std::string ParamType(util::Params& p, util::ParamData& d);
 
+inline std::string ImportExtLib();
+
+inline std::string ImportSplit();
+
+inline std::string ImportThis(const std::string& groupName);
+
+inline std::string SplitTrainTest(const std::string& datasetName,
+                                  const std::string& labelName,
+                                  const std::string& trainDataset,
+                                  const std::string& trainLabels,
+                                  const std::string& testDataset,
+                                  const std::string& testLabels,
+                                  const std::string& splitRatio);
+
+inline std::string GetDataset(const std::string& datasetName,
+                              const std::string& url);
+
+template<typename... Args>
+std::string CreateObject(const std::string& bindingName,
+                         const std::string& objectName,
+                         const std::string& groupName,
+                         Args... args);
+
+inline std::string CreateObject(const std::string& bindingName,
+                                const std::string& objectName,
+                                const std::string& groupName);
+
+template<typename... Args>
+std::string CallMethod(const std::string& bindingName,
+                       const std::string& objectName,
+                       const std::string& methodName,
+                       Args... args);
+
 /**
  * Return whether or not a runtime check on parameters should be ignored.
  */

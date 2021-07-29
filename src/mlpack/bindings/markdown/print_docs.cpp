@@ -390,7 +390,9 @@ void PrintDocs(const string& bindingName,
           example += eg + "\n";
         }
       }
+      cout << "```" << languages[i] << "\n";
       cout << example << "\n";
+      cout << "```" << "\n";
     }
   }
 }

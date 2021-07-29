@@ -73,7 +73,15 @@ BINDING_LONG_DESC(
 
 // Example.
 BINDING_EXAMPLE(
-    "For example, to run AdaBoost on an input dataset: ");
+    IMPORT_EXT_LIB() + "\n" +
+    IMPORT_SPLIT() + "\n" +
+    IMPORT_THIS("adaboost") + "\n" +
+    GET_DATASET("X", "https://example.com") + "\n" +
+    GET_DATASET("y", "https://example.com") + "\n" +
+    SPLIT_TRAIN_TEST("X", "y", "X_train", "y_train", "X_test", "y_test", 
+    "0.2") + "\n" +
+    CREATE_OBJECT("model", "adaboost") + "\n" +
+    CALL_METHOD("model", "fit", "training", "X_train", "labels", "y_train"));
 
 // See also...
 BINDING_SEE_ALSO("AdaBoost on Wikipedia", "https://en.wikipedia.org/wiki/"

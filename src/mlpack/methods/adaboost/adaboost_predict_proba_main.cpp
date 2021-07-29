@@ -63,7 +63,7 @@ BINDING_LONG_DESC("");
 
 // Example.
 BINDING_EXAMPLE(
-    "For example, to run AdaBoost on an input dataset ");
+    CALL_METHOD("model", "predict_proba", "test", "X_test"));
 
 // Classification options.
 PARAM_MATRIX_IN("test", "Test dataset.", "T");
