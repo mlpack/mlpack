@@ -238,31 +238,31 @@ void RSModel::serialize(Archive& ar, const uint32_t /* version */)
 
     case VP_TREE:
       {
-        RSWrapper<tree::VPTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::VPTree>&>(*rSearch);
+        LeafSizeRSWrapper<tree::VPTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<tree::VPTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case RP_TREE:
       {
-        RSWrapper<tree::RPTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::RPTree>&>(*rSearch);
+        LeafSizeRSWrapper<tree::RPTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<tree::RPTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
 
     case MAX_RP_TREE:
       {
-        RSWrapper<tree::MaxRPTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::MaxRPTree>&>(*rSearch);
+        LeafSizeRSWrapper<tree::MaxRPTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<tree::MaxRPTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case UB_TREE:
       {
-        RSWrapper<tree::UBTree>& typedSearch =
-            dynamic_cast<RSWrapper<tree::UBTree>&>(*rSearch);
+        LeafSizeRSWrapper<tree::UBTree>& typedSearch =
+            dynamic_cast<LeafSizeRSWrapper<tree::UBTree>&>(*rSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }

@@ -142,10 +142,11 @@ class DecisionTree :
           typename std::remove_reference<WeightsType>::type>::value>* = 0);
 
   /**
-   * Take ownership of another decision tree and train on the given data and
-   * labels with weights, where the data can be both numeric and categorical.
-   * Setting minimumLeafSize and minimumGainSplit too small may cause the
-   * tree to overfit, but setting them too large may cause it to underfit.
+   * Using the hyperparameters of another decision tree, train on the given data
+   * and labels with weights, where the data can be both numeric and
+   * categorical.  Setting minimumLeafSize and minimumGainSplit too small may
+   * cause the tree to overfit, but setting them too large may cause it to
+   * underfit.
    *
    * Use std::move if data, labels or weights are no longer needed to avoid
    * copies.
