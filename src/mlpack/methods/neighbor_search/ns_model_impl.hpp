@@ -433,28 +433,29 @@ void NSModel<SortPolicy>::serialize(Archive& ar, const uint32_t /* version */)
     case VP_TREE:
       {
         LeafSizeNSWrapper<SortPolicy, tree::VPTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::VPTree>&>(*nSearch);
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::VPTree>&>(*nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case RP_TREE:
       {
         LeafSizeNSWrapper<SortPolicy, tree::RPTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::RPTree>&>(*nSearch);
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::RPTree>&>(*nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case MAX_RP_TREE:
       {
         LeafSizeNSWrapper<SortPolicy, tree::MaxRPTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::MaxRPTree>&>(*nSearch);
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::MaxRPTree>&>(
+            *nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
     case UB_TREE:
       {
         LeafSizeNSWrapper<SortPolicy, tree::UBTree>& typedSearch =
-            dynamic_cast<NSWrapper<SortPolicy, tree::UBTree>&>(*nSearch);
+            dynamic_cast<LeafSizeNSWrapper<SortPolicy, tree::UBTree>&>(*nSearch);
         ar(CEREAL_NVP(typedSearch));
         break;
       }
