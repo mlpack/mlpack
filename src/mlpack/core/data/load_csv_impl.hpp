@@ -42,6 +42,7 @@ namespace mlpack
 {
 namespace data
 {
+  
   /**
    * Given the address of a martix element(val)
    * sets it equal to the provided value(token)
@@ -119,7 +120,7 @@ namespace data
     return true;
   }
 
-  inline std::pair<size_t, size_t> LoadCSV::GetMatSize(std::ifstream& f)
+  inline std::pair<size_t, size_t> LoadCSV::GetMatSize(std::ifstream& f, const char delim = ',')
   {
     
     bool load_okay = f.good();
@@ -149,7 +150,7 @@ namespace data
 
       while (line_stream.good())
       {
-        std::getline(line_stream, token, ',');
+        std::getline(line_stream, token, delim);
         ++line_n_cols;
       }
 
@@ -182,7 +183,7 @@ namespace data
 
     std::pair<size_t, size_t> mat_size = GetMatSize(f);
 
-    x.zeros(mat_size.second, mat_size.first);
+    x.zeros(mat_size.first, mat_size.second);
 
     size_t row = 0;
 

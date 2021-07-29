@@ -10,17 +10,12 @@
  * 3-clause BSD license along with mlpack.  If not, see
  * http://www.opensource.org/licenses/BSD-3-Clause for more information.
  */
-#include "load_csv.hpp"
+/*#include "load_csv.hpp"
 
 using namespace boost::spirit;
 
 namespace mlpack {
 namespace data {
-
-LoadCSV::LoadCSV()
-{
-  // Nothing to do here.
-}
 
 LoadCSV::LoadCSV(const std::string& file) :
   extension(Extension(file)),
@@ -76,17 +71,6 @@ LoadCSV::LoadCSV(const std::string& file) :
   }
 }
 
-void LoadCSV::CheckOpen()
-{
-  if (!inFile.is_open())
-  {
-    std::ostringstream oss;
-    oss << "Cannot open file '" << filename << "'. " << std::endl;
-    throw std::runtime_error(oss.str());
-  }
-
-  inFile.unsetf(std::ios::skipws);
-}
-
 } // namespace data
 } // namespace mlpack
+*/

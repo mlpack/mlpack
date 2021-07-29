@@ -32,10 +32,8 @@
 #ifndef MLPACK_CORE_DATA_LOAD_CSV_HPP
 #define MLPACK_CORE_DATA_LOAD_CSV_HPP
 
-#include <boost/spirit/include/qi.hpp>
-
 #include <mlpack/core/util/log.hpp>
-
+#include <boost/algorithm/string/trim.hpp>
 #include <set>
 #include <string>
 
@@ -56,13 +54,36 @@ class LoadCSV
 {
  public:
 
+  char delim;
   // Do nothing, just a place holder, to be removed later.
-  LoadCSV(); 
+  LoadCSV()
+  {
+  } 
+
   /**
    * Construct the LoadCSV object on the given file.  This will construct the
    * rules necessary for loading and attempt to open the file.
    */
-  LoadCSV(const std::string& file);
+  LoadCSV(const std::string& file) :
+    extension(Extension(file)),
+    filename(file),
+    inFile(file)
+  {
+    if(extension == "csv")
+    {
+      delim = ',';
+    }
+    else if(extension == "tsv")
+    {
+      delim = '\t';
+    }
+    else
+    {
+      delim = ' ';
+    }
+
+    CheckOpen();
+  }
 
   /**
    * Convert the given string token to assigned datatype and assign
@@ -131,8 +152,6 @@ class LoadCSV
   template<typename T, typename MapPolicy>
   void GetMatrixSize(size_t& rows, size_t& cols, DatasetMapper<MapPolicy>& info)
   {
-    using namespace boost::spirit;
-
     // Take a pass through the file.  If the DatasetMapper policy requires it,
     // we will pass everything string through MapString().  This might be useful
     // if, e.g., the MapPolicy needs to find which dimensions are numeric or
@@ -186,11 +205,12 @@ class LoadCSV
     
     while (std::getline(inFile, line))
     {
+      boost::trim(line);
       ++rows;
       if (rows == 1)
       {
         // Extract the number of columns.
-        std::pair<size_t, size_t> dimen = GetMatSize(inFile);
+        std::pair<size_t, size_t> dimen = GetMatSize(inFile, delim);
         cols = dimen.second;
       }
 
@@ -200,19 +220,24 @@ class LoadCSV
       {
         // In this case we must pass everything we parse to the MapPolicy.
 	std::string str(line.begin(), line.end());
-        
-	for(size_t i = 0; i < str.size(); i++)
-	{
-	  // Maybe there is a faster way to parser each element of the string
-	  // Also for now it is being considered that delimiter will always
-	  // be comma(,)
-	  if(str[i] != ',')
-	  {
-	    std::string cc(1, str[i]);
-	    info.template MapFirstPass<T>(std::move(cc), rows - 1);
-	  }
-	}
+      
+        std::stringstream line_stream;
+        std::string token;
 
+        if(line.size() == 0)
+	{
+	  break;
+        }
+
+       line_stream.clear();
+       line_stream.str(line);
+
+       while(line_stream.good())
+       {
+         std::getline(line_stream, token, delim);
+	 boost::trim(token);
+	 info.template MapFirstPass<T>(std::move(token), rows - 1);
+       }
       }
     }
   }
@@ -232,8 +257,6 @@ class LoadCSV
                               size_t& cols,
                               DatasetMapper<MapPolicy>& info)
   {
-    using namespace boost::spirit;
-
     // Take a pass through the file.  If the DatasetMapper policy requires it,
     // we will pass everything string through MapString().  This might be useful
     // if, e.g., the MapPolicy needs to find which dimensions are numeric or
@@ -249,11 +272,13 @@ class LoadCSV
     while (std::getline(inFile, line))
     {
       ++cols;
+      
+      boost::trim(line);
 
       if (cols == 1)
       {
         // Extract the number of dimensions.
-        std::pair<int, int> dimen = GetMatSize(inFile);
+        std::pair<size_t, size_t> dimen = GetMatSize(inFile, delim);
         rows = dimen.second;
 
         // Reset the DatasetInfo object, if needed.
@@ -276,32 +301,43 @@ class LoadCSV
       {
         size_t dim = 0;
 
-        // In this case we must pass everything we parse to the MapPolicy.
-        std::string str(line.begin(), line.end());
+	std::stringstream line_stream;
+	std::string token;
 
-	// Maybe there is a faster way to parser each element of the string
-	// Also for now it is being considered that delimiter will always
-	// be comma(,)
-	for(size_t i = 0; i < str.size(); i++)
+	if(line.size() == 0)
+	{
+	  break;
+	}
+
+	line_stream.clear();
+	line_stream.str(line);
+
+	while(line_stream.good())
         {
-	  if(str[i] != ',')
-	  {
-	    std::string cc(1, str[i]);
-	    info.template MapFirstPass<T>(std::move(cc), dim++);
-	  }
+          std::getline(line_stream, token, delim);
+	  boost::trim(token);
+          info.template MapFirstPass<T>(std::move(token), dim++);
         }
       }
     }
   }
 
  private:
-  using iter_type = boost::iterator_range<std::string::iterator>;
-
   /**
    * Check whether or not the file has successfully opened; throw an exception
    * if not.
    */
-  void CheckOpen();
+  void CheckOpen()
+  {
+    if (!inFile.is_open())
+    {
+      std::ostringstream oss;
+      oss << "Cannot open file '" << filename << "'. " << std::endl;
+      throw std::runtime_error(oss.str());
+    }
+
+    inFile.unsetf(std::ios::skipws);
+  }
 
   /**
    * Parse a non-transposed matrix.
@@ -313,8 +349,6 @@ class LoadCSV
   void NonTransposeParse(arma::Mat<T>& inout,
                          DatasetMapper<PolicyType>& infoSet)
   {
-    using namespace boost::spirit;
-
     // Get the size of the matrix.
     size_t rows, cols;
     GetMatrixSize<T>(rows, cols, infoSet);
@@ -329,24 +363,34 @@ class LoadCSV
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
 
-    auto setCharClass = [&](iter_type const &iter)
-    {
-      std::string str(iter.begin(), iter.end());
-      if (str == "\t")
-      {
-        str.clear();
-      }
-
-      inout(row, col++) = infoSet.template MapString<T>(std::move(str), row);
-    };
-
     while (std::getline(inFile, line))
     {
-      // Parse the numbers from a line (ex: 1,2,3,4); if the parser finds a
-      // number it will execute the setNum function.
-      const bool canParse = qi::parse(line.begin(), line.end(),
-          stringRule[setCharClass] % delimiterRule);
+      
+      boost::trim(line);
 
+      const bool canParse = true;
+      std::stringstream line_stream;
+      std::string token;
+
+      if(line.size() == 0)
+      {
+        break;
+      }
+
+      line_stream.clear();
+      line_stream.str(line);
+
+      while(line_stream.good())
+      {
+	if(token == "\t")
+	{
+	  token.clear();
+	}
+
+        std::getline(line_stream, token, delim);
+        boost::trim(token);
+	inout(row, col++) = infoSet.template MapString<T>(std::move(token), row);
+      }      
       // Make sure we got the right number of rows.
       if (col != cols)
       {
@@ -357,6 +401,10 @@ class LoadCSV
         throw std::runtime_error(oss.str());
       }
 
+      // I am not able to understand when can we enter this case.
+      // I am looking into it, if anyone can give me some hint
+      // it might help, currently I've assigned canParse as true
+      // by default
       if (!canParse)
       {
         std::ostringstream oss;
@@ -378,8 +426,6 @@ class LoadCSV
   template<typename T, typename PolicyType>
   void TransposeParse(arma::Mat<T>& inout, DatasetMapper<PolicyType>& infoSet)
   {
-    using namespace boost::spirit;
-
     // Get matrix size.  This also initializes infoSet correctly.
     size_t rows, cols;
     GetTransposeMatrixSize<T>(rows, cols, infoSet);
@@ -394,29 +440,31 @@ class LoadCSV
     inFile.clear();
     inFile.seekg(0, std::ios::beg);
 
-    /**
-     * This is the parse rule for strings.  When we get a string we have to pass
-     * it to the DatasetMapper.
-     */
-    auto parseString = [&](iter_type const &iter)
-    {
-      // All parsed values must be mapped.
-      std::string str(iter.begin(), iter.end());
-
-      inout(row, col) = infoSet.template MapString<T>(std::move(str), row);
-      ++row;
-    };
-
     while (std::getline(inFile, line))
     {
+      boost::trim(line);
       // Reset the row we are looking at.  (Remember this is transposed.)
       row = 0;
+      const bool canParse = true;
+      std::stringstream line_stream;
+      std::string token;
 
-      // Now use boost::spirit to parse the characters of the line;
-      // parseString() will be called when a token is detected.
-      const bool canParse = qi::parse(line.begin(), line.end(),
-          stringRule[parseString] % delimiterRule);
+      if(line.size() == 0)
+      {
+        break;
+      }
+      
+      line_stream.clear();
+      line_stream.str(line);
 
+      while(line_stream.good())
+      {
+        std::getline(line_stream, token, delim);
+	boost::trim(token);
+        inout(row, col) = infoSet.template MapString<T>(std::move(token), row);
+	row++;
+      }
+      
       // Make sure we got the right number of rows.
       if (row != rows)
       {
@@ -425,7 +473,11 @@ class LoadCSV
             << ") on line " << col << "; should be " << rows << " dimensions.";
         throw std::runtime_error(oss.str());
       }
-
+      
+      // I am not able to understand when can we enter this case.
+      // I am looking into it, if anyone can give me some hint
+      // it might help, currently I've assigned canParser as true
+      // by default
       if (!canParse)
       {
         std::ostringstream oss;
@@ -439,12 +491,7 @@ class LoadCSV
     }
   }
 
-  inline std::pair<size_t, size_t> GetMatSize(std::ifstream& f);
-
-  //! Spirit rule for parsing.
-  boost::spirit::qi::rule<std::string::iterator, iter_type()> stringRule;
-  //! Spirit rule for delimiters (i.e. ',' for CSVs).
-  boost::spirit::qi::rule<std::string::iterator, iter_type()> delimiterRule;
+  inline std::pair<size_t, size_t> GetMatSize(std::ifstream& f, const char delim);
 
   //! Extension (type) of file.
   std::string extension;
