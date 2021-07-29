@@ -149,6 +149,7 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
     const double minimumGainSplit,
     double& splitInfo,
     AuxiliarySplitInfo& /* aux */,
+    FitnessFunction& fitnessFunction,
     const bool splitIfBetterGain)
 {
   double bestFoundGain = std::min(bestGain + minimumGainSplit, 0.0);
@@ -230,9 +231,9 @@ double RandomBinaryNumericSplit<FitnessFunction>::SplitIfBetter(
   }
 
   // Calculate the gain for the left and right child.
-  const double leftGain = FitnessFunction::template
+  const double leftGain = fitnessFunction.template
       Evaluate<UseWeights>(leftResponses, leftWeights, 0, leftLeafSize);
-  const double rightGain = FitnessFunction::template
+  const double rightGain = fitnessFunction.template
       Evaluate<UseWeights>(rightResponses, rightWeights, 0, rightLeafSize);
 
   // Calculate the gain at this split point.
