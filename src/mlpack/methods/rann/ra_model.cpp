@@ -127,7 +127,7 @@ void RAModel::InitializeModel(const bool naive, const bool singleMode)
       raSearch = new RAWrapper<tree::RPlusPlusTree>(naive, singleMode);
       break;
     case UB_TREE:
-      raSearch = new RAWrapper<tree::UBTree>(naive, singleMode);
+      raSearch = new LeafSizeRAWrapper<tree::UBTree>(naive, singleMode);
       break;
     case OCTREE:
       raSearch = new LeafSizeRAWrapper<tree::Octree>(naive, singleMode);
