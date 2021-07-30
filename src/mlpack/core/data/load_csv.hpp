@@ -33,10 +33,10 @@
 #define MLPACK_CORE_DATA_LOAD_CSV_HPP
 
 #include <mlpack/core/util/log.hpp>
-#include <boost/algorithm/string/trim.hpp>
 #include <set>
 #include <string>
 
+#include "string_algorithms.hpp"
 #include "extension.hpp"
 #include "format.hpp"
 #include "dataset_mapper.hpp"
@@ -77,8 +77,10 @@ class LoadCSV
     {
       delim = '\t';
     }
-    else
+    else if(extension == "txt")
     {
+      // Can we have a case where number
+      // of spaces is more than 1
       delim = ' ';
     }
 
@@ -205,7 +207,7 @@ class LoadCSV
     
     while (std::getline(inFile, line))
     {
-      boost::trim(line);
+      trim(line);
       ++rows;
       if (rows == 1)
       {
@@ -235,7 +237,7 @@ class LoadCSV
        while(line_stream.good())
        {
          std::getline(line_stream, token, delim);
-	 boost::trim(token);
+	 trim(token);
 	 info.template MapFirstPass<T>(std::move(token), rows - 1);
        }
       }
@@ -273,7 +275,7 @@ class LoadCSV
     {
       ++cols;
       
-      boost::trim(line);
+      trim(line);
 
       if (cols == 1)
       {
@@ -315,7 +317,7 @@ class LoadCSV
 	while(line_stream.good())
         {
           std::getline(line_stream, token, delim);
-	  boost::trim(token);
+	  trim(token);
           info.template MapFirstPass<T>(std::move(token), dim++);
         }
       }
@@ -366,7 +368,7 @@ class LoadCSV
     while (std::getline(inFile, line))
     {
       
-      boost::trim(line);
+      trim(line);
 
       const bool canParse = true;
       std::stringstream line_stream;
@@ -388,7 +390,7 @@ class LoadCSV
 	}
 
         std::getline(line_stream, token, delim);
-        boost::trim(token);
+        trim(token);
 	inout(row, col++) = infoSet.template MapString<T>(std::move(token), row);
       }      
       // Make sure we got the right number of rows.
@@ -442,7 +444,7 @@ class LoadCSV
 
     while (std::getline(inFile, line))
     {
-      boost::trim(line);
+      trim(line);
       // Reset the row we are looking at.  (Remember this is transposed.)
       row = 0;
       const bool canParse = true;
@@ -460,7 +462,8 @@ class LoadCSV
       while(line_stream.good())
       {
         std::getline(line_stream, token, delim);
-	boost::trim(token);
+	trim(token);
+
         inout(row, col) = infoSet.template MapString<T>(std::move(token), row);
 	row++;
       }

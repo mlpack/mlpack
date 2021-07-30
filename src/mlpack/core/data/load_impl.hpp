@@ -23,7 +23,7 @@
 #include "detect_file_type.hpp"
 #include "types.hpp"
 
-#include <boost/algorithm/string/trim.hpp>
+#include "string_algorithms.hpp"
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -41,7 +41,7 @@ std::vector<std::string> ToTokens(Tokenizer& lineTok)
                  [&tokens](std::string const &str)
   {
     std::string trimmedToken(str);
-    boost::trim(trimmedToken);
+    trim(trimmedToken);
     return std::move(trimmedToken);
   });
 

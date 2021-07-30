@@ -14,8 +14,8 @@
  */
 #include "extension.hpp"
 #include "detect_file_type.hpp"
+#include "string_algorithms.hpp"
 
-#include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -214,7 +214,7 @@ file_type AutoDetect(std::fstream& stream, const std::string& filename)
         const std::streampos pos = stream.tellg();
         std::string line;
         std::getline(stream, line, '\n');
-        boost::trim(line);
+        trim(line);
 
         // Reset stream position.
         stream.seekg(pos);
