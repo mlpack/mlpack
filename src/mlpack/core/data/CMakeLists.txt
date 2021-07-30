@@ -10,7 +10,6 @@ set(SOURCES
   has_serialize.hpp
   is_naninf.hpp
   load_csv.hpp
-  load_csv.cpp
   load.hpp
   load_image_impl.hpp
   load_image.cpp
@@ -25,6 +24,7 @@ set(SOURCES
   save_impl.hpp
   save_image.cpp
   split_data.hpp
+  string_algorithms.hpp
   imputer.hpp
   binarize.hpp
   string_encoding.hpp
