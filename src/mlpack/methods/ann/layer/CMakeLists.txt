@@ -16,6 +16,8 @@ set(SOURCES
   base_layer.hpp
   batch_norm.hpp
   batch_norm_impl.hpp
+  bicubic_interpolation.hpp
+  bicubic_interpolation_impl.hpp
   bilinear_interpolation.hpp
   bilinear_interpolation_impl.hpp
   channel_shuffle.hpp
