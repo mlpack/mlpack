@@ -22,6 +22,32 @@ using namespace mlpack::bindings;
 using namespace mlpack::bindings::cli;
 using namespace mlpack::kernel;
 
+// If multiple binding types are used in the same test file, we may get the
+// wrong function map.  These functions are utilities to ensure that for these
+// tests, the function maps are accurate.
+
+template<typename N>
+void AddCLIMapFunctions(util::Params& p)
+{
+  p.functionMap[TYPENAME(N)]["DefaultParam"] = &cli::DefaultParam<N>;
+  p.functionMap[TYPENAME(N)]["OutputParam"] = &cli::OutputParam<N>;
+  p.functionMap[TYPENAME(N)]["GetPrintableParam"] = &cli::GetPrintableParam<N>;
+  p.functionMap[TYPENAME(N)]["StringTypeParam"] = &cli::StringTypeParam<N>;
+  p.functionMap[TYPENAME(N)]["GetParam"] = &cli::GetParam<N>;
+  p.functionMap[TYPENAME(N)]["GetRawParam"] = &cli::GetRawParam<N>;
+  p.functionMap[TYPENAME(N)]["AddToCLI11"] = &cli::AddToCLI11<N>;
+  p.functionMap[TYPENAME(N)]["MapParameterName"] = &cli::MapParameterName<N>;
+  p.functionMap[TYPENAME(N)]["GetPrintableParamName"] =
+      &cli::GetPrintableParamName<N>;
+  p.functionMap[TYPENAME(N)]["GetPrintableParamValue"] =
+      &cli::GetPrintableParamValue<N>;
+  p.functionMap[TYPENAME(N)]["GetAllocatedMemory"] =
+      &cli::GetAllocatedMemory<N>;
+  p.functionMap[TYPENAME(N)]["DeleteAllocatedMemory"] =
+      &cli::DeleteAllocatedMemory<N>;
+  p.functionMap[TYPENAME(N)]["InPlaceCopy"] = &cli::InPlaceCopy<N>;
+}
+
 /**
  * Ensure that we can construct a CLIOption object, and that it will add itself
  * to the CLI instance.
@@ -33,6 +59,9 @@ TEST_CASE("CLIOptionTest", "[CLIOptionTest]")
 
   // Now check that it's in CLI.
   util::Params p = IO::Parameters("CLIOptionTest");
+  p.functionMap.clear();
+  AddCLIMapFunctions<double>(p);
+
   REQUIRE(p.Parameters().count("test") > 0);
   REQUIRE(p.Aliases().count('t') > 0);
   REQUIRE(p.Parameters()["test"].desc == "test2");
@@ -48,6 +77,9 @@ TEST_CASE("CLIOptionTest", "[CLIOptionTest]")
 
   // Now check that it's in CLI.
   p = IO::Parameters("CLIOptionTest");
+  p.functionMap.clear();
+  AddCLIMapFunctions<arma::mat>(p);
+
   REQUIRE(p.Parameters().count("mat") > 0);
   REQUIRE(p.Aliases().count('m') > 0);
   REQUIRE(p.Parameters()["mat"].desc == "mat2");
