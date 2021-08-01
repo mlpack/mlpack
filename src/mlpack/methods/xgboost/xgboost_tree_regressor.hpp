@@ -92,7 +92,7 @@ class XGBoostTreeRegressor
                    DimensionSelectionType());
 
   template<typename VecType>
-  VecType::elem_type Predict(const VecType& point) const;
+  typename VecType::elem_type Predict(const VecType& point) const;
 
   template<typename MatType>
   void Predict(const MatType& data, arma::rowvec& predictions) const;
@@ -118,6 +118,8 @@ class XGBoostTreeRegressor
  private:
   std::vector<DecisionTreeType*> trees;
   double eta;
+  double initialPred;
+  double avgGain;
 
   template<bool UseDatasetInfo, typename MatType, typename ResponsesType>
   double Train(const MatType& dataset,
