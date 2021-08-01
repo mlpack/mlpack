@@ -101,7 +101,7 @@ mlpack has the following dependencies:
 
       Armadillo      >= 8.400.0
       Boost (math_c99, spirit) >= 1.58.0
-      CMake          >= 3.2.2
+      CMake          >= 3.6
       ensmallen      >= 2.10.0
       cereal         >= 1.1.2
 

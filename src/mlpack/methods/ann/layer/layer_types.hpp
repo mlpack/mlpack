@@ -19,7 +19,9 @@
 #include <mlpack/methods/ann/layer/alpha_dropout.hpp>
 #include <mlpack/methods/ann/layer/base_layer.hpp>
 #include <mlpack/methods/ann/layer/batch_norm.hpp>
+#include <mlpack/methods/ann/layer/bicubic_interpolation.hpp>
 #include <mlpack/methods/ann/layer/bilinear_interpolation.hpp>
+#include <mlpack/methods/ann/layer/channel_shuffle.hpp>
 #include <mlpack/methods/ann/layer/constant.hpp>
 #include <mlpack/methods/ann/layer/concatenate.hpp>
 #include <mlpack/methods/ann/layer/dropout.hpp>
@@ -39,6 +41,7 @@
 #include <mlpack/methods/ann/layer/max_pooling.hpp>
 #include <mlpack/methods/ann/layer/mean_pooling.hpp>
 #include <mlpack/methods/ann/layer/lp_pooling.hpp>
+#include <mlpack/methods/ann/layer/nearest_interpolation.hpp>
 #include <mlpack/methods/ann/layer/noisylinear.hpp>
 #include <mlpack/methods/ann/layer/adaptive_max_pooling.hpp>
 #include <mlpack/methods/ann/layer/adaptive_mean_pooling.hpp>
@@ -46,6 +49,7 @@
 #include <mlpack/methods/ann/layer/pixel_shuffle.hpp>
 #include <mlpack/methods/ann/layer/positional_encoding.hpp>
 #include <mlpack/methods/ann/layer/reinforce_normal.hpp>
+#include <mlpack/methods/ann/layer/relu6.hpp>
 #include <mlpack/methods/ann/layer/reparametrization.hpp>
 #include <mlpack/methods/ann/layer/select.hpp>
 #include <mlpack/methods/ann/layer/softmax.hpp>
@@ -82,6 +86,7 @@ template<typename InputDataType, typename OutputDataType> class FastLSTM;
 template<typename InputDataType, typename OutputDataType> class VRClassReward;
 template<typename InputDataType, typename OutputDataType> class Concatenate;
 template<typename InputDataType, typename OutputDataType> class Padding;
+template<typename InputDataType, typename OutputDataType> class ReLU6;
 
 template<typename InputDataType,
          typename OutputDataType,
@@ -221,26 +226,30 @@ template <typename InputDataType,
 class AdaptiveMeanPooling;
 
 using MoreTypes = boost::variant<
+        FlexibleReLU<arma::mat, arma::mat>*,
         Linear3D<arma::mat, arma::mat, NoRegularizer>*,
         LpPooling<arma::mat, arma::mat>*,
         PixelShuffle<arma::mat, arma::mat>*,
+        ChannelShuffle<arma::mat, arma::mat>*,
         Glimpse<arma::mat, arma::mat>*,
         Highway<arma::mat, arma::mat>*,
         MultiheadAttention<arma::mat, arma::mat, NoRegularizer>*,
         Recurrent<arma::mat, arma::mat>*,
         RecurrentAttention<arma::mat, arma::mat>*,
         ReinforceNormal<arma::mat, arma::mat>*,
+        ReLU6<arma::mat, arma::mat>*,
         Reparametrization<arma::mat, arma::mat>*,
         Select<arma::mat, arma::mat>*,
-        Sequential<arma::mat, arma::mat, false>*,
-        Sequential<arma::mat, arma::mat, true>*,
+        SpatialDropout<arma::mat, arma::mat>*,
         Subview<arma::mat, arma::mat>*,
         VRClassReward<arma::mat, arma::mat>*,
         VirtualBatchNorm<arma::mat, arma::mat>*,
         RBF<arma::mat, arma::mat, GaussianFunction>*,
         BaseLayer<GaussianFunction, arma::mat, arma::mat>*,
         PositionalEncoding<arma::mat, arma::mat>*,
-        ISRLU<arma::mat, arma::mat>*
+        ISRLU<arma::mat, arma::mat>*,
+        BicubicInterpolation<arma::mat, arma::mat>*,
+        NearestInterpolation<arma::mat, arma::mat>*
 >;
 
 template <typename... CustomLayers>
@@ -275,7 +284,6 @@ using LayerTypes = boost::variant<
     Dropout<arma::mat, arma::mat>*,
     ELU<arma::mat, arma::mat>*,
     FastLSTM<arma::mat, arma::mat>*,
-    FlexibleReLU<arma::mat, arma::mat>*,
     GRU<arma::mat, arma::mat>*,
     HardTanH<arma::mat, arma::mat>*,
     Join<arma::mat, arma::mat>*,
@@ -295,8 +303,9 @@ using LayerTypes = boost::variant<
     NoisyLinear<arma::mat, arma::mat>*,
     Padding<arma::mat, arma::mat>*,
     PReLU<arma::mat, arma::mat>*,
+    Sequential<arma::mat, arma::mat, false>*,
+    Sequential<arma::mat, arma::mat, true>*,
     Softmax<arma::mat, arma::mat>*,
-    SpatialDropout<arma::mat, arma::mat>*,
     TransposedConvolution<NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>,
             NaiveConvolution<ValidConvolution>, arma::mat, arma::mat>*,

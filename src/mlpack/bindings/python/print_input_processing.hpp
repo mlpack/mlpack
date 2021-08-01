@@ -31,11 +31,11 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // The copy_all_inputs parameter must be handled first, and therefore is
   // outside the scope of this code.
@@ -164,11 +164,11 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::disable_if<data::HasSerialize<T>>::type* = 0,
-    const typename boost::disable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0,
-    const typename boost::enable_if<util::IsStdVector<T>>::type* = 0)
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<!data::HasSerialize<T>::value>::type* = 0,
+    const typename std::enable_if<!std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0,
+    const typename std::enable_if<util::IsStdVector<T>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -251,8 +251,8 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
-    const typename boost::enable_if<arma::is_arma_type<T>>::type* = 0)
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
+    const typename std::enable_if<arma::is_arma_type<T>::value>::type* = 0)
 {
   const std::string prefix(indent, ' ');
 
@@ -372,9 +372,9 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
-    const typename boost::disable_if<arma::is_arma_type<T>>::type* = 0,
-    const typename boost::enable_if<data::HasSerialize<T>>::type* = 0)
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
+    const typename std::enable_if<!arma::is_arma_type<T>::value>::type* = 0,
+    const typename std::enable_if<data::HasSerialize<T>::value>::type* = 0)
 {
   // First, get the correct class name if needed.
   std::string strippedType, printedType, defaultsType;
@@ -445,9 +445,9 @@ template<typename T>
 void PrintInputProcessing(
     util::ParamData& d,
     const size_t indent,
-    const typename boost::disable_if<util::IsStdVector<T>>::type* = 0,
-    const typename boost::enable_if<std::is_same<T,
-        std::tuple<data::DatasetInfo, arma::mat>>>::type* = 0)
+    const typename std::enable_if<!util::IsStdVector<T>::value>::type* = 0,
+    const typename std::enable_if<std::is_same<T,
+        std::tuple<data::DatasetInfo, arma::mat>>::value>::type* = 0)
 {
   // The user should pass in a matrix type of some sort.
   const std::string prefix(indent, ' ');

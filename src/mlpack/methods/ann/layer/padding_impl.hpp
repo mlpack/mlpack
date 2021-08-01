@@ -46,7 +46,7 @@ void Padding<InputDataType, OutputDataType>::Forward(
 {
   nRows = input.n_rows;
   nCols = input.n_cols;
-  
+
   if (inputWidth == 0 || inputHeight == 0)
   {
     output = arma::zeros(nRows + padWLeft + padWRight,
@@ -62,7 +62,7 @@ void Padding<InputDataType, OutputDataType>::Forward(
     outputTemp = arma::zeros<arma::Cube<eT>>(inputWidth + padWLeft + padWRight,
         inputHeight + padHTop + padHBottom, inSize * nCols);
     for (size_t i = 0; i < inputTemp.n_slices; ++i)
-    {   
+    {
       outputTemp.slice(i).submat(padWLeft, padHTop, padWLeft + inputWidth - 1,
           padHTop + inputHeight - 1) = inputTemp.slice(i);
     }
@@ -103,4 +103,3 @@ void Padding<InputDataType, OutputDataType>::serialize(
 } // namespace mlpack
 
 #endif
-    
